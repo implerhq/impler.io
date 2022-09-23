@@ -62,7 +62,7 @@ module.exports = {
     'no-restricted-imports': [
       'error',
       {
-        patterns: ['@novu/shared/*', '@novu/dal/*', '!import2/good'],
+        patterns: ['@impler/shared/*', '@impler/dal/*', '!import2/good'],
       },
     ],
     'padding-line-between-statements': [
