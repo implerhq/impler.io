@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true,
+    "types": ["node"],
+    "target": "es2017",
+    "allowJs": false,
+    "esModuleInterop": false,
+    "declarationMap": true
+  }
+}
