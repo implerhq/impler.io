@@ -7,7 +7,7 @@
   "scripts": {
     "clean": "pnpm run prebuild",
     "lint": "nx run-many --target=lint --all",
-    "start:dev": "cross-env TZ=UTC nx run-many --target=start:dev --parallel --projects=@impler/api,@impler/dal",
+    "start:dev": "cross-env TZ=UTC nx run-many --target=start --parallel --projects=@impler/api,@impler/dal",
     "start:dal": "cross-env nx run @impler/dal:start",
     "start:api": "cross-env nx run @impler/api:start",
     "prebuild": "nx run-many --target=prebuild --all",

@@ -1,6 +1,6 @@
 {
   "extends": "@nrwl/workspace/presets/npm.json",
-  "npmScope": "impler",
+  "npmScope": "@impler",
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/nx-cloud",
