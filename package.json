@@ -5,7 +5,15 @@
   "packageManager": "pnpm@7.9.4",
   "main": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "pnpm run prebuild",
+    "lint": "nx run-many --target=lint --all",
+    "start:dev": "cross-env TZ=UTC nx run-many --target=start --parallel --projects=@impler/api,@impler/dal",
+    "start:dal": "cross-env nx run @impler/dal:start",
+    "start:api": "cross-env nx run @impler/api:start",
+    "prebuild": "nx run-many --target=prebuild --all",
+    "build": "nx run-many --target=build --all",
+    "build:api": "nx build @impler/api",
+    "build:dal": "nx build @impler/dal"
   },
   "keywords": [
     "data-import",
@@ -39,6 +47,8 @@
   "devDependencies": {
     "@commitlint/cli": "^17.1.2",
     "@commitlint/config-conventional": "^17.1.0",
+    "@nrwl/nx-cloud": "^14.6.2",
+    "@nrwl/workspace": "^14.7.11",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
     "@typescript-eslint/parser": "^5.38.0",
     "cross-env": "^7.0.3",
@@ -55,6 +65,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
+    "nx": "^14.7.11",
     "prettier": "^2.7.1"
   }
 }

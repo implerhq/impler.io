@@ -6,9 +6,10 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "start": "npm run start:dev",
-    "afterinstall": "pnpm build",
+    "start": "pnpm run build:watch",
+    "preinstall": "pnpm build",
     "prebuild": "rimraf dist",
+    "start:dev": "pnpm run build:watch",
     "build": "cross-env node_modules/.bin/tsc -p tsconfig.build.json",
     "build:watch": "cross-env node_modules/.bin/tsc -p tsconfig.build.json -w --preserveWatchOutput",
     "lint": "eslint src",
