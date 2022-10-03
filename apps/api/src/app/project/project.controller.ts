@@ -1,16 +1,22 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiOperation, ApiTags, ApiOkResponse } from '@nestjs/swagger';
-import { CreateProjectDto } from './dtos/create-project.dto';
-import { ProjectResponseDto } from './dtos/projects-response.dto';
+import { CreateProjectRequestDto } from './dtos/create-project-request.dto';
+import { ProjectResponseDto } from './dtos/project-response.dto';
 import { GetProjects } from './usecases/get-projects/get-projects.usecase';
 import { CreateProject } from './usecases/create-project/create-project.usecase';
 import { CreateProjectCommand } from './usecases/create-project/create-project.command';
-import { CreateProjectResponseDto } from './dtos/create-project-response.dto';
+import { UpdateProjectRequestDto } from './dtos/update-project-request.dto';
+import { UpdateProject } from './usecases/update-project/update-project.usecase';
+import { UpdateProjectCommand } from './usecases/update-project/update-project.command';
 
 @Controller('/project')
 @ApiTags('Project')
 export class ProjectController {
-  constructor(private getProjectsUsecase: GetProjects, private createProjectUsecase: CreateProject) {}
+  constructor(
+    private getProjectsUsecase: GetProjects,
+    private createProjectUsecase: CreateProject,
+    private updateProjectUsecase: UpdateProject
+  ) {}
 
   @Get('')
   @ApiOperation({
@@ -28,14 +34,28 @@ export class ProjectController {
     summary: 'Create project',
   })
   @ApiOkResponse({
-    type: CreateProjectResponseDto,
+    type: ProjectResponseDto,
   })
-  createProject(@Body() body: CreateProjectDto): Promise<CreateProjectResponseDto> {
+  createProject(@Body() body: CreateProjectRequestDto): Promise<ProjectResponseDto> {
     return this.createProjectUsecase.execute(
       CreateProjectCommand.create({
         code: body.code,
         name: body.name,
       })
     );
+  }
+
+  @Put(':projectId')
+  @ApiOperation({
+    summary: 'Update project',
+  })
+  @ApiOkResponse({
+    type: ProjectResponseDto,
+  })
+  updateProject(
+    @Body() body: UpdateProjectRequestDto,
+    @Param('projectId') projectId: string
+  ): Promise<ProjectResponseDto> {
+    return this.updateProjectUsecase.execute(UpdateProjectCommand.create({ name: body.name }), projectId);
   }
 }

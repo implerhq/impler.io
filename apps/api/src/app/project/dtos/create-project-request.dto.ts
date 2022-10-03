@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsDefined, IsString, Validate } from 'class-validator';
 import { UniqueValidator } from '../../shared/framework/IsUniqueValidator';
 
-export class CreateProjectDto {
+export class CreateProjectRequestDto {
   @ApiProperty({
     description: 'Name of the project',
   })

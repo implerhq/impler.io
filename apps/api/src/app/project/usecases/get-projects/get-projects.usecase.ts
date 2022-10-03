@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ProjectRepository } from '@impler/dal';
-import { ProjectResponseDto } from '../../dtos/projects-response.dto';
+import { ProjectResponseDto } from '../../dtos/project-response.dto';
 
 @Injectable()
 export class GetProjects {

@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsDefined, IsString } from 'class-validator';
 
-export class CreateProjectResponseDto {
+export class ProjectResponseDto {
   @ApiPropertyOptional({
     description: 'Id of the project',
   })
