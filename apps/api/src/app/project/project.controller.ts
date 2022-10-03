@@ -16,6 +16,9 @@ export class ProjectController {
   @ApiOperation({
     summary: 'Get projects',
   })
+  @ApiOkResponse({
+    type: [ProjectResponseDto],
+  })
   getProjects(): Promise<ProjectResponseDto[]> {
     return this.getProjectsUsecase.execute();
   }
@@ -25,7 +28,7 @@ export class ProjectController {
     summary: 'Create project',
   })
   @ApiOkResponse({
-    type: [CreateProjectResponseDto],
+    type: CreateProjectResponseDto,
   })
   createProject(@Body() body: CreateProjectDto): Promise<CreateProjectResponseDto> {
     return this.createProjectUsecase.execute(
