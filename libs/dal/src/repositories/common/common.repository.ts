@@ -1,4 +1,4 @@
-import { FilterQuery, models } from 'mongoose';
+import { FilterQuery, models, Types } from 'mongoose';
 
 export class CommonRepository {
   async count<T>(name: string, query: FilterQuery<T>): Promise<number> {
@@ -10,5 +10,9 @@ export class CommonRepository {
     }
 
     throw new Error(`Model ${name} does not exists`);
+  }
+
+  validMongoId(id: string): boolean {
+    return Types.ObjectId.isValid(id);
   }
 }
