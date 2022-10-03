@@ -5,8 +5,8 @@ import { ProjectController } from './project.controller';
 import { UniqueValidator } from '../shared/framework/IsUniqueValidator';
 
 @Module({
-  imports: [SharedModule],
-  providers: [...USE_CASES, UniqueValidator],
+  imports: [SharedModule, UniqueValidator],
+  providers: [...USE_CASES],
   controllers: [ProjectController],
 })
 export class ProjectModule {}
