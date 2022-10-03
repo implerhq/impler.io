@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiOperation, ApiTags, ApiOkResponse } from '@nestjs/swagger';
 import { CreateProjectRequestDto } from './dtos/create-project-request.dto';
 import { ProjectResponseDto } from './dtos/project-response.dto';
@@ -8,6 +8,8 @@ import { CreateProjectCommand } from './usecases/create-project/create-project.c
 import { UpdateProjectRequestDto } from './dtos/update-project-request.dto';
 import { UpdateProject } from './usecases/update-project/update-project.usecase';
 import { UpdateProjectCommand } from './usecases/update-project/update-project.command';
+import { DeleteProject } from './usecases/delete-project/delete-project.usecase';
+import { DocumentNotFoundException } from '../shared/exceptions/document-not-found.exception';
 
 @Controller('/project')
 @ApiTags('Project')
@@ -15,7 +17,8 @@ export class ProjectController {
   constructor(
     private getProjectsUsecase: GetProjects,
     private createProjectUsecase: CreateProject,
-    private updateProjectUsecase: UpdateProject
+    private updateProjectUsecase: UpdateProject,
+    private deleteProjectUsecase: DeleteProject
   ) {}
 
   @Get('')
@@ -57,5 +60,21 @@ export class ProjectController {
     @Param('projectId') projectId: string
   ): Promise<ProjectResponseDto> {
     return this.updateProjectUsecase.execute(UpdateProjectCommand.create({ name: body.name }), projectId);
+  }
+
+  @Delete(':projectId')
+  @ApiOperation({
+    summary: 'Delete project',
+  })
+  @ApiOkResponse({
+    type: ProjectResponseDto,
+  })
+  async deleteProject(@Param('projectId') projectId: string): Promise<ProjectResponseDto> {
+    const document = await this.deleteProjectUsecase.execute(projectId);
+    if (!document) {
+      throw new DocumentNotFoundException('Project', projectId);
+    }
+
+    return document;
   }
 }

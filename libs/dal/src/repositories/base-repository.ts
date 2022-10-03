@@ -36,7 +36,7 @@ export class BaseRepository<T> {
   }
 
   async delete(query: FilterQuery<T & Document>) {
-    const data = await this.MongooseModel.remove(query);
+    const data = await this.MongooseModel.findOneAndDelete(query);
 
     return data;
   }
