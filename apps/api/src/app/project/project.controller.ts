@@ -10,6 +10,7 @@ import { UpdateProject } from './usecases/update-project/update-project.usecase'
 import { UpdateProjectCommand } from './usecases/update-project/update-project.command';
 import { DeleteProject } from './usecases/delete-project/delete-project.usecase';
 import { DocumentNotFoundException } from '../shared/exceptions/document-not-found.exception';
+import { ValidateMongoId } from '../shared/validations/valid-mongo-id.validation';
 
 @Controller('/project')
 @ApiTags('Project')
@@ -57,7 +58,7 @@ export class ProjectController {
   })
   updateProject(
     @Body() body: UpdateProjectRequestDto,
-    @Param('projectId') projectId: string
+    @Param('projectId', ValidateMongoId) projectId: string
   ): Promise<ProjectResponseDto> {
     return this.updateProjectUsecase.execute(UpdateProjectCommand.create({ name: body.name }), projectId);
   }
@@ -69,7 +70,7 @@ export class ProjectController {
   @ApiOkResponse({
     type: ProjectResponseDto,
   })
-  async deleteProject(@Param('projectId') projectId: string): Promise<ProjectResponseDto> {
+  async deleteProject(@Param('projectId', ValidateMongoId) projectId: string): Promise<ProjectResponseDto> {
     const document = await this.deleteProjectUsecase.execute(projectId);
     if (!document) {
       throw new DocumentNotFoundException('Project', projectId);

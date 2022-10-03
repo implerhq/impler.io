@@ -26,7 +26,7 @@ export class TemplateController {
   @ApiOkResponse({
     type: [TemplateResponseDto],
   })
-  getTemplates(@Param('projectId') projectId: string): Promise<TemplateResponseDto[]> {
+  getTemplates(@Param('projectId', ValidateMongoId) projectId: string): Promise<TemplateResponseDto[]> {
     return this.getTemplatesUsecase.execute(projectId);
   }
 
