@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { USE_CASES } from './usecases';
-import { ProjectController } from './project.controller';
 import { SharedModule } from '../shared/shared.module';
+import { ProjectController } from './project.controller';
+import { UniqueValidator } from '../shared/framework/IsUniqueValidator';
 
 @Module({
-  imports: [SharedModule],
+  imports: [SharedModule, UniqueValidator],
   providers: [...USE_CASES],
   controllers: [ProjectController],
 })

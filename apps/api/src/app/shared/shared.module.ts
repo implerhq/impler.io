@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { DalService, ProjectRepository } from '@impler/dal';
+import { DalService, ProjectRepository, TemplateRepository } from '@impler/dal';
 
-const DAL_MODELS = [ProjectRepository];
+const DAL_MODELS = [ProjectRepository, TemplateRepository];
 
 const dalService = new DalService();
 

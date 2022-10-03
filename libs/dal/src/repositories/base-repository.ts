@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ClassConstructor, plainToClass } from 'class-transformer';
-import { Document, FilterQuery, Model, Types } from 'mongoose';
+import { Document, FilterQuery, Model, QueryOptions, Types, UpdateQuery } from 'mongoose';
 
 export class BaseRepository<T> {
   public _model: Model<any & Document>;
@@ -36,7 +36,7 @@ export class BaseRepository<T> {
   }
 
   async delete(query: FilterQuery<T & Document>) {
-    const data = await this.MongooseModel.remove(query);
+    const data = await this.MongooseModel.findOneAndDelete(query);
 
     return data;
   }
@@ -103,6 +103,14 @@ export class BaseRepository<T> {
       matched: saved.matchedCount,
       modified: saved.modifiedCount,
     };
+  }
+
+  async findOneAndUpdate(
+    query: FilterQuery<T & Document>,
+    updateBody: UpdateQuery<T>,
+    options: QueryOptions<T> = { new: true } // By default return updated document
+  ): Promise<T> {
+    return this.MongooseModel.findOneAndUpdate(query, updateBody, options);
   }
 
   protected mapEntity(data: any): T {
