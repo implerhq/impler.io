@@ -11,7 +11,7 @@ export class GetProjects {
 
     return projects.map((project) => {
       return {
-        id: project._id,
+        _id: project._id,
         name: project.name,
         code: project.code,
       };
