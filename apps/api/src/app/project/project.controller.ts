@@ -56,11 +56,19 @@ export class ProjectController {
   @ApiOkResponse({
     type: ProjectResponseDto,
   })
-  updateProject(
+  async updateProject(
     @Body() body: UpdateProjectRequestDto,
     @Param('projectId', ValidateMongoId) projectId: string
   ): Promise<ProjectResponseDto> {
-    return this.updateProjectUsecase.execute(UpdateProjectCommand.create({ name: body.name }), projectId);
+    const document = await this.updateProjectUsecase.execute(
+      UpdateProjectCommand.create({ name: body.name }),
+      projectId
+    );
+    if (!document) {
+      throw new DocumentNotFoundException('Project', projectId);
+    }
+
+    return document;
   }
 
   @Delete(':projectId')
