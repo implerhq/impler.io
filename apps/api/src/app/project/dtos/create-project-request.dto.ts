@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsDefined, IsString, Validate } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsDefined, IsOptional, IsString, Validate } from 'class-validator';
 import { UniqueValidator } from '../../shared/framework/IsUniqueValidator';
 
 export class CreateProjectRequestDto {
@@ -19,4 +19,11 @@ export class CreateProjectRequestDto {
     message: 'Code is already taken',
   })
   code: string;
+
+  @ApiPropertyOptional({
+    description: 'Name of authentication header to sent along the request',
+  })
+  @IsString()
+  @IsOptional()
+  authHeaderName: string;
 }

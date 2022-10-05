@@ -4,4 +4,6 @@ export class ProjectEntity {
   name: string;
 
   code: string;
+
+  authHeaderName: string;
 }

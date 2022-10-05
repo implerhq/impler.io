@@ -10,6 +10,9 @@ const projectSchema = new Schema(
     code: {
       type: Schema.Types.String,
     },
+    authHeaderName: {
+      type: Schema.Types.String,
+    },
   },
   { ...schemaOptions }
 );

@@ -1,11 +1,18 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsDefined, IsString } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional, IsString } from 'class-validator';
 
 export class UpdateProjectRequestDto {
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Name of the project',
   })
   @IsString()
-  @IsDefined()
+  @IsOptional()
   name: string;
+
+  @ApiPropertyOptional({
+    description: 'Name of authentication header to sent along the request',
+  })
+  @IsString()
+  @IsOptional()
+  authHeaderName: string;
 }
