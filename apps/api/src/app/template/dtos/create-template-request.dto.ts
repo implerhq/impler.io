@@ -1,4 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
+import { changeToCode } from '@impler/shared';
 import { IsDefined, IsString, Validate, IsNumber } from 'class-validator';
 import { UniqueValidator } from '../../shared/framework/IsUniqueValidator';
 
@@ -18,6 +20,7 @@ export class CreateTemplateRequestDto {
   @Validate(UniqueValidator, ['Template', 'code'], {
     message: 'Code is already taken',
   })
+  @Transform((value) => changeToCode(value.value))
   code: string;
 
   @ApiProperty({

@@ -1,5 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsDefined, IsOptional, IsString, Validate } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { changeToCode } from '@impler/shared';
 import { UniqueValidator } from '../../shared/framework/IsUniqueValidator';
 
 export class CreateProjectRequestDto {
@@ -18,6 +20,7 @@ export class CreateProjectRequestDto {
   @Validate(UniqueValidator, ['Project', 'code'], {
     message: 'Code is already taken',
   })
+  @Transform((value) => changeToCode(value.value))
   code: string;
 
   @ApiPropertyOptional({
