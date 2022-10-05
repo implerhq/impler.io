@@ -13,7 +13,8 @@
     "prebuild": "nx run-many --target=prebuild --all",
     "build": "nx run-many --target=build --all",
     "build:api": "nx build @impler/api",
-    "build:dal": "nx build @impler/dal"
+    "build:dal": "nx build @impler/dal",
+    "build:shared": "nx build @impler/shared"
   },
   "keywords": [
     "data-import",

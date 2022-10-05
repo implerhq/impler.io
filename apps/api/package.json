@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@impler/dal": "workspace:^1.0.0",
+    "@impler/shared": "workspace:^1.0.0",
     "@nestjs/common": "^9.1.2",
     "@nestjs/core": "^9.1.2",
     "@nestjs/platform-express": "^9.1.2",

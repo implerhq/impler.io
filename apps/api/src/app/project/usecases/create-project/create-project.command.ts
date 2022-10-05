@@ -1,4 +1,4 @@
-import { IsDefined, IsString } from 'class-validator';
+import { IsDefined, IsOptional, IsString } from 'class-validator';
 import { BaseCommand } from '../../../shared/commands/base.command';
 
 export class CreateProjectCommand extends BaseCommand {
@@ -9,4 +9,8 @@ export class CreateProjectCommand extends BaseCommand {
   @IsDefined()
   @IsString()
   code: string;
+
+  @IsOptional()
+  @IsString()
+  authHeaderName: string;
 }

@@ -55,6 +55,7 @@ importers:
   apps/api:
     specifiers:
       '@impler/dal': workspace:^1.0.0
+      '@impler/shared': workspace:^1.0.0
       '@nestjs/common': ^9.1.2
       '@nestjs/core': ^9.1.2
       '@nestjs/platform-express': ^9.1.2
@@ -74,6 +75,7 @@ importers:
       typescript: ^4.8.3
     dependencies:
       '@impler/dal': link:../../libs/dal
+      '@impler/shared': link:../../libs/shared
       '@nestjs/common': 9.1.2_allg6cauirbqzgqcmexy2wdnoq
       '@nestjs/core': 9.1.2_foclggtudvr6cnfc5hz7ukfode
       '@nestjs/platform-express': 9.1.2_umdjpi6fqr4wvw73r3mhthbyle
@@ -114,6 +116,17 @@ importers:
       nodemon: 2.0.20
       ts-node: 10.9.1_bidgzm5cq2du6gnjtweqqjrrn4
       tsconfig-paths: 4.1.0
+      typescript: 4.8.3
+
+  libs/shared:
+    specifiers:
+      '@types/node': ^18.7.18
+      rimraf: ^3.0.2
+      typescript: ^4.8.3
+    dependencies:
+      rimraf: 3.0.2
+    devDependencies:
+      '@types/node': 18.7.18
       typescript: 4.8.3
 
 packages:

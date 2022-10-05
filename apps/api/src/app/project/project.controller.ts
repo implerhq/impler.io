@@ -45,6 +45,7 @@ export class ProjectController {
       CreateProjectCommand.create({
         code: body.code,
         name: body.name,
+        authHeaderName: body.authHeaderName,
       })
     );
   }
@@ -61,7 +62,7 @@ export class ProjectController {
     @Param('projectId', ValidateMongoId) projectId: string
   ): Promise<ProjectResponseDto> {
     const document = await this.updateProjectUsecase.execute(
-      UpdateProjectCommand.create({ name: body.name }),
+      UpdateProjectCommand.create({ name: body.name, authHeaderName: body.authHeaderName }),
       projectId
     );
     if (!document) {

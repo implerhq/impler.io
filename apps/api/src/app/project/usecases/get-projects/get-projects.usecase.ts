@@ -14,6 +14,7 @@ export class GetProjects {
         _id: project._id,
         name: project.name,
         code: project.code,
+        authHeaderName: project.authHeaderName,
       };
     });
   }
