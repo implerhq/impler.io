@@ -33,17 +33,20 @@ export class TemplateController {
     return this.getTemplatesUsecase.execute(projectId);
   }
 
-  @Post('')
+  @Post(':projectId')
   @ApiOperation({
-    summary: 'Create template',
+    summary: 'Add template in project',
   })
   @ApiOkResponse({
     type: TemplateResponseDto,
   })
-  createTemplate(@Body() body: CreateTemplateRequestDto): Promise<TemplateResponseDto> {
+  createTemplate(
+    @Param('projectId', ValidateMongoId) projectId: string,
+    @Body() body: CreateTemplateRequestDto
+  ): Promise<TemplateResponseDto> {
     return this.createTemplateUsecase.execute(
       CreateTemplateCommand.create({
-        _projectId: body._projectId,
+        _projectId: projectId,
         callbackUrl: body.callbackUrl,
         chunkSize: body.chunkSize,
         code: body.code,
