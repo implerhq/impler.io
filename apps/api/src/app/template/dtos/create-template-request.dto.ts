@@ -36,11 +36,4 @@ export class CreateTemplateRequestDto {
   @IsNumber()
   @IsDefined()
   chunkSize: number;
-
-  @ApiProperty({
-    description: 'Id of project related to the template',
-  })
-  @IsString()
-  @IsDefined()
-  _projectId: string;
 }
