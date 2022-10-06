@@ -80,12 +80,8 @@ export class BaseRepository<T> {
     return this.mapEntity(saved);
   }
 
-  async createMany(data: T[]) {
-    await new Promise((resolve) => {
-      this.MongooseModel.collection.insertMany(data, (err, response) => {
-        resolve(response);
-      });
-    });
+  async createMany(data: T[]): Promise<T[]> {
+    return await this.MongooseModel.insertMany(data);
   }
 
   async update(

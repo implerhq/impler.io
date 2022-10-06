@@ -25,4 +25,4 @@ interface IColumnDocument extends ColumnEntity, Document {
   _id: never;
 }
 
-export const Column = models.Project || model<IColumnDocument>('Column', columnSchema);
+export const Column = models.Column || model<IColumnDocument>('Column', columnSchema);

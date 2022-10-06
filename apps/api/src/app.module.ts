@@ -4,11 +4,13 @@ import { ForwardReference } from '@nestjs/common/interfaces/modules/forward-refe
 import { SharedModule } from './app/shared/shared.module';
 import { ProjectModule } from './app/project/project.module';
 import { TemplateModule } from './app/template/template.module';
+import { ColumnModule } from './app/column/column.module';
 
 const modules: Array<Type | DynamicModule | Promise<DynamicModule> | ForwardReference> = [
   ProjectModule,
   SharedModule,
   TemplateModule,
+  ColumnModule,
 ];
 
 const providers = [];
