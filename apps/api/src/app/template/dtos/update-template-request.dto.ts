@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsNumber, IsNotEmpty } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsNotEmpty, IsUrl } from 'class-validator';
 
 export class UpdateTemplateRequestDto {
   @ApiProperty({
@@ -13,7 +13,7 @@ export class UpdateTemplateRequestDto {
     description: 'Callback URL of the template, gets called when sending data to the application',
     nullable: false,
   })
-  @IsString()
+  @IsUrl()
   @IsOptional()
   callbackUrl?: string;
 
