@@ -39,6 +39,14 @@ export async function bootstrap(expressApp?): Promise<INestApplication> {
     .setTitle('Impler API')
     .setDescription('The Impler API description')
     .setVersion('1.0')
+    .addApiKey(
+      {
+        type: 'apiKey', // type
+        name: 'ACCESS_KEY', // Name of the key to expect in header
+        in: 'header',
+      },
+      'ACCESS_KEY' // Name to show and used in swagger
+    )
     .addTag('Project')
     .build();
   const document = SwaggerModule.createDocument(app, options);

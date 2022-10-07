@@ -1,14 +1,17 @@
-import { Controller, Put, Param, Body, Get, ParseArrayPipe } from '@nestjs/common';
-import { ApiTags, ApiBody, ApiOperation } from '@nestjs/swagger';
+import { Controller, Put, Param, Body, Get, ParseArrayPipe, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiBody, ApiOperation, ApiSecurity } from '@nestjs/swagger';
 import { ValidateMongoId } from '../shared/validations/valid-mongo-id.validation';
 import { UpdateColumnRequestDto } from './dtos/update-column-request.dto';
 import { UpdateColumnCommand } from './usecases/update-columns/update-columns.command';
 import { UpdateColumns } from './usecases/update-columns/update-columns.usecase';
 import { ColumnResponseDto } from './dtos/column-response.dto';
 import { GetColumns } from './usecases/get-columns/get-columns.usecase';
+import { APIKeyGuard } from '../shared/framework/auth.gaurd';
 
 @Controller('/column')
 @ApiTags('Column')
+@ApiSecurity('ACCESS_KEY')
+@UseGuards(APIKeyGuard)
 export class ColumnController {
   constructor(private updateColumns: UpdateColumns, private getColumns: GetColumns) {}
 
