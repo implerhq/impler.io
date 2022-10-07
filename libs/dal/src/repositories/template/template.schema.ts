@@ -16,6 +16,9 @@ const templateSchema = new Schema(
     chunkSize: {
       type: Schema.Types.Number,
     },
+    sampleFileUrl: {
+      type: Schema.Types.String,
+    },
     _projectId: {
       type: Schema.Types.ObjectId,
       ref: 'Project',

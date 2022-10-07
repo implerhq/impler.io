@@ -9,5 +9,7 @@ export class TemplateEntity {
 
   chunkSize: number;
 
+  sampleFileUrl: string;
+
   _projectId: string;
 }

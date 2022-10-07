@@ -38,6 +38,13 @@ export class TemplateResponseDto {
   chunkSize: number;
 
   @ApiProperty({
+    description: 'URL to download samle csv file',
+  })
+  @IsString()
+  @IsDefined()
+  sampleFileUrl: string;
+
+  @ApiProperty({
     description: 'Id of project related to the template',
   })
   @IsString()
