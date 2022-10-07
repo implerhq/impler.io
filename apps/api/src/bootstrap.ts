@@ -7,6 +7,10 @@ import * as bodyParser from 'body-parser';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { validateEnv } from './config/env-validator';
+
+// Validate the ENV variables after launching SENTRY, so missing variables will report to sentry
+validateEnv();
 
 export async function bootstrap(expressApp?): Promise<INestApplication> {
   let app;
