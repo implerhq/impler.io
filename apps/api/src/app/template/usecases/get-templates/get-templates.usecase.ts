@@ -15,6 +15,7 @@ export class GetTemplates {
       chunkSize: template.chunkSize,
       code: template.code,
       name: template.name,
+      sampleFileUrl: template.sampleFileUrl,
       _id: template._id,
     }));
   }
