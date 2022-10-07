@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiOperation, ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { ApiOperation, ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { CreateProjectRequestDto } from './dtos/create-project-request.dto';
 import { ProjectResponseDto } from './dtos/project-response.dto';
 import { GetProjects } from './usecases/get-projects/get-projects.usecase';
@@ -11,9 +11,12 @@ import { UpdateProjectCommand } from './usecases/update-project/update-project.c
 import { DeleteProject } from './usecases/delete-project/delete-project.usecase';
 import { DocumentNotFoundException } from '../shared/exceptions/document-not-found.exception';
 import { ValidateMongoId } from '../shared/validations/valid-mongo-id.validation';
+import { APIKeyGuard } from '../shared/framework/auth.gaurd';
 
 @Controller('/project')
 @ApiTags('Project')
+@ApiSecurity('ACCESS_KEY')
+@UseGuards(APIKeyGuard)
 export class ProjectController {
   constructor(
     private getProjectsUsecase: GetProjects,

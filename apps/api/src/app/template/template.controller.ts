@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiOperation, ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { ApiOperation, ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { DocumentNotFoundException } from '../shared/exceptions/document-not-found.exception';
+import { APIKeyGuard } from '../shared/framework/auth.gaurd';
 import { ValidateMongoId } from '../shared/validations/valid-mongo-id.validation';
 import { CreateTemplateRequestDto } from './dtos/create-template-request.dto';
 import { TemplateResponseDto } from './dtos/template-response.dto';
@@ -14,6 +15,8 @@ import { UpdateTemplate } from './usecases/update-template/update-template.useca
 
 @Controller('/template')
 @ApiTags('Template')
+@ApiSecurity('ACCESS_KEY')
+@UseGuards(APIKeyGuard)
 export class TemplateController {
   constructor(
     private getTemplatesUsecase: GetTemplates,

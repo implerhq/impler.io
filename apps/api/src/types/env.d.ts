@@ -4,6 +4,7 @@ declare namespace NodeJS {
     NODE_ENV: 'test' | 'prod' | 'dev' | 'ci' | 'local';
     PORT: number;
     API_ROOT_URL: string;
+    ACCESS_KEY?: string;
     FRONT_BASE_URL: string;
 
     MONGO_URL: string;
