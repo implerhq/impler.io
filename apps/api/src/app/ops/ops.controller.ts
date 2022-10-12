@@ -28,14 +28,5 @@ export class OpsController {
         authHeaderValue: body.authHeaderValue,
       })
     );
-
-    /*
-     * validate template (done)
-     * upload file (done)
-     * make entry to file (done)
-     * make entry to uploads (done)
-     * Get headings
-     * do mapping
-     */
   }
 }
