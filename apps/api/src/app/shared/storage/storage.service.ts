@@ -16,20 +16,20 @@ export interface IFilePath {
 export abstract class StorageService {
   abstract uploadFile(
     key: string,
-    file: Buffer,
+    file: Buffer | string,
     contentType: string,
     isPublic?: boolean
   ): Promise<PutObjectCommandOutput>;
-  abstract getFile(key: string): Promise<Buffer>;
+  abstract getFileContent(key: string, encoding: string): Promise<string>;
   abstract deleteFile(key: string): Promise<void>;
 }
 
-async function streamToString(stream: Readable): Promise<string> {
+async function streamToString(stream: Readable, encoding: BufferEncoding): Promise<string> {
   return await new Promise((resolve, reject) => {
     const chunks: Uint8Array[] = [];
     stream.on('data', (chunk) => chunks.push(chunk));
     stream.on('error', reject);
-    stream.on('end', () => resolve(Buffer.concat(chunks).toString('base64')));
+    stream.on('end', () => resolve(Buffer.concat(chunks).toString(encoding)));
   });
 }
 
@@ -52,16 +52,15 @@ export class S3StorageService implements StorageService {
     return await this.s3.send(command);
   }
 
-  async getFile(key: string): Promise<Buffer> {
+  async getFileContent(key: string, encoding: BufferEncoding = 'utf8'): Promise<string> {
     try {
       const command = new GetObjectCommand({
         Bucket: process.env.S3_BUCKET_NAME,
         Key: key,
       });
       const data = await this.s3.send(command);
-      const bodyContents = await streamToString(data.Body as Readable);
 
-      return bodyContents as unknown as Buffer;
+      return await streamToString(data.Body as Readable, encoding);
     } catch (error) {
       if (error.code === 404 || error.message === 'The specified key does not exist.') {
         throw new FileNotExistError();

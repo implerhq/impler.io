@@ -7,6 +7,7 @@ const uploadSchema = new Schema(
     _templateId: {
       type: Schema.Types.String,
       ref: 'Template',
+      index: true,
     },
     _uploadedFileId: {
       type: Schema.Types.String,
@@ -19,6 +20,11 @@ const uploadSchema = new Schema(
     _invalidDataFileId: {
       type: Schema.Types.String,
       ref: 'File',
+    },
+    uploadedDate: {
+      type: Schema.Types.Date,
+      default: Date.now,
+      index: true,
     },
     headings: [String],
     uploadDate: Date,

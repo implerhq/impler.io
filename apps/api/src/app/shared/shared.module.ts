@@ -1,10 +1,27 @@
 import { Module } from '@nestjs/common';
-import { ColumnRepository, DalService, ProjectRepository, TemplateRepository } from '@impler/dal';
+import {
+  ColumnRepository,
+  CommonRepository,
+  DalService,
+  FileRepository,
+  MappingRepository,
+  ProjectRepository,
+  TemplateRepository,
+  UploadRepository,
+} from '@impler/dal';
 import { S3StorageService, StorageService } from './storage/storage.service';
 import { CSVFileService } from './file/file.service';
 import { FileNameService } from './file/name.service';
 
-const DAL_MODELS = [ProjectRepository, TemplateRepository, ColumnRepository];
+const DAL_MODELS = [
+  ProjectRepository,
+  TemplateRepository,
+  ColumnRepository,
+  FileRepository,
+  UploadRepository,
+  MappingRepository,
+  CommonRepository,
+];
 const FILE_SERVICES = [CSVFileService, FileNameService];
 
 const dalService = new DalService();

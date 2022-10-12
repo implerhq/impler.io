@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { SupportedFileMimeTypesEnum } from '@impler/shared';
 import { ColumnRepository, TemplateRepository } from '@impler/dal';
 import { UpdateColumnCommand } from './update-columns.command';
 import { CSVFileService } from '../../../shared/file/file.service';
@@ -23,11 +24,16 @@ export class UpdateColumns {
   }
 
   async saveSampleFile(data: UpdateColumnCommand[], templateId: string) {
-    const fields = data.map((column) => column.columnKeys[0]);
-    const csvContent = this.csvFileService.convertFromJson({}, fields);
+    const csvContent = this.createCSVFileHeadingContent(data);
     const fileName = this.fileNameService.getSampleFileName(templateId);
     const sampleFileUrl = this.fileNameService.getSampleFileUrl(templateId);
-    await this.csvFileService.saveFile(this.storageService, csvContent, fileName, true);
+    this.storageService.uploadFile(fileName, csvContent, SupportedFileMimeTypesEnum.CSV, true);
     await this.templateRepository.update({ _id: templateId }, { sampleFileUrl });
+  }
+
+  createCSVFileHeadingContent(data: UpdateColumnCommand[]): string {
+    const headings = data.map((column) => column.columnKeys[0]);
+
+    return headings.join(',');
   }
 }
