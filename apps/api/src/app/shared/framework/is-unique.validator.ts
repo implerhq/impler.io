@@ -1,7 +1,7 @@
 import { ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from 'class-validator';
 import { CommonRepository, ProjectEntity } from '@impler/dal';
 
-@ValidatorConstraint({ name: 'IsUniqueUser', async: true })
+@ValidatorConstraint({ name: 'IsUnique', async: true })
 export class UniqueValidator implements ValidatorConstraintInterface {
   private commonRepository: CommonRepository;
   constructor() {

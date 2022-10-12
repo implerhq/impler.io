@@ -14,7 +14,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ColumnTypesEnum } from '@impler/shared';
-import { IsValidRegex } from '../../shared/framework/IsValidRegexValidator';
+import { IsValidRegex } from '../../shared/framework/is-valid-regex.validator';
 
 export class UpdateColumnRequestDto {
   @ApiProperty({

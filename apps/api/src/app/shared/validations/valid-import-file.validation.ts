@@ -2,7 +2,7 @@
 import _whatever from 'multer';
 import { SupportedFileMimeTypesEnum } from '@impler/shared';
 import { Injectable, PipeTransform } from '@nestjs/common';
-import { FileNotValidError } from '../errors/file-not-valid.error';
+import { FileNotValidError } from '../exceptions/file-not-valid.exception';
 
 @Injectable()
 export class ValidImportFile implements PipeTransform<Express.Multer.File> {
