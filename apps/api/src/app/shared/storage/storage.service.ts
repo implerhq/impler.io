@@ -16,7 +16,7 @@ export interface IFilePath {
 export abstract class StorageService {
   abstract uploadFile(
     key: string,
-    file: Buffer,
+    file: Buffer | string,
     contentType: string,
     isPublic?: boolean
   ): Promise<PutObjectCommandOutput>;
