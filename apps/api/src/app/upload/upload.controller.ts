@@ -2,7 +2,7 @@
 import _whatever from 'multer';
 import { Body, Controller, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags, ApiSecurity, ApiConsumes, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiSecurity, ApiConsumes, ApiOperation, ApiParam } from '@nestjs/swagger';
 import { UploadStatusEnum } from '@impler/shared';
 import { MappingEntity, UploadEntity } from '@impler/dal';
 
@@ -19,6 +19,7 @@ import { DoMappingCommand } from './usecases/do-mapping/do-mapping.command';
 import { GetUploads } from './usecases/get-uploads/get-uploads.usecase';
 import { GetUploadsCommand } from './usecases/get-uploads/get-uploads.command';
 import { GetMappings } from './usecases/get-mappings/get-mappings.usecase';
+import { ValidateTemplate } from '../shared/validations/valid-template.validation';
 
 @Controller('/upload')
 @ApiTags('Uploads')
@@ -33,17 +34,27 @@ export class UploadController {
     private getMappings: GetMappings
   ) {}
 
-  @Post('')
+  @Post(':template')
   @ApiOperation({
     summary: `Upload file to template`,
   })
+  @ApiParam({
+    name: 'template',
+    required: true,
+    description: 'ID or CODE of the template',
+    type: 'string',
+  })
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(@UploadedFile('file', ValidImportFile) file: Express.Multer.File, @Body() body: UploadRequestDto) {
+  async uploadFile(
+    @UploadedFile('file', ValidImportFile) file: Express.Multer.File,
+    @Body() body: UploadRequestDto,
+    @Param('template', ValidateTemplate) templateId: string
+  ) {
     return await this.makeUploadEntry.execute(
       MakeUploadEntryCommand.create({
         file: file,
-        templateId: body.template,
+        templateId,
         extra: body.extra,
         authHeaderValue: body.authHeaderValue,
       })
@@ -52,7 +63,7 @@ export class UploadController {
 
   @Get(':templateId')
   @ApiOperation({
-    summary: 'Get upload information for template',
+    summary: 'Get uploads information for template',
   })
   async getUploadsInformation(@Param('templateId', ValidateMongoId) templateId: string): Promise<UploadEntity[]> {
     return this.getUploads.execute(

@@ -1,15 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsJSON, IsOptional, IsString, Validate } from 'class-validator';
-import { IsValidTemplateValidator } from '../../shared/framework/is-valid-template.validator';
+import { IsJSON, IsOptional, IsString } from 'class-validator';
 
 export class UploadRequestDto {
-  @ApiProperty({
-    description: 'Id or CODE of the template',
-  })
-  @IsString()
-  @Validate(IsValidTemplateValidator)
-  template: string;
-
   @ApiProperty({
     type: 'file',
     required: true,
