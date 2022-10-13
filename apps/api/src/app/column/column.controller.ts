@@ -27,7 +27,8 @@ export class ColumnController {
     return this.updateColumns.execute(
       body.map((columnData) =>
         UpdateColumnCommand.create({
-          columnKeys: columnData.columnKeys,
+          key: columnData.key,
+          alternateKeys: columnData.alternateKeys,
           isRequired: columnData.isRequired,
           isUnique: columnData.isUnique,
           name: columnData.name,

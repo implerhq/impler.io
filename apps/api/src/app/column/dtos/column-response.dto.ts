@@ -9,10 +9,15 @@ export class ColumnResponseDto {
   name: string;
 
   @ApiProperty({
-    description: 'Possible keys to consider for column',
+    description: 'Key of the column',
+  })
+  key: string;
+
+  @ApiProperty({
+    description: 'Alternative possible keys of the column',
     type: Array<string>,
   })
-  columnKeys: string[];
+  alternateKeys: string[];
 
   @ApiPropertyOptional({
     description: 'While true, it Indicates column value should exists in data',

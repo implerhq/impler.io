@@ -1,4 +1,5 @@
 export enum UploadStatusEnum {
+  'UPLOADED' = 'Uploaded',
   'MAPPING' = 'Mapping',
   'REVIEWING' = 'Reviewing',
   'REVIEWED' = 'Reviewed',

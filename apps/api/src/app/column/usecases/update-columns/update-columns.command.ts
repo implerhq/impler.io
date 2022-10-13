@@ -1,13 +1,4 @@
-import {
-  ArrayMinSize,
-  IsArray,
-  IsBoolean,
-  IsDefined,
-  IsMongoId,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsArray, IsBoolean, IsDefined, IsMongoId, IsNumber, IsOptional, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ColumnTypesEnum } from '@impler/shared';
 import { BaseCommand } from '../../../shared/commands/base.command';
@@ -17,11 +8,14 @@ export class UpdateColumnCommand extends BaseCommand {
   @IsDefined()
   name: string;
 
-  @IsArray()
+  @IsString()
   @IsDefined()
-  @ArrayMinSize(1)
+  key: string;
+
+  @IsArray()
+  @IsOptional()
   @Type(() => Array<string>)
-  columnKeys: string[];
+  alternateKeys: string[];
 
   @IsBoolean()
   @IsOptional()

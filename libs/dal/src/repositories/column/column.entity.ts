@@ -3,7 +3,9 @@ export class ColumnEntity {
 
   name: string;
 
-  columnKeys: string[];
+  key: string;
+
+  alternateKeys: string[];
 
   isRequired: boolean;
 

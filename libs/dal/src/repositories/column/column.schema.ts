@@ -5,7 +5,8 @@ import { ColumnEntity } from './column.entity';
 const columnSchema = new Schema(
   {
     name: String,
-    columnKeys: [String],
+    key: String,
+    alternateKeys: [String],
     isRequired: Boolean,
     isUnique: Boolean,
     regex: String,
