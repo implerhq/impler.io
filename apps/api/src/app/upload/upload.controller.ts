@@ -86,4 +86,19 @@ export class UploadController {
 
     return this.getMappings.execute(uploadId);
   }
+
+  @Get(':uploadId/headings')
+  @ApiOperation({
+    summary: 'Get headings for the uploaded file',
+  })
+  async getHeadings(@Param('uploadId', ValidateMongoId) uploadId: string): Promise<string[]> {
+    const uploadInfo = await this.getUpload.execute(
+      GetUploadCommand.create({
+        uploadId,
+        select: 'headings',
+      })
+    );
+
+    return uploadInfo.headings;
+  }
 }
