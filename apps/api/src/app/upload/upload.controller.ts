@@ -4,7 +4,7 @@ import { Body, Controller, Get, Param, Post, UploadedFile, UseGuards, UseInterce
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiSecurity, ApiConsumes, ApiOperation } from '@nestjs/swagger';
 import { UploadStatusEnum } from '@impler/shared';
-import { UploadEntity } from '@impler/dal';
+import { MappingEntity, UploadEntity } from '@impler/dal';
 
 import { APIKeyGuard } from '../shared/framework/auth.gaurd';
 import { UploadRequestDto } from './dtos/upload-request.dto';
@@ -18,6 +18,7 @@ import { DoMapping } from './usecases/do-mapping/do-mapping.usecase';
 import { DoMappingCommand } from './usecases/do-mapping/do-mapping.command';
 import { GetUploads } from './usecases/get-uploads/get-uploads.usecase';
 import { GetUploadsCommand } from './usecases/get-uploads/get-uploads.command';
+import { GetMappings } from './usecases/get-mappings/get-mappings.usecase';
 
 @Controller('/upload')
 @ApiTags('Uploads')
@@ -28,7 +29,8 @@ export class UploadController {
     private makeUploadEntry: MakeUploadEntry,
     private getUpload: GetUpload,
     private doMapping: DoMapping,
-    private getUploads: GetUploads
+    private getUploads: GetUploads,
+    private getMappings: GetMappings
   ) {}
 
   @Post('')
@@ -60,11 +62,11 @@ export class UploadController {
     );
   }
 
-  @Get('mapping/:uploadId')
+  @Get(':uploadId/mappings')
   @ApiOperation({
     summary: 'Get mapping information for uploaded file',
   })
-  async getMappingInformation(@Param('uploadId', ValidateMongoId) uploadId: string) {
+  async getMappingInformation(@Param('uploadId', ValidateMongoId) uploadId: string): Promise<Partial<MappingEntity>[]> {
     const uploadInformation = await this.getUpload.execute(
       GetUploadCommand.create({
         uploadId,
@@ -82,12 +84,6 @@ export class UploadController {
       );
     }
 
-    return 'Done';
-    /*
-     * Check if upload status
-     * if status = Uploaded => Do Mapping
-     *                      => Change status to Mapping
-     * return mapping
-     */
+    return this.getMappings.execute(uploadId);
   }
 }

@@ -1,4 +1,4 @@
-import { Schema, Document, model, models } from 'mongoose';
+import { Schema, Document, model, models, Model } from 'mongoose';
 import { schemaOptions } from '../schema-default.options';
 import { MappingEntity } from './mapping.entity';
 
@@ -21,4 +21,4 @@ interface IMappingDocument extends MappingEntity, Document {
   _id: never;
 }
 
-export const Mapping = models.Mapping || model<IMappingDocument>('Mapping', mappingSchema);
+export const Mapping = (models.Mapping as Model<IMappingDocument>) || model<IMappingDocument>('Mapping', mappingSchema);
