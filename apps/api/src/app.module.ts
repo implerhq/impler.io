@@ -5,14 +5,14 @@ import { SharedModule } from './app/shared/shared.module';
 import { ProjectModule } from './app/project/project.module';
 import { TemplateModule } from './app/template/template.module';
 import { ColumnModule } from './app/column/column.module';
-import { OpsModule } from './app/ops/ops.module';
+import { UploadModule } from './app/upload/upload.module';
 
 const modules: Array<Type | DynamicModule | Promise<DynamicModule> | ForwardReference> = [
   ProjectModule,
   SharedModule,
   TemplateModule,
   ColumnModule,
-  OpsModule,
+  UploadModule,
 ];
 
 const providers = [];

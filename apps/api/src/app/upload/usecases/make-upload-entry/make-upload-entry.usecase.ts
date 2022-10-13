@@ -66,7 +66,7 @@ export class MakeUploadEntry {
       _templateId: templateId,
       extra: extra,
       headings: Array.isArray(headings) ? headings : [],
-      status: UploadStatusEnum.MAPPING,
+      status: UploadStatusEnum.UPLOADED,
       authHeaderValue: authHeaderValue,
       totalRecords: totalRecords || 0,
     });
