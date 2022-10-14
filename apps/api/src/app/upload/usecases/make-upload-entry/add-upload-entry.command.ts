@@ -4,11 +4,15 @@ import { BaseCommand } from '../../../shared/commands/base.command';
 export class AddUploadEntryCommand extends BaseCommand {
   @IsDefined()
   @IsString()
-  templateId: string;
+  _templateId: string;
 
   @IsDefined()
   @IsString()
-  fileId: string;
+  _allDataFileId: string;
+
+  @IsDefined()
+  @IsString()
+  _uploadedFileId: string;
 
   @IsDefined()
   @IsString()

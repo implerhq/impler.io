@@ -1,4 +1,4 @@
-import { Schema, Document, model, models } from 'mongoose';
+import { Schema, Document, model, models, Model } from 'mongoose';
 import { schemaOptions } from '../schema-default.options';
 import { UploadEntity } from './upload.entity';
 
@@ -8,6 +8,10 @@ const uploadSchema = new Schema(
       type: Schema.Types.String,
       ref: 'Template',
       index: true,
+    },
+    _allDataFileId: {
+      type: Schema.Types.String,
+      ref: 'File',
     },
     _uploadedFileId: {
       type: Schema.Types.String,
@@ -42,4 +46,4 @@ interface IUploadDocument extends UploadEntity, Document {
   _id: never;
 }
 
-export const Upload = models.Upload || model<IUploadDocument>('Upload', uploadSchema);
+export const Upload = (models.Upload as Model<IUploadDocument>) || model<IUploadDocument>('Upload', uploadSchema);

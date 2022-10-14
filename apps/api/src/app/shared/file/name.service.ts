@@ -18,4 +18,10 @@ export class FileNameService {
   getUploadedFileName(fileName: string): string {
     return `uploaded.${this.getFileExtension(fileName)}`;
   }
+  getAllJsonDataFileName(): string {
+    return `all-data.json`;
+  }
+  getAllJsonDataFilePath(uploadId: string): string {
+    return `${uploadId}/all-data.json`;
+  }
 }

@@ -6,4 +6,8 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
   constructor() {
     super(Upload, UploadEntity);
   }
+
+  async getUploadInformation(uploadId: string): Promise<UploadEntity> {
+    return await Upload.findById(uploadId).populate('_allDataFileId', 'path name');
+  }
 }

@@ -23,11 +23,13 @@ export class MakeUploadEntry {
     const fileEntity = await this.makeFileEntry(uploadId, file);
     const fileService: FileService = getFileService(file.mimetype);
     const fileInformation = await fileService.getFileInformation(this.storageService, fileEntity.path);
+    const allDataFile = await this.addAllDataEntry(uploadId, fileInformation.data);
 
     return this.addUploadEntry(
       AddUploadEntryCommand.create({
-        templateId: templateId,
-        fileId: fileEntity._id,
+        _templateId: templateId,
+        _uploadedFileId: fileEntity._id,
+        _allDataFileId: allDataFile._id,
         uploadId,
         extra,
         authHeaderValue,
@@ -52,8 +54,9 @@ export class MakeUploadEntry {
   }
 
   private async addUploadEntry({
-    templateId,
-    fileId,
+    _templateId,
+    _uploadedFileId,
+    _allDataFileId,
     uploadId,
     extra,
     authHeaderValue,
@@ -62,13 +65,27 @@ export class MakeUploadEntry {
   }: AddUploadEntryCommand) {
     return this.uploadRepository.create({
       _id: uploadId,
-      _uploadedFileId: fileId,
-      _templateId: templateId,
+      _uploadedFileId,
+      _templateId,
+      _allDataFileId,
       extra: extra,
       headings: Array.isArray(headings) ? headings : [],
       status: UploadStatusEnum.UPLOADED,
       authHeaderValue: authHeaderValue,
       totalRecords: totalRecords || 0,
+    });
+  }
+
+  private async addAllDataEntry(uploadId: string, data: Record<string, unknown>[]): Promise<FileEntity> {
+    const allDataFileName = this.fileNameService.getAllJsonDataFileName();
+    const allDataFilePath = this.fileNameService.getAllJsonDataFilePath(uploadId);
+    await this.storageService.uploadFile(allDataFilePath, JSON.stringify(data), 'application/json');
+
+    return await this.fileRepository.create({
+      mimeType: 'application/json',
+      path: allDataFilePath,
+      name: allDataFileName,
+      originalName: allDataFileName,
     });
   }
 }
