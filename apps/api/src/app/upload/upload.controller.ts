@@ -3,8 +3,7 @@ import _whatever from 'multer';
 import { Body, Controller, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiSecurity, ApiConsumes, ApiOperation, ApiParam } from '@nestjs/swagger';
-import { UploadStatusEnum } from '@impler/shared';
-import { MappingEntity, UploadEntity } from '@impler/dal';
+import { UploadEntity } from '@impler/dal';
 
 import { APIKeyGuard } from '../shared/framework/auth.gaurd';
 import { UploadRequestDto } from './dtos/upload-request.dto';
@@ -14,11 +13,8 @@ import { MakeUploadEntryCommand } from './usecases/make-upload-entry/make-upload
 import { ValidateMongoId } from '../shared/validations/valid-mongo-id.validation';
 import { GetUpload } from './usecases/get-upload/get-upload.usecase';
 import { GetUploadCommand } from './usecases/get-upload/get-upload.command';
-import { DoMapping } from './usecases/do-mapping/do-mapping.usecase';
-import { DoMappingCommand } from './usecases/do-mapping/do-mapping.command';
 import { GetUploads } from './usecases/get-uploads/get-uploads.usecase';
 import { GetUploadsCommand } from './usecases/get-uploads/get-uploads.command';
-import { GetMappings } from './usecases/get-mappings/get-mappings.usecase';
 import { ValidateTemplate } from '../shared/validations/valid-template.validation';
 
 @Controller('/upload')
@@ -26,13 +22,7 @@ import { ValidateTemplate } from '../shared/validations/valid-template.validatio
 @ApiSecurity('ACCESS_KEY')
 @UseGuards(APIKeyGuard)
 export class UploadController {
-  constructor(
-    private makeUploadEntry: MakeUploadEntry,
-    private getUpload: GetUpload,
-    private doMapping: DoMapping,
-    private getUploads: GetUploads,
-    private getMappings: GetMappings
-  ) {}
+  constructor(private makeUploadEntry: MakeUploadEntry, private getUpload: GetUpload, private getUploads: GetUploads) {}
 
   @Post(':template')
   @ApiOperation({
@@ -71,31 +61,6 @@ export class UploadController {
         _templateId: templateId,
       })
     );
-  }
-
-  @Get(':uploadId/mappings')
-  @ApiOperation({
-    summary: 'Get mapping information for uploaded file',
-  })
-  async getMappingInformation(@Param('uploadId', ValidateMongoId) uploadId: string): Promise<Partial<MappingEntity>[]> {
-    const uploadInformation = await this.getUpload.execute(
-      GetUploadCommand.create({
-        uploadId,
-        select: 'status headings _templateId',
-      })
-    );
-
-    if (uploadInformation.status === UploadStatusEnum.UPLOADED) {
-      await this.doMapping.execute(
-        DoMappingCommand.create({
-          headings: uploadInformation.headings,
-          _templateId: uploadInformation._templateId,
-          _uploadId: uploadId,
-        })
-      );
-    }
-
-    return this.getMappings.execute(uploadId);
   }
 
   @Get(':uploadId/headings')

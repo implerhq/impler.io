@@ -14,11 +14,13 @@ export class MappingRepository extends BaseRepository<MappingEntity> {
       _id: mapping._id,
       id: mapping._id,
       columnHeading: mapping.columnHeading,
-      column: {
-        _columnId: (mapping._columnId as any)._id,
-        name: (mapping._columnId as any).name,
-        sequence: (mapping._columnId as any).sequence,
-      },
+      column: mapping._columnId
+        ? {
+            _columnId: (mapping._columnId as any)._id,
+            name: (mapping._columnId as any).name,
+            sequence: (mapping._columnId as any).sequence,
+          }
+        : null,
     }));
   }
 }
