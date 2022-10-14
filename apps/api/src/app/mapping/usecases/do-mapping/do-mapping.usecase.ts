@@ -14,7 +14,7 @@ export class DoMapping {
   async execute(command: DoMappingCommand) {
     const columns = await this.columnRepository.find(
       {
-        templateId: command._templateId,
+        _templateId: command._templateId,
       },
       'key alternateKeys sequence',
       {

@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { SupportedFileMimeTypesEnum } from '@impler/shared';
 import { ColumnRepository, TemplateRepository } from '@impler/dal';
 import { UpdateColumnCommand } from './update-columns.command';
-import { CSVFileService } from '../../../shared/file/file.service';
 import { StorageService } from '../../../shared/storage/storage.service';
 import { FileNameService } from '../../../shared/file/name.service';
 
@@ -10,15 +9,14 @@ import { FileNameService } from '../../../shared/file/name.service';
 export class UpdateColumns {
   constructor(
     private columnRepository: ColumnRepository,
-    private csvFileService: CSVFileService,
     private storageService: StorageService,
     private fileNameService: FileNameService,
     private templateRepository: TemplateRepository
   ) {}
 
-  async execute(command: UpdateColumnCommand[], templateId: string) {
-    await this.columnRepository.delete({ templateId });
-    this.saveSampleFile(command, templateId);
+  async execute(command: UpdateColumnCommand[], _templateId: string) {
+    await this.columnRepository.delete({ _templateId });
+    this.saveSampleFile(command, _templateId);
 
     return this.columnRepository.createMany(command);
   }

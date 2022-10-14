@@ -5,7 +5,7 @@ import { ColumnRepository } from '@impler/dal';
 export class GetColumns {
   constructor(private columnRepository: ColumnRepository) {}
 
-  async execute(templateId: string) {
-    return this.columnRepository.find({ templateId });
+  async execute(_templateId: string) {
+    return this.columnRepository.find({ _templateId });
   }
 }

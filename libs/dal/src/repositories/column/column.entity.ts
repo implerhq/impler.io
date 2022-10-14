@@ -21,5 +21,5 @@ export class ColumnEntity {
 
   sequence: number;
 
-  templateId: string;
+  _templateId: string;
 }

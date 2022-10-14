@@ -13,7 +13,7 @@ const columnSchema = new Schema(
     regexDescription: String,
     selectValues: [String],
     sequence: Number,
-    templateId: {
+    _templateId: {
       type: Schema.Types.String,
       ref: 'Template',
     },

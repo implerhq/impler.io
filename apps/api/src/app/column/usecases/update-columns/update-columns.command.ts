@@ -47,5 +47,5 @@ export class UpdateColumnCommand extends BaseCommand {
 
   @IsDefined()
   @IsMongoId()
-  templateId: string;
+  _templateId: string;
 }
