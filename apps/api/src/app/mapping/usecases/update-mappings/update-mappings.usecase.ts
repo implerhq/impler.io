@@ -7,7 +7,7 @@ export class UpdateMappings {
   constructor(private mappingRepository: MappingRepository) {}
 
   async execute(command: UpdateMappingCommand[], _uploadId: string) {
-    await this.mappingRepository.delete({ _uploadId });
+    await this.mappingRepository.deleteMany({ _uploadId });
 
     return this.mappingRepository.createMany(command);
   }

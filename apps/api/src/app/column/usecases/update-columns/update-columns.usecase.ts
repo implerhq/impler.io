@@ -15,7 +15,7 @@ export class UpdateColumns {
   ) {}
 
   async execute(command: UpdateColumnCommand[], _templateId: string) {
-    await this.columnRepository.delete({ _templateId });
+    await this.columnRepository.deleteMany({ _templateId });
     this.saveSampleFile(command, _templateId);
 
     return this.columnRepository.createMany(command);
