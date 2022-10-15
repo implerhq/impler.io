@@ -15,8 +15,6 @@ export class ReviewController {
     summary: 'Get Review data for uploaded file',
   })
   async getReview(@Param('uploadId') uploadId: string) {
-    await this.doReview.execute(uploadId);
-
-    return 'Done';
+    return await this.doReview.execute(uploadId);
   }
 }
