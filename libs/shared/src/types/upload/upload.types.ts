@@ -9,16 +9,24 @@ export enum UploadStatusEnum {
   'COMPLETED' = 'Completed',
 }
 
-export enum SupportedFileMimeTypesEnum {
+export const SupportedFileMimeTypes = [
+  'text/csv', // csv
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // EXCELX
+  'application/vnd.ms-excel', // EXCEL
+];
+
+export enum FileMimeTypesEnum {
   'CSV' = 'text/csv',
   'EXCEL' = 'application/vnd.ms-excel',
   'EXCELX' = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'JSON' = 'application/json',
 }
 
 export enum FileEncodingsEnum {
   'CSV' = 'utf8',
   'EXCEL' = 'base64',
   'EXCELX' = 'base64',
+  'JSON' = 'utf8',
 }
 
 export interface IFileInformation {

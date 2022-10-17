@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UploadStatusEnum } from '@impler/shared';
+import { FileMimeTypesEnum, UploadStatusEnum } from '@impler/shared';
 import { CommonRepository, FileEntity, FileRepository, UploadRepository } from '@impler/dal';
 import { MakeUploadEntryCommand } from './make-upload-entry.command';
 import { FileNameService } from '../../../shared/file/name.service';
@@ -79,10 +79,10 @@ export class MakeUploadEntry {
   private async addAllDataEntry(uploadId: string, data: Record<string, unknown>[]): Promise<FileEntity> {
     const allDataFileName = this.fileNameService.getAllJsonDataFileName();
     const allDataFilePath = this.fileNameService.getAllJsonDataFilePath(uploadId);
-    await this.storageService.uploadFile(allDataFilePath, JSON.stringify(data), 'application/json');
+    await this.storageService.uploadFile(allDataFilePath, JSON.stringify(data), FileMimeTypesEnum.JSON);
 
     return await this.fileRepository.create({
-      mimeType: 'application/json',
+      mimeType: FileMimeTypesEnum.JSON,
       path: allDataFilePath,
       name: allDataFileName,
       originalName: allDataFileName,

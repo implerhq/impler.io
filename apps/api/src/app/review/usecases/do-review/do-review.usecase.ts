@@ -1,4 +1,4 @@
-import { UploadStatusEnum } from '@impler/shared';
+import { FileEncodingsEnum, UploadStatusEnum } from '@impler/shared';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { ColumnRepository, UploadRepository, MappingRepository, FileEntity } from '@impler/dal';
 import { StorageService } from '../../../shared/storage/storage.service';
@@ -31,13 +31,15 @@ export class DoReview {
       { _templateId: uploadInfo._templateId },
       'isRequired isUnique selectValues type regex'
     );
+    const reviewData = this.ajvService.validate(columns, mappings, dataContent);
+    this.uploadRepository.update({ _id: uploadId }, { status: UploadStatusEnum.REVIEWING });
 
-    return this.ajvService.validate(columns, mappings, dataContent);
+    return reviewData;
   }
 
   async getFileContent(path): Promise<string> {
     try {
-      const dataContent = await this.storageService.getFileContent(path, 'utf8');
+      const dataContent = await this.storageService.getFileContent(path, FileEncodingsEnum.JSON);
 
       return JSON.parse(dataContent);
     } catch (error) {

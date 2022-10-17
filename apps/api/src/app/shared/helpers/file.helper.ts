@@ -1,11 +1,11 @@
-import { SupportedFileMimeTypesEnum } from '@impler/shared';
+import { FileMimeTypesEnum } from '@impler/shared';
 import { APIMessages } from '../constants';
 import { FileService, CSVFileService, ExcelFileService } from '../file/file.service';
 
 export const getFileService = (mimeType: string): FileService => {
-  if (mimeType === SupportedFileMimeTypesEnum.CSV) {
+  if (mimeType === FileMimeTypesEnum.CSV) {
     return new CSVFileService();
-  } else if (mimeType === SupportedFileMimeTypesEnum.EXCEL || mimeType === SupportedFileMimeTypesEnum.EXCELX) {
+  } else if (mimeType === FileMimeTypesEnum.EXCEL || mimeType === FileMimeTypesEnum.EXCELX) {
     return new ExcelFileService();
   }
 

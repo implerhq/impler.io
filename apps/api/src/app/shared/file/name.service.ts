@@ -13,7 +13,7 @@ export class FileNameService {
     return fileName.split('.').pop();
   }
   getUploadedFilePath(uploadId: string, fileName: string): string {
-    return `${uploadId}/uploaded.${this.getFileExtension(fileName)}`;
+    return `${uploadId}/${this.getUploadedFileName(fileName)}`;
   }
   getUploadedFileName(fileName: string): string {
     return `uploaded.${this.getFileExtension(fileName)}`;
@@ -22,6 +22,18 @@ export class FileNameService {
     return `all-data.json`;
   }
   getAllJsonDataFilePath(uploadId: string): string {
-    return `${uploadId}/all-data.json`;
+    return `${uploadId}/${this.getAllJsonDataFileName()}`;
+  }
+  getInvalidDataFileName(): string {
+    return `invalid-data.json`;
+  }
+  getInvalidDataFilePath(uploadId: string): string {
+    return `${uploadId}/${this.getInvalidDataFileName()}`;
+  }
+  getValidDataFileName(): string {
+    return `valid-data.json`;
+  }
+  getValidDataFilePath(uploadId: string): string {
+    return `${uploadId}/${this.getValidDataFileName()}`;
   }
 }
