@@ -5,7 +5,13 @@ import Ajv, { ErrorObject } from 'ajv';
 import addFormats from 'ajv-formats';
 import addKeywords from 'ajv-keywords';
 
-const ajv = new Ajv({ allErrors: true, coerceTypes: true, allowUnionTypes: true, removeAdditional: true });
+const ajv = new Ajv({
+  allErrors: true,
+  coerceTypes: true,
+  allowUnionTypes: true,
+  removeAdditional: true,
+  verbose: true,
+});
 addFormats(ajv, ['email']);
 addKeywords(ajv);
 ajv.addFormat('custom-date-time', function (dateTimeString) {
@@ -54,7 +60,7 @@ export class AJVService {
       type: 'object',
       properties,
       required: requiredProperties,
-      additionalProperties: true,
+      additionalProperties: false,
     };
 
     return {
@@ -130,7 +136,10 @@ export class AJVService {
         message = `${field} ${error.message}`;
         break;
       case 'enum':
-        message = `${field} must be from [${error.params.allowedValues}]`;
+        message = `${field} must be from [${error.params?.allowedValues}]`;
+        break;
+      case 'regexp':
+        message = `${field} must match pattern ${error.parentSchema?.regexp}`;
         break;
       default:
         return `${field} contains invalid data`;
