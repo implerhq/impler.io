@@ -112,7 +112,7 @@ export class AJVService {
       message = this.getMessage(error, field);
 
       if (acc[index]) {
-        acc[index].message += `\n${message}`;
+        acc[index].message += `${message}`;
       } else
         acc[index] = {
           index,
@@ -124,13 +124,18 @@ export class AJVService {
     }, {});
   }
   private getMessage(error: ErrorObject, field: string): string {
+    let message = '';
     switch (error.keyword) {
       case 'type':
-        return `${field} ${error.message}`;
+        message = `${field} ${error.message}`;
+        break;
       case 'enum':
-        return `${field} must be from [${error.params.allowedValues}]`;
+        message = `${field} must be from [${error.params.allowedValues}]`;
+        break;
       default:
         return `${field} contains invalid data`;
     }
+
+    return `<li>${message}</li>`;
   }
 }
