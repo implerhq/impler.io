@@ -5,7 +5,7 @@ import Ajv, { ErrorObject } from 'ajv';
 import addFormats from 'ajv-formats';
 import addKeywords from 'ajv-keywords';
 
-const ajv = new Ajv({ allErrors: true, coerceTypes: true, allowUnionTypes: true });
+const ajv = new Ajv({ allErrors: true, coerceTypes: true, allowUnionTypes: true, removeAdditional: true });
 addFormats(ajv, ['email']);
 addKeywords(ajv);
 ajv.addFormat('custom-date-time', function (dateTimeString) {
@@ -54,7 +54,7 @@ export class AJVService {
       type: 'object',
       properties,
       required: requiredProperties,
-      // additionalProperties: false,
+      additionalProperties: true,
     };
 
     return {
@@ -99,7 +99,7 @@ export class AJVService {
       case ColumnTypesEnum.DATE:
         return { type: 'string', format: 'custom-date-time' };
       case ColumnTypesEnum.ANY:
-        return { type: ['string', 'number'] };
+        return { type: ['string', 'number', 'object'] };
       default:
         throw new Error(`Column type ${column.type} is not supported`);
     }
