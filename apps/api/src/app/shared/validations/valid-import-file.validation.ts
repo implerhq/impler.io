@@ -1,13 +1,13 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 import _whatever from 'multer';
-import { SupportedFileMimeTypesEnum } from '@impler/shared';
+import { SupportedFileMimeTypes } from '@impler/shared';
 import { Injectable, PipeTransform } from '@nestjs/common';
 import { FileNotValidError } from '../exceptions/file-not-valid.exception';
 
 @Injectable()
 export class ValidImportFile implements PipeTransform<Express.Multer.File> {
   transform(value: Express.Multer.File) {
-    if (!(Object.values(SupportedFileMimeTypesEnum) as string[]).includes(value.mimetype)) {
+    if (!SupportedFileMimeTypes.includes(value.mimetype)) {
       throw new FileNotValidError();
     }
 
