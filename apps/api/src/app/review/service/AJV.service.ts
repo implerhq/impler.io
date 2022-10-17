@@ -24,16 +24,24 @@ ajv.addFormat('custom-date-time', function (dateTimeString) {
 
 @Injectable()
 export class AJVService {
-  async validate(columns: ColumnEntity[], mappings: MappingEntity[], data?: string) {
+  async validate(columns: ColumnEntity[], mappings: MappingEntity[], data: any) {
     const schema = this.buildAJVSchema(columns, mappings);
     const validator = ajv.compile(schema);
 
     const valid = validator(data);
+    const returnData = {
+      invalid: [],
+      valid: [],
+    };
     if (!valid) {
-      const errors = this.buildErrorRecords(validator.errors, data);
+      const errors: Record<number, any> = this.buildErrorRecords(validator.errors, data);
 
-      return Object.values(errors);
-    } else return {};
+      returnData.invalid = Object.values(errors);
+      Object.keys(errors).forEach((index) => (data as any).splice(index as unknown as number, 1));
+    }
+    returnData.valid = data as any;
+
+    return returnData;
   }
   private buildAJVSchema(columns: ColumnEntity[], mappings: MappingEntity[]) {
     const formattedColumns: Record<string, ColumnEntity> = columns.reduce((acc, column) => {
@@ -99,7 +107,9 @@ export class AJVService {
            */
         };
       case ColumnTypesEnum.REGEX:
-        return { type: 'string', pattern: column.regex };
+        const [full, pattern, flags] = column.regex.match(/\/(.*)\/(.*)|(.*)/);
+
+        return { type: 'string', regexp: { pattern: pattern || full, flags: flags || '' } };
       case ColumnTypesEnum.EMAIL:
         return { type: 'string', format: 'email' };
       case ColumnTypesEnum.DATE:
@@ -136,10 +146,16 @@ export class AJVService {
         message = `${field} ${error.message}`;
         break;
       case 'enum':
-        message = `${field} must be from [${error.params?.allowedValues}]`;
+        message = `${field} must be from [${error.params.allowedValues}]`;
         break;
       case 'regexp':
-        message = `${field} must match pattern ${error.parentSchema?.regexp}`;
+        message = `${field} must match pattern ${new RegExp(
+          error.parentSchema?.regexp?.pattern,
+          error.parentSchema?.regexp?.flags || ''
+        ).toString()}`;
+        break;
+      case 'pattern':
+        message = `${field} must match pattern ${error.params.pattern}`;
         break;
       default:
         return `${field} contains invalid data`;
