@@ -20,7 +20,7 @@ export abstract class StorageService {
     contentType: string,
     isPublic?: boolean
   ): Promise<PutObjectCommandOutput>;
-  abstract getFileContent(key: string, encoding: string): Promise<string>;
+  abstract getFileContent(key: string, encoding?: BufferEncoding): Promise<string>;
   abstract deleteFile(key: string): Promise<void>;
 }
 
@@ -52,7 +52,7 @@ export class S3StorageService implements StorageService {
     return await this.s3.send(command);
   }
 
-  async getFileContent(key: string, encoding: BufferEncoding = 'utf8'): Promise<string> {
+  async getFileContent(key: string, encoding = 'utf8' as BufferEncoding): Promise<string> {
     try {
       const command = new GetObjectCommand({
         Bucket: process.env.S3_BUCKET_NAME,

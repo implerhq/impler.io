@@ -41,6 +41,12 @@ export class BaseRepository<T> {
     return data;
   }
 
+  async deleteMany(query: FilterQuery<T & Document>): Promise<{ acknowledged: boolean; deletedCount: number }> {
+    const data = await this.MongooseModel.deleteMany(query);
+
+    return data;
+  }
+
   async find(
     query: FilterQuery<T & Document>,
     select = '',

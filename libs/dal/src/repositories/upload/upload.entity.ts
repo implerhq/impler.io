@@ -5,6 +5,8 @@ export class UploadEntity {
 
   _uploadedFileId: string;
 
+  _allDataFileId: string;
+
   _validDataFileId: string;
 
   _invalidDataFileId: string;

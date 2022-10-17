@@ -21,7 +21,7 @@ export class ColumnController {
   })
   @ApiBody({ type: [UpdateColumnRequestDto] })
   async updateTemplateColumns(
-    @Param('templateId', ValidateMongoId) templateId: string,
+    @Param('templateId', ValidateMongoId) _templateId: string,
     @Body(new ParseArrayPipe({ items: UpdateColumnRequestDto })) body: UpdateColumnRequestDto[]
   ): Promise<ColumnResponseDto[]> {
     return this.updateColumns.execute(
@@ -36,11 +36,11 @@ export class ColumnController {
           regexDescription: columnData.regexDescription,
           selectValues: columnData.selectValues,
           sequence: columnData.sequence,
-          templateId: templateId,
+          _templateId,
           type: columnData.type,
         })
       ),
-      templateId
+      _templateId
     );
   }
 
@@ -48,7 +48,7 @@ export class ColumnController {
   @ApiOperation({
     summary: 'Get template columns',
   })
-  async getTemplateColumns(@Param('templateId') templateId: string): Promise<ColumnResponseDto[]> {
-    return this.getColumns.execute(templateId);
+  async getTemplateColumns(@Param('templateId') _templateId: string): Promise<ColumnResponseDto[]> {
+    return this.getColumns.execute(_templateId);
   }
 }
