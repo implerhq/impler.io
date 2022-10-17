@@ -24,7 +24,7 @@ ajv.addFormat('custom-date-time', function (dateTimeString) {
 
 @Injectable()
 export class AJVService {
-  async validate(columns: ColumnEntity[], mappings: MappingEntity[], data: any) {
+  validate(columns: ColumnEntity[], mappings: MappingEntity[], data: any) {
     const schema = this.buildAJVSchema(columns, mappings);
     const validator = ajv.compile(schema);
 
