@@ -16,6 +16,7 @@ import { FinalizeUpload } from './usecases/finalize-upload/finalize-upload.useca
 import { UpdateMappingDto } from './dtos/update-columns.dto';
 import { ValidateMapping } from './usecases/validate-mapping/validate-mapping.usecase';
 import { validateUploadStatus } from '../shared/helpers/upload.helpers';
+import { validateNotFound } from '../shared/helpers/common.helper';
 
 @Controller('/mapping')
 @ApiTags('Mappings')
@@ -42,6 +43,9 @@ export class MappingController {
         select: 'status headings _templateId',
       })
     );
+
+    // throw error if upload information not found
+    validateNotFound(uploadInformation, 'upload');
 
     // Get mappings can be called only when file is uploaded or it's mapping in progress
     validateUploadStatus(uploadInformation.status as UploadStatusEnum, [
@@ -77,6 +81,9 @@ export class MappingController {
         select: 'status',
       })
     );
+
+    // throw error if upload information not found
+    validateNotFound(uploadInformation, 'upload');
 
     // Finalize mapping can only be called after the mapping has been completed
     validateUploadStatus(uploadInformation.status as UploadStatusEnum, [UploadStatusEnum.MAPPING]);
