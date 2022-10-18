@@ -5,10 +5,10 @@ import { MappingEntity } from '@impler/dal';
 
 import { APIKeyGuard } from '../shared/framework/auth.gaurd';
 import { ValidateMongoId } from '../shared/validations/valid-mongo-id.validation';
-import { GetUploadCommand } from './../upload/usecases/get-upload/get-upload.command';
+import { GetUploadCommand } from '../shared/usecases/get-upload/get-upload.command';
 import { DoMapping } from './usecases/do-mapping/do-mapping.usecase';
 import { DoMappingCommand } from './usecases/do-mapping/do-mapping.command';
-import { GetUpload } from './../upload/usecases/get-upload/get-upload.usecase';
+import { GetUpload } from '../shared/usecases/get-upload/get-upload.usecase';
 import { GetMappings } from './usecases/get-mappings/get-mappings.usecase';
 import { UpdateMappingCommand } from './usecases/update-mappings/update-mappings.command';
 import { UpdateMappings } from './usecases/update-mappings/update-mappings.usecase';

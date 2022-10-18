@@ -11,8 +11,8 @@ import { ValidImportFile } from '../shared/validations/valid-import-file.validat
 import { MakeUploadEntry } from './usecases/make-upload-entry/make-upload-entry.usecase';
 import { MakeUploadEntryCommand } from './usecases/make-upload-entry/make-upload-entry.command';
 import { ValidateMongoId } from '../shared/validations/valid-mongo-id.validation';
-import { GetUpload } from './usecases/get-upload/get-upload.usecase';
-import { GetUploadCommand } from './usecases/get-upload/get-upload.command';
+import { GetUpload } from '../shared/usecases/get-upload/get-upload.usecase';
+import { GetUploadCommand } from '../shared/usecases/get-upload/get-upload.command';
 import { GetUploads } from './usecases/get-uploads/get-uploads.usecase';
 import { GetUploadsCommand } from './usecases/get-uploads/get-uploads.command';
 import { ValidateTemplate } from '../shared/validations/valid-template.validation';
