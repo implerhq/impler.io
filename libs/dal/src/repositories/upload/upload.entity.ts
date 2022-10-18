@@ -26,4 +26,6 @@ export class UploadEntity {
   status: string;
 
   extra: string;
+
+  processInvalidRecords: boolean;
 }

@@ -1,6 +1,6 @@
-import { BadRequestException, Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags, ApiSecurity } from '@nestjs/swagger';
-import { FileEntity } from '@impler/dal';
+import { FileEntity, UploadEntity } from '@impler/dal';
 import { UploadStatusEnum } from '@impler/shared';
 import { APIMessages } from '../shared/constants';
 import { APIKeyGuard } from '../shared/framework/auth.gaurd';
@@ -9,6 +9,13 @@ import { DoReview } from './usecases/do-review/do-review.usecase';
 import { GetUploadInvalidData } from './usecases/get-upload-invalid-data/get-upload-invalid-data.usecase';
 import { SaveReviewData } from './usecases/save-review-data/save-review-data.usecase';
 import { GetFileInvalidData } from './usecases/get-file-invalid-data/get-file-invalid-data.usecase';
+import { ValidateMongoId } from '../shared/validations/valid-mongo-id.validation';
+import { ConfirmReviewRequestDto } from './dtos/confirm-review-request.dto';
+import { GetUploadCommand } from '../shared/usecases/get-upload/get-upload.command';
+import { GetUpload } from '../shared/usecases/get-upload/get-upload.usecase';
+import { validateNotFound } from '../shared/helpers/common.helper';
+import { ConfirmReview } from './usecases/confirm-review/confirm-review.usecase';
+import { ConfirmReviewCommand } from './usecases/confirm-review/confirm-review.command';
 
 @Controller('/review')
 @ApiTags('Review')
@@ -17,6 +24,8 @@ import { GetFileInvalidData } from './usecases/get-file-invalid-data/get-file-in
 export class ReviewController {
   constructor(
     private doReview: DoReview,
+    private getUpload: GetUpload,
+    private confirmReview: ConfirmReview,
     private saveReviewData: SaveReviewData,
     private getFileInvalidData: GetFileInvalidData,
     private getUploadInvalidData: GetUploadInvalidData
@@ -44,5 +53,34 @@ export class ReviewController {
       // Uploaded file is already reviewed, return reviewed data
       return this.getFileInvalidData.execute((uploadData._invalidDataFileId as unknown as FileEntity).path);
     }
+  }
+
+  @Post(':uploadId/confirm')
+  @ApiOperation({
+    summary: 'Confirm review data for uploaded file',
+  })
+  async doConfirmReview(
+    @Param('uploadId', ValidateMongoId) _uploadId: string,
+    @Body() body: ConfirmReviewRequestDto
+  ): Promise<UploadEntity> {
+    const uploadInformation = await this.getUpload.execute(
+      GetUploadCommand.create({
+        uploadId: _uploadId,
+        select: 'status',
+      })
+    );
+
+    // throw error if upload information not found
+    validateNotFound(uploadInformation, 'upload');
+
+    // upload files with status reviewing can only be confirmed
+    validateUploadStatus(uploadInformation.status as UploadStatusEnum, [UploadStatusEnum.REVIEWING]);
+
+    return this.confirmReview.execute(
+      ConfirmReviewCommand.create({
+        _uploadId: _uploadId,
+        processInvalidRecords: body.processInvalidRecords,
+      })
+    );
   }
 }

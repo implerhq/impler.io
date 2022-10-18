@@ -1,5 +1,5 @@
 import { IsDefined, IsMongoId, IsOptional, IsString } from 'class-validator';
-import { BaseCommand } from '../../../shared/commands/base.command';
+import { BaseCommand } from '../../commands/base.command';
 
 export class GetUploadCommand extends BaseCommand {
   @IsDefined()
