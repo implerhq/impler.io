@@ -15,6 +15,7 @@ import { UpdateMappings } from './usecases/update-mappings/update-mappings.useca
 import { FinalizeUpload } from './usecases/finalize-upload/finalize-upload.usecase';
 import { UpdateMappingDto } from './dtos/update-columns.dto';
 import { ValidateMapping } from './usecases/validate-mapping/validate-mapping.usecase';
+import { validateUploadStatus } from '../shared/helpers/upload.helpers';
 
 @Controller('/mapping')
 @ApiTags('Mappings')
@@ -42,6 +43,12 @@ export class MappingController {
       })
     );
 
+    // Get mappings can be called only when file is uploaded or it's mapping in progress
+    validateUploadStatus(uploadInformation.status as UploadStatusEnum, [
+      UploadStatusEnum.UPLOADED,
+      UploadStatusEnum.MAPPING,
+    ]);
+
     if (uploadInformation.status === UploadStatusEnum.UPLOADED) {
       await this.doMapping.execute(
         DoMappingCommand.create({
@@ -64,6 +71,16 @@ export class MappingController {
     @Param('uploadId', ValidateMongoId) _uploadId: string,
     @Body(new ParseArrayPipe({ items: UpdateMappingDto, optional: true })) body: UpdateMappingDto[]
   ) {
+    const uploadInformation = await this.getUpload.execute(
+      GetUploadCommand.create({
+        uploadId: _uploadId,
+        select: 'status',
+      })
+    );
+
+    // Finalize mapping can only be called after the mapping has been completed
+    validateUploadStatus(uploadInformation.status as UploadStatusEnum, [UploadStatusEnum.MAPPING]);
+
     // validate mapping data
     await this.validateMapping.execute(body, _uploadId);
 
