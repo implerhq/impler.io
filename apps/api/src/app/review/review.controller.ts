@@ -1,7 +1,7 @@
 import { BadRequestException, Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags, ApiSecurity } from '@nestjs/swagger';
 import { FileEntity, UploadEntity } from '@impler/dal';
-import { UploadStatusEnum } from '@impler/shared';
+import { QueuesEnum, UploadStatusEnum } from '@impler/shared';
 import { APIMessages } from '../shared/constants';
 import { APIKeyGuard } from '../shared/framework/auth.gaurd';
 import { validateUploadStatus } from '../shared/helpers/upload.helpers';
@@ -16,6 +16,7 @@ import { GetUpload } from '../shared/usecases/get-upload/get-upload.usecase';
 import { validateNotFound } from '../shared/helpers/common.helper';
 import { ConfirmReview } from './usecases/confirm-review/confirm-review.usecase';
 import { ConfirmReviewCommand } from './usecases/confirm-review/confirm-review.command';
+import { QueueService } from '../shared/storage/queue.service';
 
 @Controller('/review')
 @ApiTags('Review')
@@ -25,6 +26,7 @@ export class ReviewController {
   constructor(
     private doReview: DoReview,
     private getUpload: GetUpload,
+    private queueService: QueueService,
     private confirmReview: ConfirmReview,
     private saveReviewData: SaveReviewData,
     private getFileInvalidData: GetFileInvalidData,
@@ -82,5 +84,15 @@ export class ReviewController {
         processInvalidRecords: body.processInvalidRecords,
       })
     );
+  }
+
+  @Post(':uploadId/process')
+  @ApiOperation({
+    summary: 'Start processing for uploaded files',
+  })
+  processUpload(@Param('uploadId', ValidateMongoId) _uploadId: string) {
+    this.queueService.publishToQueue(QueuesEnum.PROCESS_FILE, { uploadId: _uploadId });
+
+    return 'send';
   }
 }

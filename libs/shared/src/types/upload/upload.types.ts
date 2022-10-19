@@ -29,6 +29,13 @@ export enum FileEncodingsEnum {
   'JSON' = 'utf8',
 }
 
+export enum QueuesEnum {
+  'PROCESS_FILE' = 'PROCESS_FILE',
+}
+
+export type ProcessFileData = { uploadId: string };
+export type PublishToQueueData = ProcessFileData;
+
 export interface IFileInformation {
   headings: string[];
   data: Record<string, unknown>[];
