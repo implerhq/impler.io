@@ -1,19 +1,26 @@
 import axios from 'axios';
-import { FileEncodingsEnum, ProcessFileCachedData, ProcessFileData, StorageService } from '@impler/shared';
-import { FileEntity, UploadRepository, TemplateRepository } from '@impler/dal';
+import {
+  FileEncodingsEnum,
+  ProcessFileCachedData,
+  ProcessFileData,
+  StorageService,
+  StatusEnum,
+  UploadStatusEnum,
+} from '@impler/shared';
+import { FileEntity, UploadRepository, TemplateRepository, WebhookLogRepository, WebhookLogEntity } from '@impler/dal';
 import { BaseConsumer } from './base.consumer';
 import { getStorageServiceClass } from '../helpers/storage.helper';
 import {
   ISendDataParameters,
   IBuildSendDataParameters,
   IGetNextDataParameters,
-  ISendDataResponse,
   ISendData,
 } from '../types/file-processing.types';
 
 export class ProcessFileConsumer extends BaseConsumer {
   private templateRepository: TemplateRepository = new TemplateRepository();
   private uploadRepository: UploadRepository = new UploadRepository();
+  private webhookLogRepository: WebhookLogRepository = new WebhookLogRepository();
   private storageService: StorageService = getStorageServiceClass();
 
   async message(message) {
@@ -59,17 +66,26 @@ export class ProcessFileConsumer extends BaseConsumer {
       });
 
       if (nextCachedData) {
+        // Make next call
         this.message({
           content: JSON.stringify({
             uploadId,
             cache: nextCachedData,
           }),
         });
+      } else {
+        // Processing is done
+        this.finalizeUpload(uploadId);
       }
     }
   }
 
-  private async makeApiCall({ data, method, url }: ISendDataParameters): Promise<ISendDataResponse> {
+  private async makeApiCall({ data, method, url }: ISendDataParameters): Promise<Partial<WebhookLogEntity>> {
+    const baseResponse: Partial<WebhookLogEntity> = {
+      _uploadId: data.uploadId,
+      callDate: new Date(),
+      pageNumber: data.page,
+    };
     try {
       const response = await axios({
         method,
@@ -77,38 +93,29 @@ export class ProcessFileConsumer extends BaseConsumer {
         data,
       });
 
-      return {
-        statusCode: response.status,
-        status: 'SUCCEED',
-      };
+      baseResponse.responseStatusCode = response.status;
+      baseResponse.status = StatusEnum.SUCCEED;
+
+      return baseResponse;
     } catch (error) {
+      baseResponse.status = StatusEnum.FAILED;
       if (axios.isAxiosError(error)) {
         if (error.response) {
-          return {
-            statusCode: error.response.status,
-            status: 'FAILED',
-            failedReason: 'Application Error',
-          };
+          baseResponse.failedReason = 'Application Error';
+          baseResponse.responseStatusCode = error.response.status;
         } else if (error.request) {
-          return {
-            statusCode: error.request.status,
-            status: 'FAILED',
-            failedReason: 'Network Error',
-          };
+          baseResponse.failedReason = 'Network Error';
+          baseResponse.responseStatusCode = error.request.status;
         } else {
-          return {
-            statusCode: 400,
-            status: 'FAILED',
-            failedReason: error.message,
-          };
+          baseResponse.failedReason = error.message;
+          baseResponse.responseStatusCode = 400;
         }
       } else {
-        return {
-          statusCode: 400,
-          status: 'FAILED',
-          failedReason: error.message,
-        };
+        baseResponse.failedReason = error.message;
+        baseResponse.responseStatusCode = 400;
       }
+
+      return baseResponse;
     }
   }
 
@@ -203,7 +210,11 @@ export class ProcessFileConsumer extends BaseConsumer {
     };
   }
 
-  private async makeResponseEntry(data: ISendDataResponse) {
-    console.log(data);
+  private async makeResponseEntry(data: Partial<WebhookLogEntity>) {
+    return await this.webhookLogRepository.create(data);
+  }
+
+  private async finalizeUpload(uploadId: string) {
+    return await this.uploadRepository.update({ _id: uploadId }, { status: UploadStatusEnum.COMPLETED });
   }
 }

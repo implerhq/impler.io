@@ -1,7 +1,7 @@
 import { ProcessFileCachedData } from '@impler/shared';
 
 export interface ISendDataParameters {
-  data: any;
+  data: ISendData;
   url: string;
   method: 'POST';
 }
