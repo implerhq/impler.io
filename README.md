@@ -53,9 +53,9 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-All projects needs to give some kind of data import facility, so that their users can import data in application through files like `.csv`, `.xls`, `.xlsx`, etc.
+All projects need to give some kind of data import facility, so that their users can import data in application through files like `.csv`, `.xls`, `.xlsx`, etc.
 
-At first it looks like just importing file and inserting in database, but as app grows facilities like validating data, data mapping, becomes must. `impler` provides infrastructure to applications, so that they don't have to write code for data import.
+At first it looks like just importing file and inserting in database, but as the app grows facilities like validating data, data mapping, becomes must. `impler` provides infrastructure to applications, so that they don't have to write code for data import.
 
 > impler.io is under development.
 
