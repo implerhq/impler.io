@@ -3,42 +3,13 @@ import { FileEncodingsEnum, ProcessFileCachedData, ProcessFileData, StorageServi
 import { FileEntity, UploadRepository, TemplateRepository } from '@impler/dal';
 import { BaseConsumer } from './base.consumer';
 import { getStorageServiceClass } from '../helpers/storage.helper';
-
-interface ISendDataParameters {
-  data: any;
-  url: string;
-  method: 'POST';
-}
-interface IBuildSendDataParameters {
-  data: any[];
-  page: number;
-  chunkSize: number;
-  isInvalidRecords: boolean;
-  template: string;
-  uploadId: string;
-  extra?: string;
-}
-interface IGetNextDataParameters extends ProcessFileCachedData {
-  validData: any[];
-  invalidData: any[];
-}
-
-interface ISendDataResponse {
-  statusCode: number;
-  status: 'FAILED' | 'SUCCEED';
-  failedReason?: string;
-}
-interface ISendData {
-  template: string;
-  uploadId: string;
-  data: any[];
-  totalRecords: number;
-  totalPages: number;
-  page: number;
-  pageSize: number;
-  extra: string;
-  isInvalidRecords: boolean;
-}
+import {
+  ISendDataParameters,
+  IBuildSendDataParameters,
+  IGetNextDataParameters,
+  ISendDataResponse,
+  ISendData,
+} from '../types/file-processing.types';
 
 export class ProcessFileConsumer extends BaseConsumer {
   private templateRepository: TemplateRepository = new TemplateRepository();
