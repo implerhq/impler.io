@@ -6,3 +6,4 @@ export * from './repositories/column';
 export * from './repositories/file';
 export * from './repositories/upload';
 export * from './repositories/mapping';
+export * from './repositories/webhook-log';
