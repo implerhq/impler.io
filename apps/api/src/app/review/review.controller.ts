@@ -1,5 +1,5 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiTags, ApiSecurity } from '@nestjs/swagger';
+import { BadRequestException, Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { ApiOperation, ApiTags, ApiSecurity, ApiQuery, ApiOkResponse } from '@nestjs/swagger';
 import { FileEntity, UploadEntity } from '@impler/dal';
 import { UploadStatusEnum } from '@impler/shared';
 import { APIMessages } from '../shared/constants';
@@ -13,9 +13,10 @@ import { ValidateMongoId } from '../shared/validations/valid-mongo-id.validation
 import { ConfirmReviewRequestDto } from './dtos/confirm-review-request.dto';
 import { GetUploadCommand } from '../shared/usecases/get-upload/get-upload.command';
 import { GetUpload } from '../shared/usecases/get-upload/get-upload.usecase';
-import { validateNotFound } from '../shared/helpers/common.helper';
+import { paginateRecords, validateNotFound } from '../shared/helpers/common.helper';
 import { StartProcess } from './usecases/start-process/start-process.usecase';
 import { StartProcessCommand } from './usecases/start-process/start-process.command';
+import { PaginationResponseDto } from '../shared/dtos/pagination-response.dto';
 
 @Controller('/review')
 @ApiTags('Review')
@@ -35,24 +36,50 @@ export class ReviewController {
   @ApiOperation({
     summary: 'Get Review data for uploaded file',
   })
-  async getReview(@Param('uploadId') _uploadId: string) {
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page index of data to return',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Size of data to return',
+  })
+  @ApiOkResponse({
+    description: 'Paginated reviewed data',
+    type: PaginationResponseDto,
+  })
+  async getReview(
+    @Param('uploadId') _uploadId: string,
+    @Query('page') page = 1,
+    @Query('limit') limit = 100
+  ): Promise<PaginationResponseDto> {
     const uploadData = await this.getUploadInvalidData.execute(_uploadId);
     if (!uploadData) throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
 
     // Only Mapped & Reviewing status are allowed
     validateUploadStatus(uploadData.status as UploadStatusEnum, [UploadStatusEnum.MAPPED, UploadStatusEnum.REVIEWING]);
 
+    // Get Invalid Data either from Validation or Validation Result
+    let invalidData = [];
     if (uploadData.status === UploadStatusEnum.MAPPED) {
       // uploaded file is mapped, do review
       const reviewData = await this.doReview.execute(_uploadId);
       // save invalid data to storage
       this.saveReviewData.execute(_uploadId, reviewData.invalid, reviewData.valid);
 
-      return reviewData.invalid;
+      invalidData = reviewData.invalid;
     } else {
       // Uploaded file is already reviewed, return reviewed data
-      return this.getFileInvalidData.execute((uploadData._invalidDataFileId as unknown as FileEntity).path);
+      invalidData = await this.getFileInvalidData.execute(
+        (uploadData._invalidDataFileId as unknown as FileEntity).path
+      );
     }
+
+    return paginateRecords(invalidData, page, limit);
   }
 
   @Post(':uploadId/confirm')
