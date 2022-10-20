@@ -71,7 +71,7 @@ At first it looks like just importing file and inserting in database, but as the
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Setup
-To setup `impler.io` locally, you need following things installed in your computer.
+To set up `impler.io` locally, you need the following things installed in your computer.
 1. `pnpm`
 2. `localstack`
 3. `mongodb`
@@ -86,7 +86,7 @@ Follow these steps to setup the project locally,
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-`impler` need to be communicated through **REST API**, you can easily makes call through **Swagger UI** provided at `http://localhost:3000/api`, 
+`impler` need to be communicated through **REST API**, you can easily make call through **Swagger UI** provided at `http://localhost:3000/api`, 
 1. You create `project`.
 2. You add `template` to `project`, Template refers to set of data you want to import i.e. users data.
 3. Add `columns` to `template`, Column refers to individual fields template can have, for example users Template can have firstname, lastname, address, email, phonenumber, etc.
