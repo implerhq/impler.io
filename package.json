@@ -7,7 +7,7 @@
   "scripts": {
     "clean": "pnpm run prebuild",
     "lint": "nx run-many --target=lint --all",
-    "start:dev": "cross-env TZ=UTC nx run-many --target=start --parallel --projects=@impler/api,@impler/dal",
+    "start:dev": "cross-env TZ=UTC nx run-many --target=start --parallel --projects=@impler/api,@impler/dal,@impler/queue-manager",
     "start:dal": "cross-env nx run @impler/dal:start",
     "start:api": "cross-env nx run @impler/api:start",
     "prebuild": "nx run-many --target=prebuild --all",
@@ -69,5 +69,8 @@
     "lint-staged": "^13.0.3",
     "nx": "^14.7.11",
     "prettier": "^2.7.1"
+  },
+  "dependencies": {
+    "amqp-connection-manager": "^4.1.7"
   }
 }

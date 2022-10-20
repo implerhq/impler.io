@@ -14,8 +14,8 @@ import { ConfirmReviewRequestDto } from './dtos/confirm-review-request.dto';
 import { GetUploadCommand } from '../shared/usecases/get-upload/get-upload.command';
 import { GetUpload } from '../shared/usecases/get-upload/get-upload.usecase';
 import { validateNotFound } from '../shared/helpers/common.helper';
-import { ConfirmReview } from './usecases/confirm-review/confirm-review.usecase';
-import { ConfirmReviewCommand } from './usecases/confirm-review/confirm-review.command';
+import { StartProcess } from './usecases/start-process/start-process.usecase';
+import { StartProcessCommand } from './usecases/start-process/start-process.command';
 
 @Controller('/review')
 @ApiTags('Review')
@@ -25,7 +25,7 @@ export class ReviewController {
   constructor(
     private doReview: DoReview,
     private getUpload: GetUpload,
-    private confirmReview: ConfirmReview,
+    private startProcess: StartProcess,
     private saveReviewData: SaveReviewData,
     private getFileInvalidData: GetFileInvalidData,
     private getUploadInvalidData: GetUploadInvalidData
@@ -76,8 +76,8 @@ export class ReviewController {
     // upload files with status reviewing can only be confirmed
     validateUploadStatus(uploadInformation.status as UploadStatusEnum, [UploadStatusEnum.REVIEWING]);
 
-    return this.confirmReview.execute(
-      ConfirmReviewCommand.create({
+    return this.startProcess.execute(
+      StartProcessCommand.create({
         _uploadId: _uploadId,
         processInvalidRecords: body.processInvalidRecords,
       })
