@@ -6,10 +6,12 @@ import {
   StorageService,
   StatusEnum,
   UploadStatusEnum,
+  QueuesEnum,
 } from '@impler/shared';
 import { FileEntity, UploadRepository, TemplateRepository, WebhookLogRepository, WebhookLogEntity } from '@impler/dal';
 import { BaseConsumer } from './base.consumer';
 import { getStorageServiceClass } from '../helpers/storage.helper';
+import { publishToQueue } from '../bootstrap';
 import {
   ISendDataParameters,
   IBuildSendDataParameters,
@@ -67,11 +69,9 @@ export class ProcessFileConsumer extends BaseConsumer {
 
       if (nextCachedData) {
         // Make next call
-        this.message({
-          content: JSON.stringify({
-            uploadId,
-            cache: nextCachedData,
-          }),
+        publishToQueue(QueuesEnum.PROCESS_FILE, {
+          uploadId,
+          cache: nextCachedData,
         });
       } else {
         // Processing is done

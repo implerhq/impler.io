@@ -1,8 +1,11 @@
 import './config/env-config';
-import amqp from 'amqp-connection-manager';
+import amqp, { ChannelWrapper } from 'amqp-connection-manager';
 import { ProcessFileConsumer } from './consumers';
 import { QueuesEnum } from '@impler/shared';
 import { DalService } from '@impler/dal';
+import { IAmqpConnectionManager } from 'amqp-connection-manager/dist/esm/AmqpConnectionManager';
+
+let connection: IAmqpConnectionManager, chanelWrapper: ChannelWrapper;
 
 export async function bootstrap() {
   // conenct dal service
@@ -10,12 +13,12 @@ export async function bootstrap() {
   await dalService.connect(process.env.MONGO_URL);
 
   // connect to amqp rabbitmq server
-  const connection = amqp.connect([process.env.RABBITMQ_CONN_URL]);
+  connection = amqp.connect([process.env.RABBITMQ_CONN_URL]);
   connection.on('connect', () => console.log('QueueManager RabbitMQ::Connected!'));
   connection.on('disconnect', (err: Error) => console.log('RabbitMQ::Disconnected.', err));
 
   // create channel
-  const chanelWrapper = connection.createChannel({
+  chanelWrapper = connection.createChannel({
     json: true,
   });
 
@@ -31,4 +34,8 @@ export async function bootstrap() {
       channel.consume(QueuesEnum.PROCESS_FILE, processFileConsumer.message.bind(processFileConsumer), { noAck: true }),
     ]);
   });
+}
+
+export function publishToQueue(queueName: QueuesEnum, data: any) {
+  chanelWrapper.sendToQueue(queueName, data);
 }
