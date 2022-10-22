@@ -1,0 +1,67 @@
+{
+  "name": "@impler/embed",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "keywords": [],
+  "main": "dist/embed.umd.min.js",
+  "module": "dist/embed.es5.min.js",
+  "typings": "dist/types/embed.d.ts",
+  "files": ["dist"],
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "scripts": {
+    "lint": "eslint 'src/**/*.ts'",
+    "lint:fix": "pnpm lint -- --fix",
+    "prebuild": "rimraf dist",
+    "build": "tsc && cross-env ENVIRONMENT=local rollup -c rollup.config.ts",
+    "build:dev": "tsc && cross-env ENVIRONMENT=dev rollup -c rollup.config.ts",
+    "build:prod": "tsc && cross-env ENVIRONMENT=production rollup -c rollup.config.ts",
+    "start": "cross-env ENVIRONMENT=local rollup -c rollup.config.ts -w",
+    "start:dev": "concurrently \"pnpm start\"",
+    "start:docker": "pnpm build && http-server -p 4701 dist",
+    "start:test:web": "http-server -p 4701 -o test",
+    "precommit": "lint-staged"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": ["eslint"],
+    "{*.json,.{babelrc,eslintrc,prettierrc,stylelintrc}}": [
+      "prettier --ignore-path .eslintignore --parser json --write"
+    ],
+    "*.{html,md,yml}": ["prettier --ignore-path .eslintignore --single-quote --write"]
+  },
+  "commitlint": {
+    "extends": ["@commitlint/config-conventional"]
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.1.2",
+    "@commitlint/config-conventional": "^17.1.0",
+    "@rollup/plugin-replace": "^5.0.0",
+    "@types/iframe-resizer": "^3.5.9",
+    "@types/node": "^18.7.18",
+    "concurrently": "^7.4.0",
+    "cross-env": "^7.0.3",
+    "http-server": "^14.1.1",
+    "lint-staged": "^13.0.3",
+    "lodash.camelcase": "^4.3.0",
+    "prettier": "^2.7.1",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-json": "^4.0.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-sourcemaps": "^0.6.3",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript2": "^0.34.1",
+    "ts-node": "^10.9.1",
+    "tslib": "^2.4.0",
+    "typescript": "^4.8.3"
+  },
+  "dependencies": {
+    "iframe-resizer": "^4.3.2"
+  }
+}
