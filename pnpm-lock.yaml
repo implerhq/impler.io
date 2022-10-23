@@ -34,7 +34,7 @@ importers:
       '@commitlint/cli': 17.1.2
       '@commitlint/config-conventional': 17.1.0
       '@nrwl/nx-cloud': 14.6.2
-      '@nrwl/workspace': 14.7.11_7a7cafgkwmw5xsnofiwtvya3ly
+      '@nrwl/workspace': 14.7.11_prdxvwpqz7ols7qpi4wzmubrfu
       '@typescript-eslint/eslint-plugin': 5.38.0_wsb62dxj2oqwgas4kadjymcmry
       '@typescript-eslint/parser': 5.38.0_irgkl5vooow2ydyo6aokmferha
       cross-env: 7.0.3
@@ -71,7 +71,6 @@ importers:
       ajv: ^8.11.0
       ajv-formats: ^2.1.1
       ajv-keywords: ^5.1.0
-      amqp-connection-manager: ^4.1.7
       body-parser: ^1.20.0
       class-transformer: ^0.5.1
       class-validator: ^0.13.2
@@ -97,7 +96,6 @@ importers:
       ajv: 8.11.0
       ajv-formats: 2.1.1_ajv@8.11.0
       ajv-keywords: 5.1.0_ajv@8.11.0
-      amqp-connection-manager: 4.1.7_amqplib@0.10.3
       body-parser: 1.20.0
       class-transformer: 0.5.1
       class-validator: 0.13.2
@@ -198,7 +196,6 @@ importers:
       concurrently: ^7.4.0
       cross-env: ^7.0.3
       http-server: ^14.1.1
-      iframe-resizer: ^4.3.2
       lint-staged: ^13.0.3
       lodash.camelcase: ^4.3.0
       prettier: ^2.7.1
@@ -211,8 +208,6 @@ importers:
       ts-node: ^10.9.1
       tslib: ^2.4.0
       typescript: ^4.8.3
-    dependencies:
-      iframe-resizer: 4.3.2
     devDependencies:
       '@commitlint/cli': 17.1.2
       '@commitlint/config-conventional': 17.1.0
@@ -258,6 +253,7 @@ importers:
       '@types/react': ^18.0.21
       acron: ^1.0.5
       babel-loader: ^8.2.5
+      react: '>=16.8.0'
       rollup: ^3.2.3
       rollup-plugin-dts: ^5.0.0
       rollup-plugin-node-externals: ^5.0.1
@@ -265,6 +261,8 @@ importers:
       rollup-plugin-terser: ^7.0.2
       tslib: ^2.4.0
       typescript: ^4.8.3
+    dependencies:
+      react: 18.2.0
     devDependencies:
       '@babel/core': 7.19.6
       '@rollup/plugin-commonjs': 23.0.1_rollup@3.2.3
@@ -3776,7 +3774,7 @@ packages:
       - typescript
     dev: true
 
-  /@nrwl/jest/14.7.11_qlwo5hsvdg7hn7hu33cogh6bhm:
+  /@nrwl/jest/14.7.11_g54zz37vbc6ogdygpm6ynqcgoe:
     resolution: {integrity: sha512-HpjnNxreE+7h6KmjNQXeb5owwfTdEXRs5kxBw2O3ez8M7R9ruLM+0MpuhI+A71nzIRnR55O9TXncddNwJmYd8Q==}
     dependencies:
       '@jest/reporters': 28.1.1
@@ -3786,7 +3784,7 @@ packages:
       chalk: 4.1.0
       dotenv: 10.0.0
       identity-obj-proxy: 3.0.0
-      jest-config: 28.1.1_sgupjgtkb76w4hsvieap2xky7i
+      jest-config: 28.1.1
       jest-resolve: 28.1.1
       jest-util: 28.1.1
       resolve.exports: 1.1.0
@@ -3800,7 +3798,7 @@ packages:
       - typescript
     dev: true
 
-  /@nrwl/linter/14.7.11_tfvgyompwak5obgtt2siywktj4:
+  /@nrwl/linter/14.7.11_irgkl5vooow2ydyo6aokmferha:
     resolution: {integrity: sha512-6PHfgbeHJd0OZrPfoiuzO3ohgYPeAqsNKGbBFP09EeP6FXFtihTGhqzo20l81ZNUwYpHELOZPP+6LAmycPCiug==}
     peerDependencies:
       eslint: ^8.0.0
@@ -3809,7 +3807,7 @@ packages:
         optional: true
     dependencies:
       '@nrwl/devkit': 14.7.11_g54zz37vbc6ogdygpm6ynqcgoe
-      '@nrwl/jest': 14.7.11_qlwo5hsvdg7hn7hu33cogh6bhm
+      '@nrwl/jest': 14.7.11_g54zz37vbc6ogdygpm6ynqcgoe
       '@phenomnomnominal/tsquery': 4.1.1_typescript@4.8.3
       eslint: 8.23.1
       nx: 14.7.11
@@ -3850,7 +3848,7 @@ packages:
       - '@swc/core'
     dev: true
 
-  /@nrwl/workspace/14.7.11_7a7cafgkwmw5xsnofiwtvya3ly:
+  /@nrwl/workspace/14.7.11_prdxvwpqz7ols7qpi4wzmubrfu:
     resolution: {integrity: sha512-rf41S7IDVesYrW7LEiDQ4rh8kFDXCOFRgI8ZKCXwBUBX+/TIWmKZMYjFNY794AqfU4ybhdShUlsghD/yqtS7qw==}
     peerDependencies:
       prettier: ^2.6.2
@@ -3859,8 +3857,8 @@ packages:
         optional: true
     dependencies:
       '@nrwl/devkit': 14.7.11_g54zz37vbc6ogdygpm6ynqcgoe
-      '@nrwl/jest': 14.7.11_qlwo5hsvdg7hn7hu33cogh6bhm
-      '@nrwl/linter': 14.7.11_tfvgyompwak5obgtt2siywktj4
+      '@nrwl/jest': 14.7.11_g54zz37vbc6ogdygpm6ynqcgoe
+      '@nrwl/linter': 14.7.11_irgkl5vooow2ydyo6aokmferha
       '@parcel/watcher': 2.0.4
       chalk: 4.1.0
       chokidar: 3.5.3
@@ -8168,11 +8166,6 @@ packages:
   /ieee754/1.2.1:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
 
-  /iframe-resizer/4.3.2:
-    resolution: {integrity: sha512-gOWo2hmdPjMQsQ+zTKbses08mDfDEMh4NneGQNP4qwePYujY1lguqP6gnbeJkf154gojWlBhIltlgnMfYjGHWA==}
-    engines: {node: '>=0.8.0'}
-    dev: false
-
   /ignore-by-default/1.0.1:
     resolution: {integrity: sha512-Ius2VYcGNk7T90CppJqcIkS5ooHUZyIQK+ClZfMfMNFEF9VSE73Fq+906u/CWu92x4gzZMWOwfFYckPObzdEbA==}
     dev: true
@@ -8631,7 +8624,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  /jest-config/28.1.1_sgupjgtkb76w4hsvieap2xky7i:
+  /jest-config/28.1.1:
     resolution: {integrity: sha512-tASynMhS+jVV85zKvjfbJ8nUyJS/jUSYZ5KQxLUN2ZCvcQc/OmhQl2j6VEL3ezQkNofxn5pQ3SPYWPHb0unTZA==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     peerDependencies:
@@ -8646,7 +8639,6 @@ packages:
       '@babel/core': 7.19.1
       '@jest/test-sequencer': 28.1.3
       '@jest/types': 28.1.3
-      '@types/node': 18.7.18
       babel-jest: 28.1.3_@babel+core@7.19.1
       chalk: 4.1.2
       ci-info: 3.4.0
@@ -8666,7 +8658,6 @@ packages:
       pretty-format: 28.1.3
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.1_bidgzm5cq2du6gnjtweqqjrrn4
     transitivePeerDependencies:
       - supports-color
     dev: true

@@ -5,7 +5,7 @@ import camelCase from 'lodash.camelcase';
 import typescript from 'rollup-plugin-typescript2';
 import json from 'rollup-plugin-json';
 import replace from '@rollup/plugin-replace';
-import pkg from './package.json' assert { type: 'json' };
+import pkg from './package.json';
 
 const libraryName = 'embed';
 

@@ -2,7 +2,7 @@
 /* eslint promise/param-names: 0 */
 /* eslint-disable */
 //
-import iFrameResize from 'iframe-resizer';
+
 import * as EventTypes from './shared/eventTypes';
 import { UnmountedError, DomainVerificationError } from './shared/errors';
 import { IFRAME_URL } from './shared/resources';
@@ -12,21 +12,15 @@ const IFRAME_ID = 'impler-iframe-element';
 const WRAPPER_CLASS_NAME = 'wrapper-impler-widget';
 
 class Impler {
-  public clientId: string | unknown;
+  public projectId: string | unknown;
 
   private backendUrl?: string = '';
-
-  private socketUrl?: string = '';
-
-  private theme?: Record<string, unknown>;
 
   private i18n?: Record<string, unknown>;
 
   private debugMode: boolean;
 
   private onloadFunc: (b: any) => void;
-
-  private unseenBadgeSelector: string = '';
 
   private domainAllowed: boolean;
 
@@ -52,7 +46,7 @@ class Impler {
   };
 
   init = (
-    clientId: string,
+    projectId: string,
     selectorOrOptions: string | IOptions,
     data: { subscriberId: string; lastName: string; firstName: string; email: string; subscriberHash?: string }
   ) => {
@@ -60,17 +54,14 @@ class Impler {
     if (typeof selectorOrOptions === 'string') {
       this.selector = selectorOrOptions;
     } else {
-      this.selector = selectorOrOptions.bellSelector;
-      this.unseenBadgeSelector = selectorOrOptions.unseenBadgeSelector;
+      this.selector = selectorOrOptions.selector;
       this.options = selectorOrOptions;
       this.backendUrl = selectorOrOptions.backendUrl;
-      this.socketUrl = selectorOrOptions.socketUrl;
-      this.theme = selectorOrOptions.theme;
       this.i18n = selectorOrOptions.i18n;
     }
 
-    this.clientId = clientId;
-    this.initializeIframe(clientId, data);
+    this.projectId = projectId;
+    this.initializeIframe(projectId, data);
     this.mountIframe();
     const button = document.querySelector(this.selector) as HTMLButtonElement;
     if (button) {
@@ -144,7 +135,7 @@ class Impler {
 
   ensureAllowed = () => {
     if (!this.domainAllowed) {
-      throw new DomainVerificationError(`${window.location.host} is not permitted to use client ID ${this.clientId}`);
+      throw new DomainVerificationError(`${window.location.host} is not permitted to use client ID ${this.projectId}`);
     }
   };
 
@@ -177,7 +168,7 @@ class Impler {
     this.domainAllowed = false;
   };
 
-  initializeIframe = (clientId: string, options: any) => {
+  initializeIframe = (projectId: string, options: any) => {
     if (!document.getElementById(IFRAME_ID)) {
       const iframe = document.createElement('iframe');
       window.addEventListener(
@@ -191,10 +182,8 @@ class Impler {
             {
               type: EventTypes.INIT_IFRAME,
               value: {
-                clientId: this.clientId,
+                projectId: this.projectId,
                 backendUrl: this.backendUrl,
-                socketUrl: this.socketUrl,
-                theme: this.theme,
                 i18n: this.i18n,
                 topHost: window.location.host,
                 data: options,
@@ -206,7 +195,7 @@ class Impler {
         true
       );
 
-      iframe.src = `${IFRAME_URL}/${clientId}?`;
+      iframe.src = `${IFRAME_URL}/${projectId}?`;
       iframe.id = IFRAME_ID;
       iframe.style.border = 'none';
       (iframe as any).crossorigin = 'anonymous';
@@ -281,14 +270,7 @@ export default ((window: any) => {
 })(window);
 
 interface IOptions {
-  bellSelector: string;
-  unseenBadgeSelector: string;
+  selector: string;
   backendUrl?: string;
-  socketUrl?: string;
-  theme?: Record<string, unknown>;
   i18n?: Record<string, unknown>;
-  position?: {
-    top?: number | string;
-    left?: number | string;
-  };
 }
