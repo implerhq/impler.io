@@ -15,8 +15,8 @@
     "url": ""
   },
   "scripts": {
-    "lint": "eslint 'src/**/*.ts'",
-    "lint:fix": "pnpm lint -- --fix",
+    "lint": "eslint src",
+    "lint:fix": "pnpm lint --fix",
     "preinstall": "pnpm build",
     "prebuild": "rimraf dist",
     "build": "tsc && cross-env ENVIRONMENT=local rollup -c rollup.config.js",
