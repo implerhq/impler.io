@@ -1,13 +1,12 @@
-import resolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import typescript from '@rollup/plugin-typescript';
-import dts from 'rollup-plugin-dts';
-import { terser } from 'rollup-plugin-terser';
-import image from '@rollup/plugin-image';
-import nodeExternals from 'rollup-plugin-node-externals';
-import packageJson from './package.json' assert { type: 'json' };
+const resolve = require('@rollup/plugin-node-resolve');
+const commonjs = require('@rollup/plugin-commonjs')
+const typescript = require('@rollup/plugin-typescript')
+const { default:dts } = require('rollup-plugin-dts')
+const { terser } = require('rollup-plugin-terser');
+const { externals } = require('rollup-plugin-node-externals');
+const packageJson = require('./package.json');
 
-export default [
+module.exports = [
   {
     input: 'src/index.ts',
     output: [
@@ -23,12 +22,11 @@ export default [
       },
     ],
     plugins: [
-      nodeExternals(),
+      externals(),
       resolve({ preferBuiltins: false, browser: true }),
       commonjs(),
       typescript({ tsconfig: './tsconfig.json' }),
       terser(),
-      image(),
     ],
   },
   {
