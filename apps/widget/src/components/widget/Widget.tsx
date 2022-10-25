@@ -12,7 +12,7 @@ interface IWidgetProps {
 export function Widget(props: IWidgetProps) {
   const [userDataPayload, setUserDataPayload] = useState<IUserDataPayload>();
   const [backendUrl, setBackendUrl] = useState(API_URL);
-  // const [theme, setTheme] = useState<INovuThemeProvider>({});
+  // const [theme, setTheme] = useState<>({});
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   const [fontFamily, setFontFamily] = useState<string>('Lato');
   const [frameInitialized, setFrameInitialized] = useState(false);
