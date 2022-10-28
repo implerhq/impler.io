@@ -14,8 +14,6 @@ const WRAPPER_CLASS_NAME = 'wrapper-impler-widget';
 class Impler {
   public projectId: string | unknown;
 
-  private backendUrl?: string = '';
-
   private i18n?: Record<string, unknown>;
 
   private debugMode: boolean;
@@ -56,7 +54,6 @@ class Impler {
     } else {
       this.selector = selectorOrOptions.selector;
       this.options = selectorOrOptions;
-      this.backendUrl = selectorOrOptions.backendUrl;
       this.i18n = selectorOrOptions.i18n;
     }
 
@@ -183,7 +180,6 @@ class Impler {
               type: EventTypes.INIT_IFRAME,
               value: {
                 projectId: this.projectId,
-                backendUrl: this.backendUrl,
                 i18n: this.i18n,
                 topHost: window.location.host,
                 data: options,
@@ -271,6 +267,5 @@ export default ((window: any) => {
 
 interface IOptions {
   selector: string;
-  backendUrl?: string;
   i18n?: Record<string, unknown>;
 }
