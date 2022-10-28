@@ -14,8 +14,6 @@ const WRAPPER_CLASS_NAME = 'wrapper-impler-widget';
 class Impler {
   public projectId: string | unknown;
 
-  private backendUrl?: string = '';
-
   private i18n?: Record<string, unknown>;
 
   private debugMode: boolean;
@@ -56,7 +54,6 @@ class Impler {
     } else {
       this.selector = selectorOrOptions.selector;
       this.options = selectorOrOptions;
-      this.backendUrl = selectorOrOptions.backendUrl;
       this.i18n = selectorOrOptions.i18n;
     }
 
@@ -87,7 +84,6 @@ class Impler {
       wrapper.style.width = '100vw';
       wrapper.style.top = '0';
       wrapper.style.left = '0';
-      wrapper.style.backgroundColor = 'gray';
     }
 
     function hideWidget() {
@@ -99,7 +95,7 @@ class Impler {
     }
 
     function handleClick(e: MouseEvent | TouchEvent) {
-      if (document.querySelector(_scope.selector)?.contains(e.target as Node)) {
+      if (document.querySelector(_scope.selector)?.contains(e.target as Node) && projectId) {
         _scope.widgetVisible = !_scope.widgetVisible;
         positionIframe();
 
@@ -183,7 +179,6 @@ class Impler {
               type: EventTypes.INIT_IFRAME,
               value: {
                 projectId: this.projectId,
-                backendUrl: this.backendUrl,
                 i18n: this.i18n,
                 topHost: window.location.host,
                 data: options,
@@ -271,6 +266,5 @@ export default ((window: any) => {
 
 interface IOptions {
   selector: string;
-  backendUrl?: string;
   i18n?: Record<string, unknown>;
 }

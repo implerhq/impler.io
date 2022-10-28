@@ -7,9 +7,7 @@
   "main": "dist/embed.umd.min.js",
   "module": "dist/embed.es5.min.js",
   "typings": "dist/types/embed.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "repository": {
     "type": "git",
     "url": ""
@@ -22,9 +20,9 @@
     "build": "tsc && cross-env ENVIRONMENT=local rollup -c rollup.config.js",
     "build:dev": "tsc && cross-env ENVIRONMENT=dev rollup -c rollup.config.js -w",
     "build:prod": "tsc && cross-env ENVIRONMENT=production rollup -c rollup.config.js",
-    "start:dev": "http-server -p 4701 -o test",
-    "start:docker": "pnpm build && pnpm start",
-    "start": "http-server -p 4701 -o test",
+    "start:dev": "http-server -p 4701 test",
+    "start:docker": "pnpm build && http-server -p 4701 dist",
+    "start": "http-server -p 4701 dist",
     "dev": "concurrently \"pnpm build:dev\" \"pnpm start:dev\"",
     "precommit": "lint-staged"
   },
@@ -33,20 +31,14 @@
     "node": ">=6.0.0"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "eslint"
-    ],
+    "*.{js,jsx,ts,tsx}": ["eslint"],
     "{*.json,.{babelrc,eslintrc,prettierrc,stylelintrc}}": [
       "prettier --ignore-path .eslintignore --parser json --write"
     ],
-    "*.{html,md,yml}": [
-      "prettier --ignore-path .eslintignore --single-quote --write"
-    ]
+    "*.{html,md,yml}": ["prettier --ignore-path .eslintignore --single-quote --write"]
   },
   "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ]
+    "extends": ["@commitlint/config-conventional"]
   },
   "devDependencies": {
     "@commitlint/cli": "^17.1.2",

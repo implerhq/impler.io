@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Widget Demo</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      (function (n, o, t, i, f) {
+        /* eslint-disable */
+        let m;
+        (n[i] = {}), (m = ['init', 'on']);
+        n[i]._c = [];
+        m.forEach(
+          (me) =>
+            (n[i][me] = function () {
+              n[i]._c.push([me, arguments]);
+            })
+        );
+        const elt = o.createElement(f);
+        elt.type = 'text/javascript';
+        elt.async = true;
+        elt.src = t;
+        const before = o.getElementsByTagName(f)[0];
+        before.parentNode?.insertBefore(elt, before);
+      })(window, document, "http://127.0.0.1:4701/embed.umd.min.js", 'impler', 'script');
+
+      impler.init("", "#import");
+    </script>
+  </body>
+</html>

@@ -267,6 +267,7 @@ importers:
       '@rollup/plugin-node-resolve': ^15.0.0
       '@rollup/plugin-typescript': ^9.0.1
       '@types/react': ^18.0.21
+      '@types/styled-components': ^5.1.26
       babel-loader: ^8.2.5
       react: '>=16.8.0'
       rollup: ^3.2.3
@@ -286,6 +287,7 @@ importers:
       '@rollup/plugin-node-resolve': 15.0.0_rollup@3.2.3
       '@rollup/plugin-typescript': 9.0.1_l76lguts6rhkt2cfcgdaysjzr4
       '@types/react': 18.0.21
+      '@types/styled-components': 5.1.26
       babel-loader: 8.2.5_6zc4kxld457avlfyhj3lzsljlm
       rollup: 3.2.3
       rollup-plugin-dts: 5.0.0_723547pa73ldc3ok456m7rj5ky

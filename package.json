@@ -8,15 +8,21 @@
     "clean": "pnpm run prebuild",
     "lint": "nx run-many --target=lint --all",
     "start:dev": "cross-env TZ=UTC nx run-many --target=start --parallel --projects=@impler/api,@impler/dal,@impler/queue-manager",
+    "start:widget-dev": "cross-env TZ=UTC nx run-many --target=start --parallel --projects=@impler/widget,@impler/embed",
     "start:dal": "cross-env nx run @impler/dal:start",
     "start:api": "cross-env nx run @impler/api:start",
     "start:embed": "cross-env nx run @impler/embed:start",
     "start:widget": "cross-env nx run @impler/widget:start",
+    "start:queue-manager": "cross-env nx run @impler/queue-manager:start",
+    "start:docker:embed": "cd libs/embed && npm run start:docker",
     "prebuild": "nx run-many --target=prebuild --all",
     "build": "nx run-many --target=build --all",
     "build:api": "nx build @impler/api",
     "build:dal": "nx build @impler/dal",
-    "build:shared": "nx build @impler/shared"
+    "build:react": "nx build @impler/react",
+    "build:shared": "nx build @impler/shared",
+    "build:widget": "nx build @impler/widget",
+    "build:embed": "nx build @impler/embed"
   },
   "keywords": [
     "data-import",
