@@ -16,11 +16,17 @@ const StyledButton = styled.button`
   font-family: inherit;
   font-size: 100%;
   line-height: inherit;
+  border: none;
 `;
 
-export const Button = ({ children = 'Import', className = '', disabled = false }: ButtonProps): JSX.Element => {
+export const Button = ({
+  children = 'Import',
+  className = '',
+  disabled = false,
+  onClick,
+}: ButtonProps): JSX.Element => {
   return (
-    <StyledButton className={className} disabled={disabled}>
+    <StyledButton id="import" className={className} disabled={disabled} onClick={onClick}>
       {children}
     </StyledButton>
   );
