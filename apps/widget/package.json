@@ -3,8 +3,8 @@
 	"version": "1.0.0",
 	"private": true,
 	"scripts": {
-		"start": "craco start",
-		"start:dev": "cross-env PORT=3500 pnpm start",
+		"start": "cross-env PORT=3500 craco start",
+		"start:dev": "cross-env PORT=3500 craco start",
 		"preinstall": "pnpm build",
 		"prebuild": "rimraf build",
 		"build": "craco build",

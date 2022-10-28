@@ -20,9 +20,9 @@
     "build": "tsc && cross-env ENVIRONMENT=local rollup -c rollup.config.js",
     "build:dev": "tsc && cross-env ENVIRONMENT=dev rollup -c rollup.config.js -w",
     "build:prod": "tsc && cross-env ENVIRONMENT=production rollup -c rollup.config.js",
-    "start:dev": "http-server -p 4701 -o test",
+    "start:dev": "http-server -p 4701 test",
     "start:docker": "pnpm build && http-server -p 4701 dist",
-    "start": "http-server -p 4701 -o test",
+    "start": "http-server -p 4701 dist",
     "dev": "concurrently \"pnpm build:dev\" \"pnpm start:dev\"",
     "precommit": "lint-staged"
   },
