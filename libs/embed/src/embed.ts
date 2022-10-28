@@ -84,7 +84,6 @@ class Impler {
       wrapper.style.width = '100vw';
       wrapper.style.top = '0';
       wrapper.style.left = '0';
-      wrapper.style.backgroundColor = 'gray';
     }
 
     function hideWidget() {
@@ -96,7 +95,7 @@ class Impler {
     }
 
     function handleClick(e: MouseEvent | TouchEvent) {
-      if (document.querySelector(_scope.selector)?.contains(e.target as Node)) {
+      if (document.querySelector(_scope.selector)?.contains(e.target as Node) && projectId) {
         _scope.widgetVisible = !_scope.widgetVisible;
         positionIframe();
 
