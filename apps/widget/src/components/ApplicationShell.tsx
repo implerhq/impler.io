@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 
 export function WidgetShell({ children }: { children: JSX.Element }) {
@@ -8,7 +8,7 @@ export function WidgetShell({ children }: { children: JSX.Element }) {
 }
 
 function TransparentShell({ children }: { children: JSX.Element }) {
-  return <div style={{ padding: 7 }}>{children}</div>;
+  return <div>{children}</div>;
 }
 
 function MockPreviewShell({ children }: { children: JSX.Element }) {

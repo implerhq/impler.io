@@ -25,6 +25,7 @@
       "@store/*": ["store/*"],
       "@client": ["client/index.ts"],
       "@config": ["config/index.ts"],
+      "@ui/*": ["design-system/*"]
     }
   },
   "include": [
