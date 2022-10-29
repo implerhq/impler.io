@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import styled, { createGlobalStyle } from 'styled-components';
+import { Global } from '@emotion/react';
 
 export function WidgetShell({ children }: { children: JSX.Element }) {
   const WrapperComponent = inIframe() ? TransparentShell : MockPreviewShell;
@@ -19,10 +19,27 @@ function MockPreviewShell({ children }: { children: JSX.Element }) {
   }, []);
 
   return (
-    <ShellWrapper>
-      <GlobalStyle />
+    <div
+      style={{
+        backgroundColor: 'lightgray',
+        height: '100vh',
+        padding: '7px',
+        color: '#333737',
+      }}
+    >
+      <Global
+        styles={{
+          body: {
+            margin: 0,
+            padding: 0,
+          },
+          '*': {
+            boxSizing: 'border-box',
+          },
+        }}
+      />
       {children}
-    </ShellWrapper>
+    </div>
   );
 }
 
@@ -33,19 +50,3 @@ function inIframe() {
     return true;
   }
 }
-
-const ShellWrapper = styled.div`
-  background: lightgrey;
-  height: 100vh;
-  padding: 7px;
-  color: #333737;
-`;
-const GlobalStyle = createGlobalStyle`
-  body {
-    padding: 0;
-    margin: 0;
-  }
-  * {
-    box-sizing: border-box;
-  }
-`;

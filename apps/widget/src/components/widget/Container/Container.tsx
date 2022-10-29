@@ -2,7 +2,7 @@ import { useEffect, useState, PropsWithChildren } from 'react';
 import * as WebFont from 'webfontloader';
 import { useParams } from 'react-router-dom';
 import { IUserDataPayload } from '@impler/shared';
-import { createGlobalStyle } from 'styled-components';
+import { Global } from '@emotion/react';
 import { API_URL } from '@config';
 import { Provider } from '../Provider';
 
@@ -53,7 +53,18 @@ export function Container({ children }: PropsWithChildren) {
 
   return (
     <>
-      <GlobalStyle fontFamily={fontFamily} />
+      <Global
+        styles={{
+          '*': {
+            boxSizing: 'border-box',
+            margin: 0,
+            padding: 0,
+          },
+          body: {
+            fontFamily: `'${fontFamily}', Helvetica, sans-serif`,
+          },
+        }}
+      />
       {frameInitialized ? (
         <Provider
           // api
@@ -72,13 +83,13 @@ export function Container({ children }: PropsWithChildren) {
   );
 }
 
-const GlobalStyle = createGlobalStyle<{ fontFamily: string }>`
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-  body {
-    font-family: ${({ fontFamily }) => fontFamily}, Helvetica, sans-serif;
-  }
-`;
+/*
+ * * {
+ *   box-sizing: border-box;
+ *   margin: 0;
+ *   padding: 0;
+ * }
+ * body {
+ *   font-family: ${({ fontFamily }) => fontFamily}, Helvetica, sans-serif;
+ * }
+ */
