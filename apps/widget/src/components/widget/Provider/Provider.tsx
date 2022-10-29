@@ -1,8 +1,8 @@
-import { ApiService } from '../../client';
-import ImplerContextProvider from '../../store/impler.context';
-import APIContextProvider from '../../store/api.context';
+import { ApiService } from '@client';
+import ImplerContextProvider from '@store/impler.context';
+import APIContextProvider from '@store/api.context';
 
-interface IWidgetProviderProps {
+interface IProviderProps {
   // api-context
   backendUrl: string;
   // impler-context
@@ -17,7 +17,7 @@ interface IWidgetProviderProps {
 
 let api: ApiService;
 
-export function WidgetProvider(props: IWidgetProviderProps) {
+export function Provider(props: IProviderProps) {
   if (!api) api = new ApiService(props.backendUrl);
 
   return (

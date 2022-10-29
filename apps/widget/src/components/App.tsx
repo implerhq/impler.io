@@ -1,8 +1,7 @@
-import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { CONTEXT_PATH } from '@config';
 import { WidgetShell } from './ApplicationShell';
-import { NotificationCenterWidgetContainer } from './widget';
-import { CONTEXT_PATH } from '../config';
+import { Widget } from './widget';
 
 export function App() {
   return (
@@ -12,7 +11,7 @@ export function App() {
           path="/:projectId"
           element={
             <WidgetShell>
-              <NotificationCenterWidgetContainer />
+              <Widget />
             </WidgetShell>
           }
         />
