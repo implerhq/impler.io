@@ -1,7 +1,7 @@
 const resolve = require('@rollup/plugin-node-resolve');
-const commonjs = require('@rollup/plugin-commonjs')
-const typescript = require('@rollup/plugin-typescript')
-const { default:dts } = require('rollup-plugin-dts')
+const commonjs = require('@rollup/plugin-commonjs');
+const typescript = require('@rollup/plugin-typescript');
+const { default: dts } = require('rollup-plugin-dts');
 const { terser } = require('rollup-plugin-terser');
 const { externals } = require('rollup-plugin-node-externals');
 const packageJson = require('./package.json');
