@@ -60,9 +60,6 @@ export function Container({ children }: PropsWithChildren) {
             margin: 0,
             padding: 0,
           },
-          body: {
-            fontFamily: `'${fontFamily}', Helvetica, sans-serif`,
-          },
         }}
       />
       {frameInitialized ? (
@@ -82,14 +79,3 @@ export function Container({ children }: PropsWithChildren) {
     </>
   );
 }
-
-/*
- * * {
- *   box-sizing: border-box;
- *   margin: 0;
- *   padding: 0;
- * }
- * body {
- *   font-family: ${({ fontFamily }) => fontFamily}, Helvetica, sans-serif;
- * }
- */

@@ -2,7 +2,7 @@ import { PropsWithChildren } from 'react';
 import { Modal } from '@mantine/core';
 
 interface IModalProps extends JSX.ElementChildrenAttribute {
-  title: string;
+  title?: string;
   opened: boolean;
   centered?: boolean;
   onClose: () => void;
