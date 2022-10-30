@@ -1,12 +1,12 @@
 import { Container } from './Container';
-import { ModalContainer } from '@ui/ModalContainer';
+import { Modal } from '@ui/Modal';
 
 export function Widget() {
   return (
     <Container>
-      <ModalContainer title="Upload" opened={true} onClose={() => {}}>
+      <Modal title="Upload" opened={true} onClose={() => {}}>
         <div style={{ height: '500px' }}>Widget</div>
-      </ModalContainer>
+      </Modal>
     </Container>
   );
 }

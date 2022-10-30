@@ -1,5 +1,5 @@
 import { PropsWithChildren } from 'react';
-import { Modal } from '@mantine/core';
+import { Modal as MantineModal } from '@mantine/core';
 
 interface IModalProps extends JSX.ElementChildrenAttribute {
   title?: string;
@@ -11,7 +11,7 @@ interface IModalProps extends JSX.ElementChildrenAttribute {
   padding?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number;
 }
 
-export function ModalContainer(props: PropsWithChildren<IModalProps>) {
+export function Modal(props: PropsWithChildren<IModalProps>) {
   const {
     children,
     onClose,
@@ -24,7 +24,7 @@ export function ModalContainer(props: PropsWithChildren<IModalProps>) {
   } = props;
 
   return (
-    <Modal
+    <MantineModal
       onClose={onClose}
       opened={opened}
       transitionDuration={1000}
@@ -37,6 +37,6 @@ export function ModalContainer(props: PropsWithChildren<IModalProps>) {
       padding={padding}
     >
       {children}
-    </Modal>
+    </MantineModal>
   );
 }
