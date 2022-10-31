@@ -15,6 +15,9 @@ export default {
     onDrop: {
       action: 'onDrop',
     },
+    onClear: {
+      action: 'onClear',
+    },
   },
 } as ComponentMeta<typeof Dropzone>;
 

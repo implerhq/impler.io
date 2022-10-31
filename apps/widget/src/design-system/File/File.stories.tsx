@@ -5,8 +5,8 @@ export default {
   title: 'File',
   component: File,
   argTypes: {
-    onClose: {
-      action: 'onClose',
+    onClear: {
+      action: 'onClear',
     },
   },
 } as ComponentMeta<typeof File>;
