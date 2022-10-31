@@ -1,6 +1,8 @@
 export const colors = {
   primary: '#24A0ED',
-  success: '#69BA3C',
+  success: '#569D4F',
+  darkDeem: '#666666',
+  lightDeem: '#CCCCCC',
   black: '#FFFFFF',
-  danger: '#E64331',
+  danger: '#AB3022',
 };
