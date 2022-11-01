@@ -5,4 +5,5 @@ export const colors = {
   lightDeem: '#CCCCCC',
   black: '#FFFFFF',
   danger: '#AB3022',
+  light: '#F2F9FE',
 };
