@@ -193,6 +193,15 @@ class Impler {
       iframe.src = `${IFRAME_URL}/${projectId}?`;
       iframe.id = IFRAME_ID;
       iframe.style.border = 'none';
+      iframe.style.position = 'fixed';
+      iframe.style.top = '0';
+      iframe.style.left = '0';
+      iframe.style.width = '100%';
+      iframe.style.height = '100%';
+      iframe.style.margin = '0';
+      iframe.style.padding = '0';
+      iframe.style.overflow = 'hidden';
+      iframe.style.zIndex = Number.MAX_SAFE_INTEGER.toString();
       (iframe as any).crossorigin = 'anonymous';
       this.iframe = iframe;
     }

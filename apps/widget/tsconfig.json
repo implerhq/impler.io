@@ -19,7 +19,16 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "baseUrl": "src",
+    "paths": {
+      "@store/*": ["store/*"],
+      "@client": ["client/index.ts"],
+      "@config": ["config/index.ts"],
+      "@ui/*": ["design-system/*"],
+      "@types": ["types/index.ts"],
+      "@icons": ["icons/index.ts"],
+    }
   },
   "include": [
     "src"
