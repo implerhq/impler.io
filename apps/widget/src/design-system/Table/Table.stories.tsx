@@ -18,6 +18,16 @@ Simple.args = {
   data: [{ firstName: 'John', lastName: 'Baber', surname: 'Doe' }],
 };
 
+export const Empty = Template.bind({});
+Empty.args = {
+  headings: [
+    { title: 'First Name', key: 'firstName' },
+    { title: 'Last Name', key: 'lastName' },
+    { title: 'Surname', key: 'surname' },
+  ],
+  data: [],
+};
+
 export const CustomCellRender = Template.bind({});
 CustomCellRender.args = {
   headings: [

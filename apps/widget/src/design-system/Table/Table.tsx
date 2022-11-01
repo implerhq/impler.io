@@ -8,13 +8,14 @@ interface IHeadingItem {
 }
 
 interface ITableProps {
+  emptyDataText?: string;
   headings?: IHeadingItem[];
   data?: Record<string, string>[];
 }
 
 export function Table(props: ITableProps) {
   const { classes } = useStyles();
-  const { data, headings } = props;
+  const { data, headings, emptyDataText = 'No Data Found!' } = props;
 
   const isHeadingsEmpty = !headings || !Array.isArray(headings) || !headings.length;
   const isDataEmpty = !data || !Array.isArray(data) || !data.length;
@@ -34,7 +35,16 @@ export function Table(props: ITableProps) {
   };
 
   const TBody = () => {
-    if (isHeadingsEmpty || isDataEmpty) return <tbody />;
+    if (isHeadingsEmpty) return <tbody />;
+
+    if (isDataEmpty)
+      return (
+        <tbody>
+          <tr>
+            <td colSpan={headings?.length || 1}>{emptyDataText}</td>
+          </tr>
+        </tbody>
+      );
 
     return (
       <tbody>
