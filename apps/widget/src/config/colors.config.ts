@@ -4,7 +4,7 @@ export const colors = {
   darkDeem: '#666666',
   lightDeem: '#CCCCCC',
   lightGray: '#F8F8F8',
-  black: '#FFFFFF',
+  black: '#000000',
   danger: '#AB3022',
   light: '#F2F9FE',
 };

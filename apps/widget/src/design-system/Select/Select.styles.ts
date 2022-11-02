@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
 import { colors } from '../../config/colors.config';
 import { createStyles, MantineTheme } from '@mantine/core';
-import { ISelectProps } from './Select';
 
 export const getLabelStyles = (theme: MantineTheme): React.CSSProperties => ({
   fontWeight: 'bold',
+  color: colors.black,
 });
 
 export const getSelectStyles = (theme: MantineTheme): React.CSSProperties => ({

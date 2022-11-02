@@ -22,5 +22,4 @@ Simple.args = {
       label: 'Review',
     },
   ],
-  size: 'xs',
 };

@@ -27,11 +27,16 @@ export const getCheckIconStyles = (theme) => ({
   display: 'block',
 });
 
+export const getWrapperStyles = (theme) => ({
+  width: '100%',
+});
+
 export default createStyles((theme: MantineTheme, params, getRef): Record<string, any> => {
   return {
     icon: getIconStyles(theme),
     successRoot: getSuccessRootStyles(theme),
     root: getRootStyles(theme),
     checkIcon: getCheckIconStyles(theme),
+    wrapper: getWrapperStyles(theme),
   };
 });
