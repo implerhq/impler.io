@@ -1,4 +1,4 @@
-import { Stepper as MantineStepper, DefaultMantineColor, MantineSize } from '@mantine/core';
+import { Stepper as MantineStepper, DefaultMantineColor } from '@mantine/core';
 import useStyles from './Stepper.styles';
 
 interface IStep {
@@ -9,11 +9,11 @@ interface IStep {
 export interface IStepperProps {
   active: number;
   steps: IStep[];
-  size: MantineSize;
+  size?: 'xs' | 'sm' | 'md';
 }
 
 export function Stepper(props: IStepperProps) {
-  const { active, steps, size } = props;
+  const { active, steps, size = 'md' } = props;
   const { classes } = useStyles(props);
 
   const getColor = (index: number): DefaultMantineColor => {

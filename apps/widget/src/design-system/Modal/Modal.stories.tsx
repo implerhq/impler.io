@@ -32,6 +32,5 @@ Simple.args = {
   centered: true,
   opened: true,
   overflow: 'inside',
-  padding: 'sm',
   children: 'Content',
 };
