@@ -8,9 +8,9 @@ export default {
 
 const Template: ComponentStory<typeof MappingItem> = (args) => <MappingItem {...args} />;
 
-export const Simple = Template.bind({});
+export const NotMapped = Template.bind({});
 
-Simple.args = {
+NotMapped.args = {
   options: [
     {
       label: 'Firstname',
@@ -25,4 +25,24 @@ Simple.args = {
   heading: 'First Name',
   size: 'sm',
   placeholder: 'Select Field',
+};
+
+export const Mapped = Template.bind({});
+
+Mapped.args = {
+  options: [
+    {
+      label: 'Firstname',
+      value: '1',
+    },
+    {
+      label: 'Lastname',
+      value: '2',
+    },
+  ],
+  searchable: true,
+  heading: 'First Name',
+  size: 'sm',
+  placeholder: 'Select Field',
+  value: '1',
 };

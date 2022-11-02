@@ -10,6 +10,7 @@ interface IOption {
 
 interface IMappingItem {
   heading: string;
+  required?: boolean;
   options: IOption[];
   value?: string;
   placeholder?: string;
@@ -23,6 +24,7 @@ export function MappingItem(props: IMappingItem) {
   const {
     heading,
     options,
+    required,
     value,
     placeholder = 'Select field',
     size = 'sm',
@@ -43,6 +45,7 @@ export function MappingItem(props: IMappingItem) {
       <Group className={classes.selectionRoot} align="stretch" ref={groupRef} noWrap>
         <Text size={size} className={classes.heading}>
           {heading}
+          {required ? <span className={classes.required}>&nbsp;*</span> : null}
         </Text>
         <Select
           placeholder={placeholder}
