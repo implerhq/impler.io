@@ -1,6 +1,7 @@
 import { FileIcon, CrossIcon } from '../../icons';
 import { Group, Text } from '@mantine/core';
 import useStyles from './File.style';
+import { colors } from '../../config/colors.config';
 
 interface IFile {
   name: string;
@@ -21,13 +22,13 @@ export function File(props: IFile) {
 
   return (
     <Group className={classes.root}>
-      <Group spacing="sm">
-        <FileIcon className={classes.fileIcon} />
+      <Group spacing="xs">
+        <FileIcon className={classes.fileIcon} fill={colors.darkDeem} />
         <Text size="sm" inline className={classes.nameText}>
           {name}
         </Text>
       </Group>
-      <Group spacing="sm">
+      <Group spacing="xs">
         <Text size="sm" inline className={classes.sizeText}>
           {size}
         </Text>
