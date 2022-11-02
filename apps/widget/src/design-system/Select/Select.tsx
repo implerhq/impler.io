@@ -7,17 +7,18 @@ interface IOption {
   label: string;
 }
 
-interface ISelectProps {
+export interface ISelectProps {
   title?: string;
   placeholder?: string;
   data: IOption[];
   error?: string;
   required?: boolean;
+  width?: string | number;
 }
 
 export function Select(props: ISelectProps) {
-  const { classes } = useStyles();
-  const { title, placeholder, data, error, required = true } = props;
+  const { title, placeholder, data, error, required = true, width = '100%' } = props;
+  const { classes } = useStyles({ width });
 
   return (
     <MantineNativeSelect
@@ -30,6 +31,7 @@ export function Select(props: ISelectProps) {
       classNames={{
         label: classes.label,
         input: classes.select,
+        root: classes.root,
       }}
       required={required}
     />

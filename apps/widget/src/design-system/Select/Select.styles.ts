@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
 import { colors } from '../../config/colors.config';
 import { createStyles, MantineTheme } from '@mantine/core';
+import { ISelectProps } from './Select';
 
 export const getLabelStyles = (theme: MantineTheme): React.CSSProperties => ({
   fontWeight: 'bold',
@@ -11,9 +12,16 @@ export const getSelectStyles = (theme: MantineTheme): React.CSSProperties => ({
   cursor: 'pointer',
 });
 
-export default createStyles((theme: MantineTheme, params, getRef): Record<string, any> => {
-  return {
-    label: getLabelStyles(theme),
-    select: getSelectStyles(theme),
-  };
+export const getRootStyles = (theme: MantineTheme, width: string | number): React.CSSProperties => ({
+  width,
 });
+
+export default createStyles(
+  (theme: MantineTheme, { width }: { width: string | number }, getRef): Record<string, any> => {
+    return {
+      label: getLabelStyles(theme),
+      select: getSelectStyles(theme),
+      root: getRootStyles(theme, width),
+    };
+  }
+);

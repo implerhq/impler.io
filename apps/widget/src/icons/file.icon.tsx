@@ -4,13 +4,17 @@ export function FileIcon(props: IIcon) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="-4 -2 24 24"
-      fill="currentColor"
-      style={props?.styles}
-      className={props?.className}
+      width="63.56"
+      height="89.659"
+      viewBox="0 0 63.56 89.659"
+      style={props.styles}
+      className={props.className}
     >
-      {/* eslint-disable-next-line max-len */}
-      <path d="M10.298 2H3a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V4.961L10.298 2zM3 0h8l5 4v13a3 3 0 0 1-3 3H3a3 3 0 0 1-3-3V3a3 3 0 0 1 3-3z"></path>
+      <path
+        fill="#cee7f8"
+        // eslint-disable-next-line max-len
+        d="M62.072 19.981 43.591 1.488A5.034 5.034 0 0 0 40 0H5.476A5.482 5.482 0 0 0 0 5.476v79.425a4.756 4.756 0 0 0 4.758 4.758h54.044a4.756 4.756 0 0 0 4.758-4.758V23.559a5.026 5.026 0 0 0-1.488-3.578Zm-1.077 41.245a2.884 2.884 0 0 0-.744-.09H29.497a3.166 3.166 0 0 1-2.232-.923l-3.822-3.822a3.119 3.119 0 0 0-2.257-.923l-17.968.115a3.77 3.77 0 0 0-.654.064V5.476a2.917 2.917 0 0 1 2.911-2.911H40a1.623 1.623 0 0 1 .359.038v18.673a2.95 2.95 0 0 0 2.95 2.95h17.685ZM33.062 28.971V10.259H8.9v38.18h45.413V28.971Zm-21.6-16.146h19.032v6.8H11.465Zm0 9.362h19.032v6.746H11.465Zm0 9.311h19.032v6.079H11.465Zm0 8.644h19.032v5.733H11.465Zm40.283 5.733H33.063v-5.736h18.686Zm0-8.3H33.063v-6.036h18.686Z"
+      />
     </svg>
   );
 }
