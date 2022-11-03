@@ -4,17 +4,14 @@ export function Download(props: IIcon) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      viewBox="-5 -5 24 24"
       width="24"
-      height="24"
-      viewBox="0 0 24 24"
+      fill="currentColor"
       className={props?.className}
       style={props?.styles}
     >
-      <path d="M0,0H24V24H0Z" fill="none" />
-      <path
-        d="M3,19H21v2H3Zm10-5.828L19.071,7.1l1.414,1.414L12,17,3.515,8.515,4.929,7.1,11,13.17V2h2Z"
-        fill={props?.fill || '#24a0ed'}
-      />
+      {/* eslint-disable-next-line max-len */}
+      <path d="M8 6.641l1.121-1.12a1 1 0 0 1 1.415 1.413L7.707 9.763a.997.997 0 0 1-1.414 0L3.464 6.934A1 1 0 1 1 4.88 5.52L6 6.641V1a1 1 0 1 1 2 0v5.641zM1 12h12a1 1 0 0 1 0 2H1a1 1 0 0 1 0-2z" />
     </svg>
   );
 }
