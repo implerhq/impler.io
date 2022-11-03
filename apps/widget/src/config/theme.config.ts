@@ -6,9 +6,5 @@ export const mantineConfig: MantineThemeOverride = {
   fontFamily: "'Lato', sans serif",
   headings: {
     fontFamily: "'Lato', sans serif",
-    sizes: {
-      h1: { fontSize: 26 },
-      h2: { fontSize: 20 },
-    },
   },
 };
