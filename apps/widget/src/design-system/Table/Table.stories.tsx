@@ -28,12 +28,15 @@ Empty.args = {
   data: [],
 };
 
-export const CustomCellRender = Template.bind({});
-CustomCellRender.args = {
+export const WithError = Template.bind({});
+WithError.args = {
   headings: [
-    { title: 'First Name', key: 'firstName', Cell: (item) => <b>{item.firstName}</b> },
+    { title: 'First Name', key: 'firstName' },
     { title: 'Last Name', key: 'lastName' },
     { title: 'Surname', key: 'surname' },
   ],
-  data: [{ firstName: 'John', lastName: 'Baber', surname: 'Doe' }],
+  data: [
+    { firstName: 'John', lastName: 'Baber', surname: 'Doe', error: '`firstName` should be unique' },
+    { firstName: 'John', lastName: 'Baber', surname: 'Doe', error: '`lastName` should be unique' },
+  ],
 };

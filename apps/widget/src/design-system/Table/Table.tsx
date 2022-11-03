@@ -1,16 +1,18 @@
 import { Table as MantineTable } from '@mantine/core';
 import useStyles from './Table.style';
+import { getErrorObject } from '../../util/helpers';
+import { InvalidWarning } from '../InvalidWarning';
 
 interface IHeadingItem {
   title: string;
   key: string;
-  Cell?: (item: Record<string, string>) => any;
+  width?: number | string;
 }
 
 interface ITableProps {
   emptyDataText?: string;
   headings?: IHeadingItem[];
-  data?: Record<string, string>[];
+  data?: Record<string, any>[];
 }
 
 export function Table(props: ITableProps) {
@@ -27,7 +29,9 @@ export function Table(props: ITableProps) {
       <thead className={classes.heading}>
         <tr>
           {headings.map((heading: IHeadingItem, index: number) => (
-            <th key={index}>{heading.title}</th>
+            <th style={{ textAlign: 'center', width: heading.width || '' }} key={index}>
+              {heading.title}
+            </th>
           ))}
         </tr>
       </thead>
@@ -35,6 +39,7 @@ export function Table(props: ITableProps) {
   };
 
   const TBody = () => {
+    let errorObject: Record<string, string>;
     if (isHeadingsEmpty) return <tbody />;
 
     if (isDataEmpty)
@@ -48,13 +53,26 @@ export function Table(props: ITableProps) {
 
     return (
       <tbody>
-        {data.map((item: Record<string, string>, i: number) => (
-          <tr key={item.id || i}>
-            {headings.map((heading: IHeadingItem, fieldIndex: number) => (
-              <td key={fieldIndex}>{typeof heading.Cell === 'function' ? heading.Cell(item) : item[heading.key]}</td>
-            ))}
-          </tr>
-        ))}
+        {data.map((item: Record<string, string>, i: number) => {
+          errorObject = getErrorObject(item.error);
+
+          return (
+            <tr key={item.id || i}>
+              {headings.map((heading: IHeadingItem, fieldIndex: number) =>
+                errorObject[heading.key] ? (
+                  // if error exist for column
+                  <td key={fieldIndex} className={classes.invalidColumn}>
+                    {item[heading.key]}
+                    <InvalidWarning label={errorObject[heading.key]} />
+                  </td>
+                ) : (
+                  // normal column
+                  <td key={fieldIndex}>{item[heading.key]}</td>
+                )
+              )}
+            </tr>
+          );
+        })}
       </tbody>
     );
   };
