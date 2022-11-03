@@ -9,6 +9,7 @@ import { ConfirmModal } from './Phases/ConfirmModal';
 
 export function Widget() {
   const [phase, setPhase] = useState<number>(1);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   return (
     <Container>
@@ -19,12 +20,9 @@ export function Widget() {
           ) : phase === 2 ? (
             <Phase2 onNextClick={() => setPhase(3)} onPrevClick={() => setPhase(1)} />
           ) : phase === 3 ? (
-            <Phase3 onNextClick={() => setPhase(4)} onPrevClick={() => setPhase(2)} />
-          ) : phase === 4 ? (
-            <ConfirmModal onClose={() => setPhase(3)} opened wrongDataCount={8} />
-          ) : (
-            <p>asdf</p>
-          )}
+            <Phase3 onNextClick={() => setShowConfirmModal(true)} onPrevClick={() => setPhase(2)} />
+          ) : null}
+          <ConfirmModal onClose={() => setShowConfirmModal(false)} opened={showConfirmModal} wrongDataCount={8} />
         </Wrapper>
       </Modal>
     </Container>
