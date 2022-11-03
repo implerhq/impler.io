@@ -17,6 +17,4 @@ export const Simple = Template.bind({});
 Simple.args = {
   total: 10,
   page: 1,
-  limit: 10,
-  totalRecords: 100,
 };

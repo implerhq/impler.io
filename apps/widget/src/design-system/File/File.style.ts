@@ -16,6 +16,7 @@ export const getContainerStyles = (theme: MantineTheme): React.CSSProperties => 
 export const getFileIconStyles = (theme: MantineTheme): React.CSSProperties => ({
   color: colors.darkDeem,
   height: '20px',
+  width: '20px',
 });
 
 export const getCrossIconStyles = (theme: MantineTheme): React.CSSProperties => ({

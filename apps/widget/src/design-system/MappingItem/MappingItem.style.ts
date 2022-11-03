@@ -4,6 +4,12 @@ import { colors } from '../../config/colors.config';
 
 export const getRootStyles = (theme: MantineTheme): React.CSSProperties => ({
   justifyContent: 'space-between',
+  width: '100%',
+  [`@media (max-width: ${theme.breakpoints.md}px)`]: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    gap: 3,
+  },
 });
 
 export const getSelectionRootStyles = (theme: MantineTheme): React.CSSProperties => ({
@@ -12,7 +18,12 @@ export const getSelectionRootStyles = (theme: MantineTheme): React.CSSProperties
   borderStyle: 'solid',
   borderRadius: 4,
   padding: 0,
-  width: '70%',
+  [`@media (max-width: ${theme.breakpoints.md}px)`]: {
+    width: '100%',
+  },
+  [`@media (min-width: ${theme.breakpoints.md}px)`]: {
+    width: '70%',
+  },
 });
 
 export const getHeadingStyles = (theme: MantineTheme) => ({
@@ -52,6 +63,13 @@ export const getStatusTextStyles = (theme: MantineTheme): React.CSSProperties =>
   display: 'flex',
   alignItems: 'center',
   gap: theme.spacing.sm,
+  [`@media (max-width: ${theme.breakpoints.md}px)`]: {
+    flexDirection: 'row-reverse',
+  },
+});
+
+export const getRequiredStyles = (theme: MantineTheme): React.CSSProperties => ({
+  color: 'red',
 });
 
 export default createStyles((theme: MantineTheme, params: { height: number }, getRef): Record<string, any> => {
@@ -62,5 +80,6 @@ export default createStyles((theme: MantineTheme, params: { height: number }, ge
     selectRoot: getSelectRootStyles(theme),
     select: getSelectStyles(theme, params.height),
     heading: getHeadingStyles(theme),
+    required: getRequiredStyles(theme),
   };
 });

@@ -1,7 +1,8 @@
 export const TEXTS = {
   DROPZONE: {
-    TITLE: 'Drag file here or Click to select file',
-    SUBTITLE: '.csv, .xlx, .xlsx files are supported',
+    TITLE: 'Drop your file here or ',
+    BROWSE: 'Browse',
+    SUBTITLE: 'Select any .csv, .xlx or .xlsx file',
     FILE_SELECTION: 'File selected successfully',
   },
 };

@@ -1,4 +1,4 @@
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, ReactNode } from 'react';
 import { Button as MantineButton, MantineSize } from '@mantine/core';
 
 interface IButtonProps {
@@ -8,13 +8,22 @@ interface IButtonProps {
   onClick?: () => void;
   size?: MantineSize;
   color?: 'blue' | 'red';
+  leftIcon?: ReactNode;
 }
 
 export function Button(props: PropsWithChildren<IButtonProps>) {
-  const { variant, disabled, children, loading, onClick, size = 'md', color } = props;
+  const { variant, disabled, children, loading, onClick, size = 'md', color, leftIcon } = props;
 
   return (
-    <MantineButton disabled={disabled} variant={variant} loading={loading} onClick={onClick} size={size} color={color}>
+    <MantineButton
+      leftIcon={leftIcon}
+      disabled={disabled}
+      variant={variant}
+      loading={loading}
+      onClick={onClick}
+      size={size}
+      color={color}
+    >
       {children}
     </MantineButton>
   );

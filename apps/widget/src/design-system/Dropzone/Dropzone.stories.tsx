@@ -23,4 +23,13 @@ export default {
 
 const Template: ComponentStory<typeof Dropzone> = (args) => <Dropzone {...args} />;
 
-export const Simple = Template.bind({});
+export const Default = Template.bind({});
+
+export const WithFile = Template.bind({});
+WithFile.args = {
+  title: 'Select a file',
+  file: {
+    name: 'Document.tsx',
+    size: 1200,
+  } as unknown as File,
+};

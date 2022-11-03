@@ -1,5 +1,6 @@
 import { PropsWithChildren } from 'react';
 import { Modal as MantineModal } from '@mantine/core';
+import useStyles from './Modal.style';
 
 interface IModalProps extends JSX.ElementChildrenAttribute {
   title?: string;
@@ -8,20 +9,11 @@ interface IModalProps extends JSX.ElementChildrenAttribute {
   onClose: () => void;
   overflow?: 'inside' | 'outside';
   size?: 'sm' | 'md' | 'lg' | '100%' | number;
-  padding?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number;
 }
 
 export function Modal(props: PropsWithChildren<IModalProps>) {
-  const {
-    children,
-    onClose,
-    opened,
-    size = '100%',
-    padding = 'sm',
-    overflow = 'inside',
-    title,
-    centered = true,
-  } = props;
+  const { children, onClose, opened, size = '100%', overflow = 'inside', title, centered = true } = props;
+  const { classes } = useStyles();
 
   return (
     <MantineModal
@@ -34,7 +26,10 @@ export function Modal(props: PropsWithChildren<IModalProps>) {
       centered={centered}
       overflow={overflow}
       title={title}
-      padding={padding}
+      classNames={{
+        header: classes.header,
+        modal: classes.modal,
+      }}
     >
       {children}
     </MantineModal>
