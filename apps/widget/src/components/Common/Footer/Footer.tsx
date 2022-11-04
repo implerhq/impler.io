@@ -29,6 +29,8 @@ export function Footer(props: IFooterProps) {
           </Button>
           <Button onClick={onNextClick}>{TEXTS.PHASE3.CONFIRM_UPLOAD}</Button>
         </>
+      ) : active === 4 ? (
+        <Button onClick={onNextClick}>{TEXTS.COMPLETE.UPLOAD_AGAIN}</Button>
       ) : null}
     </Group>
   );

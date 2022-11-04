@@ -7,10 +7,11 @@ interface IConfirmModalProps {
   opened: boolean;
   wrongDataCount: number;
   onClose: () => void;
+  onConfirm: (exempt: boolean) => void;
 }
 
 export function ConfirmModal(props: IConfirmModalProps) {
-  const { opened, onClose, wrongDataCount } = props;
+  const { opened, onClose, wrongDataCount, onConfirm } = props;
 
   return (
     <MantineModal centered opened={opened} onClose={onClose} withCloseButton={false} padding="xl" size="lg">
@@ -23,8 +24,10 @@ export function ConfirmModal(props: IConfirmModalProps) {
           {TEXTS.CONFIRM_MODAL.subTitle}
         </Text>
         <Group spacing="sm" style={{ flexDirection: 'row' }}>
-          <Button variant="outline">{TEXTS.CONFIRM_MODAL.EXEMPT_CONTINUE}</Button>
-          <Button>{TEXTS.CONFIRM_MODAL.KEEP_CONTINUE}</Button>
+          <Button onClick={() => onConfirm(true)} variant="outline">
+            {TEXTS.CONFIRM_MODAL.EXEMPT_CONTINUE}
+          </Button>
+          <Button onClick={() => onConfirm(false)}>{TEXTS.CONFIRM_MODAL.KEEP_CONTINUE}</Button>
         </Group>
       </Group>
     </MantineModal>

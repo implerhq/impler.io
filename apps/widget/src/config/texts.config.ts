@@ -3,11 +3,13 @@ export const TEXTS = {
     UPLOAD: 'Upload',
     MAPPING: 'Mapping',
     REVIEW: 'Review',
+    COMPLETE: 'Complete',
   },
   STEPS: {
     UPLOAD: 'Upload',
     MAPPING: 'Mapping',
     REVIEW: 'Review',
+    COMPLETE: 'Complete',
   },
   DROPZONE: {
     TITLE: 'Drop your file here or ',
@@ -33,12 +35,18 @@ export const TEXTS = {
     INVALID_DATA_INFO: 'Sheet contains invalid data, hover over columns to see error',
     EXPORT_DATA: 'Export Data',
     BACK_TO_MAPPING: 'Back to mapping',
-    CONFIRM_UPLOAD: 'Confirm Upload',
+    CONFIRM_UPLOAD: 'Complete Upload',
   },
   CONFIRM_MODAL: {
-    title: '8 rows appears to be have wrong data',
+    title: 'rows appears to be have wrong data',
     subTitle: 'You can choose to exempt wrong data or keep your wrong data and confirm your upload',
     EXEMPT_CONTINUE: 'Exempt wrong data and Continue',
     KEEP_CONTINUE: 'Continue with wrong data',
+  },
+  COMPLETE: {
+    greeting: 'Bravo!',
+    title: 'rows have been uploaded',
+    subTitle: '700 rows have been uploaded successfully, and currently is in process, it will be ready shortly.',
+    UPLOAD_AGAIN: 'Upload new File',
   },
 };

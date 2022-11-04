@@ -10,6 +10,7 @@ const Titles = {
   1: TEXTS.TITLES.UPLOAD,
   2: TEXTS.TITLES.MAPPING,
   3: TEXTS.TITLES.REVIEW,
+  4: TEXTS.TITLES.COMPLETE,
 };
 
 const Steps = [
@@ -21,6 +22,9 @@ const Steps = [
   },
   {
     label: TEXTS.STEPS.REVIEW,
+  },
+  {
+    label: TEXTS.STEPS.COMPLETE,
   },
 ];
 
