@@ -13,11 +13,22 @@ interface IDropzoneProps {
   onClear?: () => void;
   file?: FileWithPath;
   title?: string;
+  className?: string;
 }
 
 export function Dropzone(props: IDropzoneProps) {
-  const { loading, accept = [MIME_TYPES.csv, MIME_TYPES.xls, MIME_TYPES.xlsx], onDrop, onClear, file, title } = props;
+  const {
+    loading,
+    accept = [MIME_TYPES.csv, MIME_TYPES.xls, MIME_TYPES.xlsx],
+    onDrop,
+    onClear,
+    file,
+    title,
+    className,
+  } = props;
   const { classes } = useStyles();
+  const wrapperClasses = [classes.wrapper];
+  if (className) wrapperClasses.push(className);
 
   const isFileSelected = !!(file && file.name && file.size);
 
@@ -66,7 +77,7 @@ export function Dropzone(props: IDropzoneProps) {
   };
 
   return (
-    <div className={classes.wrapper}>
+    <div className={wrapperClasses.join(' ')}>
       {title ? (
         <Text weight="bold" size="sm" color="">
           {title}
