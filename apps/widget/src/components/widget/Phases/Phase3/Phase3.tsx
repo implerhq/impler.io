@@ -5,6 +5,7 @@ import { Button } from '@ui/Button';
 import { Pagination } from '@ui/Pagination';
 import { Table } from '@ui/Table';
 import { Footer } from 'components/Common/Footer';
+import { useRef, useState, useEffect } from 'react';
 import useStyles from './Styles';
 
 interface IPhase3Props {
@@ -13,6 +14,11 @@ interface IPhase3Props {
 }
 
 export function Phase3(props: IPhase3Props) {
+  const tableWrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
+  const [tableWrapperDimensions, setTableWrapperDimentions] = useState({
+    height: 200,
+    width: 500,
+  });
   const { classes } = useStyles();
   const { onNextClick, onPrevClick } = props;
 
@@ -30,8 +36,16 @@ export function Phase3(props: IPhase3Props) {
     state: 'Gujarat',
   }));
 
+  useEffect(() => {
+    //  setting wrapper height
+    setTableWrapperDimentions({
+      height: tableWrapperRef.current.getBoundingClientRect().height,
+      width: tableWrapperRef.current.getBoundingClientRect().width,
+    });
+  }, []);
+
   return (
-    <Group className={classes.container} spacing="sm">
+    <>
       <Group className={classes.textContainer} align="center">
         <Group align="center" spacing="xs">
           <Warning fill={colors.red} className={classes.warningIcon} />
@@ -42,24 +56,30 @@ export function Phase3(props: IPhase3Props) {
         </Button>
       </Group>
 
-      <Table
-        headings={[
-          { key: 'index', title: '#', width: '4%' },
-          { key: 'fname', title: 'First Name' },
-          { key: 'lname', title: 'Last Name' },
-          { key: 'surname', title: 'Surname' },
-          { key: 'gender', title: 'Gender' },
-          { key: 'email', title: 'Email' },
-          { key: 'age', title: 'Age' },
-          { key: 'city', title: 'City' },
-          { key: 'country', title: 'Country' },
-          { key: 'state', title: 'State' },
-        ]}
-        data={data}
-      />
+      <div ref={tableWrapperRef} style={{ flexGrow: 1 }}>
+        <Table
+          style={{
+            height: tableWrapperDimensions.height,
+            // width: tableWrapperDimensions.width,
+          }}
+          headings={[
+            { key: 'index', title: '#', width: '4%' },
+            { key: 'fname', title: 'First Name' },
+            { key: 'lname', title: 'Last Name' },
+            { key: 'surname', title: 'Surname' },
+            { key: 'gender', title: 'Gender' },
+            { key: 'email', title: 'Email' },
+            { key: 'age', title: 'Age' },
+            { key: 'city', title: 'City' },
+            { key: 'country', title: 'Country' },
+            { key: 'state', title: 'State' },
+          ]}
+          data={data}
+        />
+      </div>
       <Pagination page={1} total={10} />
 
       <Footer active={3} onNextClick={onNextClick} onPrevClick={onPrevClick} />
-    </Group>
+    </>
   );
 }

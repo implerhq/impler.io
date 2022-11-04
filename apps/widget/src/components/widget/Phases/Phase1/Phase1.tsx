@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { TEXTS } from '@config';
 import { Select } from '@ui/Select';
 import { Button } from '@ui/Button';
@@ -14,9 +15,10 @@ interface IPhase1Props {
 export function Phase1(props: IPhase1Props) {
   const { classes } = useStyles();
   const { onNextClick } = props;
+  const [selectedFile, setSelectedFile] = useState<File>();
 
   return (
-    <Group className={classes.container} spacing="md">
+    <>
       <Group className={classes.templateContainer} spacing="lg" noWrap>
         <Select
           title={TEXTS.PHASE1.SELECT_TITLE}
@@ -31,9 +33,15 @@ export function Phase1(props: IPhase1Props) {
         </div>
       </Group>
 
-      <Dropzone onDrop={() => {}} title={TEXTS.PHASE1.SELECT_FILE} />
+      <Dropzone
+        className={classes.dropzone}
+        onDrop={(file) => setSelectedFile(file[0])}
+        onClear={() => setSelectedFile(undefined)}
+        title={TEXTS.PHASE1.SELECT_FILE}
+        file={selectedFile}
+      />
 
       <Footer onNextClick={onNextClick} onPrevClick={() => {}} active={1} />
-    </Group>
+    </>
   );
 }
