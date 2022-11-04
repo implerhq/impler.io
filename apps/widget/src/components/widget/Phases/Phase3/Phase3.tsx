@@ -22,7 +22,7 @@ export function Phase3(props: IPhase3Props) {
   const { classes } = useStyles();
   const { onNextClick, onPrevClick } = props;
 
-  const data = Array.from({ length: 10 }).map(() => ({
+  const data = Array.from({ length: 50 }).map(() => ({
     index: 10,
     error: '`fname` should not be empty, `email` should be unique',
     fname: '',
@@ -34,6 +34,14 @@ export function Phase3(props: IPhase3Props) {
     city: 'Surat',
     country: 'India',
     state: 'Gujarat',
+    height: '5.5ft',
+    weight: '45kg',
+    bday: '18/9/1999',
+    mname: 'Ramubhai',
+    faname: 'Bhagavanbhai',
+    passed: '10th',
+    college: 'J P Dawer',
+    university: 'VNSGU',
   }));
 
   useEffect(() => {
@@ -73,6 +81,14 @@ export function Phase3(props: IPhase3Props) {
             { key: 'city', title: 'City' },
             { key: 'country', title: 'Country' },
             { key: 'state', title: 'State' },
+            { key: 'height', title: 'Height' },
+            { key: 'weight', title: 'Weight' },
+            { key: 'bday', title: 'Birthdate' },
+            { key: 'mname', title: 'Mother Name' },
+            { key: 'faname', title: 'Father Name' },
+            { key: 'passed', title: 'Passed' },
+            { key: 'college', title: 'College' },
+            { key: 'university', title: 'University' },
           ]}
           data={data}
         />

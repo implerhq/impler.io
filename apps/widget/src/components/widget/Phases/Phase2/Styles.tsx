@@ -15,6 +15,7 @@ export const getMappingWrapperStyles = (theme: MantineTheme): React.CSSPropertie
   display: 'flex',
   flexDirection: 'column',
   gap: '15px',
+  paddingRight: 5,
 });
 
 export default createStyles((theme: MantineTheme, params, getRef): Record<string, any> => {
