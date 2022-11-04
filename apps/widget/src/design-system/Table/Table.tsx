@@ -2,6 +2,7 @@ import { Table as MantineTable } from '@mantine/core';
 import useStyles from './Table.style';
 import { getErrorObject } from '../../util/helpers';
 import { InvalidWarning } from '../InvalidWarning';
+import React from 'react';
 
 interface IHeadingItem {
   title: string;
@@ -13,11 +14,12 @@ interface ITableProps {
   emptyDataText?: string;
   headings?: IHeadingItem[];
   data?: Record<string, any>[];
+  style?: React.CSSProperties;
 }
 
 export function Table(props: ITableProps) {
   const { classes } = useStyles();
-  const { data, headings, emptyDataText = 'No Data Found!' } = props;
+  const { data, headings, emptyDataText = 'No Data Found!', style } = props;
 
   const isHeadingsEmpty = !headings || !Array.isArray(headings) || !headings.length;
   const isDataEmpty = !data || !Array.isArray(data) || !data.length;
@@ -78,7 +80,7 @@ export function Table(props: ITableProps) {
   };
 
   return (
-    <MantineTable withBorder withColumnBorders className={classes.table}>
+    <MantineTable withBorder withColumnBorders className={classes.table} style={style}>
       <THead />
       <TBody />
     </MantineTable>

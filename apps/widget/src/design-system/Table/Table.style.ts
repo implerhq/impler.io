@@ -4,6 +4,9 @@ import { colors } from '../../config/colors.config';
 
 export const getTableStyles = (theme: MantineTheme) => ({
   textAlign: 'center',
+  overflow: 'auto',
+  display: 'block',
+  whiteSpace: 'nowrap',
 });
 
 export const getHeadingStyles = (theme: MantineTheme): React.CSSProperties => ({

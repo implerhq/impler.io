@@ -4,6 +4,7 @@ import { colors } from '../../config/colors.config';
 
 export const getRootStyles = (theme: MantineTheme): React.CSSProperties => ({
   borderColor: colors.primary,
+  flexGrow: 1,
 });
 
 export const getSuccessRootStyles = (theme: MantineTheme): React.CSSProperties => ({
@@ -13,6 +14,10 @@ export const getSuccessRootStyles = (theme: MantineTheme): React.CSSProperties =
   padding: theme.spacing.md,
   borderRadius: 4,
   position: 'relative',
+  flexGrow: 1,
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
 });
 
 export const getIconStyles = (theme) => ({
@@ -31,6 +36,13 @@ export const getWrapperStyles = (theme) => ({
   width: '100%',
 });
 
+export const getDropzoneInnerStyles = (theme: MantineTheme): React.CSSProperties => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  height: '100%',
+});
+
 export default createStyles((theme: MantineTheme, params, getRef): Record<string, any> => {
   return {
     icon: getIconStyles(theme),
@@ -38,5 +50,6 @@ export default createStyles((theme: MantineTheme, params, getRef): Record<string
     root: getRootStyles(theme),
     checkIcon: getCheckIconStyles(theme),
     wrapper: getWrapperStyles(theme),
+    inner: getDropzoneInnerStyles(theme),
   };
 });

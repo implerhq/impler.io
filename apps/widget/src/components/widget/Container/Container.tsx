@@ -3,7 +3,7 @@ import * as WebFont from 'webfontloader';
 import { useParams } from 'react-router-dom';
 import { IUserDataPayload } from '@impler/shared';
 import { Global } from '@emotion/react';
-import { API_URL } from '@config';
+import { API_URL, colors } from '@config';
 import { Provider } from '../Provider';
 
 export function Container({ children }: PropsWithChildren) {
@@ -55,10 +55,30 @@ export function Container({ children }: PropsWithChildren) {
     <>
       <Global
         styles={{
+          body: {
+            backgroundColor: 'transparent',
+          },
           '*': {
             boxSizing: 'border-box',
             margin: 0,
             padding: 0,
+          },
+          /* width */
+          '::-webkit-scrollbar': {
+            width: '7px',
+            height: '7px',
+          },
+
+          /* Track */
+          '::-webkit-scrollbar-track': {
+            boxShadow: 'inset 0 0 3px grey',
+            borderRadius: '10px',
+          },
+
+          /* Handle */
+          '::-webkit-scrollbar-thumb': {
+            background: colors.primary,
+            borderRadius: '10px',
           },
         }}
       />

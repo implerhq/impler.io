@@ -2,6 +2,7 @@ import { FileIcon, CrossIcon } from '../../icons';
 import { Group, Text } from '@mantine/core';
 import useStyles from './File.style';
 import { colors } from '../../config/colors.config';
+import { formatBytes } from '../../util/helpers';
 
 interface IFile {
   name: string;
@@ -30,7 +31,7 @@ export function File(props: IFile) {
       </Group>
       <Group spacing="xs">
         <Text size="sm" inline className={classes.sizeText}>
-          {size}
+          {formatBytes(size)}
         </Text>
         <CrossIcon className={classes.crossIcon} onClick={onClearClick} />
       </Group>
