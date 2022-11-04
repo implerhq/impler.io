@@ -12,7 +12,7 @@ interface IModalProps extends JSX.ElementChildrenAttribute {
 }
 
 export function Modal(props: PropsWithChildren<IModalProps>) {
-  const { children, onClose, opened, size = '100%', overflow = 'inside', title, centered = true } = props;
+  const { children, onClose, opened, title, centered = true } = props;
   const { classes } = useStyles();
 
   return (
@@ -22,14 +22,11 @@ export function Modal(props: PropsWithChildren<IModalProps>) {
       transitionDuration={1000}
       transitionTimingFunction="ease"
       transition="scale"
-      size={size}
+      overlayOpacity={0.4}
+      overlayBlur={0.8}
       centered={centered}
-      overflow={overflow}
       title={title}
-      classNames={{
-        header: classes.header,
-        modal: classes.modal,
-      }}
+      classNames={classes}
     >
       {children}
     </MantineModal>
