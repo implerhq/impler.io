@@ -5,6 +5,7 @@ import { IUserDataPayload } from '@impler/shared';
 import { Global } from '@emotion/react';
 import { API_URL, colors } from '@config';
 import { Provider } from '../Provider';
+import { ParentWindow } from '@util';
 
 export function Container({ children }: PropsWithChildren) {
   const { projectId = '' } = useParams<{ projectId: string }>();
@@ -40,7 +41,7 @@ export function Container({ children }: PropsWithChildren) {
 
     window.addEventListener('message', handler);
 
-    window.parent.postMessage({ type: 'WIDGET_READY' }, '*');
+    ParentWindow.Ready();
 
     return () => window.removeEventListener('message', handler);
   }, []);

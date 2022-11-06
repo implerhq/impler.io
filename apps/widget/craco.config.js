@@ -8,6 +8,7 @@ module.exports = {
       '@ui': path.resolve(__dirname, './src/design-system'),
       '@types': path.resolve(__dirname, './src/types'),
       '@icons': path.resolve(__dirname, './src/icons/index.ts'),
+      "@util": path.resolve(__dirname, './src/util/index.ts'),
     },
   },
 };

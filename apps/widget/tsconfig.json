@@ -28,6 +28,7 @@
       "@ui/*": ["design-system/*"],
       "@types": ["types/index.ts"],
       "@icons": ["icons/index.ts"],
+      "@util": ["util/index.ts"],
     }
   },
   "include": [

@@ -7,6 +7,7 @@ import { Phase2 } from './Phases/Phase2';
 import { Phase3 } from './Phases/Phase3';
 import { ConfirmModal } from './Phases/ConfirmModal';
 import { Phase4 } from './Phases/Phase4';
+import { ParentWindow } from '@util';
 
 export function Widget() {
   const [phase, setPhase] = useState<number>(1);
@@ -18,7 +19,7 @@ export function Widget() {
   };
 
   const onClose = () => {
-    window.parent.postMessage({ type: 'CLOSE_WIDGET' }, '*');
+    ParentWindow.Close();
   };
 
   return (
