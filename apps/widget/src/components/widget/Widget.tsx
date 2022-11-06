@@ -17,9 +17,13 @@ export function Widget() {
     setPhase(4);
   };
 
+  const onClose = () => {
+    window.parent.postMessage({ type: 'CLOSE_WIDGET' }, '*');
+  };
+
   return (
     <Container>
-      <Modal opened={true} onClose={() => {}}>
+      <Modal opened={true} onClose={onClose}>
         <Wrapper active={phase}>
           {phase === 1 ? (
             <Phase1 onNextClick={() => setPhase(2)} />

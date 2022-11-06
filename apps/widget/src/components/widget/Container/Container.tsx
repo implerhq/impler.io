@@ -9,7 +9,6 @@ import { Provider } from '../Provider';
 export function Container({ children }: PropsWithChildren) {
   const { projectId = '' } = useParams<{ projectId: string }>();
   const [userDataPayload, setUserDataPayload] = useState<IUserDataPayload>();
-  const [backendUrl, setBackendUrl] = useState(API_URL);
   // const [theme, setTheme] = useState<>({});
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   const [fontFamily, setFontFamily] = useState<string>('Lato');
@@ -27,13 +26,10 @@ export function Container({ children }: PropsWithChildren) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handler = ({ data }: any) => {
       if (data && data.type === 'INIT_IFRAME') {
-        setUserDataPayload(data.value);
-
-        if (data.value.backendUrl) {
-          setBackendUrl(data.value.backendUrl);
-        }
-
         setFrameInitialized(true);
+      }
+      if (data && data.type === 'SHOW_WIDGET') {
+        setUserDataPayload(data.value);
       }
     };
 
@@ -85,7 +81,7 @@ export function Container({ children }: PropsWithChildren) {
       {frameInitialized ? (
         <Provider
           // api
-          backendUrl={backendUrl}
+          backendUrl={API_URL}
           // impler-context
           projectId={projectId}
           template={userDataPayload.template}

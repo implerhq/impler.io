@@ -3,7 +3,7 @@ import { Button } from '../../';
 function App() {
   return (
     <div className="App">
-      <Button />
+      <Button projectId="asdf" />
     </div>
   );
 }
