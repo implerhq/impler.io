@@ -13,6 +13,14 @@ export class HttpClient {
     });
   }
 
+  setAuthorizationToken(token: string) {
+    this.axiosClient.defaults.headers.common.ACCESS_TOKEN = token;
+  }
+
+  disposeAuthorizationToken() {
+    delete this.axiosClient.defaults.headers.common.ACCESS_TOKEN;
+  }
+
   async get(url: string, params?: IParamObject) {
     return await this.axiosClient
       .get(url, {
@@ -27,9 +35,5 @@ export class HttpClient {
 
   async patch(url: string, body = {}) {
     return await this.axiosClient.patch(url, body).then((response) => response.data.data);
-  }
-
-  async delete(url: string) {
-    return await this.axiosClient.delete(url).then((response) => response.data.data);
   }
 }
