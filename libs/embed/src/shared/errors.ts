@@ -24,3 +24,11 @@ export class DomainVerificationError extends Error {
     this.message = message;
   }
 }
+
+export class AuthenticationError extends Error {
+  constructor(message: string, ...args: any) {
+    super(message, ...(args as []));
+    this.name = 'AuthenticationError';
+    this.message = message;
+  }
+}

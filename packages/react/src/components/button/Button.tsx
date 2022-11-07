@@ -1,3 +1,4 @@
+import { IInitPayload, IShowPayload } from 'libs/shared/dist';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { ButtonProps } from './Button.types';
@@ -28,21 +29,22 @@ export const Button = ({
   projectId,
   template,
   authHeaderValue,
+  accessToken,
   extra,
 }: ButtonProps): JSX.Element => {
   const [isImplerInitiated, setIsImplerInitiated] = useState(false);
 
   useEffect(() => {
     if (window.impler && projectId) {
-      window.impler.init(projectId);
+      const initPayload: IInitPayload = { accessToken, template };
+      window.impler.init(projectId, initPayload);
       setIsImplerInitiated(true);
     }
   }, []);
 
   const onButtonClick = async () => {
     if (window.impler) {
-      const payload: any = {};
-      if (template) payload.template = template;
+      const payload: IShowPayload = {};
       if (extra) {
         if (typeof extra === 'object') payload.extra = JSON.stringify(extra);
         else payload.extra = extra;
@@ -51,6 +53,8 @@ export const Button = ({
         if (typeof authHeaderValue === 'function' && authHeaderValue.constructor.name === 'AsyncFunction') {
           payload.authHeaderValue = await authHeaderValue();
         } else if (typeof authHeaderValue === 'function') {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           payload.authHeaderValue = authHeaderValue();
         } else {
           payload.authHeaderValue = authHeaderValue;

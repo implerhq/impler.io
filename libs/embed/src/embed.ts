@@ -4,7 +4,7 @@
 //
 
 import * as EventTypes from './shared/eventTypes';
-import { UnmountedError } from './shared/errors';
+import { UnmountedError, AuthenticationError } from './shared/errors';
 import { IFRAME_URL } from './shared/resources';
 
 const WEASL_WRAPPER_ID = 'impler-container';
@@ -24,6 +24,12 @@ class Impler {
 
   private listeners: { [key: string]: (data: any) => void } = {};
 
+  private initPayload: any;
+
+  private isAuthenticated: boolean = false;
+
+  private authenticationError?: string;
+
   constructor(onloadFunc = function () {}) {
     this.onloadFunc = onloadFunc;
     this.widgetVisible = false;
@@ -33,10 +39,9 @@ class Impler {
     this.listeners[name] = cb;
   };
 
-  init = (
-    projectId: string,
-  ) => {
+  init = (projectId: string, payload: any) => {
     this.projectId = projectId;
+    this.initPayload = payload;
     this.initializeIframe(projectId);
     this.mountIframe();
   };
@@ -49,7 +54,7 @@ class Impler {
     wrapper.style.width = '100vw';
     wrapper.style.top = '0';
     wrapper.style.left = '0';
-  }
+  };
 
   hideWidget = () => {
     var elem = document.querySelector(`.${WRAPPER_CLASS_NAME}`) as HTMLBodyElement;
@@ -57,9 +62,9 @@ class Impler {
     if (elem) {
       elem.style.display = 'none';
     }
-  }
+  };
 
-  showWidget = (payload: WidgetPayload) => {
+  showWidget = (payload: any) => {
     this.ensureMounted();
     this.widgetVisible = !this.widgetVisible;
     var elem = document.querySelector(`.${WRAPPER_CLASS_NAME}`) as HTMLBodyElement;
@@ -75,12 +80,14 @@ class Impler {
       },
       '*'
     );
-  }
+  };
 
   // PRIVATE METHODS
   ensureMounted = () => {
     if (!document.getElementById(IFRAME_ID)) {
       throw new UnmountedError('impler.init needs to be called first');
+    } else if (!this.isAuthenticated) {
+      throw new AuthenticationError(this.authenticationError || `You're not authenticated to access the widget`);
     }
   };
 
@@ -91,6 +98,13 @@ class Impler {
         case EventTypes.CLOSE_WIDGET:
           this.hideWidget();
           break;
+        case EventTypes.AUTHENTICATION_VALID:
+          this.isAuthenticated = true;
+          this.authenticationError = undefined;
+          break;
+        case EventTypes.AUTHENTICATION_ERROR:
+          this.isAuthenticated = false;
+          this.authenticationError = event.data.value?.message;
       }
     }
   };
@@ -105,15 +119,12 @@ class Impler {
             return;
           }
 
-          iframe?.contentWindow?.postMessage(
-            { type: EventTypes.INIT_IFRAME },
-            '*'
-          );
+          iframe?.contentWindow?.postMessage({ type: EventTypes.INIT_IFRAME, value: this.initPayload }, '*');
         },
         true
       );
 
-      iframe.style.backgroundColor = 'transparent'
+      iframe.style.backgroundColor = 'transparent';
       iframe.src = `${IFRAME_URL}/${projectId}?`;
       iframe.id = IFRAME_ID;
       iframe.style.border = 'none';
@@ -177,9 +188,3 @@ export default ((window: any) => {
   (window as any).impler.on = impler.on;
   (window as any).impler.show = impler.showWidget;
 })(window);
-
-interface WidgetPayload {
-  template?: string;
-  extra?: string;
-  authHeaderValue?: string;
-}

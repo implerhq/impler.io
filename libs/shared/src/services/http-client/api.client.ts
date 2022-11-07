@@ -5,6 +5,12 @@ export interface IParamObject {
   [key: string]: string | string[] | number | boolean;
 }
 
+export interface IErrorObject {
+  error: string;
+  message: string;
+  statusCode: number;
+}
+
 export class HttpClient {
   private axiosClient: AxiosInstance;
 
@@ -42,7 +48,7 @@ export class HttpClient {
         resolve(response.data);
       } catch (error) {
         if (error.response) {
-          return reject(error.response.data);
+          return reject(error.response.data as IErrorObject);
         } else if (error.request) {
           return reject(error.request);
         } else {

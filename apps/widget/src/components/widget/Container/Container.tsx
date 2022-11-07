@@ -1,52 +1,58 @@
 import { useEffect, useState, PropsWithChildren } from 'react';
 import * as WebFont from 'webfontloader';
 import { useParams } from 'react-router-dom';
-import { IUserDataPayload } from '@impler/shared';
 import { Global } from '@emotion/react';
 import { API_URL, colors } from '@config';
 import { Provider } from '../Provider';
 import { ParentWindow } from '@util';
+import { Modal } from '@ui/Modal';
+import { Layout } from 'components/Common/Layout';
+import { MessageHandlerDataType } from '@types';
+import { IInitPayload, IShowPayload } from '@impler/shared';
+interface IContainerProps {
+  phase: number;
+}
 
-export function Container({ children }: PropsWithChildren) {
+export function Container({ children, phase }: PropsWithChildren<IContainerProps>) {
   const { projectId = '' } = useParams<{ projectId: string }>();
-  const [userDataPayload, setUserDataPayload] = useState<IUserDataPayload>();
-  // const [theme, setTheme] = useState<>({});
-  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-  const [fontFamily, setFontFamily] = useState<string>('Lato');
+  const [primaryPayload, setPrimaryPayload] = useState<IInitPayload>();
+  const [secondaryPayload, setSecondaryPayload] = useState<IShowPayload>();
   const [frameInitialized, setFrameInitialized] = useState(false);
 
   useEffect(() => {
     WebFont.load({
       google: {
-        families: [fontFamily],
+        families: ['Lato'],
       },
     });
-  }, [fontFamily]);
+  }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handler = ({ data }: any) => {
-      if (data && data.type === 'INIT_IFRAME') {
-        setFrameInitialized(true);
-      }
-      if (data && data.type === 'SHOW_WIDGET') {
-        setUserDataPayload(data.value);
-      }
-    };
-
     if (process.env.NODE_ENV === 'test') {
       // eslint-disable-next-line
-      (window as any).initHandler = handler;
+      (window as any).initHandler = messageEventHandler;
     }
 
-    window.addEventListener('message', handler);
+    window.addEventListener('message', messageEventHandler);
 
     ParentWindow.Ready();
 
-    return () => window.removeEventListener('message', handler);
+    return () => window.removeEventListener('message', messageEventHandler);
   }, []);
 
-  if (!userDataPayload) return null;
+  function messageEventHandler({ data }: { data?: MessageHandlerDataType }) {
+    if (data && data.type === 'INIT_IFRAME') {
+      setFrameInitialized(true);
+      setPrimaryPayload(data.value);
+    }
+    if (data && data.type === 'SHOW_WIDGET') {
+      setSecondaryPayload(data.value);
+    }
+  }
+
+  const onClose = () => {
+    ParentWindow.Close();
+  };
 
   return (
     <>
@@ -79,18 +85,20 @@ export function Container({ children }: PropsWithChildren) {
           },
         }}
       />
-      {frameInitialized ? (
+      {frameInitialized && primaryPayload ? (
         <Provider
           // api
           backendUrl={API_URL}
           // impler-context
           projectId={projectId}
-          template={userDataPayload.template}
-          accessToken={userDataPayload.accessToken}
-          authHeaderValue={userDataPayload.authHeaderValue}
-          extra={userDataPayload.extra}
+          template={primaryPayload.template}
+          accessToken={primaryPayload.accessToken}
+          authHeaderValue={secondaryPayload?.authHeaderValue}
+          extra={secondaryPayload?.extra}
         >
-          {children}
+          <Modal opened={true} onClose={onClose}>
+            <Layout active={phase}>{children}</Layout>
+          </Modal>
         </Provider>
       ) : null}
     </>
