@@ -3,6 +3,7 @@ import _whatever from 'multer';
 import { Body, Controller, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiSecurity, ApiConsumes, ApiOperation, ApiParam } from '@nestjs/swagger';
+import { ACCESS_KEY_NAME } from '@impler/shared';
 import { UploadEntity } from '@impler/dal';
 
 import { APIKeyGuard } from '../shared/framework/auth.gaurd';
@@ -19,7 +20,7 @@ import { ValidateTemplate } from '../shared/validations/valid-template.validatio
 
 @Controller('/upload')
 @ApiTags('Uploads')
-@ApiSecurity('ACCESS_KEY')
+@ApiSecurity(ACCESS_KEY_NAME)
 @UseGuards(APIKeyGuard)
 export class UploadController {
   constructor(private makeUploadEntry: MakeUploadEntry, private getUpload: GetUpload, private getUploads: GetUploads) {}

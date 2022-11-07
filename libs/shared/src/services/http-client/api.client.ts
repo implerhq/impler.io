@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
+import { ACCESS_KEY_NAME } from '../../.';
 
 export interface IParamObject {
   [key: string]: string | string[] | number | boolean;
@@ -14,26 +15,40 @@ export class HttpClient {
   }
 
   setAuthorizationToken(token: string) {
-    this.axiosClient.defaults.headers.common.ACCESS_TOKEN = token;
+    this.axiosClient.defaults.headers.common[ACCESS_KEY_NAME] = token;
   }
 
   disposeAuthorizationToken() {
-    delete this.axiosClient.defaults.headers.common.ACCESS_TOKEN;
+    delete this.axiosClient.defaults.headers.common[ACCESS_KEY_NAME];
   }
 
   async get(url: string, params?: IParamObject) {
-    return await this.axiosClient
-      .get(url, {
-        params,
-      })
-      .then((response) => response.data.data);
+    return this.callWrapper(this.axiosClient.get.bind(this, url, { params }));
   }
 
   async post(url: string, body = {}) {
-    return await this.axiosClient.post(url, body).then((response) => response.data.data);
+    return this.callWrapper(this.axiosClient.post.bind(this, url, body));
   }
 
   async patch(url: string, body = {}) {
-    return await this.axiosClient.patch(url, body).then((response) => response.data.data);
+    return this.callWrapper(this.axiosClient.patch.bind(this, url, body));
+  }
+
+  private callWrapper(axiosCall: any) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await axiosCall();
+
+        resolve(response.data);
+      } catch (error) {
+        if (error.response) {
+          return reject(error.response.data);
+        } else if (error.request) {
+          return reject(error.request);
+        } else {
+          return reject(error.message);
+        }
+      }
+    });
   }
 }

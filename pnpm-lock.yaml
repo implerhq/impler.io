@@ -121,7 +121,7 @@ importers:
       '@impler/dal': workspace:^1.0.0
       '@impler/shared': workspace:^1.0.0
       '@types/node': ^18.7.18
-      axios: ^1.1.3
+      axios: ^0.26.1
       dotenv: ^16.0.2
       nodemon: ^2.0.20
       ts-node: ^10.9.1
@@ -129,7 +129,7 @@ importers:
     dependencies:
       '@impler/dal': link:../../libs/dal
       '@impler/shared': link:../../libs/shared
-      axios: 1.1.3
+      axios: 0.26.1
       dotenv: 16.0.2
     devDependencies:
       '@types/node': 18.7.18
@@ -150,7 +150,7 @@ importers:
       '@tanstack/react-query': ^4.14.5
       '@types/react': ^18.0.21
       '@types/react-dom': ^18.0.6
-      axios: ^1.1.3
+      axios: ^0.26.1
       cross-env: ^7.0.3
       react: 18.2.0
       react-dom: 18.2.0
@@ -171,7 +171,7 @@ importers:
       '@storybook/addon-essentials': 6.5.13_jbjkrzxoioyjn2npuaofuog6gm
       '@storybook/react': 6.5.13_sevfxvufqxngza4zj5dbnig4vq
       '@tanstack/react-query': 4.14.5_biqbaboplfbrettd7655fr4n2y
-      axios: 1.1.3
+      axios: 0.26.1
       cross-env: 7.0.3
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -255,12 +255,12 @@ importers:
     specifiers:
       '@aws-sdk/client-s3': ^3.185.0
       '@types/node': ^18.7.18
-      axios: ^1.1.3
+      axios: ^0.26.1
       rimraf: ^3.0.2
       typescript: ^4.8.3
     dependencies:
       '@aws-sdk/client-s3': 3.185.0
-      axios: 1.1.3
+      axios: 0.26.1
       rimraf: 3.0.2
     devDependencies:
       '@types/node': 18.7.18
@@ -270,12 +270,12 @@ importers:
     specifiers:
       '@impler/shared': workspace:^1.0.0
       '@types/node': ^18.11.9
-      axios: ^1.1.3
+      axios: ^0.26.1
       typedoc: ^0.23.20
       typescript: 4.8.4
     dependencies:
       '@impler/shared': link:../../libs/shared
-      axios: 1.1.3
+      axios: 0.26.1
     devDependencies:
       '@types/node': 18.11.9
       typedoc: 0.23.20_typescript@4.8.4
@@ -284,6 +284,7 @@ importers:
   packages/react:
     specifiers:
       '@babel/core': ^7.19.6
+      '@impler/shared': workspace:^1.0.0
       '@rollup/plugin-commonjs': ^23.0.1
       '@rollup/plugin-node-resolve': ^15.0.0
       '@rollup/plugin-typescript': ^9.0.1
@@ -300,6 +301,7 @@ importers:
       tslib: ^2.4.0
       typescript: ^4.8.3
     dependencies:
+      '@impler/shared': link:../../libs/shared
       react: 18.2.0
       styled-components: 5.3.6_7i5myeigehqah43i5u7wbekgba
     devDependencies:
@@ -7580,12 +7582,10 @@ packages:
       - debug
     dev: true
 
-  /axios/1.1.3:
-    resolution: {integrity: sha512-00tXVRwKx/FZr/IDVFt4C+f9FYairX517WoGCL6dpOntqLkZofjhu43F/Xl44UOpqa+9sLFDrG/XAnFsUYgkDA==}
+  /axios/0.26.1:
+    resolution: {integrity: sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==}
     dependencies:
       follow-redirects: 1.15.2
-      form-data: 4.0.0
-      proxy-from-env: 1.1.0
     transitivePeerDependencies:
       - debug
     dev: false
@@ -11057,15 +11057,6 @@ packages:
       mime-types: 2.1.35
     dev: false
 
-  /form-data/4.0.0:
-    resolution: {integrity: sha512-ETEklSGi5t0QMZuiXoA/Q6vcnxcLQP5vdugSpuAyi6SVGi2clPPp+xgEhuMaHC+zGgn31Kd235W35f7Hykkaww==}
-    engines: {node: '>= 6'}
-    dependencies:
-      asynckit: 0.4.0
-      combined-stream: 1.0.8
-      mime-types: 2.1.35
-    dev: false
-
   /forwarded/0.2.0:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
     engines: {node: '>= 0.6'}
@@ -13377,7 +13368,7 @@ packages:
     resolution: {integrity: sha512-7vuh85V5cdDofPyxn58nrPjBktZo0u9x1g8WtjQol+jZDaE+fhN+cIvTj11GndBnMnyfrUOG1sZQxCdjKh+DKg==}
     engines: {node: '>= 10.13.0'}
     dependencies:
-      '@types/node': 18.7.18
+      '@types/node': 18.11.9
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
@@ -16180,10 +16171,6 @@ packages:
     dependencies:
       forwarded: 0.2.0
       ipaddr.js: 1.9.1
-    dev: false
-
-  /proxy-from-env/1.1.0:
-    resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
     dev: false
 
   /prr/1.0.1:

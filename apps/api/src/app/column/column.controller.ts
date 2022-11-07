@@ -7,10 +7,11 @@ import { UpdateColumns } from './usecases/update-columns/update-columns.usecase'
 import { ColumnResponseDto } from './dtos/column-response.dto';
 import { GetColumns } from './usecases/get-columns/get-columns.usecase';
 import { APIKeyGuard } from '../shared/framework/auth.gaurd';
+import { ACCESS_KEY_NAME } from '@impler/shared';
 
 @Controller('/column')
 @ApiTags('Column')
-@ApiSecurity('ACCESS_KEY')
+@ApiSecurity(ACCESS_KEY_NAME)
 @UseGuards(APIKeyGuard)
 export class ColumnController {
   constructor(private updateColumns: UpdateColumns, private getColumns: GetColumns) {}

@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { ACCESS_KEY_NAME } from '@impler/shared';
 import { DocumentNotFoundException } from '../shared/exceptions/document-not-found.exception';
 import { APIKeyGuard } from '../shared/framework/auth.gaurd';
 import { ValidateMongoId } from '../shared/validations/valid-mongo-id.validation';
@@ -15,7 +16,7 @@ import { UpdateTemplate } from './usecases/update-template/update-template.useca
 
 @Controller('/template')
 @ApiTags('Template')
-@ApiSecurity('ACCESS_KEY')
+@ApiSecurity(ACCESS_KEY_NAME)
 @UseGuards(APIKeyGuard)
 export class TemplateController {
   constructor(
