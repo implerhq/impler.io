@@ -22,12 +22,14 @@ let api: ApiService;
 export function Provider(props: PropsWithChildren<IProviderProps>) {
   const { backendUrl, projectId, template, accessToken, extra, authHeaderValue, children } = props;
   if (!api) api = new ApiService(backendUrl);
-  const { data, refetch, error } = useQuery<Boolean, IErrorObject>({
-    queryKey: ['valid'],
-    queryFn: () => api.checkIsRequestvalid(projectId, template),
-    enabled: false,
-    retry: 0,
-  });
+  const { data, refetch, error } = useQuery<Boolean, IErrorObject, any, string[]>(
+    ['valid'],
+    () => api.checkIsRequestvalid(projectId, template) as Promise<boolean>,
+    {
+      enabled: false,
+      retry: 0,
+    }
+  );
 
   useEffect(() => {
     if (accessToken) {
