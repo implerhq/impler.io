@@ -5,8 +5,18 @@ import { CONTEXT_PATH, mantineConfig } from '@config';
 import { WidgetShell } from './ApplicationShell';
 import { Widget } from './widget';
 
+const twentyFourHoursInMs = 1000 * 60 * 60 * 24;
 export function App() {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
+        retry: false,
+        staleTime: twentyFourHoursInMs,
+      },
+    },
+  });
 
   return (
     <MantineProvider withGlobalStyles withNormalizeCSS theme={{ ...mantineConfig }}>

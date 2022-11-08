@@ -1,12 +1,14 @@
-import { useState } from 'react';
 import { TEXTS } from '@config';
 import { Select } from '@ui/Select';
 import { Button } from '@ui/Button';
 import { Dropzone } from '@ui/Dropzone';
+import { LoadingOverlay } from '@ui/LoadingOverlay';
 import { Group } from '@mantine/core';
 import { Download } from '@icons';
 import useStyles from './Styles';
 import { Footer } from 'components/Common/Footer';
+import { usePhase1 } from '@hooks/Phase1/usePhase1';
+import { Controller } from 'react-hook-form';
 
 interface IPhase1Props {
   onNextClick: () => void;
@@ -14,18 +16,37 @@ interface IPhase1Props {
 
 export function Phase1(props: IPhase1Props) {
   const { classes } = useStyles();
-  const { onNextClick } = props;
-  const [selectedFile, setSelectedFile] = useState<File>();
+  const { onNextClick: goNext } = props;
+  const { showSelectTemplate, onSubmit, control, templates, isInitialDataLoaded, isUploadLoading } = usePhase1();
+
+  const onNextClick = () => {
+    onSubmit();
+    goNext;
+  };
 
   return (
     <>
+      <LoadingOverlay visible={!isInitialDataLoaded || isUploadLoading} />
       <Group className={classes.templateContainer} spacing="lg" noWrap>
-        <Select
-          title={TEXTS.PHASE1.SELECT_TITLE}
-          placeholder={TEXTS.PHASE1.SELECT_PLACEHOLDER}
-          data={[{ value: 'Users', label: 'Users' }]}
-          width="50%"
-        />
+        {showSelectTemplate && (
+          <Controller
+            name={`template`}
+            control={control}
+            rules={{
+              required: TEXTS.VALIDATION.TEMPLATE_REQUIRED,
+            }}
+            render={({ field, fieldState }) => (
+              <Select
+                title={TEXTS.PHASE1.SELECT_TITLE}
+                placeholder={TEXTS.PHASE1.SELECT_PLACEHOLDER}
+                data={templates}
+                width="50%"
+                error={fieldState.error?.message}
+                {...field}
+              />
+            )}
+          />
+        )}
         <div className={classes.download}>
           <Button size="sm" leftIcon={<Download />}>
             {TEXTS.PHASE1.DOWNLOAD_SAMPLE}
@@ -33,15 +54,25 @@ export function Phase1(props: IPhase1Props) {
         </div>
       </Group>
 
-      <Dropzone
-        className={classes.dropzone}
-        onDrop={(file) => setSelectedFile(file[0])}
-        onClear={() => setSelectedFile(undefined)}
-        title={TEXTS.PHASE1.SELECT_FILE}
-        file={selectedFile}
+      <Controller
+        control={control}
+        name="file"
+        rules={{
+          required: TEXTS.VALIDATION.FILE_REQUIRED,
+        }}
+        render={({ field, fieldState }) => (
+          <Dropzone
+            className={classes.dropzone}
+            onDrop={(selectedFile) => field.onChange(selectedFile[0])}
+            onClear={() => field.onChange(undefined)}
+            title={TEXTS.PHASE1.SELECT_FILE}
+            file={field.value}
+            error={fieldState.error?.message}
+          />
+        )}
       />
 
-      <Footer onNextClick={onNextClick} onPrevClick={() => {}} active={1} />
+      <Footer primaryButtonLoading={isUploadLoading} onNextClick={onNextClick} onPrevClick={() => {}} active={1} />
     </>
   );
 }

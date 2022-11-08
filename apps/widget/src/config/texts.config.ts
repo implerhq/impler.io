@@ -56,4 +56,8 @@ export const TEXTS = {
     YES: 'Yes',
     NO: 'No',
   },
+  VALIDATION: {
+    TEMPLATE_REQUIRED: 'Template is required',
+    FILE_REQUIRED: 'File is required',
+  },
 };
