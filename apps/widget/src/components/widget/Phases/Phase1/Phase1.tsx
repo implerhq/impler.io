@@ -17,7 +17,16 @@ interface IPhase1Props {
 export function Phase1(props: IPhase1Props) {
   const { classes } = useStyles();
   const { onNextClick: goNext } = props;
-  const { showSelectTemplate, onSubmit, control, templates, isInitialDataLoaded, isUploadLoading } = usePhase1({
+  const {
+    showSelectTemplate,
+    onSubmit,
+    control,
+    templates,
+    isInitialDataLoaded,
+    isUploadLoading,
+    onDownload,
+    isDownloadInProgress,
+  } = usePhase1({
     goNext,
   });
 
@@ -45,7 +54,7 @@ export function Phase1(props: IPhase1Props) {
           />
         )}
         <div className={classes.download}>
-          <Button size="sm" leftIcon={<Download />}>
+          <Button loading={isDownloadInProgress} size="sm" leftIcon={<Download />} onClick={onDownload}>
             {TEXTS.PHASE1.DOWNLOAD_SAMPLE}
           </Button>
         </div>

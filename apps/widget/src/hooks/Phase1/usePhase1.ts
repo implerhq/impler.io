@@ -5,6 +5,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAPIState } from '@store/api.context';
 import { IErrorObject, IOption, ITemplate, IUpload } from '@impler/shared';
 import { useAppState } from '@store/app.context';
+import { downloadFileFromURL } from '@util';
 
 interface IFormvalues {
   template: string;
@@ -23,15 +24,16 @@ interface IUsePhase1Props {
 export function usePhase1({ goNext }: IUsePhase1Props) {
   const { api } = useAPIState();
   const { setUploadInfo } = useAppState();
-  const { projectId, template, authHeaderValue, extra } = useImplerState();
   const [templates, setTemplates] = useState<IOption[]>([]);
-  const { isFetched, isLoading } = useQuery<ITemplate[], IErrorObject, ITemplate[], string[]>(
+  const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
+  const { projectId, template, authHeaderValue, extra } = useImplerState();
+  const { data, isFetched, isLoading } = useQuery<ITemplate[], IErrorObject, ITemplate[], string[]>(
     ['templates'],
     () => api.getTemplates(projectId),
     {
-      onSuccess(data) {
+      onSuccess(templatesResponse) {
         setTemplates(
-          data.map((item) => ({
+          templatesResponse.map((item) => ({
             label: item.name,
             value: item._id,
           }))
@@ -52,9 +54,32 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
   const {
     control,
     register,
+    trigger,
+    getValues,
     handleSubmit,
     formState: { errors },
   } = useForm<IFormvalues>();
+
+  const onDownload = async () => {
+    setIsDownloadInProgress(true);
+    const isTemplateValid = await trigger('template');
+    if (!isTemplateValid) {
+      setIsDownloadInProgress(false);
+
+      return;
+    }
+
+    let selectedTemplate: ITemplate | undefined;
+    const selectedTemplateValue = getValues('template');
+    if (selectedTemplateValue && data) {
+      selectedTemplate = data.find((templateItem) => templateItem._id === selectedTemplateValue);
+    } else if (template && data) {
+      selectedTemplate = data.find((templateItem) => templateItem.code === template || templateItem._id === template);
+    }
+
+    if (selectedTemplate) downloadFileFromURL(selectedTemplate.sampleFileUrl);
+    setIsDownloadInProgress(false);
+  };
 
   const onSubmit = (submitData: IFormvalues) => {
     mutate({
@@ -70,6 +95,8 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     register,
     templates,
     isUploadLoading,
+    onDownload,
+    isDownloadInProgress,
     isInitialDataLoaded: isFetched && !isLoading,
     showSelectTemplate: !template,
     onSubmit: handleSubmit(onSubmit),

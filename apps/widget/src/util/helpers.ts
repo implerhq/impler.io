@@ -22,3 +22,25 @@ export function formatBytes(bytes, decimals = 2) {
 
   return `${parseFloat((bytes / Math.pow(KBSize, i)).toFixed(dm))} ${sizes[i]}`;
 }
+
+function isValidHttpUrl(string: string) {
+  let url: URL | undefined;
+  try {
+    url = new URL(string);
+  } catch (_) {
+    return false;
+  }
+
+  return url.protocol === 'http:' || url.protocol === 'https:';
+}
+
+export function downloadFileFromURL(url: string) {
+  if (!isValidHttpUrl(url)) return;
+
+  // create DOM link and download file
+  const link = document.createElement('a');
+  link.href = url;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
