@@ -1,12 +1,14 @@
+import { EventTypesEnum } from '@types';
+
 export function Ready() {
-  window.parent.postMessage({ type: 'WIDGET_READY' }, '*');
+  window.parent.postMessage({ type: EventTypesEnum.WIDGET_READY }, '*');
 }
 export function Close() {
-  window.parent.postMessage({ type: 'CLOSE_WIDGET' }, '*');
+  window.parent.postMessage({ type: EventTypesEnum.CLOSE_WIDGET }, '*');
 }
 export function AuthenticationValid() {
-  window.parent.postMessage({ type: 'AUTHENTICATION_VALID' }, '*');
+  window.parent.postMessage({ type: EventTypesEnum.AUTHENTICATION_VALID }, '*');
 }
 export function AuthenticationError(message: string) {
-  window.parent.postMessage({ type: 'AUTHENTICATION_ERROR', value: { message } }, '*');
+  window.parent.postMessage({ type: EventTypesEnum.AUTHENTICATION_ERROR, value: { message } }, '*');
 }

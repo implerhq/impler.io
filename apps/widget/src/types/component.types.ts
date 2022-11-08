@@ -1,11 +1,12 @@
 import { IInitPayload, IShowPayload } from '@impler/shared';
+import { EventTypesEnum } from './event.types';
 
 export type MessageHandlerDataType =
   | {
-      type: 'INIT_IFRAME';
+      type: EventTypesEnum.INIT_IFRAME;
       value: IInitPayload;
     }
   | {
-      type: 'SHOW_WIDGET';
+      type: EventTypesEnum.SHOW_WIDGET;
       value: IShowPayload;
     };

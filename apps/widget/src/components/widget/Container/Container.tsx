@@ -6,18 +6,24 @@ import { API_URL, colors } from '@config';
 import { Provider } from '../Provider';
 import { ParentWindow } from '@util';
 import { Modal } from '@ui/Modal';
+import { useAuthentication } from '@hooks/useAuthentication';
+import { ApiService } from '@impler/client';
 import { Layout } from 'components/Common/Layout';
-import { MessageHandlerDataType } from '@types';
+import { EventTypesEnum, MessageHandlerDataType } from '@types';
 import { IInitPayload, IShowPayload } from '@impler/shared';
+
 interface IContainerProps {
   phase: number;
 }
 
+let api: ApiService;
+
 export function Container({ children, phase }: PropsWithChildren<IContainerProps>) {
+  if (!api) api = new ApiService(API_URL);
   const { projectId = '' } = useParams<{ projectId: string }>();
   const [primaryPayload, setPrimaryPayload] = useState<IInitPayload>();
   const [secondaryPayload, setSecondaryPayload] = useState<IShowPayload>();
-  const [frameInitialized, setFrameInitialized] = useState(false);
+  const { isAuthenticated, refetch } = useAuthentication({ api, projectId, template: primaryPayload?.template });
 
   useEffect(() => {
     WebFont.load({
@@ -41,11 +47,14 @@ export function Container({ children, phase }: PropsWithChildren<IContainerProps
   }, []);
 
   function messageEventHandler({ data }: { data?: MessageHandlerDataType }) {
-    if (data && data.type === 'INIT_IFRAME') {
-      setFrameInitialized(true);
+    if (data && data.type === EventTypesEnum.INIT_IFRAME) {
       setPrimaryPayload(data.value);
+      if (data.value?.accessToken) {
+        api.setAuthorizationToken(data.value.accessToken);
+      }
+      refetch();
     }
-    if (data && data.type === 'SHOW_WIDGET') {
+    if (data && data.type === EventTypesEnum.SHOW_WIDGET) {
       setSecondaryPayload(data.value);
     }
   }
@@ -53,6 +62,8 @@ export function Container({ children, phase }: PropsWithChildren<IContainerProps
   const onClose = () => {
     ParentWindow.Close();
   };
+
+  if (!isAuthenticated) return null;
 
   return (
     <>
@@ -85,10 +96,10 @@ export function Container({ children, phase }: PropsWithChildren<IContainerProps
           },
         }}
       />
-      {frameInitialized && primaryPayload ? (
+      {primaryPayload ? (
         <Provider
           // api
-          backendUrl={API_URL}
+          api={api}
           // impler-context
           projectId={projectId}
           template={primaryPayload.template}
