@@ -33,3 +33,9 @@ WithFile.args = {
     size: 1200,
   } as unknown as File,
 };
+
+export const WithError = Template.bind({});
+WithError.args = {
+  title: 'Select a file',
+  error: 'File is required',
+};
