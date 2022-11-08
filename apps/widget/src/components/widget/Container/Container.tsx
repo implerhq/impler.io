@@ -1,55 +1,69 @@
 import { useEffect, useState, PropsWithChildren } from 'react';
 import * as WebFont from 'webfontloader';
 import { useParams } from 'react-router-dom';
-import { IUserDataPayload } from '@impler/shared';
 import { Global } from '@emotion/react';
 import { API_URL, colors } from '@config';
 import { Provider } from '../Provider';
+import { ParentWindow } from '@util';
+import { Modal } from '@ui/Modal';
+import { useAuthentication } from '@hooks/useAuthentication';
+import { ApiService } from '@impler/client';
+import { Layout } from 'components/Common/Layout';
+import { EventTypesEnum, MessageHandlerDataType } from '@types';
+import { IInitPayload, IShowPayload } from '@impler/shared';
 
-export function Container({ children }: PropsWithChildren) {
+interface IContainerProps {
+  phase: number;
+}
+
+let api: ApiService;
+
+export function Container({ children, phase }: PropsWithChildren<IContainerProps>) {
+  if (!api) api = new ApiService(API_URL);
   const { projectId = '' } = useParams<{ projectId: string }>();
-  const [userDataPayload, setUserDataPayload] = useState<IUserDataPayload>();
-  const [backendUrl, setBackendUrl] = useState(API_URL);
-  // const [theme, setTheme] = useState<>({});
-  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-  const [fontFamily, setFontFamily] = useState<string>('Lato');
-  const [frameInitialized, setFrameInitialized] = useState(false);
+  const [primaryPayload, setPrimaryPayload] = useState<IInitPayload>();
+  const [secondaryPayload, setSecondaryPayload] = useState<IShowPayload>();
+  const { isAuthenticated, refetch } = useAuthentication({ api, projectId, template: primaryPayload?.template });
 
   useEffect(() => {
     WebFont.load({
       google: {
-        families: [fontFamily],
+        families: ['Lato'],
       },
     });
-  }, [fontFamily]);
-
-  useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handler = ({ data }: any) => {
-      if (data && data.type === 'INIT_IFRAME') {
-        setUserDataPayload(data.value);
-
-        if (data.value.backendUrl) {
-          setBackendUrl(data.value.backendUrl);
-        }
-
-        setFrameInitialized(true);
-      }
-    };
-
-    if (process.env.NODE_ENV === 'test') {
-      // eslint-disable-next-line
-      (window as any).initHandler = handler;
-    }
-
-    window.addEventListener('message', handler);
-
-    window.parent.postMessage({ type: 'WIDGET_READY' }, '*');
-
-    return () => window.removeEventListener('message', handler);
   }, []);
 
-  if (!userDataPayload) return null;
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'test') {
+      // eslint-disable-next-line
+      (window as any).initHandler = messageEventHandler;
+    }
+
+    window.addEventListener('message', messageEventHandler);
+
+    ParentWindow.Ready();
+
+    return () => window.removeEventListener('message', messageEventHandler);
+  }, []);
+
+  function messageEventHandler({ data }: { data?: MessageHandlerDataType }) {
+    if (data && data.type === EventTypesEnum.INIT_IFRAME) {
+      setPrimaryPayload(data.value);
+      if (data.value?.accessToken) {
+        api.setAuthorizationToken(data.value.accessToken);
+      }
+      refetch();
+    }
+    if (data && data.type === EventTypesEnum.SHOW_WIDGET) {
+      setSecondaryPayload(data.value);
+    }
+  }
+
+  const onClose = () => {
+    ParentWindow.Close();
+  };
+
+  if (!isAuthenticated) return null;
 
   return (
     <>
@@ -82,18 +96,20 @@ export function Container({ children }: PropsWithChildren) {
           },
         }}
       />
-      {frameInitialized ? (
+      {primaryPayload ? (
         <Provider
           // api
-          backendUrl={backendUrl}
+          api={api}
           // impler-context
           projectId={projectId}
-          template={userDataPayload.template}
-          accessToken={userDataPayload.accessToken}
-          authHeaderValue={userDataPayload.authHeaderValue}
-          extra={userDataPayload.extra}
+          template={primaryPayload.template}
+          accessToken={primaryPayload.accessToken}
+          authHeaderValue={secondaryPayload?.authHeaderValue}
+          extra={secondaryPayload?.extra}
         >
-          {children}
+          <Modal opened={true} onClose={onClose}>
+            <Layout active={phase}>{children}</Layout>
+          </Modal>
         </Provider>
       ) : null}
     </>

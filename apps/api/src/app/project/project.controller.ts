@@ -12,10 +12,11 @@ import { DeleteProject } from './usecases/delete-project/delete-project.usecase'
 import { DocumentNotFoundException } from '../shared/exceptions/document-not-found.exception';
 import { ValidateMongoId } from '../shared/validations/valid-mongo-id.validation';
 import { APIKeyGuard } from '../shared/framework/auth.gaurd';
+import { ACCESS_KEY_NAME } from '@impler/shared';
 
 @Controller('/project')
 @ApiTags('Project')
-@ApiSecurity('ACCESS_KEY')
+@ApiSecurity(ACCESS_KEY_NAME)
 @UseGuards(APIKeyGuard)
 export class ProjectController {
   constructor(

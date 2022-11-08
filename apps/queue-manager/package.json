@@ -20,7 +20,7 @@
   "dependencies": {
     "@impler/dal": "workspace:^1.0.0",
     "@impler/shared": "workspace:^1.0.0",
-    "axios": "^1.1.3",
+    "axios": "^0.26.1",
     "dotenv": "^16.0.2"
   },
   "devDependencies": {

@@ -8,6 +8,7 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { validateEnv } from './config/env-validator';
+import { ACCESS_KEY_NAME } from '@impler/shared';
 
 // Validate the ENV variables after launching SENTRY, so missing variables will report to sentry
 validateEnv();
@@ -42,10 +43,10 @@ export async function bootstrap(expressApp?): Promise<INestApplication> {
     .addApiKey(
       {
         type: 'apiKey', // type
-        name: 'ACCESS_KEY', // Name of the key to expect in header
+        name: ACCESS_KEY_NAME, // Name of the key to expect in header
         in: 'header',
       },
-      'ACCESS_KEY' // Name to show and used in swagger
+      ACCESS_KEY_NAME // Name to show and used in swagger
     )
     .addTag('Project')
     .build();
@@ -68,7 +69,7 @@ const corsOptionsDelegate = function (req, callback) {
   const corsOptions = {
     origin: false as boolean | string | string[],
     preflightContinue: false,
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', ACCESS_KEY_NAME],
     methods: ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   };
 

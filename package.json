@@ -22,7 +22,8 @@
     "build:react": "nx build @impler/react",
     "build:shared": "nx build @impler/shared",
     "build:widget": "nx build @impler/widget",
-    "build:embed": "nx build @impler/embed"
+    "build:embed": "nx build @impler/embed",
+    "build:client": "nx build @impler/client"
   },
   "keywords": [
     "data-import",

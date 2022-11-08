@@ -1,4 +1,5 @@
-import React from 'react';
+import { IInitPayload, IShowPayload } from 'libs/shared/dist';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { ButtonProps } from './Button.types';
 
@@ -17,16 +18,55 @@ const StyledButton = styled.button`
   font-size: 100%;
   line-height: inherit;
   border: none;
+  &:disabled {
+    cursor: not-allowed;
+  }
 `;
 
 export const Button = ({
   children = 'Import',
   className = '',
-  disabled = false,
-  onClick,
+  projectId,
+  template,
+  authHeaderValue,
+  accessToken,
+  extra,
 }: ButtonProps): JSX.Element => {
+  const [isImplerInitiated, setIsImplerInitiated] = useState(false);
+
+  useEffect(() => {
+    if (window.impler && projectId) {
+      const initPayload: IInitPayload = { accessToken, template };
+      window.impler.init(projectId, initPayload);
+      setIsImplerInitiated(true);
+    }
+  }, []);
+
+  const onButtonClick = async () => {
+    if (window.impler) {
+      const payload: IShowPayload = {};
+      if (extra) {
+        if (typeof extra === 'object') payload.extra = JSON.stringify(extra);
+        else payload.extra = extra;
+      }
+      if (authHeaderValue) {
+        if (typeof authHeaderValue === 'function' && authHeaderValue.constructor.name === 'AsyncFunction') {
+          payload.authHeaderValue = await authHeaderValue();
+        } else if (typeof authHeaderValue === 'function') {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          payload.authHeaderValue = authHeaderValue();
+        } else {
+          payload.authHeaderValue = authHeaderValue;
+        }
+      }
+
+      window.impler.show(payload);
+    }
+  };
+
   return (
-    <StyledButton id="import" className={className} disabled={disabled} onClick={onClick}>
+    <StyledButton id="import" className={className} disabled={!isImplerInitiated} onClick={onButtonClick}>
       {children}
     </StyledButton>
   );

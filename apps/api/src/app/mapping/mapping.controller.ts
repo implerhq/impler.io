@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, ParseArrayPipe, Post, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiSecurity, ApiOperation, ApiBody } from '@nestjs/swagger';
-import { UploadStatusEnum } from '@impler/shared';
+import { ACCESS_KEY_NAME, UploadStatusEnum } from '@impler/shared';
 import { MappingEntity } from '@impler/dal';
 
 import { APIKeyGuard } from '../shared/framework/auth.gaurd';
@@ -20,7 +20,7 @@ import { validateNotFound } from '../shared/helpers/common.helper';
 
 @Controller('/mapping')
 @ApiTags('Mappings')
-@ApiSecurity('ACCESS_KEY')
+@ApiSecurity(ACCESS_KEY_NAME)
 @UseGuards(APIKeyGuard)
 export class MappingController {
   constructor(

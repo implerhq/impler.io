@@ -1,7 +1,7 @@
 import { BadRequestException, Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags, ApiSecurity, ApiQuery, ApiOkResponse } from '@nestjs/swagger';
 import { FileEntity, UploadEntity } from '@impler/dal';
-import { UploadStatusEnum } from '@impler/shared';
+import { ACCESS_KEY_NAME, UploadStatusEnum } from '@impler/shared';
 import { APIMessages } from '../shared/constants';
 import { APIKeyGuard } from '../shared/framework/auth.gaurd';
 import { validateUploadStatus } from '../shared/helpers/upload.helpers';
@@ -20,7 +20,7 @@ import { PaginationResponseDto } from '../shared/dtos/pagination-response.dto';
 
 @Controller('/review')
 @ApiTags('Review')
-@ApiSecurity('ACCESS_KEY')
+@ApiSecurity(ACCESS_KEY_NAME)
 @UseGuards(APIKeyGuard)
 export class ReviewController {
   constructor(

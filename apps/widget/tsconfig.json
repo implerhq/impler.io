@@ -23,11 +23,12 @@
     "baseUrl": "src",
     "paths": {
       "@store/*": ["store/*"],
-      "@client": ["client/index.ts"],
       "@config": ["config/index.ts"],
       "@ui/*": ["design-system/*"],
       "@types": ["types/index.ts"],
       "@icons": ["icons/index.ts"],
+      "@util": ["util/index.ts"],
+      "@hooks/*": ["hooks/*"]
     }
   },
   "include": [

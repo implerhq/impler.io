@@ -4,6 +4,7 @@ interface IMessagePayload {
 }
 
 declare interface Window {
+  impler: any;
   parentIFrame: {
     sendMessage: (payload: IMessagePayload) => void;
   };

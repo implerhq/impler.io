@@ -4,7 +4,7 @@
 //
 
 import * as EventTypes from './shared/eventTypes';
-import { UnmountedError, DomainVerificationError } from './shared/errors';
+import { UnmountedError, AuthenticationError } from './shared/errors';
 import { IFRAME_URL } from './shared/resources';
 
 const WEASL_WRAPPER_ID = 'impler-container';
@@ -16,15 +16,7 @@ class Impler {
 
   private i18n?: Record<string, unknown>;
 
-  private debugMode: boolean;
-
   private onloadFunc: (b: any) => void;
-
-  private domainAllowed: boolean;
-
-  private selector: string = '';
-
-  private options?: IOptions;
 
   private iframe: HTMLIFrameElement | undefined;
 
@@ -32,10 +24,14 @@ class Impler {
 
   private listeners: { [key: string]: (data: any) => void } = {};
 
+  private initPayload: any;
+
+  private isAuthenticated: boolean = false;
+
+  private authenticationError?: string;
+
   constructor(onloadFunc = function () {}) {
-    this.debugMode = false;
     this.onloadFunc = onloadFunc;
-    this.domainAllowed = true;
     this.widgetVisible = false;
   }
 
@@ -43,95 +39,55 @@ class Impler {
     this.listeners[name] = cb;
   };
 
-  init = (
-    projectId: string,
-    selectorOrOptions: string | IOptions,
-    data: { subscriberId: string; lastName: string; firstName: string; email: string; subscriberHash?: string }
-  ) => {
-    const _scope = this;
-    if (typeof selectorOrOptions === 'string') {
-      this.selector = selectorOrOptions;
-    } else {
-      this.selector = selectorOrOptions.selector;
-      this.options = selectorOrOptions;
-      this.i18n = selectorOrOptions.i18n;
-    }
-
+  init = (projectId: string, payload: any) => {
     this.projectId = projectId;
-    this.initializeIframe(projectId, data);
+    this.initPayload = payload;
+    this.initializeIframe(projectId);
     this.mountIframe();
-    const button = document.querySelector(this.selector) as HTMLButtonElement;
-    if (button) {
-      button.style.position = 'relative';
+  };
+
+  positionIframe = () => {
+    const wrapper: any = document.querySelector(`.${WRAPPER_CLASS_NAME}`);
+
+    wrapper.style.position = 'absolute';
+    wrapper.style.height = '100vh';
+    wrapper.style.width = '100vw';
+    wrapper.style.top = '0';
+    wrapper.style.left = '0';
+  };
+
+  hideWidget = () => {
+    var elem = document.querySelector(`.${WRAPPER_CLASS_NAME}`) as HTMLBodyElement;
+
+    if (elem) {
+      elem.style.display = 'none';
+    }
+  };
+
+  showWidget = (payload: any) => {
+    this.ensureMounted();
+    this.widgetVisible = !this.widgetVisible;
+    var elem = document.querySelector(`.${WRAPPER_CLASS_NAME}`) as HTMLBodyElement;
+
+    if (elem) {
+      elem.style.display = 'inline-block';
     }
 
-    const _this = this;
-    function positionIframe() {
-      const button = document.querySelector(_scope.selector);
-      if (!button) {
-        return;
-      }
-      const pos = button.getClientRects()[0];
-      if (!pos) {
-        hideWidget();
-        return;
-      }
-
-      const wrapper: any = document.querySelector(`.${WRAPPER_CLASS_NAME}`);
-
-      wrapper.style.position = 'absolute';
-      wrapper.style.height = '100vh';
-      wrapper.style.width = '100vw';
-      wrapper.style.top = '0';
-      wrapper.style.left = '0';
-    }
-
-    function hideWidget() {
-      var elem = document.querySelector(`.${WRAPPER_CLASS_NAME}`) as HTMLBodyElement;
-
-      if (elem) {
-        elem.style.display = 'none';
-      }
-    }
-
-    function handleClick(e: MouseEvent | TouchEvent) {
-      if (document.querySelector(_scope.selector)?.contains(e.target as Node) && projectId) {
-        _scope.widgetVisible = !_scope.widgetVisible;
-        positionIframe();
-
-        var elem = document.querySelector(`.${WRAPPER_CLASS_NAME}`) as HTMLBodyElement;
-
-        if (elem) {
-          elem.style.display = 'inline-block';
-        }
-
-        _scope.iframe?.contentWindow?.postMessage(
-          {
-            type: EventTypes.SHOW_WIDGET,
-            value: {},
-          },
-          '*'
-        );
-      } else {
-        // hideWidget();
-      }
-    }
-
-    window.addEventListener('resize', positionIframe);
-    window.addEventListener('click', handleClick);
-    window.addEventListener('touchstart', handleClick);
+    this.iframe?.contentWindow?.postMessage(
+      {
+        type: EventTypes.SHOW_WIDGET,
+        value: payload,
+      },
+      '*'
+    );
   };
 
   // PRIVATE METHODS
   ensureMounted = () => {
     if (!document.getElementById(IFRAME_ID)) {
       throw new UnmountedError('impler.init needs to be called first');
-    }
-  };
-
-  ensureAllowed = () => {
-    if (!this.domainAllowed) {
-      throw new DomainVerificationError(`${window.location.host} is not permitted to use client ID ${this.projectId}`);
+    } else if (!this.isAuthenticated) {
+      throw new AuthenticationError(this.authenticationError || `You're not authenticated to access the widget`);
     }
   };
 
@@ -139,32 +95,21 @@ class Impler {
     if (!!event && !!event.data && !!event.data.type) {
       // eslint-disable-next-line default-case
       switch (event.data.type) {
-        case EventTypes.SET_COOKIE:
-          document.cookie = event.data.value;
+        case EventTypes.CLOSE_WIDGET:
+          this.hideWidget();
           break;
-        case EventTypes.DOMAIN_NOT_ALLOWED:
-          this.handleDomainNotAllowed();
+        case EventTypes.AUTHENTICATION_VALID:
+          this.isAuthenticated = true;
+          this.authenticationError = undefined;
           break;
-        case EventTypes.BOOTSTRAP_DONE:
-          this.handleBootstrapDone();
-          break;
+        case EventTypes.AUTHENTICATION_ERROR:
+          this.isAuthenticated = false;
+          this.authenticationError = event.data.value?.message;
       }
     }
   };
 
-  handleBootstrapDone = () => {
-    const implerApi = (window as any).impler;
-    implerApi._c = (window as any).impler._c;
-
-    this.runPriorCalls();
-    (window as any).impler = implerApi;
-  };
-
-  handleDomainNotAllowed = () => {
-    this.domainAllowed = false;
-  };
-
-  initializeIframe = (projectId: string, options: any) => {
+  initializeIframe = (projectId: string) => {
     if (!document.getElementById(IFRAME_ID)) {
       const iframe = document.createElement('iframe');
       window.addEventListener(
@@ -174,22 +119,12 @@ class Impler {
             return;
           }
 
-          iframe?.contentWindow?.postMessage(
-            {
-              type: EventTypes.INIT_IFRAME,
-              value: {
-                projectId: this.projectId,
-                i18n: this.i18n,
-                topHost: window.location.host,
-                data: options,
-              },
-            },
-            '*'
-          );
+          iframe?.contentWindow?.postMessage({ type: EventTypes.INIT_IFRAME, value: this.initPayload }, '*');
         },
         true
       );
 
+      iframe.style.backgroundColor = 'transparent';
       iframe.src = `${IFRAME_URL}/${projectId}?`;
       iframe.id = IFRAME_ID;
       iframe.style.border = 'none';
@@ -247,33 +182,9 @@ export default ((window: any) => {
       ? window.impler.onload
       : function () {};
 
-  const initCall = window.impler._c.find((call: string[]) => call[0] === 'init');
-  const implerApi: any = () => {};
   const impler = new Impler(onloadFunc);
 
-  implerApi.init = impler.init;
-  implerApi.on = impler.on;
-
-  if (initCall) {
-    // eslint-disable-next-line prefer-spread
-    implerApi[initCall[0]].apply(implerApi, initCall[1]);
-
-    const onCalls = window.impler._c.filter((call: string[]) => call[0] === 'on');
-    if (onCalls.length) {
-      for (const onCall of onCalls) {
-        implerApi[onCall[0]].apply(implerApi, onCall[1]);
-      }
-    }
-  } else {
-    // eslint-disable-next-line no-param-reassign
-    (window as any).impler.init = impler.init;
-
-    // eslint-disable-next-line no-param-reassign
-    (window as any).impler.on = impler.on;
-  }
+  (window as any).impler.init = impler.init;
+  (window as any).impler.on = impler.on;
+  (window as any).impler.show = impler.showWidget;
 })(window);
-
-interface IOptions {
-  selector: string;
-  i18n?: Record<string, unknown>;
-}

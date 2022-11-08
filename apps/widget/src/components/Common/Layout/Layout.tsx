@@ -2,11 +2,11 @@ import { PropsWithChildren } from 'react';
 import { Heading } from 'components/Common/Heading';
 import useStyles from './Styles';
 
-interface IWrapperProps {
+interface ILayoutProps {
   active: number;
 }
 
-export function Wrapper(props: PropsWithChildren<IWrapperProps>) {
+export function Layout(props: PropsWithChildren<ILayoutProps>) {
   const { classes } = useStyles();
   const { children, active } = props;
 

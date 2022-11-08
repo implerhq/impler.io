@@ -13,4 +13,5 @@ export const APIMessages = {
   ALREADY_CONFIRMED: '`You may landed to wrong place, This upload file is confirmed already.',
   IN_PROGRESS: 'You may landed to wrong place, This uploaded file processing is started already.',
   COMPLETED: 'You may landed to wrong place, This uploaded file is already completed, no more steps left to perform.',
+  PROJECT_WITH_TEMPLATE_MISSING: 'Template not found with provided ProjectId and Template',
 };
