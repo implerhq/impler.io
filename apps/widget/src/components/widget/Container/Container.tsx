@@ -22,6 +22,7 @@ let api: ApiService;
 export function Container({ children, phase, onClose }: PropsWithChildren<IContainerProps>) {
   if (!api) api = new ApiService(API_URL);
   const { projectId = '' } = useParams<{ projectId: string }>();
+  const [showWidget, setShowWidget] = useState<boolean>(false);
   const [primaryPayload, setPrimaryPayload] = useState<IInitPayload>();
   const [secondaryPayload, setSecondaryPayload] = useState<IShowPayload>();
   const { isAuthenticated, refetch } = useAuthentication({ api, projectId, template: primaryPayload?.template });
@@ -56,11 +57,12 @@ export function Container({ children, phase, onClose }: PropsWithChildren<IConta
       refetch();
     }
     if (data && data.type === EventTypesEnum.SHOW_WIDGET) {
+      setShowWidget(true);
       setSecondaryPayload(data.value);
     }
   }
 
-  if (!isAuthenticated) return null;
+  if (!isAuthenticated || !showWidget) return null;
 
   return (
     <>
