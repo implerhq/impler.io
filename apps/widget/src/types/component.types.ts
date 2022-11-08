@@ -10,3 +10,7 @@ export type MessageHandlerDataType =
       type: EventTypesEnum.SHOW_WIDGET;
       value: IShowPayload;
     };
+export enum PromptModalTypesEnum {
+  'CLOSE' = 'CLOSE',
+  'UPLOAD_AGAIN' = 'UPLOAD_AGAIN',
+}
