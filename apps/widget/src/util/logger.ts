@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 export enum ErrorTypesEnum {
   INVALID_PROPS = 'INVALID_PROPS',
 }
