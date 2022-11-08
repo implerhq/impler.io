@@ -1,5 +1,5 @@
 import React from 'react';
-import { NativeSelect as MantineNativeSelect } from '@mantine/core';
+import { Select as MantineNativeSelect } from '@mantine/core';
 import useStyles from './Select.styles';
 import { ChevronDown } from '../../icons';
 
@@ -19,7 +19,7 @@ export interface ISelectProps {
   onChange?: (value: any) => void;
 }
 
-export const Select = React.forwardRef<HTMLSelectElement, ISelectProps>((props: ISelectProps, ref) => {
+export const Select = React.forwardRef<HTMLInputElement, ISelectProps>((props: ISelectProps, ref) => {
   const { title, placeholder, data, error, required = true, width = '100%', onChange, value, ...extraProps } = props;
   const { classes } = useStyles({ width });
 
@@ -38,7 +38,7 @@ export const Select = React.forwardRef<HTMLSelectElement, ISelectProps>((props: 
         root: classes.root,
       }}
       value={value}
-      onChange={(e) => onChange && onChange(e.target.value)}
+      onChange={(selectedValue) => onChange && onChange(selectedValue)}
       required={required}
       {...extraProps}
     />
