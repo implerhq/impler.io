@@ -49,4 +49,11 @@ export const TEXTS = {
     subTitle: '700 rows have been uploaded successfully, and currently is in process, it will be ready shortly.',
     UPLOAD_AGAIN: 'Upload new File',
   },
+  PROMPT: {
+    title: `Are You sure? You'll lost your progress`,
+    SUBTITLE_CLOSE: 'Your Import is in progress, Clicking Yes will close the widget',
+    SUBTITLE_RESET: 'Your Import is in progress, Clicking Yes will reset your import',
+    YES: 'Yes',
+    NO: 'No',
+  },
 };

@@ -7,7 +7,7 @@ interface IButtonProps {
   loading?: boolean;
   onClick?: () => void;
   size?: MantineSize;
-  color?: 'blue' | 'red';
+  color?: 'blue' | 'red' | 'gray' | string;
   leftIcon?: ReactNode;
 }
 
