@@ -6,3 +6,7 @@ export interface IShowPayload {
   extra?: string;
   authHeaderValue?: string;
 }
+export interface IOption {
+  value: string;
+  label: string;
+}
