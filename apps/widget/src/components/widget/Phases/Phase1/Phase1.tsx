@@ -17,12 +17,9 @@ interface IPhase1Props {
 export function Phase1(props: IPhase1Props) {
   const { classes } = useStyles();
   const { onNextClick: goNext } = props;
-  const { showSelectTemplate, onSubmit, control, templates, isInitialDataLoaded, isUploadLoading } = usePhase1();
-
-  const onNextClick = () => {
-    onSubmit();
-    goNext;
-  };
+  const { showSelectTemplate, onSubmit, control, templates, isInitialDataLoaded, isUploadLoading } = usePhase1({
+    goNext,
+  });
 
   return (
     <>
@@ -72,7 +69,7 @@ export function Phase1(props: IPhase1Props) {
         )}
       />
 
-      <Footer primaryButtonLoading={isUploadLoading} onNextClick={onNextClick} onPrevClick={() => {}} active={1} />
+      <Footer primaryButtonLoading={isUploadLoading} onNextClick={onSubmit} onPrevClick={() => {}} active={1} />
     </>
   );
 }

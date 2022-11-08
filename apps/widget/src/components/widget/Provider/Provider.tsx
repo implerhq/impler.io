@@ -2,6 +2,7 @@ import { PropsWithChildren } from 'react';
 import { ApiService } from '@impler/client';
 import ImplerContextProvider from '@store/impler.context';
 import APIContextProvider from '@store/api.context';
+import AppContextProvider from '@store/app.context';
 
 interface IProviderProps {
   // api-context
@@ -25,7 +26,9 @@ export function Provider(props: PropsWithChildren<IProviderProps>) {
       extra={extra}
       authHeaderValue={authHeaderValue}
     >
-      <APIContextProvider api={api}>{children}</APIContextProvider>
+      <APIContextProvider api={api}>
+        <AppContextProvider>{children}</AppContextProvider>
+      </APIContextProvider>
     </ImplerContextProvider>
   );
 }

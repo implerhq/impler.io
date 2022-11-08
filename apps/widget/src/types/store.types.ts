@@ -1,4 +1,5 @@
 import { ApiService } from '@impler/client';
+import { IUpload } from '@impler/shared';
 
 export interface IImplerStore {
   projectId: string;
@@ -10,4 +11,9 @@ export interface IImplerStore {
 
 export interface IApiStore {
   api: ApiService;
+}
+
+export interface IAppStore {
+  uploadInfo?: IUpload;
+  setUploadInfo: (uploadInfo: IUpload) => void;
 }

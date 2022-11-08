@@ -1,4 +1,4 @@
-import { HttpClient, ITemplate } from '@impler/shared';
+import { HttpClient, ITemplate, IUpload } from '@impler/shared';
 
 export class ApiService {
   private httpClient: HttpClient;
@@ -39,7 +39,7 @@ export class ApiService {
 
     return this.httpClient.post(`/upload/${data.template}`, formData, {
       'Content-Type': 'multipart/form-data',
-    });
+    }) as Promise<IUpload>;
   }
 
   async getTemplates(projectId: string): Promise<ITemplate[]> {

@@ -1,17 +1,28 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useImplerState } from '@store/impler.context';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAPIState } from '@store/api.context';
-import { IErrorObject, IOption, ITemplate } from '@impler/shared';
+import { IErrorObject, IOption, ITemplate, IUpload } from '@impler/shared';
+import { useAppState } from '@store/app.context';
 
 interface IFormvalues {
   template: string;
   file: File;
 }
 
-export function usePhase1() {
+interface IUploadValues extends IFormvalues {
+  authHeaderValue?: string;
+  extra?: string;
+}
+
+interface IUsePhase1Props {
+  goNext: () => void;
+}
+
+export function usePhase1({ goNext }: IUsePhase1Props) {
   const { api } = useAPIState();
+  const { setUploadInfo } = useAppState();
   const { projectId, template, authHeaderValue, extra } = useImplerState();
   const [templates, setTemplates] = useState<IOption[]>([]);
   const { isFetched, isLoading } = useQuery<ITemplate[], IErrorObject, ITemplate[], string[]>(
@@ -28,25 +39,22 @@ export function usePhase1() {
       },
     }
   );
-  const {
-    isLoading: isUploadLoading,
-    data,
-    error,
-    mutate,
-  } = useMutation({
-    mutationKey: ['upload'],
-    mutationFn: (values: any) => api.uploadFile(values),
-  });
+  const { isLoading: isUploadLoading, mutate } = useMutation<IUpload, IErrorObject, IUploadValues>(
+    ['upload'],
+    (values: any) => api.uploadFile(values),
+    {
+      onSuccess(uploadData) {
+        setUploadInfo(uploadData);
+        goNext();
+      },
+    }
+  );
   const {
     control,
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<IFormvalues>();
-
-  useEffect(() => {
-    console.log(data, error);
-  }, [data, error]);
 
   const onSubmit = (submitData: IFormvalues) => {
     mutate({
