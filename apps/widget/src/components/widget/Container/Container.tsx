@@ -14,11 +14,12 @@ import { IInitPayload, IShowPayload } from '@impler/shared';
 
 interface IContainerProps {
   phase: number;
+  onClose: () => void;
 }
 
 let api: ApiService;
 
-export function Container({ children, phase }: PropsWithChildren<IContainerProps>) {
+export function Container({ children, phase, onClose }: PropsWithChildren<IContainerProps>) {
   if (!api) api = new ApiService(API_URL);
   const { projectId = '' } = useParams<{ projectId: string }>();
   const [primaryPayload, setPrimaryPayload] = useState<IInitPayload>();
@@ -58,10 +59,6 @@ export function Container({ children, phase }: PropsWithChildren<IContainerProps
       setSecondaryPayload(data.value);
     }
   }
-
-  const onClose = () => {
-    ParentWindow.Close();
-  };
 
   if (!isAuthenticated) return null;
 
