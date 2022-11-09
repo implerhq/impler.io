@@ -1,5 +1,5 @@
 import { Group, Select, Text } from '@mantine/core';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import useStyles from './MappingItem.style';
 import { ChevronDown, GreenCheck } from '../../icons';
 
@@ -11,21 +11,23 @@ interface IOption {
 interface IMappingItem {
   heading: string;
   required?: boolean;
-  options: IOption[];
+  options: IOption[] | string[];
   value?: string;
   placeholder?: string;
   size?: 'sm' | 'md';
   searchable?: boolean;
   mappingSucceedText?: string;
   mappingFailedText?: string;
+  onChange?: (value: any) => void;
 }
 
-export function MappingItem(props: IMappingItem) {
+export const MappingItem = React.forwardRef<HTMLInputElement, IMappingItem>((props: IMappingItem, ref) => {
   const {
     heading,
     options,
     required,
     value,
+    onChange,
     placeholder = 'Select field',
     size = 'sm',
     searchable = true,
@@ -58,6 +60,8 @@ export function MappingItem(props: IMappingItem) {
           size={size}
           searchable={searchable}
           dropdownComponent="div"
+          onChange={(selectedValue) => onChange && onChange(selectedValue)}
+          ref={ref}
         />
       </Group>
       <Text size={size} color={value ? 'black' : 'gray'} className={classes.statusText}>
@@ -66,4 +70,4 @@ export function MappingItem(props: IMappingItem) {
       </Text>
     </Group>
   );
-}
+});

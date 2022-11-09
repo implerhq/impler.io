@@ -7,7 +7,7 @@ type AppContextProviderProps = React.PropsWithChildren;
 const AppContext = createContext<IAppStore | null>(null);
 
 const AppContextProvider = ({ children }: AppContextProviderProps) => {
-  const [uploadInfo, setUploadInfo] = useState<IUpload>();
+  const [uploadInfo, setUploadInfo] = useState<IUpload>({} as IUpload);
 
   return <AppContext.Provider value={{ uploadInfo, setUploadInfo }}>{children}</AppContext.Provider>;
 };

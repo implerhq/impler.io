@@ -16,7 +16,7 @@ export function GreenCheck(props: IIcon) {
         transform="translate(-3.282 -5.625)"
         fill="#199c4d"
         stroke="#199c4d"
-        stroke-width="0.5"
+        strokeWidth="0.5"
       />
     </svg>
   );

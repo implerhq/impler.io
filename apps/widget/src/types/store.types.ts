@@ -14,6 +14,6 @@ export interface IApiStore {
 }
 
 export interface IAppStore {
-  uploadInfo?: IUpload;
+  uploadInfo: IUpload;
   setUploadInfo: (uploadInfo: IUpload) => void;
 }

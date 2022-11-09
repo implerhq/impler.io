@@ -9,6 +9,7 @@ import useStyles from './Styles';
 import { Footer } from 'components/Common/Footer';
 import { usePhase1 } from '@hooks/Phase1/usePhase1';
 import { Controller } from 'react-hook-form';
+import { PhasesEum } from '@types';
 
 interface IPhase1Props {
   onNextClick: () => void;
@@ -85,7 +86,12 @@ export function Phase1(props: IPhase1Props) {
         )}
       />
 
-      <Footer primaryButtonLoading={isUploadLoading} onNextClick={onSubmit} onPrevClick={() => {}} active={1} />
+      <Footer
+        primaryButtonLoading={isUploadLoading}
+        onNextClick={onSubmit}
+        onPrevClick={() => {}}
+        active={PhasesEum.UPLOAD}
+      />
     </>
   );
 }

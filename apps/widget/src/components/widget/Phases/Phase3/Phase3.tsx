@@ -1,6 +1,7 @@
 import { colors, TEXTS } from '@config';
 import { Download, Warning } from '@icons';
 import { Group, Text } from '@mantine/core';
+import { PhasesEum } from '@types';
 import { Button } from '@ui/Button';
 import { Pagination } from '@ui/Pagination';
 import { Table } from '@ui/Table';
@@ -95,7 +96,7 @@ export function Phase3(props: IPhase3Props) {
       </div>
       <Pagination page={1} total={10} />
 
-      <Footer active={3} onNextClick={onNextClick} onPrevClick={onPrevClick} />
+      <Footer active={PhasesEum.REVIEW} onNextClick={onNextClick} onPrevClick={onPrevClick} />
     </>
   );
 }
