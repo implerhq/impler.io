@@ -33,7 +33,7 @@ export function Footer(props: IFooterProps) {
     [PhasesEum.REVIEW]: (
       <>
         <Button loading={secondaryButtonLoading} onClick={onPrevClick} variant="outline">
-          {TEXTS.PHASE3.BACK_TO_MAPPING}
+          {TEXTS.PHASE2.UPLOAD_AGAIN}
         </Button>
         <Button loading={primaryButtonLoading} onClick={onNextClick}>
           {TEXTS.PHASE3.CONFIRM_UPLOAD}
@@ -42,11 +42,8 @@ export function Footer(props: IFooterProps) {
     ),
     [PhasesEum.CONFIRMATION]: (
       <>
-        <Button loading={secondaryButtonLoading} onClick={onPrevClick} variant="outline">
-          {TEXTS.PHASE3.BACK_TO_MAPPING}
-        </Button>
         <Button loading={primaryButtonLoading} onClick={onNextClick}>
-          {TEXTS.PHASE3.CONFIRM_UPLOAD}
+          {TEXTS.PHASE2.UPLOAD_AGAIN}
         </Button>
       </>
     ),

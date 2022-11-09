@@ -34,7 +34,6 @@ export const TEXTS = {
   PHASE3: {
     INVALID_DATA_INFO: 'Sheet contains invalid data, hover over columns to see error',
     EXPORT_DATA: 'Export Data',
-    BACK_TO_MAPPING: 'Back to mapping',
     CONFIRM_UPLOAD: 'Complete Upload',
   },
   CONFIRM_MODAL: {

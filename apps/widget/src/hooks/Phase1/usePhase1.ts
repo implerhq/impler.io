@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useImplerState } from '@store/impler.context';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -6,16 +6,7 @@ import { useAPIState } from '@store/api.context';
 import { IErrorObject, IOption, ITemplate, IUpload } from '@impler/shared';
 import { useAppState } from '@store/app.context';
 import { downloadFileFromURL, notifier } from '@util';
-
-interface IFormvalues {
-  template: string;
-  file: File;
-}
-
-interface IUploadValues extends IFormvalues {
-  authHeaderValue?: string;
-  extra?: string;
-}
+import { IFormvalues, IUploadValues } from '@types';
 
 interface IUsePhase1Props {
   goNext: () => void;
@@ -23,7 +14,7 @@ interface IUsePhase1Props {
 
 export function usePhase1({ goNext }: IUsePhase1Props) {
   const { api } = useAPIState();
-  const { setUploadInfo } = useAppState();
+  const { setUploadInfo, reset } = useAppState();
   const [templates, setTemplates] = useState<IOption[]>([]);
   const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
   const { projectId, template, authHeaderValue, extra } = useImplerState();
@@ -59,6 +50,11 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     handleSubmit,
     formState: { errors },
   } = useForm<IFormvalues>();
+
+  // reset App State on initial load
+  useEffect(() => {
+    reset();
+  }, []);
 
   const onDownload = async () => {
     setIsDownloadInProgress(true);

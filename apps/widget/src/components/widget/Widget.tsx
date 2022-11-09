@@ -8,8 +8,10 @@ import { PromptModal } from './Phases/PromptModal';
 import { Phase4 } from './Phases/Phase4';
 import { ParentWindow } from '@util';
 import { PhasesEum, PromptModalTypesEnum } from '@types';
+import { useQueryClient } from '@tanstack/react-query';
 
 export function Widget() {
+  const queryClient = useQueryClient();
   const [phase, setPhase] = useState<PhasesEum>(PhasesEum.UPLOAD);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [promptContinueAction, setPromptContinueAction] = useState<PromptModalTypesEnum>();
@@ -24,7 +26,7 @@ export function Widget() {
   const onPromptConfirm = () => {
     setPromptContinueAction(undefined);
     if (promptContinueAction === PromptModalTypesEnum.CLOSE) closeWidget();
-    else if (promptContinueAction === PromptModalTypesEnum.UPLOAD_AGAIN) setPhase(PhasesEum.UPLOAD);
+    resetProgress();
   };
   const onPromptCancel = () => {
     setPromptContinueAction(undefined);
@@ -36,14 +38,16 @@ export function Widget() {
   const closeWidget = () => {
     ParentWindow.Close();
   };
+  const resetProgress = () => {
+    queryClient.clear();
+    setPhase(PhasesEum.UPLOAD);
+  };
 
   const PhaseView = {
     [PhasesEum.UPLOAD]: <Phase1 onNextClick={() => setPhase(PhasesEum.MAPPING)} />,
     [PhasesEum.MAPPING]: <Phase2 onNextClick={() => setPhase(PhasesEum.REVIEW)} onPrevClick={onUploadResetClick} />,
-    [PhasesEum.REVIEW]: (
-      <Phase3 onNextClick={() => setShowConfirmModal(true)} onPrevClick={() => setPhase(PhasesEum.MAPPING)} />
-    ),
-    [PhasesEum.CONFIRMATION]: <Phase4 rowsCount={1000000} onUploadAgainClick={() => setPhase(PhasesEum.UPLOAD)} />,
+    [PhasesEum.REVIEW]: <Phase3 onNextClick={() => setShowConfirmModal(true)} onPrevClick={onUploadResetClick} />,
+    [PhasesEum.CONFIRMATION]: <Phase4 rowsCount={1000000} onUploadAgainClick={onUploadResetClick} />,
   };
 
   return (

@@ -9,12 +9,16 @@ const AppContext = createContext<IAppStore | null>(null);
 const AppContextProvider = ({ children }: AppContextProviderProps) => {
   const [uploadInfo, setUploadInfo] = useState<IUpload>({} as IUpload);
 
-  return <AppContext.Provider value={{ uploadInfo, setUploadInfo }}>{children}</AppContext.Provider>;
+  const reset = () => {
+    setUploadInfo({} as IUpload);
+  };
+
+  return <AppContext.Provider value={{ uploadInfo, setUploadInfo, reset }}>{children}</AppContext.Provider>;
 };
 
 export function useAppState() {
   const context = useContext(AppContext);
-  if (!context) throw new Error('API Context must be used within APIContextProvider');
+  if (!context) throw new Error('App Context must be used within AppContextProvider');
 
   return context;
 }
