@@ -20,6 +20,7 @@ export function Phase1(props: IPhase1Props) {
   const {
     showSelectTemplate,
     onSubmit,
+    trigger,
     control,
     templates,
     isInitialDataLoaded,
@@ -48,7 +49,12 @@ export function Phase1(props: IPhase1Props) {
                 data={templates}
                 width="50%"
                 error={fieldState.error?.message}
-                {...field}
+                onChange={(value) => {
+                  field.onChange(value);
+                  trigger('template');
+                }}
+                value={field.value}
+                ref={field.ref}
               />
             )}
           />

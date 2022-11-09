@@ -93,6 +93,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
   return {
     control,
     errors,
+    trigger,
     register,
     templates,
     isUploadLoading,
