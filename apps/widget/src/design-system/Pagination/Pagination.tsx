@@ -8,7 +8,8 @@ interface IPaginationProps {
 }
 
 export function Pagination(props: IPaginationProps) {
-  const { total, page = 1, size = 'md', onChange } = props;
+  const defaultPage = 1;
+  const { total, page = defaultPage, size = 'md', onChange } = props;
 
   return (
     <Group style={{ justifyContent: 'center' }}>

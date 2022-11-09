@@ -18,6 +18,7 @@ interface ITableProps {
 }
 
 export function Table(props: ITableProps) {
+  const defaultColSpan = 1;
   const { classes } = useStyles();
   const { data, headings, emptyDataText = 'No Data Found!', style } = props;
 
@@ -48,7 +49,7 @@ export function Table(props: ITableProps) {
       return (
         <tbody>
           <tr>
-            <td colSpan={headings?.length || 1}>{emptyDataText}</td>
+            <td colSpan={headings?.length || defaultColSpan}>{emptyDataText}</td>
           </tr>
         </tbody>
       );

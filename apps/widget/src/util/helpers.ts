@@ -11,10 +11,12 @@ export function getErrorObject(error: string): Record<string, string> {
   }, {});
 }
 
+// eslint-disable-next-line no-magic-numbers
 export function formatBytes(bytes, decimals = 2) {
   if (!+bytes) return '0 Bytes';
 
   const KBSize = 1024;
+  // eslint-disable-next-line no-magic-numbers
   const dm = decimals < 0 ? 0 : decimals;
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 

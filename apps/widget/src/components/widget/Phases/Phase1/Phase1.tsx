@@ -69,6 +69,7 @@ export function Phase1(props: IPhase1Props) {
         render={({ field, fieldState }) => (
           <Dropzone
             className={classes.dropzone}
+            // eslint-disable-next-line no-magic-numbers
             onDrop={(selectedFile) => field.onChange(selectedFile[0])}
             onClear={() => field.onChange(undefined)}
             title={TEXTS.PHASE1.SELECT_FILE}

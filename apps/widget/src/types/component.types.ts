@@ -14,3 +14,10 @@ export enum PromptModalTypesEnum {
   'CLOSE' = 'CLOSE',
   'UPLOAD_AGAIN' = 'UPLOAD_AGAIN',
 }
+
+export enum PhasesEum {
+  UPLOAD,
+  MAPPING,
+  REVIEW,
+  CONFIRMATION,
+}
