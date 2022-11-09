@@ -2,6 +2,7 @@ import { Table as MantineTable } from '@mantine/core';
 import useStyles from './Table.style';
 import { getErrorObject } from '../../util/helpers';
 import { InvalidWarning } from '../InvalidWarning';
+import { variables } from '../../config';
 import React from 'react';
 
 interface IHeadingItem {
@@ -57,7 +58,7 @@ export function Table(props: ITableProps) {
     return (
       <tbody>
         {data.map((item: Record<string, string>, i: number) => {
-          errorObject = getErrorObject(item.error);
+          errorObject = getErrorObject(item[variables.error]);
 
           return (
             <tr key={item.id || i}>
