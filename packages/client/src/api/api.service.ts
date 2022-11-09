@@ -1,4 +1,10 @@
-import { HttpClient, ITemplate, IUpload } from '@impler/shared';
+import {
+  HttpClient,
+  ITemplate,
+  IUpload,
+  IMapping,
+  IMappingFinalize,
+} from '@impler/shared';
 
 export class ApiService {
   private httpClient: HttpClient;
@@ -46,5 +52,16 @@ export class ApiService {
     return this.httpClient.get(`/template/${projectId}`) as Promise<
       ITemplate[]
     >;
+  }
+
+  async getMappings(uploadId: string): Promise<IMapping[]> {
+    return this.httpClient.get(`/mapping/${uploadId}`) as Promise<IMapping[]>;
+  }
+
+  async finalizeMappings(uploadId: string, mappings: IMappingFinalize[]) {
+    return this.httpClient.post(
+      `/mapping/${uploadId}/finalize`,
+      mappings
+    ) as Promise<IUpload>;
   }
 }
