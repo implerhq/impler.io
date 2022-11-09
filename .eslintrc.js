@@ -41,6 +41,7 @@ module.exports = {
     'no-await-in-loop': 'off',
     'no-continue': 'off',
     'no-console': 'warn',
+    'no-magic-numbers': 'error',
     'no-prototype-builtins': 'off',
     'import/no-cycle': 'off',
     'class-methods-use-this': 'off',

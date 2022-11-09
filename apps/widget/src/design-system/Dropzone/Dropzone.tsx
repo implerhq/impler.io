@@ -13,6 +13,7 @@ interface IDropzoneProps {
   onClear?: () => void;
   file?: FileWithPath;
   title?: string;
+  error?: string;
   className?: string;
 }
 
@@ -25,8 +26,9 @@ export function Dropzone(props: IDropzoneProps) {
     file,
     title,
     className,
+    error,
   } = props;
-  const { classes } = useStyles();
+  const { classes } = useStyles({ hasError: !!error });
   const wrapperClasses = [classes.wrapper];
   if (className) wrapperClasses.push(className);
 
@@ -84,6 +86,11 @@ export function Dropzone(props: IDropzoneProps) {
         </Text>
       ) : null}
       {isFileSelected ? <SelectedFileContent /> : <SelectFileContent />}
+      {error ? (
+        <Text size="xs" mt={3} color="red">
+          {error}
+        </Text>
+      ) : null}
     </div>
   );
 }

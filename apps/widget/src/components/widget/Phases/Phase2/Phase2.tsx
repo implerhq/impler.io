@@ -11,9 +11,10 @@ interface IPhase2Props {
 }
 
 export function Phase2(props: IPhase2Props) {
+  const defaulWrappertHeight = 200;
   const wrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
   const titlesRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
-  const [wrapperHeight, setWrapperHeight] = useState(200);
+  const [wrapperHeight, setWrapperHeight] = useState(defaulWrappertHeight);
   const { classes } = useStyles();
   const { onPrevClick, onNextClick } = props;
   const options = [

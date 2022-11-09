@@ -32,12 +32,13 @@ export function MappingItem(props: IMappingItem) {
     mappingFailedText = 'Not Mapped',
     mappingSucceedText = 'Mapping Successfull',
   } = props;
-  const [groupHeight, setGroupHeight] = useState<number>(0);
+  const defaultGroupHeight = 45;
+  const [groupHeight, setGroupHeight] = useState<number>(defaultGroupHeight);
   const groupRef = useRef<HTMLDivElement>(null);
   const { classes } = useStyles({ height: groupHeight });
 
   useEffect(() => {
-    setGroupHeight(groupRef.current?.getBoundingClientRect().height || 45);
+    setGroupHeight(groupRef.current?.getBoundingClientRect().height || defaultGroupHeight);
   }, []);
 
   return (

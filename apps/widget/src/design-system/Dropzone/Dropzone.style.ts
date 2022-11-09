@@ -2,8 +2,8 @@
 import { createStyles, MantineTheme } from '@mantine/core';
 import { colors } from '../../config/colors.config';
 
-export const getRootStyles = (theme: MantineTheme): React.CSSProperties => ({
-  borderColor: colors.primary,
+export const getRootStyles = (theme: MantineTheme, hasError: boolean): React.CSSProperties => ({
+  borderColor: hasError ? colors.red : colors.primary,
   flexGrow: 1,
 });
 
@@ -43,11 +43,11 @@ export const getDropzoneInnerStyles = (theme: MantineTheme): React.CSSProperties
   height: '100%',
 });
 
-export default createStyles((theme: MantineTheme, params, getRef): Record<string, any> => {
+export default createStyles((theme: MantineTheme, { hasError }: { hasError: boolean }, getRef): Record<string, any> => {
   return {
     icon: getIconStyles(theme),
     successRoot: getSuccessRootStyles(theme),
-    root: getRootStyles(theme),
+    root: getRootStyles(theme, hasError),
     checkIcon: getCheckIconStyles(theme),
     wrapper: getWrapperStyles(theme),
     inner: getDropzoneInnerStyles(theme),

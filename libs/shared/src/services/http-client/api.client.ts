@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosRequestHeaders } from 'axios';
 import { ACCESS_KEY_NAME } from '../../.';
 
 export interface IParamObject {
@@ -32,8 +32,8 @@ export class HttpClient {
     return this.callWrapper(this.axiosClient.get.bind(this, url, { params }));
   }
 
-  async post(url: string, body = {}) {
-    return this.callWrapper(this.axiosClient.post.bind(this, url, body));
+  async post(url: string, body = {}, headers: AxiosRequestHeaders = {}) {
+    return this.callWrapper(this.axiosClient.post.bind(this, url, body, { headers }));
   }
 
   async patch(url: string, body = {}) {

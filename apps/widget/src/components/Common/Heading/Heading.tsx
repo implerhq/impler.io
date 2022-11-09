@@ -1,16 +1,17 @@
 import { Group, Title } from '@mantine/core';
 import { Stepper } from '@ui/Stepper';
 import { TEXTS } from '@config';
+import { PhasesEum } from '@types';
 
 interface IHeadingProps {
-  active: number;
+  active: PhasesEum;
 }
 
 const Titles = {
-  1: TEXTS.TITLES.UPLOAD,
-  2: TEXTS.TITLES.MAPPING,
-  3: TEXTS.TITLES.REVIEW,
-  4: TEXTS.TITLES.COMPLETE,
+  [PhasesEum.UPLOAD]: TEXTS.TITLES.UPLOAD,
+  [PhasesEum.MAPPING]: TEXTS.TITLES.MAPPING,
+  [PhasesEum.REVIEW]: TEXTS.TITLES.REVIEW,
+  [PhasesEum.CONFIRMATION]: TEXTS.TITLES.COMPLETE,
 };
 
 const Steps = [
@@ -29,12 +30,13 @@ const Steps = [
 ];
 
 export function Heading(props: IHeadingProps) {
+  const stepperDiff = 1;
   const { active } = props;
 
   return (
     <Group style={{ justifyContent: 'space-between' }} mb="lg">
       <Title order={3}>{Titles[active]}</Title>
-      <Stepper active={active} steps={Steps} />
+      <Stepper active={active + stepperDiff} steps={Steps} />
     </Group>
   );
 }
