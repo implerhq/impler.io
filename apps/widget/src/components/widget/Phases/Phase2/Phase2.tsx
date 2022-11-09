@@ -1,32 +1,25 @@
-import { Group, Text } from '@mantine/core';
 import { MappingItem } from '@ui/MappingItem';
-import { TEXTS } from '@config';
 import { Footer } from 'components/Common/Footer';
 import useStyles from './Styles';
 import { useEffect, useRef, useState } from 'react';
+import { usePhase2 } from '@hooks/Phase2/usePhase2';
+import { PhasesEum } from '@types';
+import { Controller } from 'react-hook-form';
+import { MappingHeading } from './MappingHeading';
 
 interface IPhase2Props {
   onPrevClick: () => void;
   onNextClick: () => void;
 }
 
+const defaulWrappertHeight = 200;
 export function Phase2(props: IPhase2Props) {
-  const defaulWrappertHeight = 200;
-  const wrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
-  const titlesRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
-  const [wrapperHeight, setWrapperHeight] = useState(defaulWrappertHeight);
   const { classes } = useStyles();
   const { onPrevClick, onNextClick } = props;
-  const options = [
-    {
-      label: 'Firstname',
-      value: '1',
-    },
-    {
-      label: 'Lastname',
-      value: '2',
-    },
-  ];
+  const [wrapperHeight, setWrapperHeight] = useState(defaulWrappertHeight);
+  const { headings, mappings, control, onSubmit } = usePhase2({ goNext: onNextClick });
+  const wrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
+  const titlesRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
 
   useEffect(() => {
     // setting wrapper height
@@ -39,16 +32,7 @@ export function Phase2(props: IPhase2Props) {
     <>
       <div style={{ flexGrow: 1 }} ref={wrapperRef}>
         {/* Heading */}
-        <Group style={{ justifyContent: 'space-between' }} noWrap ref={titlesRef}>
-          <Group className={classes.textWrapper} align="stretch" noWrap>
-            <Text color="dimmed" style={{ width: '50%' }}>
-              {TEXTS.PHASE2.NAME_IN_SCHEMA_TITLE}
-            </Text>
-            <Text color="dimmed" style={{ width: '50%' }}>
-              {TEXTS.PHASE2.NAME_IN_SHEET_TITLE}
-            </Text>
-          </Group>
-        </Group>
+        <MappingHeading ref={titlesRef} />
         {/* Mapping Items */}
         <div
           className={classes.mappingWrapper}
@@ -56,13 +40,28 @@ export function Phase2(props: IPhase2Props) {
             height: wrapperHeight,
           }}
         >
-          {Array.from({ length: 10 }).map((value, index) => (
-            <MappingItem key={index} options={options} heading="First Name" />
-          ))}
+          {Array.isArray(mappings) &&
+            mappings.map((mappingItem, index) => (
+              <Controller
+                key={mappingItem._id}
+                name={`mappings.${index}.columnHeading`}
+                control={control}
+                render={({ field }) => (
+                  <MappingItem
+                    key={mappingItem._id}
+                    options={headings}
+                    heading={mappingItem.column.name}
+                    value={field.value}
+                    onChange={field.onChange}
+                    ref={field.ref}
+                  />
+                )}
+              />
+            ))}
         </div>
       </div>
 
-      <Footer active={2} onNextClick={onNextClick} onPrevClick={onPrevClick} />
+      <Footer active={PhasesEum.MAPPING} onNextClick={onSubmit} onPrevClick={onPrevClick} />
     </>
   );
 }
