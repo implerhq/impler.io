@@ -9,11 +9,11 @@ import { Modal } from '@ui/Modal';
 import { useAuthentication } from '@hooks/useAuthentication';
 import { ApiService } from '@impler/client';
 import { Layout } from 'components/Common/Layout';
-import { EventTypesEnum, MessageHandlerDataType } from '@types';
+import { EventTypesEnum, MessageHandlerDataType, PhasesEum } from '@types';
 import { IInitPayload, IShowPayload } from '@impler/shared';
 
 interface IContainerProps {
-  phase: number;
+  phase: PhasesEum;
   onClose: () => void;
 }
 

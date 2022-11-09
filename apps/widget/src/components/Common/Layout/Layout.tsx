@@ -1,9 +1,10 @@
 import { PropsWithChildren } from 'react';
 import { Heading } from 'components/Common/Heading';
 import useStyles from './Styles';
+import { PhasesEum } from '@types';
 
 interface ILayoutProps {
-  active: number;
+  active: PhasesEum;
 }
 
 export function Layout(props: PropsWithChildren<ILayoutProps>) {
