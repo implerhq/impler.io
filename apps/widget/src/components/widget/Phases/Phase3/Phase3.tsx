@@ -21,8 +21,17 @@ export function Phase3(props: IPhase3Props) {
   const { classes } = useStyles();
   const { onNextClick, onPrevClick } = props;
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const { onPageChange, heaings, isInitialDataLoaded, reviewData, page, totalPages, totalData, onConfirmReview } =
-    usePhase3({ onNext: onNextClick });
+  const {
+    onPageChange,
+    heaings,
+    isInitialDataLoaded,
+    reviewData,
+    page,
+    totalPages,
+    totalData,
+    onConfirmReview,
+    isConfirmReviewLoading,
+  } = usePhase3({ onNext: onNextClick });
   const tableWrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
   const [tableWrapperDimensions, setTableWrapperDimentions] = useState({
     height: 200,
@@ -43,7 +52,7 @@ export function Phase3(props: IPhase3Props) {
 
   return (
     <>
-      <LoadingOverlay visible={!isInitialDataLoaded} />
+      <LoadingOverlay visible={!isInitialDataLoaded || isConfirmReviewLoading} />
       <Group className={classes.textContainer} align="center">
         <Group align="center" spacing="xs">
           <Warning fill={colors.red} className={classes.warningIcon} />
@@ -65,7 +74,12 @@ export function Phase3(props: IPhase3Props) {
       </div>
       <Pagination page={page} total={totalPages} onChange={onPageChange} />
 
-      <Footer active={PhasesEum.REVIEW} onNextClick={onConfirmClick} onPrevClick={onPrevClick} />
+      <Footer
+        primaryButtonLoading={isConfirmReviewLoading}
+        active={PhasesEum.REVIEW}
+        onNextClick={onConfirmClick}
+        onPrevClick={onPrevClick}
+      />
 
       <ConfirmModal
         onConfirm={onConfirmReview}
