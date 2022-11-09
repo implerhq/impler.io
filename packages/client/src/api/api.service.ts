@@ -79,8 +79,8 @@ export class ApiService {
 
   async getReviewData(
     uploadId: string,
-    limit?: number,
-    page?: number
+    page?: number,
+    limit?: number
   ): Promise<IReviewData> {
     const queryString = this.constructQueryString({ limit, page });
 
