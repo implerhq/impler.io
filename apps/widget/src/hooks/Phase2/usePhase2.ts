@@ -12,7 +12,11 @@ export function usePhase2({ goNext }: IUsePhase2Props) {
   const { api } = useAPIState();
   const { uploadInfo, setUploadInfo } = useAppState();
   const { control, reset, handleSubmit } = useForm<{ mappings: IMappingFinalize[] }>();
-  const { data: mappings } = useQuery<IMapping[], IErrorObject, IMapping[], string[]>(
+  const {
+    isFetched,
+    isLoading,
+    data: mappings,
+  } = useQuery<IMapping[], IErrorObject, IMapping[], string[]>(
     [`mapping:${uploadInfo._id}`],
     () => api.getMappings(uploadInfo._id),
     {
@@ -50,6 +54,7 @@ export function usePhase2({ goNext }: IUsePhase2Props) {
     mappings,
     isMappingFinalizing,
     headings: uploadInfo.headings,
+    isInitialDataLoaded: isFetched && !isLoading,
     onSubmit: handleSubmit(onFinalizeMapping),
   };
 }
