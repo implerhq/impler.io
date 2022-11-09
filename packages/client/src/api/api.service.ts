@@ -88,4 +88,10 @@ export class ApiService {
       `/review/${uploadId}${queryString}`
     ) as Promise<IReviewData>;
   }
+
+  async confirmReview(uploadId: string, processInvalidRecords?: boolean) {
+    return this.httpClient.post(`/review/${uploadId}/confirm`, {
+      processInvalidRecords,
+    }) as Promise<IUpload>;
+  }
 }

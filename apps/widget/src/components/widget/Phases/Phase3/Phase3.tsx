@@ -9,17 +9,20 @@ import { Pagination } from '@ui/Pagination';
 import { Table } from '@ui/Table';
 import { Footer } from 'components/Common/Footer';
 import { useRef, useState, useEffect } from 'react';
+import { ConfirmModal } from '../ConfirmModal';
 import useStyles from './Styles';
 
 interface IPhase3Props {
-  onNextClick: () => void;
+  onNextClick: (count: number) => void;
   onPrevClick: () => void;
 }
 
 export function Phase3(props: IPhase3Props) {
   const { classes } = useStyles();
   const { onNextClick, onPrevClick } = props;
-  const { onPageChange, heaings, isInitialDataLoaded, reviewData, page, totalPages } = usePhase3();
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const { onPageChange, heaings, isInitialDataLoaded, reviewData, page, totalPages, totalData, onConfirmReview } =
+    usePhase3({ onNext: onNextClick });
   const tableWrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
   const [tableWrapperDimensions, setTableWrapperDimentions] = useState({
     height: 200,
@@ -33,6 +36,10 @@ export function Phase3(props: IPhase3Props) {
       width: tableWrapperRef.current.getBoundingClientRect().width,
     });
   }, []);
+
+  const onConfirmClick = () => {
+    setShowConfirmModal(true);
+  };
 
   return (
     <>
@@ -58,7 +65,14 @@ export function Phase3(props: IPhase3Props) {
       </div>
       <Pagination page={page} total={totalPages} onChange={onPageChange} />
 
-      <Footer active={PhasesEum.REVIEW} onNextClick={onNextClick} onPrevClick={onPrevClick} />
+      <Footer active={PhasesEum.REVIEW} onNextClick={onConfirmClick} onPrevClick={onPrevClick} />
+
+      <ConfirmModal
+        onConfirm={onConfirmReview}
+        onClose={() => setShowConfirmModal(false)}
+        opened={showConfirmModal}
+        wrongDataCount={totalData}
+      />
     </>
   );
 }
