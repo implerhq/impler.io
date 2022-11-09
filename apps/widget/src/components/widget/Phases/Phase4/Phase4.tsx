@@ -3,6 +3,7 @@ import { colors, TEXTS } from '@config';
 import { CheckIcon } from '@icons';
 import { Footer } from 'components/Common/Footer';
 import useStyles from './Styles';
+import { PhasesEum } from '@types';
 
 interface IPhase4Props {
   onUploadAgainClick: () => void;
@@ -25,7 +26,7 @@ export function Phase4(props: IPhase4Props) {
         </Text>
       </Group>
 
-      <Footer active={4} onNextClick={onUploadAgainClick} onPrevClick={() => {}} />
+      <Footer active={PhasesEum.CONFIRMATION} onNextClick={onUploadAgainClick} onPrevClick={() => {}} />
     </>
   );
 }
