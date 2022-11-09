@@ -26,7 +26,7 @@ export function Widget() {
   const onPromptConfirm = () => {
     setPromptContinueAction(undefined);
     if (promptContinueAction === PromptModalTypesEnum.CLOSE) closeWidget();
-    else if (promptContinueAction === PromptModalTypesEnum.UPLOAD_AGAIN) resetProgress();
+    resetProgress();
   };
   const onPromptCancel = () => {
     setPromptContinueAction(undefined);
@@ -46,10 +46,8 @@ export function Widget() {
   const PhaseView = {
     [PhasesEum.UPLOAD]: <Phase1 onNextClick={() => setPhase(PhasesEum.MAPPING)} />,
     [PhasesEum.MAPPING]: <Phase2 onNextClick={() => setPhase(PhasesEum.REVIEW)} onPrevClick={onUploadResetClick} />,
-    [PhasesEum.REVIEW]: (
-      <Phase3 onNextClick={() => setShowConfirmModal(true)} onPrevClick={() => setPhase(PhasesEum.MAPPING)} />
-    ),
-    [PhasesEum.CONFIRMATION]: <Phase4 rowsCount={1000000} onUploadAgainClick={() => setPhase(PhasesEum.UPLOAD)} />,
+    [PhasesEum.REVIEW]: <Phase3 onNextClick={() => setShowConfirmModal(true)} onPrevClick={onUploadResetClick} />,
+    [PhasesEum.CONFIRMATION]: <Phase4 rowsCount={1000000} onUploadAgainClick={onUploadResetClick} />,
   };
 
   return (
