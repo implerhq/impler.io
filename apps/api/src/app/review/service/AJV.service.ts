@@ -37,6 +37,7 @@ export class AJVService {
       const errors: Record<number, any> = this.buildErrorRecords(validator.errors, data);
 
       returnData.invalid = Object.values(errors);
+      // eslint-disable-next-line no-magic-numbers
       Object.keys(errors).forEach((index) => (data as any).splice(index as unknown as number, 1));
     }
     returnData.valid = data as any;
@@ -128,7 +129,7 @@ export class AJVService {
       message = this.getMessage(error, field);
 
       if (acc[index]) {
-        acc[index].message += `${message}`;
+        acc[index].message += `, ${message}`;
       } else
         acc[index] = {
           index,
@@ -143,24 +144,24 @@ export class AJVService {
     let message = '';
     switch (error.keyword) {
       case 'type':
-        message = `${field} ${error.message}`;
+        message = error.message;
         break;
       case 'enum':
-        message = `${field} must be from [${error.params.allowedValues}]`;
+        message = ` must be from [${error.params.allowedValues}]`;
         break;
       case 'regexp':
-        message = `${field} must match pattern ${new RegExp(
+        message = ` must match pattern ${new RegExp(
           error.parentSchema?.regexp?.pattern,
           error.parentSchema?.regexp?.flags || ''
         ).toString()}`;
         break;
       case 'pattern':
-        message = `${field} must match pattern ${error.params.pattern}`;
+        message = ` must match pattern ${error.params.pattern}`;
         break;
       default:
-        return `${field} contains invalid data`;
+        return ` contains invalid data`;
     }
 
-    return `<li>${message}</li>`;
+    return '`' + field + '`' + message;
   }
 }
