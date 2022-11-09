@@ -3,7 +3,8 @@ import { Button } from '../../';
 function App() {
   return (
     <div className="App">
-      <Button projectId="6347a8ea4ae447ca0bca916e" accessToken="ABCD" />
+      {/* template="636a7159b145c6ef2b8a8371" */}
+      <Button projectId="636a6d6ff10b0a8908aaa357" accessToken="ABCD" />
     </div>
   );
 }

@@ -60,4 +60,10 @@ export const TEXTS = {
     TEMPLATE_REQUIRED: 'Template is required',
     FILE_REQUIRED: 'File is required',
   },
+  NOTIFICATIONS: {
+    INCOMPLETE_TEMPLATE: {
+      title: 'Oops!',
+      message: 'It looks like selected Template is Incomplete, Please select another one!',
+    },
+  },
 };

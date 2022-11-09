@@ -5,7 +5,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAPIState } from '@store/api.context';
 import { IErrorObject, IOption, ITemplate, IUpload } from '@impler/shared';
 import { useAppState } from '@store/app.context';
-import { downloadFileFromURL } from '@util';
+import { downloadFileFromURL, notifier } from '@util';
 
 interface IFormvalues {
   template: string;
@@ -77,7 +77,8 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
       selectedTemplate = data.find((templateItem) => templateItem.code === template || templateItem._id === template);
     }
 
-    if (selectedTemplate) downloadFileFromURL(selectedTemplate.sampleFileUrl);
+    if (selectedTemplate && selectedTemplate.sampleFileUrl) downloadFileFromURL(selectedTemplate.sampleFileUrl);
+    else notifier.showError('INCOMPLETE_TEMPLATE');
     setIsDownloadInProgress(false);
   };
 

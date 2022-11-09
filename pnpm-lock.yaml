@@ -145,6 +145,7 @@ importers:
       '@impler/shared': workspace:^1.0.0
       '@mantine/core': ^5.6.3
       '@mantine/dropzone': ^5.6.3
+      '@mantine/notifications': 5.6.3
       '@storybook/addon-essentials': ^6.5.13
       '@storybook/react': ^6.5.13
       '@tanstack/react-query': ^4.14.5
@@ -169,6 +170,7 @@ importers:
       '@impler/shared': link:../../libs/shared
       '@mantine/core': 5.6.3_lha5ulipqaccx6prm56igoh3zy
       '@mantine/dropzone': 5.6.3_hliqdvg4trnmlenfv3ync25tfa
+      '@mantine/notifications': 5.6.3_hliqdvg4trnmlenfv3ync25tfa
       '@storybook/addon-essentials': 6.5.13_jbjkrzxoioyjn2npuaofuog6gm
       '@storybook/react': 6.5.13_sevfxvufqxngza4zj5dbnig4vq
       '@tanstack/react-query': 4.14.5_biqbaboplfbrettd7655fr4n2y
@@ -4052,6 +4054,22 @@ packages:
       react: '>=16.8.0'
     dependencies:
       react: 18.2.0
+    dev: false
+
+  /@mantine/notifications/5.6.3_hliqdvg4trnmlenfv3ync25tfa:
+    resolution: {integrity: sha512-YL+gqKDCakQ2NCh16w8zkwxD80xUTCmpLEwYXvJoLZix0jmt62pmwG+n/kIcZL4Bn04YYmLROOXKga1aiIFF/A==}
+    peerDependencies:
+      '@mantine/core': 5.6.3
+      '@mantine/hooks': 5.6.3
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+    dependencies:
+      '@mantine/core': 5.6.3_lha5ulipqaccx6prm56igoh3zy
+      '@mantine/hooks': 5.6.3_react@18.2.0
+      '@mantine/utils': 5.6.3_react@18.2.0
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      react-transition-group: 4.4.2_biqbaboplfbrettd7655fr4n2y
     dev: false
 
   /@mantine/styles/5.6.3_sogmqz4enknxtkxk3k5s6bqwnq:
@@ -9689,6 +9707,13 @@ packages:
     resolution: {integrity: sha512-gd3ypIPfOMr9h5jIKq8E3sHOTCjeirnl0WK5ZdS1AW0Odt0b1PaWaHdJ4Qk4klv+YB9aJBS7mESXjFoDQPu6DA==}
     dependencies:
       utila: 0.4.0
+    dev: false
+
+  /dom-helpers/5.2.1:
+    resolution: {integrity: sha512-nRCa7CK3VTrM2NmGkIy4cbK7IZlgBE/PYMn55rrXefr5xXDP0LdtfPnblFDoVdcAfslJ7or6iqAUnx0CCGIWQA==}
+    dependencies:
+      '@babel/runtime': 7.19.0
+      csstype: 3.1.1
     dev: false
 
   /dom-serializer/0.2.2:
@@ -16605,6 +16630,20 @@ packages:
       use-latest: 1.2.1_iapumuv4e6jcjznwuxpf4tt22e
     transitivePeerDependencies:
       - '@types/react'
+    dev: false
+
+  /react-transition-group/4.4.2_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-/RNYfRAMlZwDSr6z4zNKV6xu53/e2BuaBbGhbyYIXTrmgu/bGHzmqOs7mJSJBHy9Ud+ApHx3QjrkKSp1pxvlFg==}
+    peerDependencies:
+      react: '>=16.6.0'
+      react-dom: '>=16.6.0'
+    dependencies:
+      '@babel/runtime': 7.19.0
+      dom-helpers: 5.2.1
+      loose-envify: 1.4.0
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
     dev: false
 
   /react/18.2.0:
