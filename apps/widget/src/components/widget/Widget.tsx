@@ -8,8 +8,10 @@ import { PromptModal } from './Phases/PromptModal';
 import { Phase4 } from './Phases/Phase4';
 import { ParentWindow } from '@util';
 import { PhasesEum, PromptModalTypesEnum } from '@types';
+import { useQueryClient } from '@tanstack/react-query';
 
 export function Widget() {
+  const queryClient = useQueryClient();
   const [phase, setPhase] = useState<PhasesEum>(PhasesEum.UPLOAD);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [promptContinueAction, setPromptContinueAction] = useState<PromptModalTypesEnum>();
@@ -24,7 +26,7 @@ export function Widget() {
   const onPromptConfirm = () => {
     setPromptContinueAction(undefined);
     if (promptContinueAction === PromptModalTypesEnum.CLOSE) closeWidget();
-    else if (promptContinueAction === PromptModalTypesEnum.UPLOAD_AGAIN) setPhase(PhasesEum.UPLOAD);
+    else if (promptContinueAction === PromptModalTypesEnum.UPLOAD_AGAIN) resetProgress();
   };
   const onPromptCancel = () => {
     setPromptContinueAction(undefined);
@@ -35,6 +37,10 @@ export function Widget() {
   };
   const closeWidget = () => {
     ParentWindow.Close();
+  };
+  const resetProgress = () => {
+    queryClient.clear();
+    setPhase(PhasesEum.UPLOAD);
   };
 
   const PhaseView = {

@@ -14,7 +14,7 @@ const AppContextProvider = ({ children }: AppContextProviderProps) => {
 
 export function useAppState() {
   const context = useContext(AppContext);
-  if (!context) throw new Error('API Context must be used within APIContextProvider');
+  if (!context) throw new Error('App Context must be used within AppContextProvider');
 
   return context;
 }
