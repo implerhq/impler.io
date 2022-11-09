@@ -36,6 +36,9 @@ export const TEXTS = {
     EXPORT_DATA: 'Export Data',
     CONFIRM_UPLOAD: 'Complete Upload',
   },
+  PHASE4: {
+    CLOSE: 'Close',
+  },
   CONFIRM_MODAL: {
     title: 'rows appears to be have wrong data',
     subTitle: 'You can choose to exempt wrong data or keep your wrong data and confirm your upload',
@@ -45,7 +48,7 @@ export const TEXTS = {
   COMPLETE: {
     greeting: 'Bravo!',
     title: 'rows have been uploaded',
-    subTitle: '700 rows have been uploaded successfully, and currently is in process, it will be ready shortly.',
+    subTitle: 'rows have been uploaded successfully, and currently is in process, it will be ready shortly.',
     UPLOAD_AGAIN: 'Upload new File',
   },
   PROMPT: {

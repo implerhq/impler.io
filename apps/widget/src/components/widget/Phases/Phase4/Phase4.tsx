@@ -6,13 +6,14 @@ import useStyles from './Styles';
 import { PhasesEum } from '@types';
 
 interface IPhase4Props {
+  onCloseClick: () => void;
   onUploadAgainClick: () => void;
   rowsCount: number;
 }
 
 export function Phase4(props: IPhase4Props) {
   const { classes } = useStyles();
-  const { rowsCount, onUploadAgainClick } = props;
+  const { rowsCount, onUploadAgainClick, onCloseClick } = props;
 
   return (
     <>
@@ -22,11 +23,11 @@ export function Phase4(props: IPhase4Props) {
           {TEXTS.COMPLETE.greeting}&nbsp;{rowsCount}&nbsp;{TEXTS.COMPLETE.title}
         </Title>
         <Text size="xl" color="dimmed">
-          {TEXTS.COMPLETE.subTitle}
+          &nbsp;{rowsCount}&nbsp;{TEXTS.COMPLETE.subTitle}
         </Text>
       </Group>
 
-      <Footer active={PhasesEum.CONFIRMATION} onNextClick={onUploadAgainClick} onPrevClick={() => {}} />
+      <Footer active={PhasesEum.CONFIRMATION} onNextClick={onUploadAgainClick} onPrevClick={onCloseClick} />
     </>
   );
 }
