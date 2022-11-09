@@ -1,4 +1,4 @@
-export class IMapping {
+export interface IMapping {
   _id: string;
   column: {
     _columnId: string;
@@ -8,7 +8,7 @@ export class IMapping {
   columnHeading?: string;
 }
 
-export class IMappingFinalize {
+export interface IMappingFinalize {
   _columnId: string;
   columnHeading: string;
 }

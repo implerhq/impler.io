@@ -3,6 +3,7 @@ import {
   ITemplate,
   IUpload,
   IMapping,
+  IReviewData,
   IMappingFinalize,
 } from '@impler/shared';
 
@@ -13,6 +14,17 @@ export class ApiService {
 
   constructor(private backendUrl: string) {
     this.httpClient = new HttpClient(backendUrl);
+  }
+
+  constructQueryString(obj: Record<string, string | number>): string {
+    const arr = [];
+    Object.keys(obj).forEach((key: string) => {
+      if (obj[key] !== undefined && obj[key] !== null)
+        arr.push(`${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`);
+    });
+    const query = arr.join('&');
+
+    return query ? `?${query}` : '';
   }
 
   setAuthorizationToken(token: string) {
@@ -63,5 +75,23 @@ export class ApiService {
       `/mapping/${uploadId}/finalize`,
       mappings
     ) as Promise<IUpload>;
+  }
+
+  async getReviewData(
+    uploadId: string,
+    page?: number,
+    limit?: number
+  ): Promise<IReviewData> {
+    const queryString = this.constructQueryString({ limit, page });
+
+    return this.httpClient.get(
+      `/review/${uploadId}${queryString}`
+    ) as Promise<IReviewData>;
+  }
+
+  async confirmReview(uploadId: string, processInvalidRecords?: boolean) {
+    return this.httpClient.post(`/review/${uploadId}/confirm`, {
+      processInvalidRecords,
+    }) as Promise<IUpload>;
   }
 }

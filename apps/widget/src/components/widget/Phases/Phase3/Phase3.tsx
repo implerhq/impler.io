@@ -1,49 +1,42 @@
 import { colors, TEXTS } from '@config';
+import { usePhase3 } from '@hooks/Phase3/usePhase3';
 import { Download, Warning } from '@icons';
 import { Group, Text } from '@mantine/core';
 import { PhasesEum } from '@types';
 import { Button } from '@ui/Button';
+import { LoadingOverlay } from '@ui/LoadingOverlay';
 import { Pagination } from '@ui/Pagination';
 import { Table } from '@ui/Table';
 import { Footer } from 'components/Common/Footer';
 import { useRef, useState, useEffect } from 'react';
+import { ConfirmModal } from '../ConfirmModal';
 import useStyles from './Styles';
 
 interface IPhase3Props {
-  onNextClick: () => void;
+  onNextClick: (count: number) => void;
   onPrevClick: () => void;
 }
 
 export function Phase3(props: IPhase3Props) {
+  const { classes } = useStyles();
+  const { onNextClick, onPrevClick } = props;
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const {
+    onPageChange,
+    heaings,
+    isInitialDataLoaded,
+    reviewData,
+    page,
+    totalPages,
+    totalData,
+    onConfirmReview,
+    isConfirmReviewLoading,
+  } = usePhase3({ onNext: onNextClick });
   const tableWrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
   const [tableWrapperDimensions, setTableWrapperDimentions] = useState({
     height: 200,
     width: 500,
   });
-  const { classes } = useStyles();
-  const { onNextClick, onPrevClick } = props;
-
-  const data = Array.from({ length: 50 }).map(() => ({
-    index: 10,
-    error: '`fname` should not be empty, `email` should be unique',
-    fname: '',
-    lname: 'Doe',
-    surname: 'Doe',
-    gender: 'Male',
-    email: 'johndoe@gmail.com',
-    age: 20,
-    city: 'Surat',
-    country: 'India',
-    state: 'Gujarat',
-    height: '5.5ft',
-    weight: '45kg',
-    bday: '18/9/1999',
-    mname: 'Ramubhai',
-    faname: 'Bhagavanbhai',
-    passed: '10th',
-    college: 'J P Dawer',
-    university: 'VNSGU',
-  }));
 
   useEffect(() => {
     //  setting wrapper height
@@ -53,8 +46,13 @@ export function Phase3(props: IPhase3Props) {
     });
   }, []);
 
+  const onConfirmClick = () => {
+    setShowConfirmModal(true);
+  };
+
   return (
     <>
+      <LoadingOverlay visible={!isInitialDataLoaded || isConfirmReviewLoading} />
       <Group className={classes.textContainer} align="center">
         <Group align="center" spacing="xs">
           <Warning fill={colors.red} className={classes.warningIcon} />
@@ -69,34 +67,26 @@ export function Phase3(props: IPhase3Props) {
         <Table
           style={{
             height: tableWrapperDimensions.height,
-            // width: tableWrapperDimensions.width,
           }}
-          headings={[
-            { key: 'index', title: '#', width: '4%' },
-            { key: 'fname', title: 'First Name' },
-            { key: 'lname', title: 'Last Name' },
-            { key: 'surname', title: 'Surname' },
-            { key: 'gender', title: 'Gender' },
-            { key: 'email', title: 'Email' },
-            { key: 'age', title: 'Age' },
-            { key: 'city', title: 'City' },
-            { key: 'country', title: 'Country' },
-            { key: 'state', title: 'State' },
-            { key: 'height', title: 'Height' },
-            { key: 'weight', title: 'Weight' },
-            { key: 'bday', title: 'Birthdate' },
-            { key: 'mname', title: 'Mother Name' },
-            { key: 'faname', title: 'Father Name' },
-            { key: 'passed', title: 'Passed' },
-            { key: 'college', title: 'College' },
-            { key: 'university', title: 'University' },
-          ]}
-          data={data}
+          headings={[{ key: 'index', title: '#', width: '4%' }, ...heaings]}
+          data={reviewData}
         />
       </div>
-      <Pagination page={1} total={10} />
+      <Pagination page={page} total={totalPages} onChange={onPageChange} />
 
-      <Footer active={PhasesEum.REVIEW} onNextClick={onNextClick} onPrevClick={onPrevClick} />
+      <Footer
+        primaryButtonLoading={isConfirmReviewLoading}
+        active={PhasesEum.REVIEW}
+        onNextClick={onConfirmClick}
+        onPrevClick={onPrevClick}
+      />
+
+      <ConfirmModal
+        onConfirm={onConfirmReview}
+        onClose={() => setShowConfirmModal(false)}
+        opened={showConfirmModal}
+        wrongDataCount={totalData}
+      />
     </>
   );
 }
