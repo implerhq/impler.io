@@ -46,11 +46,15 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     IErrorObject,
     boolean,
     [string]
-  >([`confirm:${uploadInfo._id}`], (exemptData) => api.confirmReview(uploadInfo._id, exemptData), {
-    onSuccess() {
-      onNext(uploadInfo.totalRecords);
-    },
-  });
+  >(
+    [`confirm:${uploadInfo._id}`],
+    (processInvalidRecords) => api.confirmReview(uploadInfo._id, processInvalidRecords),
+    {
+      onSuccess() {
+        onNext(uploadInfo.totalRecords);
+      },
+    }
+  );
 
   const onPageChange = (newPageNumber: number) => {
     setPage(newPageNumber);

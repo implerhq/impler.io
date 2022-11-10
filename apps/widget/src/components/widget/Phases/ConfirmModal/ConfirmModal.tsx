@@ -24,10 +24,10 @@ export function ConfirmModal(props: IConfirmModalProps) {
           {TEXTS.CONFIRM_MODAL.subTitle}
         </Text>
         <Group spacing="sm" style={{ flexDirection: 'row' }}>
-          <Button onClick={() => onConfirm(true)} variant="outline">
+          <Button onClick={() => onConfirm(false)} variant="outline">
             {TEXTS.CONFIRM_MODAL.EXEMPT_CONTINUE}
           </Button>
-          <Button onClick={() => onConfirm(false)}>{TEXTS.CONFIRM_MODAL.KEEP_CONTINUE}</Button>
+          <Button onClick={() => onConfirm(true)}>{TEXTS.CONFIRM_MODAL.KEEP_CONTINUE}</Button>
         </Group>
       </Group>
     </MantineModal>
