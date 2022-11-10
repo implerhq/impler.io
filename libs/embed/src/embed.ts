@@ -184,6 +184,7 @@ export default ((window: any) => {
 
   const impler = new Impler(onloadFunc);
 
+  (window as any).impler = {};
   (window as any).impler.init = impler.init;
   (window as any).impler.on = impler.on;
   (window as any).impler.show = impler.showWidget;
