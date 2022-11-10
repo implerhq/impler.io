@@ -18,4 +18,6 @@ export const APIMessages = {
 
 export const Defaults = {
   DATA_LENGTH: 1,
+  PAGE: 1,
+  PAGE_LIMIT: 100,
 };

@@ -2,21 +2,22 @@ import { BadRequestException, Body, Controller, Get, Param, Post, Query, UseGuar
 import { ApiOperation, ApiTags, ApiSecurity, ApiQuery, ApiOkResponse } from '@nestjs/swagger';
 import { FileEntity, UploadEntity } from '@impler/dal';
 import { ACCESS_KEY_NAME, UploadStatusEnum } from '@impler/shared';
-import { APIMessages } from '../shared/constants';
-import { APIKeyGuard } from '../shared/framework/auth.gaurd';
-import { validateUploadStatus } from '../shared/helpers/upload.helpers';
+import { APIMessages } from '@shared/constants';
+import { APIKeyGuard } from '@shared/framework/auth.gaurd';
+import { validateUploadStatus } from '@shared/helpers/upload.helpers';
 import { DoReview } from './usecases/do-review/do-review.usecase';
 import { GetUploadInvalidData } from './usecases/get-upload-invalid-data/get-upload-invalid-data.usecase';
 import { SaveReviewData } from './usecases/save-review-data/save-review-data.usecase';
 import { GetFileInvalidData } from './usecases/get-file-invalid-data/get-file-invalid-data.usecase';
-import { ValidateMongoId } from '../shared/validations/valid-mongo-id.validation';
+import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 import { ConfirmReviewRequestDto } from './dtos/confirm-review-request.dto';
-import { GetUploadCommand } from '../shared/usecases/get-upload/get-upload.command';
-import { GetUpload } from '../shared/usecases/get-upload/get-upload.usecase';
-import { paginateRecords, validateNotFound } from '../shared/helpers/common.helper';
+import { GetUploadCommand } from '@shared/usecases/get-upload/get-upload.command';
+import { GetUpload } from '@shared/usecases/get-upload/get-upload.usecase';
+import { paginateRecords, validateNotFound } from '@shared/helpers/common.helper';
 import { StartProcess } from './usecases/start-process/start-process.usecase';
 import { StartProcessCommand } from './usecases/start-process/start-process.command';
-import { PaginationResponseDto } from '../shared/dtos/pagination-response.dto';
+import { PaginationResponseDto } from '@shared/dtos/pagination-response.dto';
+import { Defaults } from '@shared/constants';
 
 @Controller('/review')
 @ApiTags('Review')
@@ -54,8 +55,8 @@ export class ReviewController {
   })
   async getReview(
     @Param('uploadId') _uploadId: string,
-    @Query('page') page = 1,
-    @Query('limit') limit = 100
+    @Query('page') page = Defaults.PAGE,
+    @Query('limit') limit = Defaults.PAGE_LIMIT
   ): Promise<PaginationResponseDto> {
     const uploadData = await this.getUploadInvalidData.execute(_uploadId);
     if (!uploadData) throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
