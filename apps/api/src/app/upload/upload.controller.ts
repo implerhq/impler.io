@@ -49,6 +49,14 @@ export class UploadController {
     );
   }
 
+  @Get(':uploadId')
+  @ApiOperation({
+    summary: 'Get Upload information',
+  })
+  getUploadInformation(@Param('uploadId', ValidateMongoId) uploadId: string) {
+    return this.getUpload.execute(GetUploadCommand.create({ uploadId }));
+  }
+
   @Get(':uploadId/headings')
   @ApiOperation({
     summary: 'Get headings for the uploaded file',
