@@ -28,6 +28,17 @@ export class FileNameService {
   getInvalidDataFilePath(uploadId: string): string {
     return `${uploadId}/${this.getInvalidDataFileName()}`;
   }
+  getInvalidCSVDataFileName(): string {
+    return 'invalid-data.csv';
+  }
+  getInvalidCSVDataFilePath(uploadId: string): string {
+    return `${uploadId}/${this.getInvalidCSVDataFileName()}`;
+  }
+  getInvalidCSVDataFileUrl(uploadId: string): string {
+    const path = this.getInvalidCSVDataFilePath(uploadId);
+
+    return [process.env.S3_LOCAL_STACK, process.env.S3_BUCKET_NAME, path].join('/');
+  }
   getValidDataFileName(): string {
     return `valid-data.json`;
   }
