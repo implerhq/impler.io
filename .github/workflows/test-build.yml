@@ -47,4 +47,6 @@ jobs:
           run_install: true
 
       - name: Build
-        run: pnpm build
+        run: |
+          npm i -g @nestjs/cli
+          pnpm build
