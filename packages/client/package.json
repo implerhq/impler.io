@@ -51,7 +51,7 @@
     "dist"
   ],
   "dependencies": {
-    "@impler/shared": "workspace:^1.0.0",
+    "@impler/shared": "workspace:^0.1.0",
     "axios": "^0.26.1"
   }
 }

@@ -1,6 +1,6 @@
 {
 	"name": "@impler/widget",
-	"version": "1.0.0",
+	"version": "0.1.0",
 	"private": true,
 	"scripts": {
 		"start": "cross-env PORT=3500 craco start",
@@ -36,7 +36,7 @@
 		"@craco/craco": "^6.4.5",
 		"@emotion/react": "^11.10.5",
 		"@impler/client": "workspace:^0.1.0",
-		"@impler/shared": "workspace:^1.0.0",
+		"@impler/shared": "workspace:^0.1.0",
 		"@mantine/core": "^5.6.3",
 		"@mantine/dropzone": "^5.6.3",
 		"@mantine/notifications": "5.6.3",
