@@ -1,3 +1,5 @@
+import { saveAs } from 'file-saver';
+
 export function getErrorObject(error: string): Record<string, string> {
   if (!error) return {};
   const errorStrs = error.split(`, `);
@@ -36,13 +38,8 @@ function isValidHttpUrl(string: string) {
   return url.protocol === 'http:' || url.protocol === 'https:';
 }
 
-export function downloadFileFromURL(url: string) {
+export function downloadFileFromURL(url: string, name: string) {
   if (!isValidHttpUrl(url)) return;
 
-  // create DOM link and download file
-  const link = document.createElement('a');
-  link.href = url;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  saveAs(url, name);
 }
