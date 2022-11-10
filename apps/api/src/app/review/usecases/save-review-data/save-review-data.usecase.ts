@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { FileRepository, UploadRepository } from '@impler/dal';
 import { FileMimeTypesEnum } from '@impler/shared';
-import { FileNameService } from '../../../shared/file/name.service';
-import { StorageService } from '../../../shared/storage/storage.service';
+import { FileNameService } from '@shared/file/name.service';
+import { StorageService } from '@shared/storage/storage.service';
+import { Defaults } from '@shared/constants';
 
 @Injectable()
 export class SaveReviewData {
@@ -20,7 +21,7 @@ export class SaveReviewData {
   }
 
   private async storeValidFile(_uploadId: string, validData: any[]): Promise<string> {
-    if (validData.length < 1) return null;
+    if (validData.length < Defaults.DATA_LENGTH) return null;
 
     const strinValidData = JSON.stringify(validData);
     const validFilePath = this.fileNameService.getValidDataFilePath(_uploadId);
@@ -32,7 +33,7 @@ export class SaveReviewData {
   }
 
   private async storeInvalidFile(_uploadId: string, invalidData: any[]): Promise<string> {
-    if (invalidData.length < 1) return null;
+    if (invalidData.length < Defaults.DATA_LENGTH) return null;
 
     const stringInvalidData = JSON.stringify(invalidData);
     const invalidFilePath = this.fileNameService.getInvalidDataFilePath(_uploadId);
@@ -44,7 +45,7 @@ export class SaveReviewData {
   }
 
   private async storeFile(invalidFilePath: string, data: string) {
-    await this.storageService.uploadFile(invalidFilePath, data, FileMimeTypesEnum.JSON);
+    await this.storageService.uploadFile(invalidFilePath, data, FileMimeTypesEnum.JSON, true);
   }
 
   private async makeFileEntry(fileName: string, filePath: string) {
