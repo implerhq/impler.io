@@ -1,6 +1,7 @@
-import { IInitPayload, IShowPayload } from 'libs/shared/dist';
+import { IInitPayload, IShowPayload } from '@impler/shared';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { logger } from '../../utils';
 import { ButtonProps } from './Button.types';
 
 const StyledButton = styled.button`
@@ -39,7 +40,8 @@ export const Button = ({
       const initPayload: IInitPayload = { accessToken, template };
       window.impler.init(projectId, initPayload);
       setIsImplerInitiated(true);
-    }
+      // eslint-disable-next-line no-console
+    } else logger.logError('IMPLER_UNDEFINED_ERROR');
   }, []);
 
   const onButtonClick = async () => {
