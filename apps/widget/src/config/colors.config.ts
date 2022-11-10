@@ -10,4 +10,5 @@ export const colors = {
   lightDanger: '#FDEBEB',
   light: '#F2F9FE',
   white: '#FFFFFF',
+  gray: '#ebebeb',
 };
