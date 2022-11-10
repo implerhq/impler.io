@@ -7,6 +7,12 @@ export const getTableStyles = (theme: MantineTheme) => ({
   overflow: 'auto',
   display: 'block',
   whiteSpace: 'nowrap',
+  'thead tr th': {
+    position: 'sticky',
+    top: 0,
+    'z-index': 1,
+    background: colors.gray,
+  },
 });
 
 export const getHeadingStyles = (theme: MantineTheme): React.CSSProperties => ({
