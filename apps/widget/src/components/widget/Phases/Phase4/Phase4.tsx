@@ -27,7 +27,7 @@ export function Phase4(props: IPhase4Props) {
         </Text>
       </Group>
 
-      <Footer active={PhasesEum.CONFIRMATION} onNextClick={onUploadAgainClick} onPrevClick={onCloseClick} />
+      <Footer active={PhasesEum.COMPLETE} onNextClick={onUploadAgainClick} onPrevClick={onCloseClick} />
     </>
   );
 }

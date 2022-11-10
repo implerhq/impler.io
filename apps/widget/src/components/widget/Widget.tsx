@@ -28,7 +28,7 @@ export function Widget() {
     setPromptContinueAction(undefined);
   };
   const onClose = () => {
-    if ([PhasesEum.UPLOAD, PhasesEum.CONFIRMATION].includes(phase)) closeWidget();
+    if ([PhasesEum.UPLOAD, PhasesEum.COMPLETE].includes(phase)) closeWidget();
     else setPromptContinueAction(PromptModalTypesEnum.CLOSE);
   };
   const closeWidget = () => {
@@ -40,16 +40,14 @@ export function Widget() {
   };
   const onComplete = (count: number) => {
     setDataCount(count);
-    setPhase(PhasesEum.CONFIRMATION);
+    setPhase(PhasesEum.COMPLETE);
   };
 
   const PhaseView = {
     [PhasesEum.UPLOAD]: <Phase1 onNextClick={() => setPhase(PhasesEum.MAPPING)} />,
     [PhasesEum.MAPPING]: <Phase2 onNextClick={() => setPhase(PhasesEum.REVIEW)} onPrevClick={onUploadResetClick} />,
     [PhasesEum.REVIEW]: <Phase3 onNextClick={onComplete} onPrevClick={onUploadResetClick} />,
-    [PhasesEum.CONFIRMATION]: (
-      <Phase4 rowsCount={dataCount} onUploadAgainClick={resetProgress} onCloseClick={onClose} />
-    ),
+    [PhasesEum.COMPLETE]: <Phase4 rowsCount={dataCount} onUploadAgainClick={resetProgress} onCloseClick={onClose} />,
   };
 
   return (
