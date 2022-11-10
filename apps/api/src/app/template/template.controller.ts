@@ -1,9 +1,11 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { UploadEntity } from '@impler/dal';
 import { ACCESS_KEY_NAME } from '@impler/shared';
-import { DocumentNotFoundException } from '../shared/exceptions/document-not-found.exception';
-import { APIKeyGuard } from '../shared/framework/auth.gaurd';
-import { ValidateMongoId } from '../shared/validations/valid-mongo-id.validation';
+import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
+import { APIKeyGuard } from '@shared/framework/auth.gaurd';
+import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
+
 import { CreateTemplateRequestDto } from './dtos/create-template-request.dto';
 import { TemplateResponseDto } from './dtos/template-response.dto';
 import { UpdateTemplateRequestDto } from './dtos/update-template-request.dto';
@@ -13,6 +15,8 @@ import { DeleteTemplate } from './usecases/delete-template/delete-template.useca
 import { GetTemplates } from './usecases/get-templates/get-templates.usecase';
 import { UpdateTemplateCommand } from './usecases/update-template/update-template.command';
 import { UpdateTemplate } from './usecases/update-template/update-template.usecase';
+import { GetUploads } from './usecases/get-uploads/get-uploads.usecase';
+import { GetUploadsCommand } from './usecases/get-uploads/get-uploads.command';
 
 @Controller('/template')
 @ApiTags('Template')
@@ -23,7 +27,8 @@ export class TemplateController {
     private getTemplatesUsecase: GetTemplates,
     private createTemplateUsecase: CreateTemplate,
     private updateTemplateUsecase: UpdateTemplate,
-    private deleteTemplateUsecase: DeleteTemplate
+    private deleteTemplateUsecase: DeleteTemplate,
+    private getUploads: GetUploads
   ) {}
 
   @Get(':projectId')
@@ -100,5 +105,17 @@ export class TemplateController {
     }
 
     return document;
+  }
+
+  @Get(':templateId/uploads')
+  @ApiOperation({
+    summary: 'Get all uploads information for template',
+  })
+  async getAllUploads(@Param('templateId', ValidateMongoId) templateId: string): Promise<UploadEntity[]> {
+    return this.getUploads.execute(
+      GetUploadsCommand.create({
+        _templateId: templateId,
+      })
+    );
   }
 }
