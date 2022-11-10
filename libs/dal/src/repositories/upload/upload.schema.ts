@@ -25,6 +25,13 @@ const uploadSchema = new Schema(
       type: Schema.Types.String,
       ref: 'File',
     },
+    _invalidCSVDataFileId: {
+      type: Schema.Types.String,
+      ref: 'File',
+    },
+    invalidCSVDataFileUrl: {
+      type: Schema.Types.String,
+    },
     uploadedDate: {
       type: Schema.Types.Date,
       default: Date.now,

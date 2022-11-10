@@ -2,7 +2,7 @@ import { Table as MantineTable } from '@mantine/core';
 import useStyles from './Table.style';
 import { getErrorObject } from '../../util/helpers';
 import { InvalidWarning } from '../InvalidWarning';
-import { variables } from '../../config';
+import { variables } from '../../config/variable.config';
 import React from 'react';
 
 interface IHeadingItem {

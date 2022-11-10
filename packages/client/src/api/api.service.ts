@@ -94,4 +94,8 @@ export class ApiService {
       processInvalidRecords,
     }) as Promise<IUpload>;
   }
+
+  async getUpload(uploadId: string) {
+    return this.httpClient.get(`/upload/${uploadId}`) as Promise<IUpload>;
+  }
 }

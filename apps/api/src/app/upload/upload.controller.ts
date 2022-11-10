@@ -4,7 +4,6 @@ import { Body, Controller, Get, Param, Post, UploadedFile, UseGuards, UseInterce
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiSecurity, ApiConsumes, ApiOperation, ApiParam } from '@nestjs/swagger';
 import { ACCESS_KEY_NAME } from '@impler/shared';
-import { UploadEntity } from '@impler/dal';
 
 import { APIKeyGuard } from '../shared/framework/auth.gaurd';
 import { UploadRequestDto } from './dtos/upload-request.dto';
@@ -14,8 +13,6 @@ import { MakeUploadEntryCommand } from './usecases/make-upload-entry/make-upload
 import { ValidateMongoId } from '../shared/validations/valid-mongo-id.validation';
 import { GetUpload } from '../shared/usecases/get-upload/get-upload.usecase';
 import { GetUploadCommand } from '../shared/usecases/get-upload/get-upload.command';
-import { GetUploads } from './usecases/get-uploads/get-uploads.usecase';
-import { GetUploadsCommand } from './usecases/get-uploads/get-uploads.command';
 import { ValidateTemplate } from '../shared/validations/valid-template.validation';
 
 @Controller('/upload')
@@ -23,7 +20,7 @@ import { ValidateTemplate } from '../shared/validations/valid-template.validatio
 @ApiSecurity(ACCESS_KEY_NAME)
 @UseGuards(APIKeyGuard)
 export class UploadController {
-  constructor(private makeUploadEntry: MakeUploadEntry, private getUpload: GetUpload, private getUploads: GetUploads) {}
+  constructor(private makeUploadEntry: MakeUploadEntry, private getUpload: GetUpload) {}
 
   @Post(':template')
   @ApiOperation({
@@ -52,16 +49,12 @@ export class UploadController {
     );
   }
 
-  @Get(':templateId')
+  @Get(':uploadId')
   @ApiOperation({
-    summary: 'Get uploads information for template',
+    summary: 'Get Upload information',
   })
-  async getUploadsInformation(@Param('templateId', ValidateMongoId) templateId: string): Promise<UploadEntity[]> {
-    return this.getUploads.execute(
-      GetUploadsCommand.create({
-        _templateId: templateId,
-      })
-    );
+  getUploadInformation(@Param('uploadId', ValidateMongoId) uploadId: string) {
+    return this.getUpload.execute(GetUploadCommand.create({ uploadId }));
   }
 
   @Get(':uploadId/headings')

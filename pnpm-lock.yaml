@@ -65,7 +65,6 @@ importers:
       '@nestjs/platform-express': ^9.1.2
       '@nestjs/swagger': ^6.1.2
       '@types/express': ^4.17.14
-      '@types/json2csv': ^5.0.3
       '@types/multer': ^1.4.7
       '@types/node': ^18.7.18
       ajv: ^8.11.0
@@ -107,7 +106,6 @@ importers:
       xlsx: 0.18.5
     devDependencies:
       '@types/express': 4.17.14
-      '@types/json2csv': 5.0.3
       '@types/multer': 1.4.7
       '@types/node': 18.7.18
       nodemon: 2.0.20
@@ -149,10 +147,12 @@ importers:
       '@storybook/addon-essentials': ^6.5.13
       '@storybook/react': ^6.5.13
       '@tanstack/react-query': ^4.14.5
+      '@types/file-saver': ^2.0.5
       '@types/react': ^18.0.21
       '@types/react-dom': ^18.0.6
       axios: ^0.26.1
       cross-env: ^7.0.3
+      file-saver: ^2.0.5
       react: 18.2.0
       react-dom: 18.2.0
       react-hook-form: ^7.39.1
@@ -176,6 +176,7 @@ importers:
       '@tanstack/react-query': 4.14.5_biqbaboplfbrettd7655fr4n2y
       axios: 0.26.1
       cross-env: 7.0.3
+      file-saver: 2.0.5
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-hook-form: 7.39.1_react@18.2.0
@@ -186,6 +187,7 @@ importers:
       webfontloader: 1.6.28
       webpack-dev-server: 4.11.1_webpack@5.74.0
     devDependencies:
+      '@types/file-saver': 2.0.5
       '@types/react': 18.0.21
       '@types/react-dom': 18.0.6
       typescript: 4.8.3
@@ -6272,6 +6274,10 @@ packages:
       '@types/qs': 6.9.7
       '@types/serve-static': 1.15.0
 
+  /@types/file-saver/2.0.5:
+    resolution: {integrity: sha512-zv9kNf3keYegP5oThGLaPk8E081DFDuwfqjtiTzm6PoxChdJ1raSuADf2YGCVIyrSynLrgc8JWv296s7Q7pQSQ==}
+    dev: true
+
   /@types/glob/7.2.0:
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
     dependencies:
@@ -6337,12 +6343,6 @@ packages:
 
   /@types/json-schema/7.0.11:
     resolution: {integrity: sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==}
-
-  /@types/json2csv/5.0.3:
-    resolution: {integrity: sha512-ZJEv6SzhPhgpBpxZU4n/TZekbZqI4EcyXXRwms1lAITG2kIAtj85PfNYafUOY1zy8bWs5ujaub0GU4copaA0sw==}
-    dependencies:
-      '@types/node': 18.7.18
-    dev: true
 
   /@types/json5/0.0.29:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
@@ -10825,6 +10825,10 @@ packages:
       loader-utils: 2.0.3
       schema-utils: 3.1.1
       webpack: 5.74.0
+    dev: false
+
+  /file-saver/2.0.5:
+    resolution: {integrity: sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==}
     dev: false
 
   /file-selector/0.6.0:

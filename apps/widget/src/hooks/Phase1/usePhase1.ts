@@ -73,7 +73,8 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
       selectedTemplate = data.find((templateItem) => templateItem.code === template || templateItem._id === template);
     }
 
-    if (selectedTemplate && selectedTemplate.sampleFileUrl) downloadFileFromURL(selectedTemplate.sampleFileUrl);
+    if (selectedTemplate && selectedTemplate.sampleFileUrl)
+      downloadFileFromURL(selectedTemplate.sampleFileUrl, `${selectedTemplate.code}-sample.csv`);
     else notifier.showError('INCOMPLETE_TEMPLATE');
     setIsDownloadInProgress(false);
   };

@@ -2,6 +2,7 @@ import { IErrorObject, IReviewData, IUpload } from '@impler/shared';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { downloadFileFromURL } from '@util';
 import { useState } from 'react';
 
 const defaultPage = 1;
@@ -12,7 +13,7 @@ interface IUsePhase3Props {
 
 export function usePhase3({ onNext }: IUsePhase3Props) {
   const { api } = useAPIState();
-  const { uploadInfo } = useAppState();
+  const { uploadInfo, setUploadInfo } = useAppState();
   const [page, setPage] = useState<number>(defaultPage);
   const [totalPages, setTotalPages] = useState<number>(defaultPage);
   const {
@@ -29,31 +30,53 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
       },
     }
   );
+  const { isLoading: isGetUploadLoading, refetch: getUpload } = useQuery<IUpload, IErrorObject, IUpload, [string]>(
+    [`getUpload:${uploadInfo._id}`],
+    () => api.getUpload(uploadInfo._id),
+    {
+      onSuccess(data) {
+        setUploadInfo(data);
+        downloadFileFromURL(data.invalidCSVDataFileUrl, `invalid-data-${uploadInfo._id}.csv`);
+      },
+      enabled: false,
+    }
+  );
   const { isLoading: isConfirmReviewLoading, mutate: confirmReview } = useMutation<
     IUpload,
     IErrorObject,
     boolean,
     [string]
-  >([`confirm:${uploadInfo._id}`], (exemptData) => api.confirmReview(uploadInfo._id, exemptData), {
-    onSuccess() {
-      onNext(uploadInfo.totalRecords);
-    },
-  });
+  >(
+    [`confirm:${uploadInfo._id}`],
+    (processInvalidRecords) => api.confirmReview(uploadInfo._id, processInvalidRecords),
+    {
+      onSuccess() {
+        onNext(uploadInfo.totalRecords);
+      },
+    }
+  );
 
   const onPageChange = (newPageNumber: number) => {
     setPage(newPageNumber);
+  };
+
+  const onExportData = () => {
+    if (!uploadInfo.invalidCSVDataFileUrl) getUpload();
+    else downloadFileFromURL(uploadInfo.invalidCSVDataFileUrl, `invalid-data-${uploadInfo._id}.csv`);
   };
 
   return {
     page,
     totalPages,
     onPageChange,
+    onExportData,
+    isGetUploadLoading,
+    isConfirmReviewLoading,
     onConfirmReview: confirmReview,
     heaings: uploadInfo.headings.map((key: string) => ({ title: key, key })),
     reviewData: reviewData?.data || [],
     // eslint-disable-next-line no-magic-numbers
     totalData: reviewData?.totalRecords || 0,
-    isConfirmReviewLoading,
     isInitialDataLoaded: isReviewDataFetched && !isReviewDataLoading,
   };
 }

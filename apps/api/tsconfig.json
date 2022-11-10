@@ -8,6 +8,10 @@
     "target": "es2017",
     "allowJs": false,
     "esModuleInterop": false,
-    "declarationMap": true
+    "declarationMap": true,
+    "baseUrl": "src",
+    "paths": {
+      "@shared/*": ["app/shared/*"],
+    }
   }
 }

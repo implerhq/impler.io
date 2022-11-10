@@ -15,3 +15,9 @@ export const APIMessages = {
   COMPLETED: 'You may landed to wrong place, This uploaded file is already completed, no more steps left to perform.',
   PROJECT_WITH_TEMPLATE_MISSING: 'Template not found with provided ProjectId and Template',
 };
+
+export const Defaults = {
+  DATA_LENGTH: 1,
+  PAGE: 1,
+  PAGE_LIMIT: 100,
+};

@@ -40,7 +40,7 @@ export function Footer(props: IFooterProps) {
         </Button>
       </>
     ),
-    [PhasesEum.CONFIRMATION]: (
+    [PhasesEum.COMPLETE]: (
       <>
         <Button loading={secondaryButtonLoading} onClick={onPrevClick} variant="outline">
           {TEXTS.PHASE4.CLOSE}
