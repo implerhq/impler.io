@@ -1,6 +1,6 @@
 {
   "name": "impler.io",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Open source infrastructure to import data easily",
   "packageManager": "pnpm@7.9.4",
   "main": "",
@@ -39,6 +39,13 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
+  },
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "libs/*",
+      "packages/*"
+    ]
   },
   "lint-staged": {
     "apps/**/*.{ts,tsx,json}": [

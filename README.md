@@ -109,12 +109,14 @@ Follow these steps to setup the project locally,
   - [x] Upload
   - [x] Mapping
   - [x] Review
-  - [ ] Processing data
-- [ ] Web
-  - [ ] Upload Phase
-  - [ ] Mapping Phase
-  - [ ] Review Phase
-  - [ ] Confirm Phase
+  - [x] Processing data
+- [x] Web
+  - [x] Upload Phase
+  - [x] Mapping Phase
+  - [x] Review Phase
+  - [x] Confirm Phase
+- [] Infra
+  - [] Docker
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
