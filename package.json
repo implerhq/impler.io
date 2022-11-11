@@ -5,7 +5,7 @@
   "packageManager": "pnpm@7.9.4",
   "main": "",
   "scripts": {
-    "clean": "lerna clean --yes && npm run prebuild",
+    "clean": "pnpm run prebuild && lerna clean --yes",
     "lint": "nx run-many --target=lint --all",
     "kill-ports": "npx kill-port 4701 3000 3500",
     "setup:project": "npx pnpm@7.9.4 i && node scripts/setup-env-files.js",

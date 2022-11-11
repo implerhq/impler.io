@@ -55,6 +55,7 @@
     "lint-staged": "^13.0.3",
     "lodash.camelcase": "^4.3.0",
     "prettier": "^2.7.1",
+    "rimraf": "^3.0.2",
     "rollup": "^3.2.3",
     "rollup-plugin-typescript2": "^0.34.1",
     "ts-node": "^10.9.1",
