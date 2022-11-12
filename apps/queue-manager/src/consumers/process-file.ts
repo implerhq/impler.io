@@ -19,6 +19,9 @@ import {
   ISendData,
 } from '../types/file-processing.types';
 
+const MIN_LIMIT = 0;
+const DEFAULT_PAGE = 1;
+
 export class ProcessFileConsumer extends BaseConsumer {
   private templateRepository: TemplateRepository = new TemplateRepository();
   private uploadRepository: UploadRepository = new UploadRepository();
@@ -32,15 +35,18 @@ export class ProcessFileConsumer extends BaseConsumer {
 
     if (cachedData) {
       // Get valid data information
-      const validDataContent = await this.storageService.getFileContent(
-        cachedData.validDataFilePath,
-        FileEncodingsEnum.JSON
-      );
-      const validDataJSON: any[] = JSON.parse(validDataContent);
+      let validDataJSON: null | any[] = null;
+      if (cachedData.validDataFilePath) {
+        const validDataContent = await this.storageService.getFileContent(
+          cachedData.validDataFilePath,
+          FileEncodingsEnum.JSON
+        );
+        validDataJSON = JSON.parse(validDataContent);
+      }
 
       // Get invalid data information
       let invalidDataJSON: null | any[] = null;
-      if (cachedData.processInvalidRecords) {
+      if (cachedData.processInvalidRecords && cachedData.invalidDataFilePath) {
         const invalidDataContent = await this.storageService.getFileContent(
           cachedData.invalidDataFilePath,
           FileEncodingsEnum.JSON
@@ -51,7 +57,7 @@ export class ProcessFileConsumer extends BaseConsumer {
       const sendData = this.buildSendData({
         chunkSize: cachedData.chunkSize,
         data: cachedData.isInvalidRecords ? invalidDataJSON : validDataJSON,
-        page: cachedData.page || 1,
+        page: cachedData.page || DEFAULT_PAGE,
         isInvalidRecords: cachedData.isInvalidRecords,
         template: cachedData.code,
         uploadId,
@@ -121,14 +127,17 @@ export class ProcessFileConsumer extends BaseConsumer {
 
   private buildSendData({
     data,
-    page = 1,
+    page = DEFAULT_PAGE,
     chunkSize,
     isInvalidRecords,
     template,
     uploadId,
     extra = '',
   }: IBuildSendDataParameters): ISendData {
-    const slicedData = data.slice(Math.max((page - 1) * chunkSize, 0), Math.min((page + 1) * chunkSize, data.length));
+    const slicedData = data.slice(
+      Math.max((page - DEFAULT_PAGE) * chunkSize, MIN_LIMIT),
+      Math.min((page + DEFAULT_PAGE) * chunkSize, data.length)
+    );
 
     return {
       data: slicedData,
@@ -153,7 +162,7 @@ export class ProcessFileConsumer extends BaseConsumer {
   }: IGetNextDataParameters): ProcessFileCachedData | null {
     const baseData = {
       chunkSize,
-      page: page + 1,
+      page: page + DEFAULT_PAGE,
       isInvalidRecords: isInvalidRecords || false,
       ...rest,
     };
@@ -161,10 +170,10 @@ export class ProcessFileConsumer extends BaseConsumer {
       // there is more valid data available to send on next page
       return {
         ...baseData,
-        page: page + 1,
+        page: page + DEFAULT_PAGE,
         isInvalidRecords: false,
       };
-    } else if (!isInvalidRecords && Array.isArray(invalidData) && invalidData.length > 0) {
+    } else if (!isInvalidRecords && Array.isArray(invalidData) && invalidData.length > MIN_LIMIT) {
       // valid data are completed, invalid-data is available, so now move to invalid data
       return {
         ...baseData,
@@ -175,7 +184,7 @@ export class ProcessFileConsumer extends BaseConsumer {
       // currently processing invalid data, and there is more invalid data available to send
       return {
         ...baseData,
-        page: page + 1,
+        page: page + DEFAULT_PAGE,
         isInvalidRecords: true,
       };
     }
@@ -202,10 +211,10 @@ export class ProcessFileConsumer extends BaseConsumer {
       chunkSize: templateData.chunkSize,
       code: templateData.code,
       isInvalidRecords: uploadata._validDataFileId ? false : true,
-      invalidDataFilePath: (uploadata._invalidDataFileId as unknown as FileEntity).path,
+      invalidDataFilePath: (uploadata._invalidDataFileId as unknown as FileEntity)?.path,
       page: 1,
       processInvalidRecords: uploadata.processInvalidRecords,
-      validDataFilePath: (uploadata._validDataFileId as unknown as FileEntity).path,
+      validDataFilePath: (uploadata._validDataFileId as unknown as FileEntity)?.path,
       extra: uploadata.extra,
     };
   }
