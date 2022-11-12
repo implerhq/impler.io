@@ -41,7 +41,8 @@ export const Button = ({
       window.impler.init(projectId, initPayload);
       setIsImplerInitiated(true);
       // eslint-disable-next-line no-console
-    } else logger.logError('IMPLER_UNDEFINED_ERROR');
+    } else if (!window.impler) logger.logError('IMPLER_UNDEFINED_ERROR');
+    else if (!projectId) logger.logError('PROJECTID_NOT_SPECIFIED');
   }, []);
 
   const onButtonClick = async () => {
