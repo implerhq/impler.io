@@ -2,6 +2,7 @@ import { Warning } from '@icons';
 import { colors, TEXTS } from '@config';
 import { Button } from '@ui/Button';
 import { Group, Modal as MantineModal, Text, Title } from '@mantine/core';
+import { replaceVariablesInString, numberFormatter } from '@impler/shared';
 
 interface IConfirmModalProps {
   opened: boolean;
@@ -18,7 +19,7 @@ export function ConfirmModal(props: IConfirmModalProps) {
       <Group spacing={0} style={{ flexDirection: 'column', textAlign: 'center' }}>
         <Warning fill={colors.red} styles={{ width: 40, height: 40 }} />
         <Title color={colors.red} order={3} mt="sm">
-          {wrongDataCount}&nbsp;{TEXTS.CONFIRM_MODAL.title}
+          {replaceVariablesInString(TEXTS.CONFIRM_MODAL.title, { count: numberFormatter(wrongDataCount) })}
         </Title>
         <Text color="dimmed" mb="sm">
           {TEXTS.CONFIRM_MODAL.subTitle}

@@ -40,15 +40,14 @@ export const TEXTS = {
     CLOSE: 'Close',
   },
   CONFIRM_MODAL: {
-    title: 'rows appears to be have wrong data',
+    title: '{count} rows appears to be have wrong data',
     subTitle: 'You can choose to exempt wrong data or keep your wrong data and confirm your upload',
     EXEMPT_CONTINUE: 'Exempt wrong data and Continue',
     KEEP_CONTINUE: 'Continue with wrong data',
   },
   COMPLETE: {
-    greeting: 'Bravo!',
-    title: 'rows have been uploaded',
-    subTitle: 'rows have been uploaded successfully, and currently is in process, it will be ready shortly.',
+    title: 'Bravo! {count} rows have been uploaded',
+    subTitle: '{count} rows have been uploaded successfully, and currently is in process, it will be ready shortly.',
     UPLOAD_AGAIN: 'Upload new File',
   },
   PROMPT: {

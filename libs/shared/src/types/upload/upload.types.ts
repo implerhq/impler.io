@@ -42,8 +42,8 @@ export type ProcessFileCachedData = {
   isInvalidRecords: boolean;
   processInvalidRecords: boolean;
   _templateId: string;
-  validDataFilePath: string;
-  invalidDataFilePath: string;
+  validDataFilePath?: string;
+  invalidDataFilePath?: string;
 };
 
 export type ProcessFileData = {

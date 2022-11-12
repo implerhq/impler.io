@@ -4,6 +4,7 @@ import { CheckIcon } from '@icons';
 import { Footer } from 'components/Common/Footer';
 import useStyles from './Styles';
 import { PhasesEum } from '@types';
+import { numberFormatter, replaceVariablesInString } from '@impler/shared';
 
 interface IPhase4Props {
   onCloseClick: () => void;
@@ -20,10 +21,10 @@ export function Phase4(props: IPhase4Props) {
       <Group className={classes.wrapper}>
         <CheckIcon className={classes.check} />
         <Title color={colors.primary} order={2} mt="md">
-          {TEXTS.COMPLETE.greeting}&nbsp;{rowsCount}&nbsp;{TEXTS.COMPLETE.title}
+          {replaceVariablesInString(TEXTS.COMPLETE.title, { count: numberFormatter(rowsCount) })}
         </Title>
         <Text size="xl" color="dimmed">
-          &nbsp;{rowsCount}&nbsp;{TEXTS.COMPLETE.subTitle}
+          {replaceVariablesInString(TEXTS.COMPLETE.subTitle, { count: numberFormatter(rowsCount) })}
         </Text>
       </Group>
 

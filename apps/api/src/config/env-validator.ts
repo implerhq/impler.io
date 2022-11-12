@@ -16,6 +16,7 @@ const validators: { [K in keyof any]: ValidatorSpec<any[K]> } = {
   FRONT_BASE_URL: url(),
   API_ROOT_URL: url({ default: '' }),
   MONGO_URL: str(),
+  RABBITMQ_CONN_URL: str(),
 };
 
 export function validateEnv() {
