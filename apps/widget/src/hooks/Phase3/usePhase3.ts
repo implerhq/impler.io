@@ -25,8 +25,13 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     () => api.getReviewData(uploadInfo._id, page),
     {
       onSuccess(data) {
-        setPage(Number(data.page));
-        setTotalPages(data.totalPages);
+        if (!data.totalRecords) {
+          // Confirm review if spreadsheet do not have invalid records
+          confirmReview(false);
+        } else {
+          setPage(Number(data.page));
+          setTotalPages(data.totalPages);
+        }
       },
     }
   );
