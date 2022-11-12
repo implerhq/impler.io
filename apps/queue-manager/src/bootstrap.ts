@@ -4,8 +4,11 @@ import { ProcessFileConsumer } from './consumers';
 import { QueuesEnum } from '@impler/shared';
 import { DalService } from '@impler/dal';
 import { IAmqpConnectionManager } from 'amqp-connection-manager/dist/esm/AmqpConnectionManager';
+import { validateEnv } from './config/env-validator';
 
 let connection: IAmqpConnectionManager, chanelWrapper: ChannelWrapper;
+
+validateEnv();
 
 export async function bootstrap() {
   // conenct dal service
