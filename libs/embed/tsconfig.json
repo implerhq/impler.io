@@ -14,5 +14,5 @@
     "outDir": "dist/lib",
     "typeRoots": ["node_modules/@types"]
   },
-  "include": ["src", "rollup.config.js"]
+  "include": ["src", "index.js", "rollup.config.js"]
 }
