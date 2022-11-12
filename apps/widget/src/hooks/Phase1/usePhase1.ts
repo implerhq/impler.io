@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useImplerState } from '@store/impler.context';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -14,7 +14,7 @@ interface IUsePhase1Props {
 
 export function usePhase1({ goNext }: IUsePhase1Props) {
   const { api } = useAPIState();
-  const { setUploadInfo, reset } = useAppState();
+  const { setUploadInfo } = useAppState();
   const [templates, setTemplates] = useState<IOption[]>([]);
   const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
   const { projectId, template, authHeaderValue, extra } = useImplerState();
@@ -50,11 +50,6 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     handleSubmit,
     formState: { errors },
   } = useForm<IFormvalues>();
-
-  // reset App State on initial load
-  useEffect(() => {
-    reset();
-  }, []);
 
   const onDownload = async () => {
     setIsDownloadInProgress(true);

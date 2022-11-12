@@ -1,17 +1,20 @@
 import { useState } from 'react';
-import { Container } from './Container';
+import { Modal } from '@ui/Modal';
+import { ParentWindow } from '@util';
+import { useAppState } from '@store/app.context';
+import { useQueryClient } from '@tanstack/react-query';
+import { PhasesEum, PromptModalTypesEnum } from '@types';
 import { Phase1 } from './Phases/Phase1';
 import { Phase2 } from './Phases/Phase2';
 import { Phase3 } from './Phases/Phase3';
-import { PromptModal } from './Phases/PromptModal';
 import { Phase4 } from './Phases/Phase4';
-import { ParentWindow } from '@util';
-import { PhasesEum, PromptModalTypesEnum } from '@types';
-import { useQueryClient } from '@tanstack/react-query';
+import { PromptModal } from './Phases/PromptModal';
+import { Layout } from 'components/Common/Layout';
 
 export function Widget() {
   const defaultDataCount = 0;
   const queryClient = useQueryClient();
+  const { reset: resetAppState } = useAppState();
   const [phase, setPhase] = useState<PhasesEum>(PhasesEum.UPLOAD);
   const [dataCount, setDataCount] = useState<number>(defaultDataCount);
   const [promptContinueAction, setPromptContinueAction] = useState<PromptModalTypesEnum>();
@@ -33,8 +36,10 @@ export function Widget() {
   };
   const closeWidget = () => {
     ParentWindow.Close();
+    resetProgress();
   };
   const resetProgress = () => {
+    resetAppState();
     queryClient.clear();
     setPhase(PhasesEum.UPLOAD);
   };
@@ -51,14 +56,16 @@ export function Widget() {
   };
 
   return (
-    <Container phase={phase} onClose={onClose}>
-      {PhaseView[phase]}
-      <PromptModal
-        onCancel={onPromptCancel}
-        onConfirm={onPromptConfirm}
-        opened={!!promptContinueAction}
-        action={promptContinueAction}
-      />
-    </Container>
+    <Modal opened onClose={onClose}>
+      <Layout active={phase}>
+        {PhaseView[phase]}
+        <PromptModal
+          onCancel={onPromptCancel}
+          onConfirm={onPromptConfirm}
+          opened={!!promptContinueAction}
+          action={promptContinueAction}
+        />
+      </Layout>
+    </Modal>
   );
 }

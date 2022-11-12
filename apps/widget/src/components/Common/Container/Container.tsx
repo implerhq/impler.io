@@ -5,21 +5,14 @@ import { Global } from '@emotion/react';
 import { API_URL, colors } from '@config';
 import { Provider } from '../Provider';
 import { ParentWindow } from '@util';
-import { Modal } from '@ui/Modal';
 import { useAuthentication } from '@hooks/useAuthentication';
 import { ApiService } from '@impler/client';
-import { Layout } from 'components/Common/Layout';
-import { EventTypesEnum, MessageHandlerDataType, PhasesEum } from '@types';
+import { EventTypesEnum, MessageHandlerDataType } from '@types';
 import { IInitPayload, IShowPayload } from '@impler/shared';
-
-interface IContainerProps {
-  phase: PhasesEum;
-  onClose: () => void;
-}
 
 let api: ApiService;
 
-export function Container({ children, phase, onClose }: PropsWithChildren<IContainerProps>) {
+export function Container({ children }: PropsWithChildren<{}>) {
   if (!api) api = new ApiService(API_URL);
   const { projectId = '' } = useParams<{ projectId: string }>();
   const [showWidget, setShowWidget] = useState<boolean>(false);
@@ -106,9 +99,7 @@ export function Container({ children, phase, onClose }: PropsWithChildren<IConta
           authHeaderValue={secondaryPayload?.authHeaderValue}
           extra={secondaryPayload?.extra}
         >
-          <Modal opened={true} onClose={onClose}>
-            <Layout active={phase}>{children}</Layout>
-          </Modal>
+          {children}
         </Provider>
       ) : null}
     </>
