@@ -129,6 +129,29 @@ describe('AJV Service', () => {
       );
       expect(validationResult.invalid.length).to.equal(0);
       expect(validationResult.valid.length).to.equal(1);
+    });    
+  });
+  describe("Date", () => {
+    it('should mark data invalid if value is not a date', () => {
+      let validationResult = ajvService.validate(
+        // @ts-ignore
+        [{ _id: "a", key: "dob", name: "Date of Birth", type: ColumnTypesEnum.DATE }],
+        [{ _columnId: "a", columnHeading: "dob" }],
+        [{ dob: "test" }]
+      );
+      expect(validationResult.invalid.length).to.equal(1);
+      expect(validationResult.invalid[0].message).to.equal("`dob` must be a valid date");
+      expect(validationResult.valid.length).to.equal(0);
+    });
+    it('should mark data valid if value is a date', () => {
+      let validationResult = ajvService.validate(
+        // @ts-ignore
+        [{ _id: "a", key: "dob", name: "Date of Birth", type: ColumnTypesEnum.DATE }],
+        [{ _columnId: "a", columnHeading: "dob" }],
+        [{ dob: "2020-01-01" }]
+      );
+      expect(validationResult.invalid.length).to.equal(0);
+      expect(validationResult.valid.length).to.equal(1);
     });
   });
 })

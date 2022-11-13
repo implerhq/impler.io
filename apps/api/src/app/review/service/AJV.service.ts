@@ -177,6 +177,10 @@ export class AJVService {
       case error.keyword === 'uniqueCheck':
         message = ` must be unique`;
         break;
+      // custom date format
+      case error.keyword === 'format' && error.params.format === 'custom-date-time':
+        message = ` must be a valid date`;
+        break;
       // common cases
       case error.keyword === 'type':
         message = ' ' + error.message;
