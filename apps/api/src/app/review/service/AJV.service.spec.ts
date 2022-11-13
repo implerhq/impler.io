@@ -1,0 +1,87 @@
+import { ColumnTypesEnum } from '@impler/shared';
+import { expect } from 'chai';
+import { AJVService } from './AJV.service';
+
+describe('AJV Service', () => {
+  let ajvService = new AJVService();
+  describe('isRequired', () => {
+    it('should mark data invalid if value is empty', () => {
+      let validationResult = ajvService.validate(
+        // @ts-ignore
+        [{ _id: "a", key: "username", isRequired: true, name: "Username", type: ColumnTypesEnum.STRING }],
+        [{ _columnId: "a", columnHeading: "username" }],
+        [{ username: "" }]
+      );
+      expect(validationResult.invalid.length).to.equal(1);
+      expect(validationResult.invalid[0].message).to.equal("`username` must not be empty");
+      expect(validationResult.valid.length).to.equal(0);
+    });
+    it('should mark data invalid if value is empty for number type', () => {
+      let validationResult = ajvService.validate(
+        // @ts-ignore
+        [{ _id: "a", key: "id", isRequired: true, name: "ID", type: ColumnTypesEnum.NUMBER }],
+        [{ _columnId: "a", columnHeading: "id" }],
+        [{ id: "" }]
+      );
+      expect(validationResult.invalid.length).to.equal(1);
+      expect(validationResult.invalid[0].message).to.include("`id` must not be empty");
+      expect(validationResult.valid.length).to.equal(0);
+    });
+    it('should mark data valid if value is not empty', () => {
+      let validationResult = ajvService.validate(
+        // @ts-ignore
+        [{ _id: "a",  key: "username", isRequired: true, name: "Username", type: ColumnTypesEnum.STRING }],
+        [{ _columnId: "a", columnHeading: "username" }],
+        [{ username: "test" }]
+      );
+      expect(validationResult.invalid.length).to.equal(0);
+      expect(validationResult.valid.length).to.equal(1);
+    });
+  });
+  describe('isUnique', () => {
+    it('should mark data invalid if value is not unique', () => {
+      let validationResult = ajvService.validate(
+        // @ts-ignore
+        [{ _id: "a",  key: "username", isUnique: true, name: "Username", type: ColumnTypesEnum.STRING }],
+        [{ _columnId: "a", columnHeading: "username" }],
+        [{ username: "test" }, { username: "test" }]
+      );
+      expect(validationResult.invalid.length).to.equal(1);
+      expect(validationResult.invalid[0].message).to.equal("`username` must be unique");
+      expect(validationResult.valid.length).to.equal(1);
+    });
+    it('should mark data valid if value is unique', () => {
+      let validationResult = ajvService.validate(
+        // @ts-ignore
+        [{ _id: "a",  key: "username", isUnique: true, name: "Username", type: ColumnTypesEnum.STRING }],
+        [{ _columnId: "a", columnHeading: "username" }],
+        [{ username: "test" }, { username: "test2" }]
+      );
+      expect(validationResult.invalid.length).to.equal(0);
+      expect(validationResult.valid.length).to.equal(2);
+    });
+  });
+  describe("Email", () => {
+    it('should mark data invalid if value is not a valid email', () => {
+      let validationResult = ajvService.validate(
+        // @ts-ignore
+        [{ _id: "a", key: "regemail", name: "Email", type: ColumnTypesEnum.EMAIL }],
+        [{ _columnId: "a", columnHeading: "regemail" }],
+        [{ regemail: "test" }]
+      );
+      expect(validationResult.invalid.length).to.equal(1);
+      expect(validationResult.invalid[0].message).to.equal("`regemail` must be a valid email");
+      expect(validationResult.valid.length).to.equal(0);
+    });
+    it('should mark data valid if value is a valid email', () => {
+      let validationResult = ajvService.validate(
+        // @ts-ignore
+        [{ _id: "a", key: "regemail", name: "Email", type: ColumnTypesEnum.EMAIL }],
+        [{ _columnId: "a", columnHeading: "regemail" }],
+        [{ regemail: "test@gmail.com" }]
+      );
+      expect(validationResult.invalid.length).to.equal(0);
+      expect(validationResult.valid.length).to.equal(1);
+    });
+  })
+})

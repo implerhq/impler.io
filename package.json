@@ -27,6 +27,7 @@
     "build:widget": "nx build @impler/widget",
     "build:embed": "nx build @impler/embed",
     "build:client": "nx build @impler/client",
+    "test:api": "pnpm run --filter @impler/api test",
     "build:widget-demo": "nx build @impler/widget-demo",
     "release:patch": "lerna version patch --no-push",
     "release:minor": "lerna version minor --no-push",

@@ -16,7 +16,8 @@
     "start:debug": "TZ=UTC nodemon --config nodemon-debug.json",
     "start:prod": "TZ=UTC node dist/main.js",
     "lint": "eslint src",
-    "lint:fix": "pnpm lint -- --fix"
+    "lint:fix": "pnpm lint -- --fix",
+    "test": "cross-env TZ=UTC NODE_ENV=test E2E_RUNNER=true mocha --timeout 10000 --require ts-node/register --exit src/**/**/*.spec.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.185.0",
@@ -40,9 +41,13 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@types/chai": "^4.3.4",
     "@types/express": "^4.17.14",
+    "@types/mocha": "^10.0.0",
     "@types/multer": "^1.4.7",
     "@types/node": "^18.7.18",
+    "chai": "^4.3.7",
+    "mocha": "^10.1.0",
     "nodemon": "^2.0.20",
     "ts-loader": "^9.4.1",
     "ts-node": "^10.9.1",
