@@ -177,4 +177,16 @@ describe('AJV Service', () => {
       expect(validationResult.valid.length).to.equal(1);
     });
   });
+  describe('Any', () => {
+    it('should mark data valid if value is any', () => {
+      let validationResult = ajvService.validate(
+        // @ts-ignore
+        [{ _id: "a", key: "any", name: "Any", type: ColumnTypesEnum.ANY }],
+        [{ _columnId: "a", columnHeading: "any" }],
+        [{ any: "test" }, { any: 1 }, { any: "2020-01-01" }]
+      );
+      expect(validationResult.invalid.length).to.equal(0);
+      expect(validationResult.valid.length).to.equal(3);
+    });
+  })
 })
