@@ -154,4 +154,27 @@ describe('AJV Service', () => {
       expect(validationResult.valid.length).to.equal(1);
     });
   });
+  describe('Select', () => {
+    it('should mark data invalid if value is not in select options', () => {
+      let validationResult = ajvService.validate(
+        // @ts-ignore
+        [{ _id: "a", key: "gender", name: "Gender", type: ColumnTypesEnum.SELECT, selectValues: ['Male', 'Female'] }],
+        [{ _columnId: "a", columnHeading: "gender" }],
+        [{ gender: "abcd" }]
+      );
+      expect(validationResult.invalid.length).to.equal(1);
+      expect(validationResult.invalid[0].message).to.equal("`gender` must be from [Male,Female]");
+      expect(validationResult.valid.length).to.equal(0);
+    });
+    it('should mark data valid if value is in select options', () => {
+      let validationResult = ajvService.validate(
+        // @ts-ignore
+        [{ _id: "a", key: "gender", name: "Gender", type: ColumnTypesEnum.SELECT, selectValues: ['Male', 'Female'] }],
+        [{ _columnId: "a", columnHeading: "gender" }],
+        [{ gender: "Male" }]
+      );
+      expect(validationResult.invalid.length).to.equal(0);
+      expect(validationResult.valid.length).to.equal(1);
+    });
+  });
 })
