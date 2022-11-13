@@ -185,13 +185,13 @@ export class AJVService {
         message = ` must be from [${error.params.allowedValues}]`;
         break;
       case error.keyword === 'regexp':
-        message = ` must match pattern ${new RegExp(
+        message = ` must match the pattern ${new RegExp(
           error.parentSchema?.regexp?.pattern,
           error.parentSchema?.regexp?.flags || ''
         ).toString()}`;
         break;
       case error.keyword === 'pattern':
-        message = ` must match pattern ${error.params.pattern}`;
+        message = ` must match the pattern ${error.params.pattern}`;
         break;
       case error.keyword === 'format':
         message = ` must be a valid ${error.params.format}`;

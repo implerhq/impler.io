@@ -84,4 +84,28 @@ describe('AJV Service', () => {
       expect(validationResult.valid.length).to.equal(1);
     });
   })
+  describe("Regex", () => {
+    it('should mark data invalid if value does not match regex', () => {
+      const pattern = "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$";
+      let validationResult = ajvService.validate(
+        // @ts-ignore
+        [{ _id: "a", key: "regemail", name: "Email", type: ColumnTypesEnum.REGEX, regex: "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$" }],
+        [{ _columnId: "a", columnHeading: "regemail" }],
+        [{ regemail: "test" }]
+      );
+      expect(validationResult.invalid.length).to.equal(1);
+      expect(validationResult.invalid[0].message).to.include('`regemail`' + ` must match the pattern /${pattern}/`);
+      expect(validationResult.valid.length).to.equal(0);
+    });
+    it('should mark data valid if value matches regex', () => {
+      let validationResult = ajvService.validate(
+        // @ts-ignore
+        [{ _id: "a", key: "regemail", name: "Email", type: ColumnTypesEnum.REGEX, regex: "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$" }],
+        [{ _columnId: "a", columnHeading: "regemail" }],
+        [{ regemail: "test@gmail.com" }]
+      );
+      expect(validationResult.invalid.length).to.equal(0);
+      expect(validationResult.valid.length).to.equal(1);
+    });
+  });
 })
