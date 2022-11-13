@@ -108,4 +108,27 @@ describe('AJV Service', () => {
       expect(validationResult.valid.length).to.equal(1);
     });
   });
+  describe("Number", () => {
+    it('should mark data invalid if value is not a number', () => {
+      let validationResult = ajvService.validate(
+        // @ts-ignore
+        [{ _id: "a", key: "id", name: "ID", type: ColumnTypesEnum.NUMBER }],
+        [{ _columnId: "a", columnHeading: "id" }],
+        [{ id: "test" }]
+      );
+      expect(validationResult.invalid.length).to.equal(1);
+      expect(validationResult.invalid[0].message).to.equal("`id` must be number");
+      expect(validationResult.valid.length).to.equal(0);
+    });
+    it('should mark data valid if value is a number', () => {
+      let validationResult = ajvService.validate(
+        // @ts-ignore
+        [{ _id: "a", key: "id", name: "ID", type: ColumnTypesEnum.NUMBER }],
+        [{ _columnId: "a", columnHeading: "id" }],
+        [{ id: 1 }]
+      );
+      expect(validationResult.invalid.length).to.equal(0);
+      expect(validationResult.valid.length).to.equal(1);
+    });
+  });
 })

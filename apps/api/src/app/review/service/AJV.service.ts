@@ -179,7 +179,7 @@ export class AJVService {
         break;
       // common cases
       case error.keyword === 'type':
-        message = error.message;
+        message = ' ' + error.message;
         break;
       case error.keyword === 'enum':
         message = ` must be from [${error.params.allowedValues}]`;
