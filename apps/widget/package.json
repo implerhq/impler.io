@@ -8,7 +8,6 @@
     "preinstall": "pnpm build",
     "prebuild": "rimraf build",
     "build": "craco build",
-    "test": "craco test",
     "precommit": "lint-staged",
     "eject": "craco eject",
     "lint": "eslint src",
