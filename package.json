@@ -27,6 +27,8 @@
     "build:embed": "nx build @impler/embed",
     "build:client": "nx build @impler/client",
     "build:widget-demo": "nx build @impler/widget-demo",
+    "test": "nx run-many --target=test --all",
+    "test:api": "pnpm run --filter @impler/api test",
     "release:patch": "lerna version patch --no-push",
     "release:minor": "lerna version minor --no-push",
     "release:preminor": "lerna version preminor --no-push",

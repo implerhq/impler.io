@@ -14,9 +14,7 @@
     "start:dev": "pnpm build:watch",
     "precommit": "lint-staged",
     "lint": "eslint src",
-    "lint:fix": "pnpm lint -- --fix",
-    "test": "",
-    "test:watch": ""
+    "lint:fix": "pnpm lint -- --fix"
   },
   "devDependencies": {
     "@types/node": "^18.7.18",

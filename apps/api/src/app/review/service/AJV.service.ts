@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ColumnTypesEnum } from '@impler/shared';
 import { ColumnEntity, MappingEntity } from '@impler/dal';
-import Ajv, { ErrorObject } from 'ajv';
+import Ajv, { ErrorObject, AnySchemaObject } from 'ajv';
 import addFormats from 'ajv-formats';
 import addKeywords from 'ajv-keywords';
 
@@ -20,6 +20,30 @@ ajv.addFormat('custom-date-time', function (dateTimeString) {
   }
 
   return !isNaN(Date.parse(dateTimeString)); // any test that returns true/false
+});
+
+// Empty keyword
+ajv.addKeyword({
+  keyword: 'emptyCheck',
+  schema: false,
+  compile: () => {
+    return (data) => (data === undefined || data === null || data === '' ? false : true);
+  },
+});
+
+// Unique keyword
+let uniqueItems: Record<string, Set<any>> = {};
+ajv.addKeyword({
+  keyword: 'uniqueCheck',
+  schema: false, // keyword value is not used, can be true
+  validate: function (data: any, dataPath: AnySchemaObject) {
+    if (uniqueItems[dataPath.parentDataProperty].has(data)) {
+      return false;
+    }
+    uniqueItems[dataPath.parentDataProperty].add(data);
+
+    return true;
+  },
 });
 
 @Injectable()
@@ -41,6 +65,8 @@ export class AJVService {
       Object.keys(errors).forEach((index) => (data as any).splice(index as unknown as number, 1));
     }
     returnData.valid = data as any;
+    // resetting uniqueItems
+    uniqueItems = {};
 
     return returnData;
   }
@@ -60,11 +86,12 @@ export class AJVService {
 
       return acc;
     }, []);
-    const uniqueItemProperties = mappings.reduce((acc, mapping) => {
-      if (formattedColumns[mapping._columnId].isUnique) acc.push(mapping.columnHeading);
-
-      return acc;
-    }, []);
+    // setting uniqueItems to empty set to avoid error
+    mappings.forEach((mapping) => {
+      if (formattedColumns[mapping._columnId].isUnique) {
+        uniqueItems[mapping.columnHeading] = new Set();
+      }
+    });
     const objectSchema = {
       type: 'object',
       properties,
@@ -75,58 +102,57 @@ export class AJVService {
     return {
       type: 'array',
       items: objectSchema,
-      uniqueItemProperties,
     };
   }
-  private getProperty(column: ColumnEntity) {
-    /*
-     * ${1} is record object
-     * ${1#} is record index
-     * ${0#} is key
-     * ${0} is value
-     */
+  private getProperty(column: ColumnEntity): Record<string, unknown> {
+    let property: Record<string, unknown> = {};
+
     switch (column.type) {
       case ColumnTypesEnum.STRING:
-        return {
+        property = {
           type: 'string',
-          // errorMessage: { type: `\${1#}${this.indexSeperator}${heading} is not valid string` },
         };
+        break;
       case ColumnTypesEnum.NUMBER:
-        return {
+        property = {
           type: 'number',
-          // errorMessage: { type: `\${1#}${this.indexSeperator}${heading} is not valid number` },
         };
+        break;
       case ColumnTypesEnum.SELECT:
-        return {
+        property = {
           type: 'string',
           enum: column.selectValues || [],
-          /*
-           * errorMessage: {
-           *   enum: `\${1#}${this.indexSeperator}${heading} value should be from [${column.selectValues.join(',')}]`,
-           *   type: `\${1#}${this.indexSeperator}${heading} is not valid string value`,
-           * },
-           */
         };
+        break;
       case ColumnTypesEnum.REGEX:
         const [full, pattern, flags] = column.regex.match(/\/(.*)\/(.*)|(.*)/);
 
-        return { type: 'string', regexp: { pattern: pattern || full, flags: flags || '' } };
+        property = { type: 'string', regexp: { pattern: pattern || full, flags: flags || '' } };
+        break;
       case ColumnTypesEnum.EMAIL:
-        return { type: 'string', format: 'email' };
+        property = { type: 'string', format: 'email' };
+        break;
       case ColumnTypesEnum.DATE:
-        return { type: 'string', format: 'custom-date-time' };
+        property = { type: 'string', format: 'custom-date-time' };
+        break;
       case ColumnTypesEnum.ANY:
-        return { type: ['string', 'number', 'object'] };
-      default:
-        throw new Error(`Column type ${column.type} is not supported`);
+        property = { type: ['string', 'number', 'object'] };
+        break;
     }
+
+    return {
+      ...property,
+      ...(column.isUnique && { uniqueCheck: true }),
+      ...(column.isRequired && { emptyCheck: true }),
+    };
   }
   private buildErrorRecords(errors: ErrorObject[], data?: any[]) {
     let index: string, field: string, message: string;
 
     return errors.reduce((acc, error) => {
       [, index, field] = error.instancePath.split('/');
-      message = this.getMessage(error, field);
+      // eslint-disable-next-line no-magic-numbers
+      message = this.getMessage(error, field || error.schema[0]);
 
       if (acc[index]) {
         acc[index].message += `, ${message}`;
@@ -142,24 +168,47 @@ export class AJVService {
   }
   private getMessage(error: ErrorObject, field: string): string {
     let message = '';
-    switch (error.keyword) {
-      case 'type':
-        message = error.message;
+    switch (true) {
+      // empty string case
+      case error.keyword === 'emptyCheck':
+        message = ` must not be empty`;
         break;
-      case 'enum':
+      // uniqueCheck
+      case error.keyword === 'uniqueCheck':
+        message = ` must be unique`;
+        break;
+      // custom date format
+      case error.keyword === 'format' && error.params.format === 'custom-date-time':
+        message = ` must be a valid date`;
+        break;
+      // common cases
+      case error.keyword === 'type':
+        message = ' ' + error.message;
+        break;
+      case error.keyword === 'enum':
         message = ` must be from [${error.params.allowedValues}]`;
         break;
-      case 'regexp':
-        message = ` must match pattern ${new RegExp(
+      case error.keyword === 'regexp':
+        message = ` must match the pattern ${new RegExp(
           error.parentSchema?.regexp?.pattern,
           error.parentSchema?.regexp?.flags || ''
         ).toString()}`;
         break;
-      case 'pattern':
-        message = ` must match pattern ${error.params.pattern}`;
+      case error.keyword === 'pattern':
+        message = ` must match the pattern ${error.params.pattern}`;
+        break;
+      case error.keyword === 'format':
+        message = ` must be a valid ${error.params.format}`;
+        break;
+      case error.keyword === 'required':
+        message = ` is required`;
+        break;
+      case error.keyword === 'uniqueItemProperties':
+        message = ` must be unique`;
         break;
       default:
-        return ` contains invalid data`;
+        message = ` contains invalid data`;
+        break;
     }
 
     return '`' + field + '`' + message;
