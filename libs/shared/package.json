@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Reusable types and classes to shared between apps and libraries",
   "license": "MIT",
+  "author": "knovator",
   "repository": "https://github.com/knovator/impler.io",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",

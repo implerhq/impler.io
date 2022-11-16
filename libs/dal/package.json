@@ -1,7 +1,8 @@
 {
   "name": "@impler/dal",
   "version": "0.1.0",
-  "description": "",
+  "author": "knovator",
+  "license": "MIT",
   "private": true,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -15,9 +16,6 @@
     "lint": "eslint src",
     "lint:fix": "eslint src --fix"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "class-transformer": "^0.5.1",
     "mongoose": "^6.6.1",

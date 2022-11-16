@@ -2,16 +2,11 @@
   "name": "@impler/embed",
   "version": "0.1.0",
   "private": true,
-  "description": "",
-  "keywords": [],
+  "license": "MIT",
+  "author": "knovator",
   "main": "dist/embed.umd.min.js",
   "module": "dist/embed.es5.min.js",
   "typings": "dist/types/embed.d.ts",
-  "files": ["dist"],
-  "repository": {
-    "type": "git",
-    "url": ""
-  },
   "scripts": {
     "lint": "eslint src",
     "lint:fix": "pnpm lint --fix",
@@ -21,12 +16,11 @@
     "build:dev": "tsc && cross-env ENVIRONMENT=dev rollup -c rollup.config.js -w",
     "build:prod": "tsc && cross-env ENVIRONMENT=production rollup -c rollup.config.js",
     "start:dev": "node index.js",
-    "start:docker": "pnpm build && node index.js",
+    "start:docker": "node index.js",
     "start": "node index.js",
     "dev": "concurrently \"pnpm build:dev\" \"pnpm start:dev\"",
     "precommit": "lint-staged"
   },
-  "license": "MIT",
   "engines": {
     "node": ">=6.0.0"
   },
@@ -47,6 +41,7 @@
     "@rollup/plugin-json": "^5.0.1",
     "@rollup/plugin-node-resolve": "^15.0.0",
     "@rollup/plugin-replace": "^5.0.0",
+    "@rollup/plugin-typescript": "^9.0.1",
     "@types/lodash.camelcase": "^4.3.7",
     "@types/node": "^18.7.18",
     "concurrently": "^7.4.0",
