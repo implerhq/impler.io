@@ -1,0 +1,103 @@
+{
+  "name": "impler.io",
+  "version": "0.1.0",
+  "description": "Open source infrastructure to import data easily",
+  "packageManager": "pnpm@7.9.4",
+  "main": "",
+  "scripts": {
+    "clean": "pnpm run prebuild && lerna clean --yes",
+    "lint": "nx run-many --target=lint --all",
+    "kill-ports": "npx kill-port 4701 3000 3500",
+    "setup:project": "npx pnpm@7.9.4 i && node scripts/setup-env-files.js",
+    "start:dev": "cross-env TZ=UTC lerna run start:dev --parallel --concurrency=20 --scope=@impler/{api,widget,embed,queue-manager,widget-demo}",
+    "start:widget-demo": "cross-env nx run @impler/widget-demo:start",
+    "start:dal": "cross-env nx run @impler/dal:start",
+    "start:api": "cross-env nx run @impler/api:start",
+    "start:embed": "cross-env nx run @impler/embed:start",
+    "start:widget": "cross-env nx run @impler/widget:start",
+    "start:queue-manager": "cross-env nx run @impler/queue-manager:start",
+    "start:docker:embed": "cd libs/embed && npm run start:docker",
+    "prebuild": "nx run-many --target=prebuild --all",
+    "build": "nx run-many --target=build --all",
+    "build:api": "nx build @impler/api",
+    "build:dal": "nx build @impler/dal",
+    "build:react": "nx build @impler/react",
+    "build:shared": "nx build @impler/shared",
+    "build:widget": "nx build @impler/widget",
+    "build:embed": "nx build @impler/embed",
+    "build:client": "nx build @impler/client",
+    "build:widget-demo": "nx build @impler/widget-demo",
+    "test": "nx run-many --target=test --all",
+    "test:api": "pnpm run --filter @impler/api test",
+    "release:patch": "lerna version patch --no-push",
+    "release:minor": "lerna version minor --no-push",
+    "release:preminor": "lerna version preminor --no-push",
+    "release:prerelease": "lerna version prerelease --no-push",
+    "publish": "lerna publish from-package"
+  },
+  "keywords": [
+    "data-import",
+    "excel-import",
+    "csv-import",
+    "impler",
+    "knovator",
+    "chavda-bhavik"
+  ],
+  "author": "knovator",
+  "license": "MIT",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "libs/*",
+      "packages/*"
+    ]
+  },
+  "lint-staged": {
+    "apps/**/*.{ts,tsx,json}": [
+      "prettier --ignore-path ./.prettierignore --write",
+      "eslint --fix"
+    ],
+    "packages/**/*.{ts,tsx,json}": [
+      "prettier --ignore-path ./.prettierignore --write",
+      "eslint --fix"
+    ],
+    "libs/**/*.{ts,js,json}": [
+      "prettier --ignore-path ./.prettierignore --write",
+      "eslint --fix"
+    ]
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.1.2",
+    "@commitlint/config-conventional": "^17.1.0",
+    "@nrwl/nx-cloud": "^14.6.2",
+    "@nrwl/workspace": "^14.7.11",
+    "@typescript-eslint/eslint-plugin": "^5.38.0",
+    "@typescript-eslint/parser": "^5.38.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.23.1",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-functional": "^4.4.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.6.1",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-promise": "^6.0.1",
+    "eslint-plugin-react": "^7.31.8",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "fs-extra": "^10.1.0",
+    "husky": "^8.0.1",
+    "lerna": "^6.0.3",
+    "lint-staged": "^13.0.3",
+    "nx": "^14.7.11",
+    "prettier": "^2.7.1"
+  },
+  "dependencies": {
+    "amqp-connection-manager": "^4.1.7"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "extends": "@nrwl/workspace/presets/npm.json",
+  "npmScope": "@impler",
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "@nrwl/nx-cloud",
+      "options": {
+        "cacheableOperations": ["build", "test", "lint", "package", "prepare"],
+        "canTrackAnalytics": false,
+        "accessToken": "MzIxZDg2NWQtY2FkNC00ZjBlLTk5N2QtYWIzYjY5YzEyM2UzfHJlYWQtd3JpdGU="
+      }
+    }
+  },
+  "targetDependencies": {
+    "build": [
+      {
+        "target": "build",
+        "projects": "dependencies"
+      }
+    ],
+    "prepare": [
+      {
+        "target": "prepare",
+        "projects": "dependencies"
+      }
+    ],
+    "package": [
+      {
+        "target": "package",
+        "projects": "dependencies"
+      }
+    ]
+  },
+  "affected": {
+    "defaultBase": "main"
+  }
+}
