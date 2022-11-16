@@ -16,6 +16,7 @@ const validators: { [K in keyof any]: ValidatorSpec<any[K]> } = {
   FRONT_BASE_URL: url(),
   MONGO_URL: str(),
   RABBITMQ_CONN_URL: str(),
+  SENTRY_DSN: str(),
 };
 
 export function validateEnv() {
