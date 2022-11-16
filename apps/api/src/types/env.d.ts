@@ -5,7 +5,7 @@ declare namespace NodeJS {
     PORT: number;
     'ACCESS-KEY'?: string;
     FRONT_BASE_URL: string;
-
+    SENTRY_DSN: string;
     MONGO_URL: string;
     S3_LOCAL_STACK: string;
     S3_REGION: string;
