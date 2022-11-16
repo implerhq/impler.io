@@ -8,6 +8,7 @@ import { CONTEXT_PATH, mantineConfig, variables, SENTRY_DSN, ENV } from '@config
 import { WidgetShell } from './ApplicationShell';
 import { Container } from './Common/Container';
 import { Widget } from './widget';
+import { AppShell } from './Common/AppShell';
 
 if (SENTRY_DSN) {
   Sentry.init({
@@ -44,11 +45,13 @@ export function App() {
               <Route
                 path="/:projectId"
                 element={
-                  <WidgetShell>
-                    <Container>
-                      <Widget />
-                    </Container>
-                  </WidgetShell>
+                  <AppShell>
+                    <WidgetShell>
+                      <Container>
+                        <Widget />
+                      </Container>
+                    </WidgetShell>
+                  </AppShell>
                 }
               />
             </Routes>
