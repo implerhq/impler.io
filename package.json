@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Open source infrastructure to import data easily",
   "packageManager": "pnpm@7.9.4",
-  "main": "",
+  "private": true,
   "scripts": {
     "clean": "pnpm run prebuild && lerna clean --yes",
     "lint": "nx run-many --target=lint --all",
