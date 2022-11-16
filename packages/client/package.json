@@ -1,13 +1,20 @@
 {
   "name": "@impler/client",
   "version": "0.1.0",
-  "repository": "https://github.com/knovator/impler.io",
   "description": "API client to be used in end user environments",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
   "license": "MIT",
+  "author": "knovator",
+  "repository": "https://github.com/knovator/impler.io",
+  "types": "dist/index.d.ts",
+  "main": "dist/index.js",
   "keywords": [
-    "impler"
+    "impler",
+    "knovator",
+    "chavda-bhavik"
+  ],
+  "files": [
+    "dist",
+    "package.json"
   ],
   "scripts": {
     "start": "npm run start:dev",
@@ -28,23 +35,20 @@
   "publishConfig": {
     "access": "public"
   },
-  "engines": {
-    "node": ">=10"
-  },
   "devDependencies": {
     "@types/node": "^18.11.9",
     "rimraf": "^3.0.2",
     "typedoc": "^0.23.20",
     "typescript": "4.8.4"
   },
+  "dependencies": {
+    "@impler/shared": "^0.1.0",
+    "axios": "^0.26.1"
+  },
+  "engines": {
+    "node": ">=10"
+  },
   "prettier": {
     "singleQuote": true
-  },
-  "files": [
-    "dist"
-  ],
-  "dependencies": {
-    "@impler/shared": "workspace:^0.1.0",
-    "axios": "^0.26.1"
   }
 }

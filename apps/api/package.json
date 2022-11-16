@@ -1,10 +1,9 @@
 {
   "name": "@impler/api",
   "version": "0.1.0",
-  "main": "index.js",
   "author": "knovator",
   "license": "MIT",
-  "private": false,
+  "private": true,
   "scripts": {
     "prebuild": "rimraf dist",
     "preinstall": "pnpm build",
@@ -21,8 +20,8 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.185.0",
-    "@impler/dal": "workspace:^0.1.0",
-    "@impler/shared": "workspace:^0.1.0",
+    "@impler/dal": "^0.1.0",
+    "@impler/shared": "^0.1.0",
     "@nestjs/common": "^9.1.2",
     "@nestjs/core": "^9.1.2",
     "@nestjs/platform-express": "^9.1.2",
@@ -41,6 +40,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@nestjs/cli": "^9.1.5",
     "@types/chai": "^4.3.4",
     "@types/express": "^4.17.14",
     "@types/mocha": "^10.0.0",
