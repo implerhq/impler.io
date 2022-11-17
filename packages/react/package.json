@@ -15,6 +15,7 @@
   ],
   "files": [
     "dist",
+    "README.md",
     "package.json"
   ],
   "scripts": {
@@ -24,7 +25,8 @@
     "start": "npm run build:watch",
     "prebuild": "rimraf dist",
     "build": "rollup -c",
-    "build:watch": "rollup -c -w"
+    "build:watch": "rollup -c -w",
+    "publish": "npm publish"
   },
   "publishConfig": {
     "access": "public"

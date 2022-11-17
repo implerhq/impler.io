@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Reusable types and classes to shared between apps and libraries",
   "license": "MIT",
+  "private": true,
   "author": "knovator",
   "repository": "https://github.com/knovator/impler.io",
   "types": "dist/index.d.ts",
@@ -19,9 +20,6 @@
     "precommit": "lint-staged",
     "lint": "eslint src",
     "lint:fix": "pnpm lint -- --fix"
-  },
-  "publishConfig": {
-    "access": "public"
   },
   "devDependencies": {
     "@types/node": "^18.7.18",
