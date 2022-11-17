@@ -7,6 +7,7 @@
   "repository": "https://github.com/knovator/impler.io",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
+  "private": true,
   "keywords": [
     "impler",
     "knovator",
@@ -31,9 +32,6 @@
     "doc:html": "typedoc src/ --exclude **/*.spec.ts --target ES6 --mode file --out build/docs",
     "doc:json": "typedoc src/ --exclude **/*.spec.ts --target ES6 --mode file --json build/docs/typedoc.json",
     "doc:publish": "gh-pages -m \"[ci skip] Updates\" -d build/docs"
-  },
-  "publishConfig": {
-    "access": "public"
   },
   "devDependencies": {
     "@types/node": "^18.11.9",
