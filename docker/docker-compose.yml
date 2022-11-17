@@ -1,0 +1,65 @@
+version: "3"
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    logging:
+      driver: "none"
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - mongodb:/data/db
+    ports:
+      - 27017:27017
+    restart: unless-stopped
+  api:
+    image: "api"
+    depends_on:
+      - mongodb
+    container_name: api
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${API_PORT}
+      FRONT_BASE_URL: ${FRONT_BASE_URL}
+      MONGO_URL: ${MONGO_URL}
+      S3_REGION: ${S3_REGION}
+      S3_LOCAL_STACK: ${S3_LOCAL_STACK}
+      S3_BUCKET_NAME: ${S3_BUCKET_NAME}
+      ACCESS-KEY: ${ACCESS-KEY}
+      SENTRY_DSN: ${SENTRY_DSN}
+      RABBITMQ_CONN_URL: ${RABBITMQ_CONN_URL}
+    ports:
+      - "3000:3000"
+  queue-manager:
+    image: "queue-manager"
+    depends_on:
+      - api
+    container_name: queue-manager
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      MONGO_URL: ${MONGO_URL}
+      RABBITMQ_CONN_URL: ${RABBITMQ_CONN_URL}
+      S3_REGION: ${S3_REGION}
+      S3_LOCAL_STACK: ${S3_LOCAL_STACK}
+      S3_BUCKET_NAME: ${S3_BUCKET_NAME}
+  widget:
+    image: "widget"
+    depends_on:
+      - api
+    container_name: widget
+    environment:
+      REACT_APP_API_URL: ${API_ROOT_URL}
+      REACT_APP_SENTRY_DSN: ${SENTRY_DSN}
+      REACT_APP_ENVIRONMENT: ${NODE_ENV}
+    ports:
+      - 3500:3500
+  embed:
+    depends_on:
+      - widget
+    image: "embed"
+    container_name: embed
+    ports:
+      - 4701:4701
+volumes:
+  mongodb: ~
