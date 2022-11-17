@@ -57,8 +57,6 @@ All projects need to give some kind of data import facility, so that their users
 
 At first it looks like just importing file and inserting in database, but as the app grows facilities like validating data, data mapping, becomes must. `impler` provides infrastructure to applications, so that they don't have to write code for data import.
 
-> impler.io is under development.
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Built With
@@ -115,8 +113,8 @@ Follow these steps to setup the project locally,
   - [x] Mapping Phase
   - [x] Review Phase
   - [x] Confirm Phase
-- [] Infra
-  - [] Docker
+- [ ] Infra
+  - [ ] Docker
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
