@@ -9,6 +9,7 @@ import { UploadModule } from './app/upload/upload.module';
 import { MappingModule } from './app/mapping/mapping.module';
 import { ReviewModule } from './app/review/review.module';
 import { CommonModule } from './app/common/common.module';
+import { HealthModule } from 'app/health/health.module';
 
 const modules: Array<Type | DynamicModule | Promise<DynamicModule> | ForwardReference> = [
   ProjectModule,
@@ -19,6 +20,7 @@ const modules: Array<Type | DynamicModule | Promise<DynamicModule> | ForwardRefe
   MappingModule,
   ReviewModule,
   CommonModule,
+  HealthModule,
 ];
 
 const providers = [];

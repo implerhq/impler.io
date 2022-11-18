@@ -4,4 +4,5 @@ export const Defaults = {
   PAGE_LIMIT: 100,
   LENGTH_ZERO: 0,
   NOT_FOUND_STATUS_CODE: 404,
+  READY_STATE: 1,
 };
