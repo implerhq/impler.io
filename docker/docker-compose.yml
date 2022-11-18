@@ -17,6 +17,7 @@ services:
     image: "api"
     depends_on:
       - mongodb
+      - rabbitmq
     container_name: api
     environment:
       NODE_ENV: ${NODE_ENV}
@@ -37,6 +38,7 @@ services:
     image: "queue-manager"
     depends_on:
       - api
+      - rabbitmq
     container_name: queue-manager
     environment:
       NODE_ENV: ${NODE_ENV}
@@ -65,5 +67,16 @@ services:
     container_name: embed
     ports:
       - 4701:4701
+  rabbitmq:
+    image: rabbitmq:3-alpine
+    container_name: 'rabbitmq'
+    restart: always
+    ports:
+      - 5672:5672
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "5672" ]
+      interval: 5s
+      timeout: 15s
+      retries: 1
 volumes:
   mongodb: ~
