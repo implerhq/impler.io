@@ -7,15 +7,15 @@ const validators: { [K in keyof any]: ValidatorSpec<any[K]> } = {
     choices: ['dev', 'test', 'prod', 'ci', 'local'],
     default: 'local',
   }),
-  S3_LOCAL_STACK: str({
-    default: '',
-  }),
+  S3_LOCAL_STACK: str(),
   S3_BUCKET_NAME: str(),
   S3_REGION: str(),
   PORT: port(),
   FRONT_BASE_URL: url(),
   MONGO_URL: str(),
   RABBITMQ_CONN_URL: str(),
+  AWS_ACCESS_KEY_ID: str({ default: '' }),
+  AWS_SECRET_ACCESS_KEY: str({ default: '' }),
 };
 
 export function validateEnv() {

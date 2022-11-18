@@ -1,5 +1,6 @@
 import './config';
 
+import * as Sentry from '@sentry/node';
 import { INestApplication, ValidationPipe, Logger } from '@nestjs/common';
 import * as compression from 'compression';
 import { NestFactory } from '@nestjs/core';
@@ -9,6 +10,20 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { validateEnv } from './config/env-validator';
 import { ACCESS_KEY_NAME } from '@impler/shared';
+import { version } from '../package.json';
+
+if (process.env.SENTRY_DSN) {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    environment: process.env.NODE_ENV,
+    release: `v${version}`,
+    ignoreErrors: ['Non-Error exception captured'],
+    integrations: [
+      // enable HTTP calls tracing
+      new Sentry.Integrations.Http({ tracing: true }),
+    ],
+  });
+}
 
 // Validate the ENV variables after launching SENTRY, so missing variables will report to sentry
 validateEnv();
@@ -19,6 +34,11 @@ export async function bootstrap(expressApp?): Promise<INestApplication> {
     app = await NestFactory.create(AppModule, new ExpressAdapter(expressApp));
   } else {
     app = await NestFactory.create(AppModule);
+  }
+
+  if (process.env.SENTRY_DSN) {
+    app.use(Sentry.Handlers.requestHandler());
+    app.use(Sentry.Handlers.tracingHandler());
   }
 
   app.enableCors(corsOptionsDelegate);
@@ -69,7 +89,7 @@ const corsOptionsDelegate = function (req, callback) {
   const corsOptions = {
     origin: false as boolean | string | string[],
     preflightContinue: false,
-    allowedHeaders: ['Content-Type', ACCESS_KEY_NAME],
+    allowedHeaders: ['Content-Type', ACCESS_KEY_NAME, 'sentry-trace', 'baggage'],
     methods: ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   };
 

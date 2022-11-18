@@ -1,0 +1,82 @@
+version: "3"
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    logging:
+      driver: "none"
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - mongodb:/data/db
+    ports:
+      - 27017:27017
+    restart: unless-stopped
+  api:
+    image: "ghcr.io/knovator/impler/api:latest"
+    depends_on:
+      - mongodb
+      - rabbitmq
+    container_name: api
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${API_PORT}
+      FRONT_BASE_URL: ${FRONT_BASE_URL}
+      MONGO_URL: ${MONGO_URL}
+      S3_REGION: ${S3_REGION}
+      S3_LOCAL_STACK: ${S3_LOCAL_STACK}
+      S3_BUCKET_NAME: ${S3_BUCKET_NAME}
+      ACCESS-KEY: ${ACCESS-KEY}
+      SENTRY_DSN: ${SENTRY_DSN}
+      RABBITMQ_CONN_URL: ${RABBITMQ_CONN_URL}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    ports:
+      - "3000:3000"
+  queue-manager:
+    image: "ghcr.io/knovator/impler/queue-manager:latest"
+    depends_on:
+      - api
+      - rabbitmq
+    container_name: queue-manager
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      MONGO_URL: ${MONGO_URL}
+      RABBITMQ_CONN_URL: ${RABBITMQ_CONN_URL}
+      S3_REGION: ${S3_REGION}
+      S3_LOCAL_STACK: ${S3_LOCAL_STACK}
+      S3_BUCKET_NAME: ${S3_BUCKET_NAME}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+  widget:
+    image: "ghcr.io/knovator/impler/widget:latest"
+    depends_on:
+      - api
+    container_name: widget
+    environment:
+      REACT_APP_API_URL: ${API_ROOT_URL}
+      REACT_APP_SENTRY_DSN: ${SENTRY_DSN}
+      REACT_APP_ENVIRONMENT: ${NODE_ENV}
+    ports:
+      - 3500:3500
+  embed:
+    depends_on:
+      - widget
+    image: "ghcr.io/knovator/impler/embed:latest"
+    container_name: embed
+    ports:
+      - 4701:4701
+  rabbitmq:
+    image: rabbitmq:3-alpine
+    container_name: 'rabbitmq'
+    restart: always
+    ports:
+      - 5672:5672
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "5672" ]
+      interval: 5s
+      timeout: 15s
+      retries: 1
+volumes:
+  mongodb: ~

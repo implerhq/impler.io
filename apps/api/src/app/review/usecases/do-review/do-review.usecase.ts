@@ -1,10 +1,10 @@
 import { FileEncodingsEnum, UploadStatusEnum } from '@impler/shared';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { ColumnRepository, UploadRepository, MappingRepository, FileEntity } from '@impler/dal';
-import { StorageService } from '../../../shared/storage/storage.service';
+import { StorageService } from '@impler/shared';
 import { AJVService } from '../../service/AJV.service';
-import { APIMessages } from '../../../shared/constants';
-import { FileNotExistError } from '../../../shared/errors/file-not-exist.error';
+import { APIMessages } from '@shared/constants';
+import { FileNotExistError } from '@shared/errors/file-not-exist.error';
 
 @Injectable()
 export class DoReview {
