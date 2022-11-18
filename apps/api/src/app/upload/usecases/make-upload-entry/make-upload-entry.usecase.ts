@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { FileMimeTypesEnum, UploadStatusEnum } from '@impler/shared';
 import { CommonRepository, FileEntity, FileRepository, UploadRepository } from '@impler/dal';
 import { MakeUploadEntryCommand } from './make-upload-entry.command';
-import { FileNameService } from '../../../shared/file/name.service';
-import { StorageService } from '../../../shared/storage/storage.service';
-import { FileService } from '../../../shared/file/file.service';
-import { getFileService } from '../../../shared/helpers/file.helper';
+import { FileNameService } from '@shared/file/name.service';
+import { StorageService, Defaults } from '@impler/shared';
+import { FileService } from '@shared/file/file.service';
+import { getFileService } from '@shared/helpers/file.helper';
 import { AddUploadEntryCommand } from './add-upload-entry.command';
 
 @Injectable()
@@ -72,7 +72,7 @@ export class MakeUploadEntry {
       headings: Array.isArray(headings) ? headings : [],
       status: UploadStatusEnum.UPLOADED,
       authHeaderValue: authHeaderValue,
-      totalRecords: totalRecords || 0,
+      totalRecords: totalRecords || Defaults.LENGTH_ZERO,
     });
   }
 

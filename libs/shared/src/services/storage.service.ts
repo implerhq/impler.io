@@ -7,6 +7,7 @@ import {
   DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
 import { FileNotExistError } from '../errors/file-not-exist.error';
+import { Defaults } from '../utils';
 
 export interface IFilePath {
   path: string;
@@ -38,6 +39,10 @@ export class S3StorageService implements StorageService {
     region: process.env.S3_REGION,
     endpoint: process.env.S3_LOCAL_STACK || undefined,
     forcePathStyle: true,
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    },
   });
 
   async uploadFile(key: string, file: Buffer, contentType: string, isPublic = false): Promise<PutObjectCommandOutput> {
@@ -62,7 +67,7 @@ export class S3StorageService implements StorageService {
 
       return await streamToString(data.Body as Readable, encoding);
     } catch (error) {
-      if (error.code === 404 || error.message === 'The specified key does not exist.') {
+      if (error.code === Defaults.NOT_FOUND_STATUS_CODE || error.message === 'The specified key does not exist.') {
         throw new FileNotExistError();
       }
       throw error;

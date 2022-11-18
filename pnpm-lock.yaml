@@ -67,6 +67,7 @@ importers:
       '@nestjs/core': ^9.1.2
       '@nestjs/platform-express': ^9.1.2
       '@nestjs/swagger': ^6.1.2
+      '@nestjs/terminus': ^9.1.3
       '@sentry/node': ^7.19.0
       '@types/chai': ^4.3.4
       '@types/express': ^4.17.14
@@ -100,6 +101,7 @@ importers:
       '@nestjs/core': 9.1.2_foclggtudvr6cnfc5hz7ukfode
       '@nestjs/platform-express': 9.1.2_umdjpi6fqr4wvw73r3mhthbyle
       '@nestjs/swagger': 6.1.2_o5ym4ozkuwx4tb6ybx3mgktlhe
+      '@nestjs/terminus': 9.1.3_fm6wnb52zy7oux7xhi2ikexdcu
       '@sentry/node': 7.19.0
       ajv: 8.11.0
       ajv-formats: 2.1.1_ajv@8.11.0
@@ -5199,6 +5201,59 @@ packages:
       - class-validator
     dev: false
 
+  /@nestjs/terminus/9.1.3_fm6wnb52zy7oux7xhi2ikexdcu:
+    resolution: {integrity: sha512-e5tsdEI1dqbjjGwk9H8wPtX1b8kyzAnYvy1hs6h1kms8+EAUglxRX1wtCIIIr8PA8ISGKaROWzJ+qxARXaarlg==}
+    peerDependencies:
+      '@grpc/grpc-js': '*'
+      '@grpc/proto-loader': '*'
+      '@mikro-orm/core': '*'
+      '@mikro-orm/nestjs': '*'
+      '@nestjs/axios': '*'
+      '@nestjs/common': 9.x
+      '@nestjs/core': 9.x
+      '@nestjs/microservices': '*'
+      '@nestjs/mongoose': '*'
+      '@nestjs/sequelize': '*'
+      '@nestjs/typeorm': '*'
+      mongoose: '*'
+      reflect-metadata: 0.1.x
+      rxjs: 7.x
+      sequelize: '*'
+      typeorm: '*'
+    peerDependenciesMeta:
+      '@grpc/grpc-js':
+        optional: true
+      '@grpc/proto-loader':
+        optional: true
+      '@mikro-orm/core':
+        optional: true
+      '@mikro-orm/nestjs':
+        optional: true
+      '@nestjs/axios':
+        optional: true
+      '@nestjs/microservices':
+        optional: true
+      '@nestjs/mongoose':
+        optional: true
+      '@nestjs/sequelize':
+        optional: true
+      '@nestjs/typeorm':
+        optional: true
+      mongoose:
+        optional: true
+      sequelize:
+        optional: true
+      typeorm:
+        optional: true
+    dependencies:
+      '@nestjs/common': 9.1.2_allg6cauirbqzgqcmexy2wdnoq
+      '@nestjs/core': 9.1.2_foclggtudvr6cnfc5hz7ukfode
+      boxen: 5.1.2
+      check-disk-space: 3.3.1
+      reflect-metadata: 0.1.13
+      rxjs: 7.5.6
+    dev: false
+
   /@nicolo-ribaudo/eslint-scope-5-internals/5.1.1-v1:
     resolution: {integrity: sha512-54/JRvkLIzzDWshCWfuhadfrfZVPiElY8Fcgmg1HroEly/EDSszzhBAsarCux+D/kOslTRquNzuyGSmUSTTHGg==}
     dependencies:
@@ -10042,6 +10097,11 @@ packages:
   /chardet/0.7.0:
     resolution: {integrity: sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==}
     dev: true
+
+  /check-disk-space/3.3.1:
+    resolution: {integrity: sha512-iOrT8yCZjSnyNZ43476FE2rnssvgw5hnuwOM0hm8Nj1qa0v4ieUUEbCyxxsEliaoDUb/75yCOL71zkDiDBLbMQ==}
+    engines: {node: '>=12'}
+    dev: false
 
   /check-error/1.0.2:
     resolution: {integrity: sha512-BrgHpW9NURQgzoNyjfq0Wu6VFO6D7IZEmJNdtgNqpzGG8RuNFHt2jQxWlAs4HMe119chBnv+34syEZtc6IhLtA==}

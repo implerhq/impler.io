@@ -1,7 +1,7 @@
 import * as XLSX from 'xlsx';
-import { FileEncodingsEnum, IFileInformation } from '@impler/shared';
+import { Defaults, FileEncodingsEnum, IFileInformation } from '@impler/shared';
 import { ParserOptionsArgs, parseString } from 'fast-csv';
-import { StorageService } from '../storage/storage.service';
+import { StorageService } from '@impler/shared';
 import { EmptyFileException } from '../exceptions/empty-file.exception';
 import { APIMessages } from '../constants';
 
@@ -43,27 +43,30 @@ export class ExcelFileService extends FileService {
   async getExcelInformation(fileContent: string): Promise<IFileInformation> {
     const workbookHeaders = XLSX.read(fileContent);
     // Throw empty error if file do not have any sheets
-    if (workbookHeaders.SheetNames.length < 1) throw new EmptyFileException();
+    if (workbookHeaders.SheetNames.length < Defaults.DATA_LENGTH) throw new EmptyFileException();
 
     // get file headings
-    const headings = XLSX.utils.sheet_to_json(workbookHeaders.Sheets[workbookHeaders.SheetNames[0]], {
-      header: 1,
-    })[0] as string[];
+    const headings = XLSX.utils.sheet_to_json(
+      workbookHeaders.Sheets[workbookHeaders.SheetNames[Defaults.DATA_LENGTH]],
+      {
+        header: 1,
+      }
+    )[Defaults.LENGTH_ZERO] as string[];
     // throw error if sheet is empty
-    if (!headings || headings.length < 1) throw new EmptyFileException();
+    if (!headings || headings.length < Defaults.DATA_LENGTH) throw new EmptyFileException();
 
     // Refine headings by replacing empty heading
     let emptyHeadingCount = 0;
     const updatedHeading = [];
     for (const headingItem of headings) {
       if (!headingItem) {
-        emptyHeadingCount += 1;
+        emptyHeadingCount += Defaults.DATA_LENGTH;
         updatedHeading.push(`${APIMessages.EMPTY_HEADING_PREFIX} ${emptyHeadingCount}`);
       } else updatedHeading.push(headingItem);
     }
 
     const data: Record<string, unknown>[] = XLSX.utils.sheet_to_json(
-      workbookHeaders.Sheets[workbookHeaders.SheetNames[0]]
+      workbookHeaders.Sheets[workbookHeaders.SheetNames[Defaults.LENGTH_ZERO]]
     );
 
     return {

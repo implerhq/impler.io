@@ -17,7 +17,7 @@
     "build-storybook": "build-storybook -s public",
     "envsetup": "chmod +x ./env.sh && ./env.sh && mv env-config.js ./public/env-config.js",
     "envsetup:docker": "chmod +x ./env.sh && ./env.sh && mv ./env-config.js ./build/env-config.js",
-    "start:static:build": "pnpm envsetup:docker && http-server build -p 4500 --proxy http://localhost:4500?",
+    "start:static:build": "pnpm envsetup:docker && http-server build -p 3500 --proxy http://localhost:3500?",
     "start:docker": "pnpm build && pnpm start:static:build"
   },
   "browserslist": {
