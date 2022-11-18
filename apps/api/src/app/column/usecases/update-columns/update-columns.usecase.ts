@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { FileMimeTypesEnum } from '@impler/shared';
 import { ColumnRepository, TemplateRepository } from '@impler/dal';
 import { UpdateColumnCommand } from './update-columns.command';
-import { StorageService } from '../../../shared/storage/storage.service';
-import { FileNameService } from '../../../shared/file/name.service';
+import { StorageService } from '@impler/shared';
+import { FileNameService } from '@shared/file/name.service';
 
 @Injectable()
 export class UpdateColumns {

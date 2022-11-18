@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { FileEncodingsEnum } from '@impler/shared';
-import { StorageService } from '../../../shared/storage/storage.service';
+import { StorageService } from '@impler/shared';
 
 @Injectable()
 export class GetFileInvalidData {

@@ -9,7 +9,7 @@ import {
   TemplateRepository,
   UploadRepository,
 } from '@impler/dal';
-import { S3StorageService, StorageService } from './storage/storage.service';
+import { S3StorageService, StorageService } from '@impler/shared';
 import { CSVFileService } from './file/file.service';
 import { FileNameService } from './file/name.service';
 

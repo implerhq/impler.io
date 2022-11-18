@@ -17,7 +17,7 @@ import { paginateRecords, validateNotFound } from '@shared/helpers/common.helper
 import { StartProcess } from './usecases/start-process/start-process.usecase';
 import { StartProcessCommand } from './usecases/start-process/start-process.command';
 import { PaginationResponseDto } from '@shared/dtos/pagination-response.dto';
-import { Defaults } from '@shared/constants';
+import { Defaults } from '@impler/shared';
 
 @Controller('/review')
 @ApiTags('Review')
