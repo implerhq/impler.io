@@ -1,0 +1,49 @@
+name: Publish React to NPM Registry
+
+# Triggers the workflow on merge in main branch
+on:
+  pull_request:
+    branches: 
+      - main
+    types: [closed]
+
+jobs:
+  publish_prod_react:
+    # run only if pull request is merged into main branch
+    if: ${{ github.event.pull_request.merged }} && !contains(github.event.head_commit.message, 'ci skip')
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    timeout-minutes: 80
+    environment: Production
+    permissions:
+      contents: read
+      packages: write 
+      deployments: write
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - name: Setup kernel for react native, increase watchers
+        run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+      
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.15.1'
+
+      - name: Cache pnpm modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
+      
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 7.9.4
+          run_install: true
+
+      - name: Publish
+        uses: JS-DevTools/npm-publish@v1
+        working-directory: apps/widget
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
