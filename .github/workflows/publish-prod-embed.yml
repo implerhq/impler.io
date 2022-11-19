@@ -1,5 +1,11 @@
 name: Publish Embed to Production
 
+on:
+  push:
+    tags:
+      - '**@impler/embed@**'
+  workflow_dispatch:
+
 jobs:
   publish_prod_embed:
     if: "!contains(github.event.head_commit.message, 'ci skip')"

@@ -1,5 +1,12 @@
 name: Publish Widget to Production
 
+on:
+  push:
+    tags:
+      - '**@impler/widget@**'
+      - '**@impler/shared@**'
+  workflow_dispatch:
+
 jobs:
   publish_prod_widget:
     if: "!contains(github.event.head_commit.message, 'ci skip')"

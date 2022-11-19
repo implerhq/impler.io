@@ -1,5 +1,11 @@
 name: Publish React to NPM Registry
 
+on:
+  push:
+    tags:
+      - '**@impler/react@**'
+  workflow_dispatch:
+
 jobs:
   publish_prod_react:
     if: "!contains(github.event.head_commit.message, 'ci skip')"

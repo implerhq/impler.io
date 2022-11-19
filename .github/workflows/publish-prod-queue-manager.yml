@@ -1,5 +1,12 @@
 name: Publish Queue Manager to Production
 
+on:
+  push:
+    tags:
+      - '**@impler/queue-manager@**'
+      - '**@impler/shared@**'
+  workflow_dispatch:
+
 jobs:
   publish_prod_queue-manager:
     if: "!contains(github.event.head_commit.message, 'ci skip')"
