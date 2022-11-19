@@ -1,16 +1,16 @@
 name: Publish API to Production
 
-# Triggers the workflow on merge in main branch
 on:
-  pull_request:
-    branches: 
-      - main
-    types: [closed]
+  push:
+    tags:
+      - '**@impler/api@**'
+      - '**@impler/shared@**'
+      - '**@impler/dal@**'
+  workflow_dispatch:
 
 jobs:
   publish_prod_api:
-    # run only if pull request is merged into main branch
-    if: ${{ github.event.pull_request.merged }} && !contains(github.event.head_commit.message, 'ci skip')
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     timeout-minutes: 80
