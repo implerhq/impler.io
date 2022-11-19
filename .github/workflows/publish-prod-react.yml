@@ -1,16 +1,14 @@
 name: Publish React to NPM Registry
 
-# Triggers the workflow on merge in main branch
 on:
-  pull_request:
-    branches: 
-      - main
-    types: [closed]
+  push:
+    tags:
+      - '**@impler/react@**'
+  workflow_dispatch:
 
 jobs:
   publish_prod_react:
-    # run only if pull request is merged into main branch
-    if: ${{ github.event.pull_request.merged }} && !contains(github.event.head_commit.message, 'ci skip')
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     timeout-minutes: 80
@@ -42,8 +40,8 @@ jobs:
           version: 7.9.4
           run_install: true
 
-      - name: Publish
-        uses: JS-DevTools/npm-publish@v1
+      - name: Publish package to NPM 📦
         working-directory: apps/widget
+        run: npm publish --access public
         with:
-          token: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
