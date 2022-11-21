@@ -40,8 +40,14 @@ jobs:
           version: 7.9.4
           run_install: true
 
-      - name: Publish package to NPM 📦
-        working-directory: apps/widget
-        run: npm publish --access public
-        with:
+      - name: Publish @impler/react package on NPM 📦
+        working-directory: packages/react
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @impler/shared package on NPM 📦
+        working-directory: libs/shared
+        run: npm publish
+        env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
