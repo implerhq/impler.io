@@ -40,8 +40,8 @@ jobs:
           version: 7.9.4
           run_install: true
 
-      - name: Publish package to NPM 📦
+      - name: Publish package on NPM 📦
         working-directory: apps/widget
-        run: npm publish --access public
-        with:
+        run: npm publish
+        env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
