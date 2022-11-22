@@ -21,7 +21,6 @@
   "scripts": {
     "lint": "eslint src",
     "lint:fix": "pnpm lint --fix",
-    "preinstall": "pnpm build",
     "start": "npm run build:watch",
     "prebuild": "rimraf dist",
     "build": "rollup -c",

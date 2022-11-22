@@ -6,7 +6,6 @@
   "private": true,
   "scripts": {
     "prebuild": "rimraf dist",
-    "preinstall": "pnpm build",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\"",
     "start": "pnpm start:dev",

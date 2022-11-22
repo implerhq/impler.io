@@ -10,7 +10,6 @@
   "scripts": {
     "lint": "eslint src",
     "lint:fix": "pnpm lint --fix",
-    "preinstall": "pnpm build",
     "prebuild": "rimraf dist",
     "build": "tsc && cross-env ENVIRONMENT=local rollup -c rollup.config.js",
     "build:dev": "tsc && cross-env ENVIRONMENT=dev rollup -c rollup.config.js -w",

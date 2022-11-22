@@ -19,7 +19,6 @@
   ],
   "scripts": {
     "start": "npm run start:dev",
-    "preinstall": "pnpm build",
     "prebuild": "rimraf dist",
     "start:dev": "npm run watch:build",
     "build": "cross-env node_modules/.bin/tsc -p tsconfig.build.json",

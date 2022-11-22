@@ -7,7 +7,6 @@
   "scripts": {
     "start": "cross-env PORT=3500 BROWSER=none craco start",
     "start:dev": "cross-env PORT=3500 BROWSER=none craco start",
-    "preinstall": "pnpm build",
     "prebuild": "rimraf build",
     "build": "craco build",
     "precommit": "lint-staged",

@@ -11,7 +11,6 @@
   "files": ["dist", "package.json"],
   "scripts": {
     "start": "npm run start:dev",
-    "preinstall": "pnpm build",
     "prebuild": "rimraf dist",
     "build": "cross-env node_modules/.bin/tsc -p tsconfig.build.json",
     "build:watch": "cross-env node_modules/.bin/tsc -p tsconfig.build.json -w --preserveWatchOutput",

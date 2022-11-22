@@ -6,7 +6,6 @@
   "private": true,
   "scripts": {
     "prebuild": "rimraf dist",
-    "preinstall": "pnpm build",
     "format": "prettier --write \"src/**/*.ts\"",
     "build": "cross-env node_modules/.bin/tsc -p tsconfig.build.json",
     "start": "cross-env TZ=UTC nodemon",
