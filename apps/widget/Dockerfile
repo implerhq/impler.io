@@ -8,6 +8,7 @@ COPY .npmrc .
 COPY package.json .
 
 COPY apps/widget ./apps/widget
+COPY apps/widget/.example.env ./apps/widget/.env
 COPY packages/client ./packages/client
 COPY libs/shared ./libs/shared
 
