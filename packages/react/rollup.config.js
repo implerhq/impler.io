@@ -1,4 +1,4 @@
-const resolve = require('@rollup/plugin-node-resolve');
+const { nodeResolve } = require('@rollup/plugin-node-resolve');
 const commonjs = require('@rollup/plugin-commonjs');
 const typescript = require('@rollup/plugin-typescript');
 const { default: dts } = require('rollup-plugin-dts');
@@ -23,7 +23,7 @@ module.exports = [
     ],
     plugins: [
       externals(),
-      resolve({ preferBuiltins: false, browser: true }),
+      nodeResolve({ preferBuiltins: false, browser: true }),
       commonjs(),
       typescript({ tsconfig: './tsconfig.json' }),
       terser(),

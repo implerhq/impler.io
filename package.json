@@ -39,7 +39,8 @@
     "release:minor": "lerna version minor --no-push",
     "release:preminor": "lerna version preminor --no-push",
     "release:prerelease": "lerna version prerelease --no-push",
-    "publish": "pnpm build && pnpm -r --if-present publish"
+    "publish": "pnpm build && pnpm -r --if-present publish",
+    "postinstall": "pnpm build"
   },
   "keywords": [
     "data-import",

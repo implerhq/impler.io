@@ -1,6 +1,6 @@
 {
   "name": "@impler/embed",
-  "version": "0.1.1",
+  "version": "0.1.4",
   "private": true,
   "license": "MIT",
   "author": "knovator",
@@ -10,13 +10,12 @@
   "scripts": {
     "lint": "eslint src",
     "lint:fix": "pnpm lint --fix",
-    "preinstall": "pnpm build",
     "prebuild": "rimraf dist",
     "build": "tsc && cross-env ENVIRONMENT=local rollup -c rollup.config.js",
     "build:dev": "tsc && cross-env ENVIRONMENT=dev rollup -c rollup.config.js -w",
     "build:prod": "tsc && cross-env ENVIRONMENT=production rollup -c rollup.config.js",
     "start:dev": "node index.js",
-    "start:docker": "node index.js",
+    "start:docker": "pnpm build && node index.js",
     "start": "node index.js",
     "dev": "concurrently \"pnpm build:dev\" \"pnpm start:dev\"",
     "precommit": "lint-staged"
