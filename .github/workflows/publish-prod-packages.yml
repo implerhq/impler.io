@@ -1,9 +1,10 @@
-name: Publish React to NPM Registry
+name: Publish Packages to NPM Registry
 
 on:
   push:
     tags:
       - '**@impler/react@**'
+      - '**@impler/shared@**'
   workflow_dispatch:
 
 jobs:
@@ -42,12 +43,12 @@ jobs:
 
       - name: Publish @impler/react package on NPM 📦
         working-directory: packages/react
-        run: npm publish
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish @impler/shared package on NPM 📦
         working-directory: libs/shared
-        run: npm publish
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
