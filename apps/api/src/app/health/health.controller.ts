@@ -3,12 +3,16 @@ import { ApiExcludeController } from '@nestjs/swagger';
 import { DalService } from '@impler/dal';
 import { HealthCheck, HealthCheckService } from '@nestjs/terminus';
 import { version } from '../../../package.json';
-import { Defaults } from '@impler/shared';
+import { Defaults, StorageService } from '@impler/shared';
 
 @Controller('health-check')
 @ApiExcludeController()
 export class HealthController {
-  constructor(private healthCheckService: HealthCheckService, private dalService: DalService) {}
+  constructor(
+    private healthCheckService: HealthCheckService,
+    private dalService: DalService,
+    private storageService: StorageService
+  ) {}
 
   @Get()
   @HealthCheck()
@@ -26,6 +30,13 @@ export class HealthController {
           apiVersion: {
             version,
             status: 'up',
+          },
+        };
+      },
+      async () => {
+        return {
+          storage: {
+            status: (await this.storageService.isConnected()) ? 'up' : 'down',
           },
         };
       },
