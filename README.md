@@ -113,8 +113,8 @@ Follow these steps to setup the project locally,
   - [x] Mapping Phase
   - [x] Review Phase
   - [x] Confirm Phase
-- [ ] Infra
-  - [ ] Docker
+- [x] Infra
+  - [x] Docker
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
