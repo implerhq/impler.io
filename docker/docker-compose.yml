@@ -65,6 +65,8 @@ services:
       - widget
     image: "ghcr.io/knovator/impler/embed:latest"
     container_name: embed
+    environment:
+      WIDGET_URL: ${WIDGET_URL}
     ports:
       - 4701:4701
   rabbitmq:

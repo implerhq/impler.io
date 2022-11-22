@@ -5,6 +5,7 @@ import {
   PutObjectCommandOutput,
   GetObjectCommand,
   DeleteObjectCommand,
+  ListObjectsCommand,
 } from '@aws-sdk/client-s3';
 import { FileNotExistError } from '../errors/file-not-exist.error';
 import { Defaults } from '../utils';
@@ -23,6 +24,7 @@ export abstract class StorageService {
   ): Promise<PutObjectCommandOutput>;
   abstract getFileContent(key: string, encoding?: BufferEncoding): Promise<string>;
   abstract deleteFile(key: string): Promise<void>;
+  abstract isConnected(): Promise<boolean>;
 }
 
 async function streamToString(stream: Readable, encoding: BufferEncoding): Promise<string> {
@@ -80,5 +82,20 @@ export class S3StorageService implements StorageService {
       Key: key,
     });
     await this.s3.send(command);
+  }
+
+  async isConnected(): Promise<boolean> {
+    try {
+      // check if connection is available
+      const command = new ListObjectsCommand({
+        Bucket: process.env.S3_BUCKET_NAME,
+        MaxKeys: Defaults.DATA_LENGTH,
+      });
+      await this.s3.send(command);
+
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 }
