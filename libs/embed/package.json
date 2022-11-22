@@ -15,7 +15,7 @@
     "build:dev": "tsc && cross-env ENVIRONMENT=dev rollup -c rollup.config.js -w",
     "build:prod": "tsc && cross-env ENVIRONMENT=production rollup -c rollup.config.js",
     "start:dev": "node index.js",
-    "start:docker": "node index.js",
+    "start:docker": "pnpm build && node index.js",
     "start": "node index.js",
     "dev": "concurrently \"pnpm build:dev\" \"pnpm start:dev\"",
     "precommit": "lint-staged"
