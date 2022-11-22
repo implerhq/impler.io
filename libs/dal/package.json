@@ -1,6 +1,6 @@
 {
   "name": "@impler/dal",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "author": "knovator",
   "license": "MIT",
   "private": true,
@@ -8,7 +8,6 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "start": "pnpm run build:watch",
-    "preinstall": "pnpm build",
     "prebuild": "rimraf dist",
     "start:dev": "pnpm run build:watch",
     "build": "cross-env node_modules/.bin/tsc -p tsconfig.build.json",

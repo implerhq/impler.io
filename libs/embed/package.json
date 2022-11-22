@@ -1,6 +1,6 @@
 {
   "name": "@impler/embed",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": true,
   "license": "MIT",
   "author": "knovator",
@@ -10,7 +10,6 @@
   "scripts": {
     "lint": "eslint src",
     "lint:fix": "pnpm lint --fix",
-    "preinstall": "pnpm build",
     "prebuild": "rimraf dist",
     "build": "tsc && cross-env ENVIRONMENT=local rollup -c rollup.config.js",
     "build:dev": "tsc && cross-env ENVIRONMENT=dev rollup -c rollup.config.js -w",

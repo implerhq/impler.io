@@ -59,8 +59,8 @@ importers:
   apps/api:
     specifiers:
       '@aws-sdk/client-s3': ^3.185.0
-      '@impler/dal': ^0.1.2
-      '@impler/shared': ^0.1.2
+      '@impler/dal': ^0.1.3
+      '@impler/shared': ^0.1.3
       '@nestjs/cli': ^9.1.5
       '@nestjs/common': ^9.1.2
       '@nestjs/core': ^9.1.2
@@ -131,8 +131,8 @@ importers:
 
   apps/queue-manager:
     specifiers:
-      '@impler/dal': ^0.1.2
-      '@impler/shared': ^0.1.2
+      '@impler/dal': ^0.1.3
+      '@impler/shared': ^0.1.3
       '@types/node': ^18.7.18
       axios: ^0.26.1
       dotenv: ^16.0.2
@@ -158,8 +158,8 @@ importers:
     specifiers:
       '@craco/craco': ^6.4.5
       '@emotion/react': ^11.10.5
-      '@impler/client': ^0.1.2
-      '@impler/shared': ^0.1.2
+      '@impler/client': ^0.1.3
+      '@impler/shared': ^0.1.3
       '@mantine/core': ^5.6.3
       '@mantine/dropzone': ^5.6.3
       '@mantine/notifications': 5.6.3
@@ -219,7 +219,7 @@ importers:
 
   apps/widget-demo:
     specifiers:
-      '@impler/react': ^0.1.2
+      '@impler/react': ^0.1.3
       '@types/react': ^18.0.21
       '@types/react-dom': ^18.0.6
       '@vitejs/plugin-react': ^2.2.0
@@ -324,7 +324,7 @@ importers:
 
   packages/client:
     specifiers:
-      '@impler/shared': ^0.1.2
+      '@impler/shared': ^0.1.3
       '@types/node': ^18.11.9
       axios: ^0.26.1
       rimraf: ^3.0.2
@@ -342,7 +342,7 @@ importers:
   packages/react:
     specifiers:
       '@babel/core': ^7.19.6
-      '@impler/shared': ^0.1.2
+      '@impler/shared': ^0.1.3
       '@rollup/plugin-commonjs': ^23.0.1
       '@rollup/plugin-node-resolve': ^15.0.0
       '@rollup/plugin-typescript': ^9.0.1

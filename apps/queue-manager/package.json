@@ -1,12 +1,11 @@
 {
   "name": "@impler/queue-manager",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "author": "knovator",
   "license": "MIT",
   "private": true,
   "scripts": {
     "prebuild": "rimraf dist",
-    "preinstall": "pnpm build",
     "format": "prettier --write \"src/**/*.ts\"",
     "build": "cross-env node_modules/.bin/tsc -p tsconfig.build.json",
     "start": "cross-env TZ=UTC nodemon",
@@ -17,8 +16,8 @@
     "lint:fix": "pnpm lint -- --fix"
   },
   "dependencies": {
-    "@impler/dal": "^0.1.2",
-    "@impler/shared": "^0.1.2",
+    "@impler/dal": "^0.1.3",
+    "@impler/shared": "^0.1.3",
     "axios": "^0.26.1",
     "dotenv": "^16.0.2",
     "envalid": "^7.3.1"
