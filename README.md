@@ -41,7 +41,6 @@
     </li>
     <li><a href="#setup">Setup</a></li>
     <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
@@ -77,47 +76,23 @@ To set up `impler.io` locally, you need the following things installed in your c
 Follow these steps to setup the project locally,
 1. Clone the repo, `git clone https://github.com/knovator/impler.io`.
 2. Install the dependencies, `pnpm install`.
-3. Copy `.env.development` file from `apps/api/src` to `apps/api/src/.env` and do changes to variables if needed.
+3. Do setups for projects by running, `pnpm setup:project`.
 4. Start the application, `pnpm start:dev`.
-5. Start interacting with API by visiting `http://localhost:3000/api`.
+5. Start interacting with API by visiting `http://localhost:3000/api` or see demo on `http://localhost:5173`.
 
-<!-- USAGE EXAMPLES -->
-## Usage
+### Add Import Schema
 
-`impler` need to be communicated through **REST API**, you can easily make call through **Swagger UI** provided at `http://localhost:3000/api`, 
-1. You create `project`.
-2. You add `template` to `project`, Template refers to set of data you want to import i.e. users data.
-3. Add `columns` to `template`, Column refers to individual fields template can have, for example users Template can have firstname, lastname, address, email, phonenumber, etc.
-4. Upload `file` to `template`, After columns being set well, we're ready to import `.csv`, `.xls`, `.xlsx` file to aplication.
-    * `Upload` response returns data with `headings` specified in uploaded file.
-    * Keep note of uploaded file `id`, it will be used later.
-    * Uploaded file headings will be mapped automatically with `columns` provided for `template`.
-5. Check `mapping` done for uploaded file, and finalize mappings.
-6. Get `review` data for uploaded file and confirm reivew with option whether you want ot excempt invalid data or want to keep them.
+After doing setup, you can easily make call to the `impler` through **Swagger UI** provided at `http://localhost:3000/api`, 
+1. Create `project` by calling `/v1/project` API, and Copy `_id` from the response.
+2. Create `template` by calling `/v1/template/{projectId}` API, and Copy `_id` from the response.
+3. Update `columns` for template by calling `/v1/column/{templateId}` API.
+
+### See Demo
+
+If you're running `impler` locally, after [adding-schema](#add-import-schema) you can start interacting with import widget from `http://localhost:5173`.
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- ROADMAP -->
-## Roadmap
-
-- [x] API
-  - [x] Project
-  - [x] Template
-  - [x] Column
-  - [x] Upload
-  - [x] Mapping
-  - [x] Review
-  - [x] Processing data
-- [x] Web
-  - [x] Upload Phase
-  - [x] Mapping Phase
-  - [x] Review Phase
-  - [x] Confirm Phase
-- [x] Infra
-  - [x] Docker
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 <!-- CONTRIBUTING -->
 ## Contributing
