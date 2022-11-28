@@ -4,6 +4,7 @@ import { DalService } from '@impler/dal';
 import { HealthCheck, HealthCheckService } from '@nestjs/terminus';
 import { version } from '../../../package.json';
 import { Defaults, StorageService } from '@impler/shared';
+import { QueueService } from '@shared/storage/queue.service';
 
 @Controller('health-check')
 @ApiExcludeController()
@@ -11,32 +12,28 @@ export class HealthController {
   constructor(
     private healthCheckService: HealthCheckService,
     private dalService: DalService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private queueService: QueueService
   ) {}
 
   @Get()
   @HealthCheck()
   healthCheck() {
     return this.healthCheckService.check([
-      async () => {
+      () => {
         return {
           db: {
             status: this.dalService.connection.readyState === Defaults.READY_STATE ? 'up' : 'down',
           },
-        };
-      },
-      async () => {
-        return {
+          storage: {
+            status: this.storageService.isConnected() ? 'up' : 'down',
+          },
           apiVersion: {
             version,
             status: 'up',
           },
-        };
-      },
-      async () => {
-        return {
-          storage: {
-            status: (await this.storageService.isConnected()) ? 'up' : 'down',
+          rabbitmq: {
+            status: this.queueService.isQueueConnected ? 'up' : 'down',
           },
         };
       },
