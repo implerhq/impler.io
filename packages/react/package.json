@@ -24,8 +24,7 @@
     "start": "npm run build:watch",
     "prebuild": "rimraf dist",
     "build": "rollup -c",
-    "build:watch": "rollup -c -w",
-    "publish": "npm publish"
+    "build:watch": "rollup -c -w"
   },
   "publishConfig": {
     "access": "public"
