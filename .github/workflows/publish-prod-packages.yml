@@ -43,10 +43,13 @@ jobs:
 
       - name: Publish @impler/shared package on NPM 📦
         working-directory: libs/shared
-        run: npm config set _authToken=${{ secrets.NPM_TOKEN }}
-        run: npm publish --access public
+        run: |
+          npm config set _authToken=${{ secrets.NPM_TOKEN }}
+          npm publish --access public
 
       - name: Publish @impler/react package on NPM 📦
         working-directory: packages/react
-        run: npm config set _authToken=${{ secrets.NPM_TOKEN }}
-        run: npm publish --access public
+        run: |
+          npm config set _authToken=${{ secrets.NPM_TOKEN }}
+          npm publish --access public
+
