@@ -1,6 +1,6 @@
 {
   "name": "@impler/react",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "React library to show widget in client applications",
   "license": "MIT",
   "author": "knovator",
@@ -24,8 +24,7 @@
     "start": "npm run build:watch",
     "prebuild": "rimraf dist",
     "build": "rollup -c",
-    "build:watch": "rollup -c -w",
-    "publish": "npm publish"
+    "build:watch": "rollup -c -w"
   },
   "publishConfig": {
     "access": "public"
@@ -51,7 +50,7 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "@impler/shared": "^0.1.4",
+    "@impler/shared": "^0.1.5",
     "styled-components": "^5.3.6"
   }
 }
