@@ -3,7 +3,7 @@ declare namespace NodeJS {
   export interface ProcessEnv {
     NODE_ENV: 'test' | 'prod' | 'dev' | 'ci' | 'local';
     PORT: number;
-    'ACCESS-KEY'?: string;
+    ACCESS_KEY?: string;
     FRONT_BASE_URL: string;
     SENTRY_DSN: string;
     MONGO_URL: string;

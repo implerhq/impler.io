@@ -1,0 +1,19 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Test API
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+on:
+  pull_request:
+    paths:
+      - 'package.json'
+      - 'yarn.lock'
+      - 'apps/api/**'
+      - 'libs/dal/**'
+      - 'libs/shared/**'
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  test_api:
+    uses: ./.github/workflows/reusable-api-e2e.yml

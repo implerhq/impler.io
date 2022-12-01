@@ -22,7 +22,7 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV}
       PORT: ${API_PORT}
-      FRONT_BASE_URL: ${FRONT_BASE_URL}
+      FRONT_BASE_URL: ${WIDGET_URL}
       MONGO_URL: ${MONGO_URL}
       S3_REGION: ${S3_REGION}
       S3_LOCAL_STACK: ${S3_LOCAL_STACK}

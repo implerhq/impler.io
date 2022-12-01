@@ -5,7 +5,7 @@ import {
   PutObjectCommandOutput,
   GetObjectCommand,
   DeleteObjectCommand,
-  ListObjectsCommand,
+  ListBucketsCommand,
 } from '@aws-sdk/client-s3';
 import { FileNotExistError } from '../errors/file-not-exist.error';
 import { Defaults } from '../utils';
@@ -24,7 +24,7 @@ export abstract class StorageService {
   ): Promise<PutObjectCommandOutput>;
   abstract getFileContent(key: string, encoding?: BufferEncoding): Promise<string>;
   abstract deleteFile(key: string): Promise<void>;
-  abstract isConnected(): Promise<boolean>;
+  abstract isConnected(): boolean;
 }
 
 async function streamToString(stream: Readable, encoding: BufferEncoding): Promise<string> {
@@ -37,6 +37,7 @@ async function streamToString(stream: Readable, encoding: BufferEncoding): Promi
 }
 
 export class S3StorageService implements StorageService {
+  private isS3Connected = false;
   private s3 = new S3Client({
     region: process.env.S3_REGION,
     endpoint: process.env.S3_LOCAL_STACK || undefined,
@@ -46,6 +47,18 @@ export class S3StorageService implements StorageService {
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     },
   });
+
+  constructor() {
+    const command = new ListBucketsCommand({});
+    this.s3
+      .send(command)
+      .then(() => {
+        return (this.isS3Connected = true);
+      })
+      .catch(() => {
+        this.isS3Connected = false;
+      });
+  }
 
   async uploadFile(key: string, file: Buffer, contentType: string, isPublic = false): Promise<PutObjectCommandOutput> {
     const command = new PutObjectCommand({
@@ -84,18 +97,7 @@ export class S3StorageService implements StorageService {
     await this.s3.send(command);
   }
 
-  async isConnected(): Promise<boolean> {
-    try {
-      // check if connection is available
-      const command = new ListObjectsCommand({
-        Bucket: process.env.S3_BUCKET_NAME,
-        MaxKeys: Defaults.DATA_LENGTH,
-      });
-      await this.s3.send(command);
-
-      return true;
-    } catch (error) {
-      return false;
-    }
+  isConnected(): boolean {
+    return this.isS3Connected;
   }
 }

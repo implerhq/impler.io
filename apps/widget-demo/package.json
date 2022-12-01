@@ -1,6 +1,6 @@
 {
   "name": "@impler/widget-demo",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "author": "knovator",
   "license": "MIT",
   "private": true,
@@ -13,7 +13,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@impler/react": "^0.1.4",
+    "@impler/react": "^0.1.5",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
