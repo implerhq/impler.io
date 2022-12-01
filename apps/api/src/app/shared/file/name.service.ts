@@ -1,11 +1,17 @@
 export class FileNameService {
+  getURLOrigin(): string {
+    const url = new URL(process.env.S3_LOCAL_STACK);
+
+    return url.origin;
+  }
   getSampleFileName(templateId: string): string {
     return `${templateId}/sample.csv`;
   }
   getSampleFileUrl(templateId: string): string {
     const fileName = this.getSampleFileName(templateId);
+    const origin = this.getURLOrigin();
 
-    return [process.env.S3_LOCAL_STACK, process.env.S3_BUCKET_NAME, fileName].join('/');
+    return [origin, process.env.S3_BUCKET_NAME, fileName].join('/');
   }
   getFileExtension(fileName: string): string {
     return fileName.split('.').pop();
@@ -36,8 +42,9 @@ export class FileNameService {
   }
   getInvalidCSVDataFileUrl(uploadId: string): string {
     const path = this.getInvalidCSVDataFilePath(uploadId);
+    const origin = this.getURLOrigin();
 
-    return [process.env.S3_LOCAL_STACK, process.env.S3_BUCKET_NAME, path].join('/');
+    return [origin, process.env.S3_BUCKET_NAME, path].join('/');
   }
   getValidDataFileName(): string {
     return `valid-data.json`;
