@@ -23,7 +23,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
   useEffect(() => {
     WebFont.load({
       google: {
-        families: ['Lato'],
+        families: ['Poppins'],
       },
     });
   }, []);
