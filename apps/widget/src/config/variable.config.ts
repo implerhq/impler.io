@@ -9,5 +9,11 @@ export const variables = {
   colorIndex: 6,
   baseIndex: 0,
   firstIndex: 1,
+  secondIndex: 2,
+  thirdIndex: 3,
   hexNumber: 16,
+  defaultShadesCount: 5,
+  defaultAlpha: 1,
+  shadesMultipler: 2,
+  maxColorNumber: 255,
 };
