@@ -70,7 +70,7 @@ export class ReviewController {
       // uploaded file is mapped, do review
       const reviewData = await this.doReview.execute(_uploadId);
       // save invalid data to storage
-      this.saveReviewData.execute(_uploadId, reviewData.invalid, reviewData.valid);
+      await this.saveReviewData.execute(_uploadId, reviewData.invalid, reviewData.valid);
 
       invalidData = reviewData.invalid;
     } else {
