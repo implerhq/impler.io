@@ -1,6 +1,6 @@
-import { Group, Title } from '@mantine/core';
+import { Group, Title, useMantineTheme } from '@mantine/core';
 import { Stepper } from '@ui/Stepper';
-import { TEXTS } from '@config';
+import { TEXTS, variables } from '@config';
 import { PhasesEum } from '@types';
 
 interface IHeadingProps {
@@ -31,11 +31,12 @@ const Steps = [
 
 export function Heading(props: IHeadingProps) {
   const { active } = props;
+  const theme = useMantineTheme();
 
   return (
     <Group style={{ justifyContent: 'space-between' }} mb="lg">
       <Title order={3}>{Titles[active]}</Title>
-      <Stepper active={active} steps={Steps} />
+      <Stepper active={active} steps={Steps} primaryColor={theme.colors.primary[variables.colorIndex]} />
     </Group>
   );
 }
