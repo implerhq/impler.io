@@ -6,4 +6,5 @@ export interface ButtonProps {
   extra?: string | Record<string, any>;
   children?: React.ReactNode;
   className?: string;
+  primaryColor?: string;
 }
