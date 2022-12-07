@@ -16,14 +16,14 @@
   <p align="center">
     Open source infrastructure for data import
     <br />
-    <a href="https://github.com/knovator/impler.io"><strong>Explore the docs »</strong></a>
+    <a href="https://docs.impler.io"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://github.com/knovator/impler.io">View Demo</a>
     ·
-    <a href="https://github.com/knovator/impler.io/issues">Report Bug</a>
+    <a href="https://github.com/knovator/impler.io/issues/new?assignees=&labels=&template=bug_report.md&title=">Report Bug</a>
     ·
-    <a href="https://github.com/knovator/impler.io/issues">Request Feature</a>
+    <a href="https://github.com/knovator/impler.io/issues/new?assignees=&labels=&template=feature_request.md&title=">Request Feature</a>
   </p>
 </div>
 
