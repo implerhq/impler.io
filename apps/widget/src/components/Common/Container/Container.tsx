@@ -7,8 +7,8 @@ import { Provider } from '../Provider';
 import { generateShades, ParentWindow } from '@util';
 import { useAuthentication } from '@hooks/useAuthentication';
 import { ApiService } from '@impler/client';
-import { EventTypesEnum, MessageHandlerDataType } from '@types';
-import { IInitPayload, IShowPayload } from '@impler/shared';
+import { MessageHandlerDataType } from '@types';
+import { IInitPayload, IShowPayload, EventTypesEnum } from '@impler/shared';
 import { NotificationsProvider } from '@mantine/notifications';
 import { MantineProvider } from '@mantine/core';
 

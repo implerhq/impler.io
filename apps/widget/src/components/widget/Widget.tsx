@@ -14,7 +14,7 @@ import { Layout } from 'components/Common/Layout';
 export function Widget() {
   const defaultDataCount = 0;
   const queryClient = useQueryClient();
-  const { reset: resetAppState } = useAppState();
+  const { reset: resetAppState, uploadInfo } = useAppState();
   const [phase, setPhase] = useState<PhasesEum>(PhasesEum.UPLOAD);
   const [dataCount, setDataCount] = useState<number>(defaultDataCount);
   const [promptContinueAction, setPromptContinueAction] = useState<PromptModalTypesEnum>();
@@ -24,6 +24,7 @@ export function Widget() {
   };
   const onPromptConfirm = () => {
     setPromptContinueAction(undefined);
+    ParentWindow.UploadTerminated({ uploadId: uploadInfo._id });
     if (promptContinueAction === PromptModalTypesEnum.CLOSE) closeWidget();
     resetProgress();
   };
@@ -46,6 +47,7 @@ export function Widget() {
   const onComplete = (count: number) => {
     setDataCount(count);
     setPhase(PhasesEum.COMPLETE);
+    ParentWindow.UploadCompleted({ uploadId: uploadInfo._id });
   };
 
   const PhaseView = {

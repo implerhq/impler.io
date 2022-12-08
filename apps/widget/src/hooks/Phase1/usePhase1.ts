@@ -5,7 +5,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAPIState } from '@store/api.context';
 import { IErrorObject, IOption, ITemplate, IUpload } from '@impler/shared';
 import { useAppState } from '@store/app.context';
-import { downloadFileFromURL, notifier } from '@util';
+import { downloadFileFromURL, notifier, ParentWindow } from '@util';
 import { IFormvalues, IUploadValues } from '@types';
 
 interface IUsePhase1Props {
@@ -37,6 +37,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     (values: any) => api.uploadFile(values),
     {
       onSuccess(uploadData) {
+        ParentWindow.UploadStarted({ templateId: uploadData._templateId, uploadId: uploadData._id });
         setUploadInfo(uploadData);
         goNext();
       },

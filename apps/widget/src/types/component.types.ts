@@ -1,5 +1,5 @@
 import { IInitPayload, IShowPayload } from '@impler/shared';
-import { EventTypesEnum } from './event.types';
+import { EventTypesEnum } from '@impler/shared';
 
 export type MessageHandlerDataType =
   | {
