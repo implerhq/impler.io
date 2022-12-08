@@ -18,21 +18,21 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
   const [templates, setTemplates] = useState<IOption[]>([]);
   const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
   const { projectId, template, authHeaderValue, extra } = useImplerState();
-  const { data, isFetched, isLoading } = useQuery<ITemplate[], IErrorObject, ITemplate[], string[]>(
-    ['templates'],
-    () => api.getTemplates(projectId),
-    {
-      onSuccess(templatesResponse) {
-        setTemplates(
-          templatesResponse.map((item) => ({
-            label: item.name,
-            value: item._id,
-          }))
-        );
-      },
-    }
-  );
-  const { isLoading: isUploadLoading, mutate } = useMutation<IUpload, IErrorObject, IUploadValues>(
+  const {
+    data: dataTemplates,
+    isFetched,
+    isLoading,
+  } = useQuery<ITemplate[], IErrorObject, ITemplate[], string[]>(['templates'], () => api.getTemplates(projectId), {
+    onSuccess(templatesResponse) {
+      setTemplates(
+        templatesResponse.map((item) => ({
+          label: item.name,
+          value: item._id,
+        }))
+      );
+    },
+  });
+  const { isLoading: isUploadLoading, mutate: submitUpload } = useMutation<IUpload, IErrorObject, IUploadValues>(
     ['upload'],
     (values: any) => api.uploadFile(values),
     {
@@ -62,10 +62,12 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
 
     let selectedTemplate: ITemplate | undefined;
     const selectedTemplateValue = getValues('template');
-    if (selectedTemplateValue && data) {
-      selectedTemplate = data.find((templateItem) => templateItem._id === selectedTemplateValue);
-    } else if (template && data) {
-      selectedTemplate = data.find((templateItem) => templateItem.code === template || templateItem._id === template);
+    if (selectedTemplateValue && dataTemplates) {
+      selectedTemplate = dataTemplates.find((templateItem) => templateItem._id === selectedTemplateValue);
+    } else if (template && dataTemplates) {
+      selectedTemplate = dataTemplates.find(
+        (templateItem) => templateItem.code === template || templateItem._id === template
+      );
     }
 
     if (selectedTemplate && selectedTemplate.sampleFileUrl)
@@ -75,11 +77,19 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
   };
 
   const onSubmit = (submitData: IFormvalues) => {
-    mutate({
-      ...submitData,
-      authHeaderValue,
-      extra,
-    });
+    if (!submitData.template && dataTemplates) {
+      const selectedTemplate = dataTemplates.find(
+        (templateItem) => templateItem.code === template || templateItem._id === template
+      );
+      if (selectedTemplate) {
+        submitData.template = selectedTemplate._id;
+        submitUpload({
+          ...submitData,
+          authHeaderValue,
+          extra,
+        });
+      }
+    }
   };
 
   return {
