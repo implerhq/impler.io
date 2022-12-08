@@ -2,13 +2,15 @@ import { useEffect, useState, PropsWithChildren } from 'react';
 import * as WebFont from 'webfontloader';
 import { useParams } from 'react-router-dom';
 import { Global } from '@emotion/react';
-import { API_URL, colors } from '@config';
+import { API_URL, colors, mantineConfig, variables } from '@config';
 import { Provider } from '../Provider';
-import { ParentWindow } from '@util';
+import { generateShades, ParentWindow } from '@util';
 import { useAuthentication } from '@hooks/useAuthentication';
 import { ApiService } from '@impler/client';
 import { EventTypesEnum, MessageHandlerDataType } from '@types';
 import { IInitPayload, IShowPayload } from '@impler/shared';
+import { NotificationsProvider } from '@mantine/notifications';
+import { MantineProvider } from '@mantine/core';
 
 let api: ApiService;
 
@@ -17,13 +19,13 @@ export function Container({ children }: PropsWithChildren<{}>) {
   const { projectId = '' } = useParams<{ projectId: string }>();
   const [showWidget, setShowWidget] = useState<boolean>(false);
   const [primaryPayload, setPrimaryPayload] = useState<IInitPayload>();
-  const [secondaryPayload, setSecondaryPayload] = useState<IShowPayload>();
+  const [secondaryPayload, setSecondaryPayload] = useState<IShowPayload>({ primaryColor: colors.primary });
   const { isAuthenticated, refetch } = useAuthentication({ api, projectId, template: primaryPayload?.template });
 
   useEffect(() => {
     WebFont.load({
       google: {
-        families: ['Lato'],
+        families: ['Poppins'],
       },
     });
   }, []);
@@ -51,7 +53,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
     }
     if (data && data.type === EventTypesEnum.SHOW_WIDGET) {
       setShowWidget(true);
-      setSecondaryPayload(data.value);
+      setSecondaryPayload((payload) => ({ ...payload, ...data.value }));
     }
   }
 
@@ -83,24 +85,43 @@ export function Container({ children }: PropsWithChildren<{}>) {
 
           /* Handle */
           '::-webkit-scrollbar-thumb': {
-            background: colors.primary,
+            background: secondaryPayload.primaryColor,
             borderRadius: '10px',
           },
         }}
       />
       {primaryPayload ? (
-        <Provider
-          // api
-          api={api}
-          // impler-context
-          projectId={projectId}
-          template={primaryPayload.template}
-          accessToken={primaryPayload.accessToken}
-          authHeaderValue={secondaryPayload?.authHeaderValue}
-          extra={secondaryPayload?.extra}
+        <MantineProvider
+          withGlobalStyles
+          withNormalizeCSS
+          theme={{
+            ...mantineConfig,
+            colors: {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              primary: generateShades(secondaryPayload.primaryColor),
+            },
+            primaryColor: 'primary',
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            primaryShade: variables.colorIndex,
+          }}
         >
-          {children}
-        </Provider>
+          <NotificationsProvider>
+            <Provider
+              // api
+              api={api}
+              // impler-context
+              projectId={projectId}
+              template={primaryPayload.template}
+              accessToken={primaryPayload.accessToken}
+              authHeaderValue={secondaryPayload?.authHeaderValue}
+              extra={secondaryPayload?.extra}
+            >
+              {children}
+            </Provider>
+          </NotificationsProvider>
+        </MantineProvider>
       ) : null}
     </>
   );

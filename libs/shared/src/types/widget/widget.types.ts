@@ -5,6 +5,7 @@ export interface IInitPayload {
 export interface IShowPayload {
   extra?: string;
   authHeaderValue?: string;
+  primaryColor?: string;
 }
 export interface IOption {
   value: string;

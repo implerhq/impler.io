@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
 import { createStyles, MantineTheme } from '@mantine/core';
 import React from 'react';
-import { colors } from '../../config/colors.config';
 
 export const getHeaderStyles = (theme: MantineTheme): React.CSSProperties => ({
   marginBottom: theme.spacing.xs,

@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
 import { createStyles, MantineTheme } from '@mantine/core';
 import { colors } from '../../config/colors.config';
+import { variables } from '../../config/variable.config';
 
 export const getRootStyles = (theme: MantineTheme, hasError: boolean): React.CSSProperties => ({
-  borderColor: hasError ? colors.red : colors.primary,
+  borderColor: hasError ? colors.red : theme.colors.primary[variables.colorIndex],
   flexGrow: 1,
 });
 
@@ -43,6 +44,10 @@ export const getDropzoneInnerStyles = (theme: MantineTheme): React.CSSProperties
   height: '100%',
 });
 
+export const getBrowseTextStyles = (theme: MantineTheme): React.CSSProperties => ({
+  color: theme.colors.primary[variables.colorIndex],
+});
+
 export default createStyles((theme: MantineTheme, { hasError }: { hasError: boolean }, getRef): Record<string, any> => {
   return {
     icon: getIconStyles(theme),
@@ -50,6 +55,7 @@ export default createStyles((theme: MantineTheme, { hasError }: { hasError: bool
     root: getRootStyles(theme, hasError),
     checkIcon: getCheckIconStyles(theme),
     wrapper: getWrapperStyles(theme),
+    browseText: getBrowseTextStyles(theme),
     inner: getDropzoneInnerStyles(theme),
   };
 });

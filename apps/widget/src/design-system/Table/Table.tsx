@@ -1,6 +1,6 @@
 import { Table as MantineTable } from '@mantine/core';
 import useStyles from './Table.style';
-import { getErrorObject } from '../../util/helpers';
+import { getErrorObject } from '../../util/helpers/common.helpers';
 import { InvalidWarning } from '../InvalidWarning';
 import { variables } from '../../config/variable.config';
 import React from 'react';

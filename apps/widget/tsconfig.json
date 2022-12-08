@@ -32,6 +32,6 @@
     }
   },
   "include": [
-    "src"
+    "src", "public"
   ]
 }

@@ -2,7 +2,6 @@ import { Group, Text } from '@mantine/core';
 import { Dropzone as MantineDropzone, FileWithPath, MIME_TYPES } from '@mantine/dropzone';
 import useStyles from './Dropzone.style';
 import { TEXTS } from '../../config/texts.config';
-import { colors } from '../../config/colors.config';
 import { FileIcon, CheckIcon } from '../../icons';
 import { File as FileCMP } from '../File';
 
@@ -60,7 +59,7 @@ export function Dropzone(props: IDropzoneProps) {
           <div>
             <Text align="center" weight="bold">
               {TEXTS.DROPZONE.TITLE}{' '}
-              <Text component="span" color={colors.primary}>
+              <Text component="span" className={classes.browseText}>
                 {TEXTS.DROPZONE.BROWSE}
               </Text>
             </Text>

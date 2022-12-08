@@ -32,6 +32,7 @@ export const Button = ({
   authHeaderValue,
   accessToken,
   extra,
+  primaryColor,
 }: ButtonProps): JSX.Element => {
   const [isImplerInitiated, setIsImplerInitiated] = useState(false);
 
@@ -63,6 +64,7 @@ export const Button = ({
           payload.authHeaderValue = authHeaderValue;
         }
       }
+      if (primaryColor) payload.primaryColor = primaryColor;
 
       window.impler.show(payload);
     }
