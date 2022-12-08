@@ -5,6 +5,8 @@ import { PhasesEum } from '@types';
 
 interface IFooterProps {
   active: PhasesEum;
+  primaryButtonDisabled?: boolean;
+  secondaryButtonDisabled?: boolean;
   primaryButtonLoading?: boolean;
   secondaryButtonLoading?: boolean;
   onPrevClick: () => void;
@@ -12,40 +14,63 @@ interface IFooterProps {
 }
 
 export function Footer(props: IFooterProps) {
-  const { active, onNextClick, onPrevClick, primaryButtonLoading, secondaryButtonLoading } = props;
+  const {
+    active,
+    onNextClick,
+    onPrevClick,
+    primaryButtonLoading,
+    secondaryButtonLoading,
+    primaryButtonDisabled,
+    secondaryButtonDisabled,
+  } = props;
 
   const FooterActions = {
     [PhasesEum.UPLOAD]: (
-      <Button loading={primaryButtonLoading} onClick={onNextClick}>
+      <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
         {TEXTS.PHASE1.SEE_MAPPING}
       </Button>
     ),
     [PhasesEum.MAPPING]: (
       <>
-        <Button loading={secondaryButtonLoading} onClick={onPrevClick} variant="outline">
+        <Button
+          loading={secondaryButtonLoading}
+          disabled={secondaryButtonDisabled}
+          onClick={onPrevClick}
+          variant="outline"
+        >
           {TEXTS.PHASE2.UPLOAD_AGAIN}
         </Button>
-        <Button loading={primaryButtonLoading} onClick={onNextClick}>
+        <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
           {TEXTS.PHASE2.SEE_REVIEW}
         </Button>
       </>
     ),
     [PhasesEum.REVIEW]: (
       <>
-        <Button loading={secondaryButtonLoading} onClick={onPrevClick} variant="outline">
+        <Button
+          loading={secondaryButtonLoading}
+          disabled={secondaryButtonDisabled}
+          onClick={onPrevClick}
+          variant="outline"
+        >
           {TEXTS.PHASE2.UPLOAD_AGAIN}
         </Button>
-        <Button loading={primaryButtonLoading} onClick={onNextClick}>
+        <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
           {TEXTS.PHASE3.CONFIRM_UPLOAD}
         </Button>
       </>
     ),
     [PhasesEum.COMPLETE]: (
       <>
-        <Button loading={secondaryButtonLoading} onClick={onPrevClick} variant="outline">
+        <Button
+          loading={secondaryButtonLoading}
+          disabled={secondaryButtonDisabled}
+          onClick={onPrevClick}
+          variant="outline"
+        >
           {TEXTS.PHASE4.CLOSE}
         </Button>
-        <Button loading={primaryButtonLoading} onClick={onNextClick}>
+        <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
           {TEXTS.PHASE2.UPLOAD_AGAIN}
         </Button>
       </>
