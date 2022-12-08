@@ -2,7 +2,7 @@ import { IInitPayload, IShowPayload } from '@impler/shared';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { logger } from '../../utils';
-import { ButtonProps } from './Button.types';
+import { ButtonProps, EventCalls, EventTypesEnum } from './Button.types';
 
 const StyledButton = styled.button`
   color: white;
@@ -32,6 +32,10 @@ export const Button = ({
   authHeaderValue,
   accessToken,
   extra,
+  primaryColor,
+  onUploadComplete,
+  onUploadStart,
+  onUploadTerminate,
 }: ButtonProps): JSX.Element => {
   const [isImplerInitiated, setIsImplerInitiated] = useState(false);
 
@@ -44,6 +48,24 @@ export const Button = ({
     } else if (!window.impler) logger.logError('IMPLER_UNDEFINED_ERROR');
     else if (!projectId) logger.logError('PROJECTID_NOT_SPECIFIED');
   }, []);
+
+  useEffect(() => {
+    window.impler.on('message', onEventHappen);
+  }, []);
+
+  function onEventHappen(data: EventCalls) {
+    switch (data.type) {
+      case EventTypesEnum.UPLOAD_STARTED:
+        if (onUploadStart) onUploadStart(data.value);
+        break;
+      case EventTypesEnum.UPLOAD_TERMINATED:
+        if (onUploadTerminate) onUploadTerminate(data.value);
+        break;
+      case EventTypesEnum.UPLOAD_COMPLETED:
+        if (onUploadComplete) onUploadComplete(data.value);
+        break;
+    }
+  }
 
   const onButtonClick = async () => {
     if (window.impler) {
@@ -63,6 +85,7 @@ export const Button = ({
           payload.authHeaderValue = authHeaderValue;
         }
       }
+      if (primaryColor) payload.primaryColor = primaryColor;
 
       window.impler.show(payload);
     }

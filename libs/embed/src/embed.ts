@@ -3,7 +3,7 @@
 /* eslint-disable */
 //
 
-import * as EventTypes from './shared/eventTypes';
+import { EventTypesEnum } from './shared/eventTypes';
 import { UnmountedError, AuthenticationError } from './shared/errors';
 import { IFRAME_URL } from './shared/resources';
 
@@ -75,7 +75,7 @@ class Impler {
 
     this.iframe?.contentWindow?.postMessage(
       {
-        type: EventTypes.SHOW_WIDGET,
+        type: EventTypesEnum.SHOW_WIDGET,
         value: payload,
       },
       '*'
@@ -95,19 +95,25 @@ class Impler {
     if (!!event && !!event.data && !!event.data.type) {
       // eslint-disable-next-line default-case
       switch (event.data.type) {
-        case EventTypes.CLOSE_WIDGET:
+        case EventTypesEnum.CLOSE_WIDGET:
           this.hideWidget();
           break;
-        case EventTypes.AUTHENTICATION_VALID:
+        case EventTypesEnum.AUTHENTICATION_VALID:
           this.isAuthenticated = true;
           this.authenticationError = undefined;
           break;
-        case EventTypes.AUTHENTICATION_ERROR:
+        case EventTypesEnum.AUTHENTICATION_ERROR:
           this.isAuthenticated = false;
           this.authenticationError = event.data.value?.message;
+        default:
+          this.postMessageToContentWindow(event.data.type, event.data.value);
       }
     }
   };
+
+  postMessageToContentWindow(type: EventTypesEnum, value?: any): void {
+    this.listeners['message']({ type, value });
+  }
 
   initializeIframe = (projectId: string) => {
     if (!document.getElementById(IFRAME_ID)) {
@@ -115,11 +121,11 @@ class Impler {
       window.addEventListener(
         'message',
         (event) => {
-          if (!event.target || event?.data?.type !== EventTypes.WIDGET_READY) {
+          if (!event.target || event?.data?.type !== EventTypesEnum.WIDGET_READY) {
             return;
           }
 
-          iframe?.contentWindow?.postMessage({ type: EventTypes.INIT_IFRAME, value: this.initPayload }, '*');
+          iframe?.contentWindow?.postMessage({ type: EventTypesEnum.INIT_IFRAME, value: this.initPayload }, '*');
         },
         true
       );

@@ -1,6 +1,7 @@
 import { CheckIcon } from '../../icons/check.icon';
 import { Stepper as MantineStepper, DefaultMantineColor } from '@mantine/core';
 import useStyles from './Stepper.styles';
+import { colors } from '../../config/colors.config';
 
 interface IStep {
   label?: string;
@@ -10,15 +11,16 @@ interface IStep {
 export interface IStepperProps {
   active: number;
   steps: IStep[];
+  primaryColor?: string;
 }
 
 export function Stepper(props: IStepperProps) {
-  const { active, steps } = props;
+  const { active, steps, primaryColor } = props;
   const { classes } = useStyles(props);
 
   const getColor = (index: number): DefaultMantineColor => {
     if (index == active) {
-      return 'blue';
+      return primaryColor || colors.primary;
     } else if (index < active) {
       return 'green';
     }
