@@ -2,7 +2,7 @@ import { useEffect, useState, PropsWithChildren } from 'react';
 import * as WebFont from 'webfontloader';
 import { useParams } from 'react-router-dom';
 import { Global } from '@emotion/react';
-import { API_URL, colors, mantineConfig } from '@config';
+import { API_URL, colors, mantineConfig, variables } from '@config';
 import { Provider } from '../Provider';
 import { generateShades, ParentWindow } from '@util';
 import { useAuthentication } from '@hooks/useAuthentication';
@@ -102,6 +102,9 @@ export function Container({ children }: PropsWithChildren<{}>) {
               primary: generateShades(secondaryPayload.primaryColor),
             },
             primaryColor: 'primary',
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            primaryShade: variables.colorIndex,
           }}
         >
           <NotificationsProvider>
