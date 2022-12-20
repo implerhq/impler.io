@@ -41,6 +41,9 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
         setUploadInfo(uploadData);
         goNext();
       },
+      onError(error: IErrorObject) {
+        notifier.showError({ title: error.error, message: error.message });
+      },
     }
   );
   const {
