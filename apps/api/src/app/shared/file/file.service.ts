@@ -47,7 +47,7 @@ export class ExcelFileService extends FileService {
 
     // get file headings
     const headings = XLSX.utils.sheet_to_json(
-      workbookHeaders.Sheets[workbookHeaders.SheetNames[Defaults.DATA_LENGTH]],
+      workbookHeaders.Sheets[workbookHeaders.SheetNames[Defaults.LENGTH_ZERO]],
       {
         header: 1,
       }
