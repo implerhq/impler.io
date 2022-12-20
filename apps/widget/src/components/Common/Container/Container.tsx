@@ -64,7 +64,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
       <Global
         styles={{
           body: {
-            backgroundColor: 'transparent',
+            backgroundColor: 'transparent !important',
           },
           '*': {
             boxSizing: 'border-box',
