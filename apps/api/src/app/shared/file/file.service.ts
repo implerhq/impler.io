@@ -1,30 +1,32 @@
 import * as XLSX from 'xlsx';
 import { Defaults, FileEncodingsEnum, IFileInformation } from '@impler/shared';
 import { ParserOptionsArgs, parseString } from 'fast-csv';
-import { StorageService } from '@impler/shared';
 import { EmptyFileException } from '../exceptions/empty-file.exception';
 import { APIMessages } from '../constants';
+import { InvalidFileException } from '@shared/exceptions/invalid-file.exception';
 
 export abstract class FileService {
-  abstract getFileInformation(storageService: StorageService, storageKey: string): Promise<IFileInformation>;
+  abstract getFileInformation(file: Express.Multer.File, options?: ParserOptionsArgs): Promise<IFileInformation>;
 }
 
 export class CSVFileService extends FileService {
-  async getFileInformation(storageService: StorageService, storageKey: string): Promise<IFileInformation> {
-    const fileContent = await storageService.getFileContent(storageKey, FileEncodingsEnum.CSV);
-
-    return await this.getCSVInformation(fileContent, { headers: true });
-  }
-  private async getCSVInformation(fileContent: string, options?: ParserOptionsArgs): Promise<IFileInformation> {
+  async getFileInformation(file: Express.Multer.File, options?: ParserOptionsArgs): Promise<IFileInformation> {
     return new Promise((resolve, reject) => {
       const information: IFileInformation = {
         data: [],
         headings: [],
         totalRecords: 0,
       };
+      const fileContent = file.buffer.toString(FileEncodingsEnum.CSV);
 
       parseString(fileContent, options)
-        .on('error', reject)
+        .on('error', (error) => {
+          if (error.message.includes('Parse Error')) {
+            reject(new InvalidFileException());
+          } else {
+            reject(error);
+          }
+        })
         .on('headers', (headers) => information.headings.push(...headers))
         .on('data', (row) => information.data.push(row))
         .on('end', () => {
@@ -35,12 +37,8 @@ export class CSVFileService extends FileService {
   }
 }
 export class ExcelFileService extends FileService {
-  async getFileInformation(storageService: StorageService, storageKey: string): Promise<IFileInformation> {
-    const fileContent = await storageService.getFileContent(storageKey, FileEncodingsEnum.EXCEL);
-
-    return this.getExcelInformation(fileContent);
-  }
-  async getExcelInformation(fileContent: string): Promise<IFileInformation> {
+  async getFileInformation(file: Express.Multer.File): Promise<IFileInformation> {
+    const fileContent = file.buffer.toString(FileEncodingsEnum.EXCEL);
     const workbookHeaders = XLSX.read(fileContent);
     // Throw empty error if file do not have any sheets
     if (workbookHeaders.SheetNames.length < Defaults.DATA_LENGTH) throw new EmptyFileException();
