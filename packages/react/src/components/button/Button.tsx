@@ -44,13 +44,9 @@ export const Button = ({
       const initPayload: IInitPayload = { accessToken, template };
       window.impler.init(projectId, initPayload);
       setIsImplerInitiated(true);
-      // eslint-disable-next-line no-console
+      window.impler.on('message', onEventHappen);
     } else if (!window.impler) logger.logError('IMPLER_UNDEFINED_ERROR');
     else if (!projectId) logger.logError('PROJECTID_NOT_SPECIFIED');
-  }, []);
-
-  useEffect(() => {
-    window.impler.on('message', onEventHappen);
   }, []);
 
   function onEventHappen(data: EventCalls) {
