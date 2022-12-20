@@ -30,6 +30,7 @@ export class CSVFileService extends FileService {
         .on('headers', (headers) => information.headings.push(...headers))
         .on('data', (row) => information.data.push(row))
         .on('end', () => {
+          if (!information.data.length) return reject(new EmptyFileException());
           information.totalRecords = information.data.length;
           resolve(information);
         });
