@@ -1,6 +1,7 @@
 export const APIMessages = {
   FILE_TYPE_NOT_VALID: 'File type is not supported.',
   FILE_IS_EMPTY: 'File is empty',
+  FILE_CONTENT_INVALID: 'File content is invalid. Please check the file or upload new file.',
   EMPTY_HEADING_PREFIX: 'Empty Heading',
   INVALID_TEMPLATE_ID_CODE_SUFFIX: 'is not valid TemplateId or CODE.',
   FILE_MAPPING_REMAINING: 'File mapping is not yet done, please finalize mapping before.',

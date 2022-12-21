@@ -19,10 +19,10 @@ export class MakeUploadEntry {
   ) {}
 
   async execute({ file, templateId, extra, authHeaderValue }: MakeUploadEntryCommand) {
+    const fileService: FileService = getFileService(file.mimetype);
+    const fileInformation = await fileService.getFileInformation(file, { headers: true });
     const uploadId = this.commonRepository.generateMongoId();
     const fileEntity = await this.makeFileEntry(uploadId, file);
-    const fileService: FileService = getFileService(file.mimetype);
-    const fileInformation = await fileService.getFileInformation(this.storageService, fileEntity.path);
     const allDataFile = await this.addAllDataEntry(uploadId, fileInformation.data);
 
     return this.addUploadEntry(
