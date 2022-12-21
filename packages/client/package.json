@@ -1,6 +1,6 @@
 {
   "name": "@impler/client",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "API client to be used in end user environments",
   "license": "MIT",
   "author": "knovator",
@@ -39,7 +39,7 @@
     "typescript": "4.8.4"
   },
   "dependencies": {
-    "@impler/shared": "^0.1.7",
+    "@impler/shared": "^0.1.8",
     "axios": "^0.26.1"
   },
   "engines": {
