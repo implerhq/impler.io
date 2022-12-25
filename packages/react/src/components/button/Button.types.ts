@@ -1,3 +1,5 @@
+import { IUpload } from '@impler/shared';
+
 export interface ButtonProps {
   projectId: string;
   accessToken?: string;
@@ -9,7 +11,7 @@ export interface ButtonProps {
   primaryColor?: string;
   onUploadStart?: (value: UploadTemplateData) => void;
   onUploadTerminate?: (value: UploadData) => void;
-  onUploadComplete?: (value: UploadData) => void;
+  onUploadComplete?: (value: IUpload) => void;
 }
 
 export type UploadTemplateData = {
@@ -41,5 +43,5 @@ export type EventCalls =
     }
   | {
       type: EventTypesEnum.UPLOAD_COMPLETED;
-      value: UploadData;
+      value: IUpload;
     };

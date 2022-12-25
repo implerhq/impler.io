@@ -47,7 +47,7 @@ export function Widget() {
   const onComplete = (count: number) => {
     setDataCount(count);
     setPhase(PhasesEum.COMPLETE);
-    ParentWindow.UploadCompleted({ uploadId: uploadInfo._id });
+    ParentWindow.UploadCompleted(uploadInfo);
   };
 
   const PhaseView = {
