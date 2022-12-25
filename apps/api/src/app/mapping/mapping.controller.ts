@@ -3,20 +3,20 @@ import { ApiTags, ApiSecurity, ApiOperation, ApiBody } from '@nestjs/swagger';
 import { ACCESS_KEY_NAME, Defaults, UploadStatusEnum } from '@impler/shared';
 import { MappingEntity } from '@impler/dal';
 
-import { APIKeyGuard } from '../shared/framework/auth.gaurd';
-import { ValidateMongoId } from '../shared/validations/valid-mongo-id.validation';
-import { GetUploadCommand } from '../shared/usecases/get-upload/get-upload.command';
+import { APIKeyGuard } from '@shared/framework/auth.gaurd';
+import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
+import { GetUploadCommand } from '@shared/usecases/get-upload/get-upload.command';
 import { DoMapping } from './usecases/do-mapping/do-mapping.usecase';
 import { DoMappingCommand } from './usecases/do-mapping/do-mapping.command';
-import { GetUpload } from '../shared/usecases/get-upload/get-upload.usecase';
+import { GetUpload } from '@shared/usecases/get-upload/get-upload.usecase';
 import { GetMappings } from './usecases/get-mappings/get-mappings.usecase';
 import { UpdateMappingCommand } from './usecases/update-mappings/update-mappings.command';
 import { UpdateMappings } from './usecases/update-mappings/update-mappings.usecase';
 import { FinalizeUpload } from './usecases/finalize-upload/finalize-upload.usecase';
 import { UpdateMappingDto } from './dtos/update-columns.dto';
 import { ValidateMapping } from './usecases/validate-mapping/validate-mapping.usecase';
-import { validateUploadStatus } from '../shared/helpers/upload.helpers';
-import { validateNotFound } from '../shared/helpers/common.helper';
+import { validateUploadStatus } from '@shared/helpers/upload.helpers';
+import { validateNotFound } from '@shared/helpers/common.helper';
 
 @Controller('/mapping')
 @ApiTags('Mappings')

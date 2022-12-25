@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { changeToCode, Defaults } from '@impler/shared';
 import { IsDefined, IsString, Validate, IsNumber, IsUrl, IsOptional } from 'class-validator';
-import { UniqueValidator } from '../../shared/framework/is-unique.validator';
+import { UniqueValidator } from '@shared/framework/is-unique.validator';
 
 export class CreateTemplateRequestDto {
   @ApiProperty({

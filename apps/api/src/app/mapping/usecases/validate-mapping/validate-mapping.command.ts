@@ -1,5 +1,5 @@
 import { IsString, IsDefined, IsMongoId } from 'class-validator';
-import { BaseCommand } from '../../../shared/commands/base.command';
+import { BaseCommand } from '@shared/commands/base.command';
 
 export class ValidateMappingCommand extends BaseCommand {
   @IsDefined()

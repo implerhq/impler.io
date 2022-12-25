@@ -1,6 +1,6 @@
 import { Defaults } from '@impler/shared';
 import { IsString, IsNumber, IsOptional, IsNotEmpty, IsMongoId, Min } from 'class-validator';
-import { BaseCommand } from '../../../shared/commands/base.command';
+import { BaseCommand } from '@shared/commands/base.command';
 
 export class UpdateTemplateCommand extends BaseCommand {
   @IsString()
