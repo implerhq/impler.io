@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, ParseArrayPipe, Post, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiSecurity, ApiOperation, ApiBody } from '@nestjs/swagger';
-import { ACCESS_KEY_NAME, UploadStatusEnum } from '@impler/shared';
+import { ACCESS_KEY_NAME, Defaults, UploadStatusEnum } from '@impler/shared';
 import { MappingEntity } from '@impler/dal';
 
 import { APIKeyGuard } from '../shared/framework/auth.gaurd';
@@ -92,7 +92,7 @@ export class MappingController {
     await this.validateMapping.execute(body, _uploadId);
 
     // save mapping
-    if (Array.isArray(body) && body.length > 0) {
+    if (Array.isArray(body) && body.length > Defaults.ZERO) {
       this.updateMappings.execute(
         body.map((updateColumnData) =>
           UpdateMappingCommand.create({
