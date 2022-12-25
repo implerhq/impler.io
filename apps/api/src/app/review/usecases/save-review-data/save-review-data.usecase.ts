@@ -26,7 +26,7 @@ export class SaveReviewData {
   }
 
   private async storeValidFile(_uploadId: string, validData: any[]): Promise<string> {
-    if (validData.length < Defaults.DATA_LENGTH) return null;
+    if (validData.length < Defaults.ONE) return null;
 
     const strinValidData = JSON.stringify(validData);
     const validFilePath = this.fileNameService.getValidDataFilePath(_uploadId);
@@ -38,7 +38,7 @@ export class SaveReviewData {
   }
 
   private async storeInvalidFile(_uploadId: string, invalidData: any[]): Promise<string> {
-    if (invalidData.length < Defaults.DATA_LENGTH) return null;
+    if (invalidData.length < Defaults.ONE) return null;
 
     const stringInvalidData = JSON.stringify(invalidData);
     const invalidFilePath = this.fileNameService.getInvalidDataFilePath(_uploadId);
@@ -50,7 +50,7 @@ export class SaveReviewData {
   }
 
   private async storeInvalidCSVFile(_uploadId: string, invalidData: any[]): Promise<string> {
-    if (invalidData.length < Defaults.DATA_LENGTH) return null;
+    if (invalidData.length < Defaults.ONE) return null;
 
     const ws = XLSX.utils.json_to_sheet(invalidData);
     const invalidCSVDataContent = XLSX.utils.sheet_to_csv(ws, { FS: ',' });
