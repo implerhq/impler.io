@@ -15,8 +15,10 @@ export function validateNotFound(data: any, entityName: 'upload'): boolean {
 }
 
 export function paginateRecords(data: any[], page: number, limit: number): PaginationResult {
-  if (!page || page < Defaults.ONE) page = Defaults.ONE;
-  if (!limit || limit < Defaults.ONE) limit = Defaults.ONE;
+  if (!page || Number(page) < Defaults.ONE) page = Defaults.ONE;
+  else page = Number(page);
+  if (!limit || Number(limit) < Defaults.ONE) limit = Defaults.ONE;
+  else limit = Number(limit);
   if (!Array.isArray(data))
     return {
       data: [],

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ProjectRepository, TemplateRepository, CommonRepository } from '@impler/dal';
 import { ValidRequestCommand } from './valid-request.command';
-import { DocumentNotFoundException } from '../../../shared/exceptions/document-not-found.exception';
-import { APIMessages } from '../../../shared/constants';
+import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
+import { APIMessages } from '@shared/constants';
 
 @Injectable()
 export class ValidRequest {

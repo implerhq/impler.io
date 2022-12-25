@@ -9,9 +9,9 @@ import { UpdateProjectRequestDto } from './dtos/update-project-request.dto';
 import { UpdateProject } from './usecases/update-project/update-project.usecase';
 import { UpdateProjectCommand } from './usecases/update-project/update-project.command';
 import { DeleteProject } from './usecases/delete-project/delete-project.usecase';
-import { DocumentNotFoundException } from '../shared/exceptions/document-not-found.exception';
-import { ValidateMongoId } from '../shared/validations/valid-mongo-id.validation';
-import { APIKeyGuard } from '../shared/framework/auth.gaurd';
+import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
+import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
+import { APIKeyGuard } from '@shared/framework/auth.gaurd';
 import { ACCESS_KEY_NAME } from '@impler/shared';
 
 @Controller('/project')
