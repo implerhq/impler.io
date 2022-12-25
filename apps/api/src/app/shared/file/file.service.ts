@@ -42,30 +42,27 @@ export class ExcelFileService extends FileService {
     const fileContent = file.buffer.toString(FileEncodingsEnum.EXCEL);
     const workbookHeaders = XLSX.read(fileContent);
     // Throw empty error if file do not have any sheets
-    if (workbookHeaders.SheetNames.length < Defaults.DATA_LENGTH) throw new EmptyFileException();
+    if (workbookHeaders.SheetNames.length < Defaults.ONE) throw new EmptyFileException();
 
     // get file headings
-    const headings = XLSX.utils.sheet_to_json(
-      workbookHeaders.Sheets[workbookHeaders.SheetNames[Defaults.LENGTH_ZERO]],
-      {
-        header: 1,
-      }
-    )[Defaults.LENGTH_ZERO] as string[];
+    const headings = XLSX.utils.sheet_to_json(workbookHeaders.Sheets[workbookHeaders.SheetNames[Defaults.ZERO]], {
+      header: 1,
+    })[Defaults.ZERO] as string[];
     // throw error if sheet is empty
-    if (!headings || headings.length < Defaults.DATA_LENGTH) throw new EmptyFileException();
+    if (!headings || headings.length < Defaults.ONE) throw new EmptyFileException();
 
     // Refine headings by replacing empty heading
     let emptyHeadingCount = 0;
     const updatedHeading = [];
     for (const headingItem of headings) {
       if (!headingItem) {
-        emptyHeadingCount += Defaults.DATA_LENGTH;
+        emptyHeadingCount += Defaults.ONE;
         updatedHeading.push(`${APIMessages.EMPTY_HEADING_PREFIX} ${emptyHeadingCount}`);
       } else updatedHeading.push(headingItem);
     }
 
     const data: Record<string, unknown>[] = XLSX.utils.sheet_to_json(
-      workbookHeaders.Sheets[workbookHeaders.SheetNames[Defaults.LENGTH_ZERO]]
+      workbookHeaders.Sheets[workbookHeaders.SheetNames[Defaults.ZERO]]
     );
 
     return {

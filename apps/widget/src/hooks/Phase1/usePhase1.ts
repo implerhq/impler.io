@@ -81,9 +81,10 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
   };
 
   const onSubmit = (submitData: IFormvalues) => {
-    if (!submitData.template && dataTemplates) {
+    if ((template || submitData.template) && dataTemplates) {
       const selectedTemplate = dataTemplates.find(
-        (templateItem) => templateItem.code === template || templateItem._id === template
+        (templateItem) =>
+          templateItem.code === template || templateItem._id === template || templateItem._id === submitData.template
       );
       if (selectedTemplate) {
         submitData.template = selectedTemplate._id;
@@ -92,8 +93,11 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
           authHeaderValue,
           extra,
         });
+
+        return;
       }
     }
+    notifier.showError('TEMPLATE_NOT_FOUND');
   };
 
   return {

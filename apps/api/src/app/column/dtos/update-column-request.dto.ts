@@ -13,7 +13,7 @@ import {
   Validate,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ColumnTypesEnum } from '@impler/shared';
+import { ColumnTypesEnum, Defaults } from '@impler/shared';
 import { IsValidRegex } from '../../shared/framework/is-valid-regex.validator';
 
 export class UpdateColumnRequestDto {
@@ -86,7 +86,7 @@ export class UpdateColumnRequestDto {
   })
   @ValidateIf((object) => object.type === ColumnTypesEnum.SELECT)
   @IsArray()
-  @ArrayMinSize(1)
+  @ArrayMinSize(Defaults.ONE)
   @Type(() => Array<string>)
   selectValues: string[];
 
