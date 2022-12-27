@@ -1,13 +1,14 @@
 {
-  "name": "@impler/widget-demo",
+  "name": "@impler/demo",
   "version": "0.1.8",
   "author": "knovator",
   "license": "MIT",
   "private": true,
   "scripts": {
+    "start": "next dev -p 5173",
     "dev": "next dev -p 5173",
     "build": "next build",
-    "start": "next start -p 5173",
+    "start:static:build": "next start -p 5173",
     "lint": "next lint"
   },
   "dependencies": {
