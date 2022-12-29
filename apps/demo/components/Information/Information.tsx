@@ -8,7 +8,7 @@ const Information = () => {
   return (
     <Alert
       icon={<AlertIcon />}
-      title="See how fast and easily you can import temperature records in seconds with Impler,"
+      title="See how fast and easily you can import temperature data in seconds with Impler,"
       classNames={classes}
     >
       <ul className={classes.list}>
