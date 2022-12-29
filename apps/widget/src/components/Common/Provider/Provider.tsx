@@ -13,10 +13,11 @@ interface IProviderProps {
   accessToken?: string;
   extra?: string;
   authHeaderValue?: string;
+  primaryColor: string;
 }
 
 export function Provider(props: PropsWithChildren<IProviderProps>) {
-  const { api, projectId, template, accessToken, extra, authHeaderValue, children } = props;
+  const { api, projectId, template, accessToken, extra, authHeaderValue, children, primaryColor } = props;
 
   return (
     <ImplerContextProvider
@@ -27,7 +28,7 @@ export function Provider(props: PropsWithChildren<IProviderProps>) {
       authHeaderValue={authHeaderValue}
     >
       <APIContextProvider api={api}>
-        <AppContextProvider>{children}</AppContextProvider>
+        <AppContextProvider primaryColor={primaryColor}>{children}</AppContextProvider>
       </APIContextProvider>
     </ImplerContextProvider>
   );

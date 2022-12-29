@@ -5,6 +5,7 @@ import {
   IMapping,
   IReviewData,
   IMappingFinalize,
+  PaginationResult,
 } from '@impler/shared';
 
 export class ApiService {
@@ -97,5 +98,17 @@ export class ApiService {
 
   async getUpload(uploadId: string) {
     return this.httpClient.get(`/upload/${uploadId}`) as Promise<IUpload>;
+  }
+
+  async getValidUploadedRows(uploadId: string, page: number, limit: number) {
+    return this.httpClient.get(
+      `/upload/${uploadId}/rows/valid?page=${page}&limit=${limit}`
+    ) as Promise<PaginationResult>;
+  }
+
+  async getInvalidUploadedRows(uploadId: string, page: number, limit: number) {
+    return this.httpClient.get(
+      `/upload/${uploadId}/rows/invalid?page=${page}&limit=${limit}`
+    ) as Promise<PaginationResult>;
   }
 }
