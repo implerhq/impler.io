@@ -32,7 +32,7 @@ const Pagination = ({ limit, onLimitChange, dataLength, page, setPage, totalPage
 
   return (
     <div className={classes.root}>
-      <Flex align="center" gap="sm">
+      <Flex align="center" gap="sm" className={classes.statistics}>
         <Text color="white">Results per page</Text>
         <NativeSelect
           data={limits}
@@ -54,7 +54,7 @@ const Pagination = ({ limit, onLimitChange, dataLength, page, setPage, totalPage
         classNames={{ item: classes.item }}
         disabled={dataLength === variables.ZERO}
       />
-      <Text>
+      <Text className={classes.statistics}>
         Showing {paginationFrom()}-{paginationTo()} of {numberFormatter(totalRecords)} records
       </Text>
     </div>

@@ -56,7 +56,7 @@ const DataView = () => {
           { label: 'Latitude', key: 'Latitude' },
           { label: 'Latitude', key: 'Longitude' },
         ]}
-        emptyMessage="No data found! Click on Import to import and see results."
+        emptyMessage="Nothing to show! Click on Import to import and see records."
       />
       <Pagination
         dataLength={tempretureData.length}

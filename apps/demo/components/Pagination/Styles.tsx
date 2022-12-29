@@ -1,7 +1,7 @@
 import { colors } from '@config';
 import { createStyles } from '@mantine/core';
 
-export default createStyles(() => ({
+export default createStyles((theme) => ({
   root: {
     width: '100%',
     display: 'flex',
@@ -10,12 +10,10 @@ export default createStyles(() => ({
     color: colors.white,
   },
   selectInput: {
-    input: {
-      backgroundColor: colors.darkGray,
-      color: 'white',
-      borderColor: colors.lightGray,
-      ':focus-within': { borderColor: colors.white },
-    },
+    backgroundColor: colors.darkGray,
+    color: 'white',
+    borderColor: colors.lightGray,
+    ':focus-within': { borderColor: colors.white },
   },
   item: {
     color: colors.white,
@@ -26,5 +24,17 @@ export default createStyles(() => ({
     '&[disabled]': { backgroundColor: 'transparent' },
     '&[data-active]': { backgroundColor: colors.purple },
     '&[data-dots]': { color: 'white' },
+  },
+  statistics: {
+    // do not show in mobile
+    visibility: 'hidden',
+    width: 0,
+    height: 0,
+    // show for bigger screens from mobile
+    [`@media (min-width: ${theme.breakpoints.sm}px)`]: {
+      visibility: 'visible',
+      width: 'auto',
+      height: 'auto',
+    },
   },
 }));

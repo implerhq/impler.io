@@ -38,7 +38,7 @@ const Actions = () => {
   };
 
   return (
-    <Flex justify="space-between" align="flex-end">
+    <div className={classes.wrapper}>
       <Flex direction="row" align="center" gap="sm">
         <Button
           projectId={process.env.NEXT_PUBLIC_PROJECT_ID!}
@@ -54,7 +54,11 @@ const Actions = () => {
             color="white"
             checked={showInvalidRecords}
             onChange={(e) => onShowInvalidChanges(e.target.checked)}
-            classNames={classes}
+            classNames={{
+              root: classes.root,
+              track: classes.track,
+              label: classes.label,
+            }}
           />
         )}
       </Flex>
@@ -64,7 +68,7 @@ const Actions = () => {
       >
         Download Tempreture Data
       </MantineButton>
-    </Flex>
+    </div>
   );
 };
 
