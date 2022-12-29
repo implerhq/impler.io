@@ -1,6 +1,7 @@
 import { colors, TEXTS } from '@config';
 import { usePhase3 } from '@hooks/Phase3/usePhase3';
 import { Download, Warning } from '@icons';
+import { IUpload } from '@impler/shared';
 import { Group, Text } from '@mantine/core';
 import { PhasesEum } from '@types';
 import { Button } from '@ui/Button';
@@ -13,7 +14,7 @@ import { ConfirmModal } from '../ConfirmModal';
 import useStyles from './Styles';
 
 interface IPhase3Props {
-  onNextClick: (count: number) => void;
+  onNextClick: (uploadData: IUpload) => void;
   onPrevClick: () => void;
 }
 
