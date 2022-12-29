@@ -9,6 +9,9 @@ export default createStyles((theme) => ({
     padding: '12px',
     borderRadius: 0,
   },
+  title: {
+    marginBottom: 0,
+  },
   list: {
     marginBlock: '5px',
     paddingLeft: theme.spacing.xl,

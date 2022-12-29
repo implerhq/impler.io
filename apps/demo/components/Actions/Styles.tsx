@@ -1,7 +1,7 @@
 import { colors } from '@config';
 import { createStyles } from '@mantine/core';
 
-export default createStyles(() => ({
+export default createStyles((theme, showInvalidRecords: boolean) => ({
   button: {
     height: '38px !important',
     fontSize: '14px !important',
@@ -13,4 +13,9 @@ export default createStyles(() => ({
     border: `2px solid ${colors.purple} !important`,
     padding: '5px 15px !important',
   },
+  root: { lineHeight: '0' },
+  track: {
+    backgroundColor: showInvalidRecords ? `${colors.cyan} !important` : 'transparent !important',
+  },
+  label: { color: 'white' },
 }));

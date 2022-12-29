@@ -1,20 +1,69 @@
+import { saveAs } from 'file-saver';
 import { Button } from '@impler/react';
-import { Button as MantineButton, Flex } from '@mantine/core';
+import { IUpload } from '@impler/shared';
+import { constants, variables } from '@config';
+import { useAppState } from '@context/app.context';
+import { Button as MantineButton, Flex, Switch } from '@mantine/core';
 import useStyles from './Styles';
 
 const Actions = () => {
-  const { classes } = useStyles();
+  const {
+    upload,
+    setPage,
+    setUpload,
+    setHasInvalidRecords,
+    hasInvalidRecords,
+    showInvalidRecords,
+    setShowInvalidRecords,
+    setTotalRecords,
+  } = useAppState();
+  const { classes } = useStyles(showInvalidRecords);
+
+  const onUploadComplete = (uploadData: IUpload) => {
+    setUpload(uploadData);
+    setPage(variables.ONE);
+    setShowInvalidRecords(false);
+    setTotalRecords(uploadData.validRecords);
+    setHasInvalidRecords(uploadData.invalidRecords > variables.ZERO);
+  };
+
+  const onShowInvalidChanges = (status: boolean) => {
+    setShowInvalidRecords(status);
+    setPage(variables.ONE);
+    if (status) {
+      setTotalRecords(upload!.invalidRecords);
+    } else {
+      setTotalRecords(upload!.validRecords);
+    }
+  };
 
   return (
     <Flex justify="space-between" align="flex-end">
-      <Button
-        projectId={process.env.NEXT_PUBLIC_PROJECT_ID!}
-        accessToken={process.env.NEXT_PUBLIC_ACCESS_TOKEN}
-        template={process.env.NEXT_PUBLIC_TEMPLATE}
-        primaryColor={process.env.NEXT_PUBLIC_PRIMARY_COLOR}
+      <Flex direction="row" align="center" gap="sm">
+        <Button
+          projectId={process.env.NEXT_PUBLIC_PROJECT_ID!}
+          accessToken={process.env.NEXT_PUBLIC_ACCESS_TOKEN}
+          template={process.env.NEXT_PUBLIC_TEMPLATE}
+          primaryColor={process.env.NEXT_PUBLIC_PRIMARY_COLOR}
+          className={classes.button}
+          onUploadComplete={onUploadComplete}
+        />
+        {hasInvalidRecords && (
+          <Switch
+            label="Show Invalid Data"
+            color="white"
+            checked={showInvalidRecords}
+            onChange={(e) => onShowInvalidChanges(e.target.checked)}
+            classNames={classes}
+          />
+        )}
+      </Flex>
+      <MantineButton
+        onClick={() => saveAs(constants.DATA_FILE_URL, constants.DATA_FILE_NAME)}
         className={classes.button}
-      />
-      <MantineButton className={classes.button}>Download Data File</MantineButton>
+      >
+        Download Tempreture Data
+      </MantineButton>
     </Flex>
   );
 };

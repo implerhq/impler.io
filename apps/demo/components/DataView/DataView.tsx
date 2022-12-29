@@ -1,43 +1,73 @@
-import { Table, Pagination, Flex } from '@mantine/core';
+import { useState } from 'react';
+import Table from '@components/Table';
+import { useQuery } from 'react-query';
+import { colors, variables } from '@config';
+import Pagination from '@components/Pagination';
+import { useAppState } from '@context/app.context';
+import { PaginationResult } from '@impler/shared';
+import { useAPIState } from '@context/api.context';
+import { LoadingOverlay } from '@mantine/core';
 import useStyles from './Styles';
 
-const elements = [
-  { position: 6, mass: 12.011, symbol: 'C', name: 'Carbon' },
-  { position: 7, mass: 14.007, symbol: 'N', name: 'Nitrogen' },
-  { position: 39, mass: 88.906, symbol: 'Y', name: 'Yttrium' },
-  { position: 56, mass: 137.33, symbol: 'Ba', name: 'Barium' },
-  { position: 58, mass: 140.12, symbol: 'Ce', name: 'Cerium' },
-];
-
 const DataView = () => {
+  const { api } = useAPIState();
   const { classes } = useStyles();
+  const [tempretureData, setTempretureData] = useState<ITempreture[]>([]);
+  const { limit, page, setPage, totalPages, setTotalPages, upload, showInvalidRecords, setLimit, totalRecords } =
+    useAppState();
+  const { isLoading } = useQuery<PaginationResult, IErrorObject, PaginationResult, any[]>(
+    [upload, page, limit, showInvalidRecords],
+    () =>
+      showInvalidRecords
+        ? api.getInvalidUploadedRows(upload!._id, page, limit)
+        : api.getValidUploadedRows(upload!._id, page, limit),
+    {
+      enabled: !!upload,
+      onSuccess: (response: PaginationResult) => {
+        setTempretureData(response.data);
+        setTotalPages(response.totalPages);
+      },
+    }
+  );
 
-  const rows = elements.map((element) => (
-    <tr key={element.name}>
-      <td className={classes.td}>{element.position}</td>
-      <td className={classes.td}>{element.name}</td>
-      <td className={classes.td}>{element.symbol}</td>
-      <td className={classes.td}>{element.mass}</td>
-    </tr>
-  ));
+  const onLimitChange = (newLimit: number) => {
+    setLimit(newLimit);
+    setPage(variables.ONE);
+  };
 
   return (
-    <Flex direction="column" gap="sm" align="center" style={{ flexGrow: 1 }}>
-      <div className={classes.tableWrapper}>
-        <Table>
-          <thead className={classes.thead}>
-            <tr>
-              <th>Element position</th>
-              <th>Element name</th>
-              <th>Symbol</th>
-              <th>Atomic mass</th>
-            </tr>
-          </thead>
-          <tbody className={classes.tbody}>{rows}</tbody>
-        </Table>
-      </div>
-      <Pagination siblings={1} boundaries={0} noWrap={false} total={10} classNames={{ item: classes.item }} />
-    </Flex>
+    <div className={classes.root}>
+      <LoadingOverlay
+        visible={isLoading}
+        overlayBlur={2}
+        overlayColor={colors.lightGray}
+        loaderProps={{ color: colors.goldenrod }}
+      />
+      <Table
+        data={tempretureData}
+        headings={[
+          { label: 'Month', key: 'month' },
+          { label: 'Day', key: 'day' },
+          { label: 'Average Temperature', key: 'AverageTemperatureFahr' },
+          { label: 'Average Temperature Uncertainty', key: 'AverageTemperatureUncertaintyFahr' },
+          { label: 'City', key: 'City' },
+          { label: 'Country ID', key: 'country_id' },
+          { label: 'Country', key: 'Country' },
+          { label: 'Latitude', key: 'Latitude' },
+          { label: 'Latitude', key: 'Longitude' },
+        ]}
+        emptyMessage="No data found! Click on Import to import and see results."
+      />
+      <Pagination
+        dataLength={tempretureData.length}
+        limit={limit}
+        onLimitChange={onLimitChange}
+        page={page}
+        setPage={setPage}
+        totalPages={totalPages}
+        totalRecords={totalRecords}
+      />
+    </div>
   );
 };
 

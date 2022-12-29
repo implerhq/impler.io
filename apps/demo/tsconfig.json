@@ -19,7 +19,8 @@
     "paths": {
       "@icons/*": ["icons/*"],
       "@components/*": ["components/*"],
-      "@config": ["config/index.ts"]
+      "@config": ["config/index.ts"],
+      "@context/*": ["context/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

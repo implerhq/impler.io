@@ -4,6 +4,18 @@ import App from '@components/Home';
 import { colors } from '@config';
 import { Global } from '@mantine/core';
 import Footer from '@components/Footer';
+import { QueryClientProvider, QueryClient } from 'react-query';
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      retry: false,
+    },
+  },
+});
 
 const links = [
   {
@@ -26,7 +38,7 @@ const APP_REDUCE_HEIGHT = HEADER_HEIGHT + FOOTER_HEIGHT + EXTRA_SPACING;
 
 export default function Home() {
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <Global
         styles={() => ({
           body: {
@@ -37,6 +49,6 @@ export default function Home() {
       <Header links={links} height={HEADER_HEIGHT} />
       <App headerHeight={APP_REDUCE_HEIGHT} />
       <Footer />
-    </>
+    </QueryClientProvider>
   );
 }
