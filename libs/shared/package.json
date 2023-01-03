@@ -1,13 +1,13 @@
 {
   "name": "@impler/shared",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Reusable types and classes to shared between apps and libraries",
   "license": "MIT",
   "author": "knovator",
   "repository": "https://github.com/knovator/impler.io",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
-  "keywords": ["impler", "knovator", "chavda-bhavik"],
+  "keywords": ["impler", "knovator", "data-import", "excel-import", "csv-import"],
   "files": ["dist", "package.json"],
   "scripts": {
     "start": "npm run start:dev",
