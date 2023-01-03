@@ -1,5 +1,5 @@
 import { IsDefined, IsString, IsOptional, IsJSON } from 'class-validator';
-import { BaseCommand } from '../../../shared/commands/base.command';
+import { BaseCommand } from '@shared/commands/base.command';
 
 export class MakeUploadEntryCommand extends BaseCommand {
   @IsDefined()

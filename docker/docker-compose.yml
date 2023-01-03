@@ -14,7 +14,7 @@ services:
       - 27017:27017
     restart: unless-stopped
   api:
-    image: "ghcr.io/knovator/impler/api:0.1.8"
+    image: "ghcr.io/knovator/impler/api:0.1.9"
     depends_on:
       - mongodb
       - rabbitmq
@@ -35,7 +35,7 @@ services:
     ports:
       - "3000:3000"
   queue-manager:
-    image: "ghcr.io/knovator/impler/queue-manager:0.1.8"
+    image: "ghcr.io/knovator/impler/queue-manager:0.1.9"
     depends_on:
       - api
       - rabbitmq
@@ -50,7 +50,7 @@ services:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
   widget:
-    image: "ghcr.io/knovator/impler/widget:0.1.8"
+    image: "ghcr.io/knovator/impler/widget:0.1.9"
     depends_on:
       - api
     container_name: widget
@@ -63,7 +63,7 @@ services:
   embed:
     depends_on:
       - widget
-    image: "ghcr.io/knovator/impler/embed:0.1.8"
+    image: "ghcr.io/knovator/impler/embed:0.1.9"
     container_name: embed
     environment:
       WIDGET_URL: ${WIDGET_URL}

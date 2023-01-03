@@ -117,6 +117,8 @@ export function Container({ children }: PropsWithChildren<{}>) {
               accessToken={primaryPayload.accessToken}
               authHeaderValue={secondaryPayload?.authHeaderValue}
               extra={secondaryPayload?.extra}
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              primaryColor={secondaryPayload.primaryColor!}
             >
               {children}
             </Provider>

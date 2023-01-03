@@ -1,5 +1,6 @@
+import { Defaults } from '@impler/shared';
 import { IsString, IsNumber, IsOptional, IsNotEmpty, IsMongoId, Min } from 'class-validator';
-import { BaseCommand } from '../../../shared/commands/base.command';
+import { BaseCommand } from '@shared/commands/base.command';
 
 export class UpdateTemplateCommand extends BaseCommand {
   @IsString()
@@ -15,7 +16,7 @@ export class UpdateTemplateCommand extends BaseCommand {
   })
   @IsOptional()
   @IsNotEmpty()
-  @Min(1)
+  @Min(Defaults.ONE)
   chunkSize?: number;
 
   @IsMongoId({

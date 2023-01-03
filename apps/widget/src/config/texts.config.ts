@@ -66,5 +66,10 @@ export const TEXTS = {
       title: 'Oops!',
       message: 'It looks like selected Template is Incomplete, Please select another one!',
     },
+    TEMPLATE_NOT_FOUND: {
+      title: 'Oops!',
+      message:
+        "It looks we couldn't find the template you want to import, Our team is informed about it. Please try again after some time!",
+    },
   },
 };

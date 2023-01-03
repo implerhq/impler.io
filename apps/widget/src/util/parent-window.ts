@@ -1,4 +1,4 @@
-import { EventTypesEnum } from '@impler/shared';
+import { EventTypesEnum, IUpload } from '@impler/shared';
 
 export function Ready() {
   window.parent.postMessage({ type: EventTypesEnum.WIDGET_READY }, '*');
@@ -18,6 +18,6 @@ export function UploadStarted(value: { uploadId: string; templateId: string }) {
 export function UploadTerminated(value: { uploadId: string }) {
   window.parent.postMessage({ type: EventTypesEnum.UPLOAD_TERMINATED, value }, '*');
 }
-export function UploadCompleted(value: { uploadId: string }) {
+export function UploadCompleted(value: IUpload) {
   window.parent.postMessage({ type: EventTypesEnum.UPLOAD_COMPLETED, value }, '*');
 }

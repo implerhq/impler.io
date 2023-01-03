@@ -8,7 +8,7 @@ import { useState } from 'react';
 const defaultPage = 1;
 
 interface IUsePhase3Props {
-  onNext: (dataCount: number) => void;
+  onNext: (uploadData: IUpload) => void;
 }
 
 export function usePhase3({ onNext }: IUsePhase3Props) {
@@ -55,8 +55,9 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     [`confirm:${uploadInfo._id}`],
     (processInvalidRecords) => api.confirmReview(uploadInfo._id, processInvalidRecords),
     {
-      onSuccess() {
-        onNext(uploadInfo.totalRecords);
+      onSuccess(uploadData) {
+        setUploadInfo(uploadData);
+        onNext(uploadData);
       },
     }
   );

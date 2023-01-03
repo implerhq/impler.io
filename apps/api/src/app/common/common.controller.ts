@@ -1,7 +1,7 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiSecurity } from '@nestjs/swagger';
 import { ACCESS_KEY_NAME } from '@impler/shared';
-import { APIKeyGuard } from '../shared/framework/auth.gaurd';
+import { APIKeyGuard } from '@shared/framework/auth.gaurd';
 import { ValidRequestDto } from './dtos/valid.dto';
 import { ValidRequestCommand } from './usecases/valid-request/valid-request.command';
 import { ValidRequest } from './usecases/valid-request/valid-request.usecase';

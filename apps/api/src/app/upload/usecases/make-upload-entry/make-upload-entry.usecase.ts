@@ -72,7 +72,7 @@ export class MakeUploadEntry {
       headings: Array.isArray(headings) ? headings : [],
       status: UploadStatusEnum.UPLOADED,
       authHeaderValue: authHeaderValue,
-      totalRecords: totalRecords || Defaults.LENGTH_ZERO,
+      totalRecords: totalRecords || Defaults.ZERO,
     });
   }
 

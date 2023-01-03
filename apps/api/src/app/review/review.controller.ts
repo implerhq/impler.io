@@ -55,7 +55,7 @@ export class ReviewController {
   })
   async getReview(
     @Param('uploadId') _uploadId: string,
-    @Query('page') page = Defaults.PAGE,
+    @Query('page') page = Defaults.ONE,
     @Query('limit') limit = Defaults.PAGE_LIMIT
   ): Promise<PaginationResponseDto> {
     const uploadData = await this.getUploadInvalidData.execute(_uploadId);

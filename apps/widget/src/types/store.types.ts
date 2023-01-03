@@ -16,5 +16,6 @@ export interface IApiStore {
 export interface IAppStore {
   uploadInfo: IUpload;
   reset: () => void;
+  primaryColor: string;
   setUploadInfo: (uploadInfo: IUpload) => void;
 }

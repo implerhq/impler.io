@@ -32,7 +32,14 @@ export class DoReview {
       'isRequired isUnique selectValues type regex'
     );
     const reviewData = this.ajvService.validate(columns, mappings, dataContent);
-    this.uploadRepository.update({ _id: uploadId }, { status: UploadStatusEnum.REVIEWING });
+    this.uploadRepository.update(
+      { _id: uploadId },
+      {
+        status: UploadStatusEnum.REVIEWING,
+        invalidRecords: reviewData.invalid.length,
+        validRecords: reviewData.valid.length,
+      }
+    );
 
     return reviewData;
   }

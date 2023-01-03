@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { APIMessages } from '../constants';
-import { PaginationResult } from '@impler/shared';
+import { PaginationResult, Defaults } from '@impler/shared';
 
 export function validateNotFound(data: any, entityName: 'upload'): boolean {
   if (data) return true;
@@ -15,8 +15,10 @@ export function validateNotFound(data: any, entityName: 'upload'): boolean {
 }
 
 export function paginateRecords(data: any[], page: number, limit: number): PaginationResult {
-  if (!page || page < 1) page = 1;
-  if (!limit || limit < 1) limit = 1;
+  if (!page || Number(page) < Defaults.ONE) page = Defaults.ONE;
+  else page = Number(page);
+  if (!limit || Number(limit) < Defaults.ONE) limit = Defaults.ONE;
+  else limit = Number(limit);
   if (!Array.isArray(data))
     return {
       data: [],
@@ -26,7 +28,7 @@ export function paginateRecords(data: any[], page: number, limit: number): Pagin
       totalRecords: 0,
     };
 
-  const sliceFrom = Math.max((page - 1) * limit, 0);
+  const sliceFrom = Math.max((page - Defaults.ONE) * limit, Defaults.ZERO);
   const sliceTo = Math.min(page * limit, data.length);
 
   return {

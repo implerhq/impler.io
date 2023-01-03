@@ -10,6 +10,7 @@ import { Phase3 } from './Phases/Phase3';
 import { Phase4 } from './Phases/Phase4';
 import { PromptModal } from './Phases/PromptModal';
 import { Layout } from 'components/Common/Layout';
+import { IUpload } from '@impler/shared';
 
 export function Widget() {
   const defaultDataCount = 0;
@@ -44,10 +45,10 @@ export function Widget() {
     queryClient.clear();
     setPhase(PhasesEum.UPLOAD);
   };
-  const onComplete = (count: number) => {
-    setDataCount(count);
+  const onComplete = (uploadData: IUpload) => {
+    setDataCount(uploadData.totalRecords);
     setPhase(PhasesEum.COMPLETE);
-    ParentWindow.UploadCompleted({ uploadId: uploadInfo._id });
+    ParentWindow.UploadCompleted(uploadData);
   };
 
   const PhaseView = {

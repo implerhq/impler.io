@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { changeToCode } from '@impler/shared';
-import { IsDefined, IsString, Validate, IsNumber, IsUrl } from 'class-validator';
-import { UniqueValidator } from '../../shared/framework/is-unique.validator';
+import { changeToCode, Defaults } from '@impler/shared';
+import { IsDefined, IsString, Validate, IsNumber, IsUrl, IsOptional } from 'class-validator';
+import { UniqueValidator } from '@shared/framework/is-unique.validator';
 
 export class CreateTemplateRequestDto {
   @ApiProperty({
@@ -32,8 +32,9 @@ export class CreateTemplateRequestDto {
 
   @ApiProperty({
     description: 'Size of data in rows that gets sent to the application',
+    default: Defaults.CHUNK_SIZE,
   })
   @IsNumber()
-  @IsDefined()
-  chunkSize: number;
+  @IsOptional()
+  chunkSize?: number = Defaults.CHUNK_SIZE;
 }

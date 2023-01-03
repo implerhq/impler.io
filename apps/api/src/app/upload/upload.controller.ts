@@ -1,26 +1,38 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 import _whatever from 'multer';
-import { Body, Controller, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { FileEntity } from '@impler/dal';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags, ApiSecurity, ApiConsumes, ApiOperation, ApiParam } from '@nestjs/swagger';
-import { ACCESS_KEY_NAME } from '@impler/shared';
+import { ACCESS_KEY_NAME, Defaults, UploadStatusEnum } from '@impler/shared';
+import { Body, Controller, Get, Param, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { ApiTags, ApiSecurity, ApiConsumes, ApiOperation, ApiParam, ApiQuery, ApiOkResponse } from '@nestjs/swagger';
 
-import { APIKeyGuard } from '../shared/framework/auth.gaurd';
+import { APIKeyGuard } from '@shared/framework/auth.gaurd';
+import { validateNotFound } from '@shared/helpers/common.helper';
+import { validateUploadStatus } from '@shared/helpers/upload.helpers';
+import { PaginationResponseDto } from '@shared/dtos/pagination-response.dto';
+import { GetUpload } from '@shared/usecases/get-upload/get-upload.usecase';
+import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
+import { ValidImportFile } from '@shared/validations/valid-import-file.validation';
+import { GetUploadCommand } from '@shared/usecases/get-upload/get-upload.command';
+import { ValidateTemplate } from '@shared/validations/valid-template.validation';
+
 import { UploadRequestDto } from './dtos/upload-request.dto';
-import { ValidImportFile } from '../shared/validations/valid-import-file.validation';
 import { MakeUploadEntry } from './usecases/make-upload-entry/make-upload-entry.usecase';
 import { MakeUploadEntryCommand } from './usecases/make-upload-entry/make-upload-entry.command';
-import { ValidateMongoId } from '../shared/validations/valid-mongo-id.validation';
-import { GetUpload } from '../shared/usecases/get-upload/get-upload.usecase';
-import { GetUploadCommand } from '../shared/usecases/get-upload/get-upload.command';
-import { ValidateTemplate } from '../shared/validations/valid-template.validation';
+import { PaginateFileContent } from './usecases/paginate-file-content/paginate-file-content.usecase';
+import { GetUploadProcessInformation } from './usecases/get-upload-process-info/get-upload-process-info.usecase';
 
 @Controller('/upload')
 @ApiTags('Uploads')
 @ApiSecurity(ACCESS_KEY_NAME)
 @UseGuards(APIKeyGuard)
 export class UploadController {
-  constructor(private makeUploadEntry: MakeUploadEntry, private getUpload: GetUpload) {}
+  constructor(
+    private makeUploadEntry: MakeUploadEntry,
+    private getUpload: GetUpload,
+    private getUploadProcessInfo: GetUploadProcessInformation,
+    private paginateFileContent: PaginateFileContent
+  ) {}
 
   @Post(':template')
   @ApiOperation({
@@ -70,5 +82,108 @@ export class UploadController {
     );
 
     return uploadInfo.headings;
+  }
+
+  @Get(':uploadId/rows/valid')
+  @ApiOperation({
+    summary: 'Get valid rows of the uploaded file',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page index of data to return',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Size of data to return',
+  })
+  @ApiOkResponse({
+    description: 'Returns paginated data',
+    type: PaginationResponseDto,
+  })
+  async getValidRows(
+    @Param('uploadId', ValidateMongoId) uploadId: string,
+    @Query('page') page = Defaults.ONE,
+    @Query('limit') limit = Defaults.PAGE_LIMIT
+  ): Promise<PaginationResponseDto> {
+    const uploadData = await this.getUploadProcessInfo.execute(uploadId);
+
+    // throw error if upload information not found
+    validateNotFound(uploadData, 'upload');
+
+    // Rows can only be retrieved after the upload is completed
+    validateUploadStatus(uploadData.status as UploadStatusEnum, [
+      UploadStatusEnum.CONFIRMED,
+      UploadStatusEnum.PROCESSING,
+      UploadStatusEnum.COMPLETED,
+    ]);
+
+    if (!uploadData._validDataFileId) {
+      return {
+        data: [],
+        page: 0,
+        limit: 0,
+        totalPages: 0,
+        totalRecords: 0,
+      };
+    }
+
+    const validDataPath = (uploadData._validDataFileId as unknown as FileEntity).path;
+
+    return this.paginateFileContent.execute(validDataPath, page, limit);
+  }
+
+  @Get(':uploadId/rows/invalid')
+  @ApiOperation({
+    summary: 'Get invalid rows of the uploaded file',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page index of data to return',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Size of data to return',
+  })
+  @ApiOkResponse({
+    description: 'Returns paginated data',
+    type: PaginationResponseDto,
+  })
+  async getInvalidRows(
+    @Param('uploadId', ValidateMongoId) uploadId: string,
+    @Query('page') page = Defaults.ONE,
+    @Query('limit') limit = Defaults.PAGE_LIMIT
+  ): Promise<PaginationResponseDto> {
+    const uploadData = await this.getUploadProcessInfo.execute(uploadId);
+
+    // throw error if upload information not found
+    validateNotFound(uploadData, 'upload');
+
+    // Rows can only be retrieved after the upload is completed
+    validateUploadStatus(uploadData.status as UploadStatusEnum, [
+      UploadStatusEnum.CONFIRMED,
+      UploadStatusEnum.PROCESSING,
+      UploadStatusEnum.COMPLETED,
+    ]);
+
+    if (!uploadData._invalidDataFileId) {
+      return {
+        data: [],
+        page: 0,
+        limit: 0,
+        totalPages: 0,
+        totalRecords: 0,
+      };
+    }
+    const invalidDataPath = (uploadData._invalidDataFileId as unknown as FileEntity).path;
+
+    return this.paginateFileContent.execute(invalidDataPath, page, limit);
   }
 }

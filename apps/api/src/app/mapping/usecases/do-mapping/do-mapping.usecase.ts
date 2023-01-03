@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UploadStatusEnum } from '@impler/shared';
+import { Defaults, UploadStatusEnum } from '@impler/shared';
 import { ColumnEntity, ColumnRepository, MappingEntity, MappingRepository, UploadRepository } from '@impler/dal';
 import { DoMappingCommand } from './do-mapping.command';
 
@@ -60,7 +60,7 @@ export class DoMapping {
   }
 
   private checkStringEqual(a: string, b: string): boolean {
-    return String(a).localeCompare(String(b), undefined, { sensitivity: 'accent' }) === 0;
+    return String(a).localeCompare(String(b), undefined, { sensitivity: 'accent' }) === Defaults.ZERO;
   }
 
   private buildMappingItem(columnId: string, uploadId: string, heading?: string): MappingEntity {

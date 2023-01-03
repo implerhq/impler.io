@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { USE_CASES } from './usecases';
 import { ReviewController } from './review.controller';
-import { SharedModule } from '../shared/shared.module';
+import { SharedModule } from '@shared/shared.module';
 import { AJVService } from './service/AJV.service';
-import { QueueService } from '../shared/storage/queue.service';
+import { QueueService } from '@shared/storage/queue.service';
 
 @Module({
   imports: [SharedModule],
