@@ -11,7 +11,9 @@
   "keywords": [
     "impler",
     "knovator",
-    "chavda-bhavik"
+    "data-import",
+    "excel-import",
+    "csv-import"
   ],
   "files": [
     "dist",

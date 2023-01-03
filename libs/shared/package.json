@@ -7,7 +7,7 @@
   "repository": "https://github.com/knovator/impler.io",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
-  "keywords": ["impler", "knovator", "chavda-bhavik"],
+  "keywords": ["impler", "knovator", "data-import", "excel-import", "csv-import"],
   "files": ["dist", "package.json"],
   "scripts": {
     "start": "npm run start:dev",
