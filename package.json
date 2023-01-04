@@ -31,6 +31,7 @@
     "docker:build:embed": "docker build -t embed -f libs/embed/Dockerfile .",
     "docker:build:widget": "docker build -t widget -f apps/widget/Dockerfile .",
     "docker:build:queue-manager": "docker build -t queue-manager -f apps/queue-manager/Dockerfile .",
+    "docker:build:demo": "docker build -t demo -f apps/demo/Dockerfile .",
     "start:static:widget": "cross-env nx start:static:build @impler/widget",
     "start:static:demo": "cross-env nx start:static:build @impler/demo",
     "start:docker:embed": "cross-env nx start:docker @impler/embed",
