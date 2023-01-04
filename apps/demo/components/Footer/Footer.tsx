@@ -1,4 +1,5 @@
 import Container from '@components/Container';
+import { variables } from '@config';
 import { Flex, Text } from '@mantine/core';
 import useStyles from './Styles';
 
@@ -8,7 +9,12 @@ const Footer = () => {
   return (
     <footer className={classes.footer}>
       <Container className={classes.container}>
-        <Text size="md">Copyright © {new Date().getFullYear()} · All Rights Reserved by Impler</Text>
+        <Text size="md">
+          Copyright © {new Date().getFullYear()} · All Rights Reserved by{' '}
+          <a className={classes.link} href={variables.LINK_KNOVATOR} target="_blank" rel="noreferrer">
+            Knovator
+          </a>
+        </Text>
         <Flex gap="xs">
           <Text>
             <a href="#" className={classes.link}>

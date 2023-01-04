@@ -5,7 +5,7 @@ import { GetServerSideProps } from 'next';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import Header from '@components/Header';
 import App from '@components/Home';
-import { colors } from '@config';
+import { colors, variables } from '@config';
 import Footer from '@components/Footer';
 
 // Create a client
@@ -19,24 +19,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const links = [
-  {
-    link: 'https://docs.impler.io',
-    label: 'Documentation',
-  },
-  {
-    link: 'https://discord.impler.io',
-    label: 'Community',
-  },
-  {
-    link: 'https://github.com/knovator/impler.io',
-    label: 'Github',
-  },
-];
-const HEADER_HEIGHT = 70;
-const FOOTER_HEIGHT = 70;
-const EXTRA_SPACING = 5;
-const APP_REDUCE_HEIGHT = HEADER_HEIGHT + FOOTER_HEIGHT + EXTRA_SPACING;
+const APP_REDUCE_HEIGHT = variables.HEADER_HEIGHT + variables.FOOTER_HEIGHT + variables.EXTRA_SPACING;
 
 interface HomeProps {
   WIDGET_EMBED_PATH: string;
@@ -66,7 +49,7 @@ export default function Home({
             },
           })}
         />
-        <Header links={links} height={HEADER_HEIGHT} />
+        <Header links={variables.links} height={variables.HEADER_HEIGHT} />
         <App
           API_BASE_URL={API_BASE_URL}
           headerHeight={APP_REDUCE_HEIGHT}
