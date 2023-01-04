@@ -2,14 +2,14 @@ FROM node:16.15.1-slim
 
 WORKDIR /usr/src/app
 
-RUN npm install -g pnpm@7.9.4 --loglevel notice
+RUN npm install -g pnpm@7.9.4
 
 COPY .npmrc .
 COPY package.json .
 
 COPY apps/demo ./apps/demo
 COPY apps/demo/.example.env ./apps/demo/.env
-COPY libs/shared ./libs/shared
+COPY packages/client ./packages/client
 
 COPY tsconfig.json .
 COPY tsconfig.base.json .

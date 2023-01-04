@@ -10,20 +10,24 @@ import useStyles from './Styles';
 
 interface HomeProps {
   headerHeight: number;
+  PROJECT_ID: string;
+  API_BASE_URL: string;
+  ACCESS_TOKEN?: string;
+  TEMPLATE?: string;
+  PRIMARY_COLOR?: string;
 }
 
 let api: ApiService;
 
-const Home = ({ headerHeight }: HomeProps) => {
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  if (!api) api = new ApiService(process.env.NEXT_PUBLIC_API_BASE_URL!);
+const Home = ({ headerHeight, API_BASE_URL, PROJECT_ID, ACCESS_TOKEN, PRIMARY_COLOR, TEMPLATE }: HomeProps) => {
+  if (!api) api = new ApiService(API_BASE_URL);
   const { classes } = useStyles(headerHeight);
 
   useEffect(() => {
-    if (process.env.NEXT_PUBLIC_ACCESS_TOKEN) {
-      api.setAuthorizationToken(process.env.NEXT_PUBLIC_ACCESS_TOKEN);
+    if (ACCESS_TOKEN) {
+      api.setAuthorizationToken(ACCESS_TOKEN);
     }
-  }, []);
+  }, [ACCESS_TOKEN]);
 
   return (
     <main>
@@ -31,7 +35,12 @@ const Home = ({ headerHeight }: HomeProps) => {
         <APIContextProvider api={api}>
           <Container className={classes.container}>
             <Information />
-            <Actions />
+            <Actions
+              PROJECT_ID={PROJECT_ID}
+              ACCESS_TOKEN={ACCESS_TOKEN}
+              PRIMARY_COLOR={PRIMARY_COLOR}
+              TEMPLATE={TEMPLATE}
+            />
             <DataView />
           </Container>
         </APIContextProvider>

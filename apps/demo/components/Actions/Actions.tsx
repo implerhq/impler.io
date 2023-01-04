@@ -7,7 +7,14 @@ import { useAppState } from '@context/app.context';
 import { Button as MantineButton, Flex, Switch } from '@mantine/core';
 import useStyles from './Styles';
 
-const Actions = () => {
+interface ActionProps {
+  PROJECT_ID: string;
+  ACCESS_TOKEN?: string;
+  TEMPLATE?: string;
+  PRIMARY_COLOR?: string;
+}
+
+const Actions = ({ PROJECT_ID, ACCESS_TOKEN, PRIMARY_COLOR, TEMPLATE }: ActionProps) => {
   const {
     upload,
     setPage,
@@ -42,10 +49,10 @@ const Actions = () => {
     <div className={classes.wrapper}>
       <Flex direction="row" align="center" gap="sm">
         <Button
-          projectId={process.env.NEXT_PUBLIC_PROJECT_ID!}
-          accessToken={process.env.NEXT_PUBLIC_ACCESS_TOKEN}
-          template={process.env.NEXT_PUBLIC_TEMPLATE}
-          primaryColor={process.env.NEXT_PUBLIC_PRIMARY_COLOR}
+          projectId={PROJECT_ID}
+          accessToken={ACCESS_TOKEN}
+          template={TEMPLATE}
+          primaryColor={PRIMARY_COLOR}
           className={classes.button}
           onUploadComplete={onUploadComplete}
         />
