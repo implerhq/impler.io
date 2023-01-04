@@ -1,4 +1,5 @@
 import React from 'react';
+import Script from 'next/script';
 import { Global } from '@mantine/core';
 import { GetServerSideProps } from 'next';
 import { QueryClientProvider, QueryClient } from 'react-query';
@@ -38,6 +39,7 @@ const EXTRA_SPACING = 5;
 const APP_REDUCE_HEIGHT = HEADER_HEIGHT + FOOTER_HEIGHT + EXTRA_SPACING;
 
 interface HomeProps {
+  WIDGET_EMBED_PATH: string;
   PROJECT_ID: string;
   API_BASE_URL: string;
   ACCESS_TOKEN?: string;
@@ -45,33 +47,44 @@ interface HomeProps {
   PRIMARY_COLOR?: string;
 }
 
-export default function Home({ PROJECT_ID, API_BASE_URL, ACCESS_TOKEN, TEMPLATE, PRIMARY_COLOR }: HomeProps) {
+export default function Home({
+  WIDGET_EMBED_PATH,
+  PROJECT_ID,
+  API_BASE_URL,
+  ACCESS_TOKEN,
+  TEMPLATE,
+  PRIMARY_COLOR,
+}: HomeProps) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <Global
-        styles={() => ({
-          body: {
-            backgroundColor: colors.black,
-          },
-        })}
-      />
-      <Header links={links} height={HEADER_HEIGHT} />
-      <App
-        API_BASE_URL={API_BASE_URL}
-        headerHeight={APP_REDUCE_HEIGHT}
-        PROJECT_ID={PROJECT_ID}
-        ACCESS_TOKEN={ACCESS_TOKEN}
-        PRIMARY_COLOR={PRIMARY_COLOR}
-        TEMPLATE={TEMPLATE}
-      />
-      <Footer />
-    </QueryClientProvider>
+    <>
+      <Script src={WIDGET_EMBED_PATH} strategy="beforeInteractive" />
+      <QueryClientProvider client={queryClient}>
+        <Global
+          styles={() => ({
+            body: {
+              backgroundColor: colors.black,
+            },
+          })}
+        />
+        <Header links={links} height={HEADER_HEIGHT} />
+        <App
+          API_BASE_URL={API_BASE_URL}
+          headerHeight={APP_REDUCE_HEIGHT}
+          PROJECT_ID={PROJECT_ID}
+          ACCESS_TOKEN={ACCESS_TOKEN}
+          PRIMARY_COLOR={PRIMARY_COLOR}
+          TEMPLATE={TEMPLATE}
+        />
+        <Footer />
+      </QueryClientProvider>
+    </>
   );
 }
 
 export const getServerSideProps: GetServerSideProps<HomeProps> = async () => ({
   props: {
     // taking environment variables from serverSideProps, so they don't gets hard coded
+    WIDGET_EMBED_PATH: process.env.WIDGET_EMBED_PATH!,
     PROJECT_ID: process.env.PROJECT_ID!,
     API_BASE_URL: process.env.API_BASE_URL!,
     ACCESS_TOKEN: process.env.ACCESS_TOKEN,
