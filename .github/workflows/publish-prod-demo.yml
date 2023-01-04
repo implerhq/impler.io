@@ -40,10 +40,6 @@ jobs:
           version: 7.9.4
           run_install: true
       
-      - name: Envsetup
-        working-directory: apps/widget
-        run: npm run envsetup
-
       - name: Build, tag, and push image to Github container registry
         id: build-image
         env:
@@ -54,7 +50,7 @@ jobs:
           GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
         run: |
           echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin 
-          docker build -t ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG -f apps/widget/Dockerfile .
+          docker build -t ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG -f apps/demo/Dockerfile .
           docker tag ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:prod
           docker tag ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:latest
           docker push ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:prod
