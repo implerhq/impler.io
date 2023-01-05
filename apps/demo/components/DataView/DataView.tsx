@@ -4,7 +4,7 @@ import { useQuery } from 'react-query';
 import { colors, variables } from '@config';
 import Pagination from '@components/Pagination';
 import { useAppState } from '@context/app.context';
-import { PaginationResult } from '@impler/shared';
+import { PaginationResult } from '@impler/shared/dist/types';
 import { useAPIState } from '@context/api.context';
 import { LoadingOverlay } from '@mantine/core';
 import useStyles from './Styles';

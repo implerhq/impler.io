@@ -1,7 +1,7 @@
 import React from 'react';
 import { saveAs } from 'file-saver';
 import { Button } from '@impler/react';
-import { IUpload } from '@impler/shared';
+import { IUpload } from '@impler/shared/dist/entities';
 import { constants, variables } from '@config';
 import { useAppState } from '@context/app.context';
 import { Button as MantineButton, Flex, Switch } from '@mantine/core';
