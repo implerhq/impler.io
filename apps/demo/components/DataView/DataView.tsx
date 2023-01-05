@@ -54,7 +54,7 @@ const DataView = () => {
           { label: 'Country ID', key: 'country_id' },
           { label: 'Country', key: 'Country' },
           { label: 'Latitude', key: 'Latitude' },
-          { label: 'Latitude', key: 'Longitude' },
+          { label: 'Longitude', key: 'Longitude' },
         ]}
         emptyMessage="Nothing to show! Click on Import to import and see records."
       />
