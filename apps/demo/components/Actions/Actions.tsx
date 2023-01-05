@@ -74,7 +74,7 @@ const Actions = ({ PROJECT_ID, ACCESS_TOKEN, PRIMARY_COLOR, TEMPLATE }: ActionPr
         onClick={() => saveAs(constants.DATA_FILE_URL, constants.DATA_FILE_NAME)}
         className={classes.button}
       >
-        Download Tempreture Data
+        Download Temperature Data
       </MantineButton>
     </div>
   );
