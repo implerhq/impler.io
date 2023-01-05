@@ -44,4 +44,8 @@ export default createStyles(() => ({
       borderRight: `1px solid ${colors.darkGray} !important`,
     },
   },
+  invalidCell: {
+    backgroundColor: colors.lightDanger,
+    color: colors.red,
+  },
 }));

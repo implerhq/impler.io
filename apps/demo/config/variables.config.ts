@@ -4,6 +4,7 @@ export const constants = {
 };
 
 export const variables = {
+  ERROR: 'message',
   ZERO: 0,
   ONE: 1,
   DEFAULT_LIMIT: 10,
