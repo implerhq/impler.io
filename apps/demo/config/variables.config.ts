@@ -27,4 +27,5 @@ export const variables = {
   ],
   LINK_KNOVATOR: 'http://knovator.com/',
   WIDGET_EMBED_PATH: 'https://embed.impler.io/embed.umd.min.js',
+  PRIMARY_COLOR: '#111111',
 };

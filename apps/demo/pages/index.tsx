@@ -25,10 +25,9 @@ interface HomeProps {
   API_BASE_URL: string;
   ACCESS_TOKEN?: string;
   TEMPLATE?: string;
-  PRIMARY_COLOR?: string;
 }
 
-export default function Home({ PROJECT_ID, API_BASE_URL, ACCESS_TOKEN, TEMPLATE, PRIMARY_COLOR }: HomeProps) {
+export default function Home({ PROJECT_ID, API_BASE_URL, ACCESS_TOKEN, TEMPLATE }: HomeProps) {
   return (
     <>
       <QueryClientProvider client={queryClient}>
@@ -45,7 +44,7 @@ export default function Home({ PROJECT_ID, API_BASE_URL, ACCESS_TOKEN, TEMPLATE,
           headerHeight={APP_REDUCE_HEIGHT}
           PROJECT_ID={PROJECT_ID}
           ACCESS_TOKEN={ACCESS_TOKEN}
-          PRIMARY_COLOR={PRIMARY_COLOR}
+          PRIMARY_COLOR={variables.PRIMARY_COLOR}
           TEMPLATE={TEMPLATE}
         />
         <Footer />
@@ -61,6 +60,5 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async () => ({
     API_BASE_URL: process.env.API_BASE_URL!,
     ACCESS_TOKEN: process.env.ACCESS_TOKEN,
     TEMPLATE: process.env.TEMPLATE,
-    PRIMARY_COLOR: process.env.PRIMARY_COLOR,
   },
 });
