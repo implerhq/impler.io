@@ -3,11 +3,13 @@ import { createStyles } from '@mantine/core';
 
 export default createStyles((theme) => ({
   root: {
-    width: '100%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
     color: colors.white,
+    [`@media (min-width: ${theme.breakpoints.sm}px)`]: {
+      width: '100%',
+    },
   },
   selectInput: {
     backgroundColor: colors.darkGray,

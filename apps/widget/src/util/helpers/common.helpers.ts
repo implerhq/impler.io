@@ -1,18 +1,5 @@
 import { saveAs } from 'file-saver';
 
-export function getErrorObject(error: string): Record<string, string> {
-  if (!error) return {};
-  const errorStrs = error.split(`, `);
-  let fieldName: string;
-
-  return errorStrs.reduce((acc: Record<string, string>, val: string) => {
-    [, fieldName] = val.split(/`/);
-    acc[fieldName] = val;
-
-    return acc;
-  }, {});
-}
-
 // eslint-disable-next-line no-magic-numbers
 export function formatBytes(bytes, decimals = 2) {
   if (!+bytes) return '0 Bytes';

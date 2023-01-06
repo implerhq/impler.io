@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestHeaders } from 'axios';
-import { ACCESS_KEY_NAME } from '../../.';
+import { ACCESS_KEY_NAME } from '../../config';
 
 export interface IParamObject {
   [key: string]: string | string[] | number | boolean;

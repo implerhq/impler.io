@@ -8,6 +8,19 @@ export function isBrowser() {
   return typeof window !== 'undefined';
 }
 
+export function getErrorObject(error: string): Record<string, string> {
+  if (!error) return {};
+  const errorStrs = error.split(`, `);
+  let fieldName: string;
+
+  return errorStrs.reduce((acc: Record<string, string>, val: string) => {
+    [, fieldName] = val.split(/`/);
+    acc[fieldName] = val;
+
+    return acc;
+  }, {});
+}
+
 const defaultDigits = 2;
 export function numberFormatter(num: number, digits = defaultDigits) {
   const lookup = [

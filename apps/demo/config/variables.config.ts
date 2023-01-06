@@ -4,6 +4,7 @@ export const constants = {
 };
 
 export const variables = {
+  ERROR: 'message',
   ZERO: 0,
   ONE: 1,
   DEFAULT_LIMIT: 10,
@@ -25,4 +26,6 @@ export const variables = {
     },
   ],
   LINK_KNOVATOR: 'http://knovator.com/',
+  WIDGET_EMBED_PATH: 'https://embed.impler.io/embed.umd.min.js',
+  PRIMARY_COLOR: '#111111',
 };

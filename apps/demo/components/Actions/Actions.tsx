@@ -1,7 +1,7 @@
 import React from 'react';
 import { saveAs } from 'file-saver';
 import { Button } from '@impler/react';
-import { IUpload } from '@impler/shared';
+import { IUpload } from '@impler/shared/dist/entities';
 import { constants, variables } from '@config';
 import { useAppState } from '@context/app.context';
 import { Button as MantineButton, Flex, Switch } from '@mantine/core';
@@ -74,7 +74,7 @@ const Actions = ({ PROJECT_ID, ACCESS_TOKEN, PRIMARY_COLOR, TEMPLATE }: ActionPr
         onClick={() => saveAs(constants.DATA_FILE_URL, constants.DATA_FILE_NAME)}
         className={classes.button}
       >
-        Download Tempreture Data
+        Download Temperature Data
       </MantineButton>
     </div>
   );

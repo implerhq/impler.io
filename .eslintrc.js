@@ -60,12 +60,6 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     'max-len': ['warn', { code: 140 }],
     '@typescript-eslint/return-await': 'off',
-    'no-restricted-imports': [
-      'error',
-      {
-        patterns: ['@impler/shared/*', '@impler/dal/*', '!import2/good'],
-      },
-    ],
     'padding-line-between-statements': [
       'error',
       { blankLine: 'any', prev: ['const', 'let', 'var'], next: ['if', 'for'] },
