@@ -7,8 +7,8 @@ import {
   DeleteObjectCommand,
   ListBucketsCommand,
 } from '@aws-sdk/client-s3';
-import { FileNotExistError } from '../errors/file-not-exist.error';
-import { Defaults } from '../utils';
+import { FileNotExistError } from '../../errors/file-not-exist.error';
+import { Defaults } from '../../utils';
 
 export interface IFilePath {
   path: string;
