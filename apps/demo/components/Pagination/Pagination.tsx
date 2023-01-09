@@ -1,5 +1,5 @@
 import { variables } from '@config';
-import { numberFormatter } from '@impler/shared/dist/utils';
+import { numberFormatter } from '@impler/shared';
 import { Flex, Text, NativeSelect, Pagination as MantinePagination } from '@mantine/core';
 import useStyles from './Styles';
 

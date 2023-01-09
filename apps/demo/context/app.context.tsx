@@ -1,5 +1,5 @@
 import { variables } from '@config';
-import { IUpload } from '@impler/shared/dist/entities';
+import { IUpload } from '@impler/shared';
 import React, { createContext, PropsWithChildren, useContext, useState } from 'react';
 
 interface IAppContext {
