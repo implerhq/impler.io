@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { FileMimeTypesEnum } from '@impler/shared';
 import { ColumnRepository, TemplateRepository } from '@impler/dal';
 import { UpdateColumnCommand } from './update-columns.command';
-import { StorageService } from '@impler/shared';
+import { StorageService } from '@impler/shared/dist/services/storage';
 import { FileNameService } from '@shared/file/name.service';
 
 @Injectable()

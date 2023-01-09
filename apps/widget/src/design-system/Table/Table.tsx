@@ -1,5 +1,5 @@
 import React from 'react';
-import { getErrorObject } from '@impler/shared/dist/utils';
+import { getErrorObject } from '@impler/shared';
 import { Table as MantineTable } from '@mantine/core';
 import useStyles from './Table.style';
 import { InvalidWarning } from '../InvalidWarning';

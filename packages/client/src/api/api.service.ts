@@ -1,12 +1,12 @@
-import { PaginationResult } from '@impler/shared/dist/types';
-import { HttpClient } from '@impler/shared/dist/services/http-client';
 import {
+  HttpClient,
   IUpload,
   IMapping,
   IMappingFinalize,
   IReviewData,
   ITemplate,
-} from '@impler/shared/dist/entities';
+  PaginationResult,
+} from '@impler/shared';
 
 export class ApiService {
   private httpClient: HttpClient;

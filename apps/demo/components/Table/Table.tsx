@@ -1,5 +1,5 @@
 import { Table as MantineTable } from '@mantine/core';
-import { getErrorObject } from '@impler/shared/dist/utils';
+import { getErrorObject } from '@impler/shared';
 import useStyles from './Styles';
 import { variables } from '@config';
 import { InvalidWarning } from '@components/InvalidWarning';

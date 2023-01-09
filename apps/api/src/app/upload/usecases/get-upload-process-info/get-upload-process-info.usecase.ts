@@ -1,5 +1,5 @@
 import { UploadRepository } from '@impler/dal';
-import { StorageService } from '@impler/shared';
+import { StorageService } from '@impler/shared/dist/services/storage';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
