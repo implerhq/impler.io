@@ -3,7 +3,8 @@ import { ApiExcludeController } from '@nestjs/swagger';
 import { DalService } from '@impler/dal';
 import { HealthCheck, HealthCheckService } from '@nestjs/terminus';
 import { version } from '../../../package.json';
-import { Defaults, StorageService } from '@impler/shared';
+import { Defaults } from '@impler/shared';
+import { StorageService } from '@impler/shared/dist/services/storage';
 import { QueueService } from '@shared/storage/queue.service';
 
 @Controller('health-check')

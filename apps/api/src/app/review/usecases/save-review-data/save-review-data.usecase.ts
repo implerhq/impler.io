@@ -3,7 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { FileRepository, UploadRepository } from '@impler/dal';
 import { FileMimeTypesEnum } from '@impler/shared';
 import { FileNameService } from '@shared/file/name.service';
-import { StorageService, Defaults } from '@impler/shared';
+import { Defaults } from '@impler/shared';
+import { StorageService } from '@impler/shared/dist/services/storage';
 
 @Injectable()
 export class SaveReviewData {
