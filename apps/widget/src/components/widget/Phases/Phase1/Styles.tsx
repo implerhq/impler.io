@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
 import { createStyles, MantineTheme } from '@mantine/core';
-import { colors } from '@config';
 
 export const getContainerStyles = (theme: MantineTheme): React.CSSProperties => ({
   flexDirection: 'column',
