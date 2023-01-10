@@ -80,7 +80,7 @@ export function Footer(props: IFooterProps) {
   };
 
   return (
-    <Group style={{ justifyContent: 'space-between' }}>
+    <Group className={classes.wrapper}>
       <a className={classes.poweredBy} href={variables.implerWebsite} target="_blank">
         <Text size="xs">
           Powered by <img src="/logo-full.png" className={classes.implerImage} />
