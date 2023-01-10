@@ -16,4 +16,5 @@ export const variables = {
   defaultAlpha: 1,
   shadesMultipler: 2,
   maxColorNumber: 255,
+  implerWebsite: 'https://impler.io?utm_source=widget',
 };
