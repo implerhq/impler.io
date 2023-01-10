@@ -81,7 +81,7 @@ export function Footer(props: IFooterProps) {
 
   return (
     <Group className={classes.wrapper}>
-      <a className={classes.poweredBy} href={variables.implerWebsite} target="_blank">
+      <a className={classes.poweredBy} href={variables.implerWebsite} target="_blank" rel="noopener noreferrer">
         <Text size="xs">
           Powered by <img src="/logo-full.png" className={classes.implerImage} />
         </Text>
