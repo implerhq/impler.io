@@ -1,7 +1,8 @@
-import { Group } from '@mantine/core';
+import { Group, Text } from '@mantine/core';
 import { Button } from '@ui/Button';
-import { TEXTS } from '@config';
+import { TEXTS, variables } from '@config';
 import { PhasesEum } from '@types';
+import useStyles from './Styles';
 
 interface IFooterProps {
   active: PhasesEum;
@@ -14,6 +15,7 @@ interface IFooterProps {
 }
 
 export function Footer(props: IFooterProps) {
+  const { classes } = useStyles();
   const {
     active,
     onNextClick,
@@ -78,8 +80,13 @@ export function Footer(props: IFooterProps) {
   };
 
   return (
-    <Group spacing="md" style={{ alignSelf: 'flex-end' }}>
-      {FooterActions[active]}
+    <Group style={{ justifyContent: 'space-between' }}>
+      <a className={classes.poweredBy} href={variables.implerWebsite} target="_blank">
+        <Text size="xs">
+          Powered by <img src="/logo-full.png" className={classes.implerImage} />
+        </Text>
+      </a>
+      <Group spacing="md">{FooterActions[active]}</Group>
     </Group>
   );
 }
