@@ -11,9 +11,10 @@ interface TableProps {
   }[];
   data: any[];
   emptyMessage?: string;
+  style?: React.CSSProperties;
 }
 
-const Table = ({ data, headings, emptyMessage }: TableProps) => {
+const Table = ({ data, headings, emptyMessage, style }: TableProps) => {
   const { classes } = useStyles();
   let errorObject: Record<string, string>;
 
@@ -42,7 +43,7 @@ const Table = ({ data, headings, emptyMessage }: TableProps) => {
   );
 
   return (
-    <div className={classes.tableWrapper}>
+    <div className={classes.tableWrapper} style={style}>
       <MantineTable>
         <thead className={classes.thead}>
           <tr>
