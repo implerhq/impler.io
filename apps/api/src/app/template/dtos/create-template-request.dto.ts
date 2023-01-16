@@ -27,8 +27,8 @@ export class CreateTemplateRequestDto {
     description: 'Callback URL of the template, gets called when sending data to the application',
   })
   @IsUrl()
-  @IsDefined()
-  callbackUrl: string;
+  @IsOptional()
+  callbackUrl?: string;
 
   @ApiProperty({
     description: 'Size of data in rows that gets sent to the application',

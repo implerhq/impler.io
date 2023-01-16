@@ -18,4 +18,7 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
       .populate('_invalidDataFileId', 'path name')
       .populate('_validDataFileId', 'path name');
   }
+  async getUploadWithTemplate(uploadId: string, fields: string[]): Promise<UploadEntity> {
+    return await Upload.findById(uploadId).populate('_templateId', fields.join(' '));
+  }
 }
