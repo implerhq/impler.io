@@ -48,23 +48,25 @@ ajv.addKeyword({
 
 @Injectable()
 export class AJVService {
-  validate(columns: ColumnEntity[], mappings: MappingEntity[], data: any) {
+  validate(columns: ColumnEntity[], mappings: MappingEntity[], originalData: any) {
+    const dataCopy = structuredClone(originalData);
     const schema = this.buildAJVSchema(columns, mappings);
     const validator = ajv.compile(schema);
 
-    const valid = validator(data);
+    const valid = validator(dataCopy);
     const returnData = {
       invalid: [],
       valid: [],
     };
     if (!valid) {
-      const errors: Record<number, any> = this.buildErrorRecords(validator.errors, data);
+      const invalidData: Record<number, any> = this.buildErrorRecords(validator.errors, originalData);
 
-      returnData.invalid = Object.values(errors);
+      returnData.invalid = Object.values(invalidData);
+      // removing invalid data from original data
       // eslint-disable-next-line no-magic-numbers
-      Object.keys(errors).forEach((index) => (data as any).splice(index as unknown as number, 1));
+      Object.keys(invalidData).forEach((index) => (dataCopy as any).splice(index as unknown as number, 1));
     }
-    returnData.valid = data as any;
+    returnData.valid = dataCopy as any;
     // resetting uniqueItems
     uniqueItems = {};
 
