@@ -1,0 +1,22 @@
+version: "3"
+services:
+  api:
+    build:
+      dockerfile: "apps/api/Dockerfile"
+      context: ".."
+  queue-manager:
+    build:
+      dockerfile: "apps/queue-manager/Dockerfile"
+      context: ".."
+  demo:
+    build:
+      dockerfile: "apps/demo/Dockerfile"
+      context: ".."
+  widget:
+    build:
+      dockerfile: "apps/widget/Dockerfile"
+      context: ".."
+  embed:
+    build:
+      dockerfile: "libs/embed/Dockerfile"
+      context: ".."
