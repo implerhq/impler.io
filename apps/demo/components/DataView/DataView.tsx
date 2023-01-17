@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Table from '@components/Table';
 import { useQuery } from 'react-query';
 import { colors, variables } from '@config';
@@ -15,6 +15,11 @@ const DataView = () => {
   const [tempretureData, setTempretureData] = useState<ITempreture[]>([]);
   const { limit, page, setPage, totalPages, setTotalPages, upload, showInvalidRecords, setLimit, totalRecords } =
     useAppState();
+  const [tableWrapperDimensions, setTableWrapperDimentions] = useState({
+    height: 200,
+    width: 500,
+  });
+  const tableWrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
   const { isLoading } = useQuery<PaginationResult, IErrorObject, PaginationResult, any[]>(
     [upload, page, limit, showInvalidRecords],
     () =>
@@ -30,13 +35,28 @@ const DataView = () => {
     }
   );
 
+  useEffect(() => {
+    //  setting wrapper height
+    setTableWrapperDimentions({
+      height: tableWrapperRef.current.getBoundingClientRect().height,
+      width: tableWrapperRef.current.getBoundingClientRect().width,
+    });
+  }, []);
+
   const onLimitChange = (newLimit: number) => {
     setLimit(newLimit);
     setPage(variables.ONE);
   };
 
   return (
-    <div className={classes.root}>
+    <div
+      className={classes.root}
+      ref={tableWrapperRef}
+      style={{
+        height: tableWrapperDimensions.height,
+        overflow: 'auto',
+      }}
+    >
       <LoadingOverlay
         visible={isLoading}
         overlayBlur={2}
@@ -54,7 +74,7 @@ const DataView = () => {
           { label: 'Country ID', key: 'country_id' },
           { label: 'Country', key: 'Country' },
           { label: 'Latitude', key: 'Latitude' },
-          { label: 'Latitude', key: 'Longitude' },
+          { label: 'Longitude', key: 'Longitude' },
         ]}
         emptyMessage="Nothing to show! Click on Import to import and see records."
       />

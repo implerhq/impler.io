@@ -72,6 +72,7 @@ export function Phase3(props: IPhase3Props) {
           }}
           headings={[{ key: 'index', title: '#', width: '4%' }, ...heaings]}
           data={reviewData}
+          emptyDataText=""
         />
       </div>
       <Pagination page={page} total={totalPages} onChange={onPageChange} />

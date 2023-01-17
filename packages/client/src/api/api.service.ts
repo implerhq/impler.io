@@ -1,10 +1,10 @@
 import {
   HttpClient,
-  ITemplate,
   IUpload,
   IMapping,
-  IReviewData,
   IMappingFinalize,
+  IReviewData,
+  ITemplate,
   PaginationResult,
 } from '@impler/shared';
 

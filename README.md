@@ -19,7 +19,7 @@
     <a href="https://docs.impler.io"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/knovator/impler.io">View Demo</a>
+    <a href="https://demo.impler.io">View Demo</a>
     ·
     <a href="https://github.com/knovator/impler.io/issues/new?assignees=&labels=&template=bug_report.md&title=">Report Bug</a>
     ·

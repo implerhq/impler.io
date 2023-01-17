@@ -1,9 +1,9 @@
+import React from 'react';
+import { getErrorObject } from '@impler/shared';
 import { Table as MantineTable } from '@mantine/core';
 import useStyles from './Table.style';
-import { getErrorObject } from '../../util/helpers/common.helpers';
 import { InvalidWarning } from '../InvalidWarning';
 import { variables } from '../../config/variable.config';
-import React from 'react';
 
 interface IHeadingItem {
   title: string;

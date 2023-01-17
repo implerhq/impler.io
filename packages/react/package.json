@@ -1,6 +1,6 @@
 {
   "name": "@impler/react",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "React library to show widget in client applications",
   "license": "MIT",
   "author": "knovator",
@@ -52,7 +52,7 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "@impler/shared": "^0.1.9",
+    "@impler/shared": "^0.1.10",
     "styled-components": "^5.3.6"
   }
 }

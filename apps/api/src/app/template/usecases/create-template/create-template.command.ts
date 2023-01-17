@@ -1,4 +1,4 @@
-import { IsDefined, IsString, IsNumber } from 'class-validator';
+import { IsDefined, IsString, IsNumber, IsOptional } from 'class-validator';
 import { BaseCommand } from '@shared/commands/base.command';
 
 export class CreateTemplateCommand extends BaseCommand {
@@ -11,8 +11,8 @@ export class CreateTemplateCommand extends BaseCommand {
   code: string;
 
   @IsString()
-  @IsDefined()
-  callbackUrl: string;
+  @IsOptional()
+  callbackUrl?: string;
 
   @IsNumber()
   @IsDefined()

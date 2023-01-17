@@ -3,11 +3,11 @@ import {
   FileEncodingsEnum,
   ProcessFileCachedData,
   ProcessFileData,
-  StorageService,
   StatusEnum,
   UploadStatusEnum,
   QueuesEnum,
 } from '@impler/shared';
+import { StorageService } from '@impler/shared/dist/services/storage';
 import { FileEntity, UploadRepository, TemplateRepository, WebhookLogRepository, WebhookLogEntity } from '@impler/dal';
 import { BaseConsumer } from './base.consumer';
 import { getStorageServiceClass } from '../helpers/storage.helper';
