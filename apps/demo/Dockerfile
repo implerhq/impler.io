@@ -1,4 +1,4 @@
-FROM node:16.15.1-slim
+FROM node:18.13.0-slim
 
 WORKDIR /usr/src/app
 
@@ -10,6 +10,8 @@ COPY package.json .
 COPY apps/demo ./apps/demo
 COPY apps/demo/.example.env ./apps/demo/.env
 COPY packages/client ./packages/client
+COPY libs/shared ./libs/shared
+COPY packages/react ./packages/react
 
 COPY tsconfig.json .
 COPY tsconfig.base.json .
