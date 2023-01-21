@@ -15,6 +15,7 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
   }
   async getUploadProcessInformation(uploadId: string): Promise<UploadEntity> {
     return await Upload.findById(uploadId)
+      .populate('_uploadedFileId', 'path originalName')
       .populate('_invalidDataFileId', 'path name')
       .populate('_validDataFileId', 'path name');
   }

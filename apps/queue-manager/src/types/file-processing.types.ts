@@ -12,6 +12,7 @@ export interface IBuildSendDataParameters {
   isInvalidRecords: boolean;
   template: string;
   uploadId: string;
+  fileName: string;
   extra?: string;
 }
 export interface IGetNextDataParameters extends ProcessFileCachedData {
@@ -34,4 +35,5 @@ export interface ISendData {
   pageSize: number;
   extra: string;
   isInvalidRecords: boolean;
+  fileName: string;
 }
