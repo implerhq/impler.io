@@ -97,6 +97,7 @@ class Impler {
       switch (event.data.type) {
         case EventTypesEnum.CLOSE_WIDGET:
           this.hideWidget();
+          this.postMessageToContentWindow(event.data.type);
           break;
         case EventTypesEnum.AUTHENTICATION_VALID:
           this.isAuthenticated = true;
