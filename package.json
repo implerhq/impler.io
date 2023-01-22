@@ -107,6 +107,7 @@
     "prettier": "^2.7.1"
   },
   "dependencies": {
-    "amqp-connection-manager": "^4.1.7"
+    "amqp-connection-manager": "^4.1.7",
+    "amqplib": "^0.10.3"
   }
 }
