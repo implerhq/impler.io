@@ -20,7 +20,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
   const [showWidget, setShowWidget] = useState<boolean>(false);
   const [primaryPayload, setPrimaryPayload] = useState<IInitPayload>();
   const [secondaryPayload, setSecondaryPayload] = useState<IShowPayload>({ primaryColor: colors.primary });
-  const { isAuthenticated, refetch } = useAuthentication({ api, projectId, template: primaryPayload?.template });
+  const { isAuthenticated, refetch } = useAuthentication({ api, projectId });
 
   useEffect(() => {
     WebFont.load({
@@ -53,11 +53,11 @@ export function Container({ children }: PropsWithChildren<{}>) {
     }
     if (data && data.type === EventTypesEnum.SHOW_WIDGET) {
       setShowWidget(true);
-      setSecondaryPayload((payload) => ({ ...payload, ...data.value }));
+      setSecondaryPayload({ ...data.value, primaryColor: data.value.primaryColor || colors.primary });
     }
   }
 
-  if (!isAuthenticated || !showWidget) return null;
+  if (!(isAuthenticated && showWidget)) return null;
 
   return (
     <>
@@ -113,7 +113,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
               api={api}
               // impler-context
               projectId={projectId}
-              template={primaryPayload.template}
+              template={secondaryPayload.template}
               accessToken={primaryPayload.accessToken}
               authHeaderValue={secondaryPayload?.authHeaderValue}
               extra={secondaryPayload?.extra}
