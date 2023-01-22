@@ -36,6 +36,7 @@ export const Button = ({
   onUploadComplete,
   onUploadStart,
   onUploadTerminate,
+  onWidgetClose,
 }: ButtonProps): JSX.Element => {
   const [isImplerInitiated, setIsImplerInitiated] = useState(false);
 
@@ -59,6 +60,8 @@ export const Button = ({
         break;
       case EventTypesEnum.UPLOAD_COMPLETED:
         if (onUploadComplete) onUploadComplete(data.value);
+      case EventTypesEnum.CLOSE_WIDGET:
+        if (onWidgetClose) onWidgetClose();
         break;
     }
   }
