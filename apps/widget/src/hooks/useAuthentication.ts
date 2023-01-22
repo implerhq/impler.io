@@ -7,13 +7,12 @@ import { useQuery } from '@tanstack/react-query';
 interface IUseAuthenticationProps {
   api: ApiService;
   projectId: string;
-  template?: string;
 }
-export function useAuthentication({ api, projectId, template }: IUseAuthenticationProps) {
+export function useAuthentication({ api, projectId }: IUseAuthenticationProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const { data, refetch, error } = useQuery<Boolean, IErrorObject, any, string[]>(
     ['valid'],
-    () => api.checkIsRequestvalid(projectId, template) as Promise<boolean>,
+    () => api.checkIsRequestvalid(projectId) as Promise<boolean>,
     {
       enabled: false,
       retry: 0,
