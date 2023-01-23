@@ -44,6 +44,7 @@ export type ProcessFileCachedData = {
   _templateId: string;
   validDataFilePath?: string;
   invalidDataFilePath?: string;
+  fileName: string;
 };
 
 export type ProcessFileData = {

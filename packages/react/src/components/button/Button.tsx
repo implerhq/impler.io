@@ -36,12 +36,13 @@ export const Button = ({
   onUploadComplete,
   onUploadStart,
   onUploadTerminate,
+  onWidgetClose,
 }: ButtonProps): JSX.Element => {
   const [isImplerInitiated, setIsImplerInitiated] = useState(false);
 
   useEffect(() => {
     if (window.impler && projectId) {
-      const initPayload: IInitPayload = { accessToken, template };
+      const initPayload: IInitPayload = { accessToken };
       window.impler.init(projectId, initPayload);
       setIsImplerInitiated(true);
       window.impler.on('message', onEventHappen);
@@ -59,6 +60,8 @@ export const Button = ({
         break;
       case EventTypesEnum.UPLOAD_COMPLETED:
         if (onUploadComplete) onUploadComplete(data.value);
+      case EventTypesEnum.CLOSE_WIDGET:
+        if (onWidgetClose) onWidgetClose();
         break;
     }
   }
@@ -66,6 +69,7 @@ export const Button = ({
   const onButtonClick = async () => {
     if (window.impler) {
       const payload: IShowPayload = {};
+      if (template) payload.template = template;
       if (extra) {
         if (typeof extra === 'object') payload.extra = JSON.stringify(extra);
         else payload.extra = extra;

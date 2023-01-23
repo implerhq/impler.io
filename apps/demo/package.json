@@ -1,6 +1,6 @@
 {
   "name": "@impler/demo",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "author": "knovator",
   "license": "MIT",
   "private": true,
@@ -10,13 +10,14 @@
     "build": "next build",
     "start:static:build": "pnpm envsetup:docker && next start -p 5173",
     "envsetup:docker": "chmod +x ./env.sh && ./env.sh",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prebuild": "rimraf .next"
   },
   "dependencies": {
     "@emotion/react": "^11.10.5",
-    "@impler/client": "^0.1.10",
-    "@impler/react": "^0.1.10",
-    "@impler/shared": "^0.1.10",
+    "@impler/client": "^0.1.11",
+    "@impler/react": "^0.1.11",
+    "@impler/shared": "^0.1.11",
     "@mantine/core": "^5.9.5",
     "@mantine/hooks": "^5.9.5",
     "@mantine/next": "^5.9.5",
@@ -26,6 +27,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-query": "^3.39.2",
+    "rimraf": "^3.0.2",
     "sharp": "^0.31.3"
   },
   "devDependencies": {

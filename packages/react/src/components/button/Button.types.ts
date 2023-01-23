@@ -12,6 +12,7 @@ export interface ButtonProps {
   onUploadStart?: (value: UploadTemplateData) => void;
   onUploadTerminate?: (value: UploadData) => void;
   onUploadComplete?: (value: IUpload) => void;
+  onWidgetClose?: () => void;
 }
 
 export type UploadTemplateData = {
@@ -44,4 +45,7 @@ export type EventCalls =
   | {
       type: EventTypesEnum.UPLOAD_COMPLETED;
       value: IUpload;
+    }
+  | {
+      type: EventTypesEnum.CLOSE_WIDGET;
     };

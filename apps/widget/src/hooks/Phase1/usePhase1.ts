@@ -76,7 +76,8 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
 
     if (selectedTemplate && selectedTemplate.sampleFileUrl)
       downloadFileFromURL(selectedTemplate.sampleFileUrl, `${selectedTemplate.code}-sample.csv`);
-    else notifier.showError('INCOMPLETE_TEMPLATE');
+    else if (selectedTemplate && !selectedTemplate.sampleFileUrl) notifier.showError('INCOMPLETE_TEMPLATE');
+    else notifier.showError('TEMPLATE_NOT_FOUND');
     setIsDownloadInProgress(false);
   };
 

@@ -60,6 +60,7 @@ export class ProcessFileConsumer extends BaseConsumer {
         page: cachedData.page || DEFAULT_PAGE,
         isInvalidRecords: cachedData.isInvalidRecords,
         template: cachedData.code,
+        fileName: cachedData.fileName,
         uploadId,
         extra: cachedData.extra,
       });
@@ -132,6 +133,7 @@ export class ProcessFileConsumer extends BaseConsumer {
     isInvalidRecords,
     template,
     uploadId,
+    fileName,
     extra = '',
   }: IBuildSendDataParameters): ISendData {
     const slicedData = data.slice(
@@ -144,6 +146,7 @@ export class ProcessFileConsumer extends BaseConsumer {
       extra: extra ? JSON.parse(extra) : '',
       isInvalidRecords,
       page,
+      fileName,
       pageSize: slicedData.length,
       template,
       totalPages: this.getTotalPages(data.length, chunkSize),
@@ -215,6 +218,7 @@ export class ProcessFileConsumer extends BaseConsumer {
       page: 1,
       processInvalidRecords: uploadata.processInvalidRecords,
       validDataFilePath: (uploadata._validDataFileId as unknown as FileEntity)?.path,
+      fileName: (uploadata._uploadedFileId as unknown as FileEntity)?.originalName,
       extra: uploadata.extra,
     };
   }
