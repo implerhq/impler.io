@@ -41,6 +41,8 @@ export type ProcessFileCachedData = {
   extra?: string;
   isInvalidRecords: boolean;
   processInvalidRecords: boolean;
+  authHeaderName: string;
+  authHeaderValue: string;
   _templateId: string;
   validDataFilePath?: string;
   invalidDataFilePath?: string;
