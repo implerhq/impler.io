@@ -15,15 +15,26 @@ export class ValidateMapping {
     const columnIds = command.map((mapping) => ({
       _id: mapping._columnId,
     }));
-    const count = await this.columnRepository.count({
-      $or: [...columnIds],
-    });
-    if (count !== command.length) throw new BadRequestException(`Mapping data contains invalid _columnId(s)`);
+    const columnEntities = await this.columnRepository.find(
+      {
+        $or: [...columnIds],
+      },
+      'name _id isRequired'
+    );
+    if (columnEntities.length !== command.length)
+      throw new BadRequestException(`Mapping data contains invalid _columnId(s)`);
 
     // check if mapping data headings are valid
-    const columnHeadings = command.map((mapping) => mapping.columnHeading);
+    const columnHeadings = command.map((mapping) => mapping.columnHeading).filter((heading) => !!heading);
     const uploadInfo = await this.uploadRepository.findById(_uploadId, 'headings');
     const isAllHeadingsAreValid = columnHeadings.every((heading) => uploadInfo.headings.includes(heading));
     if (!isAllHeadingsAreValid) throw new BadRequestException(`Mapping data contains invalid columnHeading values`);
+
+    // check if mapping data has required columns
+    for (const columnEntity of columnEntities) {
+      if (columnEntity.isRequired && !columnHeadings.includes(columnEntity.name)) {
+        throw new BadRequestException(`${columnEntity.name} is required`);
+      }
+    }
   }
 }

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDefined, IsString, IsMongoId } from 'class-validator';
+import { IsDefined, IsString, IsMongoId, IsOptional } from 'class-validator';
 
 export class UpdateMappingDto {
   @ApiProperty({
@@ -12,7 +12,7 @@ export class UpdateMappingDto {
   @ApiProperty({
     description: 'Selected Heading for column',
   })
-  @IsDefined()
+  @IsOptional()
   @IsString()
   columnHeading: string;
 }

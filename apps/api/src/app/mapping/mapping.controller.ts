@@ -94,13 +94,15 @@ export class MappingController {
     // save mapping
     if (Array.isArray(body) && body.length > Defaults.ZERO) {
       this.updateMappings.execute(
-        body.map((updateColumnData) =>
-          UpdateMappingCommand.create({
-            _columnId: updateColumnData._columnId,
-            _uploadId,
-            columnHeading: updateColumnData.columnHeading,
-          })
-        ),
+        body
+          .filter((columnDataItem) => !!columnDataItem.columnHeading)
+          .map((updateColumnData) =>
+            UpdateMappingCommand.create({
+              _columnId: updateColumnData._columnId,
+              _uploadId,
+              columnHeading: updateColumnData.columnHeading,
+            })
+          ),
         _uploadId
       );
     }
