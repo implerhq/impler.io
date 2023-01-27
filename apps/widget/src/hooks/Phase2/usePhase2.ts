@@ -2,6 +2,7 @@ import { IMapping, IErrorObject, IMappingFinalize, IUpload } from '@impler/share
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { useQuery, useMutation } from '@tanstack/react-query';
+import { notifier } from '@util';
 import { useForm } from 'react-hook-form';
 
 interface IUsePhase2Props {
@@ -28,6 +29,9 @@ export function usePhase2({ goNext }: IUsePhase2Props) {
           })),
         });
       },
+      onError(error: IErrorObject) {
+        notifier.showError({ message: error.message, title: error.error });
+      },
     }
   );
   const { isLoading: isMappingFinalizing, mutate: finalizeMapping } = useMutation<
@@ -42,6 +46,9 @@ export function usePhase2({ goNext }: IUsePhase2Props) {
       onSuccess(updatedUploadInfo) {
         setUploadInfo(updatedUploadInfo);
         goNext();
+      },
+      onError(error: IErrorObject) {
+        notifier.showError({ message: error.message, title: error.error });
       },
     }
   );

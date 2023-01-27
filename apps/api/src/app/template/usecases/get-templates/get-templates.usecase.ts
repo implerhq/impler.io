@@ -6,8 +6,8 @@ import { TemplateResponseDto } from '../../dtos/template-response.dto';
 export class GetTemplates {
   constructor(private templateRepository: TemplateRepository) {}
 
-  async execute(projectId: string): Promise<TemplateResponseDto[]> {
-    const templates = await this.templateRepository.find({ projectId });
+  async execute(_projectId: string): Promise<TemplateResponseDto[]> {
+    const templates = await this.templateRepository.find({ _projectId });
 
     return templates.map((template) => ({
       _projectId: template._projectId,
