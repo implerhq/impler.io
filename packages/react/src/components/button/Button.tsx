@@ -60,6 +60,7 @@ export const Button = ({
         break;
       case EventTypesEnum.UPLOAD_COMPLETED:
         if (onUploadComplete) onUploadComplete(data.value);
+        break;
       case EventTypesEnum.CLOSE_WIDGET:
         if (onWidgetClose) onWidgetClose();
         break;
