@@ -2,7 +2,7 @@ import { IErrorObject, IReviewData, IUpload } from '@impler/shared';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { downloadFileFromURL } from '@util';
+import { downloadFileFromURL, notifier } from '@util';
 import { useState } from 'react';
 
 const defaultPage = 1;
@@ -33,6 +33,9 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
           setTotalPages(data.totalPages);
         }
       },
+      onError(error: IErrorObject) {
+        notifier.showError({ message: error.message, title: error.error });
+      },
     }
   );
   const { isLoading: isGetUploadLoading, refetch: getUpload } = useQuery<IUpload, IErrorObject, IUpload, [string]>(
@@ -42,6 +45,9 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
       onSuccess(data) {
         setUploadInfo(data);
         downloadFileFromURL(data.invalidCSVDataFileUrl, `invalid-data-${uploadInfo._id}.csv`);
+      },
+      onError(error: IErrorObject) {
+        notifier.showError({ message: error.message, title: error.error });
       },
       enabled: false,
     }
@@ -58,6 +64,9 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
       onSuccess(uploadData) {
         setUploadInfo(uploadData);
         onNext(uploadData);
+      },
+      onError(error: IErrorObject) {
+        notifier.showError({ message: error.message, title: error.error });
       },
     }
   );
