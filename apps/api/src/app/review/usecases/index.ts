@@ -5,6 +5,7 @@ import { GetFileInvalidData } from './get-file-invalid-data/get-file-invalid-dat
 import { GetUpload } from '@shared/usecases/get-upload/get-upload.usecase';
 import { ConfirmReview } from './confirm-review/confirm-review.usecase';
 import { StartProcess } from './start-process/start-process.usecase';
+import { ReanameFileHeadings } from './rename-file-headings/rename-file-headings.usecase';
 
 export const USE_CASES = [
   DoReview,
@@ -14,5 +15,6 @@ export const USE_CASES = [
   SaveReviewData,
   GetFileInvalidData,
   GetUploadInvalidData,
+  ReanameFileHeadings,
   //
 ];
