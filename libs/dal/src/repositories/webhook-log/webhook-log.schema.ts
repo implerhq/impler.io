@@ -13,6 +13,32 @@ const webhookSchema = new Schema(
     failedReason: String,
     pageNumber: Number,
     responseStatusCode: Number,
+    dataContent: {
+      type: String,
+      get: function (data: any) {
+        try {
+          return JSON.parse(data);
+        } catch (err) {
+          return data;
+        }
+      },
+      set: function (data: any) {
+        return JSON.stringify(data);
+      },
+    },
+    headerContent: {
+      type: String,
+      get: function (data: any) {
+        try {
+          return JSON.parse(data);
+        } catch (err) {
+          return data;
+        }
+      },
+      set: function (data: any) {
+        return JSON.stringify(data);
+      },
+    },
   },
   { ...schemaOptions }
 );
