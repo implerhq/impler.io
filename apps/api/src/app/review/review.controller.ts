@@ -18,6 +18,7 @@ import { StartProcess } from './usecases/start-process/start-process.usecase';
 import { StartProcessCommand } from './usecases/start-process/start-process.command';
 import { PaginationResponseDto } from '@shared/dtos/pagination-response.dto';
 import { Defaults } from '@impler/shared';
+import { ReanameFileHeadings } from './usecases/rename-file-headings/rename-file-headings.usecase';
 
 @Controller('/review')
 @ApiTags('Review')
@@ -28,6 +29,7 @@ export class ReviewController {
     private doReview: DoReview,
     private getUpload: GetUpload,
     private startProcess: StartProcess,
+    private renameFileHeadings: ReanameFileHeadings,
     private saveReviewData: SaveReviewData,
     private getFileInvalidData: GetFileInvalidData,
     private getUploadInvalidData: GetUploadInvalidData
@@ -94,12 +96,19 @@ export class ReviewController {
     const uploadInformation = await this.getUpload.execute(
       GetUploadCommand.create({
         uploadId: _uploadId,
-        select: 'status',
+        select: 'status _validDataFileId _invalidDataFileId',
       })
     );
 
     // throw error if upload information not found
     validateNotFound(uploadInformation, 'upload');
+
+    // rename file headings
+    await this.renameFileHeadings.execute(
+      _uploadId,
+      uploadInformation._validDataFileId,
+      uploadInformation._invalidDataFileId
+    );
 
     // upload files with status reviewing can only be confirmed
     validateUploadStatus(uploadInformation.status as UploadStatusEnum, [UploadStatusEnum.REVIEWING]);

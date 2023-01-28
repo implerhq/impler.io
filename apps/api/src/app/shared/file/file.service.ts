@@ -71,4 +71,12 @@ export class ExcelFileService extends FileService {
       totalRecords: data.length,
     };
   }
+  renameJSONHeaders(jsonData: any[], headings: string[]): Record<string, unknown>[] {
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(jsonData);
+    XLSX.utils.sheet_add_aoa(ws, [headings]);
+    XLSX.utils.book_append_sheet(wb, ws);
+
+    return XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[Defaults.ZERO]]);
+  }
 }
