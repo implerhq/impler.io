@@ -39,6 +39,7 @@ export class ColumnController {
           sequence: columnData.sequence,
           _templateId,
           type: columnData.type,
+          apiResponseKey: columnData.apiResponseKey,
         })
       ),
       _templateId

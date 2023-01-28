@@ -10,6 +10,7 @@ const columnSchema = new Schema(
     isRequired: Boolean,
     isUnique: Boolean,
     regex: String,
+    apiResponseKey: String,
     regexDescription: String,
     selectValues: [String],
     sequence: Number,
