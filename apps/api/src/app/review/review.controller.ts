@@ -103,15 +103,15 @@ export class ReviewController {
     // throw error if upload information not found
     validateNotFound(uploadInformation, 'upload');
 
+    // upload files with status reviewing can only be confirmed
+    validateUploadStatus(uploadInformation.status as UploadStatusEnum, [UploadStatusEnum.REVIEWING]);
+
     // rename file headings
     await this.renameFileHeadings.execute(
       _uploadId,
       uploadInformation._validDataFileId,
       uploadInformation._invalidDataFileId
     );
-
-    // upload files with status reviewing can only be confirmed
-    validateUploadStatus(uploadInformation.status as UploadStatusEnum, [UploadStatusEnum.REVIEWING]);
 
     return this.startProcess.execute(
       StartProcessCommand.create({
