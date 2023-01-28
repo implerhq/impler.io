@@ -105,6 +105,8 @@ export class ProcessFileConsumer extends BaseConsumer {
       _uploadId: data.uploadId,
       callDate: new Date(),
       pageNumber: data.page,
+      dataContent: data as any,
+      headersContent: headers,
     };
     try {
       const response = await axios({
