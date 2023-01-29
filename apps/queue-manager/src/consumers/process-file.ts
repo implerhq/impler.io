@@ -154,7 +154,7 @@ export class ProcessFileConsumer extends BaseConsumer {
   }: IBuildSendDataParameters): ISendData {
     const slicedData = data.slice(
       Math.max((page - DEFAULT_PAGE) * chunkSize, MIN_LIMIT),
-      Math.min((page + DEFAULT_PAGE) * chunkSize, data.length)
+      Math.min(page * chunkSize, data.length)
     );
 
     return {
