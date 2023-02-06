@@ -6,7 +6,9 @@ export interface IAuthenticationData {
     avatar_url: string;
     firstName: string;
     lastName: string;
+    password?: string;
   };
+  validateUniqueEmail?: boolean;
   _invitationId?: string;
   provider?: {
     accessToken: string;
