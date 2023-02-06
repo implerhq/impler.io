@@ -19,9 +19,11 @@ export const APIMessages = {
   PROJECT_WITH_TEMPLATE_MISSING: 'Template not found with provided ProjectId and Template',
   PROJECT_NOT_ASSIGNED: 'Project is not assigned to you',
   USER_NOT_FOUND: 'User is not found',
+  UNIQUE_EMAIL: 'Email address already in use',
 };
 
 export const CONSTANTS = {
+  PASSWORD_SALT: 10,
   AUTH_COOKIE_NAME: 'authentication',
   // eslint-disable-next-line no-magic-numbers
   maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days

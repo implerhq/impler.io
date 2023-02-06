@@ -8,6 +8,7 @@ const userSchema = new Schema(
     firstName: Schema.Types.String,
     lastName: Schema.Types.String,
     email: Schema.Types.String,
+    password: String,
     profilePicture: Schema.Types.String,
     showOnBoarding: Schema.Types.Boolean,
     tokens: [

@@ -4,6 +4,7 @@ import { UserEntity, UserRepository, MemberRepository, MemberEntity } from '@imp
 import { IJwtPayload, MemberStatusEnum } from '@impler/shared';
 import { UserNotFoundException } from '@shared/exceptions/user-not-found.exception';
 import { IAuthenticationData, IStrategyResponse } from '@shared/types/auth.types';
+import { UniqueEmailException } from '@shared/exceptions/unique-email.exception';
 
 @Injectable()
 export class AuthService {
@@ -13,17 +14,23 @@ export class AuthService {
     private memberRepository: MemberRepository
   ) {}
 
-  async authenticate({ profile, provider, _invitationId }: IAuthenticationData): Promise<IStrategyResponse> {
+  async authenticate({
+    profile,
+    provider,
+    _invitationId,
+    validateUniqueEmail,
+  }: IAuthenticationData): Promise<IStrategyResponse> {
     let showAddProject = false;
     let userCreated = false;
     // get or create the user
     let user = await this.userRepository.findOne({ email: profile.email });
+    if (user && validateUniqueEmail) {
+      throw new UniqueEmailException();
+    }
+
     if (!user) {
       const userObj: Partial<UserEntity> = {
-        email: profile.email,
-        firstName: profile.firstName,
-        lastName: profile.lastName,
-        profilePicture: profile.avatar_url,
+        ...profile,
         ...(provider ? { tokens: [provider] } : {}),
       };
       user = await this.userRepository.create(userObj);
