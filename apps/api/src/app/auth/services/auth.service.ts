@@ -1,3 +1,4 @@
+import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserEntity, UserRepository, MemberRepository, MemberEntity } from '@impler/dal';
@@ -5,6 +6,7 @@ import { IJwtPayload, MemberStatusEnum } from '@impler/shared';
 import { UserNotFoundException } from '@shared/exceptions/user-not-found.exception';
 import { IAuthenticationData, IStrategyResponse } from '@shared/types/auth.types';
 import { UniqueEmailException } from '@shared/exceptions/unique-email.exception';
+import { IncorrectLoginCredentials } from '@shared/exceptions/incorrect-login-credentials.exception';
 
 @Injectable()
 export class AuthService {
@@ -48,7 +50,7 @@ export class AuthService {
     if (!member) {
       // invitationId is not valid
       showAddProject = true;
-    } else if (userCreated && member?._id) {
+    } else if (userCreated && member?._id && !member?._userId) {
       // accept invitation or add user to project only first time
       await this.memberRepository.findOneAndUpdate(
         { _id: member._id },
@@ -64,7 +66,33 @@ export class AuthService {
       user,
       userCreated,
       showAddProject,
-      token: await this.getSignedToken(user, member._projectId, member.role),
+      token: await this.getSignedToken(user, member?._projectId, member?.role),
+    };
+  }
+
+  async login(email: string, password: string) {
+    const user = await this.userRepository.findOne({ email });
+    if (!user) {
+      throw new IncorrectLoginCredentials();
+    }
+
+    const doesPasswordMatch = bcrypt.compareSync(password, user.password);
+    if (!doesPasswordMatch) {
+      throw new IncorrectLoginCredentials();
+    }
+
+    let showAddProject = true;
+    const member: MemberEntity = await this.memberRepository.findOne({
+      $or: [{ _userId: user._id }],
+    });
+    if (member) {
+      showAddProject = false;
+    }
+
+    return {
+      user,
+      showAddProject,
+      token: await this.getSignedToken(user, member?._projectId, member?.role),
     };
   }
 

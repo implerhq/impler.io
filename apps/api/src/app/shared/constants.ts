@@ -20,6 +20,7 @@ export const APIMessages = {
   PROJECT_NOT_ASSIGNED: 'Project is not assigned to you',
   USER_NOT_FOUND: 'User is not found',
   UNIQUE_EMAIL: 'Email address already in use',
+  INCORRECT_LOGIN_CREDENTIALS: 'Incorrect email or password provided',
 };
 
 export const CONSTANTS = {

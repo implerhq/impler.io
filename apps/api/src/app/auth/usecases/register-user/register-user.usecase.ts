@@ -18,7 +18,7 @@ export class RegisterUser {
         avatar_url: CONSTANTS.DEFAULT_USER_AVATAR,
         password: bcrypt.hashSync(command.password, CONSTANTS.PASSWORD_SALT),
       },
-      validateUniqueEmail: false,
+      validateUniqueEmail: true,
     });
   }
 }

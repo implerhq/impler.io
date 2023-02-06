@@ -25,4 +25,4 @@ interface IMemberDocument extends MemberEntity, Document {
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export const Member = (models.Upload as Model<IMemberDocument>) || model<IMemberDocument>('Member', memberSchema);
+export const Member = (models.Member as Model<IMemberDocument>) || model<IMemberDocument>('Member', memberSchema);

@@ -12,20 +12,20 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { IJwtPayload } from '@impler/shared';
+import { RegisterUserDto, LoginUserDto } from './dtos';
 import { IStrategyResponse } from '@shared/types/auth.types';
+import { CONSTANTS, COOKIE_CONFIG } from '@shared/constants';
 import { UserSession } from '@shared/framework/user.decorator';
 import { ApiException } from '@shared/exceptions/api.exception';
 import { StrategyUser } from './decorators/strategy-user.decorator';
-import { CONSTANTS, COOKIE_CONFIG } from '@shared/constants';
-import { RegisterUserDto } from './dtos/register-user.dto';
-import { RegisterUser, RegisterUserCommand } from './usecases';
+import { LoginUser, LoginUserCommand, RegisterUser, RegisterUserCommand } from './usecases';
 
 @ApiTags('Auth')
 @Controller('/auth')
 @ApiExcludeController()
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
-  constructor(private registerUser: RegisterUser) {}
+  constructor(private registerUser: RegisterUser, private loginUser: LoginUser) {}
 
   @Post('/register')
   async registerUserAPI(@Body() registerData: RegisterUserDto, @Res({ passthrough: true }) response: Response) {
@@ -39,6 +39,21 @@ export class AuthController {
     );
 
     response.cookie(CONSTANTS.AUTH_COOKIE_NAME, registerationResponse.token, COOKIE_CONFIG);
+
+    return { showAddProject: registerationResponse.showAddProject };
+  }
+
+  @Post('/login')
+  async login(@Body() loginData: LoginUserDto, @Res({ passthrough: true }) response: Response) {
+    const loginResponse = await this.loginUser.execute(
+      LoginUserCommand.create({
+        email: loginData.email,
+        password: loginData.password,
+      })
+    );
+    response.cookie(CONSTANTS.AUTH_COOKIE_NAME, loginResponse.token, COOKIE_CONFIG);
+
+    return { showAddProject: loginResponse.showAddProject };
   }
 
   @Get('/github')
