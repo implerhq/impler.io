@@ -5,6 +5,7 @@ import { INestApplication, ValidationPipe, Logger } from '@nestjs/common';
 import * as compression from 'compression';
 import { NestFactory } from '@nestjs/core';
 import * as bodyParser from 'body-parser';
+import * as cookieParser from 'cookie-parser';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
@@ -51,6 +52,7 @@ export async function bootstrap(expressApp?): Promise<INestApplication> {
     })
   );
 
+  app.use(cookieParser());
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -87,16 +89,12 @@ export async function bootstrap(expressApp?): Promise<INestApplication> {
 
 const corsOptionsDelegate = function (req, callback) {
   const corsOptions = {
-    origin: false as boolean | string | string[],
+    credentials: true,
+    origin: [process.env.FRONT_BASE_URL, process.env.WEB_BASE_URL],
     preflightContinue: false,
     allowedHeaders: ['Content-Type', ACCESS_KEY_NAME, 'sentry-trace', 'baggage'],
     methods: ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   };
 
-  if (['dev', 'test', 'local'].includes(process.env.NODE_ENV)) {
-    corsOptions.origin = '*';
-  } else {
-    corsOptions.origin = [process.env.FRONT_BASE_URL];
-  }
   callback(null, corsOptions);
 };
