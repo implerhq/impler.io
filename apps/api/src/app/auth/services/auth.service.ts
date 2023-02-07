@@ -66,7 +66,11 @@ export class AuthService {
       user,
       userCreated,
       showAddProject,
-      token: await this.getSignedToken(user, member?._projectId, member?.role),
+      token: await this.getSignedToken(
+        { _id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName },
+        member?._projectId,
+        member?.role
+      ),
     };
   }
 
@@ -92,7 +96,11 @@ export class AuthService {
     return {
       user,
       showAddProject,
-      token: await this.getSignedToken(user, member?._projectId, member?.role),
+      token: await this.getSignedToken(
+        { _id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName },
+        member?._projectId,
+        member?.role
+      ),
     };
   }
 
@@ -100,10 +108,19 @@ export class AuthService {
     const user = await this.getUser({ _id: userId });
     if (!user) throw new UnauthorizedException('User not found');
 
-    return this.getSignedToken(user);
+    return this.getSignedToken({
+      _id: user._id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+    });
   }
 
-  async getSignedToken(user: UserEntity, _projectId?: string, role?: string): Promise<string> {
+  async getSignedToken(
+    user: { _id: string; firstName: string; lastName: string; email: string; profilePicture?: string },
+    _projectId?: string,
+    role?: string
+  ): Promise<string> {
     return (
       `Bearer ` +
       this.jwtService.sign(

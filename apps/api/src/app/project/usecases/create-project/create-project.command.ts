@@ -6,10 +6,6 @@ export class CreateProjectCommand extends BaseCommand {
   @IsString()
   name: string;
 
-  @IsDefined()
-  @IsString()
-  code: string;
-
   @IsOptional()
   @IsString()
   authHeaderName: string;

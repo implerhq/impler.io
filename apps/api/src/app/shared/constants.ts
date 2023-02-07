@@ -21,6 +21,7 @@ export const APIMessages = {
   USER_NOT_FOUND: 'User is not found',
   UNIQUE_EMAIL: 'Email address already in use',
   INCORRECT_LOGIN_CREDENTIALS: 'Incorrect email or password provided',
+  OPERATION_NOT_ALLOWED: `You're not allowed to perform this action.`,
 };
 
 export const CONSTANTS = {

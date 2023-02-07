@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDefined, IsOptional, IsString } from 'class-validator';
+import { IsDefined, IsString } from 'class-validator';
 
 export class ProjectResponseDto {
   @ApiPropertyOptional({
@@ -15,18 +15,4 @@ export class ProjectResponseDto {
   @IsString()
   @IsDefined()
   name: string;
-
-  @ApiProperty({
-    description: 'Code of the project',
-  })
-  @IsString()
-  @IsDefined()
-  code: string;
-
-  @ApiPropertyOptional({
-    description: 'Name of authentication header to sent along the request',
-  })
-  @IsString()
-  @IsOptional()
-  authHeaderName?: string;
 }

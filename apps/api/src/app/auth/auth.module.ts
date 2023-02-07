@@ -31,7 +31,7 @@ if (process.env.GITHUB_OAUTH_CLIENT_ID) {
   ],
   controllers: [AuthController],
   providers: [AuthService, ...AUTH_STRATEGIES, ...USE_CASES],
-  exports: [],
+  exports: [AuthService],
 })
 export class AuthModule implements NestModule {
   public configure(consumer: MiddlewareConsumer) {

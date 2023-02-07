@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { ProjectRepository } from '@impler/dal';
+import { ProjectRepository, MemberRepository } from '@impler/dal';
+import { OperationNotAllowedException } from '@shared/exceptions/operation-no-allowed.exception';
 
 @Injectable()
 export class DeleteProject {
-  constructor(private projectRepository: ProjectRepository) {}
+  constructor(private projectRepository: ProjectRepository, private memberRepository: MemberRepository) {}
 
-  async execute(id: string) {
-    return this.projectRepository.delete({ _id: id });
+  async execute(_projectId: string, _userId: string) {
+    const userMember = await this.memberRepository.findOne({ _projectId, _userId });
+    if (!userMember) throw new OperationNotAllowedException();
+
+    return this.projectRepository.delete({ _id: _projectId });
   }
 }
