@@ -3,9 +3,8 @@ import { ApiOperation, ApiTags, ApiOkResponse } from '@nestjs/swagger';
 import { Body, Controller, Delete, Get, Param, Post, Put, Res } from '@nestjs/common';
 
 import { IJwtPayload } from '@impler/shared';
-import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 import { UserSession } from '@shared/framework/user.decorator';
-import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
+import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 
 import { ProjectResponseDto } from './dtos/project-response.dto';
 import { CreateProjectRequestDto } from './dtos/create-project-request.dto';
@@ -112,12 +111,10 @@ export class ProjectController {
   @ApiOkResponse({
     type: ProjectResponseDto,
   })
-  async deleteProject(@Param('projectId', ValidateMongoId) projectId: string): Promise<ProjectResponseDto> {
-    const document = await this.deleteProjectUsecase.execute(projectId);
-    if (!document) {
-      throw new DocumentNotFoundException('Project', projectId);
-    }
-
-    return document;
+  async deleteProject(
+    @UserSession() user: IJwtPayload,
+    @Param('projectId', ValidateMongoId) projectId: string
+  ): Promise<ProjectResponseDto> {
+    return await this.deleteProjectUsecase.execute(projectId, user._id);
   }
 }
