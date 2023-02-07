@@ -47,7 +47,6 @@ export class ProjectController {
   createProject(@Body() body: CreateProjectRequestDto): Promise<ProjectResponseDto> {
     return this.createProjectUsecase.execute(
       CreateProjectCommand.create({
-        code: body.code,
         name: body.name,
         authHeaderName: body.authHeaderName,
       })

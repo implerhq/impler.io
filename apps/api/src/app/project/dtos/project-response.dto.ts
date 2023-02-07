@@ -16,13 +16,6 @@ export class ProjectResponseDto {
   @IsDefined()
   name: string;
 
-  @ApiProperty({
-    description: 'Code of the project',
-  })
-  @IsString()
-  @IsDefined()
-  code: string;
-
   @ApiPropertyOptional({
     description: 'Name of authentication header to sent along the request',
   })
