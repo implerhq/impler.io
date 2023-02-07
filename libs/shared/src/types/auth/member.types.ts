@@ -14,3 +14,5 @@ export interface IMemberInvite {
   answerDate?: Date;
   _inviterId: string;
 }
+
+export const AllowedEditProjectRoles = [MemberRoleEnum.ADMIN];

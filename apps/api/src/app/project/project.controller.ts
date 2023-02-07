@@ -94,18 +94,15 @@ export class ProjectController {
     type: ProjectResponseDto,
   })
   async updateProject(
+    @UserSession() user: IJwtPayload,
     @Body() body: UpdateProjectRequestDto,
     @Param('projectId', ValidateMongoId) projectId: string
   ): Promise<ProjectResponseDto> {
-    const document = await this.updateProjectUsecase.execute(
+    return this.updateProjectUsecase.execute(
       UpdateProjectCommand.create({ name: body.name, authHeaderName: body.authHeaderName }),
-      projectId
+      projectId,
+      user._id
     );
-    if (!document) {
-      throw new DocumentNotFoundException('Project', projectId);
-    }
-
-    return document;
   }
 
   @Delete(':projectId')
