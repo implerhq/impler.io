@@ -42,8 +42,8 @@ export class ProjectController {
   @ApiOkResponse({
     type: [ProjectResponseDto],
   })
-  getProjects(): Promise<ProjectResponseDto[]> {
-    return this.getProjectsUsecase.execute();
+  getProjects(@UserSession() user: IJwtPayload): Promise<ProjectResponseDto[]> {
+    return this.getProjectsUsecase.execute(user._id);
   }
 
   @Post('')
