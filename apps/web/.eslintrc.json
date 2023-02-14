@@ -1,0 +1,15 @@
+{
+  "extends": ["next/core-web-vitals", "../../.eslintrc.js"],
+  "rules": {
+    "func-names": "off",
+    "@typescript-eslint/naming-convention": [
+      "error",
+      {
+        "filter": "_",
+        "selector": "variableLike",
+        "leadingUnderscore": "allow",
+        "format": ["PascalCase", "camelCase", "UPPER_CASE"]
+      }
+    ]
+  }
+}
