@@ -1,11 +1,10 @@
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
+import { IJwtPayload } from '@impler/shared';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserEntity, UserRepository, MemberRepository, MemberEntity } from '@impler/dal';
-import { IJwtPayload, MemberStatusEnum } from '@impler/shared';
 import { UserNotFoundException } from '@shared/exceptions/user-not-found.exception';
 import { IAuthenticationData, IStrategyResponse } from '@shared/types/auth.types';
-import { UniqueEmailException } from '@shared/exceptions/unique-email.exception';
 import { IncorrectLoginCredentials } from '@shared/exceptions/incorrect-login-credentials.exception';
 
 @Injectable()
@@ -16,19 +15,11 @@ export class AuthService {
     private memberRepository: MemberRepository
   ) {}
 
-  async authenticate({
-    profile,
-    provider,
-    _invitationId,
-    validateUniqueEmail,
-  }: IAuthenticationData): Promise<IStrategyResponse> {
-    let showAddProject = false;
+  async authenticate({ profile, provider }: IAuthenticationData): Promise<IStrategyResponse> {
+    const showAddProject = false;
     let userCreated = false;
     // get or create the user
     let user = await this.userRepository.findOne({ email: profile.email });
-    if (user && validateUniqueEmail) {
-      throw new UniqueEmailException();
-    }
 
     if (!user) {
       const userObj: Partial<UserEntity> = {
@@ -42,35 +33,16 @@ export class AuthService {
       throw new UserNotFoundException();
     }
 
-    // update member or get member
-    const member: MemberEntity = await this.memberRepository.findOne({
-      $or: [{ _id: _invitationId }, { 'invite.email': profile.email }],
-    });
-
-    if (!member) {
-      // invitationId is not valid
-      showAddProject = true;
-    } else if (userCreated && member?._id && !member?._userId) {
-      // accept invitation or add user to project only first time
-      await this.memberRepository.findOneAndUpdate(
-        { _id: member._id },
-        {
-          _userId: user._id,
-          'invite.answerDate': new Date(),
-          memberStatus: MemberStatusEnum.ACTIVE,
-        }
-      );
-    }
-
     return {
       user,
       userCreated,
       showAddProject,
-      token: await this.getSignedToken(
-        { _id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName },
-        member?._projectId,
-        member?.role
-      ),
+      token: await this.getSignedToken({
+        _id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+      }),
     };
   }
 

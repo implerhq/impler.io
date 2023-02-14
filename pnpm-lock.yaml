@@ -108,6 +108,7 @@ importers:
       passport-oauth2: ^1.6.1
       rimraf: ^3.0.2
       rxjs: ^7.8.0
+      source-map-support: ^0.5.21
       ts-loader: ^9.4.1
       ts-node: ^10.9.1
       tsconfig-paths: ^4.1.0
@@ -146,6 +147,7 @@ importers:
       passport-oauth2: 1.6.1
       rimraf: 3.0.2
       rxjs: 7.8.0
+      source-map-support: 0.5.21
       xlsx: 0.18.5
     devDependencies:
       '@nestjs/cli': 9.1.5
