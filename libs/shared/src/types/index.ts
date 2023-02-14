@@ -3,3 +3,4 @@ export * from './upload/upload.types';
 export * from './webhook-log/webhook-log.types';
 export * from './common/common.types';
 export * from './widget/widget.types';
+export * from './auth';
