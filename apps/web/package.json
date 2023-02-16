@@ -10,9 +10,16 @@
     "build": "next build",
     "start:static:build": " next start -p 4200",
     "lint": "next lint",
-    "prebuild": "rimraf .next"
+    "prebuild": "rimraf .next",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/server": "^11.10.0",
+    "@mantine/core": "^5.10.3",
+    "@mantine/hooks": "^5.10.3",
+    "@mantine/next": "^5.10.3",
     "@next/font": "13.1.1",
     "@types/node": "18.13.0",
     "@types/react": "^18.0.21",
@@ -25,6 +32,11 @@
     "typescript": "4.9.5"
   },
   "devDependencies": {
-    "rimraf": "^3.0.2"
+    "@storybook/builder-webpack5": "^6.5.16",
+    "@storybook/manager-webpack5": "^6.5.16",
+    "@storybook/react": "^6.5.13",
+    "rimraf": "^3.0.2",
+    "storybook-dark-mode": "^2.0.6",
+    "tsconfig-paths-webpack-plugin": "^4.0.0"
   }
 }
