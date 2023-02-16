@@ -18,7 +18,8 @@
     "paths": {
       "@config": ["./config/index.ts"],
       "@types": ["./types/index.ts"],
-      "@assets/*": ["./assets/*"]
+      "@assets/*": ["./assets/*"],
+      "@ui/*": ["./design-system/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

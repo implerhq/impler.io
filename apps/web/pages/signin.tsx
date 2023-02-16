@@ -1,12 +1,11 @@
 import Head from 'next/head';
-import { CONSTANTS } from 'config';
 import { GetServerSideProps } from 'next';
-
+import { Signin } from 'components/signin';
 interface SigninProps {
   API_BASE_URL: string;
 }
 
-export default function Signin({ API_BASE_URL }: SigninProps) {
+export default function SigninPage({ API_BASE_URL }: SigninProps) {
   return (
     <>
       <Head>
@@ -15,9 +14,7 @@ export default function Signin({ API_BASE_URL }: SigninProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
-        <a href={API_BASE_URL + CONSTANTS.GITHUB_LOGIN_URL}>Signin with Github</a>
-      </main>
+      <Signin API_BASE_URL={API_BASE_URL} />
     </>
   );
 }
