@@ -9,3 +9,4 @@ export * from './repositories/mapping';
 export * from './repositories/webhook-log';
 export * from './repositories/user';
 export * from './repositories/member';
+export * from './repositories/flow';

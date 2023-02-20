@@ -96,6 +96,7 @@ importers:
       class-validator: ^0.13.2
       compression: ^1.7.4
       cookie-parser: ^1.4.6
+      docker-names: ^1.2.1
       dotenv: ^16.0.2
       envalid: ^7.3.1
       fast-csv: ^4.3.6
@@ -137,6 +138,7 @@ importers:
       class-validator: 0.13.2
       compression: 1.7.4
       cookie-parser: 1.4.6
+      docker-names: 1.2.1
       dotenv: 16.0.2
       envalid: 7.3.1
       fast-csv: 4.3.6
@@ -14620,6 +14622,10 @@ packages:
     engines: {node: '>=6'}
     dependencies:
       '@leichtgewicht/ip-codec': 2.0.4
+    dev: false
+
+  /docker-names/1.2.1:
+    resolution: {integrity: sha512-uh42tvWBp10fnMyJ9z0YL9kql+iolxEnQ+pGZANj+gcg/N2NxjrdHbMXT2Y2Y07A8Jf7KJp/6LkElPCfukCdWg==}
     dev: false
 
   /doctrine/2.1.0:

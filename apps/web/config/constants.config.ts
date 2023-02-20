@@ -1,5 +1,5 @@
 export const CONSTANTS = {
-  GITHUB_LOGIN_URL: '/auth/github',
+  GITHUB_LOGIN_URL: '/v1/auth/github',
 };
 
 export const VARIABLES = {
