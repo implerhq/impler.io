@@ -11,6 +11,7 @@ import { ReviewModule } from './app/review/review.module';
 import { CommonModule } from './app/common/common.module';
 import { HealthModule } from 'app/health/health.module';
 import { AuthModule } from './app/auth/auth.module';
+import { FlowModule } from './app/flow/flow.module';
 
 const modules: Array<Type | DynamicModule | Promise<DynamicModule> | ForwardReference> = [
   ProjectModule,
@@ -23,6 +24,7 @@ const modules: Array<Type | DynamicModule | Promise<DynamicModule> | ForwardRefe
   CommonModule,
   HealthModule,
   AuthModule,
+  FlowModule,
 ];
 
 const providers = [];
