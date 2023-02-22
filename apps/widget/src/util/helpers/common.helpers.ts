@@ -30,3 +30,10 @@ export function downloadFileFromURL(url: string, name: string) {
 
   saveAs(url, name);
 }
+
+export function getFileNameFromUrl(url: string) {
+  if (!isValidHttpUrl(url)) return '';
+  const formedUrl = new URL(url);
+
+  return formedUrl.pathname.replace(/\/\w+\//gm, '');
+}

@@ -5,8 +5,9 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAPIState } from '@store/api.context';
 import { IErrorObject, IOption, ITemplate, IUpload } from '@impler/shared';
 import { useAppState } from '@store/app.context';
-import { downloadFileFromURL, notifier, ParentWindow } from '@util';
+import { downloadFileFromURL, getFileNameFromUrl, notifier, ParentWindow } from '@util';
 import { IFormvalues, IUploadValues } from '@types';
+import { variables } from '@config';
 
 interface IUsePhase1Props {
   goNext: () => void;
@@ -15,7 +16,6 @@ interface IUsePhase1Props {
 export function usePhase1({ goNext }: IUsePhase1Props) {
   const { api } = useAPIState();
   const { setUploadInfo } = useAppState();
-  const [selectedTemplate, setSelectedTemplate] = useState<ITemplate>();
   const [templates, setTemplates] = useState<IOption[]>([]);
   const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
   const { projectId, template, authHeaderValue, extra } = useImplerState();
@@ -50,12 +50,12 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
       },
     }
   );
-  const { mutate: getSignedUrl } = useMutation<string, IErrorObject, string>(
+  const { mutate: getSignedUrl } = useMutation<string, IErrorObject, string[]>(
     ['getSignedUrl'],
-    (key: any) => api.getSignedUrl(key),
+    ([fileUrl]: string[]) => api.getSignedUrl(getFileNameFromUrl(fileUrl)),
     {
-      onSuccess(signedUrl) {
-        downloadFileFromURL(signedUrl, `${selectedTemplate ? selectedTemplate.code + '' : ''}sample.csv`);
+      onSuccess(signedUrl, queryVariables) {
+        downloadFileFromURL(signedUrl, queryVariables[variables.firstIndex]);
       },
       onError(error: IErrorObject) {
         notifier.showError({ title: error.error, message: error.message });
@@ -89,13 +89,9 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
         (templateItem) => templateItem.code === template || templateItem._id === template
       );
     }
-    setSelectedTemplate(foundTemplate);
 
     if (foundTemplate && foundTemplate.sampleFileUrl) {
-      // construct the URL and get the file name
-      const url = new URL(foundTemplate.sampleFileUrl);
-      const fileName = url.pathname.replace(/\/\w+\//gm, '');
-      getSignedUrl(fileName);
+      getSignedUrl([foundTemplate.sampleFileUrl, foundTemplate.name + ' (sample).csv']);
     } else if (foundTemplate && !foundTemplate.sampleFileUrl) notifier.showError('INCOMPLETE_TEMPLATE');
     else notifier.showError('TEMPLATE_NOT_FOUND');
     setIsDownloadInProgress(false);
