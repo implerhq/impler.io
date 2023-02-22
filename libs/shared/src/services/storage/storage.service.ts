@@ -9,6 +9,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { FileNotExistError } from '../../errors/file-not-exist.error';
 import { Defaults } from '../../utils';
+import { FileService } from '../file/file.service';
 
 export interface IFilePath {
   path: string;
@@ -47,6 +48,7 @@ export class S3StorageService implements StorageService {
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     },
   });
+  private fileService = new FileService();
 
   constructor() {
     const command = new ListBucketsCommand({});
@@ -61,6 +63,7 @@ export class S3StorageService implements StorageService {
   }
 
   async uploadFile(key: string, file: Buffer, contentType: string, isPublic = false): Promise<PutObjectCommandOutput> {
+    this.fileService.putFile(key, file);
     const command = new PutObjectCommand({
       Bucket: process.env.S3_BUCKET_NAME,
       Key: key,
@@ -74,6 +77,10 @@ export class S3StorageService implements StorageService {
 
   async getFileContent(key: string, encoding = 'utf8' as BufferEncoding): Promise<string> {
     try {
+      const file = this.fileService.getFile(key);
+      if (file) {
+        return file.toString(encoding);
+      }
       const command = new GetObjectCommand({
         Bucket: process.env.S3_BUCKET_NAME,
         Key: key,
@@ -90,6 +97,7 @@ export class S3StorageService implements StorageService {
   }
 
   async deleteFile(key: string): Promise<void> {
+    this.fileService.deleteFile(key);
     const command = new DeleteObjectCommand({
       Bucket: process.env.S3_BUCKET_NAME,
       Key: key,
