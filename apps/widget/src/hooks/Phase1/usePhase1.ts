@@ -50,9 +50,9 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
       },
     }
   );
-  const { mutate: getSignedUrl } = useMutation<string, IErrorObject, string[]>(
+  const { mutate: getSignedUrl } = useMutation<string, IErrorObject, [string, string]>(
     ['getSignedUrl'],
-    ([fileUrl]: string[]) => api.getSignedUrl(getFileNameFromUrl(fileUrl)),
+    ([fileUrl]) => api.getSignedUrl(getFileNameFromUrl(fileUrl)),
     {
       onSuccess(signedUrl, queryVariables) {
         downloadFileFromURL(signedUrl, queryVariables[variables.firstIndex]);
