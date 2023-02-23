@@ -10,7 +10,7 @@ import {
   UploadRepository,
 } from '@impler/dal';
 import { S3StorageService, StorageService } from '@impler/shared/dist/services/storage';
-import { CSVFileService } from './file/file.service';
+import { CSVFileService, ExcelFileService } from './file/file.service';
 import { FileNameService } from './file/name.service';
 
 const DAL_MODELS = [
@@ -22,7 +22,7 @@ const DAL_MODELS = [
   MappingRepository,
   CommonRepository,
 ];
-const FILE_SERVICES = [CSVFileService, FileNameService];
+const FILE_SERVICES = [CSVFileService, FileNameService, ExcelFileService];
 
 const dalService = new DalService();
 

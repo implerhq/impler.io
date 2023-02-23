@@ -4,6 +4,7 @@ export interface ISendDataParameters {
   data: ISendData;
   url: string;
   method: 'POST';
+  headers?: Record<string, string>;
 }
 export interface IBuildSendDataParameters {
   data: any[];

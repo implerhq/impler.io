@@ -2,16 +2,15 @@ import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiSecurity } from '@nestjs/swagger';
 import { ACCESS_KEY_NAME } from '@impler/shared';
 import { APIKeyGuard } from '@shared/framework/auth.gaurd';
-import { ValidRequestDto } from './dtos/valid.dto';
-import { ValidRequestCommand } from './usecases/valid-request/valid-request.command';
-import { ValidRequest } from './usecases/valid-request/valid-request.usecase';
+import { ValidRequestDto, SignedUrlDto } from './dtos';
+import { ValidRequestCommand, GetSignedUrl, ValidRequest } from './usecases';
 
 @Controller('/common')
 @ApiTags('Common')
 @ApiSecurity(ACCESS_KEY_NAME)
 @UseGuards(APIKeyGuard)
 export class CommonController {
-  constructor(private validRequest: ValidRequest) {}
+  constructor(private validRequest: ValidRequest, private getSignedUrl: GetSignedUrl) {}
 
   @Post('/valid')
   @ApiOperation({
@@ -24,5 +23,13 @@ export class CommonController {
         template: body.template,
       })
     );
+  }
+
+  @Post('/signed-url')
+  @ApiOperation({
+    summary: 'Get signed url for the filename',
+  })
+  async getSignedUrlRoute(@Body() body: SignedUrlDto): Promise<string> {
+    return this.getSignedUrl.execute(body.key);
   }
 }

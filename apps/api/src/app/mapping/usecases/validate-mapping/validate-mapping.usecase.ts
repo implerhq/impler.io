@@ -31,8 +31,9 @@ export class ValidateMapping {
     if (!isAllHeadingsAreValid) throw new BadRequestException(`Mapping data contains invalid columnHeading values`);
 
     // check if mapping data has required columns
+    const columnEntityIds = command.filter((item) => !!item.columnHeading).map((item) => item._columnId);
     for (const columnEntity of columnEntities) {
-      if (columnEntity.isRequired && !columnHeadings.includes(columnEntity.name)) {
+      if (columnEntity.isRequired && !columnEntityIds.includes(columnEntity._id)) {
         throw new BadRequestException(`${columnEntity.name} is required`);
       }
     }

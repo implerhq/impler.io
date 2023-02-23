@@ -8,7 +8,14 @@ import {
   QueuesEnum,
 } from '@impler/shared';
 import { StorageService } from '@impler/shared/dist/services/storage';
-import { FileEntity, UploadRepository, TemplateRepository, WebhookLogRepository, WebhookLogEntity } from '@impler/dal';
+import {
+  FileEntity,
+  UploadRepository,
+  TemplateRepository,
+  WebhookLogRepository,
+  WebhookLogEntity,
+  ProjectRepository,
+} from '@impler/dal';
 import { BaseConsumer } from './base.consumer';
 import { getStorageServiceClass } from '../helpers/storage.helper';
 import { publishToQueue } from '../bootstrap';
@@ -25,6 +32,7 @@ const DEFAULT_PAGE = 1;
 export class ProcessFileConsumer extends BaseConsumer {
   private templateRepository: TemplateRepository = new TemplateRepository();
   private uploadRepository: UploadRepository = new UploadRepository();
+  private projectRepository: ProjectRepository = new ProjectRepository();
   private webhookLogRepository: WebhookLogRepository = new WebhookLogRepository();
   private storageService: StorageService = getStorageServiceClass();
 
@@ -65,7 +73,12 @@ export class ProcessFileConsumer extends BaseConsumer {
         extra: cachedData.extra,
       });
 
-      const response = await this.makeApiCall({ data: sendData, method: 'POST', url: cachedData.callbackUrl });
+      const headers =
+        cachedData.authHeaderName && cachedData.authHeaderValue
+          ? { [cachedData.authHeaderName]: cachedData.authHeaderValue }
+          : null;
+
+      const response = await this.makeApiCall({ data: sendData, method: 'POST', url: cachedData.callbackUrl, headers });
       this.makeResponseEntry(response);
 
       const nextCachedData = this.getNextData({
@@ -87,17 +100,20 @@ export class ProcessFileConsumer extends BaseConsumer {
     }
   }
 
-  private async makeApiCall({ data, method, url }: ISendDataParameters): Promise<Partial<WebhookLogEntity>> {
+  private async makeApiCall({ data, method, url, headers }: ISendDataParameters): Promise<Partial<WebhookLogEntity>> {
     const baseResponse: Partial<WebhookLogEntity> = {
       _uploadId: data.uploadId,
       callDate: new Date(),
       pageNumber: data.page,
+      dataContent: data as any,
+      headersContent: headers,
     };
     try {
       const response = await axios({
         method,
         url,
         data,
+        headers: headers || {},
       });
 
       baseResponse.responseStatusCode = response.status;
@@ -138,7 +154,7 @@ export class ProcessFileConsumer extends BaseConsumer {
   }: IBuildSendDataParameters): ISendData {
     const slicedData = data.slice(
       Math.max((page - DEFAULT_PAGE) * chunkSize, MIN_LIMIT),
-      Math.min((page + DEFAULT_PAGE) * chunkSize, data.length)
+      Math.min(page * chunkSize, data.length)
     );
 
     return {
@@ -206,7 +222,11 @@ export class ProcessFileConsumer extends BaseConsumer {
     if (!uploadata._validDataFileId && !uploadata._invalidDataFileId) return null;
 
     // Get template information
-    const templateData = await this.templateRepository.findById(uploadata._templateId, 'callbackUrl chunkSize code');
+    const templateData = await this.templateRepository.findById(
+      uploadata._templateId,
+      '_projectId callbackUrl chunkSize code'
+    );
+    const projectData = await this.projectRepository.findById(templateData._projectId, 'authHeaderName');
 
     return {
       _templateId: uploadata._templateId,
@@ -216,6 +236,8 @@ export class ProcessFileConsumer extends BaseConsumer {
       isInvalidRecords: uploadata._validDataFileId ? false : true,
       invalidDataFilePath: (uploadata._invalidDataFileId as unknown as FileEntity)?.path,
       page: 1,
+      authHeaderName: projectData.authHeaderName,
+      authHeaderValue: uploadata.authHeaderValue,
       processInvalidRecords: uploadata.processInvalidRecords,
       validDataFilePath: (uploadata._validDataFileId as unknown as FileEntity)?.path,
       fileName: (uploadata._uploadedFileId as unknown as FileEntity)?.originalName,

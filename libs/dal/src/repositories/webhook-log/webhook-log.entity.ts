@@ -12,4 +12,8 @@ export class WebhookLogEntity {
   pageNumber: number;
 
   responseStatusCode: number;
+
+  dataContent?: Record<string, unknown>;
+
+  headersContent?: Record<string, unknown>;
 }
