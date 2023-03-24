@@ -17,12 +17,7 @@ export interface IFilePath {
 }
 
 export abstract class StorageService {
-  abstract uploadFile(
-    key: string,
-    file: Buffer | string,
-    contentType: string,
-    isPublic?: boolean
-  ): Promise<PutObjectCommandOutput>;
+  abstract uploadFile(key: string, file: Buffer | string, contentType: string): Promise<PutObjectCommandOutput>;
   abstract getFileContent(key: string, encoding?: BufferEncoding): Promise<string>;
   abstract deleteFile(key: string): Promise<void>;
   abstract isConnected(): boolean;
@@ -62,12 +57,11 @@ export class S3StorageService implements StorageService {
       });
   }
 
-  async uploadFile(key: string, file: Buffer, contentType: string, isPublic = false): Promise<PutObjectCommandOutput> {
+  async uploadFile(key: string, file: Buffer, contentType: string): Promise<PutObjectCommandOutput> {
     const command = new PutObjectCommand({
       Bucket: process.env.S3_BUCKET_NAME,
       Key: key,
       Body: file,
-      ACL: isPublic ? 'public-read' : 'private',
       ContentType: contentType,
     });
 
