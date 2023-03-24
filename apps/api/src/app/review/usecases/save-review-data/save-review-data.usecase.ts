@@ -57,15 +57,15 @@ export class SaveReviewData {
     const invalidCSVDataContent = XLSX.utils.sheet_to_csv(ws, { FS: ',' });
 
     const invalidCSVFilePath = this.fileNameService.getInvalidCSVDataFilePath(_uploadId);
-    await this.storeFile(invalidCSVFilePath, invalidCSVDataContent, true);
+    await this.storeFile(invalidCSVFilePath, invalidCSVDataContent);
     const invalidCSVFileName = this.fileNameService.getInvalidCSVDataFileName();
     const entry = await this.makeFileEntry(invalidCSVFileName, invalidCSVFilePath);
 
     return entry._id;
   }
 
-  private async storeFile(invalidFilePath: string, data: string, isPublic = false) {
-    await this.storageService.uploadFile(invalidFilePath, data, FileMimeTypesEnum.JSON, isPublic);
+  private async storeFile(invalidFilePath: string, data: string) {
+    await this.storageService.uploadFile(invalidFilePath, data, FileMimeTypesEnum.JSON);
   }
 
   private async makeFileEntry(fileName: string, filePath: string) {
