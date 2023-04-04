@@ -1,18 +1,31 @@
 import useStyles from './Button.styles';
 import { Button as MantineButton, MantineSize } from '@mantine/core';
 
+export type ButtonColors = 'blue' | 'white';
+export type ButtonVariants = 'filled' | 'outline';
+
 interface ButtonProps {
   leftIcon?: any;
   rightIcon?: any;
-  colorScheme?: 'blue';
+  color?: ButtonColors;
   children?: any;
   size?: MantineSize;
   component?: 'button' | 'a';
+  variant?: ButtonVariants;
   href?: string;
 }
 
-export function Button({ children, leftIcon, rightIcon, href, component = 'button', size = 'md' }: ButtonProps) {
-  const { classes } = useStyles();
+export function Button({
+  children,
+  leftIcon,
+  rightIcon,
+  href,
+  component = 'button',
+  size = 'sm',
+  color = 'blue',
+  variant = 'filled',
+}: ButtonProps) {
+  const { classes } = useStyles({ variant, color });
 
   return (
     <MantineButton

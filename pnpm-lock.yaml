@@ -258,6 +258,7 @@ importers:
       '@storybook/builder-webpack5': ^6.5.16
       '@storybook/manager-webpack5': ^6.5.16
       '@storybook/react': ^6.5.13
+      '@storybook/theming': ^7.0.2
       '@types/node': 18.13.0
       '@types/react': ^18.0.21
       '@types/react-dom': ^18.0.6
@@ -293,6 +294,7 @@ importers:
       '@storybook/builder-webpack5': 6.5.16_thg4xgkqzam43wvb4m4gitomxu
       '@storybook/manager-webpack5': 6.5.16_thg4xgkqzam43wvb4m4gitomxu
       '@storybook/react': 6.5.13_nsojkcuzyxevfv6vk2xlte3i2q
+      '@storybook/theming': 7.0.2_biqbaboplfbrettd7655fr4n2y
       rimraf: 3.0.2
       storybook-dark-mode: 2.0.6_biqbaboplfbrettd7655fr4n2y
       tsconfig-paths-webpack-plugin: 4.0.0
@@ -4770,7 +4772,6 @@ packages:
       react: '>=16.8.0'
     dependencies:
       react: 18.2.0
-    dev: false
 
   /@emotion/utils/1.2.0:
     resolution: {integrity: sha512-sn3WH53Kzpw8oQ5mgMmIzzyAaH2ZqFEbozVVBSYp538E06OSE6ytOp7pRAjNQR+Q/orwqdQYJSe2m3hCOeznkw==}
@@ -8662,6 +8663,12 @@ packages:
       global: 4.4.0
     dev: true
 
+  /@storybook/client-logger/7.0.2:
+    resolution: {integrity: sha512-rv7W2BhzIQHbFpUM5/CP/acS6T5lTmaxT0MbZ9n+9h++9QQU/cFOdkZgSUbLVAb1AeUGoLsk0HYzcqPpV35Xsw==}
+    dependencies:
+      '@storybook/global': 5.0.0
+    dev: true
+
   /@storybook/components/6.5.13_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-6Hhx70JK5pGfKCkqMU4yq/BBH+vRTmzj7tZKfPwba+f8VmTMoOr/2ysTQFRtXryiHB6Z15xBYgfq5x2pIwQzLQ==}
     peerDependencies:
@@ -10057,6 +10064,20 @@ packages:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       regenerator-runtime: 0.13.11
+    dev: true
+
+  /@storybook/theming/7.0.2_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-c9sE+QAZNbopPvLiJ6BMxBERfTaq1ATyIri97FBvTucuSotNXw7X5q+ip5/nrCOPZuvK2f5wF4DRyD2HnB/rIQ==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@emotion/use-insertion-effect-with-fallbacks': 1.0.0_react@18.2.0
+      '@storybook/client-logger': 7.0.2
+      '@storybook/global': 5.0.0
+      memoizerific: 1.11.3
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
     dev: true
 
   /@storybook/ui/6.5.13_biqbaboplfbrettd7655fr4n2y:

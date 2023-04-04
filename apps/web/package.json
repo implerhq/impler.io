@@ -37,6 +37,7 @@
     "@storybook/builder-webpack5": "^6.5.16",
     "@storybook/manager-webpack5": "^6.5.16",
     "@storybook/react": "^6.5.13",
+    "@storybook/theming": "^7.0.2",
     "rimraf": "^3.0.2",
     "storybook-dark-mode": "^2.0.6",
     "tsconfig-paths-webpack-plugin": "^4.0.0"
