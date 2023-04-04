@@ -21,8 +21,12 @@ export const colors = {
   TXTDark: '#FFFFFF',
   TXTLight: '#000000',
 
+  TXTSecondaryDark: '#888888',
+
   StrokeDark: '#52555E',
   StrokeLight: '#CCCCCC',
+
+  StrokeSecondaryDark: '#707070',
 
   white: '#FFFFFF',
   black: '#000000',
