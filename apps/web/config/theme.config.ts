@@ -50,10 +50,18 @@ export const strokes = {
   xl: '5px',
 };
 
+export const IconSizes = {
+  xs: 12,
+  sm: 16,
+  md: 20,
+  lg: 24,
+  xl: 32,
+};
+
 export const mantineConfig: MantineThemeOverride = {
   lineHeight: '17px',
   radius: { md: 7, xl: 30 },
-  spacing: { xs: 15, sm: 20, md: 25, lg: 30, xl: 40 },
+  spacing: { xs: 12, sm: 16, md: 20, lg: 24, xl: 32 },
   shadows: {
     sm: shadows.light,
     md: shadows.medium,
