@@ -18,8 +18,8 @@ const getRootOutlineStyles = (theme: MantineTheme, color: ButtonColors = 'blue')
   border: `1px solid ${theme.colorScheme === 'dark' ? colors.white : colors.black}`,
   color: theme.colorScheme === 'dark' ? colors.white : colors.black,
   ['&:hover']: {
-    backgroundColor: colors[color],
-    color: color === 'white' ? colors.black : colors.white,
+    backgroundColor: theme.colorScheme === 'light' && color === 'white' ? colors.black : colors[color],
+    color: theme.colorScheme === 'dark' && color === 'white' ? colors.black : colors.white,
     border: `1px solid ${color === 'white' ? colors.black : colors[color]}`,
   },
 });
