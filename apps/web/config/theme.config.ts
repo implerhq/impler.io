@@ -5,6 +5,7 @@ export const colors = {
   success: '#17B551',
   warning: '#F9931F',
   blue: '#5463FF',
+  blueDark: '#3D49C9',
   green: '#00B3B6',
   yellow: '#F7B801',
 
@@ -20,8 +21,12 @@ export const colors = {
   TXTDark: '#FFFFFF',
   TXTLight: '#000000',
 
+  TXTSecondaryDark: '#888888',
+
   StrokeDark: '#52555E',
   StrokeLight: '#CCCCCC',
+
+  StrokeSecondaryDark: '#707070',
 
   white: '#FFFFFF',
   black: '#000000',
@@ -45,10 +50,18 @@ export const strokes = {
   xl: '5px',
 };
 
+export const IconSizes = {
+  xs: 12,
+  sm: 16,
+  md: 20,
+  lg: 24,
+  xl: 32,
+};
+
 export const mantineConfig: MantineThemeOverride = {
   lineHeight: '17px',
   radius: { md: 7, xl: 30 },
-  spacing: { xs: 15, sm: 20, md: 25, lg: 30, xl: 40 },
+  spacing: { xs: 12, sm: 16, md: 20, lg: 24, xl: 32 },
   shadows: {
     sm: shadows.light,
     md: shadows.medium,

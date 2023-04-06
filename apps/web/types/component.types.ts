@@ -1,5 +1,6 @@
+import { IconSizes } from '@config';
+
 export interface IconType {
   name?: string;
-  height?: number;
-  width?: number;
+  size?: keyof typeof IconSizes;
 }
