@@ -3,7 +3,7 @@ import { createStyles } from '@mantine/core';
 
 export default createStyles((theme) => ({
   root: {
-    color: colors.TXTSecondaryDark,
+    color: theme.colorScheme === 'dark' ? colors.TXTDark : colors.TXTLight,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -29,17 +29,5 @@ export default createStyles((theme) => ({
     '&[data-active]': { backgroundColor: colors.blue },
     '&[data-dots]': { color: theme.colorScheme === 'dark' ? colors.white : colors.black },
     '&:hover': { backgroundColor: colors.blue, color: colors.white },
-  },
-  statistics: {
-    // do not show in mobile
-    visibility: 'hidden',
-    width: 0,
-    height: 0,
-    // show for bigger screens from mobile
-    [`@media (min-width: ${theme.breakpoints.sm}px)`]: {
-      visibility: 'visible',
-      width: 'auto',
-      height: 'auto',
-    },
   },
 }));
