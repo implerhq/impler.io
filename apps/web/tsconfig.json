@@ -19,7 +19,8 @@
       "@config": ["./config/index.ts"],
       "@types": ["./types/index.ts"],
       "@assets/*": ["./assets/*"],
-      "@ui/*": ["./design-system/*"]
+      "@ui/*": ["./design-system/*"],
+      "@hooks/*": ["./hooks/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

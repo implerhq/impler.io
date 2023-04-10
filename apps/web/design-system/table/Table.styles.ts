@@ -9,7 +9,12 @@ export const getTableStyles = (theme: MantineTheme) => ({
     position: 'sticky',
     top: 0,
     'z-index': 1,
+    padding: theme.spacing.xs,
+    color: theme.colorScheme === 'dark' ? colors.TXTDark : colors.TXTLight,
     background: theme.colorScheme === 'dark' ? colors.BGTertiaryDark : colors.BGTertiaryLight,
+  },
+  'tbody tr td': {
+    padding: theme.spacing.xs,
   },
 });
 

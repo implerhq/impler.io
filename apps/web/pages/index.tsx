@@ -1,6 +1,26 @@
 import Head from 'next/head';
+import Image from 'next/image';
+import { useRef } from 'react';
+import { Flex, Group, Stack, Title, useMantineColorScheme, useMantineTheme } from '@mantine/core';
+
+import { Import } from '@assets/icons';
+import { NavItem } from '@ui/nav-item';
+import { UserMenu } from '@ui/user-menu';
+import { colors } from '@config';
+import LogoBlack from '@assets/images/Logo-black.svg';
+import LogoWhite from '@assets/images/Logo-white.svg';
+import { ColorSchemeToggle } from '@ui/toggle-color-scheme';
+import { Button } from '@ui/button';
+import { Table } from '@ui/table';
+import { Pagination } from '@ui/pagination';
+import { useImports } from '@hooks/useImports';
 
 export default function Home() {
+  const { onCreateClick } = useImports();
+  const navRef = useRef<HTMLElement>(null);
+  const theme = useMantineTheme();
+  const { colorScheme } = useMantineColorScheme();
+
   return (
     <>
       <Head>
@@ -9,7 +29,95 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main></main>
+      <div style={{ height: '100vh', display: 'flex', overflow: 'hidden' }}>
+        <aside style={{ width: 'calc(100vw - 85%)', minWidth: '150px' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              paddingBlock: theme.spacing.lg,
+              paddingLeft: theme.spacing.md,
+            }}
+          >
+            <Image src={colorScheme === 'dark' ? LogoWhite : LogoBlack} alt="Impler Logo" width={140} />
+          </div>
+          <Stack spacing="sm" py="xs">
+            <NavItem icon={<Import size="lg" />} title="Imports" />
+          </Stack>
+        </aside>
+        <main style={{ width: '100%', padding: theme.spacing.lg, display: 'flex', flexDirection: 'column' }}>
+          <nav style={{ alignItems: 'center' }} ref={navRef}>
+            <Flex justify="space-between">
+              <Title order={2}>Welcome, John Doe</Title>
+              <Group>
+                <ColorSchemeToggle />
+                <UserMenu
+                  user={{
+                    name: 'John Doe',
+                    email: 'johndoe@ggmail.com',
+                    image: 'https://avatars.githubusercontent.com/u/25126261?v=4',
+                  }}
+                />
+              </Group>
+            </Flex>
+          </nav>
+          <div style={{ paddingTop: theme.spacing.md, flexGrow: 1 }}>
+            <div
+              style={{
+                backgroundColor: colorScheme === 'dark' ? colors.BGSecondaryDark : colors.BGSecondaryLight,
+                width: '100%',
+                height: '100%',
+                borderRadius: theme.radius.lg,
+                padding: theme.spacing.lg,
+              }}
+            >
+              <Flex gap="sm" direction="column" h="100%">
+                <Flex justify="space-between" align="center">
+                  <Title order={2}>Imports</Title>
+                  <Button variant="outline" onClick={onCreateClick}>
+                    Add Source
+                  </Button>
+                </Flex>
+                <div style={{ flexGrow: 1 }}>
+                  <Table
+                    headings={[
+                      { title: 'Name', key: 'name' },
+                      { title: 'Imports', key: 'imports' },
+                      { title: 'Total rows', key: 'totalImports' },
+                      { title: 'Total errors', key: 'totalErrors' },
+                    ]}
+                    data={[
+                      {
+                        name: 'Import 1',
+                        imports: 100,
+                        totalImports: 100,
+                        totalErrors: 0,
+                        actions: <Button variant="outline">View</Button>,
+                      },
+                      {
+                        name: 'Import 2',
+                        imports: 100,
+                        totalImports: 100,
+                        totalErrors: 0,
+                        actions: <Button variant="outline">View</Button>,
+                      },
+                    ]}
+                  />
+                </div>
+                <Pagination
+                  dataLength={100}
+                  page={1}
+                  limit={10}
+                  onLimitChange={() => {}}
+                  setPage={() => {}}
+                  totalPages={10}
+                  totalRecords={100}
+                />
+              </Flex>
+            </div>
+          </div>
+        </main>
+      </div>
     </>
   );
 }

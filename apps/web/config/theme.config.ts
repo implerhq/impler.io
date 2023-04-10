@@ -20,7 +20,7 @@ export const colors = {
 
   TXTDark: '#FFFFFF',
   TXTLight: '#000000',
-
+  TXTGray: '#E4E4E4',
   TXTSecondaryDark: '#888888',
 
   StrokeDark: '#52555E',
@@ -60,12 +60,41 @@ export const IconSizes = {
 
 export const mantineConfig: MantineThemeOverride = {
   lineHeight: '17px',
-  radius: { md: 7, xl: 30 },
-  spacing: { xs: 12, sm: 16, md: 20, lg: 24, xl: 32 },
+  radius: { md: '7px', xl: '30px' },
+  spacing: { xs: '12px', sm: '16px', md: '20px', lg: '24px', xl: '32px' },
   shadows: {
     sm: shadows.light,
     md: shadows.medium,
     lg: shadows.dark,
     xl: shadows.color,
   },
+  globalStyles: (theme) => ({
+    '*': {
+      boxSizing: 'border-box',
+      padding: 0,
+      margin: 0,
+    },
+    html: {
+      WebkitFontSmoothing: 'antialiased',
+      MozOsxFontSmoothing: 'grayscale',
+      WebkitTapHighlightColor: 'transparent',
+      WebkitTextSizeAdjust: '100%',
+      WebkitOverflowScrolling: 'touch',
+      textRendering: 'optimizeLegibility',
+      lineHeight: theme.lineHeight,
+    },
+    body: {
+      backgroundColor: theme.colorScheme === 'dark' ? colors.BGPrimaryDark : colors.BGPrimaryLight,
+      color: theme.colorScheme === 'dark' ? colors.TXTDark : colors.TXTLight,
+      fontSize: '1.6rem',
+      overflowX: 'hidden',
+    },
+    a: {
+      color: theme.colorScheme === 'dark' ? colors.blueDark : colors.blue,
+      textDecoration: 'none',
+      '&:hover': {
+        textDecoration: 'underline',
+      },
+    },
+  }),
 };

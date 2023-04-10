@@ -1,9 +1,20 @@
-import { AppProps } from 'next/app';
 import Head from 'next/head';
-import { MantineProvider } from '@mantine/core';
+import { AppProps } from 'next/app';
+import { useLocalStorage } from '@mantine/hooks';
+import { ModalsProvider } from '@mantine/modals';
+import { ColorSchemeProvider, MantineProvider, ColorScheme } from '@mantine/core';
+import { mantineConfig, colors } from '@config';
+import { addOpacityToHex } from 'shared/utils';
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
+  const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
+    key: 'color-scheme',
+    defaultValue: 'dark',
+    getInitialValueInEffect: true,
+  });
+  const toggleColorScheme = (value?: ColorScheme) =>
+    setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
 
   return (
     <>
@@ -14,9 +25,37 @@ export default function App(props: AppProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <MantineProvider withGlobalStyles withNormalizeCSS>
-        <Component {...pageProps} />
-      </MantineProvider>
+      <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
+        <MantineProvider theme={{ ...mantineConfig, colorScheme }} withGlobalStyles withNormalizeCSS>
+          <ModalsProvider
+            modalProps={{
+              styles: {
+                title: {
+                  color: colorScheme === 'dark' ? colors.white : colors.black,
+                },
+                content: {
+                  backgroundColor: colorScheme === 'dark' ? colors.black : colors.white,
+                  borderRadius: 0,
+                  boxShadow: 'none',
+                },
+                header: {
+                  backgroundColor: colorScheme === 'dark' ? colors.black : colors.white,
+                },
+                overlay: {
+                  // eslint-disable-next-line no-magic-numbers
+                  backgroundColor: addOpacityToHex(colorScheme === 'dark' ? colors.white : colors.black, 0.2),
+                  backdropFilter: 'blur(5px)',
+                },
+                inner: {
+                  top: '25%',
+                },
+              },
+            }}
+          >
+            <Component {...pageProps} />
+          </ModalsProvider>
+        </MantineProvider>
+      </ColorSchemeProvider>
     </>
   );
 }

@@ -11,8 +11,11 @@ interface ButtonProps {
   children?: any;
   size?: MantineSize;
   component?: 'button' | 'a';
+  type?: 'button' | 'submit' | 'reset';
   variant?: ButtonVariants;
   href?: string;
+  fullWidth?: boolean;
+  onClick?: () => void;
 }
 
 export function Button({
@@ -20,6 +23,9 @@ export function Button({
   leftIcon,
   rightIcon,
   href,
+  fullWidth,
+  onClick,
+  type,
   component = 'button',
   size = 'sm',
   color = 'blue',
@@ -35,6 +41,9 @@ export function Button({
       rightIcon={rightIcon}
       classNames={classes}
       size={size}
+      type={type}
+      fullWidth={fullWidth}
+      onClick={onClick}
     >
       {children}
     </MantineButton>

@@ -23,7 +23,7 @@ interface UserMenuProps {
     email: string;
     image: string;
   };
-  menus: MenuItemType[];
+  menus?: MenuItemType[];
   width?: number;
 }
 
