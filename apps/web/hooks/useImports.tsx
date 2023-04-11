@@ -3,11 +3,12 @@ import { modals } from '@mantine/modals';
 
 import { Input } from '@ui/input';
 import { Button } from '@ui/button';
+import { MODAL_KEYS, MODAL_TITLES } from '@config';
 
 function CreateImportForm() {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    modals.closeAll();
+    modals.close(MODAL_KEYS.IMPORT_CREATE);
   };
 
   return (
@@ -25,8 +26,8 @@ function CreateImportForm() {
 export function useImports() {
   function onCreateClick() {
     modals.open({
-      id: 'create-import',
-      title: 'Create a new Import',
+      id: MODAL_KEYS.IMPORT_CREATE,
+      title: MODAL_TITLES.IMPORT_CREATE,
       children: <CreateImportForm />,
     });
   }

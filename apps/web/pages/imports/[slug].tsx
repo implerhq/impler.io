@@ -7,6 +7,7 @@ import { Button } from '@ui/button';
 import { EditIcon } from '@assets/icons/Edit.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
 import { Tabs } from '@ui/Tabs';
+import { Schema } from '@components/imports/Schema';
 
 export default function ImportDetails() {
   return (
@@ -34,7 +35,7 @@ export default function ImportDetails() {
           {
             value: 'schema',
             title: 'Schema',
-            content: <div>Schema</div>,
+            content: <Schema />,
           },
           {
             value: 'snippet',
