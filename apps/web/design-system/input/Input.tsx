@@ -6,12 +6,20 @@ interface InputProps {
   disabled?: boolean;
   placeholder?: string;
   register?: any;
+  pattern?: string;
 }
 
-export function Input({ disabled, error, placeholder, register }: InputProps) {
+export function Input({ disabled, error, placeholder, pattern, register }: InputProps) {
   const { classes } = useStyles();
 
   return (
-    <MantineInput placeholder={placeholder} disabled={disabled} error={error} classNames={classes} {...register} />
+    <MantineInput
+      placeholder={placeholder}
+      disabled={disabled}
+      pattern={pattern}
+      error={error}
+      classNames={classes}
+      {...register}
+    />
   );
 }

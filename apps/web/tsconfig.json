@@ -21,7 +21,8 @@
       "@assets/*": ["./assets/*"],
       "@ui/*": ["./design-system/*"],
       "@hooks/*": ["./hooks/*"],
-      "@layouts/*": ["./layouts/*"]
+      "@layouts/*": ["./layouts/*"],
+      "@components/*": ["./components/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
