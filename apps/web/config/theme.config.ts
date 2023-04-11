@@ -2,6 +2,7 @@ import { MantineThemeOverride } from '@mantine/core';
 
 export const colors = {
   danger: '#F64747',
+  dangerDark: '#d53939',
   success: '#17B551',
   warning: '#F9931F',
   blue: '#5463FF',
@@ -86,7 +87,7 @@ export const mantineConfig: MantineThemeOverride = {
     body: {
       backgroundColor: theme.colorScheme === 'dark' ? colors.BGPrimaryDark : colors.BGPrimaryLight,
       color: theme.colorScheme === 'dark' ? colors.TXTDark : colors.TXTLight,
-      fontSize: '1.6rem',
+      fontSize: '16px',
       overflowX: 'hidden',
     },
     a: {

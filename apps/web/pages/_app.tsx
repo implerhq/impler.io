@@ -1,3 +1,4 @@
+import React from 'react';
 import Head from 'next/head';
 import { AppProps } from 'next/app';
 import { useLocalStorage } from '@mantine/hooks';
@@ -15,6 +16,10 @@ export default function App(props: AppProps) {
   });
   const toggleColorScheme = (value?: ColorScheme) =>
     setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const Layout = Component.Layout ? Component.Layout : React.Fragment;
 
   return (
     <>
@@ -52,7 +57,9 @@ export default function App(props: AppProps) {
               },
             }}
           >
-            <Component {...pageProps} />
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
           </ModalsProvider>
         </MantineProvider>
       </ColorSchemeProvider>
