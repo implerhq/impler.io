@@ -3,6 +3,7 @@ import { createStyles, MantineTheme } from '@mantine/core';
 
 const getTabListStyles = (theme: MantineTheme): React.CSSProperties => ({
   padding: 5,
+  width: 'max-content',
   backgroundColor: theme.colorScheme === 'dark' ? colors.BGPrimaryDark : colors.BGPrimaryLight,
 });
 
@@ -17,10 +18,6 @@ const getTabStyles = (theme: MantineTheme) => ({
   },
 });
 
-const getRootStyles = () => ({
-  width: 'max-content',
-});
-
 const getPanelStyles = (theme: MantineTheme): React.CSSProperties => ({
   paddingTop: theme.spacing.xs,
 });
@@ -29,7 +26,6 @@ export default createStyles((theme: MantineTheme): Record<string, any> => {
   return {
     tabsList: getTabListStyles(theme),
     tab: getTabStyles(theme),
-    root: getRootStyles(),
     panel: getPanelStyles(theme),
   };
 });

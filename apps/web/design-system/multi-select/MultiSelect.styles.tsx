@@ -6,17 +6,19 @@ const getInputStyles = (theme: MantineTheme): React.CSSProperties => ({
   backgroundColor: theme.colorScheme === 'dark' ? colors.BGSecondaryDark : colors.BGSecondaryLight,
 });
 
+const getItemsWrapperStyles = (): React.CSSProperties => ({
+  padding: 0,
+});
+
+const getDropdownStyles = (): React.CSSProperties => ({
+  borderRadius: 0,
+});
+
 export default createStyles((theme: MantineTheme): Record<string, any> => {
   return {
     input: getInputStyles(theme),
-    itemsWrapper: {
-      padding: 0,
-    },
-    dropdown: {
-      borderRadius: 0,
-    },
-    item: {
-      borderRadius: 0,
-    },
+    itemsWrapper: getItemsWrapperStyles(),
+    dropdown: getDropdownStyles(),
+    item: getDropdownStyles(),
   };
 });
