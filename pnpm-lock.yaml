@@ -256,6 +256,7 @@ importers:
       '@mantine/hooks': 6.0.6
       '@mantine/modals': 6.0.6
       '@mantine/next': 6.0.6
+      '@mantine/prism': 6.0.6
       '@next/font': 13.1.1
       '@storybook/builder-webpack5': ^6.5.16
       '@storybook/manager-webpack5': ^6.5.16
@@ -283,6 +284,7 @@ importers:
       '@mantine/hooks': 6.0.6_react@18.2.0
       '@mantine/modals': 6.0.6_feqrfkte3oaz5jjghkdwfk53i4
       '@mantine/next': 6.0.6_d5xj5jipthoiwqd5a5nbaex2p4
+      '@mantine/prism': 6.0.6_feqrfkte3oaz5jjghkdwfk53i4
       '@next/font': 13.1.1
       embla-carousel-react: 7.0.9_react@18.2.0
       next: 13.1.1_pjwopsidmaokadturxaafygjp4
@@ -6544,6 +6546,22 @@ packages:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-transition-group: 4.4.2_biqbaboplfbrettd7655fr4n2y
+    dev: false
+
+  /@mantine/prism/6.0.6_feqrfkte3oaz5jjghkdwfk53i4:
+    resolution: {integrity: sha512-dxZYCL6YIgKaQA5LI80FAIVLGsdYXD+pF0VmlOLbO7AkA6o5jowG0ZssUc8y25iAi5NmTzRZeLaeMEDgvN/LMg==}
+    peerDependencies:
+      '@mantine/core': 6.0.6
+      '@mantine/hooks': 6.0.6
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+    dependencies:
+      '@mantine/core': 6.0.6_ueioib7soyzozf2zgopdomeqve
+      '@mantine/hooks': 6.0.6_react@18.2.0
+      '@mantine/utils': 6.0.6_react@18.2.0
+      prism-react-renderer: 1.3.5_react@18.2.0
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
     dev: false
 
   /@mantine/ssr/5.9.5_vavbdtuajfyku5chqvt5ands7q:
@@ -23386,6 +23404,14 @@ packages:
   /pretty-hrtime/1.0.3:
     resolution: {integrity: sha512-66hKPCr+72mlfiSjlEB1+45IjXSqvVAIy6mocupoww4tBFE9R9IhwwUGoI4G++Tc9Aq+2rxOt0RFU6gPcrte0A==}
     engines: {node: '>= 0.8'}
+
+  /prism-react-renderer/1.3.5_react@18.2.0:
+    resolution: {integrity: sha512-IJ+MSwBWKG+SM3b2SUfdrhC+gu01QkV2KmRQgREThBfSQRoufqRfxfHUxpG1WcaFjP+kojcFyO9Qqtpgt3qLCg==}
+    peerDependencies:
+      react: '>=0.14.9'
+    dependencies:
+      react: 18.2.0
+    dev: false
 
   /proc-log/2.0.1:
     resolution: {integrity: sha512-Kcmo2FhfDTXdcbfDH76N7uBYHINxc/8GW7UAVuVP9I+Va3uHSerrnKV6dLooga/gh7GlgzuCCr/eoldnL1muGw==}

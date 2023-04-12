@@ -1,17 +1,20 @@
 import Link from 'next/link';
 import { Flex, Group, Title } from '@mantine/core';
 
-import { AppLayout } from '@layouts/AppLayout';
+import { Tabs } from '@ui/Tabs';
 import { Card } from '@ui/Card';
 import { Button } from '@ui/button';
+import { AppLayout } from '@layouts/AppLayout';
+
 import { EditIcon } from '@assets/icons/Edit.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
-import { Tabs } from '@ui/Tabs';
+
 import { Schema } from '@components/imports/Schema';
+import { Snippet } from '@components/imports/Snippet';
 
 export default function ImportDetails() {
   return (
-    <Flex gap="sm" direction="column" h="100%">
+    <Flex gap="lg" direction="column" h="100%">
       <Flex justify="space-between">
         <Title order={2}>Users Import</Title>
         <Group spacing="xs">
@@ -40,7 +43,7 @@ export default function ImportDetails() {
           {
             value: 'snippet',
             title: 'Snippet',
-            content: <div>Snippet</div>,
+            content: <Snippet />,
           },
           {
             value: 'output',
