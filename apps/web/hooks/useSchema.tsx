@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Group, Stack } from '@mantine/core';
 import { modals } from '@mantine/modals';
 
@@ -10,6 +11,7 @@ import { Textarea } from '@ui/textarea';
 import { Checkbox } from '@ui/checkbox';
 
 function AddColumnForm() {
+  const [type, setType] = useState<'string' | 'number' | 'select' | 'date' | 'regexp' | 'email'>('string');
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     modals.close(MODAL_KEYS.IMPORT_CREATE);
@@ -26,7 +28,7 @@ function AddColumnForm() {
             creatable
             clearable
             searchable
-            getCreateLabel={(query) => `+ Create ${query}`}
+            getCreateLabel={(query) => `+ ${query}`}
           />
         </Group>
         <Select
@@ -51,14 +53,40 @@ function AddColumnForm() {
               label: 'Boolean',
               value: 'boolean',
             },
+            {
+              label: 'Regular Expression',
+              value: 'regexp',
+            },
+            {
+              label: 'Email',
+              value: 'email',
+            },
           ]}
           placeholder="Type"
+          register={{
+            value: type,
+            onChange: (e: React.ChangeEvent<HTMLSelectElement>) => setType(e.target.value as any),
+          }}
         />
-        <Input placeholder="Regular expression" />
-        <Textarea autosize minRows={2} placeholder="Regular expression description" />
+        {type === 'regexp' && (
+          <>
+            <Input placeholder="Regular expression" />
+            <Textarea autosize minRows={2} placeholder="Regular expression description" />
+          </>
+        )}
+        {type === 'select' && (
+          <MultiSelect
+            data={[]}
+            placeholder="Select Values"
+            creatable
+            clearable
+            searchable
+            getCreateLabel={(query) => `+ Add ${query}`}
+          />
+        )}
         <Group spacing="xs">
           <Checkbox label="Is Required?" />
-          <Checkbox label="Is Unique?" />
+          {type !== 'select' && <Checkbox label="Is Unique?" />}
         </Group>
         <Button type="submit" fullWidth>
           Create
