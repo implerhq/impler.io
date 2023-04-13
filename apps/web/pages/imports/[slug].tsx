@@ -11,6 +11,7 @@ import { DeleteIcon } from '@assets/icons/Delete.icon';
 
 import { Schema } from '@components/imports/Schema';
 import { Snippet } from '@components/imports/Snippet';
+import { Destination } from '@components/imports/Destination';
 
 export default function ImportDetails() {
   return (
@@ -53,7 +54,7 @@ export default function ImportDetails() {
           {
             value: 'destination',
             title: 'Destination',
-            content: <div>Destination</div>,
+            content: <Destination />,
           },
         ]}
         defaultValue="schema"

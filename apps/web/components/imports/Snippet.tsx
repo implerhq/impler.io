@@ -1,36 +1,16 @@
 import { Prism } from '@mantine/prism';
-import { Code, Flex, Stack, Text, Title, useMantineColorScheme } from '@mantine/core';
+import { Code, Flex, Text } from '@mantine/core';
+
 import { colors } from '@config';
-
-interface SectionBlockProps extends React.PropsWithChildren {
-  title: string;
-  isDarkMode?: boolean;
-}
-
-const SectionBlock = ({ children, title, isDarkMode }: SectionBlockProps) => {
-  return (
-    <Stack
-      spacing="xs"
-      style={{
-        backgroundColor: isDarkMode ? colors.BGPrimaryDark : colors.BGPrimaryLight,
-        padding: '15px',
-      }}
-    >
-      <Title order={4}>{title}</Title>
-      {children}
-    </Stack>
-  );
-};
+import { SectionBlock } from '@ui/section-block';
 
 export function Snippet() {
-  const theme = useMantineColorScheme();
-
   return (
     <Flex gap="sm" direction="column">
       <Text>
         You can use <Code>@impler/react</Code> package to add an import widget in your application.
       </Text>
-      <SectionBlock title="Add Script" isDarkMode={theme.colorScheme === 'dark'}>
+      <SectionBlock title="Add Script">
         <Text style={{ lineHeight: '1.5rem' }}>
           Copy & Paste this snippet to your code before the closing body tag. It will add impler variable in window, so
           you can call its init and show method.
@@ -40,14 +20,14 @@ export function Snippet() {
         </Prism>
       </SectionBlock>
 
-      <SectionBlock title="Install the Package" isDarkMode={theme.colorScheme === 'dark'}>
+      <SectionBlock title="Install the Package">
         <Text style={{ lineHeight: '1.5rem', color: colors.TXTSecondaryDark }}>
           Add <Code>@impler/react</Code> in your application by running the following command.
         </Text>
         <Prism language="bash">{`npm i @impler/react\n# or\nyarn add @impler/react`}</Prism>
       </SectionBlock>
 
-      <SectionBlock title="Add Import Button" isDarkMode={theme.colorScheme === 'dark'}>
+      <SectionBlock title="Add Import Button">
         <Text style={{ lineHeight: '1.5rem' }}>
           Now add <Code>Import</Code> Button from <Code>@impler/react</Code> which opens the Widget.
         </Text>

@@ -7,6 +7,7 @@ import { MODAL_KEYS, MODAL_TITLES } from '@config';
 import { MultiSelect } from '@ui/multi-select';
 import { Select } from '@ui/select';
 import { Textarea } from '@ui/textarea';
+import { Checkbox } from '@ui/checkbox';
 
 function AddColumnForm() {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -55,6 +56,10 @@ function AddColumnForm() {
         />
         <Input placeholder="Regular expression" />
         <Textarea autosize minRows={2} placeholder="Regular expression description" />
+        <Group spacing="xs">
+          <Checkbox label="Is Required?" />
+          <Checkbox label="Is Unique?" />
+        </Group>
         <Button type="submit" fullWidth>
           Create
         </Button>
