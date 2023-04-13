@@ -6,6 +6,7 @@ import { Flex, Group, Stack, Title, useMantineColorScheme, useMantineTheme } fro
 import { Import } from '@assets/icons';
 import LogoBlack from '@assets/images/Logo-black.svg';
 import LogoWhite from '@assets/images/Logo-white.svg';
+import { LogoutIcon } from '@assets/icons/Logout.icon';
 
 import { colors } from '@config';
 import { NavItem } from '@ui/nav-item';
@@ -53,6 +54,12 @@ export function AppLayout({ children }: any) {
                     email: 'johndoe@ggmail.com',
                     image: 'https://avatars.githubusercontent.com/u/25126261?v=4',
                   }}
+                  menus={[
+                    {
+                      title: 'Logout',
+                      icon: <LogoutIcon />,
+                    },
+                  ]}
                 />
               </Group>
             </Flex>

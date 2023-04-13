@@ -15,6 +15,7 @@ const getNameStyles = (theme: MantineTheme): React.CSSProperties => ({
 const getDropdownStyles = (theme: MantineTheme): React.CSSProperties => ({
   width: '100%',
   padding: 10,
+  minWidth: 150,
 });
 
 export default createStyles((theme: MantineTheme): Record<string, any> => {

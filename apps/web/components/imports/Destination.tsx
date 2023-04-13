@@ -37,7 +37,7 @@ export function Destination() {
             url="https://api.impler.io/v1/upload/{uploadId}/rows/valid"
           />
           <APIBlock
-            method="POST"
+            method="GET"
             title="Get Invalid data of imported file"
             url="https://api.impler.io/v1/upload/{uploadId}/rows/invalid"
           />
