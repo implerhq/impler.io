@@ -1,7 +1,7 @@
 import useStyles from './Button.styles';
 import { Button as MantineButton, MantineSize } from '@mantine/core';
 
-export type ButtonColors = 'blue' | 'white';
+export type ButtonColors = 'blue' | 'white' | 'red';
 export type ButtonVariants = 'filled' | 'outline';
 
 interface ButtonProps {
@@ -10,9 +10,12 @@ interface ButtonProps {
   color?: ButtonColors;
   children?: any;
   size?: MantineSize;
-  component?: 'button' | 'a';
+  component?: any;
+  type?: 'button' | 'submit' | 'reset';
   variant?: ButtonVariants;
   href?: string;
+  fullWidth?: boolean;
+  onClick?: () => void;
 }
 
 export function Button({
@@ -20,12 +23,15 @@ export function Button({
   leftIcon,
   rightIcon,
   href,
+  fullWidth,
+  onClick,
+  type,
   component = 'button',
   size = 'sm',
   color = 'blue',
   variant = 'filled',
 }: ButtonProps) {
-  const { classes } = useStyles({ variant, color });
+  const { classes } = useStyles({ variant, color, fullWidth });
 
   return (
     <MantineButton
@@ -35,6 +41,9 @@ export function Button({
       rightIcon={rightIcon}
       classNames={classes}
       size={size}
+      type={type}
+      fullWidth={fullWidth}
+      onClick={onClick}
     >
       {children}
     </MantineButton>

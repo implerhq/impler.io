@@ -13,3 +13,13 @@ export const VARIABLES = {
   FORTY: 40,
   FIFTY: 50,
 };
+
+export const MODAL_KEYS = {
+  IMPORT_CREATE: 'IMPORT_CREATE',
+  COLUMN_CREATE: 'COLUMN_CREATE',
+};
+
+export const MODAL_TITLES = {
+  IMPORT_CREATE: 'Create a fresh import',
+  COLUMN_CREATE: 'Add a new Column',
+};

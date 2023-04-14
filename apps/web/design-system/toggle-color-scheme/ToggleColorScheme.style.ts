@@ -10,12 +10,13 @@ const getRootStyles = (theme: MantineTheme): React.CSSProperties => ({
 });
 
 const getActiveStyles = (theme: MantineTheme): React.CSSProperties => ({
-  borderRadius: '0px',
   backgroundColor: colors.blue,
 });
 
 const getActiveLabelStyles = (theme: MantineTheme) => ({
+  borderRadius: '0px',
   color: colors.white + ' !important',
+  backgroundColor: colors.blue,
 });
 const getLabelStyles = (theme: MantineTheme) => ({
   color: theme.colorScheme === 'dark' ? colors.white : colors.black,
@@ -29,6 +30,6 @@ export default createStyles((theme: MantineTheme): Record<string, any> => {
     root: getRootStyles(theme),
     active: getActiveStyles(theme),
     label: getLabelStyles(theme),
-    labelActive: getActiveLabelStyles(theme),
+    controlActive: getActiveLabelStyles(theme),
   };
 });

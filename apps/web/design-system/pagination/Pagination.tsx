@@ -40,7 +40,7 @@ export function Pagination({
 
   return (
     <div className={classes.root}>
-      <Flex align="center" gap="sm" className={classes.statistics}>
+      <Flex align="center" gap="sm">
         <Text>Results per page</Text>
         <NativeSelect
           data={limits}
@@ -56,13 +56,15 @@ export function Pagination({
         siblings={1}
         boundaries={0}
         noWrap={false}
-        page={page}
+        value={page}
         onChange={setPage}
         total={totalPages}
-        classNames={{ item: classes.item }}
+        classNames={{
+          control: classes.item,
+        }}
         disabled={dataLength === VARIABLES.ZERO}
       />
-      <Text className={classes.statistics}>
+      <Text>
         Showing {paginationFrom()}-{paginationTo()} of {numberFormatter(totalRecords)} records
       </Text>
     </div>
