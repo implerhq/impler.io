@@ -1,9 +1,8 @@
 import Image from 'next/image';
-import { signIn } from 'next-auth/react';
 import { Carousel } from '@mantine/carousel';
 import { Grid, Title, Text } from '@mantine/core';
 
-import { colors } from '@config';
+import { colors, CONSTANTS } from '@config';
 import useStyles from './Styles';
 import { Button } from '@ui/button';
 
@@ -36,7 +35,11 @@ const slides: {
   },
 ];
 
-export const Signin = () => {
+interface SigninProps {
+  API_URL: string;
+}
+
+export const Signin = ({ API_URL }: SigninProps) => {
   const { classes } = useStyles();
 
   return (
@@ -58,7 +61,7 @@ export const Signin = () => {
             <Text color="white" mb="sm">
               Hop into your account to start importing records
             </Text>
-            <Button component="a" onClick={() => signIn('github')} leftIcon={<GithubIcon />}>
+            <Button component="a" href={API_URL + CONSTANTS.GITHUB_LOGIN_URL} leftIcon={<GithubIcon />}>
               Continue with Github
             </Button>
           </div>

@@ -27,7 +27,6 @@
     "@next/font": "13.1.1",
     "embla-carousel-react": "^7.0.9",
     "next": "13.1.1",
-    "next-auth": "^4.22.0",
     "react": "18.2.0",
     "react-ace": "^10.1.0",
     "react-dom": "18.2.0",
