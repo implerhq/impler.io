@@ -1,11 +1,7 @@
 import Head from 'next/head';
-import { GetServerSideProps } from 'next';
 import { Signin } from 'components/signin';
-interface SigninProps {
-  API_BASE_URL: string;
-}
 
-export default function SigninPage({ API_BASE_URL }: SigninProps) {
+export default function SigninPage() {
   return (
     <>
       <Head>
@@ -14,13 +10,7 @@ export default function SigninPage({ API_BASE_URL }: SigninProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Signin API_BASE_URL={API_BASE_URL} />
+      <Signin />
     </>
   );
 }
-
-export const getServerSideProps: GetServerSideProps<SigninProps> = async () => ({
-  props: {
-    API_BASE_URL: process.env.API_BASE_URL!,
-  },
-});

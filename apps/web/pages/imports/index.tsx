@@ -5,6 +5,7 @@ import { Table } from '@ui/table';
 import { Pagination } from '@ui/pagination';
 import { useImports } from '@hooks/useImports';
 import { AppLayout } from '@layouts/AppLayout';
+import { ImportActions } from '@components/imports/ImportActions';
 
 export default function Imports() {
   const { onCreateClick } = useImports();
@@ -15,7 +16,7 @@ export default function Imports() {
         <Flex justify="space-between" align="center">
           <Title order={2}>Imports</Title>
           <Button variant="outline" onClick={onCreateClick}>
-            Add Source
+            Start with fresh Import
           </Button>
         </Flex>
         <div style={{ flexGrow: 1 }}>
@@ -25,6 +26,11 @@ export default function Imports() {
               { title: 'Imports', key: 'imports' },
               { title: 'Total rows', key: 'totalImports' },
               { title: 'Total errors', key: 'totalErrors' },
+              {
+                title: '',
+                key: 'actions',
+                Cell: () => <ImportActions slug="users-import" />,
+              },
             ]}
             data={[
               {
@@ -32,14 +38,12 @@ export default function Imports() {
                 imports: 100,
                 totalImports: 100,
                 totalErrors: 0,
-                actions: <Button variant="outline">View</Button>,
               },
               {
                 name: 'Import 2',
                 imports: 100,
                 totalImports: 100,
                 totalErrors: 0,
-                actions: <Button variant="outline">View</Button>,
               },
             ]}
           />

@@ -12,6 +12,9 @@ import { DeleteIcon } from '@assets/icons/Delete.icon';
 import { Schema } from '@components/imports/Schema';
 import { Snippet } from '@components/imports/Snippet';
 import { Destination } from '@components/imports/Destination';
+import dynamic from 'next/dynamic';
+
+const Editor = dynamic(() => import('@components/imports/Editor'), { ssr: false });
 
 export default function ImportDetails() {
   return (
@@ -49,7 +52,24 @@ export default function ImportDetails() {
           {
             value: 'output',
             title: 'Output',
-            content: <div>Output</div>,
+            content: (
+              <Editor
+                variables={['record.fName', 'record.lName']}
+                value={`{
+  totalRecords: 200,
+  page: 1,
+  limit: 10,
+  totalPages: 20,
+  hasMore: true,
+  data: [
+    {
+      "name": {{record.fName}},
+      "lname": {{record.lName}},
+    }
+  ]
+}`}
+              />
+            ),
           },
           {
             value: 'destination',

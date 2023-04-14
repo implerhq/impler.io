@@ -1,14 +1,16 @@
 import Image from 'next/image';
-import useStyles from './Styles';
-import DarkLogo from '@assets/images/logo-dark.png';
-import { GithubIcon } from '@assets/icons/Github.icon';
-import { colors, CONSTANTS } from '@config';
+import { signIn } from 'next-auth/react';
 import { Carousel } from '@mantine/carousel';
-import { Button } from '@ui/button';
 import { Grid, Title, Text } from '@mantine/core';
 
-import ActionsSlideImage from '@assets/images/auth-carousel/actions.png';
+import { colors } from '@config';
+import useStyles from './Styles';
+import { Button } from '@ui/button';
+
+import DarkLogo from '@assets/images/logo-dark.png';
+import { GithubIcon } from '@assets/icons/Github.icon';
 import WidgetSlideImage from '@assets/images/auth-carousel/widget.png';
+import ActionsSlideImage from '@assets/images/auth-carousel/actions.png';
 import WorkflowsSlideImage from '@assets/images/auth-carousel/workflows.png';
 
 const slides: {
@@ -34,11 +36,7 @@ const slides: {
   },
 ];
 
-interface SigninProps {
-  API_BASE_URL: string;
-}
-
-export const Signin = ({ API_BASE_URL }: SigninProps) => {
+export const Signin = () => {
   const { classes } = useStyles();
 
   return (
@@ -55,13 +53,13 @@ export const Signin = ({ API_BASE_URL }: SigninProps) => {
           <div className={classes.signinContainer}>
             <Image src={DarkLogo} alt="Impler Logo" />
             <Title order={1} color="white" mt="sm">
-              Sign in to Impler
+              Signin to Impler
             </Title>
             <Text color="white" mb="sm">
-              Singin with github to start building your workflows now
+              Hop into your account to start importing records
             </Text>
-            <Button component="a" href={API_BASE_URL + CONSTANTS.GITHUB_LOGIN_URL} leftIcon={<GithubIcon />}>
-              Signin with Github
+            <Button component="a" onClick={() => signIn('github')} leftIcon={<GithubIcon />}>
+              Continue with Github
             </Button>
           </div>
         </Grid.Col>

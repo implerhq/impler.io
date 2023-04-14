@@ -11,7 +11,7 @@ export function Snippet() {
         You can use <Code>@impler/react</Code> package to add an import widget in your application.
       </Text>
       <SectionBlock title="Add Script">
-        <Text style={{ lineHeight: '1.5rem' }}>
+        <Text style={{ lineHeight: '1.5rem', color: colors.TXTSecondaryDark }}>
           Copy & Paste this snippet to your code before the closing body tag. It will add impler variable in window, so
           you can call its init and show method.
         </Text>
@@ -28,12 +28,12 @@ export function Snippet() {
       </SectionBlock>
 
       <SectionBlock title="Add Import Button">
-        <Text style={{ lineHeight: '1.5rem' }}>
+        <Text style={{ lineHeight: '1.5rem', color: colors.TXTSecondaryDark }}>
           Now add <Code>Import</Code> Button from <Code>@impler/react</Code> which opens the Widget.
         </Text>
         <Prism language="tsx">{`import { Import } from '@impler/react';
         \n<Button projectId="<PROJECT_ID>" template="<CODE_OR_ID>">\nImport\n</Button>`}</Prism>
-        <Text style={{ lineHeight: '1.5rem' }}>
+        <Text style={{ lineHeight: '1.5rem', color: colors.TXTSecondaryDark }}>
           You can get to know about props on{' '}
           <a href={process.env.DOCUMENTATION_REACT_PROPS_URL} target="_blank" rel="noreferrer">
             documentation

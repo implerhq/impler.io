@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRef } from 'react';
-import { Flex, Group, Stack, Title, useMantineColorScheme, useMantineTheme } from '@mantine/core';
+import { Flex, Group, Select, Stack, Title, useMantineColorScheme, useMantineTheme } from '@mantine/core';
 
 import { Import } from '@assets/icons';
 import LogoBlack from '@assets/images/Logo-black.svg';
@@ -38,8 +38,21 @@ export function AppLayout({ children }: any) {
           >
             <Image src={colorScheme === 'dark' ? LogoWhite : LogoBlack} alt="Impler Logo" width={140} />
           </div>
+          <Select
+            data={[
+              { value: 'project1', label: 'Project 1' },
+              { value: 'project2', label: 'Project 2' },
+            ]}
+            placeholder="Select items"
+            nothingFound="Nothing found"
+            searchable
+            creatable
+            pl="sm"
+            radius={0}
+            getCreateLabel={(query) => `+ Create ${query}`}
+          />
           <Stack spacing="sm" py="xs">
-            <NavItem icon={<Import size="lg" />} title="Imports" />
+            <NavItem active href="/imports" icon={<Import size="lg" />} title="Imports" />
           </Stack>
         </aside>
         <main style={{ width: '100%', padding: theme.spacing.lg, display: 'flex', flexDirection: 'column' }}>

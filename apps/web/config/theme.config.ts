@@ -69,6 +69,13 @@ export const mantineConfig: MantineThemeOverride = {
     lg: shadows.dark,
     xl: shadows.color,
   },
+  breakpoints: {
+    xs: '0',
+    sm: '600',
+    md: '960',
+    lg: '1280',
+    xl: '1920',
+  },
   globalStyles: (theme) => ({
     '*': {
       boxSizing: 'border-box',
@@ -88,7 +95,6 @@ export const mantineConfig: MantineThemeOverride = {
       backgroundColor: theme.colorScheme === 'dark' ? colors.BGPrimaryDark : colors.BGPrimaryLight,
       color: theme.colorScheme === 'dark' ? colors.TXTDark : colors.TXTLight,
       fontSize: '16px',
-      overflowX: 'hidden',
     },
     a: {
       color: theme.colorScheme === 'dark' ? colors.blueDark : colors.blue,

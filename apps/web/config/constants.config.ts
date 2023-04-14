@@ -20,6 +20,6 @@ export const MODAL_KEYS = {
 };
 
 export const MODAL_TITLES = {
-  IMPORT_CREATE: 'Create new Import',
+  IMPORT_CREATE: 'Create a fresh import',
   COLUMN_CREATE: 'Add a new Column',
 };
