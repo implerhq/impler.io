@@ -10,7 +10,7 @@ interface ButtonProps {
   color?: ButtonColors;
   children?: any;
   size?: MantineSize;
-  component?: 'button' | 'a';
+  component?: any;
   type?: 'button' | 'submit' | 'reset';
   variant?: ButtonVariants;
   href?: string;
@@ -31,7 +31,7 @@ export function Button({
   color = 'blue',
   variant = 'filled',
 }: ButtonProps) {
-  const { classes } = useStyles({ variant, color });
+  const { classes } = useStyles({ variant, color, fullWidth });
 
   return (
     <MantineButton

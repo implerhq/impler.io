@@ -3,7 +3,7 @@ import { createStyles, MantineTheme } from '@mantine/core';
 import { colors } from '@config';
 import { ButtonColors, ButtonVariants } from './Button';
 
-const getRootFilledStyles = (theme: MantineTheme, color: ButtonColors = 'blue') => ({
+const getRootFilledStyles = (theme: MantineTheme, color: ButtonColors = 'blue', fullWidth?: boolean) => ({
   ...(color === 'blue' && {
     backgroundColor: colors.blue,
     color: colors.white,
@@ -15,6 +15,7 @@ const getRootFilledStyles = (theme: MantineTheme, color: ButtonColors = 'blue') 
   ...(color === 'red' && {
     backgroundColor: colors.danger,
   }),
+  width: fullWidth ? '100%' : 'max-content',
   transition: 'color 0.2s, background-color 0.2s, border-color ease-in-out',
   borderRadius: '0px',
   ['&:hover']: {
@@ -32,9 +33,10 @@ const getRootFilledStyles = (theme: MantineTheme, color: ButtonColors = 'blue') 
   },
 });
 
-const getRootOutlineStyles = (theme: MantineTheme, color: ButtonColors = 'blue') => ({
+const getRootOutlineStyles = (theme: MantineTheme, color: ButtonColors = 'blue', fullWidth?: boolean) => ({
   borderRadius: '0px',
   backgroundColor: 'transparent',
+  width: fullWidth ? '100%' : 'max-content',
   transition: 'color 0.2s, background-color 0.2s, border-color ease-in-out',
   border: `1px solid ${theme.colorScheme === 'dark' ? colors.white : colors.black}`,
   color: theme.colorScheme === 'dark' ? colors.white : colors.black,
@@ -61,13 +63,14 @@ const getRootOutlineStyles = (theme: MantineTheme, color: ButtonColors = 'blue')
 interface Params {
   variant?: ButtonVariants;
   color?: ButtonColors;
+  fullWidth?: boolean;
 }
 
 export default createStyles((theme: MantineTheme, params: Params): Record<string, any> => {
   return {
     root:
       params.variant === 'filled'
-        ? getRootFilledStyles(theme, params.color)
-        : getRootOutlineStyles(theme, params.color),
+        ? getRootFilledStyles(theme, params.color, params.fullWidth)
+        : getRootOutlineStyles(theme, params.color, params.fullWidth),
   };
 });
