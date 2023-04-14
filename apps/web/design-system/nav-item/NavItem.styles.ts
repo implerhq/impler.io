@@ -28,6 +28,25 @@ const getRootFilledStyles = (theme: MantineTheme, isActive?: boolean) => ({
     left: 0,
     borderRadius: '0 3px 3px 0',
   },
+  ...(isActive && {
+    '&:before': {
+      content: '""',
+      display: 'block',
+      width: '3px',
+      height: '100%',
+      backgroundColor: colors.blue,
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      borderRadius: '0 3px 3px 0',
+    },
+  }),
+});
+
+const getLinkStyles = () => ({
+  '&:hover': {
+    textDecoration: 'none',
+  },
 });
 
 interface Params {
@@ -37,5 +56,6 @@ interface Params {
 export default createStyles((theme: MantineTheme, params: Params): Record<string, any> => {
   return {
     root: getRootFilledStyles(theme, params.active),
+    link: getLinkStyles(),
   };
 });
