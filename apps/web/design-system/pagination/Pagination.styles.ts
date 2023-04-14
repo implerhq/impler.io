@@ -25,9 +25,12 @@ export default createStyles((theme) => ({
     backgroundColor: 'transparent',
     borderColor: colors.StrokeDark,
     transition: 'background-color 0.2s, color 0.2s ease-in-out',
+    '&:not([data-disabled]):hover': {
+      backgroundColor: colors.blue,
+      color: colors.white,
+    },
     '&[disabled]': { backgroundColor: 'transparent' },
     '&[data-active]': { backgroundColor: colors.blue },
     '&[data-dots]': { color: theme.colorScheme === 'dark' ? colors.white : colors.black },
-    '&:hover': { backgroundColor: colors.blue, color: colors.white },
   },
 }));
