@@ -269,7 +269,6 @@ importers:
       eslint: ^8.38.0
       eslint-config-next: 13.1.1
       next: 13.1.1
-      next-auth: ^4.22.0
       react: 18.2.0
       react-ace: ^10.1.0
       react-dom: 18.2.0
@@ -290,7 +289,6 @@ importers:
       '@next/font': 13.1.1
       embla-carousel-react: 7.0.9_react@18.2.0
       next: 13.1.1_pjwopsidmaokadturxaafygjp4
-      next-auth: 4.22.0_q76c2b4vyoegvsbrcwkfvimnai
       react: 18.2.0
       react-ace: 10.1.0_biqbaboplfbrettd7655fr4n2y
       react-dom: 18.2.0_react@18.2.0
@@ -7584,10 +7582,6 @@ packages:
     dependencies:
       '@octokit/openapi-types': 16.0.0
     dev: true
-
-  /@panva/hkdf/1.0.4:
-    resolution: {integrity: sha512-003xWiCuvePbLaPHT+CRuaV4GlyCAVm6XYSbBZDHoWZGn1mNkVKFaDbGJjjxmEFvizUwlCoM6O18FCBMMky2zQ==}
-    dev: false
 
   /@parcel/watcher/2.0.4:
     resolution: {integrity: sha512-cTDi+FUDBIUOBKEtj+nhiJ71AZVlkAsQFuGQTun5tV9mwQBQgZvhCzG+URPQc8myeN32yRVZEfVAPCs1RW+Jvg==}
@@ -19838,10 +19832,6 @@ packages:
       - utf-8-validate
     dev: false
 
-  /jose/4.13.2:
-    resolution: {integrity: sha512-GMUKtV+l05F6NY/06nM7rucHM6Ktvw6sxnyRqINBNWS/hCM/bBk7kanOEckRP8xtC/jzuGfTRVZvkjjuy+g4dA==}
-    dev: false
-
   /js-sdsl/4.1.4:
     resolution: {integrity: sha512-Y2/yD55y5jteOAmY50JbUZYwk3CP3wnLPEZnlR1w9oKhITrBEtAxwuWKebFf8hMrPMgbYwFoWK/lH2sBkErELw==}
     dev: true
@@ -21230,31 +21220,6 @@ packages:
   /nested-error-stacks/2.1.1:
     resolution: {integrity: sha512-9iN1ka/9zmX1ZvLV9ewJYEk9h7RyRRtqdK0woXcqohu8EWIerfPUjYJPg0ULy0UqP7cslmdGc8xKDJcojlKiaw==}
 
-  /next-auth/4.22.0_q76c2b4vyoegvsbrcwkfvimnai:
-    resolution: {integrity: sha512-08+kjnDoE7aQ52O996x6cwA3ffc2CbHIkrCgLYhbE+aDIJBKI0oA9UbIEIe19/+ODYJgpAHHOtJx4izmsgaVag==}
-    peerDependencies:
-      next: ^12.2.5 || ^13
-      nodemailer: ^6.6.5
-      react: ^17.0.2 || ^18
-      react-dom: ^17.0.2 || ^18
-    peerDependenciesMeta:
-      nodemailer:
-        optional: true
-    dependencies:
-      '@babel/runtime': 7.20.13
-      '@panva/hkdf': 1.0.4
-      cookie: 0.5.0
-      jose: 4.13.2
-      next: 13.1.1_pjwopsidmaokadturxaafygjp4
-      oauth: 0.9.15
-      openid-client: 5.4.0
-      preact: 10.13.2
-      preact-render-to-string: 5.2.6_preact@10.13.2
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-      uuid: 8.3.2
-    dev: false
-
   /next/13.1.1_pjwopsidmaokadturxaafygjp4:
     resolution: {integrity: sha512-R5eBAaIa3X7LJeYvv1bMdGnAVF4fVToEjim7MkflceFPuANY3YyvFxXee/A+acrSYwYPvOvf7f6v/BM/48ea5w==}
     engines: {node: '>=14.6.0'}
@@ -21781,11 +21746,6 @@ packages:
       define-property: 0.2.5
       kind-of: 3.2.2
 
-  /object-hash/2.2.0:
-    resolution: {integrity: sha512-gScRMn0bS5fH+IuwyIFgnh9zBdo4DV+6GhygmWM9HyNJSgS0hScp1f5vjtm7oIIOiT9trXrShAkLFSc2IqKNgw==}
-    engines: {node: '>= 6'}
-    dev: false
-
   /object-hash/3.0.0:
     resolution: {integrity: sha512-RSn9F68PjH9HqtltsSnqYC1XXoWe9Bju5+213R98cNGttag9q9yAOTzdbsqvIa7aNm5WffBZFpWYr2aWrklWAw==}
     engines: {node: '>= 6'}
@@ -21915,11 +21875,6 @@ packages:
     resolution: {integrity: sha512-PX1wu0AmAdPqOL1mWhqmlOd8kOIZQwGZw6rh7uby9fTc5lhaOWFLX3I6R1hrF9k3zUY40e6igsLGkDXK92LJNg==}
     dev: false
 
-  /oidc-token-hash/5.0.2:
-    resolution: {integrity: sha512-U91Ba78GtVBxcExLI7U+hC2AwJQqXQEW/D3fjmJC4hhSVIgdl954KO4Gu95WqAlgDKJdLATxkmuxraWLT0fVRQ==}
-    engines: {node: ^10.13.0 || >=12.0.0}
-    dev: false
-
   /on-finished/2.4.1:
     resolution: {integrity: sha512-oVlzkg3ENAhCk2zdv7IJwd/QUD4z2RxRwpkcGY8psCVcCYZNq4wYnVWALHM+brtuJjePWiYF/ClmuDr8Ch5+kg==}
     engines: {node: '>= 0.8'}
@@ -21966,15 +21921,6 @@ packages:
   /opener/1.5.2:
     resolution: {integrity: sha512-ur5UIdyw5Y7yEj9wLzhqXiy6GZ3Mwx0yGI+5sMn2r0N0v3cKJvUmFH5yPP+WXh9e0xfyzyJX95D8l088DNFj7A==}
     hasBin: true
-    dev: false
-
-  /openid-client/5.4.0:
-    resolution: {integrity: sha512-hgJa2aQKcM2hn3eyVtN12tEA45ECjTJPXCgUh5YzTzy9qwapCvmDTVPWOcWVL0d34zeQoQ/hbG9lJhl3AYxJlQ==}
-    dependencies:
-      jose: 4.13.2
-      lru-cache: 6.0.0
-      object-hash: 2.2.0
-      oidc-token-hash: 5.0.2
     dev: false
 
   /optionator/0.8.3:
@@ -23383,19 +23329,6 @@ packages:
       picocolors: 1.0.0
       source-map-js: 1.0.2
 
-  /preact-render-to-string/5.2.6_preact@10.13.2:
-    resolution: {integrity: sha512-JyhErpYOvBV1hEPwIxc/fHWXPfnEGdRKxc8gFdAZ7XV4tlzyzG847XAyEZqoDnynP88akM4eaHcSOzNcLWFguw==}
-    peerDependencies:
-      preact: '>=10'
-    dependencies:
-      preact: 10.13.2
-      pretty-format: 3.8.0
-    dev: false
-
-  /preact/10.13.2:
-    resolution: {integrity: sha512-q44QFLhOhty2Bd0Y46fnYW0gD/cbVM9dUVtNTDKPcdXSMA7jfY+Jpd6rk3GB0lcQss0z5s/6CmVP0Z/hV+g6pw==}
-    dev: false
-
   /prebuild-install/7.1.1:
     resolution: {integrity: sha512-jAXscXWMcCK8GgCoHOfIr0ODh5ai8mj63L2nWrjuAgXE6tDyYGnx4/8o/rCgU+B4JSyZBKbeZqzhtwtC3ovxjw==}
     engines: {node: '>=10'}
@@ -23481,10 +23414,6 @@ packages:
       ansi-regex: 5.0.1
       ansi-styles: 5.2.0
       react-is: 18.2.0
-
-  /pretty-format/3.8.0:
-    resolution: {integrity: sha512-WuxUnVtlWL1OfZFQFuqvnvs6MiAGk9UNsBostyBOB0Is9wb5uRESevA6rnl/rkksXaGX3GzZhPup5d6Vp1nFew==}
-    dev: false
 
   /pretty-hrtime/1.0.3:
     resolution: {integrity: sha512-66hKPCr+72mlfiSjlEB1+45IjXSqvVAIy6mocupoww4tBFE9R9IhwwUGoI4G++Tc9Aq+2rxOt0RFU6gPcrte0A==}
