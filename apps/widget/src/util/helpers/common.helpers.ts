@@ -1,3 +1,4 @@
+import { variables } from '@config';
 import { saveAs } from 'file-saver';
 
 // eslint-disable-next-line no-magic-numbers
@@ -29,4 +30,13 @@ export function downloadFileFromURL(url: string, name: string) {
   if (!isValidHttpUrl(url)) return;
 
   saveAs(url, name);
+}
+
+export function getFileNameFromUrl(url: string) {
+  if (!isValidHttpUrl(url)) return '';
+  const formedUrl = new URL(url);
+  let pathArr = formedUrl.pathname.split('/');
+  pathArr = pathArr.splice(variables.secondIndex);
+
+  return pathArr.join('/');
 }

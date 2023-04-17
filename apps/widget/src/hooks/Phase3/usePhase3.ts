@@ -1,8 +1,9 @@
+import { variables } from '@config';
 import { IErrorObject, IReviewData, IUpload } from '@impler/shared';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { downloadFileFromURL, notifier } from '@util';
+import { downloadFileFromURL, getFileNameFromUrl, notifier } from '@util';
 import { useState } from 'react';
 
 const defaultPage = 1;
@@ -38,13 +39,25 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
       },
     }
   );
+  const { mutate: getSignedUrl } = useMutation<string, IErrorObject, [string, string]>(
+    [`getSignedUrl:${uploadInfo._id}`],
+    ([fileUrl]) => api.getSignedUrl(getFileNameFromUrl(fileUrl)),
+    {
+      onSuccess(signedUrl, queryVariables) {
+        downloadFileFromURL(signedUrl, queryVariables[variables.firstIndex]);
+      },
+      onError(error: IErrorObject) {
+        notifier.showError({ title: error.error, message: error.message });
+      },
+    }
+  );
   const { isLoading: isGetUploadLoading, refetch: getUpload } = useQuery<IUpload, IErrorObject, IUpload, [string]>(
     [`getUpload:${uploadInfo._id}`],
     () => api.getUpload(uploadInfo._id),
     {
       onSuccess(data) {
         setUploadInfo(data);
-        downloadFileFromURL(data.invalidCSVDataFileUrl, `invalid-data-${uploadInfo._id}.csv`);
+        getSignedUrl([data.invalidCSVDataFileUrl, `invalid-data-${uploadInfo._id}.csv`]);
       },
       onError(error: IErrorObject) {
         notifier.showError({ message: error.message, title: error.error });
@@ -77,7 +90,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
 
   const onExportData = () => {
     if (!uploadInfo.invalidCSVDataFileUrl) getUpload();
-    else downloadFileFromURL(uploadInfo.invalidCSVDataFileUrl, `invalid-data-${uploadInfo._id}.csv`);
+    else getSignedUrl([uploadInfo.invalidCSVDataFileUrl, `invalid-data-${uploadInfo._id}.csv`]);
   };
 
   return {

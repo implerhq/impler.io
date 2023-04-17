@@ -8,6 +8,7 @@ import {
   ListBucketsCommand,
 } from '@aws-sdk/client-s3';
 import { FileNotExistError } from '../../errors/file-not-exist.error';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Defaults } from '../../utils';
 
 export interface IFilePath {
@@ -16,15 +17,11 @@ export interface IFilePath {
 }
 
 export abstract class StorageService {
-  abstract uploadFile(
-    key: string,
-    file: Buffer | string,
-    contentType: string,
-    isPublic?: boolean
-  ): Promise<PutObjectCommandOutput>;
+  abstract uploadFile(key: string, file: Buffer | string, contentType: string): Promise<PutObjectCommandOutput>;
   abstract getFileContent(key: string, encoding?: BufferEncoding): Promise<string>;
   abstract deleteFile(key: string): Promise<void>;
   abstract isConnected(): boolean;
+  abstract getSignedUrl(key: string): Promise<string>;
 }
 
 async function streamToString(stream: Readable, encoding: BufferEncoding): Promise<string> {
@@ -60,12 +57,11 @@ export class S3StorageService implements StorageService {
       });
   }
 
-  async uploadFile(key: string, file: Buffer, contentType: string, isPublic = false): Promise<PutObjectCommandOutput> {
+  async uploadFile(key: string, file: Buffer, contentType: string): Promise<PutObjectCommandOutput> {
     const command = new PutObjectCommand({
       Bucket: process.env.S3_BUCKET_NAME,
       Key: key,
       Body: file,
-      ACL: isPublic ? 'public-read' : 'private',
       ContentType: contentType,
     });
 
@@ -99,5 +95,19 @@ export class S3StorageService implements StorageService {
 
   isConnected(): boolean {
     return this.isS3Connected;
+  }
+
+  async getSignedUrl(key: string): Promise<string> {
+    return await getSignedUrl(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      this.s3,
+      new GetObjectCommand({
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: key,
+      }),
+      // eslint-disable-next-line no-magic-numbers
+      { expiresIn: 15 * 60 } // 15 minutes
+    );
   }
 }
