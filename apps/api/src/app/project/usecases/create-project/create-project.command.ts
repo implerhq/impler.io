@@ -1,12 +1,8 @@
-import { IsDefined, IsOptional, IsString } from 'class-validator';
-import { BaseCommand } from '@shared/commands/base.command';
+import { IsDefined, IsString } from 'class-validator';
+import { AuthenticatedCommand } from '@shared/commands/authenticated.command';
 
-export class CreateProjectCommand extends BaseCommand {
+export class CreateProjectCommand extends AuthenticatedCommand {
   @IsDefined()
   @IsString()
   name: string;
-
-  @IsOptional()
-  @IsString()
-  authHeaderName: string;
 }

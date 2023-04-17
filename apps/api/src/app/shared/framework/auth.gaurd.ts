@@ -1,5 +1,6 @@
 import { ExecutionContext, Injectable, CanActivate, UnauthorizedException } from '@nestjs/common';
 import { ACCESS_KEY_NAME } from '@impler/shared';
+import { CONSTANTS } from '@shared/constants';
 
 @Injectable()
 export class APIKeyGuard implements CanActivate {
@@ -15,5 +16,44 @@ export class APIKeyGuard implements CanActivate {
     }
 
     return true;
+  }
+}
+
+@Injectable()
+export class AuthGuard implements CanActivate {
+  canActivate(context: ExecutionContext) {
+    const req = context.switchToHttp().getRequest();
+
+    if ((req.cookies && req.cookies[CONSTANTS.AUTH_COOKIE_NAME]) || req.headers[CONSTANTS.ACCESS_KEY_NAME]) {
+      return true;
+    }
+
+    throw new UnauthorizedException();
+  }
+}
+
+@Injectable()
+export class WebAuthGuard implements CanActivate {
+  canActivate(context: ExecutionContext) {
+    const req = context.switchToHttp().getRequest();
+
+    if (req.cookies && req.cookies[CONSTANTS.AUTH_COOKIE_NAME]) {
+      return true;
+    }
+
+    throw new UnauthorizedException();
+  }
+}
+
+@Injectable()
+export class WidgetAuthGuard implements CanActivate {
+  canActivate(context: ExecutionContext) {
+    const req = context.switchToHttp().getRequest();
+
+    if (req.headers[CONSTANTS.ACCESS_KEY_NAME]) {
+      return true;
+    }
+
+    throw new UnauthorizedException();
   }
 }

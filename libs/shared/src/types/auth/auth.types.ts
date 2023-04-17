@@ -1,6 +1,6 @@
 export enum AuthProviderEnum {
-  GOOGLE = 'google',
-  GITHUB = 'github',
+  'GOOGLE' = 'google',
+  'GITHUB' = 'github',
 }
 
 export interface IJwtPayload {
