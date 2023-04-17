@@ -52,6 +52,11 @@ export function Phase3(props: IPhase3Props) {
     setShowConfirmModal(true);
   };
 
+  const onReviewConfirmed = (exempt: boolean) => {
+    setShowConfirmModal(false);
+    onConfirmReview(exempt);
+  };
+
   return (
     <>
       <LoadingOverlay visible={!isInitialDataLoaded || isConfirmReviewLoading} />
@@ -85,7 +90,7 @@ export function Phase3(props: IPhase3Props) {
       />
 
       <ConfirmModal
-        onConfirm={onConfirmReview}
+        onConfirm={onReviewConfirmed}
         onClose={() => setShowConfirmModal(false)}
         opened={showConfirmModal}
         wrongDataCount={totalData}

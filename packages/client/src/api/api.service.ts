@@ -111,4 +111,10 @@ export class ApiService {
       `/upload/${uploadId}/rows/invalid?page=${page}&limit=${limit}`
     ) as Promise<PaginationResult>;
   }
+
+  async getSignedUrl(key: string) {
+    return this.httpClient.post(`/common/signed-url`, {
+      key,
+    }) as Promise<string>;
+  }
 }

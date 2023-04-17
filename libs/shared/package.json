@@ -1,6 +1,6 @@
 {
   "name": "@impler/shared",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "Reusable types and classes to shared between apps and libraries",
   "license": "MIT",
   "author": "knovator",
@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.185.0",
+    "@aws-sdk/s3-request-presigner": "^3.276.0",
     "axios": "^0.26.1"
   },
   "lint-staged": {

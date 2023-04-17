@@ -5,8 +5,9 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAPIState } from '@store/api.context';
 import { IErrorObject, IOption, ITemplate, IUpload } from '@impler/shared';
 import { useAppState } from '@store/app.context';
-import { downloadFileFromURL, notifier, ParentWindow } from '@util';
+import { downloadFileFromURL, getFileNameFromUrl, notifier, ParentWindow } from '@util';
 import { IFormvalues, IUploadValues } from '@types';
+import { variables } from '@config';
 
 interface IUsePhase1Props {
   goNext: () => void;
@@ -49,6 +50,18 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
       },
     }
   );
+  const { mutate: getSignedUrl } = useMutation<string, IErrorObject, [string, string]>(
+    ['getSignedUrl'],
+    ([fileUrl]) => api.getSignedUrl(getFileNameFromUrl(fileUrl)),
+    {
+      onSuccess(signedUrl, queryVariables) {
+        downloadFileFromURL(signedUrl, queryVariables[variables.firstIndex]);
+      },
+      onError(error: IErrorObject) {
+        notifier.showError({ title: error.error, message: error.message });
+      },
+    }
+  );
   const {
     control,
     register,
@@ -67,31 +80,31 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
       return;
     }
 
-    let selectedTemplate: ITemplate | undefined;
+    let foundTemplate: ITemplate | undefined;
     const selectedTemplateValue = getValues('template');
     if (selectedTemplateValue && dataTemplates) {
-      selectedTemplate = dataTemplates.find((templateItem) => templateItem._id === selectedTemplateValue);
+      foundTemplate = dataTemplates.find((templateItem) => templateItem._id === selectedTemplateValue);
     } else if (template && dataTemplates) {
-      selectedTemplate = dataTemplates.find(
+      foundTemplate = dataTemplates.find(
         (templateItem) => templateItem.code === template || templateItem._id === template
       );
     }
 
-    if (selectedTemplate && selectedTemplate.sampleFileUrl)
-      downloadFileFromURL(selectedTemplate.sampleFileUrl, `${selectedTemplate.code}-sample.csv`);
-    else if (selectedTemplate && !selectedTemplate.sampleFileUrl) notifier.showError('INCOMPLETE_TEMPLATE');
+    if (foundTemplate && foundTemplate.sampleFileUrl) {
+      getSignedUrl([foundTemplate.sampleFileUrl, foundTemplate.name + ' (sample).csv']);
+    } else if (foundTemplate && !foundTemplate.sampleFileUrl) notifier.showError('INCOMPLETE_TEMPLATE');
     else notifier.showError('TEMPLATE_NOT_FOUND');
     setIsDownloadInProgress(false);
   };
 
   const onSubmit = (submitData: IFormvalues) => {
     if ((template || submitData.template) && dataTemplates) {
-      const selectedTemplate = dataTemplates.find(
+      const foundTemplate = dataTemplates.find(
         (templateItem) =>
           templateItem.code === template || templateItem._id === template || templateItem._id === submitData.template
       );
-      if (selectedTemplate) {
-        submitData.template = selectedTemplate._id;
+      if (foundTemplate) {
+        submitData.template = foundTemplate._id;
         submitUpload({
           ...submitData,
           authHeaderValue,
