@@ -9,7 +9,6 @@ import {
   TemplateRepository,
   UploadRepository,
   UserRepository,
-  FlowRepository,
   EnvironmentRepository,
 } from '@impler/dal';
 import { S3StorageService, StorageService } from '@impler/shared/dist/services/storage';
@@ -25,7 +24,6 @@ const DAL_MODELS = [
   MappingRepository,
   CommonRepository,
   UserRepository,
-  FlowRepository,
   EnvironmentRepository,
 ];
 const FILE_SERVICES = [CSVFileService, FileNameService, ExcelFileService];
