@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 import { USE_CASES } from './usecases';
+import { EnvironmentController } from './environment.controller';
 import { SharedModule } from '@shared/shared.module';
-import { FlowController } from './flow.controller';
 
 @Module({
   imports: [SharedModule],
   providers: [...USE_CASES],
-  controllers: [FlowController],
+  exports: [...USE_CASES],
+  controllers: [EnvironmentController],
 })
-export class FlowModule {}
+export class EnvironmentModule {}

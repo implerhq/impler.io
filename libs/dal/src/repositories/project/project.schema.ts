@@ -10,6 +10,10 @@ const projectSchema = new Schema(
     authHeaderName: {
       type: Schema.Types.String,
     },
+    _userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
   },
   { ...schemaOptions }
 );

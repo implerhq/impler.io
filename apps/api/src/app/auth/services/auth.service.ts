@@ -2,7 +2,7 @@ import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { IJwtPayload } from '@impler/shared';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserEntity, UserRepository, MemberRepository, MemberEntity } from '@impler/dal';
+import { UserEntity, UserRepository, EnvironmentRepository, ProjectRepository, ProjectEntity } from '@impler/dal';
 import { UserNotFoundException } from '@shared/exceptions/user-not-found.exception';
 import { IAuthenticationData, IStrategyResponse } from '@shared/types/auth.types';
 import { IncorrectLoginCredentials } from '@shared/exceptions/incorrect-login-credentials.exception';
@@ -12,7 +12,8 @@ export class AuthService {
   constructor(
     private jwtService: JwtService,
     private userRepository: UserRepository,
-    private memberRepository: MemberRepository
+    private projectRepository: ProjectRepository,
+    private environmentRepository: EnvironmentRepository
   ) {}
 
   async authenticate({ profile, provider }: IAuthenticationData): Promise<IStrategyResponse> {
@@ -58,10 +59,10 @@ export class AuthService {
     }
 
     let showAddProject = true;
-    const member: MemberEntity = await this.memberRepository.findOne({
-      $or: [{ _userId: user._id }],
+    const project: ProjectEntity = await this.projectRepository.findOne({
+      _userId: user._id,
     });
-    if (member) {
+    if (project) {
       showAddProject = false;
     }
 
@@ -70,8 +71,7 @@ export class AuthService {
       showAddProject,
       token: await this.getSignedToken(
         { _id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName },
-        member?._projectId,
-        member?.role
+        project?._id
       ),
     };
   }
@@ -130,5 +130,26 @@ export class AuthService {
 
   private async getUser({ _id }: { _id: string }) {
     return await this.userRepository.findById(_id);
+  }
+
+  async apiKeyAuthenticate(apiKey: string) {
+    const environment = await this.environmentRepository.findByApiKey(apiKey);
+    if (!environment) throw new UnauthorizedException('API Key not found');
+
+    const key = environment.apiKeys.find((i) => i.key === apiKey);
+    if (!key) throw new UnauthorizedException('API Key not found');
+
+    const user = await this.getUser({ _id: key._userId });
+    if (!user) throw new UnauthorizedException('User not found');
+
+    return await this.getSignedToken(
+      {
+        _id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+      },
+      environment._projectId
+    );
   }
 }

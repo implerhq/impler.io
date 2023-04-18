@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import { ApiOperation, ApiTags, ApiOkResponse } from '@nestjs/swagger';
-import { Body, Controller, Delete, Get, Param, Post, Put, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Res, UseGuards } from '@nestjs/common';
 
 import { IJwtPayload } from '@impler/shared';
 import { UserSession } from '@shared/framework/user.decorator';
@@ -14,23 +14,22 @@ import {
   CreateProject,
   UpdateProject,
   DeleteProject,
-  AddMember,
-  AddMemberCommand,
   CreateProjectCommand,
   UpdateProjectCommand,
 } from './usecases';
 import { AuthService } from 'app/auth/services/auth.service';
 import { CONSTANTS, COOKIE_CONFIG } from '@shared/constants';
+import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 
 @Controller('/project')
 @ApiTags('Project')
+@UseGuards(JwtAuthGuard)
 export class ProjectController {
   constructor(
     private getProjectsUsecase: GetProjects,
     private createProjectUsecase: CreateProject,
     private updateProjectUsecase: UpdateProject,
     private deleteProjectUsecase: DeleteProject,
-    private addMember: AddMember,
     private authService: AuthService
   ) {}
 
@@ -60,12 +59,6 @@ export class ProjectController {
     const project = await this.createProjectUsecase.execute(
       CreateProjectCommand.create({
         name: body.name,
-        authHeaderName: body.authHeaderName,
-      })
-    );
-    const member = await this.addMember.execute(
-      AddMemberCommand.create({
-        _projectId: project._id,
         _userId: user._id,
       })
     );
@@ -77,8 +70,7 @@ export class ProjectController {
         email: user.email,
         profilePicture: user.profilePicture,
       },
-      project._id,
-      member.role
+      project._id
     );
     res.cookie(CONSTANTS.AUTH_COOKIE_NAME, token, COOKIE_CONFIG);
 
