@@ -33,7 +33,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       const accessKey = req.headers[CONSTANTS.ACCESS_KEY_NAME];
 
       const tokenResult = await this.authService.apiKeyAuthenticate(accessKey);
-      req.headers.authorization = `Bearer ${tokenResult}`;
+      req.cookies = {
+        ...(req.cookies || {}),
+        [CONSTANTS.AUTH_COOKIE_NAME]: tokenResult,
+      };
 
       return true;
     } else if (req.cookies && req.cookies[CONSTANTS.AUTH_COOKIE_NAME]) {

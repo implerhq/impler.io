@@ -5,10 +5,6 @@ import { schemaOptions } from '../schema-default.options';
 
 const environmentSchema = new Schema(
   {
-    identifier: {
-      type: Schema.Types.String,
-      unique: true,
-    },
     _projectId: {
       type: Schema.Types.ObjectId,
       ref: 'Project',
