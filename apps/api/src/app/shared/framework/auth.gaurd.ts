@@ -1,6 +1,8 @@
-import { ExecutionContext, Injectable, CanActivate, UnauthorizedException } from '@nestjs/common';
+import { ExecutionContext, Injectable, CanActivate, UnauthorizedException, Inject, forwardRef } from '@nestjs/common';
 import { ACCESS_KEY_NAME } from '@impler/shared';
 import { CONSTANTS } from '@shared/constants';
+import { AuthService } from 'app/auth/services/auth.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
 export class APIKeyGuard implements CanActivate {
@@ -20,11 +22,21 @@ export class APIKeyGuard implements CanActivate {
 }
 
 @Injectable()
-export class AuthGuard implements CanActivate {
-  canActivate(context: ExecutionContext) {
-    const req = context.switchToHttp().getRequest();
+export class JwtAuthGuard extends AuthGuard('jwt') {
+  constructor(@Inject(forwardRef(() => AuthService)) private authService: AuthService) {
+    super();
+  }
 
-    if ((req.cookies && req.cookies[CONSTANTS.AUTH_COOKIE_NAME]) || req.headers[CONSTANTS.ACCESS_KEY_NAME]) {
+  async canActivate(context: ExecutionContext) {
+    const req = context.switchToHttp().getRequest();
+    if (req.cookies && req.headers[CONSTANTS.ACCESS_KEY_NAME]) {
+      const accessKey = req.headers[CONSTANTS.ACCESS_KEY_NAME];
+
+      const tokenResult = await this.authService.apiKeyAuthenticate(accessKey);
+      req.headers.authorization = `Bearer ${tokenResult}`;
+
+      return true;
+    } else if (req.cookies && req.cookies[CONSTANTS.AUTH_COOKIE_NAME]) {
       return true;
     }
 

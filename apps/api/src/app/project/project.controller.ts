@@ -19,10 +19,11 @@ import {
 } from './usecases';
 import { AuthService } from 'app/auth/services/auth.service';
 import { CONSTANTS, COOKIE_CONFIG } from '@shared/constants';
-import { WebAuthGuard } from '@shared/framework/auth.gaurd';
+import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 
 @Controller('/project')
 @ApiTags('Project')
+@UseGuards(JwtAuthGuard)
 export class ProjectController {
   constructor(
     private getProjectsUsecase: GetProjects,
@@ -39,7 +40,6 @@ export class ProjectController {
   @ApiOkResponse({
     type: [ProjectResponseDto],
   })
-  @UseGuards(WebAuthGuard)
   getProjects(@UserSession() user: IJwtPayload): Promise<ProjectResponseDto[]> {
     return this.getProjectsUsecase.execute(user._id);
   }
