@@ -34,14 +34,14 @@ export class UploadController {
     private paginateFileContent: PaginateFileContent
   ) {}
 
-  @Post(':template')
+  @Post(':templateId')
   @ApiOperation({
     summary: `Upload file to template`,
   })
   @ApiParam({
-    name: 'template',
+    name: 'templateId',
     required: true,
-    description: 'ID or CODE of the template',
+    description: 'ID of the template',
     type: 'string',
   })
   @ApiConsumes('multipart/form-data')
@@ -49,7 +49,7 @@ export class UploadController {
   async uploadFile(
     @UploadedFile('file', ValidImportFile) file: Express.Multer.File,
     @Body() body: UploadRequestDto,
-    @Param('template', ValidateTemplate) templateId: string
+    @Param('templateId', ValidateTemplate) templateId: string
   ) {
     return await this.makeUploadEntry.execute(
       MakeUploadEntryCommand.create({

@@ -13,10 +13,12 @@ export class GetTemplates {
       _projectId: template._projectId,
       callbackUrl: template.callbackUrl,
       chunkSize: template.chunkSize,
-      code: template.code,
       name: template.name,
       sampleFileUrl: template.sampleFileUrl,
       _id: template._id,
+      totalUploads: template.totalUploads,
+      totalInvalidRecords: template.totalInvalidRecords,
+      totalRecords: template.totalRecords,
     }));
   }
 }

@@ -18,6 +18,14 @@ const routes: Record<string, Route> = {
     url: () => '/v1/auth/logout',
     method: 'GET',
   },
+  [API_KEYS.TEMPLATES_LIST]: {
+    url: (projectId) => `/v1/template/${projectId}`,
+    method: 'GET',
+  },
+  [API_KEYS.TEMPLATES_CREATE]: {
+    url: (projectId) => `/v1/template/${projectId}`,
+    method: 'POST',
+  },
 };
 
 function handleResponseStatusAndContentType(response: Response) {
@@ -29,7 +37,7 @@ function handleResponseStatusAndContentType(response: Response) {
   else throw new Error(`Unsupported response content-type: ${contentType}`);
 }
 
-export async function commonApi(
+export async function commonApi<T>(
   key: keyof typeof API_KEYS,
   { parameters, body }: { parameters?: string[]; body?: any }
 ) {
@@ -48,8 +56,10 @@ export async function commonApi(
     });
 
     if (response.status >= VARIABLES.TWO_HUNDREDS && response.status < VARIABLES.THREE_HUNDREDS) {
-      return handleResponseStatusAndContentType(response);
+      return (await handleResponseStatusAndContentType(response)) as T;
     }
+
+    throw new Error('Something went wrong');
   } catch (error) {
     throw error;
   }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { FileMimeTypesEnum, UploadStatusEnum } from '@impler/shared';
-import { CommonRepository, FileEntity, FileRepository, UploadRepository } from '@impler/dal';
+import { CommonRepository, FileEntity, FileRepository, TemplateRepository, UploadRepository } from '@impler/dal';
 import { MakeUploadEntryCommand } from './make-upload-entry.command';
 import { FileNameService } from '@shared/file/name.service';
 import { Defaults } from '@impler/shared';
@@ -16,7 +16,8 @@ export class MakeUploadEntry {
     private commonRepository: CommonRepository,
     private fileRepository: FileRepository,
     private storageService: StorageService,
-    private fileNameService: FileNameService
+    private fileNameService: FileNameService,
+    private templateRepository: TemplateRepository
   ) {}
 
   async execute({ file, templateId, extra, authHeaderValue }: MakeUploadEntryCommand) {
@@ -25,6 +26,15 @@ export class MakeUploadEntry {
     const uploadId = this.commonRepository.generateMongoId();
     const fileEntity = await this.makeFileEntry(uploadId, file);
     const allDataFile = await this.addAllDataEntry(uploadId, fileInformation.data);
+
+    await this.templateRepository.findOneAndUpdate(
+      { _id: templateId },
+      {
+        $inc: {
+          totalImports: 1,
+        },
+      }
+    );
 
     return this.addUploadEntry(
       AddUploadEntryCommand.create({

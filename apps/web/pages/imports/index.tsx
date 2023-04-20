@@ -6,9 +6,10 @@ import { Pagination } from '@ui/pagination';
 import { useImports } from '@hooks/useImports';
 import { AppLayout } from '@layouts/AppLayout';
 import { ImportActions } from '@components/imports/ImportActions';
+import { ITemplate } from '@impler/shared';
 
 export default function Imports() {
-  const { onCreateClick } = useImports();
+  const { onCreateClick, templates } = useImports();
 
   return (
     <>
@@ -20,32 +21,19 @@ export default function Imports() {
           </Button>
         </Flex>
         <div style={{ flexGrow: 1 }}>
-          <Table
+          <Table<Partial<ITemplate>>
             headings={[
               { title: 'Name', key: 'name' },
-              { title: 'Imports', key: 'imports' },
-              { title: 'Total rows', key: 'totalImports' },
-              { title: 'Total errors', key: 'totalErrors' },
+              { title: 'Imports', key: 'totalUploads' },
+              { title: 'Total rows', key: 'totalRecords' },
+              { title: 'Total errors', key: 'totalInvalidRecords' },
               {
                 title: '',
                 key: 'actions',
                 Cell: () => <ImportActions slug="users-import" />,
               },
             ]}
-            data={[
-              {
-                name: 'Import 1',
-                imports: 100,
-                totalImports: 100,
-                totalErrors: 0,
-              },
-              {
-                name: 'Import 2',
-                imports: 100,
-                totalImports: 100,
-                totalErrors: 0,
-              },
-            ]}
+            data={templates}
           />
         </div>
         <Pagination

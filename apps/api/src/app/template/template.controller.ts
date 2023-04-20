@@ -58,7 +58,6 @@ export class TemplateController {
         _projectId: projectId,
         callbackUrl: body.callbackUrl,
         chunkSize: body.chunkSize,
-        code: body.code,
         name: body.name,
       })
     );

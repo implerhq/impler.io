@@ -20,3 +20,8 @@ interface IProfileData {
 interface ICreateProjectData {
   name: string;
 }
+
+interface ICreateTemplateData {
+  name: string;
+  code: string;
+}

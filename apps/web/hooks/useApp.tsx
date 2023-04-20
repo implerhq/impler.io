@@ -12,7 +12,7 @@ export function useApp() {
   const { replace } = useRouter();
   const [profile, setProfile, removeProfile] = useLocalStorage<IProfileData>({ key: CONSTANTS.PROFILE_STORAGE_NAME });
   const [projectId, setProjectId] = useState<string | undefined>();
-  const { data: projects, isLoading: isProjectsLoading } = useQuery<null, IErrorObject, IProjectPayload[], string[]>(
+  const { data: projects, isLoading: isProjectsLoading } = useQuery<unknown, IErrorObject, IProjectPayload[], string[]>(
     [API_KEYS.GET_PROJECTS],
     () => commonApi(API_KEYS.GET_PROJECTS as any, {})
   );
