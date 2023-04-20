@@ -4,6 +4,7 @@ import { createStyles, MantineTheme } from '@mantine/core';
 const getRootStyles = (): React.CSSProperties => ({
   height: '100vh',
   display: 'flex',
+  position: 'relative',
 });
 
 const getAsideStyles = (): React.CSSProperties => ({

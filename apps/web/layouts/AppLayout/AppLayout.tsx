@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import { PropsWithChildren, useRef } from 'react';
-import { Flex, Group, Select, Stack, Title, useMantineColorScheme } from '@mantine/core';
+import { Flex, Group, LoadingOverlay, Select, Stack, Title, useMantineColorScheme } from '@mantine/core';
 
 import { Import } from '@assets/icons';
 import useStyles from './AppLayout.styles';
@@ -17,7 +17,7 @@ import { ColorSchemeToggle } from '@ui/toggle-color-scheme';
 export function AppLayout({ children }: PropsWithChildren) {
   const { classes } = useStyles();
   const navRef = useRef<HTMLElement>(null);
-  const { profile, projects, createProject, projectId, setProjectId, logout } = useApp();
+  const { profile, projects, createProject, projectId, setProjectId, logout, isProjectsLoading } = useApp();
   const { colorScheme } = useMantineColorScheme();
 
   return (
@@ -29,6 +29,7 @@ export function AppLayout({ children }: PropsWithChildren) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className={classes.root}>
+        <LoadingOverlay visible={isProjectsLoading} />
         <aside className={classes.aside}>
           <div className={classes.logoContainer}>
             <Image src={colorScheme === 'dark' ? LogoWhite : LogoBlack} alt="Impler Logo" width={140} />
