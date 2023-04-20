@@ -62,7 +62,7 @@ export class ProjectController {
         _userId: user._id,
       })
     );
-    const token = this.authService.getSignedToken(
+    const token = await this.authService.getSignedToken(
       {
         _id: user._id,
         firstName: user.firstName,
