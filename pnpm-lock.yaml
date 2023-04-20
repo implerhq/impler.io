@@ -254,7 +254,8 @@ importers:
     specifiers:
       '@emotion/react': ^11.10.5
       '@emotion/server': ^11.10.0
-      '@impler/shared': ^0.1.12
+      '@impler/client': workspace:^0.1.13
+      '@impler/shared': workspace:^0.1.13
       '@mantine/carousel': 6.0.6
       '@mantine/core': 6.0.6
       '@mantine/hooks': 6.0.6
@@ -266,16 +267,19 @@ importers:
       '@storybook/manager-webpack5': ^6.5.16
       '@storybook/react': ^6.5.13
       '@storybook/theming': ^7.0.2
+      '@tanstack/react-query': ^4.14.5
       '@types/node': ^18.15.11
       '@types/react': ^18.0.21
       '@types/react-dom': ^18.0.6
       embla-carousel-react: ^7.0.9
       eslint: ^8.38.0
       eslint-config-next: 13.1.1
+      jwt-decode: ^3.1.2
       next: 13.1.1
       react: 18.2.0
       react-ace: ^10.1.0
       react-dom: 18.2.0
+      react-hook-form: ^7.39.1
       rimraf: ^3.0.2
       storybook-dark-mode: ^2.0.6
       tsconfig-paths-webpack-plugin: ^4.0.0
@@ -283,6 +287,7 @@ importers:
     dependencies:
       '@emotion/react': 11.10.5_tthezkgec2o3jwmbjlr4nrwrji
       '@emotion/server': 11.10.0
+      '@impler/client': link:../../packages/client
       '@impler/shared': link:../../libs/shared
       '@mantine/carousel': 6.0.6_pvaw2zfxtzvo4bhyx223uzxdk4
       '@mantine/core': 6.0.6_ueioib7soyzozf2zgopdomeqve
@@ -291,11 +296,14 @@ importers:
       '@mantine/next': 6.0.6_d5xj5jipthoiwqd5a5nbaex2p4
       '@mantine/prism': 6.0.6_feqrfkte3oaz5jjghkdwfk53i4
       '@next/font': 13.1.1
+      '@tanstack/react-query': 4.14.5_biqbaboplfbrettd7655fr4n2y
       embla-carousel-react: 7.0.9_react@18.2.0
+      jwt-decode: 3.1.2
       next: 13.1.1_pjwopsidmaokadturxaafygjp4
       react: 18.2.0
       react-ace: 10.1.0_biqbaboplfbrettd7655fr4n2y
       react-dom: 18.2.0_react@18.2.0
+      react-hook-form: 7.39.1_react@18.2.0
       typescript: 4.9.5
     devDependencies:
       '@storybook/builder-webpack5': 6.5.16_54qvronp7umq5avqphwforecue
@@ -20051,6 +20059,10 @@ packages:
     dependencies:
       jwa: 1.4.1
       safe-buffer: 5.2.1
+    dev: false
+
+  /jwt-decode/3.1.2:
+    resolution: {integrity: sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==}
     dev: false
 
   /kareem/2.4.1:

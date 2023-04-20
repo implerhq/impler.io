@@ -17,14 +17,17 @@ export class AuthService {
   ) {}
 
   async authenticate({ profile, provider }: IAuthenticationData): Promise<IStrategyResponse> {
-    const showAddProject = false;
+    let showAddProject = false;
     let userCreated = false;
     // get or create the user
     let user = await this.userRepository.findOne({ email: profile.email });
 
     if (!user) {
       const userObj: Partial<UserEntity> = {
-        ...profile,
+        email: profile.email,
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        profilePicture: profile.avatar_url,
         ...(provider ? { tokens: [provider] } : {}),
       };
       user = await this.userRepository.create(userObj);
@@ -33,17 +36,25 @@ export class AuthService {
     if (!user) {
       throw new UserNotFoundException();
     }
+    const project = await this.projectRepository.findOne({ _userId: user._id });
+    if (!project) {
+      showAddProject = true;
+    }
 
     return {
       user,
       userCreated,
       showAddProject,
-      token: await this.getSignedToken({
-        _id: user._id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-      }),
+      token: await this.getSignedToken(
+        {
+          _id: user._id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          profilePicture: user.profilePicture,
+        },
+        project?._id
+      ),
     };
   }
 
@@ -90,8 +101,7 @@ export class AuthService {
 
   async getSignedToken(
     user: { _id: string; firstName: string; lastName: string; email: string; profilePicture?: string },
-    _projectId?: string,
-    role?: string
+    _projectId?: string
   ): Promise<string> {
     return (
       `Bearer ` +
@@ -103,7 +113,6 @@ export class AuthService {
           lastName: user.lastName,
           email: user.email,
           profilePicture: user.profilePicture,
-          role,
         },
         {
           expiresIn: '30 days',

@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-unused-vars */
+import { colors } from '@config';
 import { createStyles, MantineTheme } from '@mantine/core';
 
-const getRootStyles = (theme: MantineTheme): React.CSSProperties => ({
+const getRootStyles = (): React.CSSProperties => ({
   height: '100%',
   width: '100%',
   display: 'flex',
@@ -11,12 +10,13 @@ const getRootStyles = (theme: MantineTheme): React.CSSProperties => ({
   paddingBottom: '40px',
 });
 
-const getSigninColStyles = (theme: MantineTheme): Record<string, any> => ({
+const getContentColStyles = (): Record<string, any> => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
 });
-const getSigninContainerStyles = (theme: MantineTheme): Record<string, any> => ({
+
+const getContentContainerStyles = (theme: MantineTheme): Record<string, any> => ({
   display: 'flex',
   alignItems: 'center',
   flexDirection: 'column',
@@ -28,7 +28,7 @@ const getSigninContainerStyles = (theme: MantineTheme): Record<string, any> => (
   },
 });
 
-const getSlideStyles = (theme: MantineTheme): Record<string, any> => ({
+const getSlideStyles = (): Record<string, any> => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
@@ -46,12 +46,19 @@ const getCarouselColStyles = (theme: MantineTheme): Record<string, any> => ({
   },
 });
 
+const getGridStyles = (): Record<string, any> => ({
+  minHeight: '100vh',
+  width: '100vw',
+  backgroundColor: colors.black,
+});
+
 export default createStyles((theme): Record<string, any> => {
   return {
-    root: getRootStyles(theme),
-    signinCol: getSigninColStyles(theme),
-    signinContainer: getSigninContainerStyles(theme),
+    root: getRootStyles(),
+    grid: getGridStyles(),
+    slide: getSlideStyles(),
+    contentCol: getContentColStyles(),
     carouselCol: getCarouselColStyles(theme),
-    slide: getSlideStyles(theme),
+    contentContainer: getContentContainerStyles(theme),
   };
 });

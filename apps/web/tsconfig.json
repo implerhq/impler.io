@@ -22,7 +22,8 @@
       "@ui/*": ["./design-system/*"],
       "@hooks/*": ["./hooks/*"],
       "@layouts/*": ["./layouts/*"],
-      "@components/*": ["./components/*"]
+      "@components/*": ["./components/*"],
+      "@libs/*": ["./libs/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

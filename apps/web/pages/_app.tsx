@@ -6,6 +6,9 @@ import { ModalsProvider } from '@mantine/modals';
 import { ColorSchemeProvider, MantineProvider, ColorScheme } from '@mantine/core';
 import { mantineConfig, colors } from '@config';
 import { addOpacityToHex } from 'shared/utils';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+
+const client = new QueryClient();
 
 export default function App({ Component, pageProps }: AppProps) {
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
@@ -56,9 +59,11 @@ export default function App({ Component, pageProps }: AppProps) {
               },
             }}
           >
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
+            <QueryClientProvider client={client}>
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </QueryClientProvider>
           </ModalsProvider>
         </MantineProvider>
       </ColorSchemeProvider>

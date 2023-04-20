@@ -58,7 +58,7 @@ export function UserMenu({ menus, width, user }: UserMenuProps) {
       </Menu.Target>
       <Menu.Dropdown>
         {menus?.map((menuItem, index) => (
-          <Menu.Item icon={menuItem.icon} key={index}>
+          <Menu.Item onClick={menuItem.onClick} icon={menuItem.icon} key={index}>
             {menuItem.title}
           </Menu.Item>
         ))}

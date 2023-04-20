@@ -3,7 +3,20 @@
 
 namespace NodeJS {
   interface ProcessEnv {
-    API_BASE_URL: string;
+    NEXT_PUBLIC_API_BASE_URL: string;
     DOCUMENTATION_REACT_PROPS_URL: string;
   }
+}
+
+interface IProfileData {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  profilePicture: string;
+  _projectId?: string;
+}
+
+interface ICreateProjectData {
+  name: string;
 }

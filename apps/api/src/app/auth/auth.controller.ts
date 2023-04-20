@@ -31,10 +31,21 @@ export class AuthController {
   @UseGuards(AuthGuard('github'))
   async githubCallback(@StrategyUser() strategyUser: IStrategyResponse, @Res() response: Response) {
     if (!strategyUser || !strategyUser.token) {
-      return response.redirect(`${process.env.CLIENT_SUCCESS_AUTH_REDIRECT}?error=AuthenticationError`);
+      return response.redirect(`${process.env.WEB_BASE_URL}/signin?error=AuthenticationError`);
     }
 
-    const url = process.env.CLIENT_SUCCESS_AUTH_REDIRECT;
+    let url = process.env.WEB_BASE_URL + '/signin';
+    const queryObj: Record<string, any> = {
+      token: strategyUser.token,
+    };
+    if (strategyUser.showAddProject) {
+      queryObj.showAddProject = true;
+    }
+    for (const key in queryObj) {
+      if (queryObj.hasOwnProperty(key)) {
+        url += `${url.includes('?') ? '&' : '?'}${key}=${queryObj[key]}`;
+      }
+    }
 
     response.cookie(CONSTANTS.AUTH_COOKIE_NAME, strategyUser.token, COOKIE_CONFIG);
 
@@ -44,5 +55,12 @@ export class AuthController {
   @Get('/user')
   async user(@UserSession() user: IJwtPayload) {
     return user;
+  }
+
+  @Get('/logout')
+  logout(@Res() response: Response) {
+    response.clearCookie(CONSTANTS.AUTH_COOKIE_NAME);
+
+    response.contentType('text').send();
   }
 }
