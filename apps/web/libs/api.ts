@@ -23,7 +23,7 @@ const routes: Record<string, Route> = {
     method: 'GET',
   },
   [API_KEYS.TEMPLATES_CREATE]: {
-    url: (projectId) => `/v1/template/${projectId}`,
+    url: () => `/v1/template`,
     method: 'POST',
   },
   [API_KEYS.TEMPLATE_DETAILS]: {

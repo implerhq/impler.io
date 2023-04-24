@@ -3,6 +3,10 @@ import dynamic from 'next/dynamic';
 import { GetServerSideProps } from 'next';
 import { Flex, Group, Title } from '@mantine/core';
 
+import { commonApi } from '@libs/api';
+import { ITemplate } from '@impler/shared';
+import { API_KEYS, CONSTANTS, ROUTES } from '@config';
+
 import { Tabs } from '@ui/Tabs';
 import { Card } from '@ui/Card';
 import { Button } from '@ui/button';
@@ -14,9 +18,6 @@ import { DeleteIcon } from '@assets/icons/Delete.icon';
 import { Schema } from '@components/imports/Schema';
 import { Snippet } from '@components/imports/Snippet';
 import { Destination } from '@components/imports/Destination';
-import { API_KEYS, CONSTANTS, ROUTES } from '@config';
-import { commonApi } from '@libs/api';
-import { ITemplate } from '@impler/shared';
 const Editor = dynamic(() => import('@components/imports/Editor'), { ssr: false });
 
 interface ImportDetailProps {

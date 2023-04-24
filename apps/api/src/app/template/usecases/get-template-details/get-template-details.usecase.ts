@@ -7,10 +7,10 @@ import { DocumentNotFoundException } from '@shared/exceptions/document-not-found
 export class GetTemplateDetails {
   constructor(private templateRepository: TemplateRepository) {}
 
-  async execute(templateId: string): Promise<TemplateResponseDto> {
-    const template = await this.templateRepository.findOne({ id: templateId });
+  async execute(_id: string): Promise<TemplateResponseDto> {
+    const template = await this.templateRepository.findOne({ _id });
     if (!template) {
-      throw new DocumentNotFoundException('Template', templateId);
+      throw new DocumentNotFoundException('Template', _id);
     }
 
     return {
