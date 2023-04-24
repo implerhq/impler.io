@@ -9,8 +9,11 @@ import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 import { ProjectResponseDto } from './dtos/project-response.dto';
 import { CreateProjectRequestDto } from './dtos/create-project-request.dto';
 import { UpdateProjectRequestDto } from './dtos/update-project-request.dto';
+import { TemplateResponseDto } from 'app/template/dtos/template-response.dto';
+
 import {
   GetProjects,
+  GetTemplates,
   CreateProject,
   UpdateProject,
   DeleteProject,
@@ -30,7 +33,8 @@ export class ProjectController {
     private createProjectUsecase: CreateProject,
     private updateProjectUsecase: UpdateProject,
     private deleteProjectUsecase: DeleteProject,
-    private authService: AuthService
+    private authService: AuthService,
+    private getTemplates: GetTemplates
   ) {}
 
   @Get('')
@@ -42,6 +46,17 @@ export class ProjectController {
   })
   getProjects(@UserSession() user: IJwtPayload): Promise<ProjectResponseDto[]> {
     return this.getProjectsUsecase.execute(user._id);
+  }
+
+  @Get(':projectId/templates')
+  @ApiOperation({
+    summary: 'Get all templates for project',
+  })
+  @ApiOkResponse({
+    type: [TemplateResponseDto],
+  })
+  getTemplatesRoute(@Param('projectId', ValidateMongoId) projectId: string): Promise<TemplateResponseDto[]> {
+    return this.getTemplates.execute(projectId);
   }
 
   @Post('')

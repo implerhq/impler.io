@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { TemplateRepository } from '@impler/dal';
-import { TemplateResponseDto } from '../../dtos/template-response.dto';
+import { TemplateResponseDto } from 'app/template/dtos/template-response.dto';
 
 @Injectable()
 export class GetTemplates {

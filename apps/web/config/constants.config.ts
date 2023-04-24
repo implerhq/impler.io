@@ -21,12 +21,15 @@ export const VARIABLES = {
 
 export const MODAL_KEYS = {
   IMPORT_CREATE: 'IMPORT_CREATE',
+  IMPORT_UPDATE: 'IMPORT_UPDATE',
   COLUMN_CREATE: 'COLUMN_CREATE',
 };
 
 export const MODAL_TITLES = {
   IMPORT_CREATE: 'Start with a new Import',
   COLUMN_CREATE: 'Add a new Column',
+  IMPORT_UPDATE: 'Update Import',
+  IMPORT_DELETE: 'Delete Import',
 };
 
 export const API_KEYS = {
@@ -35,6 +38,9 @@ export const API_KEYS = {
   LOGOUT: 'LOGOUT',
   TEMPLATES_LIST: 'TEMPLATES_LIST',
   TEMPLATES_CREATE: 'TEMPLATES_CREATE',
+  TEMPLATE_DETAILS: 'TEMPLATE_DETAILS',
+  TEMPLATE_UPDATE: 'TEMPLATE_UPDATE',
+  TEMPLATE_DELETE: 'TEMPLATE_DELETE',
 };
 
 export const ROUTES = {

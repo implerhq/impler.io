@@ -19,12 +19,24 @@ const routes: Record<string, Route> = {
     method: 'GET',
   },
   [API_KEYS.TEMPLATES_LIST]: {
-    url: (projectId) => `/v1/template/${projectId}`,
+    url: (projectId) => `/v1/project/${projectId}/templates`,
     method: 'GET',
   },
   [API_KEYS.TEMPLATES_CREATE]: {
-    url: (projectId) => `/v1/template/${projectId}`,
+    url: () => `/v1/template`,
     method: 'POST',
+  },
+  [API_KEYS.TEMPLATE_UPDATE]: {
+    url: (templateId) => `/v1/template/${templateId}`,
+    method: 'PUT',
+  },
+  [API_KEYS.TEMPLATE_DELETE]: {
+    url: (templateId) => `/v1/template/${templateId}`,
+    method: 'DELETE',
+  },
+  [API_KEYS.TEMPLATE_DETAILS]: {
+    url: (templateId) => `/v1/template/${templateId}`,
+    method: 'GET',
   },
 };
 
@@ -39,7 +51,12 @@ function handleResponseStatusAndContentType(response: Response) {
 
 export async function commonApi<T>(
   key: keyof typeof API_KEYS,
-  { parameters, body }: { parameters?: string[]; body?: any }
+  {
+    parameters,
+    body,
+    cookie,
+    headers,
+  }: { parameters?: string[]; body?: any; headers?: Record<string, string>; cookie?: string }
 ) {
   try {
     const route = routes[key];
@@ -52,6 +69,8 @@ export async function commonApi<T>(
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
+        ...(headers ? headers : {}),
+        ...(cookie ? { Cookie: cookie } : {}),
       },
     });
 
@@ -59,7 +78,7 @@ export async function commonApi<T>(
       return (await handleResponseStatusAndContentType(response)) as T;
     }
 
-    throw new Error('Something went wrong');
+    throw new Error(response.statusText);
   } catch (error) {
     throw error;
   }

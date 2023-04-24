@@ -25,3 +25,6 @@ interface ICreateTemplateData {
   name: string;
   code: string;
 }
+interface IUpdateTemplateData {
+  name: string;
+}

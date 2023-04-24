@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Defaults } from '@impler/shared';
-import { IsDefined, IsString, IsNumber, IsUrl, IsOptional } from 'class-validator';
+import { IsDefined, IsString, IsNumber, IsUrl, IsOptional, IsMongoId } from 'class-validator';
 
 export class CreateTemplateRequestDto {
   @ApiProperty({
@@ -24,4 +24,10 @@ export class CreateTemplateRequestDto {
   @IsNumber()
   @IsOptional()
   chunkSize?: number = Defaults.CHUNK_SIZE;
+
+  @ApiProperty({
+    description: 'Id of the project',
+  })
+  @IsMongoId()
+  _projectId: string;
 }
