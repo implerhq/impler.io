@@ -15,7 +15,7 @@ export function Schema() {
       <Flex justify="flex-end">
         <Button onClick={onAddColumnClick}>Add Column</Button>
       </Flex>
-      <Table
+      <Table<any>
         headings={[
           {
             title: 'Name',
@@ -31,13 +31,13 @@ export function Schema() {
             title: 'Is required?',
             key: 'isRequired',
             width: '10%',
-            Cell: (item) => item.isRequired && <CheckIcon color={colors.success} />,
+            Cell: () => <CheckIcon color={colors.success} />,
           },
           {
             title: 'Is unique?',
             key: 'isUnique',
             width: '10%',
-            Cell: (item) => item.isUnique && <CheckIcon color={colors.success} />,
+            Cell: () => <CheckIcon color={colors.success} />,
           },
           {
             title: '',

@@ -1,5 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
+import { Poppins } from '@next/font/google';
 import { AppProps } from 'next/app';
 import { useLocalStorage } from '@mantine/hooks';
 import { ModalsProvider } from '@mantine/modals';
@@ -9,6 +10,11 @@ import { addOpacityToHex } from 'shared/utils';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 const client = new QueryClient();
+
+const poppinsFont = Poppins({
+  weight: ['400', '500', '600'],
+  subsets: ['latin'],
+});
 
 export default function App({ Component, pageProps }: AppProps) {
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
@@ -32,7 +38,11 @@ export default function App({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
-        <MantineProvider theme={{ ...mantineConfig, colorScheme }} withGlobalStyles withNormalizeCSS>
+        <MantineProvider
+          theme={{ ...mantineConfig, colorScheme, fontFamily: poppinsFont.style.fontFamily }}
+          withGlobalStyles
+          withNormalizeCSS
+        >
           <ModalsProvider
             modalProps={{
               styles: {

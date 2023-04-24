@@ -37,7 +37,7 @@ export type ProcessFileCachedData = {
   page: number;
   callbackUrl: string;
   chunkSize: number;
-  code: string; // template code
+  name: string; // template name
   extra?: string;
   isInvalidRecords: boolean;
   processInvalidRecords: boolean;

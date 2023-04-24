@@ -15,4 +15,5 @@ export const Primary = Template.bind({});
 Primary.args = {
   icon: <Import size="xl" />,
   title: 'Import',
+  href: '/imports',
 };

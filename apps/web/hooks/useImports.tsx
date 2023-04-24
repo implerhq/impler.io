@@ -1,7 +1,7 @@
 import { Stack } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { useForm } from 'react-hook-form';
-import { useLocalStorage } from '@mantine/hooks';
+import { useFocusTrap, useLocalStorage } from '@mantine/hooks';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { Input } from '@ui/input';
@@ -15,6 +15,7 @@ interface CreateImportFormProps {
 }
 
 function CreateImportForm({ onSubmit }: CreateImportFormProps) {
+  const focusTrapRef = useFocusTrap();
   const {
     register,
     handleSubmit,
@@ -22,9 +23,15 @@ function CreateImportForm({ onSubmit }: CreateImportFormProps) {
   } = useForm<ICreateTemplateData>();
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} ref={focusTrapRef}>
       <Stack spacing="sm">
-        <Input placeholder="i.e. Users import" required register={register('name')} error={errors.name?.message} />
+        <Input
+          placeholder="I want to import..."
+          dataAutoFocus
+          required
+          register={register('name')}
+          error={errors.name?.message}
+        />
         <Button type="submit" fullWidth>
           Create
         </Button>

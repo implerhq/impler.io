@@ -6,7 +6,7 @@ export default {
   component: Table,
 } as ComponentMeta<typeof Table>;
 
-const Template: ComponentStory<typeof Table> = (args) => <Table {...args} />;
+const Template: ComponentStory<typeof Table<any>> = (args) => <Table {...args} />;
 
 export const Simple = Template.bind({});
 Simple.args = {

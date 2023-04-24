@@ -1,12 +1,11 @@
-import { Flex, Title } from '@mantine/core';
+import { Flex, Grid, Text, Title } from '@mantine/core';
 
 import { Button } from '@ui/button';
-import { Table } from '@ui/table';
-import { Pagination } from '@ui/pagination';
 import { useImports } from '@hooks/useImports';
 import { AppLayout } from '@layouts/AppLayout';
-import { ImportActions } from '@components/imports/ImportActions';
-import { ITemplate } from '@impler/shared';
+import { ImportCard } from '@ui/import-card';
+
+const NEW_IMPORT_TEXT = 'Start with new import';
 
 export default function Imports() {
   const { onCreateClick, templates } = useImports();
@@ -17,34 +16,32 @@ export default function Imports() {
         <Flex justify="space-between" align="center">
           <Title order={2}>Imports</Title>
           <Button variant="outline" onClick={onCreateClick}>
-            Start with fresh Import
+            {NEW_IMPORT_TEXT}
           </Button>
         </Flex>
-        <div style={{ flexGrow: 1 }}>
-          <Table<Partial<ITemplate>>
-            headings={[
-              { title: 'Name', key: 'name' },
-              { title: 'Imports', key: 'totalUploads' },
-              { title: 'Total rows', key: 'totalRecords' },
-              { title: 'Total errors', key: 'totalInvalidRecords' },
-              {
-                title: '',
-                key: 'actions',
-                Cell: () => <ImportActions slug="users-import" />,
-              },
-            ]}
-            data={templates}
-          />
-        </div>
-        <Pagination
-          dataLength={100}
-          page={1}
-          limit={10}
-          onLimitChange={() => {}}
-          setPage={() => {}}
-          totalPages={10}
-          totalRecords={100}
-        />
+        <Grid gutter="sm">
+          {!templates?.length && (
+            <Grid.Col>
+              <Text>
+                No imports found, click on <b>{NEW_IMPORT_TEXT}</b> to get started with a new import.
+              </Text>
+            </Grid.Col>
+          )}
+          {templates?.length ? (
+            <>
+              {templates.map((template) => (
+                <Grid.Col span={4} key={template._id}>
+                  <ImportCard
+                    title={template.name}
+                    imports={template.totalUploads}
+                    totalRecords={template.totalRecords}
+                    errorRecords={template.totalInvalidRecords}
+                  />
+                </Grid.Col>
+              ))}
+            </>
+          ) : null}
+        </Grid>
       </Flex>
     </>
   );
