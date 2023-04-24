@@ -18,6 +18,7 @@ import { DeleteIcon } from '@assets/icons/Delete.icon';
 import { Schema } from '@components/imports/Schema';
 import { Snippet } from '@components/imports/Snippet';
 import { Destination } from '@components/imports/Destination';
+import { useImportDetails } from '@hooks/useImportDetails';
 const Editor = dynamic(() => import('@components/imports/Editor'), { ssr: false });
 
 interface ImportDetailProps {
@@ -25,25 +26,27 @@ interface ImportDetailProps {
 }
 
 export default function ImportDetails({ template }: ImportDetailProps) {
+  const { onUpdateClick, onDeleteClick, templateData } = useImportDetails({ template });
+
   return (
     <Flex gap="lg" direction="column" h="100%">
       <Flex justify="space-between">
-        <Title order={2}>{template.name}</Title>
+        <Title order={2}>{templateData.name}</Title>
         <Group spacing="xs">
-          <Button>
+          <Button onClick={onUpdateClick}>
             <EditIcon />
           </Button>
-          <Button color="red">
+          <Button color="red" onClick={onDeleteClick}>
             <DeleteIcon />
           </Button>
         </Group>
       </Flex>
       <Group spacing="sm" w="100%" grow>
         <Link href="asdf">
-          <Card title="Total Imports" subtitle={String(template.totalUploads)} color="primary" />
+          <Card title="Total Imports" subtitle={String(templateData.totalUploads)} color="primary" />
         </Link>
-        <Card title="Total Imported Records" subtitle={String(template.totalRecords)} />
-        <Card title="Total Error Records" subtitle={String(template.totalInvalidRecords)} />
+        <Card title="Total Imported Records" subtitle={String(templateData.totalRecords)} />
+        <Card title="Total Error Records" subtitle={String(templateData.totalInvalidRecords)} />
       </Group>
       <Tabs
         items={[
@@ -92,20 +95,31 @@ export default function ImportDetails({ template }: ImportDetailProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const templateId = context.params?.id as string | undefined;
-  const authenticationToken = context.req.cookies[CONSTANTS.AUTH_COOKIE_NAME];
-  if (!templateId) return { redirect: ROUTES.IMPORTS, props: {} };
+  try {
+    const templateId = context.params?.id as string | undefined;
+    const authenticationToken = context.req.cookies[CONSTANTS.AUTH_COOKIE_NAME];
+    if (!templateId || !authenticationToken) throw new Error();
 
-  const template = await commonApi<ITemplate>(API_KEYS.TEMPLATE_DETAILS as any, {
-    parameters: [templateId],
-    cookie: `${CONSTANTS.AUTH_COOKIE_NAME}:${authenticationToken}`,
-  });
+    const template = await commonApi<ITemplate>(API_KEYS.TEMPLATE_DETAILS as any, {
+      parameters: [templateId],
+      cookie: `${CONSTANTS.AUTH_COOKIE_NAME}:${authenticationToken}`,
+    });
+    if (!template) throw new Error();
 
-  return {
-    props: {
-      template,
-    },
-  };
+    return {
+      props: {
+        template,
+      },
+    };
+  } catch (error) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: ROUTES.IMPORTS,
+      },
+      props: {},
+    };
+  }
 };
 
 ImportDetails.Layout = AppLayout;

@@ -26,6 +26,14 @@ const routes: Record<string, Route> = {
     url: () => `/v1/template`,
     method: 'POST',
   },
+  [API_KEYS.TEMPLATE_UPDATE]: {
+    url: (templateId) => `/v1/template/${templateId}`,
+    method: 'PUT',
+  },
+  [API_KEYS.TEMPLATE_DELETE]: {
+    url: (templateId) => `/v1/template/${templateId}`,
+    method: 'DELETE',
+  },
   [API_KEYS.TEMPLATE_DETAILS]: {
     url: (templateId) => `/v1/template/${templateId}`,
     method: 'GET',
