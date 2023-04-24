@@ -1,8 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
-import { changeToCode, Defaults } from '@impler/shared';
-import { IsDefined, IsString, Validate, IsNumber, IsUrl, IsOptional } from 'class-validator';
-import { UniqueValidator } from '@shared/framework/is-unique.validator';
+import { Defaults } from '@impler/shared';
+import { IsDefined, IsString, IsNumber, IsUrl, IsOptional } from 'class-validator';
 
 export class CreateTemplateRequestDto {
   @ApiProperty({
@@ -11,17 +9,6 @@ export class CreateTemplateRequestDto {
   @IsString()
   @IsDefined()
   name: string;
-
-  @ApiProperty({
-    description: 'Code of the template',
-  })
-  @IsString()
-  @IsDefined()
-  @Validate(UniqueValidator, ['Template', 'code'], {
-    message: 'Code is already taken',
-  })
-  @Transform((value) => changeToCode(value.value))
-  code: string;
 
   @ApiProperty({
     description: 'Callback URL of the template, gets called when sending data to the application',

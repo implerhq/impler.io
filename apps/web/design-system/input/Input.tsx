@@ -2,6 +2,7 @@ import { TextInput as MantineInput } from '@mantine/core';
 import useStyles from './Input.styles';
 
 interface InputProps {
+  dataAutoFocus?: boolean;
   required?: boolean;
   error?: string;
   disabled?: boolean;
@@ -10,11 +11,12 @@ interface InputProps {
   pattern?: string;
 }
 
-export function Input({ required, disabled, error, placeholder, pattern, register }: InputProps) {
+export function Input({ required, disabled, error, placeholder, pattern, dataAutoFocus, register }: InputProps) {
   const { classes } = useStyles();
 
   return (
     <MantineInput
+      data-autofocus={dataAutoFocus}
       required={required}
       placeholder={placeholder}
       disabled={disabled}

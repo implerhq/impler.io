@@ -2,21 +2,21 @@ import React from 'react';
 import useStyles from './Table.styles';
 import { Table as MantineTable } from '@mantine/core';
 
-interface IHeadingItem {
+interface IHeadingItem<T> {
   title: string;
   key: string;
   width?: number | string;
-  Cell?: (item: any) => React.ReactNode;
+  Cell?: (item: T) => React.ReactNode;
 }
 
-interface ITableProps {
+interface ITableProps<T> {
   emptyDataText?: string;
-  headings?: IHeadingItem[];
-  data?: Record<string, any>[];
+  headings?: IHeadingItem<T>[];
+  data?: T[];
   style?: React.CSSProperties;
 }
 
-export function Table(props: ITableProps) {
+export function Table<T extends { _id?: string }>(props: ITableProps<T>) {
   const defaultColSpan = 1;
   const { classes } = useStyles();
   const { data, headings, emptyDataText = 'No Data Found!', style } = props;
@@ -30,7 +30,7 @@ export function Table(props: ITableProps) {
     return (
       <thead className={classes.heading}>
         <tr>
-          {headings.map((heading: IHeadingItem, index: number) => (
+          {headings.map((heading: IHeadingItem<T>, index: number) => (
             <th style={{ width: heading.width || '' }} key={index}>
               {heading.title}
             </th>
@@ -54,12 +54,14 @@ export function Table(props: ITableProps) {
 
     return (
       <tbody>
-        {data.map((item: Record<string, string>, rowIndex: number) => (
-          <tr key={item.id || rowIndex}>
-            {headings.map((heading: IHeadingItem, fieldIndex: number) =>
+        {data.map((item: T, rowIndex: number) => (
+          <tr key={item._id || rowIndex}>
+            {headings.map((heading: IHeadingItem<T>, fieldIndex: number) =>
               typeof heading.Cell === 'function' ? (
                 <td key={fieldIndex}>{heading.Cell(item)}</td>
               ) : (
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 <td key={fieldIndex}>{item[heading.key]}</td>
               )
             )}

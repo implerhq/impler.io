@@ -3,8 +3,6 @@ export class TemplateEntity {
 
   name: string;
 
-  code: string;
-
   callbackUrl: string;
 
   chunkSize: number;
@@ -12,4 +10,10 @@ export class TemplateEntity {
   sampleFileUrl: string;
 
   _projectId: string;
+
+  totalUploads: number;
+
+  totalRecords: number;
+
+  totalInvalidRecords: number;
 }

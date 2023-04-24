@@ -47,8 +47,8 @@ Outline.args = {
   size: 'sm',
 };
 
-export const OutlineWitColor = Template.bind({});
-OutlineWitColor.args = {
+export const OutlineWithColor = Template.bind({});
+OutlineWithColor.args = {
   children: 'Outline Button',
   variant: 'outline',
   color: 'white',

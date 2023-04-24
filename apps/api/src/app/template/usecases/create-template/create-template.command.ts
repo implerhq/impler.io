@@ -6,10 +6,6 @@ export class CreateTemplateCommand extends BaseCommand {
   @IsString()
   name: string;
 
-  @IsDefined()
-  @IsString()
-  code: string;
-
   @IsString()
   @IsOptional()
   callbackUrl?: string;
