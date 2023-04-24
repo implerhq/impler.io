@@ -36,6 +36,7 @@ export default function Imports() {
                     imports={template.totalUploads}
                     totalRecords={template.totalRecords}
                     errorRecords={template.totalInvalidRecords}
+                    href={`/imports/${template._id}`}
                   />
                 </Grid.Col>
               ))}

@@ -1,18 +1,20 @@
 import { Flex, Group, Text } from '@mantine/core';
 import useStyles from './ImportCard.styles';
+import Link from 'next/link';
 
 interface ImportCardProps {
   title: string;
   imports: number;
   totalRecords: number;
   errorRecords: number;
+  href: string;
 }
 
-export function ImportCard({ title, imports, totalRecords, errorRecords }: ImportCardProps) {
+export function ImportCard({ title, imports, totalRecords, errorRecords, href }: ImportCardProps) {
   const { classes } = useStyles();
 
   return (
-    <div className={classes.root}>
+    <Link href={href} className={classes.root}>
       <Text size="xl" className={classes.name}>
         {title}
       </Text>
@@ -30,6 +32,6 @@ export function ImportCard({ title, imports, totalRecords, errorRecords }: Impor
           <Text className={classes.value}>{errorRecords}</Text>
         </Group>
       </Flex>
-    </div>
+    </Link>
   );
 }

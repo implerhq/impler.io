@@ -13,6 +13,7 @@ const getRootStyles = (theme: MantineTheme) => ({
   '&:hover': {
     border: `1px solid ${colors.blueDark}`,
     boxShadow: theme.shadows.md,
+    textDecoration: 'none',
   },
   [`@media only screen and (max-width: ${theme.breakpoints.sm}px)`]: {
     padding: theme.spacing.xs,
