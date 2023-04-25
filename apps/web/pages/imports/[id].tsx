@@ -53,7 +53,7 @@ export default function ImportDetails({ template }: ImportDetailProps) {
           {
             value: 'schema',
             title: 'Schema',
-            content: <Schema />,
+            content: <Schema templateId={template._id} />,
           },
           {
             value: 'snippet',

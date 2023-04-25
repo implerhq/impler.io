@@ -84,10 +84,6 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     const selectedTemplateValue = getValues('template');
     if (selectedTemplateValue && dataTemplates) {
       foundTemplate = dataTemplates.find((templateItem) => templateItem._id === selectedTemplateValue);
-    } else if (template && dataTemplates) {
-      foundTemplate = dataTemplates.find(
-        (templateItem) => templateItem.code === template || templateItem._id === template
-      );
     }
 
     if (foundTemplate && foundTemplate.sampleFileUrl) {
@@ -100,8 +96,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
   const onSubmit = (submitData: IFormvalues) => {
     if ((template || submitData.template) && dataTemplates) {
       const foundTemplate = dataTemplates.find(
-        (templateItem) =>
-          templateItem.code === template || templateItem._id === template || templateItem._id === submitData.template
+        (templateItem) => templateItem._id === template || templateItem._id === submitData.template
       );
       if (foundTemplate) {
         submitData.template = foundTemplate._id;

@@ -3,19 +3,24 @@ import useStyles from './MultiSelect.styles';
 
 interface MultiSelectProps {
   placeholder?: string;
-  data: SelectItem[];
+  data: SelectItem[] | string[];
+  value?: string[];
+  onCreate?: (value: string) => string;
   register?: any;
   searchable?: boolean;
   noFoundText?: string;
   creatable?: boolean;
   clearable?: boolean;
   getCreateLabel?: (value: string) => string;
+  onChange?: (value: string[]) => void;
 }
 
 export function MultiSelect({
   placeholder,
   data,
-  register,
+  value,
+  onCreate,
+  onChange,
   searchable,
   noFoundText,
   clearable,
@@ -34,7 +39,9 @@ export function MultiSelect({
       clearable={clearable}
       getCreateLabel={getCreateLabel}
       creatable={creatable}
-      {...(register || {})}
+      value={value}
+      onCreate={onCreate}
+      onChange={onChange}
     />
   );
 }

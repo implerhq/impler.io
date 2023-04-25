@@ -1,111 +1,63 @@
-import { useState } from 'react';
-import { Group, Stack } from '@mantine/core';
 import { modals } from '@mantine/modals';
 
-import { Input } from '@ui/input';
-import { Button } from '@ui/button';
-import { MODAL_KEYS, MODAL_TITLES } from '@config';
-import { MultiSelect } from '@ui/multi-select';
-import { Select } from '@ui/select';
-import { Textarea } from '@ui/textarea';
-import { Checkbox } from '@ui/checkbox';
+import { commonApi } from '@libs/api';
+import { IColumn, IErrorObject } from '@impler/shared';
+import { API_KEYS, MODAL_KEYS, MODAL_TITLES } from '@config';
+import { AddColumnForm } from '@components/imports/AddColumnForm';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-function AddColumnForm() {
-  const [type, setType] = useState<'string' | 'number' | 'select' | 'date' | 'regexp' | 'email'>('string');
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    modals.close(MODAL_KEYS.IMPORT_CREATE);
-  };
-
-  return (
-    <form onSubmit={onSubmit}>
-      <Stack spacing="xs">
-        <Group spacing="xs" grow>
-          <Input placeholder="Name of the column" />
-          <MultiSelect
-            data={[]}
-            placeholder="Excel column keys"
-            creatable
-            clearable
-            searchable
-            getCreateLabel={(query) => `+ ${query}`}
-          />
-        </Group>
-        <Select
-          data={[
-            {
-              label: 'String',
-              value: 'string',
-            },
-            {
-              label: 'Number',
-              value: 'number',
-            },
-            {
-              label: 'Select',
-              value: 'select',
-            },
-            {
-              label: 'Date',
-              value: 'date',
-            },
-            {
-              label: 'Boolean',
-              value: 'boolean',
-            },
-            {
-              label: 'Regular Expression',
-              value: 'regexp',
-            },
-            {
-              label: 'Email',
-              value: 'email',
-            },
-          ]}
-          placeholder="Type"
-          register={{
-            value: type,
-            onChange: (e: React.ChangeEvent<HTMLSelectElement>) => setType(e.target.value as any),
-          }}
-        />
-        {type === 'regexp' && (
-          <>
-            <Input placeholder="Regular expression" />
-            <Textarea autosize minRows={2} placeholder="Regular expression description" />
-          </>
-        )}
-        {type === 'select' && (
-          <MultiSelect
-            data={[]}
-            placeholder="Select Values"
-            creatable
-            clearable
-            searchable
-            getCreateLabel={(query) => `+ Add ${query}`}
-          />
-        )}
-        <Group spacing="xs">
-          <Checkbox label="Is Required?" />
-          {type !== 'select' && <Checkbox label="Is Unique?" />}
-        </Group>
-        <Button type="submit" fullWidth>
-          Create
-        </Button>
-      </Stack>
-    </form>
-  );
+interface UseSchemaProps {
+  templateId: string;
 }
 
-export function useSchema() {
+export function useSchema({ templateId }: UseSchemaProps) {
+  const queryClients = useQueryClient();
+  const { data: columns, isLoading: isColumnListLoading } = useQuery<unknown, IErrorObject, IColumn[], string[]>(
+    [API_KEYS.COLUMNS_LIST, templateId],
+    () => commonApi<IColumn[]>(API_KEYS.COLUMNS_LIST as any, { parameters: [templateId] })
+  );
+  const { mutate: createColumn, isLoading: isColumnCreateLoading } = useMutation<
+    IColumn,
+    IErrorObject,
+    IColumn,
+    string[]
+  >(
+    [API_KEYS.COLUMN_CREATE, templateId],
+    (data) => commonApi(API_KEYS.COLUMN_CREATE as any, { parameters: [templateId], body: data }),
+    {
+      onSuccess: (data) => {
+        queryClients.setQueryData<IColumn[]>([API_KEYS.COLUMNS_LIST, templateId], (oldData) => [
+          ...(oldData || []),
+          data,
+        ]);
+        modals.close(MODAL_KEYS.COLUMN_CREATE);
+      },
+    }
+  );
+
   function onAddColumnClick() {
     modals.open({
-      id: MODAL_KEYS.COLUMN_CREATE,
+      modalId: MODAL_KEYS.COLUMN_CREATE,
       title: MODAL_TITLES.COLUMN_CREATE,
-      children: <AddColumnForm />,
+      children: <AddColumnForm onSubmit={createColumn} />,
     });
   }
 
+  function onEditColumnClick(columnId: string) {
+    const columnData = columns?.find((item) => item._id === columnId);
+    if (columnData) {
+      modals.open({
+        modalId: MODAL_KEYS.COLUMN_UPDATE,
+        title: MODAL_TITLES.COLUMN_UPDATE,
+        children: <AddColumnForm onSubmit={createColumn} data={columnData} />,
+      });
+    }
+  }
+
   return {
+    columns,
+    isLoading: isColumnListLoading || isColumnCreateLoading,
     onAddColumnClick,
+    onEditColumnClick,
   };
 }

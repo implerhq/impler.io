@@ -3,7 +3,7 @@ import { Type } from 'class-transformer';
 import { ColumnTypesEnum } from '@impler/shared';
 import { BaseCommand } from '@shared/commands/base.command';
 
-export class UpdateColumnCommand extends BaseCommand {
+export class ColumnCommand extends BaseCommand {
   @IsString()
   @IsDefined()
   name: string;

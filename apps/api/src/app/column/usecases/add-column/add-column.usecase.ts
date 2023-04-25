@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { FileMimeTypesEnum } from '@impler/shared';
 import { ColumnRepository, TemplateRepository } from '@impler/dal';
-import { ColumnCommand } from '../../commands/column.command';
+import { ColumnCommand } from './../../commands/column.command';
 import { StorageService } from '@impler/shared/dist/services/storage';
 import { FileNameService } from '@shared/file/name.service';
 
 @Injectable()
-export class UpdateColumns {
+export class AddColumn {
   constructor(
     private columnRepository: ColumnRepository,
     private storageService: StorageService,
@@ -14,24 +14,24 @@ export class UpdateColumns {
     private templateRepository: TemplateRepository
   ) {}
 
-  async execute(command: ColumnCommand[], _templateId: string) {
-    await this.columnRepository.deleteMany({ _templateId });
-    this.saveSampleFile(command, _templateId);
+  async execute(command: ColumnCommand, _templateId: string) {
+    const columns = await this.columnRepository.find({ _templateId });
+    const column = await this.columnRepository.create({
+      ...command,
+      sequence: columns.length,
+    });
+    const columnKeys = columns.map((columnItem) => columnItem.key);
+    columnKeys.push(column.key);
 
-    return this.columnRepository.createMany(command);
+    await this.saveSampleFile(columnKeys.join(','), _templateId);
+
+    return column;
   }
 
-  async saveSampleFile(data: ColumnCommand[], templateId: string) {
-    const csvContent = this.createCSVFileHeadingContent(data);
+  async saveSampleFile(csvContent: string, templateId: string) {
     const fileName = this.fileNameService.getSampleFileName(templateId);
     const sampleFileUrl = this.fileNameService.getSampleFileUrl(templateId);
     await this.storageService.uploadFile(fileName, csvContent, FileMimeTypesEnum.CSV);
     await this.templateRepository.update({ _id: templateId }, { sampleFileUrl });
-  }
-
-  createCSVFileHeadingContent(data: ColumnCommand[]): string {
-    const headings = data.map((column) => column.key);
-
-    return headings.join(',');
   }
 }

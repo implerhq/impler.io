@@ -23,6 +23,7 @@ export const MODAL_KEYS = {
   IMPORT_CREATE: 'IMPORT_CREATE',
   IMPORT_UPDATE: 'IMPORT_UPDATE',
   COLUMN_CREATE: 'COLUMN_CREATE',
+  COLUMN_UPDATE: 'COLUMN_UPDATE',
 };
 
 export const MODAL_TITLES = {
@@ -30,6 +31,7 @@ export const MODAL_TITLES = {
   COLUMN_CREATE: 'Add a new Column',
   IMPORT_UPDATE: 'Update Import',
   IMPORT_DELETE: 'Delete Import',
+  COLUMN_UPDATE: 'Update Column',
 };
 
 export const API_KEYS = {
@@ -41,6 +43,9 @@ export const API_KEYS = {
   TEMPLATE_DETAILS: 'TEMPLATE_DETAILS',
   TEMPLATE_UPDATE: 'TEMPLATE_UPDATE',
   TEMPLATE_DELETE: 'TEMPLATE_DELETE',
+
+  COLUMNS_LIST: 'COLUMNS_LIST',
+  COLUMN_CREATE: 'COLUMN_CREATE',
 };
 
 export const ROUTES = {

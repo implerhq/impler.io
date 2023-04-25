@@ -38,6 +38,14 @@ const routes: Record<string, Route> = {
     url: (templateId) => `/v1/template/${templateId}`,
     method: 'GET',
   },
+  [API_KEYS.COLUMNS_LIST]: {
+    url: (templateId) => `/v1/column/${templateId}`,
+    method: 'GET',
+  },
+  [API_KEYS.COLUMN_CREATE]: {
+    url: (templateId) => `/v1/column/${templateId}`,
+    method: 'POST',
+  },
 };
 
 function handleResponseStatusAndContentType(response: Response) {
