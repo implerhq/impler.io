@@ -1,5 +1,5 @@
 import { ApiTags, ApiBody, ApiOperation, ApiSecurity } from '@nestjs/swagger';
-import { Controller, Put, Param, Body, Get, ParseArrayPipe, UseGuards, Post } from '@nestjs/common';
+import { Controller, Put, Param, Body, ParseArrayPipe, UseGuards, Post, Delete } from '@nestjs/common';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 import { APIKeyGuard } from '@shared/framework/auth.gaurd';
 import { ACCESS_KEY_NAME } from '@impler/shared';
@@ -7,8 +7,8 @@ import { ACCESS_KEY_NAME } from '@impler/shared';
 import { ColumnRequestDto } from './dtos/column-request.dto';
 import { ColumnResponseDto } from './dtos/column-response.dto';
 import { AddColumnCommand } from './commands/add-column.command';
+import { UpdateColumns, AddColumn, UpdateColumn, DeleteColumn } from './usecases';
 import { UpdateColumnCommand } from './commands/update-column.command';
-import { GetColumns, UpdateColumns, AddColumn, UpdateColumn } from './usecases';
 
 @Controller('/column')
 @ApiTags('Column')
@@ -17,9 +17,9 @@ import { GetColumns, UpdateColumns, AddColumn, UpdateColumn } from './usecases';
 export class ColumnController {
   constructor(
     private updateColumns: UpdateColumns,
-    private getColumns: GetColumns,
     private addColumn: AddColumn,
-    private updateColumn: UpdateColumn
+    private updateColumn: UpdateColumn,
+    private deleteColumn: DeleteColumn
   ) {}
 
   @Post(':templateId')
@@ -97,11 +97,11 @@ export class ColumnController {
     );
   }
 
-  @Get(':templateId')
+  @Delete(':columnId')
   @ApiOperation({
-    summary: 'Get template columns',
+    summary: 'Delete column',
   })
-  async getTemplateColumns(@Param('templateId') _templateId: string): Promise<ColumnResponseDto[]> {
-    return this.getColumns.execute(_templateId);
+  async deleteColumnRoute(@Param('columnId', ValidateMongoId) _columnId: string): Promise<ColumnResponseDto> {
+    return this.deleteColumn.execute(_columnId);
   }
 }
