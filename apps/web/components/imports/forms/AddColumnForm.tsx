@@ -22,7 +22,7 @@ export function AddColumnForm({ templateId, queryClient }: AddColumnFormProps) {
     (data) => commonApi(API_KEYS.COLUMN_CREATE as any, { parameters: [templateId], body: data }),
     {
       onSuccess: (data) => {
-        queryClient.setQueryData<IColumn[]>([API_KEYS.COLUMNS_LIST, templateId], (oldData) => [
+        queryClient.setQueryData<IColumn[]>([API_KEYS.TEMPLATE_COLUMNS_LIST, templateId], (oldData) => [
           ...(oldData || []),
           data,
         ]);

@@ -109,7 +109,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
           placeholder="Type"
           register={register('type')}
         />
-        {typeValue === 'regexp' && (
+        {typeValue === 'Regex' && (
           <>
             <Input
               placeholder="Regular expression"

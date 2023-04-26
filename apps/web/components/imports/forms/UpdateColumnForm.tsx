@@ -24,7 +24,7 @@ export function UpdateColumnForm({ data, templateId, queryClient }: UpdateColumn
     {
       onSuccess: (updatedData) => {
         queryClient.setQueryData<IColumn[]>(
-          [API_KEYS.COLUMNS_LIST, templateId],
+          [API_KEYS.TEMPLATE_COLUMNS_LIST, templateId],
           (oldData) =>
             oldData?.map((item) => {
               if (item._id === data._id) {

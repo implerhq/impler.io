@@ -13,7 +13,7 @@ interface SchemaProps {
 }
 
 export function Schema({ templateId }: SchemaProps) {
-  const { onAddColumnClick, onEditColumnClick, columns } = useSchema({ templateId });
+  const { onAddColumnClick, onEditColumnClick, onDeleteColumnClick, columns } = useSchema({ templateId });
 
   return (
     <Flex gap="sm" direction="column">
@@ -52,7 +52,7 @@ export function Schema({ templateId }: SchemaProps) {
                 <UnstyledButton onClick={() => onEditColumnClick(item._id)}>
                   <EditIcon color={colors.blue} />
                 </UnstyledButton>
-                <UnstyledButton>
+                <UnstyledButton onClick={() => onDeleteColumnClick(item._id)}>
                   <DeleteIcon color={colors.danger} />
                 </UnstyledButton>
               </Flex>

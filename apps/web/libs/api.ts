@@ -38,8 +38,8 @@ const routes: Record<string, Route> = {
     url: (templateId) => `/v1/template/${templateId}`,
     method: 'GET',
   },
-  [API_KEYS.COLUMNS_LIST]: {
-    url: (templateId) => `/v1/column/${templateId}`,
+  [API_KEYS.TEMPLATE_COLUMNS_LIST]: {
+    url: (templateId) => `/v1/template/${templateId}/columns`,
     method: 'GET',
   },
   [API_KEYS.COLUMN_CREATE]: {
@@ -49,6 +49,10 @@ const routes: Record<string, Route> = {
   [API_KEYS.COLUMN_UPDATE]: {
     url: (columnId) => `/v1/column/${columnId}`,
     method: 'PUT',
+  },
+  [API_KEYS.COLUMN_DELETE]: {
+    url: (columnId) => `/v1/column/${columnId}`,
+    method: 'DELETE',
   },
 };
 
