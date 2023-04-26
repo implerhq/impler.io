@@ -46,6 +46,7 @@ export const API_KEYS = {
 
   COLUMNS_LIST: 'COLUMNS_LIST',
   COLUMN_CREATE: 'COLUMN_CREATE',
+  COLUMN_UPDATE: 'COLUMN_UPDATE',
 };
 
 export const ROUTES = {

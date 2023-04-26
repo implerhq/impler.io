@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
 import { ITemplate, IErrorObject } from '@impler/shared';
-import { UpdateTemplateForm } from '@components/imports/UpdateTemplateForm';
+import { UpdateTemplateForm } from '@components/imports/forms/UpdateTemplateForm';
 import { API_KEYS, CONSTANTS, MODAL_KEYS, MODAL_TITLES, ROUTES } from '@config';
 
 interface useImportDetailProps {

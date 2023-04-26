@@ -46,6 +46,10 @@ const routes: Record<string, Route> = {
     url: (templateId) => `/v1/column/${templateId}`,
     method: 'POST',
   },
+  [API_KEYS.COLUMN_UPDATE]: {
+    url: (columnId) => `/v1/column/${columnId}`,
+    method: 'PUT',
+  },
 };
 
 function handleResponseStatusAndContentType(response: Response) {

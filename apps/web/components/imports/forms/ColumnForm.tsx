@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Group, Stack } from '@mantine/core';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -6,17 +7,24 @@ import { Button } from '@ui/button';
 import { Select } from '@ui/select';
 import { Textarea } from '@ui/textarea';
 import { Checkbox } from '@ui/checkbox';
-import { MultiSelect } from '@ui/multi-select';
-import { useEffect } from 'react';
 import { IColumn } from '@impler/shared';
+import { MultiSelect } from '@ui/multi-select';
 
-interface AddColumnFormProps {
+interface ColumnFormProps {
   data?: IColumn;
+  isLoading?: boolean;
   onSubmit: (data: IColumn) => void;
 }
 
-export function AddColumnForm({ onSubmit, data }: AddColumnFormProps) {
-  const { reset, register, control, watch, handleSubmit } = useForm<IColumn>();
+export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
+  const {
+    reset,
+    register,
+    control,
+    watch,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IColumn>();
   const typeValue = watch('type');
 
   useEffect(() => {
@@ -33,14 +41,14 @@ export function AddColumnForm({ onSubmit, data }: AddColumnFormProps) {
         alternateKeys: data.alternateKeys,
       });
     }
-  }, [data]);
+  }, [data, reset]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing="xs">
         <Group spacing="xs" grow>
-          <Input placeholder="Name of the column" register={register('name')} />
-          <Input placeholder="Column Key" register={register('key')} />
+          <Input placeholder="Name of the column*" required register={register('name')} error={errors.name?.message} />
+          <Input placeholder="Column Key*" required error={errors.key?.message} register={register('key')} />
         </Group>
         <Controller
           name="alternateKeys"
@@ -103,7 +111,12 @@ export function AddColumnForm({ onSubmit, data }: AddColumnFormProps) {
         />
         {typeValue === 'regexp' && (
           <>
-            <Input placeholder="Regular expression" register={register('regex')} />
+            <Input
+              placeholder="Regular expression"
+              register={register('regex')}
+              required
+              error={errors.regex?.message}
+            />
             <Textarea
               autosize
               minRows={2}
@@ -137,10 +150,10 @@ export function AddColumnForm({ onSubmit, data }: AddColumnFormProps) {
         )}
         <Group spacing="xs">
           <Checkbox label="Is Required?" register={register('isRequired')} />
-          {typeValue !== 'select' && <Checkbox label="Is Unique?" register={register('isUnique')} />}
+          {typeValue !== 'Select' && <Checkbox label="Is Unique?" register={register('isUnique')} />}
         </Group>
-        <Button type="submit" fullWidth>
-          Create
+        <Button type="submit" fullWidth loading={isLoading}>
+          {data ? 'Update' : 'Add'}
         </Button>
       </Stack>
     </form>
