@@ -1,9 +1,9 @@
-import { IsArray, IsBoolean, IsDefined, IsMongoId, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsDefined, IsNumber, IsOptional, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ColumnTypesEnum } from '@impler/shared';
 import { BaseCommand } from '@shared/commands/base.command';
 
-export class ColumnCommand extends BaseCommand {
+export class UpdateColumnCommand extends BaseCommand {
   @IsString()
   @IsDefined()
   name: string;
@@ -48,8 +48,4 @@ export class ColumnCommand extends BaseCommand {
   @IsNumber()
   @IsOptional()
   sequence: number;
-
-  @IsDefined()
-  @IsMongoId()
-  _templateId: string;
 }

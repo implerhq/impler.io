@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { FileMimeTypesEnum } from '@impler/shared';
 import { ColumnRepository, TemplateRepository } from '@impler/dal';
-import { ColumnCommand } from '../../commands/column.command';
+import { AddColumnCommand } from '../../commands/add-column.command';
 import { StorageService } from '@impler/shared/dist/services/storage';
 import { FileNameService } from '@shared/file/name.service';
 
@@ -14,14 +14,14 @@ export class UpdateColumns {
     private templateRepository: TemplateRepository
   ) {}
 
-  async execute(command: ColumnCommand[], _templateId: string) {
+  async execute(command: AddColumnCommand[], _templateId: string) {
     await this.columnRepository.deleteMany({ _templateId });
     this.saveSampleFile(command, _templateId);
 
     return this.columnRepository.createMany(command);
   }
 
-  async saveSampleFile(data: ColumnCommand[], templateId: string) {
+  async saveSampleFile(data: AddColumnCommand[], templateId: string) {
     const csvContent = this.createCSVFileHeadingContent(data);
     const fileName = this.fileNameService.getSampleFileName(templateId);
     const sampleFileUrl = this.fileNameService.getSampleFileUrl(templateId);
@@ -29,7 +29,7 @@ export class UpdateColumns {
     await this.templateRepository.update({ _id: templateId }, { sampleFileUrl });
   }
 
-  createCSVFileHeadingContent(data: ColumnCommand[]): string {
+  createCSVFileHeadingContent(data: AddColumnCommand[]): string {
     const headings = data.map((column) => column.key);
 
     return headings.join(',');

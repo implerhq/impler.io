@@ -4,17 +4,23 @@ import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 import { APIKeyGuard } from '@shared/framework/auth.gaurd';
 import { ACCESS_KEY_NAME } from '@impler/shared';
 
-import { ColumnCommand } from './commands/column.command';
 import { ColumnRequestDto } from './dtos/column-request.dto';
 import { ColumnResponseDto } from './dtos/column-response.dto';
-import { GetColumns, UpdateColumns, AddColumn } from './usecases';
+import { AddColumnCommand } from './commands/add-column.command';
+import { UpdateColumnCommand } from './commands/update-column.command';
+import { GetColumns, UpdateColumns, AddColumn, UpdateColumn } from './usecases';
 
 @Controller('/column')
 @ApiTags('Column')
 @ApiSecurity(ACCESS_KEY_NAME)
 @UseGuards(APIKeyGuard)
 export class ColumnController {
-  constructor(private updateColumns: UpdateColumns, private getColumns: GetColumns, private addColumn: AddColumn) {}
+  constructor(
+    private updateColumns: UpdateColumns,
+    private getColumns: GetColumns,
+    private addColumn: AddColumn,
+    private updateColumn: UpdateColumn
+  ) {}
 
   @Post(':templateId')
   @ApiOperation({
@@ -26,7 +32,7 @@ export class ColumnController {
     @Body() body: ColumnRequestDto
   ): Promise<ColumnResponseDto> {
     return this.addColumn.execute(
-      ColumnCommand.create({
+      AddColumnCommand.create({
         key: body.key,
         alternateKeys: body.alternateKeys,
         isRequired: body.isRequired,
@@ -44,7 +50,24 @@ export class ColumnController {
     );
   }
 
-  @Put(':templateId')
+  @Put(':columnId')
+  @ApiOperation({
+    summary: 'Update column',
+  })
+  @ApiBody({ type: ColumnRequestDto })
+  async updateColumnRoute(
+    @Param('columnId', ValidateMongoId) _columnId: string,
+    @Body() body: ColumnRequestDto
+  ): Promise<ColumnResponseDto> {
+    return this.updateColumn.execute(
+      UpdateColumnCommand.create({
+        ...body,
+      }),
+      _columnId
+    );
+  }
+
+  @Put(':templateId/all')
   @ApiOperation({
     summary: 'Update columns for Template',
   })
@@ -55,7 +78,7 @@ export class ColumnController {
   ): Promise<ColumnResponseDto[]> {
     return this.updateColumns.execute(
       body.map((columnData) =>
-        ColumnCommand.create({
+        AddColumnCommand.create({
           key: columnData.key,
           alternateKeys: columnData.alternateKeys,
           isRequired: columnData.isRequired,

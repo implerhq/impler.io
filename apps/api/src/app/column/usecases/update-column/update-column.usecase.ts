@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { FileMimeTypesEnum } from '@impler/shared';
 import { ColumnRepository, TemplateRepository } from '@impler/dal';
-import { AddColumnCommand } from '../../commands/add-column.command';
+import { UpdateColumnCommand } from '../../commands/update-column.command';
 import { StorageService } from '@impler/shared/dist/services/storage';
 import { FileNameService } from '@shared/file/name.service';
+import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
 
 @Injectable()
-export class AddColumn {
+export class UpdateColumn {
   constructor(
     private columnRepository: ColumnRepository,
     private storageService: StorageService,
@@ -14,16 +15,16 @@ export class AddColumn {
     private templateRepository: TemplateRepository
   ) {}
 
-  async execute(command: AddColumnCommand, _templateId: string) {
-    const columns = await this.columnRepository.find({ _templateId });
-    const column = await this.columnRepository.create({
-      ...command,
-      sequence: columns.length,
-    });
-    const columnKeys = columns.map((columnItem) => columnItem.key);
-    columnKeys.push(column.key);
+  async execute(command: UpdateColumnCommand, _id: string) {
+    let column = await this.columnRepository.findOne({ _id });
+    if (!column) {
+      throw new DocumentNotFoundException('Column', _id);
+    }
 
-    await this.saveSampleFile(columnKeys.join(','), _templateId);
+    column = await this.columnRepository.findOneAndUpdate({ _id }, command);
+    const columns = await this.columnRepository.find({ _templateId: column._templateId });
+    const columnKeys = columns.map((columnItem) => columnItem.key);
+    await this.saveSampleFile(columnKeys.join(','), column._templateId);
 
     return column;
   }
