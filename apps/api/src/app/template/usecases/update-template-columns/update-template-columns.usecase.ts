@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { FileMimeTypesEnum } from '@impler/shared';
 import { ColumnRepository, TemplateRepository } from '@impler/dal';
-import { AddColumnCommand } from '../../commands/add-column.command';
 import { StorageService } from '@impler/shared/dist/services/storage';
 import { FileNameService } from '@shared/file/name.service';
+import { AddColumnCommand } from 'app/column/commands/add-column.command';
 
 @Injectable()
-export class UpdateColumns {
+export class UpdateTemplateColumns {
   constructor(
     private columnRepository: ColumnRepository,
     private storageService: StorageService,

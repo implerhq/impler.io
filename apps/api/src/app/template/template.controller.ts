@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, UseGuards } from '@nestjs/common';
+import { ApiOperation, ApiTags, ApiOkResponse, ApiSecurity, ApiBody } from '@nestjs/swagger';
 
 import { UploadEntity } from '@impler/dal';
 import { ACCESS_KEY_NAME } from '@impler/shared';
 import { APIKeyGuard } from '@shared/framework/auth.gaurd';
+import { AddColumnCommand } from 'app/column/commands/add-column.command';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
 
@@ -21,8 +22,10 @@ import {
   GetUploadsCommand,
   CreateTemplateCommand,
   UpdateTemplateCommand,
+  UpdateTemplateColumns,
 } from './usecases';
 import { ColumnResponseDto } from 'app/column/dtos/column-response.dto';
+import { ColumnRequestDto } from 'app/column/dtos/column-request.dto';
 
 @Controller('/template')
 @ApiTags('Template')
@@ -35,7 +38,8 @@ export class TemplateController {
     private createTemplateUsecase: CreateTemplate,
     private updateTemplateUsecase: UpdateTemplate,
     private deleteTemplateUsecase: DeleteTemplate,
-    private getTemplateDetails: GetTemplateDetails
+    private getTemplateDetails: GetTemplateDetails,
+    private updateTemplateColumns: UpdateTemplateColumns
   ) {}
 
   @Get(':templateId')
@@ -105,6 +109,36 @@ export class TemplateController {
     }
 
     return document;
+  }
+
+  @Put(':templateId/columns')
+  @ApiOperation({
+    summary: 'Update columns for Template',
+  })
+  @ApiBody({ type: [ColumnRequestDto] })
+  async updateTemplateColumnRoute(
+    @Param('templateId', ValidateMongoId) _templateId: string,
+    @Body(new ParseArrayPipe({ items: ColumnRequestDto })) body: ColumnRequestDto[]
+  ): Promise<ColumnResponseDto[]> {
+    return this.updateTemplateColumns.execute(
+      body.map((columnData) =>
+        AddColumnCommand.create({
+          key: columnData.key,
+          alternateKeys: columnData.alternateKeys,
+          isRequired: columnData.isRequired,
+          isUnique: columnData.isUnique,
+          name: columnData.name,
+          regex: columnData.regex,
+          regexDescription: columnData.regexDescription,
+          selectValues: columnData.selectValues,
+          sequence: columnData.sequence,
+          _templateId,
+          type: columnData.type,
+          apiResponseKey: columnData.apiResponseKey,
+        })
+      ),
+      _templateId
+    );
   }
 
   @Delete(':templateId')

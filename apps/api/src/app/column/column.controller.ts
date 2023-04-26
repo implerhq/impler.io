@@ -1,5 +1,5 @@
 import { ApiTags, ApiBody, ApiOperation, ApiSecurity } from '@nestjs/swagger';
-import { Controller, Put, Param, Body, ParseArrayPipe, UseGuards, Post, Delete } from '@nestjs/common';
+import { Controller, Put, Param, Body, UseGuards, Post, Delete } from '@nestjs/common';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 import { APIKeyGuard } from '@shared/framework/auth.gaurd';
 import { ACCESS_KEY_NAME } from '@impler/shared';
@@ -7,7 +7,7 @@ import { ACCESS_KEY_NAME } from '@impler/shared';
 import { ColumnRequestDto } from './dtos/column-request.dto';
 import { ColumnResponseDto } from './dtos/column-response.dto';
 import { AddColumnCommand } from './commands/add-column.command';
-import { UpdateColumns, AddColumn, UpdateColumn, DeleteColumn } from './usecases';
+import { AddColumn, UpdateColumn, DeleteColumn } from './usecases';
 import { UpdateColumnCommand } from './commands/update-column.command';
 
 @Controller('/column')
@@ -15,12 +15,7 @@ import { UpdateColumnCommand } from './commands/update-column.command';
 @ApiSecurity(ACCESS_KEY_NAME)
 @UseGuards(APIKeyGuard)
 export class ColumnController {
-  constructor(
-    private updateColumns: UpdateColumns,
-    private addColumn: AddColumn,
-    private updateColumn: UpdateColumn,
-    private deleteColumn: DeleteColumn
-  ) {}
+  constructor(private addColumn: AddColumn, private updateColumn: UpdateColumn, private deleteColumn: DeleteColumn) {}
 
   @Post(':templateId')
   @ApiOperation({
@@ -64,36 +59,6 @@ export class ColumnController {
         ...body,
       }),
       _columnId
-    );
-  }
-
-  @Put(':templateId/all')
-  @ApiOperation({
-    summary: 'Update columns for Template',
-  })
-  @ApiBody({ type: [ColumnRequestDto] })
-  async updateTemplateColumns(
-    @Param('templateId', ValidateMongoId) _templateId: string,
-    @Body(new ParseArrayPipe({ items: ColumnRequestDto })) body: ColumnRequestDto[]
-  ): Promise<ColumnResponseDto[]> {
-    return this.updateColumns.execute(
-      body.map((columnData) =>
-        AddColumnCommand.create({
-          key: columnData.key,
-          alternateKeys: columnData.alternateKeys,
-          isRequired: columnData.isRequired,
-          isUnique: columnData.isUnique,
-          name: columnData.name,
-          regex: columnData.regex,
-          regexDescription: columnData.regexDescription,
-          selectValues: columnData.selectValues,
-          sequence: columnData.sequence,
-          _templateId,
-          type: columnData.type,
-          apiResponseKey: columnData.apiResponseKey,
-        })
-      ),
-      _templateId
     );
   }
 
