@@ -2,15 +2,17 @@ import { useEffect, useState, PropsWithChildren } from 'react';
 import * as WebFont from 'webfontloader';
 import { useParams } from 'react-router-dom';
 import { Global } from '@emotion/react';
-import { API_URL, colors, mantineConfig, variables } from '@config';
-import { Provider } from '../Provider';
-import { generateShades, ParentWindow } from '@util';
-import { useAuthentication } from '@hooks/useAuthentication';
-import { ApiService } from '@impler/client';
-import { MessageHandlerDataType } from '@types';
-import { IInitPayload, IShowPayload, EventTypesEnum } from '@impler/shared';
 import { NotificationsProvider } from '@mantine/notifications';
 import { MantineProvider } from '@mantine/core';
+import { logAmplitudePageView } from '@amplitude';
+
+import { Provider } from '../Provider';
+import { ApiService } from '@impler/client';
+import { MessageHandlerDataType } from '@types';
+import { generateShades, ParentWindow } from '@util';
+import { useAuthentication } from '@hooks/useAuthentication';
+import { IInitPayload, IShowPayload, EventTypesEnum } from '@impler/shared';
+import { AMPLITUDE, API_URL, colors, mantineConfig, variables } from '@config';
 
 let api: ApiService;
 
@@ -52,6 +54,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
       refetch();
     }
     if (data && data.type === EventTypesEnum.SHOW_WIDGET) {
+      logAmplitudePageView(AMPLITUDE.OPEN, { projectId });
       setShowWidget(true);
       setSecondaryPayload({ ...data.value, primaryColor: data.value.primaryColor || colors.primary });
     }

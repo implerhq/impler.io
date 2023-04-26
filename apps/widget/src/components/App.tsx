@@ -1,12 +1,14 @@
 import * as Sentry from '@sentry/react';
 import { Integrations } from '@sentry/tracing';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { CONTEXT_PATH, variables, SENTRY_DSN, ENV } from '@config';
-import { WidgetShell } from './ApplicationShell';
-import { Container } from './Common/Container';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+
 import { Widget } from './widget';
+import { initAmplitude } from '@amplitude';
 import { AppShell } from './Common/AppShell';
+import { Container } from './Common/Container';
+import { WidgetShell } from './ApplicationShell';
+import { CONTEXT_PATH, variables, SENTRY_DSN, ENV, AMPLITUDE_ID } from '@config';
 
 if (SENTRY_DSN) {
   Sentry.init({
@@ -20,6 +22,10 @@ if (SENTRY_DSN) {
      */
     tracesSampleRate: 1.0,
   });
+}
+
+if (AMPLITUDE_ID) {
+  initAmplitude(AMPLITUDE_ID);
 }
 
 export function App() {

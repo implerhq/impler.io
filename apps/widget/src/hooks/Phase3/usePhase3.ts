@@ -1,3 +1,4 @@
+import { logAmplitudeEvent } from '@amplitude';
 import { variables } from '@config';
 import { IErrorObject, IReviewData, IUpload } from '@impler/shared';
 import { useAPIState } from '@store/api.context';
@@ -26,6 +27,9 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     () => api.getReviewData(uploadInfo._id, page),
     {
       onSuccess(data) {
+        logAmplitudeEvent('VALIDATE', {
+          invalidRecords: data.totalRecords,
+        });
         if (!data.totalRecords) {
           // Confirm review if spreadsheet do not have invalid records
           confirmReview(false);
@@ -44,6 +48,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     ([fileUrl]) => api.getSignedUrl(getFileNameFromUrl(fileUrl)),
     {
       onSuccess(signedUrl, queryVariables) {
+        logAmplitudeEvent('DOWNLOAD_INVALID_DATA');
         downloadFileFromURL(signedUrl, queryVariables[variables.firstIndex]);
       },
       onError(error: IErrorObject) {
