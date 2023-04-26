@@ -13,6 +13,7 @@ import { UpdateTemplateRequestDto } from './dtos/update-template-request.dto';
 
 import {
   GetUploads,
+  GetTemplateColumns,
   CreateTemplate,
   DeleteTemplate,
   UpdateTemplate,
@@ -21,6 +22,7 @@ import {
   CreateTemplateCommand,
   UpdateTemplateCommand,
 } from './usecases';
+import { ColumnResponseDto } from 'app/column/dtos/column-response.dto';
 
 @Controller('/template')
 @ApiTags('Template')
@@ -28,6 +30,7 @@ import {
 @UseGuards(APIKeyGuard)
 export class TemplateController {
   constructor(
+    private getTemplateColumns: GetTemplateColumns,
     private getUploads: GetUploads,
     private createTemplateUsecase: CreateTemplate,
     private updateTemplateUsecase: UpdateTemplate,
@@ -46,6 +49,17 @@ export class TemplateController {
     @Param('templateId', ValidateMongoId) templateId: string
   ): Promise<TemplateResponseDto> {
     return this.getTemplateDetails.execute(templateId);
+  }
+
+  @Get(':templateId/columns')
+  @ApiOperation({
+    summary: 'Get template columns',
+  })
+  @ApiOkResponse({
+    type: [TemplateResponseDto],
+  })
+  async getColumns(@Param('templateId') _templateId: string): Promise<ColumnResponseDto[]> {
+    return this.getTemplateColumns.execute(_templateId);
   }
 
   @Post('')

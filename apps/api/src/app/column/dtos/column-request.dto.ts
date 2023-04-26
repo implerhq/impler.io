@@ -16,20 +16,18 @@ import { Type } from 'class-transformer';
 import { ColumnTypesEnum, Defaults } from '@impler/shared';
 import { IsValidRegex } from '@shared/framework/is-valid-regex.validator';
 
-export class UpdateColumnRequestDto {
+export class ColumnRequestDto {
   @ApiProperty({
     description: 'Name of the column',
     type: 'string',
   })
   @IsString()
-  @IsDefined()
   name: string;
 
   @ApiProperty({
     description: 'Key of the column',
   })
   @IsString()
-  @IsDefined()
   key: string;
 
   @ApiProperty({

@@ -3,19 +3,24 @@ import { DeleteIcon } from '@assets/icons/Delete.icon';
 import { EditIcon } from '@assets/icons/Edit.icon';
 import { colors } from '@config';
 import { useSchema } from '@hooks/useSchema';
+import { IColumn } from '@impler/shared';
 import { Flex, UnstyledButton } from '@mantine/core';
 import { Button } from '@ui/button';
 import { Table } from '@ui/table';
 
-export function Schema() {
-  const { onAddColumnClick } = useSchema();
+interface SchemaProps {
+  templateId: string;
+}
+
+export function Schema({ templateId }: SchemaProps) {
+  const { onAddColumnClick, onEditColumnClick, onDeleteColumnClick, columns } = useSchema({ templateId });
 
   return (
     <Flex gap="sm" direction="column">
       <Flex justify="flex-end">
         <Button onClick={onAddColumnClick}>Add Column</Button>
       </Flex>
-      <Table<any>
+      <Table<IColumn>
         headings={[
           {
             title: 'Name',
@@ -31,43 +36,30 @@ export function Schema() {
             title: 'Is required?',
             key: 'isRequired',
             width: '10%',
-            Cell: () => <CheckIcon color={colors.success} />,
+            Cell: (item) => item.isRequired && <CheckIcon color={colors.success} />,
           },
           {
             title: 'Is unique?',
             key: 'isUnique',
             width: '10%',
-            Cell: () => <CheckIcon color={colors.success} />,
+            Cell: (item) => item.isUnique && <CheckIcon color={colors.success} />,
           },
           {
             title: '',
             key: 'actions',
-            Cell: () => (
+            Cell: (item) => (
               <Flex justify="flex-end" gap="xs">
-                <UnstyledButton>
+                <UnstyledButton onClick={() => onEditColumnClick(item._id)}>
                   <EditIcon color={colors.blue} />
                 </UnstyledButton>
-                <UnstyledButton>
+                <UnstyledButton onClick={() => onDeleteColumnClick(item._id)}>
                   <DeleteIcon color={colors.danger} />
                 </UnstyledButton>
               </Flex>
             ),
           },
         ]}
-        data={[
-          {
-            name: 'Name',
-            type: 'String',
-            isRequired: true,
-            isUnique: false,
-          },
-          {
-            name: 'Name',
-            type: 'String',
-            isRequired: true,
-            isUnique: false,
-          },
-        ]}
+        data={columns}
       />
     </Flex>
   );

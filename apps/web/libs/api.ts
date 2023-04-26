@@ -38,6 +38,22 @@ const routes: Record<string, Route> = {
     url: (templateId) => `/v1/template/${templateId}`,
     method: 'GET',
   },
+  [API_KEYS.TEMPLATE_COLUMNS_LIST]: {
+    url: (templateId) => `/v1/template/${templateId}/columns`,
+    method: 'GET',
+  },
+  [API_KEYS.COLUMN_CREATE]: {
+    url: (templateId) => `/v1/column/${templateId}`,
+    method: 'POST',
+  },
+  [API_KEYS.COLUMN_UPDATE]: {
+    url: (columnId) => `/v1/column/${columnId}`,
+    method: 'PUT',
+  },
+  [API_KEYS.COLUMN_DELETE]: {
+    url: (columnId) => `/v1/column/${columnId}`,
+    method: 'DELETE',
+  },
 };
 
 function handleResponseStatusAndContentType(response: Response) {

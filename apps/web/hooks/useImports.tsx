@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { commonApi } from '@libs/api';
 import { IErrorObject, ITemplate } from '@impler/shared';
 import { API_KEYS, CONSTANTS, MODAL_KEYS, MODAL_TITLES } from '@config';
-import { CreateTemplateForm } from '@components/imports/CreateTemplateForm';
+import { CreateTemplateForm } from '@components/imports/forms/CreateTemplateForm';
 
 export function useImports() {
   const queryClient = useQueryClient();
