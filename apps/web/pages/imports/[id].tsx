@@ -85,7 +85,7 @@ export default function ImportDetails({ template }: ImportDetailProps) {
           {
             value: 'destination',
             title: 'Destination',
-            content: <Destination />,
+            content: <Destination template={template} />,
           },
         ]}
         defaultValue="schema"

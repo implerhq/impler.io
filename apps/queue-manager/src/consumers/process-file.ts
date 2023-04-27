@@ -224,9 +224,8 @@ export class ProcessFileConsumer extends BaseConsumer {
     // Get template information
     const templateData = await this.templateRepository.findById(
       uploadata._templateId,
-      '_projectId callbackUrl chunkSize code'
+      '_projectId callbackUrl chunkSize code authHeaderName'
     );
-    const projectData = await this.projectRepository.findById(templateData._projectId, 'authHeaderName');
 
     return {
       _templateId: uploadata._templateId,
@@ -236,7 +235,7 @@ export class ProcessFileConsumer extends BaseConsumer {
       isInvalidRecords: uploadata._validDataFileId ? false : true,
       invalidDataFilePath: (uploadata._invalidDataFileId as unknown as FileEntity)?.path,
       page: 1,
-      authHeaderName: projectData.authHeaderName,
+      authHeaderName: templateData.authHeaderName,
       authHeaderValue: uploadata.authHeaderValue,
       processInvalidRecords: uploadata.processInvalidRecords,
       validDataFilePath: (uploadata._validDataFileId as unknown as FileEntity)?.path,

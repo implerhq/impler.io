@@ -23,6 +23,7 @@ export class GetTemplateDetails {
       totalUploads: template.totalUploads,
       totalInvalidRecords: template.totalInvalidRecords,
       totalRecords: template.totalRecords,
+      authHeaderName: template.authHeaderName,
     };
   }
 }

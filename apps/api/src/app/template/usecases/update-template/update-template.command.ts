@@ -11,6 +11,10 @@ export class UpdateTemplateCommand extends BaseCommand {
   @IsOptional()
   callbackUrl?: string;
 
+  @IsString()
+  @IsOptional()
+  authHeaderName?: string;
+
   @IsNumber({
     allowNaN: false,
   })

@@ -10,6 +10,9 @@ const templateSchema = new Schema(
     callbackUrl: {
       type: Schema.Types.String,
     },
+    authHeaderName: {
+      type: Schema.Types.String,
+    },
     chunkSize: {
       type: Schema.Types.Number,
     },

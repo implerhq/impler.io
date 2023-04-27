@@ -18,6 +18,13 @@ export class UpdateTemplateRequestDto {
   callbackUrl?: string;
 
   @ApiProperty({
+    description: 'Name of auth header to be sent to the application',
+  })
+  @IsString()
+  @IsOptional()
+  authHeaderName?: string;
+
+  @ApiProperty({
     description: 'Size of data in rows that gets sent to the application',
     format: 'number',
     nullable: false,

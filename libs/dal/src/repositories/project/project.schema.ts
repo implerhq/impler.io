@@ -7,9 +7,6 @@ const projectSchema = new Schema(
     name: {
       type: Schema.Types.String,
     },
-    authHeaderName: {
-      type: Schema.Types.String,
-    },
     _userId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
