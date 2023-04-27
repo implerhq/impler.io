@@ -3,6 +3,7 @@ export const CONSTANTS = {
   AUTH_COOKIE_NAME: 'authentication',
   AUTHENTICATION_ERROR_CODE: 'AuthenticationError',
   PROFILE_STORAGE_NAME: 'profile',
+  EMBED_URL: 'https://embed.impler.io/embed.umd.min.js',
 };
 
 export const VARIABLES = {
