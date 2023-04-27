@@ -1,12 +1,15 @@
+import { Flex } from '@mantine/core';
+
+import { colors } from '@config';
+import { Table } from '@ui/table';
+import { Button } from '@ui/button';
+import { IColumn } from '@impler/shared';
+import { useSchema } from '@hooks/useSchema';
+import { IconButton } from '@ui/icon-button';
+
+import { EditIcon } from '@assets/icons/Edit.icon';
 import { CheckIcon } from '@assets/icons/Check.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
-import { EditIcon } from '@assets/icons/Edit.icon';
-import { colors } from '@config';
-import { useSchema } from '@hooks/useSchema';
-import { IColumn } from '@impler/shared';
-import { Flex, UnstyledButton } from '@mantine/core';
-import { Button } from '@ui/button';
-import { Table } from '@ui/table';
 
 interface SchemaProps {
   templateId: string;
@@ -49,12 +52,12 @@ export function Schema({ templateId }: SchemaProps) {
             key: 'actions',
             Cell: (item) => (
               <Flex justify="flex-end" gap="xs">
-                <UnstyledButton onClick={() => onEditColumnClick(item._id)}>
+                <IconButton label="Edit" onClick={() => onEditColumnClick(item._id)}>
                   <EditIcon color={colors.blue} />
-                </UnstyledButton>
-                <UnstyledButton onClick={() => onDeleteColumnClick(item._id)}>
+                </IconButton>
+                <IconButton label="Delete" onClick={() => onDeleteColumnClick(item._id)}>
                   <DeleteIcon color={colors.danger} />
-                </UnstyledButton>
+                </IconButton>
               </Flex>
             ),
           },
