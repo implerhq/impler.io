@@ -12,7 +12,7 @@ import { Footer } from 'components/Common/Footer';
 import { useRef, useState, useEffect } from 'react';
 import { ConfirmModal } from '../ConfirmModal';
 import useStyles from './Styles';
-import { logAmplitudeEvent } from '@amplitude';
+import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
 
 interface IPhase3Props {
   onNextClick: (uploadData: IUpload) => void;
@@ -55,6 +55,7 @@ export function Phase3(props: IPhase3Props) {
 
   const onReviewConfirmed = (exempt: boolean) => {
     logAmplitudeEvent('CONFIRM', { exempt });
+    resetAmplitude();
     setShowConfirmModal(false);
     onConfirmReview(exempt);
   };

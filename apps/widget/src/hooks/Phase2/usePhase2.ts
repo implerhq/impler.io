@@ -25,6 +25,7 @@ export function usePhase2({ goNext }: IUsePhase2Props) {
       onSuccess(mappingsResponse) {
         logAmplitudeEvent('MAPPING', {
           totalKeys: mappingsResponse.length,
+          totalRecords: uploadInfo.totalRecords,
           mappedKeys: mappingsResponse.filter((mapping) => mapping.columnHeading).length, // count how many keys are mapped
         });
         reset({
