@@ -19,6 +19,7 @@ export class GetTemplates {
       totalUploads: template.totalUploads,
       totalInvalidRecords: template.totalInvalidRecords,
       totalRecords: template.totalRecords,
+      authHeaderName: template.authHeaderName,
     }));
   }
 }

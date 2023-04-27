@@ -58,7 +58,7 @@ export default function ImportDetails({ template }: ImportDetailProps) {
           {
             value: 'snippet',
             title: 'Snippet',
-            content: <Snippet />,
+            content: <Snippet templateId={template._id} projectId={template._projectId} />,
           },
           {
             value: 'output',
@@ -85,7 +85,7 @@ export default function ImportDetails({ template }: ImportDetailProps) {
           {
             value: 'destination',
             title: 'Destination',
-            content: <Destination />,
+            content: <Destination template={template} />,
           },
         ]}
         defaultValue="schema"

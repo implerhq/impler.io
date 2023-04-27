@@ -3,7 +3,5 @@ export class ProjectEntity {
 
   name: string;
 
-  authHeaderName: string;
-
   _userId: string;
 }

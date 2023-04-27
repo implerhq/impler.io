@@ -101,6 +101,7 @@ export class TemplateController {
         callbackUrl: body.callbackUrl,
         chunkSize: body.chunkSize,
         name: body.name,
+        authHeaderName: body.authHeaderName,
       }),
       templateId
     );

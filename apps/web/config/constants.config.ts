@@ -3,6 +3,7 @@ export const CONSTANTS = {
   AUTH_COOKIE_NAME: 'authentication',
   AUTHENTICATION_ERROR_CODE: 'AuthenticationError',
   PROFILE_STORAGE_NAME: 'profile',
+  EMBED_URL: 'https://embed.impler.io/embed.umd.min.js',
 };
 
 export const VARIABLES = {
@@ -57,4 +58,8 @@ export const ROUTES = {
   SIGNIN: '/signin',
   SIGNIN_ONBOARDING: '/signin/onboard',
   IMPORTS: '/imports',
+};
+
+export const REGULAR_EXPRESSIONS = {
+  URL: /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/gm,
 };

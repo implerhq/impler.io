@@ -1,10 +1,15 @@
 import { Prism } from '@mantine/prism';
 import { Code, Flex, Text } from '@mantine/core';
 
-import { colors } from '@config';
+import { CONSTANTS, colors } from '@config';
 import { SectionBlock } from '@ui/section-block';
 
-export function Snippet() {
+interface SnippetProps {
+  projectId: string;
+  templateId: string;
+}
+
+export function Snippet({ projectId, templateId }: SnippetProps) {
   return (
     <Flex gap="sm" direction="column">
       <Text>
@@ -15,9 +20,7 @@ export function Snippet() {
           Copy & Paste this snippet to your code before the closing body tag. It will add impler variable in window, so
           you can call its init and show method.
         </Text>
-        <Prism language="markup">
-          {'<script type="text/javascript" src="https://embed.impler.io/embed.umd.min.js" async></script>'}
-        </Prism>
+        <Prism language="markup">{`<script type="text/javascript" src="${CONSTANTS.EMBED_URL}" async></script>`}</Prism>
       </SectionBlock>
 
       <SectionBlock title="Install the Package">
@@ -32,7 +35,7 @@ export function Snippet() {
           Now add <Code>Import</Code> Button from <Code>@impler/react</Code> which opens the Widget.
         </Text>
         <Prism language="tsx">{`import { Import } from '@impler/react';
-        \n<Button projectId="<PROJECT_ID>" template="<CODE_OR_ID>">\nImport\n</Button>`}</Prism>
+        \n<Button projectId="${projectId}" templateId="${templateId}">\nImport\n</Button>`}</Prism>
         <Text style={{ lineHeight: '1.5rem', color: colors.TXTSecondaryDark }}>
           You can get to know about props on{' '}
           <a href={process.env.DOCUMENTATION_REACT_PROPS_URL} target="_blank" rel="noreferrer">

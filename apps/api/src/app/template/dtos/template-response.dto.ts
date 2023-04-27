@@ -24,6 +24,13 @@ export class TemplateResponseDto {
   callbackUrl: string;
 
   @ApiProperty({
+    description: 'Name of the header that gets sent to the application',
+  })
+  @IsString()
+  @IsOptional()
+  authHeaderName: string;
+
+  @ApiProperty({
     description: 'Size of data in rows that gets sent to the application',
   })
   @IsNumber()

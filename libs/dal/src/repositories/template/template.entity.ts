@@ -5,6 +5,8 @@ export class TemplateEntity {
 
   callbackUrl: string;
 
+  authHeaderName: string;
+
   chunkSize: number;
 
   sampleFileUrl: string;

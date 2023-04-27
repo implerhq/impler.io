@@ -15,6 +15,9 @@ export function APIBlock({ method, title, url }: APIBlockProps) {
 
   return (
     <Stack spacing="sm" className={classes.root}>
+      <Text weight="bold" size="lg">
+        {title}
+      </Text>
       <Group spacing="xs">
         <Badge variant="filled" color="green" radius="xl" p="xs">
           {method}
@@ -34,9 +37,6 @@ export function APIBlock({ method, title, url }: APIBlockProps) {
           }
         </CopyButton>
       </Group>
-      <Text weight="bold" size="lg">
-        {title}
-      </Text>
     </Stack>
   );
 }
