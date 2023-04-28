@@ -8,6 +8,8 @@ export const API_URL =
 
 export const SENTRY_DSN = window._env_?.REACT_APP_SENTRY_DSN || process.env.REACT_APP_SENTRY_DSN || undefined;
 
+export const AMPLITUDE_ID = window._env_?.REACT_APP_AMPLITUDE_ID || process.env.REACT_APP_AMPLITUDE_ID || undefined;
+
 export const ENV: ENVTypesEnum = window._env_?.REACT_APP_ENVIRONMENT || process.env.REACT_APP_ENVIRONMENT || 'local';
 
 export const CONTEXT_PATH = getContextPath(ImplerComponentEnum.WIDGET);
