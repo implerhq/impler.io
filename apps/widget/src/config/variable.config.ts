@@ -18,3 +18,14 @@ export const variables = {
   maxColorNumber: 255,
   implerWebsite: 'https://impler.io?utm_source=widget',
 };
+
+export const AMPLITUDE = {
+  OPEN: 'open',
+  UPLOAD: 'upload',
+  MAPPING: 'mapping',
+  VALIDATE: 'validate',
+  DOWNLOAD_INVALID_DATA: 'download invalid data',
+  CONFIRM: 'confirm',
+  UPLOAD_AGAIN: 'upload again',
+  RESET: 'reset',
+};

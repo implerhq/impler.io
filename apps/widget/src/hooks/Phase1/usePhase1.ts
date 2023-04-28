@@ -8,6 +8,7 @@ import { useAppState } from '@store/app.context';
 import { downloadFileFromURL, getFileNameFromUrl, notifier, ParentWindow } from '@util';
 import { IFormvalues, IUploadValues } from '@types';
 import { variables } from '@config';
+import { logAmplitudeEvent } from '@amplitude';
 
 interface IUsePhase1Props {
   goNext: () => void;
@@ -100,6 +101,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
       );
       if (foundTemplate) {
         submitData.template = foundTemplate._id;
+        logAmplitudeEvent('UPLOAD', { fileSize: submitData.file.size, fileType: submitData.file.type });
         submitUpload({
           ...submitData,
           authHeaderValue,

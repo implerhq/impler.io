@@ -1,3 +1,4 @@
+import { logAmplitudeEvent } from '@amplitude';
 import { IMapping, IErrorObject, IMappingFinalize, IUpload } from '@impler/shared';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
@@ -22,6 +23,11 @@ export function usePhase2({ goNext }: IUsePhase2Props) {
     () => api.getMappings(uploadInfo._id),
     {
       onSuccess(mappingsResponse) {
+        logAmplitudeEvent('MAPPING', {
+          totalKeys: mappingsResponse.length,
+          totalRecords: uploadInfo.totalRecords,
+          mappedKeys: mappingsResponse.filter((mapping) => mapping.columnHeading).length, // count how many keys are mapped
+        });
         reset({
           mappings: mappingsResponse.map((mapping) => ({
             _columnId: mapping.column._columnId,

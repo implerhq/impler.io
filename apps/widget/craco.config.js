@@ -9,6 +9,7 @@ module.exports = {
       '@icons': path.resolve(__dirname, './src/icons/index.ts'),
       '@util': path.resolve(__dirname, './src/util/index.ts'),
       '@hooks': path.resolve(__dirname, './src/hooks'),
+      '@amplitude': path.resolve(__dirname, './src/util/amplitude/index.ts'),
     },
   },
 };
