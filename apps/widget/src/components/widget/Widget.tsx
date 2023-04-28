@@ -11,6 +11,7 @@ import { Phase4 } from './Phases/Phase4';
 import { PromptModal } from './Phases/PromptModal';
 import { Layout } from 'components/Common/Layout';
 import { IUpload } from '@impler/shared';
+import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
 
 export function Widget() {
   const defaultDataCount = 0;
@@ -21,6 +22,7 @@ export function Widget() {
   const [promptContinueAction, setPromptContinueAction] = useState<PromptModalTypesEnum>();
 
   const onUploadResetClick = () => {
+    logAmplitudeEvent('RESET');
     setPromptContinueAction(PromptModalTypesEnum.UPLOAD_AGAIN);
   };
   const onPromptConfirm = () => {
@@ -37,6 +39,7 @@ export function Widget() {
     else setPromptContinueAction(PromptModalTypesEnum.CLOSE);
   };
   const closeWidget = () => {
+    resetAmplitude();
     ParentWindow.Close();
     resetProgress();
   };
