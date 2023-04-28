@@ -1,7 +1,7 @@
 import useStyles from './Button.styles';
 import { Button as MantineButton, MantineSize } from '@mantine/core';
 
-export type ButtonColors = 'blue' | 'white' | 'red';
+export type ButtonColors = 'blue' | 'invariant' | 'red' | 'green';
 export type ButtonVariants = 'filled' | 'outline';
 
 interface ButtonProps {

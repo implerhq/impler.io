@@ -1,3 +1,4 @@
+import Script from 'next/script';
 import { createGetInitialProps } from '@mantine/next';
 import Document, { Head, Html, Main, NextScript } from 'next/document';
 
@@ -13,6 +14,7 @@ export default class _Document extends Document {
         <body>
           <Main />
           <NextScript />
+          <Script type="text/javascript" src={process.env.NEXT_PUBLIC_EMBED_URL} strategy="beforeInteractive" />
         </body>
       </Html>
     );

@@ -40,7 +40,7 @@ WithFooter.args = {
   onClose: () => {},
   title: 'Modal Title',
   footerActions: [
-    <Button key="cancel" variant="outline" color="white">
+    <Button key="cancel" variant="outline" color="invariant">
       Cancel
     </Button>,
     <Button key="submit">Submit</Button>,

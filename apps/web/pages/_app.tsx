@@ -1,13 +1,14 @@
 import React from 'react';
 import Head from 'next/head';
-import { Poppins } from '@next/font/google';
 import { AppProps } from 'next/app';
+import { Poppins } from '@next/font/google';
 import { useLocalStorage } from '@mantine/hooks';
 import { ModalsProvider } from '@mantine/modals';
-import { ColorSchemeProvider, MantineProvider, ColorScheme } from '@mantine/core';
-import { mantineConfig, colors } from '@config';
-import { addOpacityToHex } from 'shared/utils';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+import { ColorSchemeProvider, MantineProvider, ColorScheme } from '@mantine/core';
+
+import { addOpacityToHex } from 'shared/utils';
+import { mantineConfig, colors } from '@config';
 
 const client = new QueryClient();
 

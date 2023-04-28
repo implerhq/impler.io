@@ -29,8 +29,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   async canActivate(context: ExecutionContext) {
     const req = context.switchToHttp().getRequest();
-    if (req.cookies && req.headers[CONSTANTS.ACCESS_KEY_NAME]) {
-      const accessKey = req.headers[CONSTANTS.ACCESS_KEY_NAME];
+    if (req.cookies && req.headers[ACCESS_KEY_NAME]) {
+      const accessKey = req.headers[ACCESS_KEY_NAME];
 
       const tokenResult = await this.authService.apiKeyAuthenticate(accessKey);
       req.cookies = {
@@ -65,7 +65,7 @@ export class WidgetAuthGuard implements CanActivate {
   canActivate(context: ExecutionContext) {
     const req = context.switchToHttp().getRequest();
 
-    if (req.headers[CONSTANTS.ACCESS_KEY_NAME]) {
+    if (req.headers[ACCESS_KEY_NAME]) {
       return true;
     }
 

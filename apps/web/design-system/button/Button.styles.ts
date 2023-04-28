@@ -8,12 +8,16 @@ const getRootFilledStyles = (theme: MantineTheme, color: ButtonColors = 'blue', 
     backgroundColor: colors.blue,
     color: colors.white,
   }),
-  ...(color === 'white' && {
-    backgroundColor: colors.white,
-    color: colors.black,
+  ...(color === 'invariant' && {
+    backgroundColor: theme.colorScheme === 'dark' ? colors.white : colors.black,
+    color: theme.colorScheme === 'dark' ? colors.black : colors.white,
   }),
   ...(color === 'red' && {
     backgroundColor: colors.danger,
+  }),
+  ...(color === 'green' && {
+    backgroundColor: colors.green,
+    color: colors.white,
   }),
   width: fullWidth ? '100%' : 'max-content',
   transition: 'color 0.2s, background-color 0.2s, border-color ease-in-out',
@@ -22,12 +26,16 @@ const getRootFilledStyles = (theme: MantineTheme, color: ButtonColors = 'blue', 
     ...(color === 'blue' && {
       backgroundColor: colors.blueDark,
     }),
-    ...(color === 'white' && {
-      backgroundColor: colors.white,
-      color: colors.black,
+    ...(color === 'invariant' && {
+      backgroundColor: theme.colorScheme === 'dark' ? colors.white : colors.black,
+      color: theme.colorScheme === 'dark' ? colors.black : colors.white,
     }),
     ...(color === 'red' && {
       backgroundColor: colors.dangerDark,
+      color: colors.white,
+    }),
+    ...(color === 'green' && {
+      backgroundColor: colors.greenDark,
       color: colors.white,
     }),
   },
@@ -46,9 +54,9 @@ const getRootOutlineStyles = (theme: MantineTheme, color: ButtonColors = 'blue',
       color: colors.white,
       border: `1px solid ${colors.blue}`,
     }),
-    ...(color === 'white' && {
-      backgroundColor: colors.white,
-      color: colors.black,
+    ...(color === 'invariant' && {
+      backgroundColor: theme.colorScheme === 'dark' ? colors.white : colors.black,
+      color: theme.colorScheme === 'dark' ? colors.black : colors.white,
       border: `1px solid ${colors.black}`,
     }),
     ...(color === 'red' && {
@@ -56,7 +64,12 @@ const getRootOutlineStyles = (theme: MantineTheme, color: ButtonColors = 'blue',
       color: colors.white,
       border: `1px solid ${colors.danger}`,
     }),
-    color: theme.colorScheme === 'dark' && color === 'white' ? colors.black : colors.white,
+    ...(color === 'green' && {
+      backgroundColor: colors.green,
+      color: colors.white,
+      border: `1px solid ${colors.green}`,
+    }),
+    color: theme.colorScheme === 'dark' && color === 'invariant' ? colors.black : colors.white,
   },
 });
 

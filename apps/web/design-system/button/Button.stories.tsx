@@ -9,7 +9,7 @@ export default {
     color: {
       control: {
         type: 'select',
-        options: ['blue', 'white'],
+        options: ['blue', 'red', 'invarient'],
       },
     },
     variant: {
@@ -51,5 +51,5 @@ export const OutlineWithColor = Template.bind({});
 OutlineWithColor.args = {
   children: 'Outline Button',
   variant: 'outline',
-  color: 'white',
+  color: 'invariant',
 };

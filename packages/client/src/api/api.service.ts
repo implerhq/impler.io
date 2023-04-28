@@ -62,7 +62,7 @@ export class ApiService {
   }
 
   async getTemplates(projectId: string): Promise<ITemplate[]> {
-    return this.httpClient.get(`/template/${projectId}`) as Promise<
+    return this.httpClient.get(`/project/${projectId}/templates`) as Promise<
       ITemplate[]
     >;
   }
