@@ -27,7 +27,6 @@ export const APIMessages = {
 export const CONSTANTS = {
   PASSWORD_SALT: 10,
   AUTH_COOKIE_NAME: 'authentication',
-  ACCESS_KEY_NAME: 'access-key',
   // eslint-disable-next-line no-magic-numbers
   maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
   DEFAULT_USER_AVATAR: 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y',

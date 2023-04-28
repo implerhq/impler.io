@@ -4,6 +4,7 @@ import { GetServerSideProps } from 'next';
 import { Flex, Group, Title } from '@mantine/core';
 
 import { commonApi } from '@libs/api';
+import { Button as ImportButton } from '@impler/react';
 import { ITemplate } from '@impler/shared';
 import { API_KEYS, CONSTANTS, ROUTES } from '@config';
 
@@ -33,6 +34,13 @@ export default function ImportDetails({ template }: ImportDetailProps) {
       <Flex justify="space-between">
         <Title order={2}>{templateData.name}</Title>
         <Group spacing="xs">
+          <ImportButton
+            accessToken="383683d112f60fa0703eceee12501f88"
+            template={template._id}
+            projectId={template._projectId}
+          >
+            Import
+          </ImportButton>
           <Button onClick={onUpdateClick}>
             <EditIcon />
           </Button>

@@ -73,6 +73,7 @@ export default function App({ Component, pageProps }: AppProps) {
               <Layout>
                 <Component {...pageProps} />
               </Layout>
+              <script type="text/javascript" src={process.env.NEXT_PUBLIC_EMBED_URL} async></script>
             </ModalsProvider>
           </MantineProvider>
         </ColorSchemeProvider>
