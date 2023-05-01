@@ -9,9 +9,9 @@ import { Input } from '@ui/input';
 import { Button } from '@ui/button';
 
 import { commonApi } from '@libs/api';
-import { API_KEYS, CONSTANTS } from '@config';
+import { API_KEYS, CONSTANTS, VARIABLES } from '@config';
 import DarkLogo from '@assets/images/logo-dark.png';
-import { IProjectPayload, IErrorObject } from '@impler/shared';
+import { IProjectPayload, IErrorObject, IEnvironmentData } from '@impler/shared';
 
 export default function CreateProjectForm() {
   const { push } = useRouter();
@@ -22,15 +22,16 @@ export default function CreateProjectForm() {
     formState: { errors },
   } = useForm<ICreateProjectData>();
   const { mutate: createProject, isLoading: isCreateProjectLoading } = useMutation<
-    IProjectPayload,
+    { project: IProjectPayload; environment: IEnvironmentData },
     IErrorObject,
     ICreateProjectData,
     string[]
-  >([API_KEYS.CREATE_PROJECT], (data) => commonApi(API_KEYS.CREATE_PROJECT as any, { body: data }), {
+  >([API_KEYS.PROJECT_CREATE], (data) => commonApi(API_KEYS.PROJECT_CREATE as any, { body: data }), {
     onSuccess: (data) => {
       setProfile((profileData) => ({
         ...profileData,
-        _projectId: data._id,
+        _projectId: data.project._id,
+        accessToken: data.environment.apiKeys[VARIABLES.ZERO].key,
       }));
       push('/');
     },

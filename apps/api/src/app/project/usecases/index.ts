@@ -5,6 +5,7 @@ import { UpdateProject } from './update-project/update-project.usecase';
 import { UpdateProjectCommand } from './update-project/update-project.command';
 import { DeleteProject } from './delete-project/delete-project.usecase';
 import { GetTemplates } from './get-templates/get-templates.usecase';
+import { GetEnvironment } from './get-environment/get-environment.usecase';
 
 export const USE_CASES = [
   GetProjects,
@@ -12,8 +13,9 @@ export const USE_CASES = [
   UpdateProject,
   DeleteProject,
   GetTemplates,
+  GetEnvironment,
   //
 ];
 
-export { CreateProject, GetProjects, UpdateProject, DeleteProject, GetTemplates };
+export { CreateProject, GetProjects, UpdateProject, DeleteProject, GetTemplates, GetEnvironment };
 export { CreateProjectCommand, UpdateProjectCommand };

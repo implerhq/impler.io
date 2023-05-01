@@ -17,12 +17,14 @@ import {
   CreateProject,
   UpdateProject,
   DeleteProject,
+  GetEnvironment,
   CreateProjectCommand,
   UpdateProjectCommand,
 } from './usecases';
 import { AuthService } from 'app/auth/services/auth.service';
 import { CONSTANTS, COOKIE_CONFIG } from '@shared/constants';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
+import { EnvironmentResponseDto } from 'app/environment/dtos/environment-response.dto';
 
 @Controller('/project')
 @ApiTags('Project')
@@ -34,7 +36,8 @@ export class ProjectController {
     private updateProjectUsecase: UpdateProject,
     private deleteProjectUsecase: DeleteProject,
     private authService: AuthService,
-    private getTemplates: GetTemplates
+    private getTemplates: GetTemplates,
+    private getEnvironment: GetEnvironment
   ) {}
 
   @Get('')
@@ -59,6 +62,17 @@ export class ProjectController {
     return this.getTemplates.execute(projectId);
   }
 
+  @Get(':projectId/environment')
+  @ApiOperation({
+    summary: 'Get environment for project',
+  })
+  @ApiOkResponse({
+    type: EnvironmentResponseDto,
+  })
+  getEnvironmentRoute(@Param('projectId', ValidateMongoId) projectId: string): Promise<EnvironmentResponseDto> {
+    return this.getEnvironment.execute(projectId);
+  }
+
   @Post('')
   @ApiOperation({
     summary: 'Create project',
@@ -70,8 +84,8 @@ export class ProjectController {
     @UserSession() user: IJwtPayload,
     @Body() body: CreateProjectRequestDto,
     @Res({ passthrough: true }) res: Response
-  ): Promise<ProjectResponseDto> {
-    const project = await this.createProjectUsecase.execute(
+  ): Promise<{ project: ProjectResponseDto; environment: EnvironmentResponseDto }> {
+    const projectWithEnvironment = await this.createProjectUsecase.execute(
       CreateProjectCommand.create({
         name: body.name,
         _userId: user._id,
@@ -85,11 +99,11 @@ export class ProjectController {
         email: user.email,
         profilePicture: user.profilePicture,
       },
-      project._id
+      projectWithEnvironment.project._id
     );
     res.cookie(CONSTANTS.AUTH_COOKIE_NAME, token, COOKIE_CONFIG);
 
-    return project;
+    return projectWithEnvironment;
   }
 
   @Put(':projectId')

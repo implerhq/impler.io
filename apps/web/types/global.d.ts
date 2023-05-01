@@ -15,6 +15,7 @@ interface IProfileData {
   email: string;
   profilePicture: string;
   _projectId?: string;
+  accessToken?: string;
 }
 
 interface ICreateProjectData {

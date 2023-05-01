@@ -17,8 +17,8 @@ import { ColorSchemeToggle } from '@ui/toggle-color-scheme';
 export function AppLayout({ children }: PropsWithChildren) {
   const { classes } = useStyles();
   const navRef = useRef<HTMLElement>(null);
-  const { profile, projects, createProject, projectId, setProjectId, logout, isProjectsLoading } = useApp();
   const { colorScheme } = useMantineColorScheme();
+  const { profile, projects, createProject, setProjectId, logout, isProjectsLoading } = useApp();
 
   return (
     <>
@@ -42,7 +42,7 @@ export function AppLayout({ children }: PropsWithChildren) {
             creatable
             pl="sm"
             radius={0}
-            value={projectId}
+            value={profile?._projectId}
             getCreateLabel={(query) => `+ Create "${query}"`}
             onChange={(value: string) => setProjectId(value)}
             onCreate={(value: string) => {

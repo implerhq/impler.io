@@ -27,18 +27,14 @@ interface ImportDetailProps {
 }
 
 export default function ImportDetails({ template }: ImportDetailProps) {
-  const { onUpdateClick, onDeleteClick, templateData } = useImportDetails({ template });
+  const { onUpdateClick, onDeleteClick, templateData, profile } = useImportDetails({ template });
 
   return (
     <Flex gap="lg" direction="column" h="100%">
       <Flex justify="space-between">
         <Title order={2}>{templateData.name}</Title>
         <Group spacing="xs">
-          <ImportButton
-            accessToken="383683d112f60fa0703eceee12501f88"
-            template={template._id}
-            projectId={template._projectId}
-          >
+          <ImportButton accessToken={profile?.accessToken} template={template._id} projectId={template._projectId}>
             Import
           </ImportButton>
           <Button onClick={onUpdateClick}>

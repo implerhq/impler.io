@@ -10,7 +10,14 @@ import { ColorSchemeProvider, MantineProvider, ColorScheme } from '@mantine/core
 import { addOpacityToHex } from 'shared/utils';
 import { mantineConfig, colors } from '@config';
 
-const client = new QueryClient();
+const client = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: false,
+    },
+  },
+});
 
 const poppinsFont = Poppins({
   weight: ['400', '500', '600'],
