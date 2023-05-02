@@ -25,7 +25,7 @@ export enum PhasesEum {
 }
 
 export interface IFormvalues {
-  template: string;
+  templateId: string;
   file: File;
 }
 
