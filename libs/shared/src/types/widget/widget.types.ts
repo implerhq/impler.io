@@ -3,7 +3,7 @@ export interface IInitPayload {
 }
 export interface IShowPayload {
   extra?: string;
-  template?: string;
+  templateId?: string;
   authHeaderValue?: string;
   primaryColor?: string;
 }

@@ -19,7 +19,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
   const { setUploadInfo } = useAppState();
   const [templates, setTemplates] = useState<IOption[]>([]);
   const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
-  const { projectId, template, authHeaderValue, extra } = useImplerState();
+  const { projectId, templateId, authHeaderValue, extra } = useImplerState();
   const {
     data: dataTemplates,
     isFetched,
@@ -95,9 +95,9 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
   };
 
   const onSubmit = (submitData: IFormvalues) => {
-    if ((template || submitData.template) && dataTemplates) {
+    if ((templateId || submitData.template) && dataTemplates) {
       const foundTemplate = dataTemplates.find(
-        (templateItem) => templateItem._id === template || templateItem._id === submitData.template
+        (templateItem) => templateItem._id === templateId || templateItem._id === submitData.template
       );
       if (foundTemplate) {
         submitData.template = foundTemplate._id;
@@ -124,7 +124,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     onDownload,
     isDownloadInProgress,
     isInitialDataLoaded: isFetched && !isLoading,
-    showSelectTemplate: !template,
+    showSelectTemplate: !templateId,
     onSubmit: handleSubmit(onSubmit),
   };
 }

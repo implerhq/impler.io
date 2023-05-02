@@ -28,7 +28,7 @@ export const Button = ({
   children = 'Import',
   className = '',
   projectId,
-  template,
+  templateId,
   authHeaderValue,
   accessToken,
   extra,
@@ -70,7 +70,7 @@ export const Button = ({
   const onButtonClick = async () => {
     if (window.impler) {
       const payload: IShowPayload = {};
-      if (template) payload.template = template;
+      if (templateId) payload.templateId = templateId;
       if (extra) {
         if (typeof extra === 'object') payload.extra = JSON.stringify(extra);
         else payload.extra = extra;
