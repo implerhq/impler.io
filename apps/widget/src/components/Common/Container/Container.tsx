@@ -119,7 +119,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
               api={api}
               // impler-context
               projectId={projectId}
-              template={secondaryPayload.template}
+              templateId={secondaryPayload.templateId}
               accessToken={primaryPayload.accessToken}
               authHeaderValue={secondaryPayload?.authHeaderValue}
               extra={secondaryPayload?.extra}

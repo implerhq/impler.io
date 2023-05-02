@@ -3,7 +3,7 @@ import { IUpload } from '@impler/shared';
 
 export interface IImplerStore {
   projectId: string;
-  template?: string;
+  templateId?: string;
   accessToken?: string;
   extra?: string;
   authHeaderValue?: string;

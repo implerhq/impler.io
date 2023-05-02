@@ -3,7 +3,7 @@ import { IUpload } from '@impler/shared';
 export interface ButtonProps {
   projectId: string;
   accessToken?: string;
-  template?: string;
+  templateId?: string;
   authHeaderValue?: string | (() => string) | (() => Promise<string>);
   extra?: string | Record<string, any>;
   children?: React.ReactNode;

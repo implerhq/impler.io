@@ -51,7 +51,7 @@ const Actions = ({ PROJECT_ID, ACCESS_TOKEN, PRIMARY_COLOR, TEMPLATE }: ActionPr
         <Button
           projectId={PROJECT_ID}
           accessToken={ACCESS_TOKEN}
-          template={TEMPLATE}
+          templateId={TEMPLATE}
           primaryColor={PRIMARY_COLOR}
           className={classes.button}
           onUploadComplete={onUploadComplete}

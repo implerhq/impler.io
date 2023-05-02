@@ -45,7 +45,7 @@ export class ApiService {
   }
 
   async uploadFile(data: {
-    template: string;
+    templateId: string;
     file: File;
     authHeaderValue?: string;
     extra?: string;
@@ -56,7 +56,7 @@ export class ApiService {
       formData.append('authHeaderValue', data.authHeaderValue);
     if (data.extra) formData.append('extra', data.extra);
 
-    return this.httpClient.post(`/upload/${data.template}`, formData, {
+    return this.httpClient.post(`/upload/${data.templateId}`, formData, {
       'Content-Type': 'multipart/form-data',
     }) as Promise<IUpload>;
   }

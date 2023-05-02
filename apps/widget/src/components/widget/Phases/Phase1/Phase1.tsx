@@ -38,7 +38,7 @@ export function Phase1(props: IPhase1Props) {
       <Group className={classes.templateContainer} spacing="lg" noWrap>
         {showSelectTemplate && (
           <Controller
-            name={`template`}
+            name={`templateId`}
             control={control}
             rules={{
               required: TEXTS.VALIDATION.TEMPLATE_REQUIRED,
@@ -52,7 +52,7 @@ export function Phase1(props: IPhase1Props) {
                 error={fieldState.error?.message}
                 onChange={(value) => {
                   field.onChange(value);
-                  trigger('template');
+                  trigger('templateId');
                 }}
                 value={field.value}
                 ref={field.ref}
