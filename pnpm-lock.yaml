@@ -255,7 +255,6 @@ importers:
       '@emotion/react': ^11.10.5
       '@emotion/server': ^11.10.0
       '@impler/client': ^0.1.13
-      '@impler/react': ^0.1.13
       '@impler/shared': ^0.1.13
       '@mantine/carousel': 6.0.6
       '@mantine/core': 6.0.6
@@ -289,7 +288,6 @@ importers:
       '@emotion/react': 11.10.5_tthezkgec2o3jwmbjlr4nrwrji
       '@emotion/server': 11.10.0
       '@impler/client': link:../../packages/client
-      '@impler/react': link:../../packages/react
       '@impler/shared': link:../../libs/shared
       '@mantine/carousel': 6.0.6_jmgnayqqxrunhbllhgwajrdemm
       '@mantine/core': 6.0.6_ueioib7soyzozf2zgopdomeqve

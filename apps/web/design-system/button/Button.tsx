@@ -17,6 +17,7 @@ interface ButtonProps {
   fullWidth?: boolean;
   onClick?: () => void;
   loading?: boolean;
+  disabled?: boolean;
 }
 
 export function Button({
@@ -28,6 +29,7 @@ export function Button({
   onClick,
   type,
   loading,
+  disabled = false,
   component = 'button',
   size = 'sm',
   color = 'blue',
@@ -47,6 +49,7 @@ export function Button({
       fullWidth={fullWidth}
       onClick={onClick}
       loading={loading}
+      disabled={disabled}
     >
       {children}
     </MantineButton>

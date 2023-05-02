@@ -29,3 +29,7 @@ interface ICreateTemplateData {
 interface IUpdateTemplateData {
   name: string;
 }
+
+interface Window {
+  impler: any;
+}

@@ -14,16 +14,17 @@ export function useApp() {
     [API_KEYS.PROJECTS_LIST],
     () => commonApi(API_KEYS.PROJECTS_LIST as any, {})
   );
-  const { refetch: fetchEnvironment } = useQuery<string, IErrorObject, IEnvironmentData, (string | undefined)[]>(
-    [API_KEYS.PROJECT_ENVIRONMENT, profile?._projectId],
-    () => commonApi(API_KEYS.PROJECT_ENVIRONMENT as any, { parameters: [profile._projectId!] }),
+  const { mutate: setEnvironment } = useMutation<IEnvironmentData, IErrorObject, string, (string | undefined)[]>(
+    [API_KEYS.PROJECT_ENVIRONMENT],
+    (id: string) => commonApi(API_KEYS.PROJECT_ENVIRONMENT as any, { parameters: [id] }),
     {
-      enabled: false,
-      onSuccess(data) {
+      onSuccess(data, projectId) {
         setProfile((oldProfile) => ({
           ...oldProfile,
           accessToken: data.apiKeys[VARIABLES.ZERO].key,
+          _projectId: projectId,
         }));
+        replace(ROUTES.IMPORTS);
       },
     }
   );
@@ -52,19 +53,11 @@ export function useApp() {
     },
   });
 
-  function selectProject(_projectId: string) {
-    setProfile((oldProfile) => ({
-      ...oldProfile,
-      _projectId,
-    }));
-    fetchEnvironment();
-  }
-
   return {
     logout,
     profile,
     projects,
-    setProjectId: selectProject,
+    setProjectId: setEnvironment,
     createProject,
     isProjectsLoading: isProjectsLoading || isCreateProjectLoading,
   };
