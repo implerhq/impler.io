@@ -10,11 +10,14 @@ export class CreateProject {
   async execute(command: CreateProjectCommand) {
     const project = await this.projectRepository.create(command);
 
-    this.createEnvironment.execute({
+    const environment = await this.createEnvironment.execute({
       projectId: project._id,
       _userId: command._userId,
     });
 
-    return project;
+    return {
+      project,
+      environment,
+    };
   }
 }

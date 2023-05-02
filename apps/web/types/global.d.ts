@@ -15,6 +15,7 @@ interface IProfileData {
   email: string;
   profilePicture: string;
   _projectId?: string;
+  accessToken?: string;
 }
 
 interface ICreateProjectData {
@@ -27,4 +28,8 @@ interface ICreateTemplateData {
 }
 interface IUpdateTemplateData {
   name: string;
+}
+
+interface Window {
+  impler: any;
 }

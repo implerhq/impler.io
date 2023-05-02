@@ -73,5 +73,5 @@ export function useImportDetails({ template }: useImportDetailProps) {
     });
   };
 
-  return { onUpdateClick, onDeleteClick, templateData };
+  return { profile, onUpdateClick, onDeleteClick, templateData };
 }

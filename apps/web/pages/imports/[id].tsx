@@ -4,9 +4,8 @@ import { GetServerSideProps } from 'next';
 import { Flex, Group, Title } from '@mantine/core';
 
 import { commonApi } from '@libs/api';
-import { Button as ImportButton } from '@impler/react';
 import { ITemplate } from '@impler/shared';
-import { API_KEYS, CONSTANTS, ROUTES } from '@config';
+import { API_KEYS, CONSTANTS, ROUTES, colors } from '@config';
 
 import { Tabs } from '@ui/Tabs';
 import { Card } from '@ui/Card';
@@ -20,6 +19,8 @@ import { Schema } from '@components/imports/Schema';
 import { Snippet } from '@components/imports/Snippet';
 import { Destination } from '@components/imports/Destination';
 import { useImportDetails } from '@hooks/useImportDetails';
+import { useEffect } from 'react';
+import { useImpler } from '@hooks/useImpler';
 const Editor = dynamic(() => import('@components/imports/Editor'), { ssr: false });
 
 interface ImportDetailProps {
@@ -27,20 +28,28 @@ interface ImportDetailProps {
 }
 
 export default function ImportDetails({ template }: ImportDetailProps) {
-  const { onUpdateClick, onDeleteClick, templateData } = useImportDetails({ template });
+  const { onUpdateClick, onDeleteClick, templateData, profile } = useImportDetails({ template });
+  const { init, onImportClick, isImplerInitiated } = useImpler({
+    templateId: template._id,
+    projectId: template._projectId,
+    accessToken: profile?.accessToken,
+    primaryColor: colors.blue,
+  });
+
+  useEffect(() => {
+    if (profile?.accessToken && template._projectId) {
+      init();
+    }
+  }, [init, profile?.accessToken, template._projectId]);
 
   return (
     <Flex gap="lg" direction="column" h="100%">
       <Flex justify="space-between">
         <Title order={2}>{templateData.name}</Title>
         <Group spacing="xs">
-          <ImportButton
-            accessToken="383683d112f60fa0703eceee12501f88"
-            template={template._id}
-            projectId={template._projectId}
-          >
+          <Button disabled={!isImplerInitiated} onClick={onImportClick}>
             Import
-          </ImportButton>
+          </Button>
           <Button onClick={onUpdateClick}>
             <EditIcon />
           </Button>

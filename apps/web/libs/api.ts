@@ -6,13 +6,17 @@ interface Route {
 }
 
 const routes: Record<string, Route> = {
-  [API_KEYS.GET_PROJECTS]: {
+  [API_KEYS.PROJECTS_LIST]: {
     url: () => '/v1/project',
     method: 'GET',
   },
-  [API_KEYS.CREATE_PROJECT]: {
+  [API_KEYS.PROJECT_CREATE]: {
     url: () => '/v1/project',
     method: 'POST',
+  },
+  [API_KEYS.PROJECT_ENVIRONMENT]: {
+    url: (projectId) => `/v1/project/${projectId}/environment`,
+    method: 'GET',
   },
   [API_KEYS.LOGOUT]: {
     url: () => '/v1/auth/logout',
