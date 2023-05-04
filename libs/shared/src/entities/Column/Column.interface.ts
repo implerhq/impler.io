@@ -4,7 +4,6 @@ export interface IColumn {
   key: string;
   type: string;
   alternateKeys?: string[];
-  apiResponseKey?: string;
   isRequired?: boolean;
   isUnique?: boolean;
   regex?: string;

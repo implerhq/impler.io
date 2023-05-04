@@ -37,7 +37,6 @@ export class ColumnController {
         sequence: body.sequence,
         _templateId,
         type: body.type,
-        apiResponseKey: body.apiResponseKey,
       }),
       _templateId
     );

@@ -34,10 +34,6 @@ export class AddColumn {
     return column;
   }
 
-  listRecordVariables(data: AddColumnCommand[]): string[] {
-    return data.map((column) => column.apiResponseKey ?? column.key);
-  }
-
   async updateCustomization(_templateId: string, variables: string[]) {
     const customization = await this.customizationRepository.findOne({
       _templateId,

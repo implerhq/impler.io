@@ -32,7 +32,7 @@ export class UpdateTemplateColumns {
   }
 
   listRecordVariables(data: AddColumnCommand[]): string[] {
-    return data.map((column) => `record.${column.apiResponseKey ?? column.key}`);
+    return data.map((column) => `record.${column.key}`);
   }
 
   createRecordFormat(data: AddColumnCommand[]): string {

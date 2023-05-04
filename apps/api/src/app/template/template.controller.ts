@@ -142,7 +142,6 @@ export class TemplateController {
           sequence: columnData.sequence,
           _templateId,
           type: columnData.type,
-          apiResponseKey: columnData.apiResponseKey,
         })
       ),
       _templateId
