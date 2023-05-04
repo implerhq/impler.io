@@ -1,26 +1,25 @@
-import Link from 'next/link';
+import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { GetServerSideProps } from 'next';
 import { Flex, Group, Title } from '@mantine/core';
 
 import { commonApi } from '@libs/api';
 import { ITemplate } from '@impler/shared';
+import { useImpler } from '@hooks/useImpler';
+import { useImportDetails } from '@hooks/useImportDetails';
 import { API_KEYS, CONSTANTS, ROUTES, colors } from '@config';
 
 import { Tabs } from '@ui/Tabs';
 import { Card } from '@ui/Card';
 import { Button } from '@ui/button';
+import { Schema } from '@components/imports/Schema';
+import { Snippet } from '@components/imports/Snippet';
+import { Destination } from '@components/imports/Destination';
 
 import { AppLayout } from '@layouts/AppLayout';
 import { EditIcon } from '@assets/icons/Edit.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
 
-import { Schema } from '@components/imports/Schema';
-import { Snippet } from '@components/imports/Snippet';
-import { Destination } from '@components/imports/Destination';
-import { useImportDetails } from '@hooks/useImportDetails';
-import { useEffect } from 'react';
-import { useImpler } from '@hooks/useImpler';
 const Editor = dynamic(() => import('@components/imports/Editor'), { ssr: false });
 
 interface ImportDetailProps {
@@ -59,9 +58,7 @@ export default function ImportDetails({ template }: ImportDetailProps) {
         </Group>
       </Flex>
       <Group spacing="sm" w="100%" grow>
-        <Link href="asdf">
-          <Card title="Total Imports" subtitle={String(templateData.totalUploads)} color="primary" />
-        </Link>
+        <Card title="Total Imports" subtitle={String(templateData.totalUploads)} color="primary" />
         <Card title="Total Imported Records" subtitle={String(templateData.totalRecords)} />
         <Card title="Total Error Records" subtitle={String(templateData.totalInvalidRecords)} />
       </Group>
