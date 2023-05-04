@@ -46,6 +46,14 @@ const routes: Record<string, Route> = {
     url: (templateId) => `/v1/template/${templateId}/columns`,
     method: 'GET',
   },
+  [API_KEYS.TEMPLATE_CUSTOMIZATION_GET]: {
+    url: (templateId) => `/v1/template/${templateId}/customizations`,
+    method: 'GET',
+  },
+  [API_KEYS.TEMPLATE_CUSTOMIZATION_UPDATE]: {
+    url: (templateId) => `/v1/template/${templateId}/customizations`,
+    method: 'PUT',
+  },
   [API_KEYS.COLUMN_CREATE]: {
     url: (templateId) => `/v1/column/${templateId}`,
     method: 'POST',

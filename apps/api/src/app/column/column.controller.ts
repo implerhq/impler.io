@@ -1,9 +1,8 @@
-import { ApiTags, ApiBody, ApiOperation, ApiSecurity } from '@nestjs/swagger';
+import { ApiTags, ApiBody, ApiOperation } from '@nestjs/swagger';
 import { Controller, Put, Param, Body, UseGuards, Post, Delete } from '@nestjs/common';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
-import { APIKeyGuard } from '@shared/framework/auth.gaurd';
-import { ACCESS_KEY_NAME } from '@impler/shared';
 
+import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { ColumnRequestDto } from './dtos/column-request.dto';
 import { ColumnResponseDto } from './dtos/column-response.dto';
 import { AddColumnCommand } from './commands/add-column.command';
@@ -12,8 +11,7 @@ import { UpdateColumnCommand } from './commands/update-column.command';
 
 @Controller('/column')
 @ApiTags('Column')
-@ApiSecurity(ACCESS_KEY_NAME)
-@UseGuards(APIKeyGuard)
+@UseGuards(JwtAuthGuard)
 export class ColumnController {
   constructor(private addColumn: AddColumn, private updateColumn: UpdateColumn, private deleteColumn: DeleteColumn) {}
 

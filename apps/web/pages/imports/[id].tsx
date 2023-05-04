@@ -80,24 +80,7 @@ export default function ImportDetails({ template }: ImportDetailProps) {
           {
             value: 'output',
             title: 'Output',
-            content: (
-              <Editor
-                variables={['record.fName', 'record.lName']}
-                value={`{
-  totalRecords: 200,
-  page: 1,
-  limit: 10,
-  totalPages: 20,
-  hasMore: true,
-  data: [
-    {
-      "name": {{record.fName}},
-      "lname": {{record.lName}},
-    }
-  ]
-}`}
-              />
-            ),
+            content: <Editor templateId={template._id} />,
           },
           {
             value: 'destination',

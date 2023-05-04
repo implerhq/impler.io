@@ -1,9 +1,10 @@
-import { Controller, useForm } from 'react-hook-form';
-import { Group, List, Stack, Switch, Text } from '@mantine/core';
+import { Controller } from 'react-hook-form';
+import { Group, List, Stack, Text } from '@mantine/core';
 
 import { Button } from '@ui/button';
 import { Editor } from '@ui/editor/Editor';
 import { SectionBlock } from '@ui/section-block';
+import { useEditor } from '@hooks/useEditor';
 
 interface VariableErrorProps {
   variables: string[];
@@ -18,7 +19,6 @@ function VariableError({ variables }: VariableErrorProps) {
     </>
   );
 }
-
 function PossibleJSONErrors() {
   return (
     <>
@@ -31,105 +31,19 @@ function PossibleJSONErrors() {
   );
 }
 
-export default function OutputEditor({}: {
-  onChange?: (value: string) => void;
-  value?: string;
-  height?: string;
-  variables?: string[];
-}) {
-  const recordVariables = ['record.fName', 'record.lName'];
-  const chunkVariables = [
-    'chunk.data',
-    'chunk.totalRecords',
-    'chunk.page',
-    'chunk.limit',
-    'chunk.totalPages',
-    'chunk.hasMore',
-    'chunk.templateId',
-  ];
-  const {
-    formState: { errors },
-    control,
-    setError,
-    handleSubmit,
-  } = useForm<{
-    recordFormat: string;
-    chunkFormat: string;
-  }>({
-    defaultValues: {
-      recordFormat: `{
-  "name": "record.fName",
-  "lname": "record.lName"
-}`,
-      chunkFormat: `{
-  "totalRecords": "chunk.totalRecords",
-  "page": "chunk.page",
-  "limit": "chunk.limit",
-  "totalPages": "chunk.totalPages",
-  "hasMore": "chunk.hasMore",
-  "data": "chunk.data"
-}`,
-    },
-  });
-  const validateFormat = (data: string, variables: string[], prefix: string): boolean => {
-    try {
-      JSON.parse(data);
-    } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-throw-literal
-      throw { type: 'JSON', message: 'Not a valid JSON!' };
-    }
-    try {
-      const parsed = JSON.parse(data);
-      const values = Object.values(parsed);
-      const isValid: boolean = values.every((value) => {
-        if (typeof value === 'string' && value.startsWith(prefix)) {
-          return variables.includes(value);
-        } else if (typeof value === 'object') {
-          return validateFormat(JSON.stringify(value), variables, prefix);
-        }
+interface OutputEditorProps {
+  templateId: string;
+}
 
-        return true;
-      });
-      if (!isValid) throw new Error('Variables are not proper');
-
-      return isValid;
-    } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-throw-literal
-      throw { type: 'VARIABLES', message: 'Variables are not Proper!' };
-    }
-  };
-  const validateFormats = () => {
-    handleSubmit((data) => {
-      const { chunkFormat, recordFormat } = data;
-      try {
-        validateFormat(chunkFormat, chunkVariables, 'chunk.');
-      } catch (error) {
-        setError('chunkFormat', {
-          type: (error as any).type,
-          message: (error as Error).message,
-        });
-      }
-
-      try {
-        validateFormat(recordFormat, recordVariables, 'record.');
-      } catch (error) {
-        setError('recordFormat', {
-          type: (error as any).type,
-          message: (error as Error).message,
-        });
-      }
-      // eslint-disable-next-line no-console
-      console.log(chunkFormat, recordFormat);
-    })();
-  };
+export default function OutputEditor({ templateId }: OutputEditorProps) {
+  const { customization, control, errors, onSaveClick } = useEditor({ templateId });
 
   return (
     <Stack spacing="sm">
       <Group position="apart">
         <Text>Customize how you will receive the data</Text>
         <Group>
-          <Switch onLabel="Preview" offLabel="Customize" size="lg" />
-          <Button onClick={validateFormats}>Save</Button>
+          <Button onClick={onSaveClick}>Save</Button>
         </Group>
       </Group>
 
@@ -143,13 +57,15 @@ export default function OutputEditor({}: {
               id="record-item"
               value={field.value}
               onChange={field.onChange}
-              variables={recordVariables}
+              variables={customization?.recordVariables}
             />
           )}
         />
         {errors.recordFormat?.message && <Text color="red">{errors.recordFormat.message}</Text>}
         {errors.recordFormat?.type === 'JSON' && <PossibleJSONErrors />}
-        {errors.recordFormat?.type === 'VARIABLES' && <VariableError variables={recordVariables} />}
+        {errors.recordFormat?.type === 'VARIABLES' && (
+          <VariableError variables={customization?.recordVariables || []} />
+        )}
       </SectionBlock>
 
       <SectionBlock title="Customize chunk Format">
@@ -162,13 +78,13 @@ export default function OutputEditor({}: {
               id="chunk-item"
               value={field.value}
               onChange={field.onChange}
-              variables={chunkVariables}
+              variables={customization?.chunkVariables}
             />
           )}
         />
         {errors.chunkFormat?.message && <Text color="red">{errors.chunkFormat.message}</Text>}
         {errors.chunkFormat?.type === 'JSON' && <PossibleJSONErrors />}
-        {errors.chunkFormat?.type === 'VARIABLES' && <VariableError variables={chunkVariables} />}
+        {errors.chunkFormat?.type === 'VARIABLES' && <VariableError variables={customization?.chunkVariables || []} />}
       </SectionBlock>
     </Stack>
   );

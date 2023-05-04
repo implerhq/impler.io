@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { APIMessages } from '../constants';
+import { APIMessages, CONSTANTS, VARIABLES } from '../constants';
 import { PaginationResult, Defaults } from '@impler/shared';
 
 export function validateNotFound(data: any, entityName: 'upload'): boolean {
@@ -38,4 +38,12 @@ export function paginateRecords(data: any[], page: number, limit: number): Pagin
     totalPages: Math.ceil(data.length / limit),
     totalRecords: data.length,
   };
+}
+
+export function createRecordFormat(variables: string[]): string {
+  const recordFormat = variables.reduce((acc, variable) => {
+    return { ...acc, [variable.replace(CONSTANTS.RECORD_VARIABLE_PREFIX, '')]: variable };
+  }, {});
+
+  return JSON.stringify(recordFormat, null, VARIABLES.TWO);
 }
