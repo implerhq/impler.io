@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { createRecordFormat } from '@shared/helpers/common.helper';
+import { createRecordFormat } from '@impler/shared';
 import { ColumnRepository, ColumnEntity, CustomizationRepository } from '@impler/dal';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
-import { CONSTANTS } from '@shared/constants';
 
 @Injectable()
 export class DeleteColumn {
@@ -23,9 +22,7 @@ export class DeleteColumn {
     const customization = await this.customizationRepository.findOne({
       _templateId,
     });
-    customization.recordVariables = customization.recordVariables.filter(
-      (variable) => variable !== CONSTANTS.RECORD_VARIABLE_PREFIX + column.key
-    );
+    customization.recordVariables = customization.recordVariables.filter((variable) => variable !== column.key);
 
     if (!customization.isRecordFormatUpdated) {
       customization.recordFormat = createRecordFormat(customization.recordVariables);

@@ -30,26 +30,16 @@ export const CONSTANTS = {
   // eslint-disable-next-line no-magic-numbers
   maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
   DEFAULT_USER_AVATAR: 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y',
-  RECORD_VARIABLE_PREFIX: 'record.',
-  CHUNK_VARIABLES: [
-    'chunk.data',
-    'chunk.page',
-    'chunk.chunkSize',
-    'chunk.isInvalidRecords',
-    'chunk.template',
-    'chunk.uploadId',
-    'chunk.fileName',
-    'chunk.extra',
-  ],
+  CHUNK_VARIABLES: ['data', 'page', 'chunkSize', 'isInvalidRecords', 'template', 'uploadId', 'fileName', 'extra'],
   CHUNK_FORMAT: `{
-  "data": "chunk.data",
-  "page": "chunk.page",
-  "chunkSize": "chunk.chunkSize",
-  "isInvalidRecords": "chunk.isInvalidRecords",
-  "template": "chunk.template",
-  "uploadId": "chunk.uploadId",
-  "fileName": "chunk.fileName",
-  "extra": "chunk.extra"
+  "data": "{{data}}",
+  "page": "{{page}}",
+  "chunkSize": "{{chunkSize}}",
+  "isInvalidRecords": "{{isInvalidRecords}}",
+  "template": "{{template}}",
+  "uploadId": "{{uploadId}}",
+  "fileName": "{{fileName}}",
+  "extra": "{{extra}}"
 }`,
 };
 
