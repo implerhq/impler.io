@@ -26,6 +26,7 @@ export function AddColumnForm({ templateId, queryClient }: AddColumnFormProps) {
           ...(oldData || []),
           data,
         ]);
+        queryClient.invalidateQueries({ queryKey: [API_KEYS.TEMPLATE_CUSTOMIZATION_GET, templateId] });
         modals.close(MODAL_KEYS.COLUMN_CREATE);
       },
     }

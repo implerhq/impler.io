@@ -1,6 +1,6 @@
 import { API_KEYS } from '@config';
 import { useForm } from 'react-hook-form';
-import { IErrorObject, ICustomization } from '@impler/shared';
+import { IErrorObject, ICustomization, validateVariable } from '@impler/shared';
 import { commonApi } from '@libs/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -58,7 +58,7 @@ export function useEditor({ templateId }: UseEditorProps) {
     }
   );
 
-  const validateFormat = (data: string, variables: string[], prefix: string): boolean => {
+  const validateFormat = (data: string, variables: string[]): boolean => {
     try {
       JSON.parse(data);
     } catch (error) {
@@ -69,10 +69,10 @@ export function useEditor({ templateId }: UseEditorProps) {
       const parsed = JSON.parse(data);
       const values = Object.values(parsed);
       const isValid: boolean = values.every((value) => {
-        if (typeof value === 'string' && value.startsWith(prefix)) {
+        if (typeof value === 'string' && validateVariable(value)) {
           return variables.includes(value);
         } else if (typeof value === 'object') {
-          return validateFormat(JSON.stringify(value), variables, prefix);
+          return validateFormat(JSON.stringify(value), variables);
         }
 
         return true;
@@ -89,7 +89,7 @@ export function useEditor({ templateId }: UseEditorProps) {
     handleSubmit((data) => {
       const { chunkFormat, recordFormat } = data;
       try {
-        validateFormat(chunkFormat, customization!.chunkVariables, 'chunk.');
+        validateFormat(chunkFormat, customization!.chunkVariables);
       } catch (error) {
         setError('chunkFormat', {
           type: (error as any).type,
@@ -98,7 +98,7 @@ export function useEditor({ templateId }: UseEditorProps) {
       }
 
       try {
-        validateFormat(recordFormat, customization!.recordVariables, 'record.');
+        validateFormat(recordFormat, customization!.recordVariables);
       } catch (error) {
         setError('recordFormat', {
           type: (error as any).type,
