@@ -11,25 +11,43 @@ export function createVariable(name: string) {
   return `{{${name}}}`;
 }
 
-export function replaceVariableInString(str: string, key: string, value: string) {
-  return str.replace(createVariable(key), value);
+export function replaceVariableInStringWithKey(str: string, key: string, value: string) {
+  if (typeof value === 'string') return str.replace(createVariable(key), value);
+
+  return value;
 }
 
-export function replaceVariable(str: unknown, key: string, value: any, record: Record<string, unknown>) {
-  if (typeof str === 'number') return str;
-  else if (typeof str == 'string' && /{{|}}/g.test(str)) return replaceVariableInString(str, key, value);
-  else if (typeof str === 'object' && !Array.isArray(str) && str !== null) {
+export function replaceVariableInString(str: string, record: Record<string, string>) {
+  const regex = /{{.*?}}/g;
+  let found: RegExpExecArray;
+  let modifiedStr = str;
+  while ((found = regex.exec(str)) !== null) {
+    if (found.index === regex.lastIndex) {
+      regex.lastIndex++;
+    }
+
+    // eslint-disable-next-line no-magic-numbers
+    const key = found[0].replace(/{{|}}/g, '');
+    modifiedStr = replaceVariableInStringWithKey(modifiedStr, key, record[key]);
+  }
+
+  return modifiedStr;
+}
+
+export function replaceVariable(formatKey: unknown, key: string, value: any, record: Record<string, string>) {
+  if (typeof formatKey == 'string' && /{{|}}/g.test(formatKey)) return replaceVariableInString(formatKey, record);
+  else if (typeof formatKey === 'object' && !Array.isArray(formatKey) && formatKey !== null) {
     // handling objects
-    return replaceVariablesInObject(str as Record<string, unknown>, record);
-  } else if (Array.isArray(str)) {
+    return replaceVariablesInObject(formatKey as Record<string, unknown>, record);
+  } else if (Array.isArray(formatKey)) {
     // handling arrays
-    return str.map((item: unknown) => replaceVariable(item, key, value, record));
+    return formatKey.map((item: unknown) => replaceVariable(item, key, value, record));
   }
 }
 
 export function replaceVariablesInObject(
   format: Record<string, unknown>,
-  record: Record<string, unknown>
+  record: Record<string, string>
 ): Record<string, string> {
   return Object.keys(format).reduce((acc, key) => {
     acc[key] = replaceVariable(format[key], key, format[key], record);
