@@ -4,18 +4,28 @@ import { useFocusTrap } from '@mantine/hooks';
 
 import { Input } from '@ui/input';
 import { Button } from '@ui/button';
+import { ITemplate } from '@impler/shared';
+import { useEffect } from 'react';
 
-interface CreateTemplateFormProps {
-  onSubmit: (data: ICreateTemplateData) => void;
+interface UpdateImportFormProps {
+  data: ITemplate;
+  onSubmit: (data: IUpdateTemplateData) => void;
 }
 
-export function CreateTemplateForm({ onSubmit }: CreateTemplateFormProps) {
+export function UpdateImportForm({ onSubmit, data }: UpdateImportFormProps) {
   const focusTrapRef = useFocusTrap();
   const {
+    reset,
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ICreateTemplateData>();
+  } = useForm<IUpdateTemplateData>();
+
+  useEffect(() => {
+    reset({
+      name: data.name,
+    });
+  }, [data, reset]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} ref={focusTrapRef}>
@@ -28,7 +38,7 @@ export function CreateTemplateForm({ onSubmit }: CreateTemplateFormProps) {
           error={errors.name?.message}
         />
         <Button type="submit" fullWidth>
-          Create
+          Update
         </Button>
       </Stack>
     </form>

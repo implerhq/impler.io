@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
 import { ITemplate, IErrorObject } from '@impler/shared';
-import { UpdateTemplateForm } from '@components/imports/forms/UpdateTemplateForm';
+import { UpdateImportForm } from '@components/imports/forms/UpdateImportForm';
 import { API_KEYS, CONSTANTS, MODAL_KEYS, MODAL_TITLES, ROUTES } from '@config';
 
 interface useImportDetailProps {
@@ -69,7 +69,7 @@ export function useImportDetails({ template }: useImportDetailProps) {
       modalId: MODAL_KEYS.IMPORT_UPDATE,
       title: MODAL_TITLES.IMPORT_UPDATE,
 
-      children: <UpdateTemplateForm onSubmit={updateImport} data={template} />,
+      children: <UpdateImportForm onSubmit={updateImport} data={template} />,
     });
   };
 
