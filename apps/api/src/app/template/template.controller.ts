@@ -23,9 +23,14 @@ import {
   CreateTemplateCommand,
   UpdateTemplateCommand,
   UpdateTemplateColumns,
+  GetCustomization,
+  UpdateCustomization,
+  UpdateCustomizationCommand,
 } from './usecases';
 import { ColumnResponseDto } from 'app/column/dtos/column-response.dto';
 import { ColumnRequestDto } from 'app/column/dtos/column-request.dto';
+import { CustomizationResponseDto } from './dtos/customization-response.dto';
+import { UpdateCustomizationRequestDto } from './dtos/update-customization-request.dto';
 
 @Controller('/template')
 @ApiTags('Template')
@@ -35,6 +40,8 @@ export class TemplateController {
   constructor(
     private getTemplateColumns: GetTemplateColumns,
     private getUploads: GetUploads,
+    private getCustomization: GetCustomization,
+    private updateCustomization: UpdateCustomization,
     private createTemplateUsecase: CreateTemplate,
     private updateTemplateUsecase: UpdateTemplate,
     private deleteTemplateUsecase: DeleteTemplate,
@@ -135,7 +142,6 @@ export class TemplateController {
           sequence: columnData.sequence,
           _templateId,
           type: columnData.type,
-          apiResponseKey: columnData.apiResponseKey,
         })
       ),
       _templateId
@@ -168,5 +174,30 @@ export class TemplateController {
         _templateId: templateId,
       })
     );
+  }
+
+  @Get(':templateId/customizations')
+  @ApiOperation({
+    summary: 'Get template customizations',
+  })
+  @ApiOkResponse({
+    type: CustomizationResponseDto,
+  })
+  async getCustomizations(@Param('templateId', ValidateMongoId) templateId: string): Promise<CustomizationResponseDto> {
+    return this.getCustomization.execute(templateId);
+  }
+
+  @Put(':templateId/customizations')
+  @ApiOperation({
+    summary: 'Update template customizations',
+  })
+  @ApiOkResponse({
+    type: CustomizationResponseDto,
+  })
+  async updateCustomizationRequest(
+    @Param('templateId', ValidateMongoId) templateId: string,
+    @Body() body: UpdateCustomizationRequestDto
+  ): Promise<CustomizationResponseDto> {
+    return this.updateCustomization.execute(templateId, UpdateCustomizationCommand.create(body));
   }
 }

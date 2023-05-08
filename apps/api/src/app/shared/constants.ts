@@ -30,6 +30,17 @@ export const CONSTANTS = {
   // eslint-disable-next-line no-magic-numbers
   maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
   DEFAULT_USER_AVATAR: 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y',
+  CHUNK_VARIABLES: ['data', 'page', 'chunkSize', 'isInvalidRecords', 'template', 'uploadId', 'fileName', 'extra'],
+  CHUNK_FORMAT: `{
+  "data": "{{data}}",
+  "page": "{{page}}",
+  "chunkSize": "{{chunkSize}}",
+  "isInvalidRecords": "{{isInvalidRecords}}",
+  "template": "{{template}}",
+  "uploadId": "{{uploadId}}",
+  "fileName": "{{fileName}}",
+  "extra": "{{extra}}"
+}`,
 };
 
 export const COOKIE_CONFIG: CookieOptions = {
@@ -41,4 +52,5 @@ export const COOKIE_CONFIG: CookieOptions = {
 
 export const VARIABLES = {
   ONE: 1,
+  TWO: 2,
 };

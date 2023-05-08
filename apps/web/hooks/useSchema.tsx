@@ -27,6 +27,7 @@ export function useSchema({ templateId }: UseSchemaProps) {
         queryClient.setQueryData<IColumn[]>([API_KEYS.TEMPLATE_COLUMNS_LIST, templateId], (oldData) => {
           return oldData?.filter((item) => item._id !== columnIdVariable);
         });
+        queryClient.invalidateQueries({ queryKey: [API_KEYS.TEMPLATE_CUSTOMIZATION_GET, templateId] });
       },
     }
   );

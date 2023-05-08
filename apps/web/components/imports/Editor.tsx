@@ -1,52 +1,74 @@
-import AceEditor from 'react-ace';
-import 'ace-builds/src-noconflict/mode-json5';
-import 'ace-builds/src-noconflict/theme-monokai';
-import { addCompleter } from 'ace-builds/src-noconflict/ext-language_tools';
+import { Controller } from 'react-hook-form';
+import { Group, List, Stack, Text } from '@mantine/core';
 
-export default function Editor({
-  onChange,
-  value,
-  height = '300px',
-  variables = [],
-}: {
-  onChange?: (value: string) => void;
-  value?: string;
-  height?: string;
-  variables?: string[];
-}) {
-  addCompleter({
-    getCompletions: function (_editor: any, _session: any, _pos: any, _prefix: any, callback: any) {
-      callback(null, [
-        ...variables.map((name) => {
-          return { name, value: name, caption: name };
-        }),
-      ]);
-    },
-  });
+import { Button } from '@ui/button';
+import { Editor } from '@ui/editor/Editor';
+import { SectionBlock } from '@ui/section-block';
+import { useEditor } from '@hooks/useEditor';
+
+function PossibleJSONErrors() {
+  return (
+    <>
+      <Text td="underline">This can be the reason:</Text>
+      <List>
+        <List.Item>Extra comma (,) at the end or missing comma (,) in between.</List.Item>
+        <List.Item>Keys are not quoted into double quote (&quot;).</List.Item>
+      </List>
+    </>
+  );
+}
+
+interface OutputEditorProps {
+  templateId: string;
+}
+
+export default function OutputEditor({ templateId }: OutputEditorProps) {
+  const { customization, control, errors, onSaveClick } = useEditor({ templateId });
 
   return (
-    <AceEditor
-      data-test-id="custom-code-editor"
-      style={{ width: '100%' }}
-      mode="json5"
-      theme="monokai"
-      name="codeEditor"
-      onChange={onChange}
-      height={height}
-      fontSize={14}
-      showPrintMargin
-      showGutter
-      highlightActiveLine
-      value={value ? String(value) : ''}
-      setOptions={{
-        displayIndentGuides: true,
-        enableLiveAutocompletion: true,
-        enableBasicAutocompletion: true,
-        newLineMode: true,
-        enableSnippets: true,
-        showLineNumbers: true,
-        tabSize: 2,
-      }}
-    />
+    <Stack spacing="sm">
+      <Group position="apart">
+        <Text>Customize how you will receive the data</Text>
+        <Group>
+          <Button onClick={onSaveClick}>Save</Button>
+        </Group>
+      </Group>
+
+      <SectionBlock title="Customize individual record Item">
+        <Controller
+          control={control}
+          name="recordFormat"
+          render={({ field }) => (
+            <Editor
+              name="recordItem"
+              id="record-item"
+              value={field.value}
+              onChange={field.onChange}
+              variables={customization?.recordVariables}
+            />
+          )}
+        />
+        {errors.recordFormat?.message && <Text color="red">{errors.recordFormat.message}</Text>}
+        {errors.recordFormat?.type === 'JSON' && <PossibleJSONErrors />}
+      </SectionBlock>
+
+      <SectionBlock title="Customize chunk Format">
+        <Controller
+          control={control}
+          name="chunkFormat"
+          render={({ field }) => (
+            <Editor
+              name="chunkFormat"
+              id="chunk-item"
+              value={field.value}
+              onChange={field.onChange}
+              variables={customization?.chunkVariables}
+            />
+          )}
+        />
+        {errors.chunkFormat?.message && <Text color="red">{errors.chunkFormat.message}</Text>}
+        {errors.chunkFormat?.type === 'JSON' && <PossibleJSONErrors />}
+      </SectionBlock>
+    </Stack>
   );
 }

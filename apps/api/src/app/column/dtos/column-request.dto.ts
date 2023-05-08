@@ -39,13 +39,6 @@ export class ColumnRequestDto {
   @Type(() => Array<string>)
   alternateKeys: string[];
 
-  @ApiProperty({
-    description: 'Key of the column to send in API response, default is Key',
-  })
-  @IsString()
-  @IsOptional()
-  apiResponseKey?: string;
-
   @ApiPropertyOptional({
     description: 'While true, it Indicates column value should exists in data',
   })

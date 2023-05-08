@@ -17,10 +17,6 @@ export class UpdateColumnCommand extends BaseCommand {
   @Type(() => Array<string>)
   alternateKeys: string[];
 
-  @IsString()
-  @IsOptional()
-  apiResponseKey?: string;
-
   @IsBoolean()
   @IsOptional()
   isRequired = false;

@@ -2,7 +2,7 @@ import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { IJwtPayload } from '@impler/shared';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserEntity, UserRepository, EnvironmentRepository, ProjectRepository, ProjectEntity } from '@impler/dal';
+import { UserEntity, UserRepository, EnvironmentRepository } from '@impler/dal';
 import { UserNotFoundException } from '@shared/exceptions/user-not-found.exception';
 import { IAuthenticationData, IStrategyResponse } from '@shared/types/auth.types';
 import { IncorrectLoginCredentials } from '@shared/exceptions/incorrect-login-credentials.exception';
@@ -12,7 +12,6 @@ export class AuthService {
   constructor(
     private jwtService: JwtService,
     private userRepository: UserRepository,
-    private projectRepository: ProjectRepository,
     private environmentRepository: EnvironmentRepository
   ) {}
 
@@ -36,8 +35,8 @@ export class AuthService {
     if (!user) {
       throw new UserNotFoundException();
     }
-    const project = await this.projectRepository.findOne({ _userId: user._id });
-    if (!project) {
+    const apiKey = await this.environmentRepository.getApiKeyForUserId(user._id);
+    if (!apiKey) {
       showAddProject = true;
     }
 
@@ -52,8 +51,9 @@ export class AuthService {
           firstName: user.firstName,
           lastName: user.lastName,
           profilePicture: user.profilePicture,
+          accessToken: apiKey?.apiKey,
         },
-        project?._id
+        apiKey?.projectId
       ),
     };
   }
@@ -70,10 +70,8 @@ export class AuthService {
     }
 
     let showAddProject = true;
-    const project: ProjectEntity = await this.projectRepository.findOne({
-      _userId: user._id,
-    });
-    if (project) {
+    const apiKey = await this.environmentRepository.getApiKeyForUserId(user._id);
+    if (apiKey) {
       showAddProject = false;
     }
 
@@ -81,8 +79,14 @@ export class AuthService {
       user,
       showAddProject,
       token: await this.getSignedToken(
-        { _id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName },
-        project?._id
+        {
+          _id: user._id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          accessToken: apiKey?.apiKey,
+        },
+        apiKey?.projectId
       ),
     };
   }
@@ -91,16 +95,29 @@ export class AuthService {
     const user = await this.getUser({ _id: userId });
     if (!user) throw new UnauthorizedException('User not found');
 
-    return this.getSignedToken({
-      _id: user._id,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-    });
+    const apiKey = await this.environmentRepository.getApiKeyForUserId(user._id);
+
+    return this.getSignedToken(
+      {
+        _id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        accessToken: apiKey?.apiKey,
+      },
+      apiKey?.projectId
+    );
   }
 
   async getSignedToken(
-    user: { _id: string; firstName: string; lastName: string; email: string; profilePicture?: string },
+    user: {
+      _id: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+      profilePicture?: string;
+      accessToken?: string;
+    },
     _projectId?: string
   ): Promise<string> {
     return (
@@ -113,6 +130,7 @@ export class AuthService {
           lastName: user.lastName,
           email: user.email,
           profilePicture: user.profilePicture,
+          accessToken: user.accessToken,
         },
         {
           expiresIn: '30 days',
@@ -157,6 +175,7 @@ export class AuthService {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
+        accessToken: apiKey,
       },
       environment._projectId
     );

@@ -34,6 +34,7 @@ export function UpdateColumnForm({ data, templateId, queryClient }: UpdateColumn
               return item;
             }) || []
         );
+        queryClient.invalidateQueries({ queryKey: [API_KEYS.TEMPLATE_CUSTOMIZATION_GET, templateId] });
         modals.close(MODAL_KEYS.COLUMN_UPDATE);
       },
     }

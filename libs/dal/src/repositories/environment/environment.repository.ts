@@ -40,4 +40,21 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
     // eslint-disable-next-line no-magic-numbers
     return apiKey ? apiKey.apiKeys[0]._userId : null;
   }
+
+  async getApiKeyForUserId(userId: string) {
+    const apiKey = await this.findOne(
+      {
+        'apiKeys._userId': userId,
+      },
+      'apiKeys.$'
+    );
+
+    return apiKey
+      ? {
+          projectId: apiKey._projectId,
+          // eslint-disable-next-line no-magic-numbers
+          apiKey: apiKey.apiKeys[0].key,
+        }
+      : null;
+  }
 }

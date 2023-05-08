@@ -16,7 +16,7 @@ export class ReanameFileHeadings {
   async execute(_uploadId: string, _validDataFileId: string, _invalidDataFileId?: string) {
     const mappingInfo = await this.mappingRepository.getMappingWithColumnInfo(_uploadId);
     const headings = mappingInfo.reduce((obj, mapping) => {
-      obj[mapping.columnHeading] = mapping.column.apiResponseKey ? mapping.column.apiResponseKey : mapping.column.key;
+      obj[mapping.columnHeading] = mapping.column.key;
 
       return obj;
     }, {});
