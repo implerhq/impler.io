@@ -6,19 +6,6 @@ import { Editor } from '@ui/editor/Editor';
 import { SectionBlock } from '@ui/section-block';
 import { useEditor } from '@hooks/useEditor';
 
-interface VariableErrorProps {
-  variables: string[];
-}
-function VariableError({ variables }: VariableErrorProps) {
-  return (
-    <>
-      <Text td="underline">Available variables:</Text>
-      <List>
-        <List.Item>Possible variables are [ {variables.join(', ')} ]</List.Item>
-      </List>
-    </>
-  );
-}
 function PossibleJSONErrors() {
   return (
     <>
@@ -63,9 +50,6 @@ export default function OutputEditor({ templateId }: OutputEditorProps) {
         />
         {errors.recordFormat?.message && <Text color="red">{errors.recordFormat.message}</Text>}
         {errors.recordFormat?.type === 'JSON' && <PossibleJSONErrors />}
-        {errors.recordFormat?.type === 'VARIABLES' && (
-          <VariableError variables={customization?.recordVariables || []} />
-        )}
       </SectionBlock>
 
       <SectionBlock title="Customize chunk Format">
@@ -84,7 +68,6 @@ export default function OutputEditor({ templateId }: OutputEditorProps) {
         />
         {errors.chunkFormat?.message && <Text color="red">{errors.chunkFormat.message}</Text>}
         {errors.chunkFormat?.type === 'JSON' && <PossibleJSONErrors />}
-        {errors.chunkFormat?.type === 'VARIABLES' && <VariableError variables={customization?.chunkVariables || []} />}
       </SectionBlock>
     </Stack>
   );

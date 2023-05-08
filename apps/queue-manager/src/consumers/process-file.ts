@@ -6,6 +6,7 @@ import {
   StatusEnum,
   UploadStatusEnum,
   QueuesEnum,
+  replaceVariablesInObject,
 } from '@impler/shared';
 import { StorageService } from '@impler/shared/dist/services/storage';
 import {
@@ -14,17 +15,12 @@ import {
   TemplateRepository,
   WebhookLogRepository,
   WebhookLogEntity,
-  ProjectRepository,
+  CustomizationRepository,
 } from '@impler/dal';
 import { BaseConsumer } from './base.consumer';
 import { getStorageServiceClass } from '../helpers/storage.helper';
 import { publishToQueue } from '../bootstrap';
-import {
-  ISendDataParameters,
-  IBuildSendDataParameters,
-  IGetNextDataParameters,
-  ISendData,
-} from '../types/file-processing.types';
+import { ISendDataParameters, IBuildSendDataParameters, IGetNextDataParameters } from '../types/file-processing.types';
 
 const MIN_LIMIT = 0;
 const DEFAULT_PAGE = 1;
@@ -32,11 +28,11 @@ const DEFAULT_PAGE = 1;
 export class ProcessFileConsumer extends BaseConsumer {
   private templateRepository: TemplateRepository = new TemplateRepository();
   private uploadRepository: UploadRepository = new UploadRepository();
-  private projectRepository: ProjectRepository = new ProjectRepository();
+  private customizationRepository: CustomizationRepository = new CustomizationRepository();
   private webhookLogRepository: WebhookLogRepository = new WebhookLogRepository();
   private storageService: StorageService = getStorageServiceClass();
 
-  async message(message) {
+  async message(message: { content: string }) {
     const data = JSON.parse(message.content) as ProcessFileData;
     const uploadId = data.uploadId;
     const cachedData = data.cache || (await this.getInitialCachedData(uploadId));
@@ -61,8 +57,7 @@ export class ProcessFileConsumer extends BaseConsumer {
         );
         invalidDataJSON = JSON.parse(invalidDataContent);
       }
-
-      const sendData = this.buildSendData({
+      const { sendData, page } = this.buildSendData({
         chunkSize: cachedData.chunkSize,
         data: cachedData.isInvalidRecords ? invalidDataJSON : validDataJSON,
         page: cachedData.page || DEFAULT_PAGE,
@@ -71,6 +66,8 @@ export class ProcessFileConsumer extends BaseConsumer {
         fileName: cachedData.fileName,
         uploadId,
         extra: cachedData.extra,
+        recordFormat: cachedData.recordFormat,
+        chunkFormat: cachedData.chunkFormat,
       });
 
       const headers =
@@ -78,7 +75,15 @@ export class ProcessFileConsumer extends BaseConsumer {
           ? { [cachedData.authHeaderName]: cachedData.authHeaderValue }
           : null;
 
-      const response = await this.makeApiCall({ data: sendData, method: 'POST', url: cachedData.callbackUrl, headers });
+      const response = await this.makeApiCall({
+        data: sendData,
+        uploadId,
+        page,
+        method: 'POST',
+        url: cachedData.callbackUrl,
+        headers,
+      });
+
       this.makeResponseEntry(response);
 
       const nextCachedData = this.getNextData({
@@ -100,11 +105,18 @@ export class ProcessFileConsumer extends BaseConsumer {
     }
   }
 
-  private async makeApiCall({ data, method, url, headers }: ISendDataParameters): Promise<Partial<WebhookLogEntity>> {
+  private async makeApiCall({
+    data,
+    uploadId,
+    page,
+    method,
+    url,
+    headers,
+  }: ISendDataParameters): Promise<Partial<WebhookLogEntity>> {
     const baseResponse: Partial<WebhookLogEntity> = {
-      _uploadId: data.uploadId,
+      _uploadId: uploadId,
       callDate: new Date(),
-      pageNumber: data.page,
+      pageNumber: page,
       dataContent: data as any,
       headersContent: headers,
     };
@@ -150,24 +162,28 @@ export class ProcessFileConsumer extends BaseConsumer {
     template,
     uploadId,
     fileName,
+    chunkFormat,
+    recordFormat,
     extra = '',
-  }: IBuildSendDataParameters): ISendData {
-    const slicedData = data.slice(
-      Math.max((page - DEFAULT_PAGE) * chunkSize, MIN_LIMIT),
-      Math.min(page * chunkSize, data.length)
-    );
+  }: IBuildSendDataParameters): { sendData: Record<string, unknown>; page: number } {
+    const slicedData = data
+      .slice(Math.max((page - DEFAULT_PAGE) * chunkSize, MIN_LIMIT), Math.min(page * chunkSize, data.length))
+      .map((obj) => replaceVariablesInObject(JSON.parse(recordFormat), obj));
 
     return {
-      data: slicedData,
-      extra: extra ? JSON.parse(extra) : '',
-      isInvalidRecords,
+      sendData: replaceVariablesInObject(JSON.parse(chunkFormat), {
+        data: slicedData,
+        extra: extra ? JSON.parse(extra) : '',
+        isInvalidRecords,
+        page,
+        fileName,
+        chunkSize: slicedData.length,
+        template,
+        totalPages: this.getTotalPages(data.length, chunkSize),
+        totalRecords: data.length,
+        uploadId,
+      } as any),
       page,
-      fileName,
-      pageSize: slicedData.length,
-      template,
-      totalPages: this.getTotalPages(data.length, chunkSize),
-      totalRecords: data.length,
-      uploadId,
     };
   }
 
@@ -211,7 +227,7 @@ export class ProcessFileConsumer extends BaseConsumer {
     return null;
   }
 
-  private getTotalPages(totalRecords, pageSize): number {
+  private getTotalPages(totalRecords: number, pageSize: number): number {
     return Math.ceil(totalRecords / pageSize);
   }
 
@@ -221,10 +237,15 @@ export class ProcessFileConsumer extends BaseConsumer {
 
     if (!uploadata._validDataFileId && !uploadata._invalidDataFileId) return null;
 
+    const customization = await this.customizationRepository.findOne(
+      { _templateId: uploadata._templateId },
+      'recordFormat chunkFormat'
+    );
+
     // Get template information
     const templateData = await this.templateRepository.findById(
       uploadata._templateId,
-      '_projectId callbackUrl chunkSize code authHeaderName'
+      'name _projectId callbackUrl chunkSize code authHeaderName'
     );
 
     return {
@@ -241,6 +262,8 @@ export class ProcessFileConsumer extends BaseConsumer {
       validDataFilePath: (uploadata._validDataFileId as unknown as FileEntity)?.path,
       fileName: (uploadata._uploadedFileId as unknown as FileEntity)?.originalName,
       extra: uploadata.extra,
+      recordFormat: customization.recordFormat,
+      chunkFormat: customization.chunkFormat,
     };
   }
 
