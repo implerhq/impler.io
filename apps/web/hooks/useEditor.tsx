@@ -1,6 +1,6 @@
 import { API_KEYS } from '@config';
 import { useForm } from 'react-hook-form';
-import { IErrorObject, ICustomization, validateVariable } from '@impler/shared';
+import { IErrorObject, ICustomization } from '@impler/shared';
 import { commonApi } from '@libs/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -58,38 +58,21 @@ export function useEditor({ templateId }: UseEditorProps) {
     }
   );
 
-  const validateFormat = (data: string, variables: string[]): boolean => {
+  const validateFormat = (data: string): boolean => {
     try {
       JSON.parse(data);
+
+      return true;
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/no-throw-literal
       throw { type: 'JSON', message: 'Not a valid JSON!' };
-    }
-    try {
-      const parsed = JSON.parse(data);
-      const values = Object.values(parsed);
-      const isValid: boolean = values.every((value) => {
-        if (typeof value === 'string' && validateVariable(value)) {
-          return variables.includes(value);
-        } else if (typeof value === 'object') {
-          return validateFormat(JSON.stringify(value), variables);
-        }
-
-        return true;
-      });
-      if (!isValid) throw new Error('Variables are not proper');
-
-      return isValid;
-    } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-throw-literal
-      throw { type: 'VARIABLES', message: 'Variables are not Proper!' };
     }
   };
   const onSaveClick = () => {
     handleSubmit((data) => {
       const { chunkFormat, recordFormat } = data;
       try {
-        validateFormat(chunkFormat, customization!.chunkVariables);
+        validateFormat(chunkFormat);
       } catch (error) {
         setError('chunkFormat', {
           type: (error as any).type,
@@ -98,7 +81,7 @@ export function useEditor({ templateId }: UseEditorProps) {
       }
 
       try {
-        validateFormat(recordFormat, customization!.recordVariables);
+        validateFormat(recordFormat);
       } catch (error) {
         setError('recordFormat', {
           type: (error as any).type,
