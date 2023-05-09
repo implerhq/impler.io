@@ -1,3 +1,4 @@
+import { EventTypesEnum } from '@impler/shared';
 import { useCallback, useState } from 'react';
 
 interface UseImplerProps {
@@ -6,10 +7,21 @@ interface UseImplerProps {
   accessToken?: string;
   primaryColor?: string;
   authHeaderValue?: string;
+  onUploadComplete?: () => void;
 }
 
-export function useImpler({ projectId, primaryColor, templateId, accessToken }: UseImplerProps) {
+export function useImpler({ projectId, primaryColor, templateId, accessToken, onUploadComplete }: UseImplerProps) {
   const [isImplerInitiated, setIsImplerInitiated] = useState(false);
+
+  const onEventHappen = useCallback(
+    ({ type }: { type: EventTypesEnum }) => {
+      switch (type) {
+        case EventTypesEnum.UPLOAD_COMPLETED:
+          if (onUploadComplete) onUploadComplete();
+      }
+    },
+    [onUploadComplete]
+  );
 
   const init = useCallback(() => {
     if (window.impler) {
@@ -17,16 +29,14 @@ export function useImpler({ projectId, primaryColor, templateId, accessToken }: 
       setIsImplerInitiated(true);
       window.impler.on('message', onEventHappen);
     }
-  }, [accessToken, projectId]);
-
-  function onEventHappen() {}
+  }, [accessToken, onEventHappen, projectId]);
 
   function onImportClick() {
     const payload: {
-      template: string;
+      templateId: string;
       primaryColor?: string;
     } = {
-      template: templateId,
+      templateId,
     };
     if (primaryColor) payload.primaryColor = primaryColor;
     if (window.impler && isImplerInitiated) {
