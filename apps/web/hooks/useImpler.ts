@@ -23,10 +23,10 @@ export function useImpler({ projectId, primaryColor, templateId, accessToken }: 
 
   function onImportClick() {
     const payload: {
-      template: string;
+      templateId: string;
       primaryColor?: string;
     } = {
-      template: templateId,
+      templateId,
     };
     if (primaryColor) payload.primaryColor = primaryColor;
     if (window.impler && isImplerInitiated) {
