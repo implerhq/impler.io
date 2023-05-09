@@ -18,7 +18,7 @@ export function AppLayout({ children }: PropsWithChildren) {
   const { classes } = useStyles();
   const navRef = useRef<HTMLElement>(null);
   const { colorScheme } = useMantineColorScheme();
-  const { profile, projects, createProject, setProjectId, logout, isProjectsLoading } = useApp();
+  const { profile, projects, createProject, logout, setProjectId, isProjectsLoading } = useApp();
 
   return (
     <>

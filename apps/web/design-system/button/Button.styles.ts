@@ -48,6 +48,9 @@ const getRootOutlineStyles = (theme: MantineTheme, color: ButtonColors = 'blue',
   transition: 'color 0.2s, background-color 0.2s, border-color ease-in-out',
   border: `1px solid ${theme.colorScheme === 'dark' ? colors.white : colors.black}`,
   color: theme.colorScheme === 'dark' ? colors.white : colors.black,
+  '> svg': {
+    color: theme.colorScheme === 'dark' ? colors.white : colors.black,
+  },
   ['&:hover']: {
     ...(color === 'blue' && {
       backgroundColor: colors.blue,
@@ -58,6 +61,9 @@ const getRootOutlineStyles = (theme: MantineTheme, color: ButtonColors = 'blue',
       backgroundColor: theme.colorScheme === 'dark' ? colors.white : colors.black,
       color: theme.colorScheme === 'dark' ? colors.black : colors.white,
       border: `1px solid ${colors.black}`,
+      '> svg': {
+        color: theme.colorScheme === 'dark' ? colors.black : colors.white,
+      },
     }),
     ...(color === 'red' && {
       backgroundColor: colors.danger,

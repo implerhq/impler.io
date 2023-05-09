@@ -1,6 +1,7 @@
-import { API_KEYS } from '@config';
+import { API_KEYS, NOTIFICATION_KEYS } from '@config';
 import { IErrorObject, ITemplate } from '@impler/shared';
 import { commonApi } from '@libs/api';
+import { notify } from '@libs/notify';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
@@ -38,6 +39,7 @@ export function useDestination({ template }: UseDestinationProps) {
           oldData?.map((item) => (item._id === data._id ? data : item))
         );
         queryClient.setQueryData<ITemplate>([API_KEYS.TEMPLATE_DETAILS, template._id], data);
+        notify(NOTIFICATION_KEYS.DESTINATION_UPDATED);
       },
     }
   );

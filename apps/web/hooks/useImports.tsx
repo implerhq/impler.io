@@ -4,10 +4,13 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
 import { IErrorObject, ITemplate } from '@impler/shared';
-import { API_KEYS, CONSTANTS, MODAL_KEYS, MODAL_TITLES } from '@config';
-import { CreateTemplateForm } from '@components/imports/forms/CreateTemplateForm';
+import { API_KEYS, CONSTANTS, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS } from '@config';
+import { CreateImportForm } from '@components/imports/forms/CreateImportForm';
+import { useRouter } from 'next/router';
+import { notify } from '@libs/notify';
 
 export function useImports() {
+  const { push } = useRouter();
   const queryClient = useQueryClient();
   const [profile] = useLocalStorage<IProfileData>({ key: CONSTANTS.PROFILE_STORAGE_NAME });
   const { mutate: createImport } = useMutation<ITemplate, IErrorObject, ICreateTemplateData, (string | undefined)[]>(
@@ -17,11 +20,13 @@ export function useImports() {
       commonApi<ITemplate>(API_KEYS.TEMPLATES_CREATE as any, { body: { ...data, _projectId: profile._projectId! } }),
     {
       onSuccess: (data) => {
-        modals.closeAll();
+        modals.close(MODAL_KEYS.IMPORT_CREATE);
         queryClient.setQueryData<ITemplate[]>([API_KEYS.TEMPLATES_LIST, profile?._projectId], (oldData) => [
           ...(oldData || []),
           data,
         ]);
+        push(`/imports/${data._id}`);
+        notify(NOTIFICATION_KEYS.IMPORT_CREATED);
       },
     }
   );
@@ -40,9 +45,9 @@ export function useImports() {
   );
   function onCreateClick() {
     modals.open({
-      id: MODAL_KEYS.IMPORT_CREATE,
+      modalId: MODAL_KEYS.IMPORT_CREATE,
       title: MODAL_TITLES.IMPORT_CREATE,
-      children: <CreateTemplateForm onSubmit={createImport} />,
+      children: <CreateImportForm onSubmit={createImport} />,
     });
   }
 

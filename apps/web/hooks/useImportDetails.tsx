@@ -5,8 +5,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
 import { ITemplate, IErrorObject } from '@impler/shared';
-import { UpdateTemplateForm } from '@components/imports/forms/UpdateTemplateForm';
-import { API_KEYS, CONSTANTS, MODAL_KEYS, MODAL_TITLES, ROUTES } from '@config';
+import { UpdateImportForm } from '@components/imports/forms/UpdateImportForm';
+import { API_KEYS, CONSTANTS, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS, ROUTES } from '@config';
+import { notify } from '@libs/notify';
 
 interface useImportDetailProps {
   template: ITemplate;
@@ -38,6 +39,7 @@ export function useImportDetails({ template }: useImportDetailProps) {
           oldData?.map((item) => (item._id === data._id ? data : item))
         );
         queryClient.setQueryData<ITemplate>([API_KEYS.TEMPLATE_DETAILS, template._id], data);
+        notify(NOTIFICATION_KEYS.IMPORT_UPDATED);
       },
     }
   );
@@ -50,6 +52,7 @@ export function useImportDetails({ template }: useImportDetailProps) {
           oldData?.filter((item) => item._id !== template._id)
         );
         queryClient.removeQueries([API_KEYS.TEMPLATE_DETAILS, template._id]);
+        notify(NOTIFICATION_KEYS.IMPORT_DELETED);
         router.replace(ROUTES.IMPORTS);
       },
     }
@@ -61,6 +64,7 @@ export function useImportDetails({ template }: useImportDetailProps) {
       children: 'Are you sure you want to delete this import?',
       onConfirm: deleteImport,
       labels: { confirm: 'Confirm', cancel: 'Cancel' },
+      confirmProps: { color: 'red' },
     });
   };
 
@@ -69,7 +73,7 @@ export function useImportDetails({ template }: useImportDetailProps) {
       modalId: MODAL_KEYS.IMPORT_UPDATE,
       title: MODAL_TITLES.IMPORT_UPDATE,
 
-      children: <UpdateTemplateForm onSubmit={updateImport} data={template} />,
+      children: <UpdateImportForm onSubmit={updateImport} data={templateData} />,
     });
   };
 

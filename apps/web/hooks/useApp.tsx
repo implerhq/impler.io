@@ -2,9 +2,10 @@ import { useLocalStorage } from '@mantine/hooks';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
-import { API_KEYS, CONSTANTS, ROUTES, VARIABLES } from '@config';
+import { API_KEYS, CONSTANTS, NOTIFICATION_KEYS, ROUTES, VARIABLES } from '@config';
 import { IErrorObject, IProjectPayload, IEnvironmentData } from '@impler/shared';
 import { useRouter } from 'next/router';
+import { notify } from '@libs/notify';
 
 export function useApp() {
   const queryClient = useQueryClient();
@@ -35,7 +36,7 @@ export function useApp() {
     },
   });
   const { mutate: createProject, isLoading: isCreateProjectLoading } = useMutation<
-    { project: IProjectPayload; environement: IEnvironmentData },
+    { project: IProjectPayload; environment: IEnvironmentData },
     IErrorObject,
     ICreateProjectData,
     string[]
@@ -48,16 +49,26 @@ export function useApp() {
       setProfile({
         ...profile,
         _projectId: data.project._id,
-        accessToken: data.environement.apiKeys[VARIABLES.ZERO].key,
+        accessToken: data.environment.apiKeys[VARIABLES.ZERO].key,
+      });
+      notify(NOTIFICATION_KEYS.PROJECT_CREATED, {
+        title: 'Project created',
+        message: `Project ${data.project.name} created successfully`,
       });
     },
   });
+  const onProjectIdChange = (id: string) => {
+    const project = projects?.find((projectItem) => projectItem._id === id);
+    if (project) {
+      setEnvironment(project._id);
+    }
+  };
 
   return {
     logout,
     profile,
     projects,
-    setProjectId: setEnvironment,
+    setProjectId: onProjectIdChange,
     createProject,
     isProjectsLoading: isProjectsLoading || isCreateProjectLoading,
   };

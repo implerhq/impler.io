@@ -7,12 +7,12 @@ import { Button } from '@ui/button';
 import { ITemplate } from '@impler/shared';
 import { useEffect } from 'react';
 
-interface UpdateTemplateFormProps {
+interface UpdateImportFormProps {
   data: ITemplate;
   onSubmit: (data: IUpdateTemplateData) => void;
 }
 
-export function UpdateTemplateForm({ onSubmit, data }: UpdateTemplateFormProps) {
+export function UpdateImportForm({ onSubmit, data }: UpdateImportFormProps) {
   const focusTrapRef = useFocusTrap();
   const {
     reset,
