@@ -46,7 +46,7 @@ export default function ImportDetails({ template }: ImportDetailProps) {
   return (
     <Flex gap="lg" direction="column" h="100%">
       <Flex justify="space-between">
-        <Group>
+        <Group spacing="xs">
           <Button variant="outline" component={Link} href={ROUTES.IMPORTS} color="invariant">
             <LeftArrowIcon />
           </Button>
