@@ -4,10 +4,10 @@ import { useLocalStorage } from '@mantine/hooks';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
+import { notify } from '@libs/notify';
 import { ITemplate, IErrorObject } from '@impler/shared';
 import { UpdateImportForm } from '@components/imports/forms/UpdateImportForm';
 import { API_KEYS, CONSTANTS, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS, ROUTES } from '@config';
-import { notify } from '@libs/notify';
 
 interface useImportDetailProps {
   template: ITemplate;
@@ -16,7 +16,7 @@ interface useImportDetailProps {
 export function useImportDetails({ template }: useImportDetailProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { data: templateData } = useQuery(
+  const { refetch: refetchTemplateData, data: templateData } = useQuery(
     [API_KEYS.TEMPLATE_DETAILS, template._id],
     () => commonApi<ITemplate>(API_KEYS.TEMPLATE_DETAILS as any, { parameters: [template._id] }),
     {
@@ -77,5 +77,5 @@ export function useImportDetails({ template }: useImportDetailProps) {
     });
   };
 
-  return { profile, onUpdateClick, onDeleteClick, templateData };
+  return { refetchTemplateData, profile, onUpdateClick, onDeleteClick, templateData };
 }
