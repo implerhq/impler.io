@@ -4,9 +4,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
 import { IErrorObject, ITemplate } from '@impler/shared';
-import { API_KEYS, CONSTANTS, MODAL_KEYS, MODAL_TITLES } from '@config';
+import { API_KEYS, CONSTANTS, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS } from '@config';
 import { CreateImportForm } from '@components/imports/forms/CreateImportForm';
 import { useRouter } from 'next/router';
+import { notify } from '@libs/notify';
 
 export function useImports() {
   const { push } = useRouter();
@@ -25,6 +26,7 @@ export function useImports() {
           data,
         ]);
         push(`/imports/${data._id}`);
+        notify(NOTIFICATION_KEYS.IMPORT_CREATED);
       },
     }
   );

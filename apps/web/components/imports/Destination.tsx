@@ -25,7 +25,6 @@ export function Destination({ template }: DestinationProps) {
         <form onSubmit={onSubmit}>
           <Stack spacing="xs">
             <Input
-              type="url"
               placeholder="Callback URL"
               register={register('callbackUrl', {
                 pattern: REGULAR_EXPRESSIONS.URL,

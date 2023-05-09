@@ -4,6 +4,7 @@ import { AppProps } from 'next/app';
 import { Poppins } from '@next/font/google';
 import { useLocalStorage } from '@mantine/hooks';
 import { ModalsProvider } from '@mantine/modals';
+import { Notifications } from '@mantine/notifications';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ColorSchemeProvider, MantineProvider, ColorScheme } from '@mantine/core';
 
@@ -52,6 +53,7 @@ export default function App({ Component, pageProps }: AppProps) {
             withGlobalStyles
             withNormalizeCSS
           >
+            <Notifications />
             <ModalsProvider
               modalProps={{
                 styles: {
