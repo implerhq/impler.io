@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { GetServerSideProps } from 'next';
@@ -19,6 +20,7 @@ import { Destination } from '@components/imports/Destination';
 import { AppLayout } from '@layouts/AppLayout';
 import { EditIcon } from '@assets/icons/Edit.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
+import { LeftArrowIcon } from '@assets/icons/LeftArrow.icon';
 
 const Editor = dynamic(() => import('@components/imports/Editor'), { ssr: false });
 
@@ -44,7 +46,12 @@ export default function ImportDetails({ template }: ImportDetailProps) {
   return (
     <Flex gap="lg" direction="column" h="100%">
       <Flex justify="space-between">
-        <Title order={2}>{templateData.name}</Title>
+        <Group>
+          <Button variant="outline" component={Link} href={ROUTES.IMPORTS} color="invariant">
+            <LeftArrowIcon />
+          </Button>
+          <Title order={2}>{templateData.name}</Title>
+        </Group>
         <Group spacing="xs">
           <Button disabled={!isImplerInitiated} onClick={onImportClick}>
             Import

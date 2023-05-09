@@ -64,6 +64,7 @@ export function useImportDetails({ template }: useImportDetailProps) {
       children: 'Are you sure you want to delete this import?',
       onConfirm: deleteImport,
       labels: { confirm: 'Confirm', cancel: 'Cancel' },
+      confirmProps: { color: 'red' },
     });
   };
 
