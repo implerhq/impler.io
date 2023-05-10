@@ -3,7 +3,7 @@ import { ApiOperation, ApiTags, ApiOkResponse, ApiSecurity, ApiBody } from '@nes
 
 import { UploadEntity } from '@impler/dal';
 import { ACCESS_KEY_NAME } from '@impler/shared';
-import { APIKeyGuard } from '@shared/framework/auth.gaurd';
+import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { AddColumnCommand } from 'app/column/commands/add-column.command';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
@@ -35,7 +35,7 @@ import { UpdateCustomizationRequestDto } from './dtos/update-customization-reque
 @Controller('/template')
 @ApiTags('Template')
 @ApiSecurity(ACCESS_KEY_NAME)
-@UseGuards(APIKeyGuard)
+@UseGuards(JwtAuthGuard)
 export class TemplateController {
   constructor(
     private getTemplateColumns: GetTemplateColumns,

@@ -1,8 +1,8 @@
 import { Response } from 'express';
-import { ApiOperation, ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Body, Controller, Delete, Get, Param, Post, Put, Res, UseGuards } from '@nestjs/common';
 
-import { IJwtPayload } from '@impler/shared';
+import { ACCESS_KEY_NAME, IJwtPayload } from '@impler/shared';
 import { UserSession } from '@shared/framework/user.decorator';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 
@@ -28,6 +28,7 @@ import { EnvironmentResponseDto } from 'app/environment/dtos/environment-respons
 
 @Controller('/project')
 @ApiTags('Project')
+@ApiSecurity(ACCESS_KEY_NAME)
 @UseGuards(JwtAuthGuard)
 export class ProjectController {
   constructor(

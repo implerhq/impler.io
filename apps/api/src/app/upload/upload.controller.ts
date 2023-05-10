@@ -6,7 +6,7 @@ import { ACCESS_KEY_NAME, Defaults, UploadStatusEnum } from '@impler/shared';
 import { Body, Controller, Get, Param, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags, ApiSecurity, ApiConsumes, ApiOperation, ApiParam, ApiQuery, ApiOkResponse } from '@nestjs/swagger';
 
-import { APIKeyGuard } from '@shared/framework/auth.gaurd';
+import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { validateNotFound } from '@shared/helpers/common.helper';
 import { validateUploadStatus } from '@shared/helpers/upload.helpers';
 import { PaginationResponseDto } from '@shared/dtos/pagination-response.dto';
@@ -25,7 +25,7 @@ import { GetUploadProcessInformation } from './usecases/get-upload-process-info/
 @Controller('/upload')
 @ApiTags('Uploads')
 @ApiSecurity(ACCESS_KEY_NAME)
-@UseGuards(APIKeyGuard)
+@UseGuards(JwtAuthGuard)
 export class UploadController {
   constructor(
     private makeUploadEntry: MakeUploadEntry,
