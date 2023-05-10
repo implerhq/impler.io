@@ -1,11 +1,12 @@
+import { useRouter } from 'next/router';
 import { useLocalStorage } from '@mantine/hooks';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
+import { notify } from '@libs/notify';
+import { track } from '@libs/amplitude';
 import { API_KEYS, CONSTANTS, NOTIFICATION_KEYS, ROUTES, VARIABLES } from '@config';
 import { IErrorObject, IProjectPayload, IEnvironmentData } from '@impler/shared';
-import { useRouter } from 'next/router';
-import { notify } from '@libs/notify';
 
 export function useApp() {
   const queryClient = useQueryClient();
@@ -50,6 +51,12 @@ export function useApp() {
         ...profile,
         _projectId: data.project._id,
         accessToken: data.environment.apiKeys[VARIABLES.ZERO].key,
+      });
+      track({
+        name: 'PROJECT CREATE',
+        properties: {
+          duringOnboard: false,
+        },
       });
       notify(NOTIFICATION_KEYS.PROJECT_CREATED, {
         title: 'Project created',

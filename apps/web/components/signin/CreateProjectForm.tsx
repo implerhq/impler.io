@@ -9,6 +9,7 @@ import { Input } from '@ui/input';
 import { Button } from '@ui/button';
 
 import { commonApi } from '@libs/api';
+import { track } from '@libs/amplitude';
 import { API_KEYS, CONSTANTS, VARIABLES } from '@config';
 import DarkLogo from '@assets/images/logo-dark.png';
 import { IProjectPayload, IErrorObject, IEnvironmentData } from '@impler/shared';
@@ -33,6 +34,12 @@ export default function CreateProjectForm() {
         _projectId: data.project._id,
         accessToken: data.environment.apiKeys[VARIABLES.ZERO].key,
       }));
+      track({
+        name: 'PROJECT CREATE',
+        properties: {
+          duringOnboard: true,
+        },
+      });
       push('/');
     },
   });

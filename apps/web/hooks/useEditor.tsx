@@ -1,9 +1,11 @@
-import { API_KEYS, NOTIFICATION_KEYS } from '@config';
 import { useForm } from 'react-hook-form';
-import { IErrorObject, ICustomization } from '@impler/shared';
-import { commonApi } from '@libs/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
+import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
+import { track } from '@libs/amplitude';
+import { API_KEYS, NOTIFICATION_KEYS } from '@config';
+import { IErrorObject, ICustomization } from '@impler/shared';
 
 interface UseEditorProps {
   templateId: string;
@@ -54,6 +56,10 @@ export function useEditor({ templateId }: UseEditorProps) {
       }),
     {
       onSuccess(data) {
+        track({
+          name: 'OUTPUT FORMAT UPDATED',
+          properties: {},
+        });
         notify(NOTIFICATION_KEYS.OUTPUT_UPDATED);
         queryClient.setQueryData([API_KEYS.TEMPLATE_CUSTOMIZATION_GET, templateId], data);
       },

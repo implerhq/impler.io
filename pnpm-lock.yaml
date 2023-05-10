@@ -252,6 +252,7 @@ importers:
 
   apps/web:
     specifiers:
+      '@amplitude/analytics-browser': ^1.10.3
       '@emotion/react': ^11.10.5
       '@emotion/server': ^11.10.0
       '@impler/client': workspace:^0.1.15
@@ -286,6 +287,7 @@ importers:
       tsconfig-paths-webpack-plugin: ^4.0.0
       typescript: 4.9.5
     dependencies:
+      '@amplitude/analytics-browser': 1.10.3
       '@emotion/react': 11.10.5_tthezkgec2o3jwmbjlr4nrwrji
       '@emotion/server': 11.10.0
       '@impler/client': link:../../packages/client
@@ -539,6 +541,62 @@ packages:
       safe-buffer: 5.1.2
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /@amplitude/analytics-browser/1.10.3:
+    resolution: {integrity: sha512-u9xnHVLMtoWawZssZDC1wYR7GjuXF9DWL09fCdxf5j0Gp9CtRurzt+kUx9KC8IzrBmNSYZ7jG8xhwUWCbIFodg==}
+    dependencies:
+      '@amplitude/analytics-client-common': 0.7.0
+      '@amplitude/analytics-core': 0.13.3
+      '@amplitude/analytics-types': 0.20.0
+      '@amplitude/plugin-page-view-tracking-browser': 0.8.0
+      '@amplitude/plugin-web-attribution-browser': 0.7.0
+      '@amplitude/ua-parser-js': 0.7.33
+      tslib: 2.4.1
+    dev: false
+
+  /@amplitude/analytics-client-common/0.7.0:
+    resolution: {integrity: sha512-fKBR5DSo6qTqFcCFnLopRdWv6Zieox3YnzyXG2Zg1hR9MDeX96GoMEwwT2VB5MPzGxE1wYW6kQPvU2C/xpn5ww==}
+    dependencies:
+      '@amplitude/analytics-connector': 1.4.8
+      '@amplitude/analytics-core': 0.13.3
+      '@amplitude/analytics-types': 0.20.0
+      tslib: 2.4.1
+    dev: false
+
+  /@amplitude/analytics-connector/1.4.8:
+    resolution: {integrity: sha512-dFW7c7Wb6Ng7vbmzwbaXZSpqfBx37ukamJV9ErFYYS8vGZK/Hkbt3M7fZHBI4WFU6CCwakr2ZXPme11uGPYWkQ==}
+    dev: false
+
+  /@amplitude/analytics-core/0.13.3:
+    resolution: {integrity: sha512-lLLmUwi78iqGsCPgd15yH488K+3FPYQ19fCdA3OemoEK9959xCzMZe/KYafQKkgZmI4ZiZLOp3pjamKWc6mcdQ==}
+    dependencies:
+      '@amplitude/analytics-types': 0.20.0
+      tslib: 2.4.1
+    dev: false
+
+  /@amplitude/analytics-types/0.20.0:
+    resolution: {integrity: sha512-OYoUrf7QUl5sL4mqcQJBu+0GuSar7ga5prJv0HDtPT4LGu7Adv8S3AWljGiEJuTS/YaOMzvTe2qyKZbwyiNrMw==}
+    dev: false
+
+  /@amplitude/plugin-page-view-tracking-browser/0.8.0:
+    resolution: {integrity: sha512-Bun7aGo7woxsnupDEY1YugLQyAXDRtFhQsXnJKKCIkyeeRCq4qsuaAz0wI8w1QV+3IhaAf0lBuSqSuBIhPFDLQ==}
+    dependencies:
+      '@amplitude/analytics-client-common': 0.7.0
+      '@amplitude/analytics-types': 0.20.0
+      tslib: 2.4.1
+    dev: false
+
+  /@amplitude/plugin-web-attribution-browser/0.7.0:
+    resolution: {integrity: sha512-PKC6SHIVGXvxhxO4CZQOYidoo+aKApLRFGBbRfDEVdSxEDY1b1wTHtqTJomxodqvw4pLocSDiuwC1s7B0p4zAQ==}
+    dependencies:
+      '@amplitude/analytics-client-common': 0.7.0
+      '@amplitude/analytics-types': 0.20.0
+      tslib: 2.4.1
+    dev: false
+
+  /@amplitude/ua-parser-js/0.7.33:
+    resolution: {integrity: sha512-wKEtVR4vXuPT9cVEIJkYWnlF++Gx3BdLatPBM+SZ1ztVIvnhdGBZR/mn9x/PzyrMcRlZmyi6L56I2J3doVBnjA==}
     dev: false
 
   /@ampproject/remapping/2.2.0:
@@ -13191,7 +13249,7 @@ packages:
       mississippi: 3.0.0
       mkdirp: 0.5.6
       move-concurrently: 1.0.1
-      promise-inflight: 1.0.1
+      promise-inflight: 1.0.1_bluebird@3.7.2
       rimraf: 2.7.1
       ssri: 6.0.2
       unique-filename: 1.1.1
@@ -23470,6 +23528,16 @@ packages:
     peerDependenciesMeta:
       bluebird:
         optional: true
+
+  /promise-inflight/1.0.1_bluebird@3.7.2:
+    resolution: {integrity: sha512-6zWPyEOFaQBJYcGMHBKTKJ3u6TBsnMFOIZSa6ce1e/ZrrsOlnHRHbabMjLiBYKp+n44X9eUI6VUPaukCXHuG4g==}
+    peerDependencies:
+      bluebird: '*'
+    peerDependenciesMeta:
+      bluebird:
+        optional: true
+    dependencies:
+      bluebird: 3.7.2
 
   /promise-retry/2.0.1:
     resolution: {integrity: sha512-y+WKFlBR8BGXnsNlIHFGPZmyDf3DFMoLhaflAnyZgV6rG6xu+JwesTo2Q9R6XwYmtmwAFCkAk3e35jEdoeh/3g==}

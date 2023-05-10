@@ -5,11 +5,16 @@ import { Poppins } from '@next/font/google';
 import { useLocalStorage } from '@mantine/hooks';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
+import { init } from '@amplitude/analytics-browser';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ColorSchemeProvider, MantineProvider, ColorScheme } from '@mantine/core';
 
 import { addOpacityToHex } from 'shared/utils';
 import { mantineConfig, colors } from '@config';
+
+if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_AMPLITUDE_ID) {
+  init(process.env.NEXT_PUBLIC_AMPLITUDE_ID);
+}
 
 const client = new QueryClient({
   defaultOptions: {
