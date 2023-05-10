@@ -62,6 +62,7 @@ export function useApp() {
         title: 'Project created',
         message: `Project ${data.project.name} created successfully`,
       });
+      setEnvironment(data.project._id);
     },
   });
   const onProjectIdChange = (id: string) => {
