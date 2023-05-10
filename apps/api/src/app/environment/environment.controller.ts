@@ -1,5 +1,6 @@
 import { Controller } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiExcludeController, ApiTags } from '@nestjs/swagger';
 @Controller('/environment')
 @ApiTags('Environment')
+@ApiExcludeController()
 export class EnvironmentController {}

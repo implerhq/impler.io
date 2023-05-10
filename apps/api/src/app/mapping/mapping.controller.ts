@@ -3,7 +3,7 @@ import { ApiTags, ApiSecurity, ApiOperation, ApiBody } from '@nestjs/swagger';
 import { ACCESS_KEY_NAME, Defaults, UploadStatusEnum } from '@impler/shared';
 import { MappingEntity } from '@impler/dal';
 
-import { APIKeyGuard } from '@shared/framework/auth.gaurd';
+import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 import { GetUploadCommand } from '@shared/usecases/get-upload/get-upload.command';
 import { DoMapping } from './usecases/do-mapping/do-mapping.usecase';
@@ -21,7 +21,7 @@ import { validateNotFound } from '@shared/helpers/common.helper';
 @Controller('/mapping')
 @ApiTags('Mappings')
 @ApiSecurity(ACCESS_KEY_NAME)
-@UseGuards(APIKeyGuard)
+@UseGuards(JwtAuthGuard)
 export class MappingController {
   constructor(
     private getUpload: GetUpload,

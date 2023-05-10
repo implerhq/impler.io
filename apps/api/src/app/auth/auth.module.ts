@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule, Provider, RequestMethod } from '@nestjs/common';
+import { Global, MiddlewareConsumer, Module, NestModule, Provider, RequestMethod } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import * as passport from 'passport';
 import { CONSTANTS } from '@shared/constants';
@@ -15,6 +15,7 @@ if (process.env.GITHUB_OAUTH_CLIENT_ID) {
   AUTH_STRATEGIES.push(GitHubStrategy);
 }
 
+@Global()
 @Module({
   imports: [
     SharedModule,

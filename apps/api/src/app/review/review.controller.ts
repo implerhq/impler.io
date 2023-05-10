@@ -3,7 +3,7 @@ import { BadRequestException, Body, Controller, Get, Param, Post, Query, UseGuar
 
 import { APIMessages } from '@shared/constants';
 import { FileEntity, UploadEntity } from '@impler/dal';
-import { APIKeyGuard } from '@shared/framework/auth.gaurd';
+import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { validateUploadStatus } from '@shared/helpers/upload.helpers';
 import { Defaults, ACCESS_KEY_NAME, UploadStatusEnum } from '@impler/shared';
 
@@ -29,7 +29,7 @@ import { PaginationResponseDto } from '@shared/dtos/pagination-response.dto';
 @Controller('/review')
 @ApiTags('Review')
 @ApiSecurity(ACCESS_KEY_NAME)
-@UseGuards(APIKeyGuard)
+@UseGuards(JwtAuthGuard)
 export class ReviewController {
   constructor(
     private doReview: DoReview,
