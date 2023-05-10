@@ -90,10 +90,6 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
               value: 'Date',
             },
             {
-              label: 'Boolean',
-              value: 'Boolean',
-            },
-            {
               label: 'Regular Expression',
               value: 'Regex',
             },
