@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
+import { track } from '@libs/amplitude';
 import { ITemplate, IErrorObject } from '@impler/shared';
 import { UpdateImportForm } from '@components/imports/forms/UpdateImportForm';
 import { API_KEYS, CONSTANTS, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS, ROUTES } from '@config';
@@ -77,5 +78,13 @@ export function useImportDetails({ template }: useImportDetailProps) {
     });
   };
 
-  return { refetchTemplateData, profile, onUpdateClick, onDeleteClick, templateData };
+  const onSpreadsheetImported = () => {
+    refetchTemplateData();
+    track({
+      name: 'WEB IMPORT',
+      properties: {},
+    });
+  };
+
+  return { onSpreadsheetImported, profile, onUpdateClick, onDeleteClick, templateData };
 }

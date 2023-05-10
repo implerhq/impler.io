@@ -12,6 +12,7 @@ import { LogoutIcon } from '@assets/icons/Logout.icon';
 import { useApp } from '@hooks/useApp';
 import { NavItem } from '@ui/nav-item';
 import { UserMenu } from '@ui/user-menu';
+import { track } from '@libs/amplitude';
 import { ColorSchemeToggle } from '@ui/toggle-color-scheme';
 
 export function AppLayout({ children }: PropsWithChildren) {
@@ -63,7 +64,7 @@ export function AppLayout({ children }: PropsWithChildren) {
                   Welcome, {profile.firstName} {profile.lastName}
                 </Title>
                 <Group>
-                  <ColorSchemeToggle />
+                  <ColorSchemeToggle onChange={(theme) => track({ name: 'TOGGLE THEME', properties: { theme } })} />
                   <UserMenu
                     user={{
                       name: `${profile.firstName} ${profile.lastName}`,

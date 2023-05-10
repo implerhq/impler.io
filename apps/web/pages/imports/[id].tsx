@@ -29,13 +29,13 @@ interface ImportDetailProps {
 }
 
 export default function ImportDetails({ template }: ImportDetailProps) {
-  const { onUpdateClick, onDeleteClick, templateData, profile, refetchTemplateData } = useImportDetails({ template });
+  const { onUpdateClick, onDeleteClick, templateData, profile, onSpreadsheetImported } = useImportDetails({ template });
   const { init, onImportClick, isImplerInitiated } = useImpler({
     templateId: template._id,
     projectId: template._projectId,
     accessToken: profile?.accessToken,
     primaryColor: colors.blue,
-    onUploadComplete: refetchTemplateData,
+    onUploadComplete: onSpreadsheetImported,
   });
 
   useEffect(() => {

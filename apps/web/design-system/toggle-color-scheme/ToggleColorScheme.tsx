@@ -3,7 +3,11 @@ import { MoonIcon } from '@assets/icons/Moon.icon';
 import useStyles from './ToggleColorScheme.style';
 import { useMantineColorScheme, SegmentedControl, Center } from '@mantine/core';
 
-export function ColorSchemeToggle() {
+interface ColorSchemeToggleProps {
+  onChange?: (value: 'light' | 'dark') => void;
+}
+
+export function ColorSchemeToggle({ onChange }: ColorSchemeToggleProps) {
   const { classes } = useStyles();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
@@ -11,7 +15,10 @@ export function ColorSchemeToggle() {
     <SegmentedControl
       value={colorScheme}
       classNames={classes}
-      onChange={(value: 'light' | 'dark') => toggleColorScheme(value)}
+      onChange={(value: 'light' | 'dark') => {
+        toggleColorScheme(value);
+        onChange?.(value);
+      }}
       data={[
         {
           value: 'light',

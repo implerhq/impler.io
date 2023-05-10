@@ -15,6 +15,7 @@
     "build-storybook": "build-storybook"
   },
   "dependencies": {
+    "@amplitude/analytics-browser": "^1.10.3",
     "@emotion/react": "^11.10.5",
     "@emotion/server": "^11.10.0",
     "@impler/client": "workspace:^0.1.15",

@@ -5,6 +5,8 @@ namespace NodeJS {
   interface ProcessEnv {
     NEXT_PUBLIC_API_BASE_URL: string;
     DOCUMENTATION_REACT_PROPS_URL: string;
+    NEXT_PUBLIC_EMBED_URL: string;
+    NEXT_PUBLIC_AMPLITUDE_ID: string;
   }
 }
 
