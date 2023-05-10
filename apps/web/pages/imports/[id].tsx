@@ -107,7 +107,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const template = await commonApi<ITemplate>(API_KEYS.TEMPLATE_DETAILS as any, {
       parameters: [templateId],
-      cookie: `${CONSTANTS.AUTH_COOKIE_NAME}:${authenticationToken}`,
+      cookie: `${CONSTANTS.AUTH_COOKIE_NAME}=${authenticationToken}`,
     });
     if (!template) throw new Error();
 
