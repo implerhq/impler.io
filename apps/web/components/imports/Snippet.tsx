@@ -38,7 +38,7 @@ export function Snippet({ projectId, templateId }: SnippetProps) {
         \n<Button projectId="${projectId}" templateId="${templateId}">\nImport\n</Button>`}</Prism>
         <Text style={{ lineHeight: '1.5rem', color: colors.TXTSecondaryDark }}>
           You can get to know about props on{' '}
-          <a href={process.env.DOCUMENTATION_REACT_PROPS_URL} target="_blank" rel="noreferrer">
+          <a href={CONSTANTS.REACT_DOCUMENTATION_URL} target="_blank" rel="noreferrer">
             documentation
           </a>
           .
