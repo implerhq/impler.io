@@ -1,3 +1,5 @@
+import { CookieOptions } from 'express';
+
 export const APIMessages = {
   FILE_TYPE_NOT_VALID: 'File type is not supported.',
   FILE_IS_EMPTY: 'File is empty',
@@ -15,4 +17,40 @@ export const APIMessages = {
   IN_PROGRESS: 'You may landed to wrong place, This uploaded file processing is started already.',
   COMPLETED: 'You may landed to wrong place, This uploaded file is already completed, no more steps left to perform.',
   PROJECT_WITH_TEMPLATE_MISSING: 'Template not found with provided ProjectId and Template',
+  PROJECT_NOT_ASSIGNED: 'Project is not assigned to you',
+  USER_NOT_FOUND: 'User is not found',
+  UNIQUE_EMAIL: 'Email address already in use',
+  INCORRECT_LOGIN_CREDENTIALS: 'Incorrect email or password provided',
+  OPERATION_NOT_ALLOWED: `You're not allowed to perform this action.`,
+};
+
+export const CONSTANTS = {
+  PASSWORD_SALT: 10,
+  AUTH_COOKIE_NAME: 'authentication',
+  // eslint-disable-next-line no-magic-numbers
+  maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+  DEFAULT_USER_AVATAR: 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y',
+  CHUNK_VARIABLES: ['data', 'page', 'chunkSize', 'isInvalidRecords', 'template', 'uploadId', 'fileName', 'extra'],
+  CHUNK_FORMAT: `{
+  "data": "{{data}}",
+  "page": "{{page}}",
+  "chunkSize": "{{chunkSize}}",
+  "isInvalidRecords": "{{isInvalidRecords}}",
+  "template": "{{template}}",
+  "uploadId": "{{uploadId}}",
+  "fileName": "{{fileName}}",
+  "extra": "{{extra}}"
+}`,
+};
+
+export const COOKIE_CONFIG: CookieOptions = {
+  httpOnly: true,
+  secure: true,
+  maxAge: CONSTANTS.maxAge,
+  sameSite: 'none',
+};
+
+export const VARIABLES = {
+  ONE: 1,
+  TWO: 2,
 };

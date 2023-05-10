@@ -67,9 +67,18 @@ services:
     image: "ghcr.io/knovator/impler/embed:0.1.15"
     container_name: embed
     environment:
-      WIDGET_URL: ${WIDGET_URL}
+      WIDGET_URL: ${WIDGET_AMPLITUDE_ID}
     ports:
       - 4701:4701
+  web:
+    depends_on:
+      - api
+    image: "ghcr.io/knovator/impler/web:0.1.15"
+    container_name: web
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: ${API_ROOT_URL}
+      NEXT_PUBLIC_EMBED_URL: ${WIDGET_EMBED_PATH}
+      NEXT_PUBLIC_AMPLITUDE_ID: ${WEB_AMPLITUDE_ID}
   rabbitmq:
     image: rabbitmq:3-alpine
     container_name: 'rabbitmq'

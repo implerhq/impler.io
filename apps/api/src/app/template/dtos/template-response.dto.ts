@@ -17,18 +17,18 @@ export class TemplateResponseDto {
   name: string;
 
   @ApiProperty({
-    description: 'Code of the template',
-  })
-  @IsString()
-  @IsDefined()
-  code: string;
-
-  @ApiProperty({
     description: 'Callback URL of the template, gets called when sending data to the application',
   })
   @IsString()
   @IsOptional()
   callbackUrl: string;
+
+  @ApiProperty({
+    description: 'Name of the header that gets sent to the application',
+  })
+  @IsString()
+  @IsOptional()
+  authHeaderName: string;
 
   @ApiProperty({
     description: 'Size of data in rows that gets sent to the application',
@@ -50,4 +50,25 @@ export class TemplateResponseDto {
   @IsString()
   @IsDefined()
   _projectId: string;
+
+  @ApiProperty({
+    description: 'Total number of imports',
+  })
+  @IsNumber()
+  @IsDefined()
+  totalUploads: number;
+
+  @ApiProperty({
+    description: 'Total number of imported records',
+  })
+  @IsNumber()
+  @IsDefined()
+  totalRecords: number;
+
+  @ApiProperty({
+    description: 'Total number of invalid records',
+  })
+  @IsNumber()
+  @IsDefined()
+  totalInvalidRecords: number;
 }

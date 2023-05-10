@@ -1,56 +1,71 @@
-import { Controller, Put, Param, Body, Get, ParseArrayPipe, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiBody, ApiOperation, ApiSecurity } from '@nestjs/swagger';
+import { Controller, Put, Param, Body, UseGuards, Post, Delete } from '@nestjs/common';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
-import { UpdateColumnRequestDto } from './dtos/update-column-request.dto';
-import { UpdateColumnCommand } from './usecases/update-columns/update-columns.command';
-import { UpdateColumns } from './usecases/update-columns/update-columns.usecase';
-import { ColumnResponseDto } from './dtos/column-response.dto';
-import { GetColumns } from './usecases/get-columns/get-columns.usecase';
-import { APIKeyGuard } from '@shared/framework/auth.gaurd';
+
 import { ACCESS_KEY_NAME } from '@impler/shared';
+import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
+import { ColumnRequestDto } from './dtos/column-request.dto';
+import { ColumnResponseDto } from './dtos/column-response.dto';
+import { AddColumnCommand } from './commands/add-column.command';
+import { AddColumn, UpdateColumn, DeleteColumn } from './usecases';
+import { UpdateColumnCommand } from './commands/update-column.command';
 
 @Controller('/column')
 @ApiTags('Column')
+@UseGuards(JwtAuthGuard)
 @ApiSecurity(ACCESS_KEY_NAME)
-@UseGuards(APIKeyGuard)
 export class ColumnController {
-  constructor(private updateColumns: UpdateColumns, private getColumns: GetColumns) {}
+  constructor(private addColumn: AddColumn, private updateColumn: UpdateColumn, private deleteColumn: DeleteColumn) {}
 
-  @Put(':templateId')
+  @Post(':templateId')
   @ApiOperation({
-    summary: 'Update columns for Template',
+    summary: 'Add column to template',
   })
-  @ApiBody({ type: [UpdateColumnRequestDto] })
-  async updateTemplateColumns(
+  @ApiBody({ type: ColumnRequestDto })
+  async addColumnToTemplate(
     @Param('templateId', ValidateMongoId) _templateId: string,
-    @Body(new ParseArrayPipe({ items: UpdateColumnRequestDto })) body: UpdateColumnRequestDto[]
-  ): Promise<ColumnResponseDto[]> {
-    return this.updateColumns.execute(
-      body.map((columnData) =>
-        UpdateColumnCommand.create({
-          key: columnData.key,
-          alternateKeys: columnData.alternateKeys,
-          isRequired: columnData.isRequired,
-          isUnique: columnData.isUnique,
-          name: columnData.name,
-          regex: columnData.regex,
-          regexDescription: columnData.regexDescription,
-          selectValues: columnData.selectValues,
-          sequence: columnData.sequence,
-          _templateId,
-          type: columnData.type,
-          apiResponseKey: columnData.apiResponseKey,
-        })
-      ),
+    @Body() body: ColumnRequestDto
+  ): Promise<ColumnResponseDto> {
+    return this.addColumn.execute(
+      AddColumnCommand.create({
+        key: body.key,
+        alternateKeys: body.alternateKeys,
+        isRequired: body.isRequired,
+        isUnique: body.isUnique,
+        name: body.name,
+        regex: body.regex,
+        regexDescription: body.regexDescription,
+        selectValues: body.selectValues,
+        sequence: body.sequence,
+        _templateId,
+        type: body.type,
+      }),
       _templateId
     );
   }
 
-  @Get(':templateId')
+  @Put(':columnId')
   @ApiOperation({
-    summary: 'Get template columns',
+    summary: 'Update column',
   })
-  async getTemplateColumns(@Param('templateId') _templateId: string): Promise<ColumnResponseDto[]> {
-    return this.getColumns.execute(_templateId);
+  @ApiBody({ type: ColumnRequestDto })
+  async updateColumnRoute(
+    @Param('columnId', ValidateMongoId) _columnId: string,
+    @Body() body: ColumnRequestDto
+  ): Promise<ColumnResponseDto> {
+    return this.updateColumn.execute(
+      UpdateColumnCommand.create({
+        ...body,
+      }),
+      _columnId
+    );
+  }
+
+  @Delete(':columnId')
+  @ApiOperation({
+    summary: 'Delete column',
+  })
+  async deleteColumnRoute(@Param('columnId', ValidateMongoId) _columnId: string): Promise<ColumnResponseDto> {
+    return this.deleteColumn.execute(_columnId);
   }
 }

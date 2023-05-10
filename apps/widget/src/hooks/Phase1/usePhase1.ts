@@ -19,7 +19,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
   const { setUploadInfo } = useAppState();
   const [templates, setTemplates] = useState<IOption[]>([]);
   const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
-  const { projectId, template, authHeaderValue, extra } = useImplerState();
+  const { projectId, templateId, authHeaderValue, extra } = useImplerState();
   const {
     data: dataTemplates,
     isFetched,
@@ -74,7 +74,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
 
   const onDownload = async () => {
     setIsDownloadInProgress(true);
-    const isTemplateValid = await trigger('template');
+    const isTemplateValid = await trigger('templateId');
     if (!isTemplateValid) {
       setIsDownloadInProgress(false);
 
@@ -82,13 +82,9 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     }
 
     let foundTemplate: ITemplate | undefined;
-    const selectedTemplateValue = getValues('template');
+    const selectedTemplateValue = getValues('templateId');
     if (selectedTemplateValue && dataTemplates) {
       foundTemplate = dataTemplates.find((templateItem) => templateItem._id === selectedTemplateValue);
-    } else if (template && dataTemplates) {
-      foundTemplate = dataTemplates.find(
-        (templateItem) => templateItem.code === template || templateItem._id === template
-      );
     }
 
     if (foundTemplate && foundTemplate.sampleFileUrl) {
@@ -99,13 +95,12 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
   };
 
   const onSubmit = (submitData: IFormvalues) => {
-    if ((template || submitData.template) && dataTemplates) {
+    if ((templateId || submitData.templateId) && dataTemplates) {
       const foundTemplate = dataTemplates.find(
-        (templateItem) =>
-          templateItem.code === template || templateItem._id === template || templateItem._id === submitData.template
+        (templateItem) => templateItem._id === templateId || templateItem._id === submitData.templateId
       );
       if (foundTemplate) {
-        submitData.template = foundTemplate._id;
+        submitData.templateId = foundTemplate._id;
         logAmplitudeEvent('UPLOAD', { fileSize: submitData.file.size, fileType: submitData.file.type });
         submitUpload({
           ...submitData,
@@ -129,7 +124,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     onDownload,
     isDownloadInProgress,
     isInitialDataLoaded: isFetched && !isLoading,
-    showSelectTemplate: !template,
+    showSelectTemplate: !templateId,
     onSubmit: handleSubmit(onSubmit),
   };
 }

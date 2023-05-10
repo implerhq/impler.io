@@ -7,3 +7,6 @@ export * from './repositories/file';
 export * from './repositories/upload';
 export * from './repositories/mapping';
 export * from './repositories/webhook-log';
+export * from './repositories/user';
+export * from './repositories/environment';
+export * from './repositories/customization';

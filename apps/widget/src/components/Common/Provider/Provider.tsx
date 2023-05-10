@@ -9,7 +9,7 @@ interface IProviderProps {
   api: ApiService;
   // impler-context
   projectId: string;
-  template?: string;
+  templateId?: string;
   accessToken?: string;
   extra?: string;
   authHeaderValue?: string;
@@ -17,12 +17,12 @@ interface IProviderProps {
 }
 
 export function Provider(props: PropsWithChildren<IProviderProps>) {
-  const { api, projectId, template, accessToken, extra, authHeaderValue, children, primaryColor } = props;
+  const { api, projectId, templateId, accessToken, extra, authHeaderValue, children, primaryColor } = props;
 
   return (
     <ImplerContextProvider
       projectId={projectId}
-      template={template}
+      templateId={templateId}
       accessToken={accessToken}
       extra={extra}
       authHeaderValue={authHeaderValue}

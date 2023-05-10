@@ -6,16 +6,9 @@ import { ProjectResponseDto } from '../../dtos/project-response.dto';
 export class GetProjects {
   constructor(private projectRepository: ProjectRepository) {}
 
-  async execute(): Promise<ProjectResponseDto[]> {
-    const projects = await this.projectRepository.find({});
+  async execute(_userId: string): Promise<ProjectResponseDto[]> {
+    const response = await this.projectRepository.getUserProjects(_userId);
 
-    return projects.map((project) => {
-      return {
-        _id: project._id,
-        name: project.name,
-        code: project.code,
-        authHeaderName: project.authHeaderName,
-      };
-    });
+    return response;
   }
 }

@@ -51,7 +51,7 @@ const Actions = ({ PROJECT_ID, ACCESS_TOKEN, PRIMARY_COLOR, TEMPLATE }: ActionPr
         <Button
           projectId={PROJECT_ID}
           accessToken={ACCESS_TOKEN}
-          template={TEMPLATE}
+          templateId={TEMPLATE}
           primaryColor={PRIMARY_COLOR}
           className={classes.button}
           onUploadComplete={onUploadComplete}
@@ -61,7 +61,7 @@ const Actions = ({ PROJECT_ID, ACCESS_TOKEN, PRIMARY_COLOR, TEMPLATE }: ActionPr
             label="Show Invalid Data"
             color="white"
             checked={showInvalidRecords}
-            onChange={(e) => onShowInvalidChanges(e.target.checked)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => onShowInvalidChanges(e.target.checked)}
             classNames={{
               root: classes.root,
               track: classes.track,
