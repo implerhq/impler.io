@@ -21,6 +21,7 @@ const validators: { [K in keyof any]: ValidatorSpec<any[K]> } = {
   FRONT_BASE_URL: url(),
   WEB_BASE_URL: url(),
   // auth
+  COOKIE_DOMAIN: str(),
   GITHUB_OAUTH_CLIENT_ID: str(),
   GITHUB_OAUTH_CLIENT_SECRET: str(),
   GITHUB_OAUTH_REDIRECT: str(),

@@ -102,7 +102,10 @@ export class ProjectController {
       },
       projectWithEnvironment.project._id
     );
-    res.cookie(CONSTANTS.AUTH_COOKIE_NAME, token, COOKIE_CONFIG);
+    res.cookie(CONSTANTS.AUTH_COOKIE_NAME, token, {
+      ...COOKIE_CONFIG,
+      domain: process.env.COOKIE_DOMAIN,
+    });
 
     return projectWithEnvironment;
   }
