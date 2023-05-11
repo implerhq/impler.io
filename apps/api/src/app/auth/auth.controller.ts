@@ -47,7 +47,10 @@ export class AuthController {
       }
     }
 
-    response.cookie(CONSTANTS.AUTH_COOKIE_NAME, strategyUser.token, COOKIE_CONFIG);
+    response.cookie(CONSTANTS.AUTH_COOKIE_NAME, strategyUser.token, {
+      ...COOKIE_CONFIG,
+      domain: process.env.COOKIE_DOMAIN,
+    });
 
     return response.redirect(url);
   }

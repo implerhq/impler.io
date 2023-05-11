@@ -17,6 +17,7 @@ declare namespace NodeJS {
     WEB_BASE_URL: string;
     FRONT_BASE_URL: string;
 
+    COOKIE_DOMAIN: string;
     GITHUB_OAUTH_REDIRECT: string;
     GITHUB_OAUTH_CLIENT_ID: string;
     GITHUB_OAUTH_CLIENT_SECRET: string;
