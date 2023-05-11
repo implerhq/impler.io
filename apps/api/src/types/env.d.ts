@@ -15,7 +15,6 @@ declare namespace NodeJS {
     AWS_SECRET_ACCESS_KEY: string;
 
     WEB_BASE_URL: string;
-    API_ROOT_URL: string;
     FRONT_BASE_URL: string;
 
     GITHUB_OAUTH_REDIRECT: string;
