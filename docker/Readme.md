@@ -39,7 +39,7 @@ While we provide you with some example secrets for getting started, you should N
 
 Update the `.env` file with your own secrets. In particular, these are required:
 
-- `ACCESS_KEY`: used by the API as a header to authenticate `API` requests.
+- `JWT_SECRET`: used by `jsonwebtoken` to create and manage tokens.
 
 ## Configuration
 

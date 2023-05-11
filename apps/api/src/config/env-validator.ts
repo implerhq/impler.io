@@ -4,6 +4,7 @@ import { ENVTypesEnum } from '@impler/shared';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const validators: { [K in keyof any]: ValidatorSpec<any[K]> } = {
+  JWT_SECRET: str(),
   NODE_ENV: str({
     choices: [ENVTypesEnum.LOCAL, ENVTypesEnum.TEST, ENVTypesEnum.PROD, ENVTypesEnum.CI, ENVTypesEnum.LOCAL],
     default: ENVTypesEnum.LOCAL,
