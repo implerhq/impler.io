@@ -1,16 +1,15 @@
 import jwt from 'jwt-decode';
 import { useEffect } from 'react';
+import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 
 import { CONSTANTS, ROUTES } from '@config';
 import { Signin } from '@components/signin';
 import { OnboardLayout } from '@layouts/OnboardLayout';
 
-interface SigninPageProps {
-  API_URL: string;
-}
+const { publicRuntimeConfig } = getConfig();
 
-export default function SigninPage({ API_URL }: SigninPageProps) {
+export default function SigninPage() {
   const { query, push } = useRouter();
 
   useEffect(() => {
@@ -22,15 +21,7 @@ export default function SigninPage({ API_URL }: SigninPageProps) {
     }
   }, [query, push]);
 
-  return <Signin API_URL={API_URL} error={query?.error as string} />;
-}
-
-export function getServerSideProps() {
-  return {
-    props: {
-      API_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
-    },
-  };
+  return <Signin API_URL={publicRuntimeConfig.NEXT_PUBLIC_API_BASE_URL} error={query?.error as string} />;
 }
 
 SigninPage.Layout = OnboardLayout;

@@ -1,6 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
-import { AppProps } from 'next/app';
+import getConfig from 'next/config';
+import App, { AppProps } from 'next/app';
 import { Poppins } from '@next/font/google';
 import { useLocalStorage } from '@mantine/hooks';
 import { ModalsProvider } from '@mantine/modals';
@@ -12,8 +13,10 @@ import { ColorSchemeProvider, MantineProvider, ColorScheme } from '@mantine/core
 import { addOpacityToHex } from 'shared/utils';
 import { mantineConfig, colors } from '@config';
 
-if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_AMPLITUDE_ID) {
-  init(process.env.NEXT_PUBLIC_AMPLITUDE_ID);
+const { publicRuntimeConfig } = getConfig();
+
+if (typeof window !== 'undefined' && publicRuntimeConfig.NEXT_PUBLIC_AMPLITUDE_ID) {
+  init(publicRuntimeConfig.NEXT_PUBLIC_AMPLITUDE_ID);
 }
 
 const client = new QueryClient({
@@ -30,7 +33,7 @@ const poppinsFont = Poppins({
   subsets: ['latin'],
 });
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function MyApp({ Component, pageProps }: AppProps) {
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
     key: 'color-scheme',
     defaultValue: 'dark',
@@ -95,3 +98,10 @@ export default function App({ Component, pageProps }: AppProps) {
     </>
   );
 }
+
+MyApp.getInitialProps = async (appContext: any) => {
+  // calls page's `getInitialProps` and fills `appProps.pageProps`
+  const appProps = await App.getInitialProps(appContext);
+
+  return { ...appProps };
+};

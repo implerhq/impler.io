@@ -1,3 +1,4 @@
+import getConfig from 'next/config';
 import { API_KEYS, VARIABLES } from '@config';
 
 interface Route {
@@ -77,6 +78,8 @@ function handleResponseStatusAndContentType(response: Response) {
   else throw new Error(`Unsupported response content-type: ${contentType}`);
 }
 
+const { publicRuntimeConfig } = getConfig();
+
 export async function commonApi<T>(
   key: keyof typeof API_KEYS,
   {
@@ -88,7 +91,7 @@ export async function commonApi<T>(
 ) {
   try {
     const route = routes[key];
-    const url = process.env.NEXT_PUBLIC_API_BASE_URL + route.url(parameters);
+    const url = publicRuntimeConfig.NEXT_PUBLIC_API_BASE_URL + route.url(parameters);
     const method = route.method;
 
     const response = await fetch(url, {
