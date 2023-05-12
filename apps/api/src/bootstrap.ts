@@ -90,7 +90,7 @@ export async function bootstrap(expressApp?): Promise<INestApplication> {
 const corsOptionsDelegate = function (req, callback) {
   const corsOptions = {
     credentials: true,
-    origin: [process.env.FRONT_BASE_URL, process.env.WEB_BASE_URL],
+    origin: [process.env.WIDGET_BASE_URL, process.env.WEB_BASE_URL],
     preflightContinue: false,
     allowedHeaders: ['Content-Type', ACCESS_KEY_NAME, 'sentry-trace', 'baggage'],
     methods: ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],

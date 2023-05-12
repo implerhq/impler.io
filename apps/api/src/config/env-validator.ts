@@ -18,7 +18,7 @@ const validators: { [K in keyof any]: ValidatorSpec<any[K]> } = {
   AWS_ACCESS_KEY_ID: str({ default: '' }),
   AWS_SECRET_ACCESS_KEY: str({ default: '' }),
   // urls
-  FRONT_BASE_URL: url(),
+  WIDGET_BASE_URL: url(),
   WEB_BASE_URL: url(),
   // auth
   COOKIE_DOMAIN: str(),
