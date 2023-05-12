@@ -18,8 +18,8 @@ export function getContextPath(component: ImplerComponentEnum) {
       }
       break;
     case ImplerComponentEnum.WEB:
-      if (process.env.FRONT_BASE_CONTEXT_PATH) {
-        contextPath += process.env.FRONT_BASE_CONTEXT_PATH + '/';
+      if (process.env.WEB_CONTEXT_PATH) {
+        contextPath += process.env.WEB_CONTEXT_PATH + '/';
       }
       break;
     case ImplerComponentEnum.WIDGET:

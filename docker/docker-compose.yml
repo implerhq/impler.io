@@ -22,7 +22,8 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV}
       PORT: ${API_PORT}
-      FRONT_BASE_URL: ${WIDGET_URL}
+      WIDGET_BASE_URL: ${WIDGET_BASE_URL}
+      WEB_BASE_URL: ${WEB_BASE_URL}
       MONGO_URL: ${MONGO_URL}
       S3_REGION: ${S3_REGION}
       S3_LOCAL_STACK: ${S3_LOCAL_STACK}
@@ -71,7 +72,7 @@ services:
     image: "ghcr.io/knovator/impler/embed:0.2.0"
     container_name: embed
     environment:
-      WIDGET_URL: ${WIDGET_AMPLITUDE_ID}
+      WIDGET_URL: ${WIDGET_BASE_URL}
     ports:
       - 4701:4701
   web:
