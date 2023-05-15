@@ -7,9 +7,10 @@ import { SectionBlock } from '@ui/section-block';
 interface SnippetProps {
   projectId: string;
   templateId: string;
+  accessToken?: string;
 }
 
-export function Snippet({ projectId, templateId }: SnippetProps) {
+export function Snippet({ projectId, templateId, accessToken }: SnippetProps) {
   return (
     <Flex gap="sm" direction="column">
       <Text>
@@ -35,7 +36,7 @@ export function Snippet({ projectId, templateId }: SnippetProps) {
           Now add <Code>Import</Code> Button from <Code>@impler/react</Code> which opens the Widget.
         </Text>
         <Prism language="tsx">{`import { Import } from '@impler/react';
-        \n<Button projectId="${projectId}" templateId="${templateId}">\nImport\n</Button>`}</Prism>
+        \n<Button projectId="${projectId}" templateId="${templateId}" accessToken="${accessToken}">\nImport\n</Button>`}</Prism>
         <Text style={{ lineHeight: '1.5rem', color: colors.TXTSecondaryDark }}>
           You can get to know about props on{' '}
           <a href={CONSTANTS.REACT_DOCUMENTATION_URL} target="_blank" rel="noreferrer">

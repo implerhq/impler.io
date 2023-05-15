@@ -80,7 +80,9 @@ export default function ImportDetails({ template }: ImportDetailProps) {
           {
             value: 'snippet',
             title: 'Snippet',
-            content: <Snippet templateId={template._id} projectId={template._projectId} />,
+            content: (
+              <Snippet templateId={template._id} projectId={template._projectId} accessToken={profile?.accessToken} />
+            ),
           },
           {
             value: 'output',
