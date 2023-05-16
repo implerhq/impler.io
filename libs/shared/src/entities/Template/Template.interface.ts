@@ -6,6 +6,7 @@ export interface ITemplate {
   chunkSize: number;
   sampleFileUrl?: string;
   _projectId: string;
+  totalColumns: number;
   totalUploads: number;
   totalRecords: number;
   totalInvalidRecords: number;

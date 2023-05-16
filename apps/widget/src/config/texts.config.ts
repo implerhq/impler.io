@@ -64,7 +64,7 @@ export const TEXTS = {
   NOTIFICATIONS: {
     INCOMPLETE_TEMPLATE: {
       title: 'Oops!',
-      message: 'It looks like selected Template is Incomplete, Please select another one!',
+      message: 'This import is empty! Please try again with a different import.',
     },
     TEMPLATE_NOT_FOUND: {
       title: 'Oops!',

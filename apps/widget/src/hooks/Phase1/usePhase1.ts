@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useImplerState } from '@store/impler.context';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -36,6 +36,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     onError(error: IErrorObject) {
       notifier.showError({ message: error.message, title: error.error });
     },
+    refetchOnWindowFocus: true,
   });
   const { isLoading: isUploadLoading, mutate: submitUpload } = useMutation<IUpload, IErrorObject, IUploadValues>(
     ['upload'],
@@ -68,9 +69,27 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     register,
     trigger,
     getValues,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm<IFormvalues>();
+
+  useEffect(() => {
+    if (templateId) setValue('templateId', templateId);
+  }, []);
+
+  const findTemplate = (): ITemplate | undefined => {
+    let foundTemplate: ITemplate | undefined;
+    const selectedTemplateValue = getValues('templateId');
+    if (selectedTemplateValue && dataTemplates) {
+      foundTemplate = dataTemplates.find((templateItem) => templateItem._id === selectedTemplateValue);
+    }
+    if (!foundTemplate) notifier.showError('TEMPLATE_NOT_FOUND');
+    else if (foundTemplate.totalColumns === variables.baseIndex) notifier.showError('INCOMPLETE_TEMPLATE');
+    else return foundTemplate;
+
+    return undefined;
+  };
 
   const onDownload = async () => {
     setIsDownloadInProgress(true);
@@ -81,37 +100,24 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
       return;
     }
 
-    let foundTemplate: ITemplate | undefined;
-    const selectedTemplateValue = getValues('templateId');
-    if (selectedTemplateValue && dataTemplates) {
-      foundTemplate = dataTemplates.find((templateItem) => templateItem._id === selectedTemplateValue);
-    }
-
+    const foundTemplate = findTemplate();
     if (foundTemplate && foundTemplate.sampleFileUrl) {
       getSignedUrl([foundTemplate.sampleFileUrl, foundTemplate.name + ' (sample).csv']);
-    } else if (foundTemplate && !foundTemplate.sampleFileUrl) notifier.showError('INCOMPLETE_TEMPLATE');
-    else notifier.showError('TEMPLATE_NOT_FOUND');
+    }
     setIsDownloadInProgress(false);
   };
 
   const onSubmit = (submitData: IFormvalues) => {
-    if ((templateId || submitData.templateId) && dataTemplates) {
-      const foundTemplate = dataTemplates.find(
-        (templateItem) => templateItem._id === templateId || templateItem._id === submitData.templateId
-      );
-      if (foundTemplate) {
-        submitData.templateId = foundTemplate._id;
-        logAmplitudeEvent('UPLOAD', { fileSize: submitData.file.size, fileType: submitData.file.type });
-        submitUpload({
-          ...submitData,
-          authHeaderValue,
-          extra,
-        });
-
-        return;
-      }
+    const foundTemplate = findTemplate();
+    if (foundTemplate) {
+      submitData.templateId = foundTemplate._id;
+      logAmplitudeEvent('UPLOAD', { fileSize: submitData.file.size, fileType: submitData.file.type });
+      submitUpload({
+        ...submitData,
+        authHeaderValue,
+        extra,
+      });
     }
-    notifier.showError('TEMPLATE_NOT_FOUND');
   };
 
   return {

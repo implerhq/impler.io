@@ -1,13 +1,35 @@
 import { Injectable } from '@nestjs/common';
-import { TemplateRepository } from '@impler/dal';
-import { TemplateResponseDto } from 'app/template/dtos/template-response.dto';
+import { TemplateRepository, CommonRepository } from '@impler/dal';
+import { WidgetTemplateResponseDto } from 'app/template/dtos/widget-templates-response.dto';
 
 @Injectable()
 export class GetTemplates {
-  constructor(private templateRepository: TemplateRepository) {}
+  constructor(private templateRepository: TemplateRepository, private commonRepository: CommonRepository) {}
 
-  async execute(_projectId: string): Promise<TemplateResponseDto[]> {
-    const templates = await this.templateRepository.find({ _projectId });
+  async execute(_projectId: string): Promise<WidgetTemplateResponseDto[]> {
+    const templates = await this.templateRepository.aggregate([
+      {
+        $match: {
+          _projectId: this.commonRepository.generateMongoId(_projectId),
+        },
+      },
+      { $addFields: { templateId: { $toString: '$_id' } } },
+      {
+        $lookup: {
+          from: 'columns',
+          localField: 'templateId',
+          foreignField: '_templateId',
+          as: 'columns',
+          pipeline: [
+            {
+              $project: {
+                _id: 1,
+              },
+            },
+          ],
+        },
+      },
+    ]);
 
     return templates.map((template) => ({
       _projectId: template._projectId,
@@ -20,6 +42,7 @@ export class GetTemplates {
       totalInvalidRecords: template.totalInvalidRecords,
       totalRecords: template.totalRecords,
       authHeaderName: template.authHeaderName,
+      totalColumns: template.columns?.length,
     }));
   }
 }
