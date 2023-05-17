@@ -113,6 +113,9 @@ class Impler {
   };
 
   postMessageToContentWindow(type: EventTypesEnum, value?: any): void {
+    if (!this.listeners['message']) {
+      return;
+    }
     this.listeners['message']({ type, value });
   }
 
