@@ -48,4 +48,7 @@ export type EventCalls =
     }
   | {
       type: EventTypesEnum.CLOSE_WIDGET;
+    }
+  | {
+      type: EventTypesEnum.WIDGET_READY;
     };

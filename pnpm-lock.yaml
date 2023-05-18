@@ -255,6 +255,7 @@ importers:
       '@amplitude/analytics-browser': ^1.10.3
       '@emotion/react': ^11.10.5
       '@emotion/server': ^11.10.0
+      '@impler/react': workspace:^0.2.0
       '@impler/shared': workspace:^0.2.0
       '@mantine/carousel': 6.0.6
       '@mantine/core': 6.0.6
@@ -289,6 +290,7 @@ importers:
       '@amplitude/analytics-browser': 1.10.3
       '@emotion/react': 11.10.5_tthezkgec2o3jwmbjlr4nrwrji
       '@emotion/server': 11.10.0
+      '@impler/react': link:../../packages/react
       '@impler/shared': link:../../libs/shared
       '@mantine/carousel': 6.0.6_jmgnayqqxrunhbllhgwajrdemm
       '@mantine/core': 6.0.6_ueioib7soyzozf2zgopdomeqve
@@ -13304,7 +13306,7 @@ packages:
       mississippi: 3.0.0
       mkdirp: 0.5.6
       move-concurrently: 1.0.1
-      promise-inflight: 1.0.1_bluebird@3.7.2
+      promise-inflight: 1.0.1
       rimraf: 2.7.1
       ssri: 6.0.2
       unique-filename: 1.1.1
@@ -23627,16 +23629,6 @@ packages:
     peerDependenciesMeta:
       bluebird:
         optional: true
-
-  /promise-inflight/1.0.1_bluebird@3.7.2:
-    resolution: {integrity: sha512-6zWPyEOFaQBJYcGMHBKTKJ3u6TBsnMFOIZSa6ce1e/ZrrsOlnHRHbabMjLiBYKp+n44X9eUI6VUPaukCXHuG4g==}
-    peerDependencies:
-      bluebird: '*'
-    peerDependenciesMeta:
-      bluebird:
-        optional: true
-    dependencies:
-      bluebird: 3.7.2
 
   /promise-retry/2.0.1:
     resolution: {integrity: sha512-y+WKFlBR8BGXnsNlIHFGPZmyDf3DFMoLhaflAnyZgV6rG6xu+JwesTo2Q9R6XwYmtmwAFCkAk3e35jEdoeh/3g==}
