@@ -5,7 +5,7 @@ import { EventCalls, UploadTemplateData, UploadData } from '../components/button
 
 interface UseImplerProps {
   projectId: string;
-  templateId: string;
+  templateId?: string;
   accessToken?: string;
   primaryColor?: string;
   authHeaderValue?: string;
