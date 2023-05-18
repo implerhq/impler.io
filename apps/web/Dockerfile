@@ -10,6 +10,7 @@ COPY package.json .
 COPY apps/web ./apps/web
 COPY apps/web/.example.env ./apps/web/.env
 COPY libs/shared ./libs/shared
+COPY packages/react ./packages/react
 
 COPY tsconfig.json .
 COPY tsconfig.base.json .
