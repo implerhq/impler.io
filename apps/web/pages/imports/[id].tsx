@@ -1,12 +1,11 @@
 import Link from 'next/link';
-import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { GetServerSideProps } from 'next';
 import { Flex, Group, Title } from '@mantine/core';
 
 import { commonApi } from '@libs/api';
 import { ITemplate } from '@impler/shared';
-import { useImpler } from '@hooks/useImpler';
+import { useImpler } from '@impler/react';
 import { useImportDetails } from '@hooks/useImportDetails';
 import { API_KEYS, CONSTANTS, ROUTES, colors } from '@config';
 
@@ -30,19 +29,13 @@ interface ImportDetailProps {
 
 export default function ImportDetails({ template }: ImportDetailProps) {
   const { onUpdateClick, onDeleteClick, templateData, profile, onSpreadsheetImported } = useImportDetails({ template });
-  const { init, onImportClick, isImplerInitiated } = useImpler({
+  const { showWidget, isImplerInitiated } = useImpler({
     templateId: template._id,
     projectId: template._projectId,
     accessToken: profile?.accessToken,
     primaryColor: colors.blue,
     onUploadComplete: onSpreadsheetImported,
   });
-
-  useEffect(() => {
-    if (profile?.accessToken && template._projectId) {
-      init();
-    }
-  }, [init, profile?.accessToken, template._projectId]);
 
   return (
     <Flex gap="lg" direction="column" h="100%">
@@ -54,7 +47,7 @@ export default function ImportDetails({ template }: ImportDetailProps) {
           <Title order={2}>{templateData.name}</Title>
         </Group>
         <Group spacing="xs">
-          <Button disabled={!isImplerInitiated} onClick={onImportClick}>
+          <Button disabled={!isImplerInitiated} onClick={showWidget}>
             Import
           </Button>
           <Button onClick={onUpdateClick}>

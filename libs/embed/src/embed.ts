@@ -26,6 +26,8 @@ class Impler {
 
   private initPayload: any;
 
+  private isWidgetReady: boolean = false;
+
   private isAuthenticated: boolean = false;
 
   private authenticationError?: string;
@@ -95,6 +97,17 @@ class Impler {
     if (!!event && !!event.data && !!event.data.type) {
       // eslint-disable-next-line default-case
       switch (event.data.type) {
+        case EventTypesEnum.WIDGET_READY:
+          this.isWidgetReady = true;
+          this.iframe?.contentWindow?.postMessage(
+            {
+              type: EventTypesEnum.INIT_IFRAME,
+              value: this.initPayload,
+            },
+            '*'
+          );
+          this.postMessageToContentWindow(EventTypesEnum.WIDGET_READY);
+          break;
         case EventTypesEnum.CLOSE_WIDGET:
           this.hideWidget();
           this.postMessageToContentWindow(event.data.type);
@@ -120,19 +133,9 @@ class Impler {
   }
 
   initializeIframe = (projectId: string) => {
+    let iframe: HTMLIFrameElement;
     if (!document.getElementById(IFRAME_ID)) {
       const iframe = document.createElement('iframe');
-      window.addEventListener(
-        'message',
-        (event) => {
-          if (!event.target || event?.data?.type !== EventTypesEnum.WIDGET_READY) {
-            return;
-          }
-
-          iframe?.contentWindow?.postMessage({ type: EventTypesEnum.INIT_IFRAME, value: this.initPayload }, '*');
-        },
-        true
-      );
 
       iframe.style.backgroundColor = 'transparent';
       iframe.src = `${IFRAME_URL}/${projectId}?`;
@@ -149,6 +152,19 @@ class Impler {
       iframe.style.zIndex = Number.MAX_SAFE_INTEGER.toString();
       (iframe as any).crossorigin = 'anonymous';
       this.iframe = iframe;
+    } else {
+      iframe = document.getElementById(IFRAME_ID) as HTMLIFrameElement;
+      this.iframe = iframe;
+    }
+    if (this.isWidgetReady) {
+      this.iframe?.contentWindow?.postMessage(
+        {
+          type: EventTypesEnum.INIT_IFRAME,
+          value: this.initPayload,
+        },
+        '*'
+      );
+      this.postMessageToContentWindow(EventTypesEnum.WIDGET_READY);
     }
   };
 
