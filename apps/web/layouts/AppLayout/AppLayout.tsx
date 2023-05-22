@@ -1,6 +1,10 @@
 import Head from 'next/head';
 import Image from 'next/image';
+import getConfig from 'next/config';
 import { PropsWithChildren, useRef } from 'react';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import TawkMessengerReact from '@tawk.to/tawk-messenger-react';
 import { Flex, Group, LoadingOverlay, Select, Stack, Title, useMantineColorScheme } from '@mantine/core';
 
 import { Import } from '@assets/icons';
@@ -9,13 +13,17 @@ import LogoBlack from '@assets/images/Logo-black.svg';
 import LogoWhite from '@assets/images/Logo-white.svg';
 import { LogoutIcon } from '@assets/icons/Logout.icon';
 
+import { CONSTANTS } from '@config';
 import { useApp } from '@hooks/useApp';
 import { NavItem } from '@ui/nav-item';
 import { UserMenu } from '@ui/user-menu';
 import { track } from '@libs/amplitude';
 import { ColorSchemeToggle } from '@ui/toggle-color-scheme';
 
+const { publicRuntimeConfig } = getConfig();
+
 export function AppLayout({ children }: PropsWithChildren) {
+  const twakRef = useRef<any>();
   const { classes } = useStyles();
   const navRef = useRef<HTMLElement>(null);
   const { colorScheme } = useMantineColorScheme();
@@ -88,6 +96,23 @@ export function AppLayout({ children }: PropsWithChildren) {
           </div>
         </main>
       </div>
+      {publicRuntimeConfig.NEXT_PUBLIC_TAWK_PROPERTY_ID && publicRuntimeConfig.NEXT_PUBLIC_TAWK_WIDGET_ID ? (
+        <TawkMessengerReact
+          propertyId={publicRuntimeConfig.NEXT_PUBLIC_TAWK_PROPERTY_ID}
+          widgetId={publicRuntimeConfig.NEXT_PUBLIC_TAWK_WIDGET_ID}
+          ref={twakRef}
+          onLoad={() => {
+            if (typeof window !== 'undefined' && localStorage.getItem(CONSTANTS.PROFILE_STORAGE_NAME)) {
+              const user = JSON.parse(localStorage.getItem(CONSTANTS.PROFILE_STORAGE_NAME)!);
+              twakRef.current?.setAttributes({
+                id: user._id,
+                name: user.firstName,
+                email: user.email,
+              });
+            }
+          }}
+        />
+      ) : null}
     </>
   );
 }
