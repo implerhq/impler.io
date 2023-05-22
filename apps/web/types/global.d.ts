@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
+declare module '@tawk.to/tawk-messenger-react';
 
 namespace NodeJS {
   interface ProcessEnv {
     NEXT_PUBLIC_API_BASE_URL: string;
     NEXT_PUBLIC_EMBED_URL: string;
     NEXT_PUBLIC_AMPLITUDE_ID: string;
+    NEXT_PUBLIC_TAWK_PROPERTY_ID: string;
+    NEXT_PUBLIC_TAWK_WIDGET_ID: string;
   }
 }
 
