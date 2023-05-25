@@ -260,6 +260,7 @@ importers:
       '@impler/shared': workspace:^0.3.0
       '@mantine/carousel': 6.0.6
       '@mantine/core': 6.0.6
+      '@mantine/dates': 6.0.6
       '@mantine/hooks': 6.0.6
       '@mantine/modals': 6.0.6
       '@mantine/next': 6.0.6
@@ -285,7 +286,6 @@ importers:
       react: 18.2.0
       react-ace: ^10.1.0
       react-chartjs-2: ^5.2.0
-      react-datepicker: ^4.11.0
       react-dom: 18.2.0
       react-hook-form: ^7.39.1
       rimraf: ^3.0.2
@@ -301,6 +301,7 @@ importers:
       '@impler/shared': link:../../libs/shared
       '@mantine/carousel': 6.0.6_jmgnayqqxrunhbllhgwajrdemm
       '@mantine/core': 6.0.6_ueioib7soyzozf2zgopdomeqve
+      '@mantine/dates': 6.0.6_7cbxwq2i6ifycwljiccut564ni
       '@mantine/hooks': 6.0.6_react@18.2.0
       '@mantine/modals': 6.0.6_feqrfkte3oaz5jjghkdwfk53i4
       '@mantine/next': 6.0.6_d5xj5jipthoiwqd5a5nbaex2p4
@@ -317,7 +318,6 @@ importers:
       react: 18.2.0
       react-ace: 10.1.0_biqbaboplfbrettd7655fr4n2y
       react-chartjs-2: 5.2.0_jzw32sextkxj6pznyxerjojkqm
-      react-datepicker: 4.11.0_biqbaboplfbrettd7655fr4n2y
       react-dom: 18.2.0_react@18.2.0
       react-hook-form: 7.39.1_react@18.2.0
       typescript: 4.9.5
@@ -6521,6 +6521,21 @@ packages:
     transitivePeerDependencies:
       - '@emotion/react'
       - '@types/react'
+    dev: false
+
+  /@mantine/dates/6.0.6_7cbxwq2i6ifycwljiccut564ni:
+    resolution: {integrity: sha512-eIBnvugWZp0ComzAaiIy5tjBXq9G53Q5Fht6SPyFBxXU/NZ/ZQhLq49nlFyLBpuZQOJ2Ex71S8cv/FMwLaAS4A==}
+    peerDependencies:
+      '@mantine/core': 6.0.6
+      '@mantine/hooks': 6.0.6
+      dayjs: '>=1.0.0'
+      react: '>=16.8.0'
+    dependencies:
+      '@mantine/core': 6.0.6_ueioib7soyzozf2zgopdomeqve
+      '@mantine/hooks': 6.0.6_react@18.2.0
+      '@mantine/utils': 6.0.6_react@18.2.0
+      dayjs: 1.11.7
+      react: 18.2.0
     dev: false
 
   /@mantine/dropzone/5.6.3_hliqdvg4trnmlenfv3ync25tfa:
@@ -13805,10 +13820,6 @@ packages:
       validator: 13.7.0
     dev: false
 
-  /classnames/2.3.2:
-    resolution: {integrity: sha512-CSbhY4cFEJRe6/GQzIk5qXZ4Jeg5pcsP7b5peFSDpffpe1cqjASH/n9UTjBwOp6XpMSTwQ8Za2K5V02ueA7Tmw==}
-    dev: false
-
   /clean-css/4.2.4:
     resolution: {integrity: sha512-EJUDT7nDVFDvaQgAo2G/PJvxmp1o/c6iXLbswsBbUFXi1Nr+AjA2cKmfbKDMjMvzEe75g3P6JkaDDAKk96A85A==}
     engines: {node: '>= 4.0'}
@@ -14842,6 +14853,10 @@ packages:
   /dateformat/3.0.3:
     resolution: {integrity: sha512-jyCETtSl3VMZMWeRo7iY1FL19ges1t55hMo5yaam4Jrsm5EPL89UQkoQRyiI+Yf4k8r2ZpdngkV8hr1lIdjb3Q==}
     dev: true
+
+  /dayjs/1.11.7:
+    resolution: {integrity: sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==}
+    dev: false
 
   /debug/2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
@@ -24147,22 +24162,6 @@ packages:
       react: 18.2.0
     dev: false
 
-  /react-datepicker/4.11.0_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-50n93o7mQwBEhg05tbopjFKgs8qgi8VBCAOMC4VqrKut72eAjESc/wXS/k5hRtnP0oe2FCGw7MJuIwh37wuXOw==}
-    peerDependencies:
-      react: ^16.9.0 || ^17 || ^18
-      react-dom: ^16.9.0 || ^17 || ^18
-    dependencies:
-      '@popperjs/core': 2.11.7
-      classnames: 2.3.2
-      date-fns: 2.29.3
-      prop-types: 15.8.1
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-      react-onclickoutside: 6.13.0_biqbaboplfbrettd7655fr4n2y
-      react-popper: 2.3.0_d52dtujcogewjimhlbpfze4rs4
-    dev: false
-
   /react-dev-utils/12.0.1_7cuulgboaz6suilqxjt4pdw23a:
     resolution: {integrity: sha512-84Ivxmr17KjUupyqzFode6xKhjwuEJDROWKJy/BthkL7Wn6NJ8h4WE6k/exAv6ImS+0oZLRRW5j/aINMHyeGeQ==}
     engines: {node: '>=14'}
@@ -24350,16 +24349,6 @@ packages:
 
   /react-is/18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
-
-  /react-onclickoutside/6.13.0_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-ty8So6tcUpIb+ZE+1HAhbLROvAIJYyJe/1vRrrcmW+jLsaM+/powDRqxzo6hSh9CuRZGSL1Q8mvcF5WRD93a0A==}
-    peerDependencies:
-      react: ^15.5.x || ^16.x || ^17.x || ^18.x
-      react-dom: ^15.5.x || ^16.x || ^17.x || ^18.x
-    dependencies:
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-    dev: false
 
   /react-popper/2.3.0_d52dtujcogewjimhlbpfze4rs4:
     resolution: {integrity: sha512-e1hj8lL3uM+sgSR4Lxzn5h1GxBlpa4CQz0XLF8kx4MDrDRWY0Ena4c97PUeSX9i5W3UAfDP0z0FXCTQkoXUl3Q==}

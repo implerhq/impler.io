@@ -1,25 +1,20 @@
 import { useState } from 'react';
-import DatePicker from 'react-datepicker';
 import { Group, Stack, Title } from '@mantine/core';
 
 import { Input } from '@ui/input';
 import { Table } from '@ui/table';
-import { Button } from '@ui/button';
 import { Pagination } from '@ui/pagination';
-import { CalendarIcon } from '@assets/icons/Calendar.icon';
+import { DateInput } from '@ui/date-input';
 
 export function History() {
-  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date>();
 
   return (
     <Stack spacing="md">
       <Title order={2}>Import History</Title>
-      <Group>
-        <Input />
-        <Button variant="outline" color="blue" onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}>
-          <CalendarIcon />
-        </Button>
-        {isDatePickerOpen && <DatePicker selected={new Date()} onChange={() => {}} />}
+      <Group spacing="xs" style={{ position: 'relative' }}>
+        <Input placeholder="Search imports by name..." />
+        <DateInput placeholder="DD/MM/YYYY" value={selectedDate} onChange={setSelectedDate} maw={200} />
       </Group>
       <Stack spacing="sm">
         <Table
