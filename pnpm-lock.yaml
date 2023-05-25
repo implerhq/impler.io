@@ -403,6 +403,7 @@ importers:
       '@impler/shared': ^0.3.0
       '@types/node': ^18.7.18
       class-transformer: ^0.5.1
+      date-fns: ^2.30.0
       eslint-plugin-prettier: ^4.2.1
       mongoose: ^6.6.1
       nodemon: ^2.0.20
@@ -413,6 +414,7 @@ importers:
     dependencies:
       '@impler/shared': link:../shared
       class-transformer: 0.5.1
+      date-fns: 2.30.0
       mongoose: 6.6.1
       rimraf: 3.0.2
     devDependencies:
@@ -14849,6 +14851,13 @@ packages:
   /date-fns/2.29.3:
     resolution: {integrity: sha512-dDCnyH2WnnKusqvZZ6+jA1O51Ibt8ZMRNkDZdyAyK4YfbDwa/cEmuztzG5pk6hqlp9aSBPYcjOlktquahGwGeA==}
     engines: {node: '>=0.11'}
+
+  /date-fns/2.30.0:
+    resolution: {integrity: sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==}
+    engines: {node: '>=0.11'}
+    dependencies:
+      '@babel/runtime': 7.21.0
+    dev: false
 
   /dateformat/3.0.3:
     resolution: {integrity: sha512-jyCETtSl3VMZMWeRo7iY1FL19ges1t55hMo5yaam4Jrsm5EPL89UQkoQRyiI+Yf4k8r2ZpdngkV8hr1lIdjb3Q==}
