@@ -11,4 +11,10 @@ export default {
 const Template: ComponentStory<typeof ImportCard> = (args: any) => <ImportCard {...args} />;
 
 export const Primary = Template.bind({});
-Primary.args = {};
+Primary.args = {
+  title: 'Import 1',
+  imports: 100,
+  totalRecords: 1000,
+  errorRecords: 10,
+  href: '/',
+};

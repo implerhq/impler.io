@@ -46,7 +46,7 @@ const getRootOutlineStyles = (theme: MantineTheme, color: ButtonColors = 'blue',
   backgroundColor: 'transparent',
   width: fullWidth ? '100%' : 'max-content',
   transition: 'color 0.2s, background-color 0.2s, border-color ease-in-out',
-  border: `1px solid ${theme.colorScheme === 'dark' ? colors.white : colors.black}`,
+  border: `1px solid ${theme.colorScheme === 'dark' ? colors.StrokeDark : colors.StrokeLight}`,
   color: theme.colorScheme === 'dark' ? colors.white : colors.black,
   '> svg': {
     color: theme.colorScheme === 'dark' ? colors.white : colors.black,

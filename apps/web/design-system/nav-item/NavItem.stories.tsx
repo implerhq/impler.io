@@ -1,7 +1,7 @@
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { NavItem } from './NavItem';
-import { Import } from '@assets/icons/Import.icon';
+import { ImportIcon } from '@assets/icons/Import.icon';
 
 export default {
   title: 'NavItem',
@@ -13,7 +13,7 @@ const Template: ComponentStory<typeof NavItem> = (args: any) => <NavItem {...arg
 
 export const Primary = Template.bind({});
 Primary.args = {
-  icon: <Import size="xl" />,
+  icon: <ImportIcon size="xl" />,
   title: 'Import',
   href: '/imports',
 };
