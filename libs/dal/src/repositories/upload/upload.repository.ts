@@ -87,7 +87,76 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
       weekly: stats.weekly || 0,
     };
   }
+  async getList(_projectId: string, name?: string, page?: number, limit?: number) {
+    const templateIds = await this.templateRepository.getProjectTemplateIds(_projectId, name);
 
+    const uploads = await this.aggregate([
+      {
+        $match: {
+          _templateId: {
+            $in: templateIds,
+          },
+        },
+      },
+      {
+        $facet: {
+          totalRecords: [
+            {
+              $group: {
+                _id: null,
+                count: { $sum: 1 },
+              },
+            },
+          ],
+          uploads: [
+            ...(typeof page === 'number' && typeof limit === 'number'
+              ? [{ $skip: (page - 1) * limit }, { $limit: limit }]
+              : []),
+            { $addFields: { templateId: { $toObjectId: '$_templateId' } } },
+            {
+              $lookup: {
+                from: 'templates',
+                localField: 'templateId',
+                foreignField: '_id',
+                as: '_template',
+              },
+            },
+            {
+              $unwind: {
+                path: '$_template',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $sort: {
+                createdAt: -1,
+              },
+            },
+            {
+              $project: {
+                _id: 1,
+                name: 1,
+                uploadedDate: 1,
+                totalRecords: 1,
+                validRecords: 1,
+                status: 1,
+                _template: {
+                  name: 1,
+                },
+              },
+            },
+          ],
+        },
+      },
+    ]);
+    if (!uploads[0]) return { totalRecords: 0, uploads: [] };
+    const { totalRecords, uploads: result } = uploads[0];
+
+    return {
+      totalRecords: totalRecords[0] ? totalRecords[0].count : 0,
+      uploads: result,
+    };
+  }
   async getStatsFeed(_projectId: string, days: number) {
     const now: number = Date.now();
     const daysBefore = subWeeks(now, days);

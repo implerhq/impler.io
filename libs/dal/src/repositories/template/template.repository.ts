@@ -8,14 +8,22 @@ export class TemplateRepository extends BaseRepository<TemplateEntity> {
     super(Template, TemplateEntity);
   }
 
-  async getProjectTemplateIds(_projectId: string): Promise<string[]> {
+  async getProjectTemplateIds(_projectId: string, name?: string): Promise<string[]> {
     const ids = await this.find(
       {
         _projectId: new Types.ObjectId(_projectId),
+        ...(name
+          ? {
+              name: {
+                $regex: name || '',
+                $options: 'i',
+              },
+            }
+          : {}),
       },
       '_id'
     );
 
-    return ids.map((id) => id._id);
+    return ids?.map((id) => id._id);
   }
 }
