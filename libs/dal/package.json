@@ -18,6 +18,7 @@
   "dependencies": {
     "@impler/shared": "^0.3.0",
     "class-transformer": "^0.5.1",
+    "date-fns": "^2.30.0",
     "mongoose": "^6.6.1",
     "rimraf": "^3.0.2"
   },

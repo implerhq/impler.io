@@ -9,7 +9,8 @@ interface InputProps {
   placeholder?: string;
   register?: any;
   pattern?: string;
-  type?: 'text' | 'email' | 'number' | 'url';
+  icon?: React.ReactNode;
+  type?: 'text' | 'email' | 'number' | 'url' | 'search';
 }
 
 export function Input({
@@ -17,6 +18,7 @@ export function Input({
   type = 'text',
   disabled,
   error,
+  icon,
   placeholder,
   pattern,
   dataAutoFocus,
@@ -27,6 +29,7 @@ export function Input({
   return (
     <MantineInput
       type={type}
+      icon={icon}
       data-autofocus={dataAutoFocus}
       required={required}
       placeholder={placeholder}

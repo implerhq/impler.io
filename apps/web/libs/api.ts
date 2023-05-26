@@ -67,6 +67,10 @@ const routes: Record<string, Route> = {
     url: (columnId) => `/v1/column/${columnId}`,
     method: 'DELETE',
   },
+  [API_KEYS.IMPORTS_LIST]: {
+    url: (projectId) => `/v1/activity/${projectId}/history`,
+    method: 'GET',
+  },
 };
 
 function handleResponseStatusAndContentType(response: Response) {
@@ -78,6 +82,16 @@ function handleResponseStatusAndContentType(response: Response) {
   else throw new Error(`Unsupported response content-type: ${contentType}`);
 }
 
+function queryObjToString(obj?: Record<string, string | number | undefined>): string {
+  const str = [];
+  for (const key in obj)
+    if (obj.hasOwnProperty(key) && typeof obj[key] !== 'undefined') {
+      str.push(encodeURIComponent(key) + '=' + encodeURIComponent(obj[key] as any));
+    }
+
+  return str.join('&');
+}
+
 const { publicRuntimeConfig } = getConfig();
 
 export async function commonApi<T>(
@@ -87,11 +101,19 @@ export async function commonApi<T>(
     body,
     cookie,
     headers,
-  }: { parameters?: string[]; body?: any; headers?: Record<string, string>; cookie?: string }
+    query,
+  }: {
+    parameters?: string[];
+    body?: any;
+    headers?: Record<string, string>;
+    cookie?: string;
+    query?: Record<string, string | number | undefined>;
+  }
 ) {
   try {
     const route = routes[key];
-    const url = publicRuntimeConfig.NEXT_PUBLIC_API_BASE_URL + route.url(parameters);
+    let url = publicRuntimeConfig.NEXT_PUBLIC_API_BASE_URL + route.url(parameters);
+    url = url + '?' + queryObjToString(query);
     const method = route.method;
 
     const response = await fetch(url, {

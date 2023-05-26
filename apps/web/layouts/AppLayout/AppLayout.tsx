@@ -7,7 +7,8 @@ import { PropsWithChildren, useRef } from 'react';
 import TawkMessengerReact from '@tawk.to/tawk-messenger-react';
 import { Flex, Group, LoadingOverlay, Select, Stack, Title, useMantineColorScheme } from '@mantine/core';
 
-import { Import } from '@assets/icons';
+import { ImportIcon } from '@assets/icons/Import.icon';
+import { ActivitiesIcon } from '@assets/icons/Activities.icon';
 import useStyles from './AppLayout.styles';
 import LogoBlack from '@assets/images/Logo-black.svg';
 import LogoWhite from '@assets/images/Logo-white.svg';
@@ -19,10 +20,12 @@ import { NavItem } from '@ui/nav-item';
 import { UserMenu } from '@ui/user-menu';
 import { track } from '@libs/amplitude';
 import { ColorSchemeToggle } from '@ui/toggle-color-scheme';
+import { useRouter } from 'next/router';
 
 const { publicRuntimeConfig } = getConfig();
 
 export function AppLayout({ children }: PropsWithChildren) {
+  const router = useRouter();
   const twakRef = useRef<any>();
   const { classes } = useStyles();
   const navRef = useRef<HTMLElement>(null);
@@ -61,7 +64,18 @@ export function AppLayout({ children }: PropsWithChildren) {
             }}
           />
           <Stack spacing="sm" py="xs">
-            <NavItem active href="/imports" icon={<Import size="lg" />} title="Imports" />
+            <NavItem
+              active={router.pathname.includes('/imports')}
+              href="/imports"
+              icon={<ImportIcon size="lg" />}
+              title="Imports"
+            />
+            <NavItem
+              active={router.pathname.includes('/activities')}
+              href="/activities"
+              icon={<ActivitiesIcon size="lg" />}
+              title="Activities"
+            />
           </Stack>
         </aside>
         <main className={classes.main}>

@@ -5,7 +5,7 @@ export type Colors = 'default' | 'primary';
 
 interface CardProps {
   title: string;
-  subtitle: string;
+  subtitle: string | number;
   color?: Colors;
 }
 
