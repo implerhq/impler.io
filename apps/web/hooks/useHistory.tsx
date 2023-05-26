@@ -7,6 +7,7 @@ import { API_KEYS, CONSTANTS, VARIABLES } from '@config';
 import { IErrorObject, IHistoryData } from '@impler/shared';
 
 export function useHistory() {
+  const [date, setDate] = useState<Date>();
   const [limit, setLimit] = useState<number>();
   const [page, setPage] = useState<number>();
   const [name, setName] = useDebouncedState('', VARIABLES.TWO_HUNDREDS);
@@ -24,6 +25,7 @@ export function useHistory() {
           limit,
           page,
           name,
+          date: date?.toLocaleDateString('en-US'),
         },
       }),
     {
@@ -36,14 +38,16 @@ export function useHistory() {
     if (profile?._projectId) {
       fetchHistoryData();
     }
-  }, [profile?._projectId, fetchHistoryData, page, limit, name]);
+  }, [profile?._projectId, fetchHistoryData, page, limit, name, date]);
 
   return {
+    onDateChange: setDate,
     onNameChange: setName,
     onPageChange: setPage,
     onLimitChange: setLimit,
     isHistoryDataLoading,
     historyData,
     name,
+    date,
   };
 }

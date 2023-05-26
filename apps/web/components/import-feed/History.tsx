@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent } from 'react';
 import { Badge, Group, LoadingOverlay, Stack, Title } from '@mantine/core';
 
 import { Input } from '@ui/input';
@@ -11,8 +11,8 @@ import { IHistoryRecord } from '@impler/shared';
 import { SearchIcon } from '@assets/icons/Search.icon';
 
 export function History() {
-  const { historyData, isHistoryDataLoading, onLimitChange, onPageChange, onNameChange, name } = useHistory();
-  const [selectedDate, setSelectedDate] = useState<Date>();
+  const { historyData, isHistoryDataLoading, onLimitChange, onPageChange, onNameChange, onDateChange, name, date } =
+    useHistory();
 
   return (
     <Stack spacing="md">
@@ -28,10 +28,11 @@ export function History() {
           type="search"
         />
         <DateInput
+          allowDeselect
           placeholder="DD/MM/YYYY"
           valueFormat="DD/MM/YYYY"
-          value={selectedDate}
-          onChange={setSelectedDate}
+          value={date}
+          onChange={onDateChange}
           maw={200}
         />
       </Group>

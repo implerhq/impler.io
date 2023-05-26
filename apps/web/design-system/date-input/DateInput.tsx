@@ -11,9 +11,10 @@ interface IDateInputProps {
   placeholder?: string;
   maw?: number;
   valueFormat?: string;
+  allowDeselect?: boolean;
 }
 
-export function DateInput({ onChange, value, placeholder, maw, valueFormat }: IDateInputProps) {
+export function DateInput({ onChange, value, placeholder, maw, valueFormat, allowDeselect }: IDateInputProps) {
   const { colorScheme } = useMantineColorScheme();
   const { classes } = useStyles();
 
@@ -24,6 +25,7 @@ export function DateInput({ onChange, value, placeholder, maw, valueFormat }: ID
       onChange={onChange}
       value={value}
       placeholder={placeholder}
+      allowDeselect={allowDeselect}
       maw={maw}
       valueFormat={valueFormat}
     />

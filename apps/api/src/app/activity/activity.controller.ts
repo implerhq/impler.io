@@ -5,6 +5,7 @@ import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 import { UploadSummary, UploadHistory } from './usecases';
 import { ACCESS_KEY_NAME, Defaults } from '@impler/shared';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
+import { isDateString } from '@shared/helpers/common.helper';
 
 @Controller('/activity')
 @ApiTags('Activity')
@@ -29,13 +30,17 @@ export class ActivityController {
     @Param('projectId', ValidateMongoId) _projectId: string,
     @Query('name') name?: string,
     @Query('page') page = Defaults.ONE,
-    @Query('limit') limit = Defaults.PAGE_LIMIT
+    @Query('limit') limit = Defaults.PAGE_LIMIT,
+    @Query('date') date?: string
   ) {
     if (isNaN(page)) page = Defaults.ONE;
     else page = Number(page);
     if (isNaN(limit)) limit = Defaults.PAGE_LIMIT;
     else limit = Number(limit);
+    if (!isDateString(date)) {
+      date = undefined;
+    }
 
-    return this.uploadHistory.execute(_projectId, name, page, limit);
+    return this.uploadHistory.execute(_projectId, name, date, page, limit);
   }
 }

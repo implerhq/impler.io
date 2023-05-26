@@ -87,8 +87,11 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
       weekly: stats.weekly || 0,
     };
   }
-  async getList(_projectId: string, name?: string, page?: number, limit?: number) {
+  async getList(_projectId: string, name?: string, date?: string, page?: number, limit?: number) {
     const templateIds = await this.templateRepository.getProjectTemplateIds(_projectId, name);
+    const dateLowerStart = date ? new Date(date) : undefined;
+    const dateUpperEnd = date ? new Date(date) : undefined;
+    if (dateUpperEnd) dateUpperEnd.setDate(dateUpperEnd.getDate() + 1);
 
     const uploads = await this.aggregate([
       {
@@ -96,6 +99,13 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
           _templateId: {
             $in: templateIds,
           },
+          ...(dateLowerStart &&
+            dateUpperEnd && {
+              uploadedDate: {
+                $gte: dateLowerStart,
+                $lt: dateUpperEnd,
+              },
+            }),
         },
       },
       {
