@@ -188,7 +188,7 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
         $group: {
           _id: {
             $dateToString: {
-              format: '%Y-%m-%d',
+              format: '%d/%m/%Y',
               date: '$createdAt',
             },
           },

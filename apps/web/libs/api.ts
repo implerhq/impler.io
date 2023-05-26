@@ -71,6 +71,10 @@ const routes: Record<string, Route> = {
     url: (projectId) => `/v1/activity/${projectId}/history`,
     method: 'GET',
   },
+  [API_KEYS.IMPORT_SUMMARY]: {
+    url: (projectId) => `/v1/activity/${projectId}/summary`,
+    method: 'GET',
+  },
 };
 
 function handleResponseStatusAndContentType(response: Response) {
