@@ -31,7 +31,7 @@ export function Table<T extends { _id?: string }>(props: ITableProps<T>) {
       <thead className={classes.heading}>
         <tr>
           {headings.map((heading: IHeadingItem<T>, index: number) => (
-            <th style={{ width: heading.width || '' }} key={index}>
+            <th style={heading.width ? { width: heading.width } : {}} key={index}>
               {heading.title}
             </th>
           ))}

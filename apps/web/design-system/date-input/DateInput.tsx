@@ -10,9 +10,10 @@ interface IDateInputProps {
   onChange: (value: Date) => void;
   placeholder?: string;
   maw?: number;
+  valueFormat?: string;
 }
 
-export function DateInput({ onChange, value, placeholder, maw }: IDateInputProps) {
+export function DateInput({ onChange, value, placeholder, maw, valueFormat }: IDateInputProps) {
   const { colorScheme } = useMantineColorScheme();
   const { classes } = useStyles();
 
@@ -24,6 +25,7 @@ export function DateInput({ onChange, value, placeholder, maw }: IDateInputProps
       value={value}
       placeholder={placeholder}
       maw={maw}
+      valueFormat={valueFormat}
     />
   );
 }
