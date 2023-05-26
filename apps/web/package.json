@@ -19,7 +19,6 @@
     "@amplitude/analytics-browser": "^1.10.3",
     "@emotion/react": "^11.10.5",
     "@emotion/server": "^11.10.0",
-    "@emotion/styled": "^11.11.0",
     "@impler/react": "workspace:^0.3.0",
     "@impler/shared": "workspace:^0.3.0",
     "@mantine/carousel": "6.0.6",
