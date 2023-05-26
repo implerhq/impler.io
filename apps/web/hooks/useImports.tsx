@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { modals } from '@mantine/modals';
 import { useLocalStorage } from '@mantine/hooks';
@@ -7,8 +8,8 @@ import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
 import { track } from '@libs/amplitude';
 import { IErrorObject, ITemplate } from '@impler/shared';
-import { API_KEYS, CONSTANTS, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS } from '@config';
 import { CreateImportForm } from '@components/imports/forms/CreateImportForm';
+import { API_KEYS, CONSTANTS, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS } from '@config';
 
 export function useImports() {
   const { push } = useRouter();
@@ -35,19 +36,25 @@ export function useImports() {
       },
     }
   );
-  const { data: templates, isLoading: isTemplatesLoading } = useQuery<
-    unknown,
-    IErrorObject,
-    ITemplate[],
-    (string | undefined)[]
-  >(
+  const {
+    refetch,
+    data: templates,
+    isLoading: isTemplatesLoading,
+  } = useQuery<unknown, IErrorObject, ITemplate[], (string | undefined)[]>(
     [API_KEYS.TEMPLATES_LIST, profile?._projectId],
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     () => commonApi<ITemplate[]>(API_KEYS.TEMPLATES_LIST as any, { parameters: [profile._projectId!] }),
     {
-      enabled: !!profile,
+      enabled: false,
     }
   );
+
+  useEffect(() => {
+    if (profile?._projectId) {
+      refetch();
+    }
+  }, [profile?._projectId, refetch]);
+
   function onCreateClick() {
     modals.open({
       modalId: MODAL_KEYS.IMPORT_CREATE,
