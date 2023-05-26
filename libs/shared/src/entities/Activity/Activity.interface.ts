@@ -19,5 +19,5 @@ export interface ISummaryData {
   yearly: number;
   monthly: number;
   weekly: number;
-  uploads: { date: string; count: string }[];
+  uploads: { date: string; count: number }[];
 }

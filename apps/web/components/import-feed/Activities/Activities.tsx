@@ -37,7 +37,7 @@ export function Activities() {
             ref={chartRef}
             id="chart-bar-styles"
             style={{
-              height: 350,
+              height: 400,
             }}
             options={{
               responsive: true,
@@ -53,13 +53,9 @@ export function Activities() {
               },
               scales: {
                 x: {
-                  reverse: true,
                   grid: {
                     display: false,
                   },
-                },
-                y: {
-                  display: false,
                 },
               },
             }}
