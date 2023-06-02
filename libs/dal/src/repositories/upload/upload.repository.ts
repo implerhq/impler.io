@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { subMonths, subWeeks, subYears } from 'date-fns';
+import { subMonths, subWeeks, subYears, format, subDays } from 'date-fns';
 
 import { TemplateRepository } from '../template';
 import { BaseRepository } from '../base-repository';
@@ -169,11 +169,12 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
   }
   async getStatsFeed(_projectId: string, days: number) {
     const now: number = Date.now();
-    const daysBefore = subWeeks(now, days);
+    const daysBefore = subDays(now, days);
+    daysBefore.setDate(daysBefore.getDate() + 1);
 
     const templateIds = await this.templateRepository.getProjectTemplateIds(_projectId);
 
-    const result = await this.aggregate([
+    const result: { date: string; count: number }[] = await this.aggregate([
       {
         $match: {
           _templateId: {
@@ -188,7 +189,7 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
         $group: {
           _id: {
             $dateToString: {
-              format: '%Y-%m-%d',
+              format: '%d/%m/%Y',
               date: '$createdAt',
             },
           },
@@ -206,6 +207,20 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
       },
     ]);
 
-    return result;
+    const resultObj = result.reduce((acc, obj) => {
+      acc[obj.date] = obj.count;
+
+      return acc;
+    }, []);
+    const formattedResults = [];
+    for (let i = 0; i < days; i++) {
+      formattedResults.push({
+        date: daysBefore.toLocaleDateString(),
+        count: resultObj[format(daysBefore, 'dd/MM/yyyy')] || 0,
+      });
+      daysBefore.setDate(daysBefore.getDate() + 1);
+    }
+
+    return formattedResults;
   }
 }

@@ -14,3 +14,10 @@ export interface IHistoryData {
   totalPages: number;
   totalRecords: number;
 }
+
+export interface ISummaryData {
+  yearly: number;
+  monthly: number;
+  weekly: number;
+  uploads: { date: string; count: number }[];
+}
