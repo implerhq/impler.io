@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { GetServerSideProps } from 'next';
-import { Flex, Group, Title } from '@mantine/core';
+import { Flex, Group, Title, useMantineTheme } from '@mantine/core';
 
 import { commonApi } from '@libs/api';
 import { ITemplate } from '@impler/shared';
@@ -28,6 +28,7 @@ interface ImportDetailProps {
 }
 
 export default function ImportDetails({ template }: ImportDetailProps) {
+  const { colorScheme } = useMantineTheme();
   const { onUpdateClick, onDeleteClick, templateData, profile, onSpreadsheetImported } = useImportDetails({ template });
   const { showWidget, isImplerInitiated } = useImpler({
     templateId: template._id,
@@ -47,7 +48,7 @@ export default function ImportDetails({ template }: ImportDetailProps) {
           <Title order={2}>{templateData.name}</Title>
         </Group>
         <Group spacing="xs">
-          <Button disabled={!isImplerInitiated} onClick={showWidget}>
+          <Button disabled={!isImplerInitiated} onClick={() => showWidget({ colorScheme })}>
             Import
           </Button>
           <Button onClick={onUpdateClick}>
