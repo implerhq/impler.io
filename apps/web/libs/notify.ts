@@ -22,6 +22,11 @@ const Messages: Record<string, NotifyProps> = {
     title: 'Schema updated',
     message: 'Output schema has been updated',
   },
+  [NOTIFICATION_KEYS.REGENERATED]: {
+    title: 'Access token is re-generated',
+    message: 'New access-token is re-generated and updated in the project',
+    color: 'green',
+  },
 };
 
 interface NotifyProps {

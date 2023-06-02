@@ -12,7 +12,7 @@ export const UserSession = createParamDecorator((data, ctx) => {
     req = ctx.switchToHttp().getRequest();
   }
 
-  if (req.cookies && req.cookies[CONSTANTS.AUTH_COOKIE_NAME]) {
+  if (req.cookies && typeof req.cookies[CONSTANTS.AUTH_COOKIE_NAME] === 'string') {
     const tokenParts = req.cookies[CONSTANTS.AUTH_COOKIE_NAME].split(' ');
     if (!tokenParts || tokenParts[0] !== 'Bearer' || !tokenParts[1]) throw new UnauthorizedException('bad_token');
     const user = jwt.decode(tokenParts[1], { json: true });

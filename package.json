@@ -46,7 +46,8 @@
     "release:preminor": "lerna version preminor --no-push",
     "release:prerelease": "lerna version prerelease --no-push",
     "publish": "pnpm build && pnpm -r --if-present publish",
-    "postinstall": "pnpm build"
+    "postinstall": "pnpm build",
+    "prepare": "husky install"
   },
   "keywords": [
     "data-import",

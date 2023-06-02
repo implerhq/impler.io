@@ -10,7 +10,8 @@ interface InputProps {
   register?: any;
   pattern?: string;
   icon?: React.ReactNode;
-  type?: 'text' | 'email' | 'number' | 'url' | 'search';
+  rightSection?: React.ReactNode;
+  type?: 'text' | 'email' | 'number' | 'url' | 'search' | 'password';
 }
 
 export function Input({
@@ -22,6 +23,7 @@ export function Input({
   placeholder,
   pattern,
   dataAutoFocus,
+  rightSection,
   register,
 }: InputProps) {
   const { classes } = useStyles();
@@ -36,6 +38,7 @@ export function Input({
       disabled={disabled}
       pattern={pattern}
       error={error}
+      rightSection={rightSection}
       classNames={classes}
       {...register}
     />
