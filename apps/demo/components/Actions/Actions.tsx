@@ -57,7 +57,11 @@ const Actions = ({ PROJECT_ID, ACCESS_TOKEN, PRIMARY_COLOR, TEMPLATE }: ActionPr
   return (
     <div className={classes.wrapper}>
       <Flex direction="row" align="center" gap="sm">
-        <MantineButton onClick={showWidget} className={classes.button} disabled={!isImplerInitiated}>
+        <MantineButton
+          onClick={() => showWidget({ colorScheme: 'dark' })}
+          className={classes.button}
+          disabled={!isImplerInitiated}
+        >
           Import temperature data
         </MantineButton>
         {hasInvalidRecords && (

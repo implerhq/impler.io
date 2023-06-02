@@ -91,9 +91,11 @@ export function Container({ children }: PropsWithChildren<{}>) {
             background: secondaryPayload.primaryColor,
             borderRadius: '10px',
           },
-          ':root': {
-            colorScheme: 'dark',
-          },
+          ...(secondaryPayload?.colorScheme && {
+            ':root': {
+              colorScheme: secondaryPayload.colorScheme,
+            },
+          }),
         }}
       />
       {primaryPayload ? (
