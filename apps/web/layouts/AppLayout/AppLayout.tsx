@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import getConfig from 'next/config';
+import { useRouter } from 'next/router';
 import { PropsWithChildren, useRef } from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -20,7 +21,7 @@ import { NavItem } from '@ui/nav-item';
 import { UserMenu } from '@ui/user-menu';
 import { track } from '@libs/amplitude';
 import { ColorSchemeToggle } from '@ui/toggle-color-scheme';
-import { useRouter } from 'next/router';
+import { SettingsIcon } from '@assets/icons/Settings.icon';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -75,6 +76,12 @@ export function AppLayout({ children }: PropsWithChildren) {
               href="/activities"
               icon={<ActivitiesIcon size="lg" />}
               title="Activities"
+            />
+            <NavItem
+              active={router.pathname.includes('/settings')}
+              href="/settings"
+              icon={<SettingsIcon size="lg" />}
+              title="Settings"
             />
           </Stack>
         </aside>
