@@ -12,7 +12,8 @@ interface UseImplerProps {
   templateId?: string;
   accessToken?: string;
   primaryColor?: string;
-  authHeaderValue?: string;
+  extra?: string | Record<string, any>;
+  authHeaderValue?: string | (() => string) | (() => Promise<string>);
   onUploadStart?: (value: UploadTemplateData) => void;
   onUploadTerminate?: (value: UploadData) => void;
   onUploadComplete?: (value: IUpload) => void;
@@ -24,6 +25,8 @@ export function useImpler({
   primaryColor,
   templateId,
   accessToken,
+  authHeaderValue,
+  extra,
   onUploadComplete,
   onWidgetClose,
   onUploadStart,
@@ -67,7 +70,7 @@ export function useImpler({
     else initWidget();
   }, [accessToken, templateId, initWidget]);
 
-  const showWidget = ({ colorScheme }: ShowWidgetProps) => {
+  const showWidget = async ({ colorScheme }: ShowWidgetProps) => {
     if (isImplerInitiated) {
       const payload: IShowPayload = {
         templateId,
@@ -78,6 +81,21 @@ export function useImpler({
         payload.colorScheme = preferColorScheme;
       }
       if (primaryColor) payload.primaryColor = primaryColor;
+      if (extra) {
+        if (typeof extra === 'object') payload.extra = JSON.stringify(extra);
+        else payload.extra = extra;
+      }
+      if (authHeaderValue) {
+        if (typeof authHeaderValue === 'function' && authHeaderValue.constructor.name === 'AsyncFunction') {
+          payload.authHeaderValue = await authHeaderValue();
+        } else if (typeof authHeaderValue === 'function') {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          payload.authHeaderValue = authHeaderValue();
+        } else {
+          payload.authHeaderValue = authHeaderValue;
+        }
+      }
       if (window.impler && isImplerInitiated) {
         window.impler.show(payload);
       }
