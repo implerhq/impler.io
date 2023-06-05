@@ -16,7 +16,7 @@ Clone the Impler repo and enter the docker directory locally:
 
 ```sh
 # Get the code
-git clone --depth 1 https://github.com/knovator/impler.io
+git clone --depth 1 https://github.com/implerhq/impler.io
 
 # Go to the docker folder
 cd impler.io/docker
@@ -52,4 +52,4 @@ We strongly recommend that you decouple your database before deploying.
 
 ## Next steps
 
-- Got a question? [Ask here](https://github.com/knovator/impler.io/discussions).
+- Got a question? [Ask here](https://github.com/implerhq/impler.io/discussions).

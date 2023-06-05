@@ -53,11 +53,9 @@
     "data-import",
     "excel-import",
     "csv-import",
-    "impler",
-    "knovator",
-    "chavda-bhavik"
+    "impler"
   ],
-  "author": "knovator",
+  "author": "implerhq",
   "license": "MIT",
   "husky": {
     "hooks": {

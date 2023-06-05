@@ -21,11 +21,11 @@ export const variables = {
       label: 'Community',
     },
     {
-      link: 'https://github.com/knovator/impler.io',
+      link: 'https://github.com/implerhq/impler.io',
       label: 'Github',
     },
   ],
-  LINK_KNOVATOR: 'http://knovator.com/',
+  LINK_IMPLER: 'https://impler.io/',
   WIDGET_EMBED_PATH: 'https://embed.impler.io/embed.umd.min.js',
   PRIMARY_COLOR: '#111111',
 };

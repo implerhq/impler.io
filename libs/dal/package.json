@@ -1,7 +1,7 @@
 {
   "name": "@impler/dal",
   "version": "0.5.0",
-  "author": "knovator",
+  "author": "implerhq",
   "license": "MIT",
   "private": true,
   "main": "dist/index.js",
