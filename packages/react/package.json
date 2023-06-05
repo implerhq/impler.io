@@ -3,14 +3,14 @@
   "version": "0.5.0",
   "description": "React library to show widget in client applications",
   "license": "MIT",
-  "author": "knovator",
-  "repository": "https://github.com/knovator/impler.io",
+  "author": "implerhq",
+  "repository": "https://github.com/implerhq/impler.io",
   "types": "dist/index.d.ts",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "keywords": [
     "impler",
-    "knovator",
+    "implerhq",
     "data-import",
     "excel-import",
     "csv-import"
