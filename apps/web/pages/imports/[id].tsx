@@ -109,6 +109,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     return {
       props: {
+        title: template.name,
         template,
       },
     };

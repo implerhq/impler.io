@@ -88,7 +88,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                 },
               }}
             >
-              <Layout>
+              <Layout pageProps={pageProps}>
                 <Component {...pageProps} />
               </Layout>
             </ModalsProvider>

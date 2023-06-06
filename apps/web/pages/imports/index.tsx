@@ -48,4 +48,12 @@ export default function Imports() {
   );
 }
 
+export async function getServerSideProps() {
+  return {
+    props: {
+      title: 'Imports',
+    },
+  };
+}
+
 Imports.Layout = AppLayout;
