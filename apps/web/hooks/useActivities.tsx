@@ -1,11 +1,13 @@
-import { API_KEYS, CONSTANTS } from '@config';
-import { IErrorObject, ISummaryData } from '@impler/shared';
-import { commonApi } from '@libs/api';
+import { useEffect } from 'react';
 import { useLocalStorage } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect } from 'react';
 
-export function useActivites() {
+import { commonApi } from '@libs/api';
+import { track } from '@libs/amplitude';
+import { API_KEYS, CONSTANTS } from '@config';
+import { IErrorObject, ISummaryData } from '@impler/shared';
+
+export function useSummary() {
   const [profile] = useLocalStorage<IProfileData>({ key: CONSTANTS.PROFILE_STORAGE_NAME });
   const {
     data: summaryData,
@@ -19,6 +21,12 @@ export function useActivites() {
       }),
     {
       enabled: false,
+      onSuccess: () => {
+        track({
+          name: 'VIEW SUMMARY',
+          properties: {},
+        });
+      },
     }
   );
 

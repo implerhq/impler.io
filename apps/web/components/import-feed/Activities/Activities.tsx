@@ -5,13 +5,13 @@ import { BarElement, CategoryScale, Chart as ChartJS, LinearScale, Tooltip } fro
 
 import { Card } from '@ui/Card';
 import { VARIABLES, colors } from '@config';
-import { useActivites } from '@hooks/useActivities';
+import { useSummary } from '@hooks/useActivities';
 import { ActivityGraphGlobalStyles } from './Graph.styles';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
 
 export function Activities() {
-  const { summaryData, isSummaryLoading } = useActivites();
+  const { summaryData, isSummaryLoading } = useSummary();
   const theme = useMantineColorScheme();
   const chartRef = useRef();
 
