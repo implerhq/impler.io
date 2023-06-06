@@ -42,4 +42,12 @@ export default function Settings() {
   );
 }
 
+export async function getServerSideProps() {
+  return {
+    props: {
+      title: 'Settings',
+    },
+  };
+}
+
 Settings.Layout = AppLayout;

@@ -24,6 +24,7 @@ const getMainStyles = (theme: MantineTheme): React.CSSProperties => ({
   padding: theme.spacing.lg,
   display: 'flex',
   flexDirection: 'column',
+  overflow: 'auto',
 });
 
 const getNavStyles = (): React.CSSProperties => ({

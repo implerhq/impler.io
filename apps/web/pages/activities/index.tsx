@@ -18,4 +18,12 @@ export default function ImportFeed() {
   );
 }
 
+export async function getServerSideProps() {
+  return {
+    props: {
+      title: 'Activities',
+    },
+  };
+}
+
 ImportFeed.Layout = AppLayout;

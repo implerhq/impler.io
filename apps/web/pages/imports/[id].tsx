@@ -86,7 +86,7 @@ export default function ImportDetails({ template }: ImportDetailProps) {
           {
             value: 'destination',
             title: 'Destination',
-            content: <Destination template={template} />,
+            content: <Destination template={template} accessToken={profile?.accessToken} />,
           },
         ]}
         defaultValue="schema"
@@ -109,6 +109,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     return {
       props: {
+        title: template.name,
         template,
       },
     };
