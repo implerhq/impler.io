@@ -15,8 +15,8 @@ export function History() {
     useHistory();
 
   return (
-    <Stack spacing="md">
-      <Title order={2}>Import History</Title>
+    <Stack spacing="xs">
+      <Title order={3}>History</Title>
       <Group spacing="xs" style={{ position: 'relative' }}>
         <Input
           icon={<SearchIcon />}

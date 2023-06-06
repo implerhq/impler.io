@@ -17,9 +17,7 @@ export default function Settings() {
       <>
         <Title order={2}>Settings</Title>
         <Flex direction="column" gap="xs" my="sm" w="max-content">
-          <Title fw={600} order={3} size="lg">
-            Access Token
-          </Title>
+          <Title order={3}>Access Token</Title>
           <Text fw={400}>Use this token to interact with Impler API</Text>
           <Input
             type="password"
