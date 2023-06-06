@@ -46,7 +46,7 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
           content="Impler is open-source data import infrastructure, built for engineering teams to help them build rich data import experience without constantly reinventing the wheel."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href={colorScheme === 'dark' ? '/favicon-dark.ico' : '/favicon-light.ico'} />
       </Head>
       <div className={classes.root}>
         <LoadingOverlay visible={isProjectsLoading} />
