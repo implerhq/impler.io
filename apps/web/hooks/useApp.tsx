@@ -33,6 +33,10 @@ export function useApp() {
   const { mutate: logout } = useMutation([API_KEYS.LOGOUT], () => commonApi(API_KEYS.LOGOUT as any, {}), {
     onSuccess: () => {
       removeProfile();
+      track({
+        name: 'LOGOUT',
+        properties: {},
+      });
       replace(ROUTES.SIGNIN);
     },
   });
@@ -69,6 +73,10 @@ export function useApp() {
     const project = projects?.find((projectItem) => projectItem._id === id);
     if (project) {
       setEnvironment(project._id);
+      track({
+        name: 'PROJECT SWITCH',
+        properties: {},
+      });
     }
   };
 

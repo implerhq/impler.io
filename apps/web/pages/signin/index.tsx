@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 
+import { track } from '@libs/amplitude';
 import { CONSTANTS, ROUTES } from '@config';
 import { Signin } from '@components/signin';
 import { OnboardLayout } from '@layouts/OnboardLayout';
@@ -14,7 +15,18 @@ export default function SigninPage() {
 
   useEffect(() => {
     if (query?.token) {
-      localStorage.setItem(CONSTANTS.PROFILE_STORAGE_NAME, JSON.stringify(jwt(query.token as string)));
+      const profileData = jwt<IProfileData>(query.token as string);
+      localStorage.setItem(CONSTANTS.PROFILE_STORAGE_NAME, JSON.stringify(profileData));
+      track({
+        name: 'GITHUB CONTINUE',
+        properties: {
+          email: profileData.email,
+          firstName: profileData.firstName,
+          lastName: profileData.lastName,
+          id: profileData._id,
+          profilePicture: profileData.profilePicture,
+        },
+      });
       if (query.showAddProject) {
         push(ROUTES.SIGNIN_ONBOARDING);
       } else push(ROUTES.HOME);

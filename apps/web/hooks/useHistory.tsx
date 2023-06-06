@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useDebouncedState, useLocalStorage } from '@mantine/hooks';
 
 import { commonApi } from '@libs/api';
+import { track } from '@libs/amplitude';
 import { API_KEYS, CONSTANTS, VARIABLES } from '@config';
 import { IErrorObject, IHistoryData } from '@impler/shared';
 
@@ -40,11 +41,43 @@ export function useHistory() {
     }
   }, [profile?._projectId, fetchHistoryData, page, limit, name, date]);
 
+  function onDateChange(newDate?: Date) {
+    setDate(newDate);
+    if (newDate) {
+      track({
+        name: 'HISTORY FILTER',
+        properties: {
+          date: newDate.toLocaleDateString('en-US'),
+        },
+      });
+    }
+  }
+  function onLimitChange(newLimit: number) {
+    setLimit(newLimit);
+    track({
+      name: 'HISTORY FILTER',
+      properties: {
+        limit: newLimit,
+      },
+    });
+  }
+  function onNameChange(newName: string) {
+    setName(newName);
+    if (newName) {
+      track({
+        name: 'HISTORY FILTER',
+        properties: {
+          text: newName,
+        },
+      });
+    }
+  }
+
   return {
-    onDateChange: setDate,
-    onNameChange: setName,
+    onDateChange,
+    onNameChange,
     onPageChange: setPage,
-    onLimitChange: setLimit,
+    onLimitChange,
     isHistoryDataLoading,
     historyData,
     name,

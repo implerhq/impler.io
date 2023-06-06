@@ -1,4 +1,4 @@
-import { track as AmplitudeTrack } from '@amplitude/analytics-browser';
+import { setUserId, track as AmplitudeTrack } from '@amplitude/analytics-browser';
 
 type TrackData =
   | {
@@ -25,6 +25,10 @@ type TrackData =
       };
     }
   | {
+      name: 'PROJECT SWITCH';
+      properties: Record<string, never>;
+    }
+  | {
       name: 'TOGGLE THEME';
       properties: {
         theme: 'light' | 'dark';
@@ -33,8 +37,54 @@ type TrackData =
   | {
       name: 'WEB IMPORT';
       properties: Record<string, never>;
+    }
+  | {
+      name: 'GITHUB CONTINUE';
+      properties: {
+        id: string;
+        email: string;
+        firstName?: string;
+        lastName?: string;
+        profilePicture?: string;
+      };
+    }
+  | {
+      name: 'HISTORY PAGINATION SIZE CHANGES';
+      properties: {
+        size: number;
+      };
+    }
+  | {
+      name: 'REGENERATE TOKEN';
+      properties: Record<string, never>;
+    }
+  | {
+      name: 'HISTORY FILTER';
+      properties: {
+        date?: string;
+        text?: string;
+        limit?: number;
+      };
+    }
+  | {
+      name: 'VIEW SUMMARY';
+      properties: Record<string, never>;
+    }
+  | {
+      name: 'DESTINATION UPDATED';
+      properties: {
+        hasAuthHeaderName?: boolean;
+        hasCallbackUrl?: boolean;
+      };
+    }
+  | {
+      name: 'LOGOUT';
+      properties: Record<string, never>;
     };
 
 export function track({ name, properties }: TrackData) {
   AmplitudeTrack(name, properties);
+  if (name === 'GITHUB CONTINUE') {
+    setUserId(properties.id);
+  }
 }

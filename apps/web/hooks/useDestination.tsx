@@ -1,10 +1,12 @@
-import { API_KEYS, NOTIFICATION_KEYS } from '@config';
-import { IErrorObject, ITemplate } from '@impler/shared';
-import { commonApi } from '@libs/api';
-import { notify } from '@libs/notify';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { commonApi } from '@libs/api';
+import { notify } from '@libs/notify';
+import { track } from '@libs/amplitude';
+import { API_KEYS, NOTIFICATION_KEYS } from '@config';
+import { IErrorObject, ITemplate } from '@impler/shared';
 
 interface UseDestinationProps {
   template: ITemplate;
@@ -53,6 +55,13 @@ export function useDestination({ template }: UseDestinationProps) {
 
   const onSubmit = (data: UpdateDestinationData) => {
     updateImport(data);
+    track({
+      name: 'DESTINATION UPDATED',
+      properties: {
+        hasAuthHeaderName: !!data.authHeaderName,
+        hasCallbackUrl: !!data.callbackUrl,
+      },
+    });
   };
 
   return {
