@@ -14,15 +14,14 @@ export function Snippet({ projectId, templateId, accessToken }: SnippetProps) {
 
   return (
     <>
-      <Accordion variant="contained" radius={0} defaultValue="button">
+      <Accordion variant="contained" radius={0}>
         <Accordion.Item value="script">
           <Accordion.Control>
             <Title color={colorScheme === 'dark' ? colors.white : colors.black} order={4}>
               1. Add Script
             </Title>
             <Title order={5} fw="normal" color={colors.TXTSecondaryDark}>
-              Copy & Paste this snippet to your code before the closing body tag. It will add impler variable in window,
-              so you can call its init and show method.
+              Copy & Paste this snippet to your code before the closing body tag. It will add impler variable in window.
             </Title>
           </Accordion.Control>
           <Accordion.Panel>
