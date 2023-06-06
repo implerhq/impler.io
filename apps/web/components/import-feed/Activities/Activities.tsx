@@ -16,8 +16,8 @@ export function Activities() {
   const chartRef = useRef();
 
   return (
-    <Stack spacing="md">
-      <Title order={2}>Import Summary</Title>
+    <Stack spacing="xs">
+      <Title order={3}>Imports</Title>
       <div style={{ position: 'relative' }}>
         <LoadingOverlay visible={isSummaryLoading} />
         <Grid mb="sm">

@@ -9,7 +9,7 @@ import { IErrorObject, IHistoryData } from '@impler/shared';
 
 export function useHistory() {
   const [date, setDate] = useState<Date>();
-  const [limit, setLimit] = useState<number>();
+  const [limit, setLimit] = useState<number>(VARIABLES.TEN);
   const [page, setPage] = useState<number>();
   const [name, setName] = useDebouncedState('', VARIABLES.TWO_HUNDREDS);
   const [profile] = useLocalStorage<IProfileData>({ key: CONSTANTS.PROFILE_STORAGE_NAME });
