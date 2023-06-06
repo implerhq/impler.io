@@ -119,6 +119,11 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
             },
           ],
           uploads: [
+            {
+              $sort: {
+                uploadedDate: -1,
+              },
+            },
             ...(typeof page === 'number' && typeof limit === 'number'
               ? [{ $skip: (page - 1) * limit }, { $limit: limit }]
               : []),
@@ -135,11 +140,6 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
               $unwind: {
                 path: '$_template',
                 preserveNullAndEmptyArrays: true,
-              },
-            },
-            {
-              $sort: {
-                createdAt: -1,
               },
             },
             {
