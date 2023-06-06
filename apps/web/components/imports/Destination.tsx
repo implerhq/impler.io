@@ -10,9 +10,10 @@ import { useDestination } from '@hooks/useDestination';
 
 interface DestinationProps {
   template: ITemplate;
+  accessToken?: string;
 }
 
-export function Destination({ template }: DestinationProps) {
+export function Destination({ template, accessToken }: DestinationProps) {
   const { colorScheme } = useMantineColorScheme();
   const { register, errors, onSubmit, isUpdateImportLoading } = useDestination({ template });
 
@@ -73,12 +74,23 @@ export function Destination({ template }: DestinationProps) {
                   <Title order={4}>How to get uploadId?</Title>
                   <Title order={5} fw="normal" color={colorScheme === 'dark' ? colors.TXTGray : colors.TXTLight}>
                     You will get uploadId in <Code>onUploadComplete</Code> callback of <Code>@impler/react</Code>{' '}
-                    package, at the time of import is completed.
+                    package, when import is completed.
                   </Title>
                 </div>
-                <Prism language="tsx">{`import { Import } from '@impler/react';
-        \n<Button projectId="<PROJECT_ID>" template="<CODE_OR_ID>" onUploadComplete={(upload) => console.log(upload)}>
-        Import\n</Button>`}</Prism>
+                <Prism language="tsx">{`import { useImpler } from '@impler/react';
+        
+const { showWidget, isImplerInitiated } = useImpler({
+  templateId: "${template._id}",
+  projectId: "${template._projectId}",
+  accessToken: "${accessToken}",
+  onUploadComplete: ({ _id }) => {
+    console.log(_id); // uploadId
+  }
+});
+
+<button disabled={!isImplerInitiated} onClick={showWidget}>
+    Import
+</button>`}</Prism>
               </Stack>
             </Stack>
           </Accordion.Panel>

@@ -53,8 +53,17 @@ export function Snippet({ projectId, templateId, accessToken }: SnippetProps) {
             </Title>
           </Accordion.Control>
           <Accordion.Panel>
-            <Prism language="tsx">{`import { Import } from '@impler/react';
-        \n<Button projectId="${projectId}" templateId="${templateId}" accessToken="${accessToken}">\nImport\n</Button>`}</Prism>
+            <Prism language="tsx">{`import { useImpler } from '@impler/react';
+        
+const { showWidget, isImplerInitiated } = useImpler({
+    templateId: "${templateId}",
+    projectId: "${projectId}",
+    accessToken: "${accessToken}",
+});
+
+<button disabled={!isImplerInitiated} onClick={showWidget}>
+    Import
+</button>`}</Prism>
             <Text mt="xs" style={{ lineHeight: '1.5rem' }}>
               You can get to know about props on{' '}
               <a href={CONSTANTS.REACT_DOCUMENTATION_URL} target="_blank" rel="noreferrer">
