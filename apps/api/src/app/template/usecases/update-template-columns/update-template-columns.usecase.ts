@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
+
+import { CONSTANTS } from '@shared/constants';
 import { FileMimeTypesEnum } from '@impler/shared';
-import { ColumnRepository, CustomizationRepository, TemplateRepository } from '@impler/dal';
-import { StorageService } from '@impler/shared/dist/services/storage';
 import { FileNameService } from '@shared/file/name.service';
+import { StorageService } from '@impler/shared/dist/services/storage';
 import { AddColumnCommand } from 'app/column/commands/add-column.command';
+import { ColumnRepository, CustomizationRepository, TemplateRepository } from '@impler/dal';
 
 @Injectable()
 export class UpdateTemplateColumns {
@@ -45,7 +47,17 @@ export class UpdateTemplateColumns {
   }
 
   async updateCustomizationData(data: AddColumnCommand[], templateId: string) {
-    const customization = await this.customizationRepository.findById(templateId);
+    let customization = await this.customizationRepository.findOne({
+      _templateId: templateId,
+    });
+    if (!customization) {
+      customization = await this.customizationRepository.create({
+        _templateId: templateId,
+        chunkFormat: CONSTANTS.CHUNK_FORMAT,
+        recordFormat: '{}',
+        chunkVariables: CONSTANTS.CHUNK_VARIABLES,
+      });
+    }
     customization.recordVariables = this.listRecordVariables(data);
 
     if (!customization.isRecordFormatUpdated) {
