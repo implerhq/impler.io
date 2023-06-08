@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { FileMimeTypesEnum, createRecordFormat } from '@impler/shared';
-import { ColumnRepository, TemplateRepository, CustomizationRepository } from '@impler/dal';
+import { ColumnRepository, TemplateRepository, CustomizationRepository, CustomizationEntity } from '@impler/dal';
 import { AddColumnCommand } from '../../commands/add-column.command';
 import { StorageService } from '@impler/shared/dist/services/storage';
 import { FileNameService } from '@shared/file/name.service';
@@ -36,11 +36,13 @@ export class AddColumn {
     const customization = await this.customizationRepository.findOne({
       _templateId,
     });
-    customization.recordVariables = variables;
+    const updateData: Partial<CustomizationEntity> = {
+      recordVariables: variables,
+    };
     if (!customization.isRecordFormatUpdated) {
-      customization.recordFormat = createRecordFormat(variables);
+      updateData.recordFormat = createRecordFormat(variables);
     }
-    await this.customizationRepository.update({ _templateId }, customization);
+    await this.customizationRepository.update({ _templateId }, updateData);
   }
 
   async saveSampleFile(csvContent: string, templateId: string) {
