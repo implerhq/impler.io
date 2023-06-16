@@ -28,9 +28,8 @@ export const Signin = ({ API_URL, error }: SigninProps) => {
       >
         <Image src={DarkLogo} alt="Impler Logo" />
         <Title order={1} color="white">
-          Signin to Impler
+          Login to your account
         </Title>
-        <Text color="white">Hop into your account to start importing records</Text>
       </Flex>
       <Box w="100%">
         <Button fullWidth component="a" size="md" href={API_URL + CONSTANTS.GITHUB_LOGIN_URL} leftIcon={<GithubIcon />}>
