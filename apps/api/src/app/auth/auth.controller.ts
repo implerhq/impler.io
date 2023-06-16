@@ -19,14 +19,14 @@ import { CONSTANTS, COOKIE_CONFIG } from '@shared/constants';
 import { UserSession } from '@shared/framework/user.decorator';
 import { ApiException } from '@shared/exceptions/api.exception';
 import { StrategyUser } from './decorators/strategy-user.decorator';
-import { RegisterUser, RegisterUserCommand } from './usecases';
+import { RegisterUser, RegisterUserCommand, LoginUser, LoginUserCommand } from './usecases';
 
 @ApiTags('Auth')
 @Controller('/auth')
 @ApiExcludeController()
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
-  constructor(private registerUser: RegisterUser) {}
+  constructor(private registerUser: RegisterUser, private loginUser: LoginUser) {}
 
   @Get('/github')
   githubAuth() {
@@ -82,7 +82,31 @@ export class AuthController {
   }
 
   @Post('/register')
-  async register(@Body() body: RegisterUserDto) {
-    return this.registerUser.execute(RegisterUserCommand.create(body));
+  async register(@Body() body: RegisterUserDto, @Res() response: Response) {
+    const registeredUser = await this.registerUser.execute(RegisterUserCommand.create(body));
+
+    response.cookie(CONSTANTS.AUTH_COOKIE_NAME, registeredUser.token, {
+      ...COOKIE_CONFIG,
+      domain: process.env.COOKIE_DOMAIN,
+    });
+
+    response.send(registeredUser);
+  }
+
+  @Post('/login')
+  async login(@Body() body: LoginUserCommand, @Res() response: Response) {
+    const loginUser = await this.loginUser.execute(
+      LoginUserCommand.create({
+        email: body.email,
+        password: body.password,
+      })
+    );
+
+    response.cookie(CONSTANTS.AUTH_COOKIE_NAME, loginUser.token, {
+      ...COOKIE_CONFIG,
+      domain: process.env.COOKIE_DOMAIN,
+    });
+
+    response.send(loginUser);
   }
 }

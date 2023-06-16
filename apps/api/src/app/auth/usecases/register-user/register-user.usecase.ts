@@ -26,7 +26,7 @@ export class RegisterUser {
       password: passwordHash,
     });
 
-    const authToken = this.authService.getSignedToken({
+    const token = this.authService.getSignedToken({
       _id: user._id,
       email: user.email,
       firstName: user.firstName,
@@ -34,8 +34,8 @@ export class RegisterUser {
     });
 
     return {
-      user: await this.userRepository.findById(user._id),
-      token: authToken,
+      user,
+      token,
     };
   }
 }
