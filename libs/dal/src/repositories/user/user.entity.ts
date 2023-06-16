@@ -16,6 +16,7 @@ export class UserEntity {
 
   email?: string | null;
 
+  @Exclude({ toPlainOnly: true })
   password?: string;
 
   profilePicture?: string | null;

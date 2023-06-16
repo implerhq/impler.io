@@ -1,19 +1,33 @@
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { ApiTags, ApiExcludeController } from '@nestjs/swagger';
-import { ClassSerializerInterceptor, Controller, Get, Res, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  Post,
+  Res,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+
+import { RegisterUserDto } from './dtos';
 import { IJwtPayload } from '@impler/shared';
 import { IStrategyResponse } from '@shared/types/auth.types';
 import { CONSTANTS, COOKIE_CONFIG } from '@shared/constants';
 import { UserSession } from '@shared/framework/user.decorator';
 import { ApiException } from '@shared/exceptions/api.exception';
 import { StrategyUser } from './decorators/strategy-user.decorator';
+import { RegisterUser, RegisterUserCommand } from './usecases';
 
 @ApiTags('Auth')
 @Controller('/auth')
 @ApiExcludeController()
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
+  constructor(private registerUser: RegisterUser) {}
+
   @Get('/github')
   githubAuth() {
     if (!process.env.GITHUB_OAUTH_CLIENT_ID || !process.env.GITHUB_OAUTH_CLIENT_SECRET) {
@@ -65,5 +79,10 @@ export class AuthController {
     response.clearCookie(CONSTANTS.AUTH_COOKIE_NAME);
 
     response.contentType('text').send();
+  }
+
+  @Post('/register')
+  async register(@Body() body: RegisterUserDto) {
+    return this.registerUser.execute(RegisterUserCommand.create(body));
   }
 }
