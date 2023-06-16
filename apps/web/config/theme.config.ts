@@ -77,6 +77,11 @@ export const mantineConfig: MantineThemeOverride = {
     lg: '1280',
     xl: '1920',
   },
+  headings: {
+    sizes: {
+      h1: { fontSize: '2rem', lineHeight: 1.2 },
+    },
+  },
   globalStyles: (theme) => ({
     '*': {
       boxSizing: 'border-box',
