@@ -4,6 +4,7 @@ import { Title, Text, Stack, Flex } from '@mantine/core';
 
 import { Input } from '@ui/input';
 import { Button } from '@ui/button';
+import { PasswordInput } from '@ui/password-input';
 import DarkLogo from '@assets/images/logo-dark.png';
 import { OnboardLayout } from '@layouts/OnboardLayout';
 
@@ -27,7 +28,7 @@ export default function SignupPage({}) {
       <Stack w="100%">
         <Input size="md" placeholder="Full Name" />
         <Input size="md" placeholder="Email" />
-        <Input size="md" placeholder="Password" />
+        <PasswordInput size="md" placeholder="Password" />
         <Button fullWidth type="submit" size="md">
           Create an account
         </Button>
