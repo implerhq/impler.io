@@ -88,7 +88,9 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                 },
               }}
             >
-              <Layout pageProps={pageProps}>
+              {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+              {/* @ts-ignore */}
+              <Layout {...(Component.Layout ? { pageProps } : {})}>
                 <Component {...pageProps} />
               </Layout>
             </ModalsProvider>

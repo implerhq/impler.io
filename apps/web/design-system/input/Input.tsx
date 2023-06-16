@@ -1,4 +1,4 @@
-import { TextInput as MantineInput } from '@mantine/core';
+import { TextInput as MantineInput, MantineSize } from '@mantine/core';
 import useStyles from './Input.styles';
 
 interface InputProps {
@@ -11,6 +11,7 @@ interface InputProps {
   pattern?: string;
   icon?: React.ReactNode;
   rightSection?: React.ReactNode;
+  size?: MantineSize;
   type?: 'text' | 'email' | 'number' | 'url' | 'search' | 'password';
 }
 
@@ -24,6 +25,7 @@ export function Input({
   pattern,
   dataAutoFocus,
   rightSection,
+  size,
   register,
 }: InputProps) {
   const { classes } = useStyles();
@@ -32,6 +34,7 @@ export function Input({
     <MantineInput
       type={type}
       icon={icon}
+      size={size}
       data-autofocus={dataAutoFocus}
       required={required}
       placeholder={placeholder}
