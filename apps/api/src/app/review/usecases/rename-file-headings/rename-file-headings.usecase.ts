@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { FileRepository, MappingRepository } from '@impler/dal';
-import { ExcelFileService } from '@shared/file/file.service';
+import { ExcelFileService } from '@shared/services/file';
 import { StorageService } from '@impler/shared/dist/services/storage';
 import { Defaults, FileEncodingsEnum, FileMimeTypesEnum } from '@impler/shared';
 

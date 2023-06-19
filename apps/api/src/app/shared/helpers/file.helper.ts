@@ -1,6 +1,6 @@
 import { FileMimeTypesEnum } from '@impler/shared';
 import { APIMessages } from '../constants';
-import { FileService, CSVFileService, ExcelFileService } from '../file/file.service';
+import { FileService, CSVFileService, ExcelFileService } from '@shared/services/file';
 
 export const getFileService = (mimeType: string): FileService => {
   if (mimeType === FileMimeTypesEnum.CSV) {

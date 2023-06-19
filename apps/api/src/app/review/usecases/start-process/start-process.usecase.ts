@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { TemplateEntity, UploadEntity, UploadRepository } from '@impler/dal';
 import { StartProcessCommand } from './start-process.command';
 import { QueuesEnum, UploadStatusEnum } from '@impler/shared';
-import { QueueService } from '@shared/storage/queue.service';
+import { QueueService } from '@shared/services/queue.service';
 
 @Injectable()
 export class StartProcess {

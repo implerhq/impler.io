@@ -1,6 +1,7 @@
 import { Global, MiddlewareConsumer, Module, NestModule, Provider, RequestMethod } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import * as passport from 'passport';
+import { USE_CASES } from './usecases';
 import { CONSTANTS } from '@shared/constants';
 import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './auth.controller';
@@ -30,7 +31,7 @@ if (process.env.GITHUB_OAUTH_CLIENT_ID) {
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, ...AUTH_STRATEGIES],
+  providers: [AuthService, ...AUTH_STRATEGIES, ...USE_CASES],
   exports: [AuthService],
 })
 export class AuthModule implements NestModule {

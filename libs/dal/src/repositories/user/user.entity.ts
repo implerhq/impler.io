@@ -7,6 +7,11 @@ export interface IUserToken {
   accessToken: string;
 }
 
+export interface IUserResetTokenCount {
+  reqInMinute: number;
+  reqInDay: number;
+}
+
 export class UserEntity {
   _id: string;
 
@@ -16,6 +21,7 @@ export class UserEntity {
 
   email?: string | null;
 
+  @Exclude({ toPlainOnly: true })
   password?: string;
 
   profilePicture?: string | null;
@@ -24,4 +30,12 @@ export class UserEntity {
   tokens: IUserToken[];
 
   showOnBoarding?: boolean;
+
+  @Exclude({ toPlainOnly: true })
+  resetToken?: string;
+
+  @Exclude({ toPlainOnly: true })
+  resetTokenDate?: string;
+
+  resetTokenCount?: IUserResetTokenCount;
 }

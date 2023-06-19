@@ -3,7 +3,7 @@ import { FileMimeTypesEnum, createRecordFormat } from '@impler/shared';
 import { ColumnRepository, TemplateRepository, CustomizationRepository, CustomizationEntity } from '@impler/dal';
 import { AddColumnCommand } from '../../commands/add-column.command';
 import { StorageService } from '@impler/shared/dist/services/storage';
-import { FileNameService } from '@shared/file/name.service';
+import { FileNameService } from '@shared/services/file';
 
 @Injectable()
 export class AddColumn {

@@ -22,6 +22,7 @@ export const APIMessages = {
   UNIQUE_EMAIL: 'Email address already in use',
   INCORRECT_LOGIN_CREDENTIALS: 'Incorrect email or password provided',
   OPERATION_NOT_ALLOWED: `You're not allowed to perform this action.`,
+  EMAIL_ALREADY_EXISTS: 'Email already exists',
 };
 
 export const CONSTANTS = {
