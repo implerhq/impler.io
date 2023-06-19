@@ -19,6 +19,12 @@ export class UserRepository extends BaseRepository<UserEntity> {
     });
   }
 
+  async findUserByToken(token: string) {
+    return await this.findOne({
+      resetToken: this.hashResetToken(token),
+    });
+  }
+
   async updatePasswordResetToken(userId: string, token: string, resetTokenCount: IUserResetTokenCount) {
     return await this.update(
       {

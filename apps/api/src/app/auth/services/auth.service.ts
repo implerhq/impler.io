@@ -180,4 +180,19 @@ export class AuthService {
       environment._projectId
     );
   }
+
+  async generateUserToken(user: UserEntity) {
+    const apiKey = await this.environmentRepository.getApiKeyForUserId(user._id);
+
+    return this.getSignedToken(
+      {
+        _id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        accessToken: apiKey?.apiKey,
+      },
+      apiKey?.projectId
+    );
+  }
 }

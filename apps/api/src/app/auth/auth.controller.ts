@@ -18,12 +18,14 @@ import { CONSTANTS, COOKIE_CONFIG } from '@shared/constants';
 import { UserSession } from '@shared/framework/user.decorator';
 import { ApiException } from '@shared/exceptions/api.exception';
 import { StrategyUser } from './decorators/strategy-user.decorator';
-import { RegisterUserDto, LoginUserDto, RequestForgotPasswordDto } from './dtos';
+import { RegisterUserDto, LoginUserDto, RequestForgotPasswordDto, ResetPasswordDto } from './dtos';
 import {
   RegisterUser,
   RegisterUserCommand,
   LoginUser,
+  ResetPassword,
   LoginUserCommand,
+  ResetPasswordCommand,
   RequestForgotPassword,
   RequestForgotPasswordCommand,
 } from './usecases';
@@ -36,6 +38,7 @@ export class AuthController {
   constructor(
     private registerUser: RegisterUser,
     private loginUser: LoginUser,
+    private resetPassword: ResetPassword,
     private requestForgotPassword: RequestForgotPassword
   ) {}
 
@@ -124,5 +127,17 @@ export class AuthController {
   @Post('/forgot-password/request')
   async requestForgotPasswordRoute(@Body() body: RequestForgotPasswordDto) {
     return this.requestForgotPassword.execute(RequestForgotPasswordCommand.create(body));
+  }
+
+  @Post('/forgot-password/reset')
+  async resetPasswordRoute(@Body() body: ResetPasswordDto, @Res() response: Response) {
+    const resetPassword = await this.resetPassword.execute(ResetPasswordCommand.create(body));
+
+    response.cookie(CONSTANTS.AUTH_COOKIE_NAME, resetPassword.token, {
+      ...COOKIE_CONFIG,
+      domain: process.env.COOKIE_DOMAIN,
+    });
+
+    response.send(resetPassword);
   }
 }
