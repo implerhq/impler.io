@@ -18,6 +18,10 @@ const userSchema = new Schema(
         accessToken: Schema.Types.String,
       },
     ],
+    resetTokenCount: {
+      reqInMinute: Schema.Types.Number,
+      reqInDay: Schema.Types.Number,
+    },
     resetToken: Schema.Types.String,
     resetTokenDate: Schema.Types.Date,
   },

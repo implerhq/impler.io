@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+import * as nodemailer from 'nodemailer';
 import { SESClient, SendRawEmailCommand } from '@aws-sdk/client-ses';
 
 interface ISendMailOptions {
@@ -39,13 +39,14 @@ export class SESEmailService extends EmailService {
   private readonly ses: SESClient;
   constructor() {
     super();
-    this.ses = new SESClient({
-      region: process.env.SES_REGION,
-      credentials: {
-        accessKeyId: process.env.SES_ACCESS_KEY_ID,
-        secretAccessKey: process.env.SES_SECRET_ACCESS_KEY,
-      },
-    });
+    if (process.env.SES_REGION && process.env.SES_ACCESS_KEY_ID && process.env.SES_SECRET_ACCESS_KEY)
+      this.ses = new SESClient({
+        region: process.env.SES_REGION,
+        credentials: {
+          accessKeyId: process.env.SES_ACCESS_KEY_ID,
+          secretAccessKey: process.env.SES_SECRET_ACCESS_KEY,
+        },
+      });
   }
   async sendEmail({ to, subject, html, from, senderName }: ISendMailOptions) {
     if (!this.isConnected()) return;
@@ -63,13 +64,12 @@ export class SESEmailService extends EmailService {
         name: senderName,
       },
     });
-    response.accepted;
 
     return {
       messageId: response.messageId,
     };
   }
   isConnected(): boolean {
-    return this.ses.config.credentials !== undefined;
+    return !!this.ses;
   }
 }

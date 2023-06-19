@@ -1,7 +1,7 @@
 import { createHash } from 'crypto';
 import { AuthProviderEnum } from '@impler/shared';
 import { BaseRepository } from '../base-repository';
-import { UserEntity } from './user.entity';
+import { UserEntity, IUserResetTokenCount } from './user.entity';
 import { User } from './user.schema';
 
 export class UserRepository extends BaseRepository<UserEntity> {
@@ -19,7 +19,7 @@ export class UserRepository extends BaseRepository<UserEntity> {
     });
   }
 
-  async updatePasswordResetToken(userId: string, token: string) {
+  async updatePasswordResetToken(userId: string, token: string, resetTokenCount: IUserResetTokenCount) {
     return await this.update(
       {
         _id: userId,
@@ -28,6 +28,7 @@ export class UserRepository extends BaseRepository<UserEntity> {
         $set: {
           resetToken: this.hashResetToken(token),
           resetTokenDate: new Date(),
+          resetTokenCount,
         },
       }
     );
