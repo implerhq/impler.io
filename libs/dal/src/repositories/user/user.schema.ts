@@ -18,6 +18,8 @@ const userSchema = new Schema(
         accessToken: Schema.Types.String,
       },
     ],
+    resetToken: Schema.Types.String,
+    resetTokenDate: Schema.Types.Date,
   },
   schemaOptions
 );

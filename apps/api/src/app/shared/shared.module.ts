@@ -14,6 +14,7 @@ import {
 } from '@impler/dal';
 import { S3StorageService, StorageService } from '@impler/shared/dist/services/storage';
 import { CSVFileService, ExcelFileService } from './services/file/file.service';
+import { EmailService, SESEmailService } from './services/email.service';
 import { FileNameService } from './services/file/name.service';
 
 const DAL_MODELS = [
@@ -36,6 +37,10 @@ function getStorageServiceClass() {
   return S3StorageService;
 }
 
+function getEmailServiceClass() {
+  return SESEmailService;
+}
+
 const PROVIDERS = [
   {
     provide: DalService,
@@ -49,6 +54,10 @@ const PROVIDERS = [
   {
     provide: StorageService,
     useClass: getStorageServiceClass(),
+  },
+  {
+    provide: EmailService,
+    useClass: getEmailServiceClass(),
   },
   ...FILE_SERVICES,
 ];

@@ -25,4 +25,10 @@ export class UserEntity {
   tokens: IUserToken[];
 
   showOnBoarding?: boolean;
+
+  @Exclude({ toPlainOnly: true })
+  resetToken?: string;
+
+  @Exclude({ toPlainOnly: true })
+  resetTokenDate?: string;
 }

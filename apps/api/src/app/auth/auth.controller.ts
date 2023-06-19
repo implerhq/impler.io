@@ -12,21 +12,32 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 
-import { RegisterUserDto } from './dtos';
 import { IJwtPayload } from '@impler/shared';
 import { IStrategyResponse } from '@shared/types/auth.types';
 import { CONSTANTS, COOKIE_CONFIG } from '@shared/constants';
 import { UserSession } from '@shared/framework/user.decorator';
 import { ApiException } from '@shared/exceptions/api.exception';
 import { StrategyUser } from './decorators/strategy-user.decorator';
-import { RegisterUser, RegisterUserCommand, LoginUser, LoginUserCommand } from './usecases';
+import { RegisterUserDto, LoginUserDto, RequestForgotPasswordDto } from './dtos';
+import {
+  RegisterUser,
+  RegisterUserCommand,
+  LoginUser,
+  LoginUserCommand,
+  RequestForgotPassword,
+  RequestForgotPasswordCommand,
+} from './usecases';
 
 @ApiTags('Auth')
 @Controller('/auth')
 @ApiExcludeController()
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
-  constructor(private registerUser: RegisterUser, private loginUser: LoginUser) {}
+  constructor(
+    private registerUser: RegisterUser,
+    private loginUser: LoginUser,
+    private requestForgotPassword: RequestForgotPassword
+  ) {}
 
   @Get('/github')
   githubAuth() {
@@ -94,7 +105,7 @@ export class AuthController {
   }
 
   @Post('/login')
-  async login(@Body() body: LoginUserCommand, @Res() response: Response) {
+  async login(@Body() body: LoginUserDto, @Res() response: Response) {
     const loginUser = await this.loginUser.execute(
       LoginUserCommand.create({
         email: body.email,
@@ -108,5 +119,10 @@ export class AuthController {
     });
 
     response.send(loginUser);
+  }
+
+  @Post('/forgot-password/request')
+  async requestForgotPasswordRoute(@Body() body: RequestForgotPasswordDto) {
+    return this.requestForgotPassword.execute(RequestForgotPasswordCommand.create(body));
   }
 }
