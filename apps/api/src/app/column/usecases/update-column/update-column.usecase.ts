@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { FileMimeTypesEnum, createRecordFormat } from '@impler/shared';
-import { FileNameService } from '@shared/file/name.service';
+import { FileNameService } from '@shared/services/file';
 import { StorageService } from '@impler/shared/dist/services/storage';
 import { UpdateColumnCommand } from '../../commands/update-column.command';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';

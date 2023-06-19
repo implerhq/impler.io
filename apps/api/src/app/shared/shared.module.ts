@@ -13,8 +13,8 @@ import {
   CustomizationRepository,
 } from '@impler/dal';
 import { S3StorageService, StorageService } from '@impler/shared/dist/services/storage';
-import { CSVFileService, ExcelFileService } from './file/file.service';
-import { FileNameService } from './file/name.service';
+import { CSVFileService, ExcelFileService } from './services/file/file.service';
+import { FileNameService } from './services/file/name.service';
 
 const DAL_MODELS = [
   ProjectRepository,
