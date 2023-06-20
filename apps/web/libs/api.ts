@@ -35,6 +35,10 @@ const routes: Record<string, Route> = {
     url: () => '/v1/auth/forgot-password/request',
     method: 'POST',
   },
+  [API_KEYS.RESET_PASSWORD]: {
+    url: () => `/v1/auth/forgot-password/reset`,
+    method: 'POST',
+  },
 
   [API_KEYS.TEMPLATES_LIST]: {
     url: (projectId) => `/v1/project/${projectId}/templates`,

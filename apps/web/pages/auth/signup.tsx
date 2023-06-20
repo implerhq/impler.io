@@ -9,6 +9,7 @@ import { PasswordInput } from '@ui/password-input';
 import { useSignup } from '@hooks/auth/useSignup';
 import DarkLogo from '@assets/images/logo-dark.png';
 import { OnboardLayout } from '@layouts/OnboardLayout';
+import { ROUTES } from '@config';
 
 export default function SignupPage({}) {
   const { register, isSignupLoading, signup, errors } = useSignup();
@@ -49,7 +50,7 @@ export default function SignupPage({}) {
             Create an account
           </Button>
           <Text size="md" align="center">
-            Already have an account? <Link href="/signin">Sign In</Link>
+            Already have an account? <Link href={ROUTES.SIGNIN}>Sign In</Link>
           </Text>
         </Stack>
       </form>

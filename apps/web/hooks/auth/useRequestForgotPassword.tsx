@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 
-import { API_KEYS } from '@config';
+import { API_KEYS, ROUTES } from '@config';
 import { commonApi } from '@libs/api';
 import { IErrorObject } from '@impler/shared';
 import { useRouter } from 'next/router';
@@ -36,7 +36,7 @@ export function useRequestForgotPassword() {
   );
 
   const goToLogin = () => {
-    push('/signin');
+    push(ROUTES.SIGNIN);
   };
 
   const onLogin = (data: IRequestForgotPasswordData) => {

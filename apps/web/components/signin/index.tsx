@@ -4,7 +4,7 @@ import { Title, Text, Stack, Divider, Flex, Box, Alert } from '@mantine/core';
 
 import { Input } from '@ui/input';
 import { Button } from '@ui/button';
-import { CONSTANTS, colors } from '@config';
+import { CONSTANTS, ROUTES, colors } from '@config';
 
 import DarkLogo from '@assets/images/logo-dark.png';
 import { GithubIcon } from '@assets/icons/Github.icon';
@@ -62,7 +62,7 @@ export const Signin = ({ API_URL, error }: SigninProps) => {
           ) : null}
           <Input register={register('email')} size="md" placeholder="Email" type="email" required />
           <PasswordInput register={register('password')} size="md" placeholder="Password" required />
-          <Link href="/forgot-password">
+          <Link href={ROUTES.REQUEST_FORGOT_PASSWORD}>
             <Text size="md" align="right">
               Forgot password?
             </Text>

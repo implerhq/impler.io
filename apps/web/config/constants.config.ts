@@ -47,6 +47,7 @@ export const API_KEYS = {
   SIGNIN: 'SIGNIN',
   SIGNUP: 'SIGNUP',
   REQUEST_FORGOT_PASSWORD: 'REQUEST_FORGOT_PASSWORD',
+  RESET_PASSWORD: 'RESET_PASSWORD',
 
   TEMPLATES_LIST: 'TEMPLATES_LIST',
   TEMPLATES_CREATE: 'TEMPLATES_CREATE',
@@ -81,9 +82,10 @@ export const NOTIFICATION_KEYS = {
 
 export const ROUTES = {
   HOME: '/',
-  SIGNIN: '/signin',
-  SIGNIN_ONBOARDING: '/signin/onboard',
+  SIGNIN: '/auth/signin',
+  SIGNIN_ONBOARDING: '/auth/onboard',
   IMPORTS: '/imports',
+  REQUEST_FORGOT_PASSWORD: '/auth/reset/request',
 };
 
 export const REGULAR_EXPRESSIONS = {

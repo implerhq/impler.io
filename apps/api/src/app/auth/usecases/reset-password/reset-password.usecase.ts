@@ -1,7 +1,7 @@
 import * as bcrypt from 'bcrypt';
 import { Injectable } from '@nestjs/common';
 import { isBefore, subDays } from 'date-fns';
-import { UserRepository } from '@impler/dal';
+import { EnvironmentRepository, UserRepository } from '@impler/dal';
 
 import { ResetPasswordCommand } from './reset-password.command';
 import { ApiException } from '@shared/exceptions/api.exception';
@@ -9,9 +9,13 @@ import { AuthService } from '../../services/auth.service';
 
 @Injectable()
 export class ResetPassword {
-  constructor(private userRepository: UserRepository, private authService: AuthService) {}
+  constructor(
+    private userRepository: UserRepository,
+    private authService: AuthService,
+    private environmentRepository: EnvironmentRepository
+  ) {}
 
-  async execute(command: ResetPasswordCommand): Promise<{ token: string }> {
+  async execute(command: ResetPasswordCommand): Promise<{ token: string; showAddProject: boolean }> {
     const user = await this.userRepository.findUserByToken(command.token);
     if (!user) {
       throw new ApiException('Bad token provided');
@@ -39,7 +43,10 @@ export class ResetPassword {
       }
     );
 
+    const apiKey = this.environmentRepository.getApiKeyForUserId(user._id);
+
     return {
+      showAddProject: !apiKey,
       token: await this.authService.generateUserToken(user),
     };
   }

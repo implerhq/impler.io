@@ -59,10 +59,10 @@ export class AuthController {
   @UseGuards(AuthGuard('github'))
   async githubCallback(@StrategyUser() strategyUser: IStrategyResponse, @Res() response: Response) {
     if (!strategyUser || !strategyUser.token) {
-      return response.redirect(`${process.env.WEB_BASE_URL}/signin?error=AuthenticationError`);
+      return response.redirect(`${process.env.WEB_BASE_URL}/auth/signin?error=AuthenticationError`);
     }
 
-    let url = process.env.WEB_BASE_URL + '/signin';
+    let url = process.env.WEB_BASE_URL + '/auth/signin';
     const queryObj: Record<string, any> = {
       token: strategyUser.token,
     };
