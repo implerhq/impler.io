@@ -11,6 +11,22 @@ type TrackData =
       };
     }
   | {
+      name: 'SIGNUP';
+      properties: {
+        id: string;
+        email: string;
+        firstName?: string;
+        lastName?: string;
+      };
+    }
+  | {
+      name: 'SIGNIN';
+      properties: {
+        id: string;
+        email: string;
+      };
+    }
+  | {
       name: 'IMPORT CREATE';
       properties: Record<string, never>;
     }

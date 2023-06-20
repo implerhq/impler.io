@@ -1,10 +1,10 @@
 import * as bcrypt from 'bcrypt';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { UserRepository } from '@impler/dal';
-import { APIMessages } from '@shared/constants';
 import { AuthService } from '../../services/auth.service';
 import { RegisterUserCommand } from './register-user.command';
+import { UniqueEmailException } from '@shared/exceptions/unique-email.exception';
 
 @Injectable()
 export class RegisterUser {
@@ -15,7 +15,7 @@ export class RegisterUser {
       email: command.email,
     });
     if (userWithEmail) {
-      throw new BadRequestException(APIMessages.EMAIL_ALREADY_EXISTS);
+      throw new UniqueEmailException();
     }
 
     const passwordHash = await bcrypt.hash(command.password, 10);

@@ -26,7 +26,7 @@ export class RequestForgotPassword {
       const resetTokenCount = this.getUpdatedRequestCount(user);
       await this.userRepository.updatePasswordResetToken(user._id, token, resetTokenCount);
 
-      const resetPasswordUrl = `${process.env.FRONT_BASE_URL}/auth/reset/${token}`;
+      const resetPasswordUrl = `${process.env.WEB_BASE_URL}/auth/reset/${token}`;
       const resetPasswordContent = this.emailService.getEmailContent({
         type: 'REQUEST_FORGOT_PASSWORD',
         link: resetPasswordUrl,
