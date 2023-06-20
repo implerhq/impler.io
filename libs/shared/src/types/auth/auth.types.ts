@@ -12,3 +12,8 @@ export interface IJwtPayload {
   lastName?: string;
   profilePicture?: string;
 }
+
+export interface ILoginResponse {
+  token: string;
+  showAddProject?: boolean;
+}

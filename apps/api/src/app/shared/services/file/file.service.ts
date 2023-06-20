@@ -1,8 +1,8 @@
 import * as XLSX from 'xlsx';
 import { Defaults, FileEncodingsEnum, IFileInformation } from '@impler/shared';
 import { ParserOptionsArgs, parseString } from 'fast-csv';
-import { EmptyFileException } from '../exceptions/empty-file.exception';
-import { APIMessages } from '../constants';
+import { EmptyFileException } from '@shared/exceptions/empty-file.exception';
+import { APIMessages } from '@shared/constants';
 import { InvalidFileException } from '@shared/exceptions/invalid-file.exception';
 
 export abstract class FileService {

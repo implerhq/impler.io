@@ -23,5 +23,11 @@ declare namespace NodeJS {
     GITHUB_OAUTH_CLIENT_SECRET: string;
 
     SENTRY_DSN: string;
+
+    SES_REGION: string;
+    SES_ACCESS_KEY_ID: string;
+    SES_SECRET_ACCESS_KEY: string;
+    EMAIL_FROM: string;
+    EMAIL_FROM_NAME: string;
   }
 }

@@ -2,10 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { FileMimeTypesEnum, UploadStatusEnum } from '@impler/shared';
 import { CommonRepository, FileEntity, FileRepository, TemplateRepository, UploadRepository } from '@impler/dal';
 import { MakeUploadEntryCommand } from './make-upload-entry.command';
-import { FileNameService } from '@shared/file/name.service';
+import { FileNameService, FileService } from '@shared/services/file';
 import { Defaults } from '@impler/shared';
 import { StorageService } from '@impler/shared/dist/services/storage';
-import { FileService } from '@shared/file/file.service';
 import { getFileService } from '@shared/helpers/file.helper';
 import { AddUploadEntryCommand } from './add-upload-entry.command';
 

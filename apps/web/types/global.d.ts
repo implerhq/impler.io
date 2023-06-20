@@ -37,3 +37,15 @@ interface IUpdateTemplateData {
 interface Window {
   impler: any;
 }
+
+interface ISigninData {
+  email: string;
+  password: string;
+}
+
+interface ISignupData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+}

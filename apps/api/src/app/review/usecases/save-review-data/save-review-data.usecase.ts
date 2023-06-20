@@ -2,7 +2,7 @@ import * as XLSX from 'xlsx';
 import { Injectable } from '@nestjs/common';
 import { FileRepository, UploadRepository } from '@impler/dal';
 import { FileMimeTypesEnum } from '@impler/shared';
-import { FileNameService } from '@shared/file/name.service';
+import { FileNameService } from '@shared/services/file';
 import { Defaults } from '@impler/shared';
 import { StorageService } from '@impler/shared/dist/services/storage';
 

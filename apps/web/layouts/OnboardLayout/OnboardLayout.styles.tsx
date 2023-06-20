@@ -22,9 +22,14 @@ const getContentContainerStyles = (theme: MantineTheme): Record<string, any> => 
   flexDirection: 'column',
   textAlign: 'center',
   padding: theme.spacing.sm,
+  width: '100%',
+  [`@media (min-width: ${theme.breakpoints.sm}px)`]: {
+    width: '75%',
+  },
   [`@media (min-width: ${theme.breakpoints.md}px)`]: {
     alignItems: 'flex-start',
     textAlign: 'left',
+    width: '60%',
   },
 });
 
