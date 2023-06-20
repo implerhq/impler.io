@@ -32,7 +32,7 @@ export const Signin = ({ API_URL, error }: SigninProps) => {
       >
         <Image src={DarkLogo} alt="Impler Logo" />
         <Title order={1} color="white">
-          Login to your account
+          Signin to your account
         </Title>
       </Flex>
       <Box w="100%">

@@ -27,6 +27,10 @@ const routes: Record<string, Route> = {
     url: () => '/v1/auth/login',
     method: 'POST',
   },
+  [API_KEYS.SIGNUP]: {
+    url: () => '/v1/auth/register',
+    method: 'POST',
+  },
 
   [API_KEYS.TEMPLATES_LIST]: {
     url: (projectId) => `/v1/project/${projectId}/templates`,

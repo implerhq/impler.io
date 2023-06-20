@@ -38,7 +38,14 @@ interface Window {
   impler: any;
 }
 
-interface ILoginData {
+interface ISigninData {
+  email: string;
+  password: string;
+}
+
+interface ISignupData {
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
 }

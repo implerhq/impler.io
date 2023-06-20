@@ -9,23 +9,36 @@ import { track } from '@libs/amplitude';
 import { API_KEYS, CONSTANTS, ROUTES } from '@config';
 import { IErrorObject, ILoginResponse } from '@impler/shared';
 
-export function useSignin() {
+interface ISignupFormData {
+  fullName: string;
+  email: string;
+  password: string;
+}
+
+export function useSignup() {
   const { push } = useRouter();
-  const { register, handleSubmit } = useForm<ISigninData>();
+  const {
+    setError,
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ISignupFormData>();
   const [errorMessage, setErrorMessage] = useState<IErrorObject | undefined>(undefined);
-  const { mutate: login, isLoading: isLoginLoading } = useMutation<
+  const { mutate: signup, isLoading: isSignupLoading } = useMutation<
     ILoginResponse,
     IErrorObject,
-    ISigninData,
+    ISignupData,
     (string | undefined)[]
-  >([API_KEYS.SIGNIN], (body) => commonApi<ILoginResponse>(API_KEYS.SIGNIN as any, { body }), {
+  >([API_KEYS.SIGNUP], (body) => commonApi<ILoginResponse>(API_KEYS.SIGNUP as any, { body }), {
     onSuccess: (data) => {
       if (!data) return;
       const profileData = jwt<IProfileData>(data.token as string);
       localStorage.setItem(CONSTANTS.PROFILE_STORAGE_NAME, JSON.stringify(profileData));
       track({
-        name: 'SIGNIN',
+        name: 'SIGNUP',
         properties: {
+          firstName: profileData.firstName,
+          lastName: profileData.lastName,
           email: profileData.email,
           id: profileData._id,
         },
@@ -35,18 +48,32 @@ export function useSignin() {
       } else push(ROUTES.HOME);
     },
     onError(error) {
-      setErrorMessage(error);
+      if (error.error === 'EmailAlreadyExists') {
+        setError('email', {
+          type: 'manual',
+          message: 'Email already exists',
+        });
+      } else {
+        setErrorMessage(error);
+      }
     },
   });
 
-  const onLogin = (data: ISigninData) => {
-    login(data);
+  const onSignup = (data: ISignupFormData) => {
+    const signupData: ISignupData = {
+      firstName: data.fullName.split(' ')[0],
+      lastName: data.fullName.split(' ')[1],
+      email: data.email,
+      password: data.password,
+    };
+    signup(signupData);
   };
 
   return {
+    errors,
     register,
     errorMessage,
-    isLoginLoading,
-    login: handleSubmit(onLogin),
+    isSignupLoading,
+    signup: handleSubmit(onSignup),
   };
 }
