@@ -71,7 +71,7 @@ export const Signin = ({ API_URL, error }: SigninProps) => {
             Sign In
           </Button>
           <Text size="md" align="center">
-            Don&apos;t have an account? <Link href="/signup">Sign Up</Link>
+            Don&apos;t have an account? <Link href={ROUTES.SIGNUP}>Sign Up</Link>
           </Text>
         </Stack>
       </form>

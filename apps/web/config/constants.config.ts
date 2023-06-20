@@ -82,6 +82,7 @@ export const NOTIFICATION_KEYS = {
 
 export const ROUTES = {
   HOME: '/',
+  SIGNUP: '/auth/signup',
   SIGNIN: '/auth/signin',
   SIGNIN_ONBOARDING: '/auth/onboard',
   IMPORTS: '/imports',
