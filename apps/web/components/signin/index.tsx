@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Title, Text, Stack, Divider, Flex, Box } from '@mantine/core';
+import { Title, Text, Stack, Divider, Flex, Box, Alert } from '@mantine/core';
 
 import { Input } from '@ui/input';
 import { Button } from '@ui/button';
@@ -8,6 +8,8 @@ import { CONSTANTS, colors } from '@config';
 
 import DarkLogo from '@assets/images/logo-dark.png';
 import { GithubIcon } from '@assets/icons/Github.icon';
+import { useSignin } from '@hooks/auth/useSignin';
+import { PasswordInput } from '@ui/password-input';
 
 interface SigninProps {
   API_URL: string;
@@ -15,6 +17,8 @@ interface SigninProps {
 }
 
 export const Signin = ({ API_URL, error }: SigninProps) => {
+  const { register, isLoginLoading, login, errorMessage } = useSignin();
+
   return (
     <>
       <Flex
@@ -49,21 +53,28 @@ export const Signin = ({ API_URL, error }: SigninProps) => {
         color={colors.StrokeSecondaryDark}
         w="100%"
       />
-      <Stack w="100%">
-        <Input size="md" placeholder="Email" />
-        <Input size="md" placeholder="Password" />
-        <Link href="/forgot-password">
-          <Text size="md" align="right">
-            Forgot password?
+      <form style={{ width: '100%' }} onSubmit={login}>
+        <Stack>
+          {errorMessage && errorMessage.message ? (
+            <Alert color={colors.white} mb="sm" bg={colors.danger} p="xs">
+              {errorMessage.message}
+            </Alert>
+          ) : null}
+          <Input register={register('email')} size="md" placeholder="Email" type="email" required />
+          <PasswordInput register={register('password')} size="md" placeholder="Password" required />
+          <Link href="/forgot-password">
+            <Text size="md" align="right">
+              Forgot password?
+            </Text>
+          </Link>
+          <Button loading={isLoginLoading} fullWidth type="submit" size="md">
+            Sign In
+          </Button>
+          <Text size="md" align="center">
+            Don&apos;t have an account? <Link href="/signup">Sign Up</Link>
           </Text>
-        </Link>
-        <Button fullWidth type="submit" size="md">
-          Sign In
-        </Button>
-        <Text size="md" align="center">
-          Don&apos;t have an account? <Link href="/signup">Sign Up</Link>
-        </Text>
-      </Stack>
+        </Stack>
+      </form>
     </>
   );
 };

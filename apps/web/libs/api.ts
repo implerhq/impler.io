@@ -23,6 +23,11 @@ const routes: Record<string, Route> = {
     url: () => '/v1/auth/logout',
     method: 'GET',
   },
+  [API_KEYS.SIGNIN]: {
+    url: () => '/v1/auth/login',
+    method: 'POST',
+  },
+
   [API_KEYS.TEMPLATES_LIST]: {
     url: (projectId) => `/v1/project/${projectId}/templates`,
     method: 'GET',
@@ -139,7 +144,7 @@ export async function commonApi<T>(
       return (await handleResponseStatusAndContentType(response)) as T;
     }
 
-    throw new Error(response.statusText);
+    throw await handleResponseStatusAndContentType(response);
   } catch (error) {
     throw error;
   }
