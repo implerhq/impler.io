@@ -1,4 +1,4 @@
-import { setUserId, track as AmplitudeTrack } from '@amplitude/analytics-browser';
+import { setUserId, track as AmplitudeTrack, Identify, identify } from '@amplitude/analytics-browser';
 
 type TrackData =
   | {
@@ -15,8 +15,9 @@ type TrackData =
       properties: {
         id: string;
         email: string;
-        firstName?: string;
-        lastName?: string;
+        firstName: string;
+        lastName: string;
+        profilePicture?: string;
       };
     }
   | {
@@ -59,8 +60,8 @@ type TrackData =
       properties: {
         id: string;
         email: string;
-        firstName?: string;
-        lastName?: string;
+        firstName: string;
+        lastName: string;
         profilePicture?: string;
       };
     }
@@ -100,7 +101,22 @@ type TrackData =
 
 export function track({ name, properties }: TrackData) {
   AmplitudeTrack(name, properties);
-  if (name === 'GITHUB CONTINUE') {
+  if (name === 'GITHUB CONTINUE' || name === 'SIGNUP') {
+    const userIdentity = new Identify();
+    userIdentity.set('id', properties.id);
+    userIdentity.set('email', properties.email);
+    userIdentity.set('firstName', properties.firstName);
+    userIdentity.set('lastName', properties.lastName);
+    if (properties.profilePicture) {
+      userIdentity.set('profilePicture', properties.profilePicture);
+    }
+    identify(userIdentity);
+    setUserId(properties.id);
+  } else if (name === 'SIGNIN') {
+    const userIdentity = new Identify();
+    userIdentity.set('id', properties.id);
+    userIdentity.set('email', properties.email);
+    identify(userIdentity);
     setUserId(properties.id);
   }
 }
