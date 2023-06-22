@@ -16,9 +16,9 @@ import { mantineConfig, colors } from '@config';
 const { publicRuntimeConfig } = getConfig();
 
 if (typeof window !== 'undefined' && publicRuntimeConfig.NEXT_PUBLIC_AMPLITUDE_ID) {
-  init(publicRuntimeConfig.NEXT_PUBLIC_AMPLITUDE_ID, undefined, {
-    attribution: {
-      disabled: true,
+  init(publicRuntimeConfig.NEXT_PUBLIC_AMPLITUDE_ID, {
+    defaultTracking: {
+      attribution: false,
     },
   });
 }
