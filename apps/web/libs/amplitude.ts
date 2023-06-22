@@ -1,4 +1,4 @@
-import { setUserId, track as AmplitudeTrack, Identify, identify } from '@amplitude/analytics-browser';
+import { setUserId, track as AmplitudeTrack, Identify, identify, reset } from '@amplitude/analytics-browser';
 
 type TrackData =
   | {
@@ -118,5 +118,7 @@ export function track({ name, properties }: TrackData) {
     userIdentity.set('email', properties.email);
     identify(userIdentity);
     setUserId(properties.id);
+  } else if (name === 'LOGOUT') {
+    reset();
   }
 }
