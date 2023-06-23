@@ -1,4 +1,4 @@
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { LoginUserCommand } from './login-user.command';
