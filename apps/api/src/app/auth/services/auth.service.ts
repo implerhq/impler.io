@@ -6,11 +6,13 @@ import { UserEntity, UserRepository, EnvironmentRepository } from '@impler/dal';
 import { UserNotFoundException } from '@shared/exceptions/user-not-found.exception';
 import { IAuthenticationData, IStrategyResponse } from '@shared/types/auth.types';
 import { IncorrectLoginCredentials } from '@shared/exceptions/incorrect-login-credentials.exception';
+import { LeadService } from '@shared/services/lead.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
+    private leadService: LeadService,
     private userRepository: UserRepository,
     private environmentRepository: EnvironmentRepository
   ) {}
@@ -30,6 +32,11 @@ export class AuthService {
         ...(provider ? { tokens: [provider] } : {}),
       };
       user = await this.userRepository.create(userObj);
+      await this.leadService.createLead({
+        'First Name': user.firstName,
+        'Last Name': user.lastName,
+        'Lead Email': user.email,
+      });
       userCreated = true;
     }
     if (!user) {

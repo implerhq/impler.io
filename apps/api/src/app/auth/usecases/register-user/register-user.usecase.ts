@@ -5,10 +5,15 @@ import { UserRepository } from '@impler/dal';
 import { AuthService } from '../../services/auth.service';
 import { RegisterUserCommand } from './register-user.command';
 import { UniqueEmailException } from '@shared/exceptions/unique-email.exception';
+import { LeadService } from '@shared/services/lead.service';
 
 @Injectable()
 export class RegisterUser {
-  constructor(private userRepository: UserRepository, private authService: AuthService) {}
+  constructor(
+    private userRepository: UserRepository,
+    private authService: AuthService,
+    private leadService: LeadService
+  ) {}
 
   async execute(command: RegisterUserCommand) {
     const userWithEmail = await this.userRepository.findOne({
@@ -24,6 +29,12 @@ export class RegisterUser {
       firstName: command.firstName.toLowerCase(),
       lastName: command.lastName?.toLowerCase(),
       password: passwordHash,
+    });
+
+    await this.leadService.createLead({
+      'First Name': user.firstName,
+      'Last Name': user.lastName,
+      'Lead Email': user.email,
     });
 
     const token = this.authService.getSignedToken({
