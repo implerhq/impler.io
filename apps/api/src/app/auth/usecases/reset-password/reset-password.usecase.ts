@@ -1,4 +1,4 @@
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { Injectable } from '@nestjs/common';
 import { isBefore, subDays } from 'date-fns';
 import { EnvironmentRepository, UserRepository } from '@impler/dal';

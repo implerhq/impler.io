@@ -1,4 +1,4 @@
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { Injectable } from '@nestjs/common';
 
 import { UserRepository } from '@impler/dal';
