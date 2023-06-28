@@ -1,5 +1,6 @@
 import * as XLSX from 'xlsx';
 import { Defaults, FileEncodingsEnum, IFileInformation } from '@impler/shared';
+import { ParseConfig, parse } from 'papaparse';
 import { ParserOptionsArgs, parseString } from 'fast-csv';
 import { EmptyFileException } from '@shared/exceptions/empty-file.exception';
 import { APIMessages } from '@shared/constants';
@@ -78,5 +79,31 @@ export class ExcelFileService extends FileService {
     XLSX.utils.book_append_sheet(wb, ws);
 
     return XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[Defaults.ZERO]]);
+  }
+}
+
+export class CSVFileService2 {
+  getFileHeaders(file: Express.Multer.File, options?: ParseConfig): Promise<string[]> {
+    return new Promise((resolve, reject) => {
+      const fileContent = file.buffer.toString(FileEncodingsEnum.CSV);
+      parse(fileContent, {
+        ...(options || {}),
+        preview: 1,
+        step: (results) => {
+          if (Object.keys(results.data).length > Defaults.ONE) {
+            resolve(results.data);
+          } else {
+            reject(new EmptyFileException());
+          }
+        },
+        error: (error) => {
+          if (error.message.includes('Parse Error')) {
+            reject(new InvalidFileException());
+          } else {
+            reject(error);
+          }
+        },
+      });
+    });
   }
 }

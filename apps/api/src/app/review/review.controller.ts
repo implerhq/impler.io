@@ -1,5 +1,6 @@
+import { Response } from 'express';
 import { ApiOperation, ApiTags, ApiSecurity, ApiQuery, ApiOkResponse } from '@nestjs/swagger';
-import { BadRequestException, Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, Query, Res, UseGuards } from '@nestjs/common';
 
 import { APIMessages } from '@shared/constants';
 import { FileEntity, UploadEntity } from '@impler/dal';
@@ -11,7 +12,6 @@ import {
   DoReview,
   GetUpload,
   StartProcess,
-  SaveReviewData,
   UpdateImportCount,
   GetFileInvalidData,
   ReanameFileHeadings,
@@ -35,10 +35,9 @@ export class ReviewController {
     private doReview: DoReview,
     private getUpload: GetUpload,
     private startProcess: StartProcess,
-    private renameFileHeadings: ReanameFileHeadings,
-    private saveReviewData: SaveReviewData,
     private updateImportCount: UpdateImportCount,
     private getFileInvalidData: GetFileInvalidData,
+    private renameFileHeadings: ReanameFileHeadings,
     private getUploadInvalidData: GetUploadInvalidData
   ) {}
 
@@ -65,23 +64,19 @@ export class ReviewController {
   async getReview(
     @Param('uploadId') _uploadId: string,
     @Query('page') page = Defaults.ONE,
-    @Query('limit') limit = Defaults.PAGE_LIMIT
-  ): Promise<PaginationResponseDto> {
+    @Query('limit') limit = Defaults.PAGE_LIMIT,
+    @Res() res: Response
+  ) {
     const uploadData = await this.getUploadInvalidData.execute(_uploadId);
     if (!uploadData) throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
 
-    // Only Mapped & Reviewing status are allowed
-    validateUploadStatus(uploadData.status as UploadStatusEnum, [UploadStatusEnum.MAPPED, UploadStatusEnum.REVIEWING]);
-
     // Get Invalid Data either from Validation or Validation Result
-    let invalidData = [];
+    let invalidData: any = [];
     if (uploadData.status === UploadStatusEnum.MAPPED) {
-      // uploaded file is mapped, do review
-      const reviewData = await this.doReview.execute(_uploadId);
-      // save invalid data to storage
-      await this.saveReviewData.execute(_uploadId, reviewData.invalid, reviewData.valid);
+      res.setHeader('Content-Type', 'text/json');
+      res.setHeader('Transfer-Encoding', 'chunked');
 
-      invalidData = reviewData.invalid;
+      return await this.doReview.execute(_uploadId, res);
     } else {
       // Uploaded file is already reviewed, return reviewed data
       invalidData = await this.getFileInvalidData.execute(
@@ -89,7 +84,9 @@ export class ReviewController {
       );
     }
 
-    return paginateRecords(invalidData, page, limit);
+    const paginatedData = paginateRecords(invalidData, page, limit);
+    res.setHeader('Content-Type', 'text/json');
+    res.send(paginatedData);
   }
 
   @Post(':uploadId/confirm')
