@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { FileMimeTypesEnum, UploadStatusEnum } from '@impler/shared';
+import { UploadStatusEnum, Defaults } from '@impler/shared';
+import { StorageService } from '@impler/shared/dist/services/storage';
 import { CommonRepository, FileEntity, FileRepository, TemplateRepository, UploadRepository } from '@impler/dal';
+import { AddUploadEntryCommand } from './add-upload-entry.command';
 import { MakeUploadEntryCommand } from './make-upload-entry.command';
 import { CSVFileService2, FileNameService } from '@shared/services/file';
-import { Defaults } from '@impler/shared';
-import { StorageService } from '@impler/shared/dist/services/storage';
-import { AddUploadEntryCommand } from './add-upload-entry.command';
 
 @Injectable()
 export class MakeUploadEntry {
@@ -79,19 +78,6 @@ export class MakeUploadEntry {
       status: UploadStatusEnum.UPLOADED,
       authHeaderValue: authHeaderValue,
       totalRecords: totalRecords || Defaults.ZERO,
-    });
-  }
-
-  private async addAllDataEntry(uploadId: string, data: Record<string, unknown>[]): Promise<FileEntity> {
-    const allDataFileName = this.fileNameService.getAllJsonDataFileName();
-    const allDataFilePath = this.fileNameService.getAllJsonDataFilePath(uploadId);
-    await this.storageService.uploadFile(allDataFilePath, JSON.stringify(data), FileMimeTypesEnum.JSON);
-
-    return await this.fileRepository.create({
-      mimeType: FileMimeTypesEnum.JSON,
-      path: allDataFilePath,
-      name: allDataFileName,
-      originalName: allDataFileName,
     });
   }
 }
