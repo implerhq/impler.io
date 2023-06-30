@@ -29,7 +29,6 @@ import { PaginationResponseDto } from '@shared/dtos/pagination-response.dto';
 @Controller('/review')
 @ApiTags('Review')
 @ApiSecurity(ACCESS_KEY_NAME)
-@UseGuards(JwtAuthGuard)
 export class ReviewController {
   constructor(
     private doReview: DoReview,
@@ -70,26 +69,30 @@ export class ReviewController {
     const uploadData = await this.getUploadInvalidData.execute(_uploadId);
     if (!uploadData) throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
 
-    // Get Invalid Data either from Validation or Validation Result
-    let invalidData: any = [];
-    if (uploadData.status === UploadStatusEnum.MAPPED) {
-      res.setHeader('Content-Type', 'text/json');
-      res.setHeader('Transfer-Encoding', 'chunked');
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('Cache-Control', 'no-cache');
 
-      return await this.doReview.execute(_uploadId, res);
+    if (uploadData.status === UploadStatusEnum.MAPPED) {
+      return await this.doReview.execute(_uploadId, res, limit);
     } else {
       // Uploaded file is already reviewed, return reviewed data
-      invalidData = await this.getFileInvalidData.execute(
+      const invalidData = await this.getFileInvalidData.execute(
         (uploadData._invalidDataFileId as unknown as FileEntity).path
       );
+      const { data, ...rest } = paginateRecords(invalidData, page, limit);
+      for (const item of data) {
+        res.write(`data: ${JSON.stringify(item)}\n\n`);
+      }
+      res.write(`data: ${JSON.stringify(rest)}\n\n`);
+      res.end();
     }
-
-    const paginatedData = paginateRecords(invalidData, page, limit);
-    res.setHeader('Content-Type', 'text/json');
-    res.send(paginatedData);
   }
 
   @Post(':uploadId/confirm')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Confirm review data for uploaded file',
   })

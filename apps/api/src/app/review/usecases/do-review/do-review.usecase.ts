@@ -57,7 +57,7 @@ export class DoReview {
     private fileNameService: FileNameService
   ) {}
 
-  async execute(uploadId: string, res: Response) {
+  async execute(uploadId: string, res: Response, limit: number) {
     const uploadInfo = await this.uploadRepository.getUploadInformation(uploadId);
     if (!uploadInfo) {
       throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
@@ -92,6 +92,7 @@ export class DoReview {
     this.storageService.writeStream(invalidFilePath, invalidDataStream, FileMimeTypesEnum.JSON);
     this.storageService.writeStream(invalidCsvDataFilePath, invalidCsvDataStream, FileMimeTypesEnum.CSV);
     invalidCsvDataStream.push(['index', 'message', ...uploadInfo.headings].join(',') + '\n');
+    res.write('\n');
 
     let validRecords = 0,
       invalidRecords = 0,
@@ -120,7 +121,7 @@ export class DoReview {
               // @ts-ignore
               ...recordObj,
             };
-            res.write(JSON.stringify(invalidItem));
+            if (totalRecords <= limit) res.write('data:' + JSON.stringify(invalidItem) + '\n\n');
             invalidDataStream.push((invalidRecords === 0 ? '[' : ',') + JSON.stringify(invalidItem));
             invalidCsvDataStream.push([totalRecords, message, ...record].join(',') + '\n');
             invalidRecords++;
@@ -142,13 +143,19 @@ export class DoReview {
           totalRecords,
           validRecords,
         });
-        res.end(
-          JSON.stringify({
-            totalRecords,
-            invalidRecords,
-            invalidCsvDataFilePath,
-          })
+        res.write(
+          'data: ' +
+            JSON.stringify({
+              limit,
+              page: 1,
+              totalPages: Math.ceil(invalidRecords / limit),
+              totalRecords,
+              invalidRecords,
+              invalidCsvDataFilePath,
+            }) +
+            '\n\n'
         );
+        res.end();
       },
       error: (err) => {
         console.log(err);
@@ -314,6 +321,7 @@ export class DoReview {
     const validDataFilePath = this.fileNameService.getValidDataFilePath(uploadId);
     const invalidDataFilePath = this.fileNameService.getInvalidDataFilePath(uploadId);
     const invalidCsvFilePath = this.fileNameService.getInvalidCSVDataFilePath(uploadId);
+    const invalidCSVDataFileUrl = this.fileNameService.getInvalidCSVDataFileUrl(uploadId);
 
     const validDataFile = await this.makeFileEntry(validDataFileName, validDataFilePath);
     const invalidDataFile = await this.makeFileEntry(invalidDataFileName, invalidDataFilePath);
@@ -326,6 +334,7 @@ export class DoReview {
         _validDataFileId: validDataFile._id,
         _invalidDataFileId: invalidDataFile._id,
         _invalidCSVDataFileId: invalidCsvFile._id,
+        invalidCSVDataFileUrl,
         totalRecords,
         validRecords,
         invalidRecords,

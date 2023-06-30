@@ -1,13 +1,11 @@
 import { logAmplitudeEvent } from '@amplitude';
 import { variables } from '@config';
-import { IErrorObject, IReviewData, IUpload } from '@impler/shared';
+import { useEventSourceQuery } from '@hooks/useEventSource';
+import { IErrorObject, IUpload } from '@impler/shared';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { downloadFileFromURL, getFileNameFromUrl, notifier } from '@util';
-import { useState } from 'react';
-
-const defaultPage = 1;
 
 interface IUsePhase3Props {
   onNext: (uploadData: IUpload) => void;
@@ -16,33 +14,14 @@ interface IUsePhase3Props {
 export function usePhase3({ onNext }: IUsePhase3Props) {
   const { api } = useAPIState();
   const { uploadInfo, setUploadInfo } = useAppState();
-  const [page, setPage] = useState<number>(defaultPage);
-  const [totalPages, setTotalPages] = useState<number>(defaultPage);
   const {
+    page,
+    setPage,
+    totalPages,
     data: reviewData,
     isLoading: isReviewDataLoading,
-    isFetched: isReviewDataFetched,
-  } = useQuery<IReviewData, IErrorObject, IReviewData, [string, number]>(
-    [`review`, page],
-    () => api.getReviewData(uploadInfo._id, page),
-    {
-      onSuccess(data) {
-        logAmplitudeEvent('VALIDATE', {
-          invalidRecords: data.totalRecords,
-        });
-        if (!data.totalRecords) {
-          // Confirm review if spreadsheet do not have invalid records
-          confirmReview(false);
-        } else {
-          setPage(Number(data.page));
-          setTotalPages(data.totalPages);
-        }
-      },
-      onError(error: IErrorObject) {
-        notifier.showError({ message: error.message, title: error.error });
-      },
-    }
-  );
+  } = useEventSourceQuery(uploadInfo._id);
+
   const { mutate: getSignedUrl } = useMutation<string, IErrorObject, [string, string]>(
     [`getSignedUrl:${uploadInfo._id}`],
     ([fileUrl]) => api.getSignedUrl(getFileNameFromUrl(fileUrl)),
@@ -94,8 +73,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
   };
 
   const onExportData = () => {
-    if (!uploadInfo.invalidCSVDataFileUrl) getUpload();
-    else getSignedUrl([uploadInfo.invalidCSVDataFileUrl, `invalid-data-${uploadInfo._id}.csv`]);
+    getUpload();
   };
 
   return {
@@ -110,6 +88,6 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     reviewData: reviewData?.data || [],
     // eslint-disable-next-line no-magic-numbers
     totalData: reviewData?.totalRecords || 0,
-    isInitialDataLoaded: isReviewDataFetched && !isReviewDataLoading,
+    isInitialDataLoaded: !isReviewDataLoading,
   };
 }
