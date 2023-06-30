@@ -19,7 +19,7 @@
     <a href="https://docs.impler.io"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://demo.impler.io">View Demo</a>
+    <a href="https://web.impler.io">Try Now</a>
     ·
     <a href="https://github.com/implerhq/impler.io/issues/new?assignees=&labels=&template=bug_report.md&title=">Report Bug</a>
     ·
