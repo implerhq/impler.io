@@ -11,8 +11,8 @@ import { Flex, Group, LoadingOverlay, Select, Stack, Title, useMantineColorSchem
 import { ImportIcon } from '@assets/icons/Import.icon';
 import { ActivitiesIcon } from '@assets/icons/Activities.icon';
 import useStyles from './AppLayout.styles';
-import LogoBlack from '@assets/images/Logo-black.svg';
-import LogoWhite from '@assets/images/Logo-white.svg';
+import LogoBlack from '@assets/images/full-logo-dark.png';
+import LogoWhite from '@assets/images/full-logo-light.png';
 import { LogoutIcon } from '@assets/icons/Logout.icon';
 
 import { CONSTANTS } from '@config';

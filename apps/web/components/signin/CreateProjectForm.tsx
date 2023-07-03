@@ -50,7 +50,7 @@ export default function CreateProjectForm() {
 
   return (
     <>
-      <Image src={DarkLogo} alt="Impler Logo" />
+      <Image src={DarkLogo} width={100} alt="Impler Logo" />
       <Title order={2} color="white" mt="sm">
         Let&apos;s Create your first project
       </Title>
