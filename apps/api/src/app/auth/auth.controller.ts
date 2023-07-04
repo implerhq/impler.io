@@ -90,7 +90,12 @@ export class AuthController {
 
   @Get('/logout')
   logout(@Res() response: Response) {
-    response.clearCookie(CONSTANTS.AUTH_COOKIE_NAME);
+    response.clearCookie(CONSTANTS.AUTH_COOKIE_NAME, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      domain: process.env.COOKIE_DOMAIN,
+    });
 
     response.contentType('text').send();
   }
