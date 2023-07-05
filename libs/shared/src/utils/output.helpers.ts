@@ -28,7 +28,7 @@ export function replaceVariableInString(str: string, record: Record<string, stri
 
     // eslint-disable-next-line no-magic-numbers
     const key = found[0].replace(/{{|}}/g, '');
-    if (record[key]) modifiedStr = replaceVariableInStringWithKey(modifiedStr, key, record[key]);
+    if (typeof record[key] !== 'undefined') modifiedStr = replaceVariableInStringWithKey(modifiedStr, key, record[key]);
   }
 
   return modifiedStr;
