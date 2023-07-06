@@ -1,27 +1,38 @@
-import { Flex } from '@mantine/core';
+import { useState } from 'react';
+import { ActionIcon, Checkbox, Flex, Input, Select } from '@mantine/core';
 
 import { colors } from '@config';
 import { Table } from '@ui/table';
-import { Button } from '@ui/button';
 import { IColumn } from '@impler/shared';
 import { useSchema } from '@hooks/useSchema';
 import { IconButton } from '@ui/icon-button';
 
+import { AddIcon } from '@assets/icons/Add.icon';
 import { EditIcon } from '@assets/icons/Edit.icon';
+import { CloseIcon } from '@assets/icons/Close.icon';
 import { CheckIcon } from '@assets/icons/Check.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
+import { COLUMN_TYPES } from '@shared/constants';
+import { Controller } from 'react-hook-form';
+import { BracesIcon } from '@assets/icons/Braces.icon';
 
 interface SchemaProps {
   templateId: string;
 }
 
 export function Schema({ templateId }: SchemaProps) {
-  const { onAddColumnClick, onEditColumnClick, onDeleteColumnClick, columns } = useSchema({ templateId });
+  const [showAddRow, setShowAddRow] = useState(false);
+  const { register, onEditColumnClick, onDeleteColumnClick, columns, control, handleSubmit, isColumnCreateLoading } =
+    useSchema({
+      templateId,
+    });
 
   return (
     <Flex gap="sm" direction="column">
       <Flex justify="flex-end">
-        <Button onClick={onAddColumnClick}>Add Column</Button>
+        <ActionIcon title="Edit JSON" variant="light">
+          <BracesIcon size="md" color={colors.yellow} />
+        </ActionIcon>
       </Flex>
       <Table<IColumn>
         headings={[
@@ -62,6 +73,51 @@ export function Schema({ templateId }: SchemaProps) {
             ),
           },
         ]}
+        extraContent={
+          <tr>
+            {showAddRow ? (
+              <>
+                <td>
+                  <Flex gap="xs">
+                    <Input autoFocus variant="default" placeholder="Column Name" {...register('name')} />
+                    <Input placeholder="Column Key" {...register('key')} />
+                  </Flex>
+                </td>
+                <td>
+                  <Controller
+                    control={control}
+                    name="type"
+                    render={({ field }) => (
+                      <Select data={COLUMN_TYPES} placeholder="Select Type" variant="default" {...field} />
+                    )}
+                  />
+                </td>
+                <td>
+                  <Checkbox title="Is Required?" {...register('isRequired')} />
+                </td>
+                <td>
+                  <Checkbox title="Is Unique?" {...register('isUnique')} />
+                </td>
+                <td>
+                  <Flex gap="xs" justify="flex-end">
+                    <ActionIcon color="blue" onClick={handleSubmit} loading={isColumnCreateLoading}>
+                      <CheckIcon color={colors.blue} />
+                    </ActionIcon>
+                    <ActionIcon color="red" onClick={() => setShowAddRow(false)}>
+                      <CloseIcon />
+                    </ActionIcon>
+                  </Flex>
+                </td>
+              </>
+            ) : (
+              <td colSpan={5}>
+                <ActionIcon variant="light" onClick={() => setShowAddRow(true)}>
+                  <AddIcon color={colors.yellow} />
+                </ActionIcon>
+              </td>
+            )}
+          </tr>
+        }
         data={columns}
       />
     </Flex>
