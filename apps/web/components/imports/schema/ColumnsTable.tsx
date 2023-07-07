@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
-import { ActionIcon, Checkbox, Flex, Input, Select } from '@mantine/core';
+import { ActionIcon, Checkbox, Flex, Input, Select, Tooltip } from '@mantine/core';
 
 import { colors } from '@config';
 import { Table } from '@ui/table';
@@ -28,6 +28,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
 
   return (
     <Table<IColumn>
+      emptyDataText='No columns found click on "+" to add new column'
       headings={[
         {
           title: 'Name',
@@ -104,9 +105,11 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
             </>
           ) : (
             <td colSpan={5}>
-              <ActionIcon variant="light" onClick={() => setShowAddRow(true)}>
-                <AddIcon color={colors.yellow} />
-              </ActionIcon>
+              <Tooltip label="Add new column" withArrow>
+                <ActionIcon variant="light" onClick={() => setShowAddRow(true)}>
+                  <AddIcon color={colors.yellow} />
+                </ActionIcon>
+              </Tooltip>
             </td>
           )}
         </tr>

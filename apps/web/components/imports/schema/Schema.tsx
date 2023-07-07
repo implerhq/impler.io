@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
-import { ActionIcon, Flex } from '@mantine/core';
+import { ActionIcon, Flex, Tooltip } from '@mantine/core';
 
 import { colors } from '@config';
 import { ColumnsTable } from './ColumnsTable';
@@ -18,9 +18,11 @@ export function Schema({ templateId }: SchemaProps) {
   return (
     <Flex gap="sm" direction="column">
       <Flex justify="flex-end">
-        <ActionIcon title="Edit JSON" variant="light" onClick={() => setShowJsonEditor(!showJsonEditor)}>
-          <BracesIcon size="md" color={colors.yellow} />
-        </ActionIcon>
+        <Tooltip label="Edit JSON" withArrow>
+          <ActionIcon title="Edit JSON" variant="light" onClick={() => setShowJsonEditor(!showJsonEditor)}>
+            <BracesIcon size="md" color={colors.yellow} />
+          </ActionIcon>
+        </Tooltip>
       </Flex>
       {showJsonEditor ? <ColumnsEditor templateId={templateId} /> : <ColumnsTable templateId={templateId} />}
     </Flex>
