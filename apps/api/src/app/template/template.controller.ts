@@ -126,7 +126,7 @@ export class TemplateController {
   @ApiBody({ type: [ColumnRequestDto] })
   async updateTemplateColumnRoute(
     @Param('templateId', ValidateMongoId) _templateId: string,
-    @Body(new ParseArrayPipe({ items: ColumnRequestDto })) body: ColumnRequestDto[]
+    @Body(new ParseArrayPipe({ items: ColumnRequestDto, stopAtFirstError: false })) body: ColumnRequestDto[]
   ): Promise<ColumnResponseDto[]> {
     return this.updateTemplateColumns.execute(
       body.map((columnData) =>

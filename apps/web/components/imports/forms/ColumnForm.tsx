@@ -9,6 +9,7 @@ import { Textarea } from '@ui/textarea';
 import { Checkbox } from '@ui/checkbox';
 import { IColumn } from '@impler/shared';
 import { MultiSelect } from '@ui/multi-select';
+import { COLUMN_TYPES } from '@shared/constants';
 
 interface ColumnFormProps {
   data?: IColumn;
@@ -71,40 +72,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
             />
           )}
         />
-        <Select
-          data={[
-            {
-              label: 'String',
-              value: 'String',
-            },
-            {
-              label: 'Number',
-              value: 'Number',
-            },
-            {
-              label: 'Select',
-              value: 'Select',
-            },
-            {
-              label: 'Date',
-              value: 'Date',
-            },
-            {
-              label: 'Regular Expression',
-              value: 'Regex',
-            },
-            {
-              label: 'Email',
-              value: 'Email',
-            },
-            {
-              label: 'Any',
-              value: 'Any',
-            },
-          ]}
-          placeholder="Type"
-          register={register('type')}
-        />
+        <Select data={COLUMN_TYPES} placeholder="Type" register={register('type')} />
         {typeValue === 'Regex' && (
           <>
             <Input

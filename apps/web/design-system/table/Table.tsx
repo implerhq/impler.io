@@ -10,16 +10,17 @@ interface IHeadingItem<T> {
 }
 
 interface ITableProps<T> {
+  data?: T[];
   emptyDataText?: string;
   headings?: IHeadingItem<T>[];
-  data?: T[];
   style?: React.CSSProperties;
+  extraContent?: React.ReactNode;
 }
 
 export function Table<T extends { _id?: string }>(props: ITableProps<T>) {
   const defaultColSpan = 1;
   const { classes } = useStyles();
-  const { data, headings, emptyDataText = 'No Data Found!', style } = props;
+  const { data, headings, emptyDataText = 'No Data Found!', style, extraContent } = props;
 
   const isHeadingsEmpty = !headings || !Array.isArray(headings) || !headings.length;
   const isDataEmpty = !data || !Array.isArray(data) || !data.length;
@@ -49,6 +50,7 @@ export function Table<T extends { _id?: string }>(props: ITableProps<T>) {
           <tr>
             <td colSpan={headings?.length || defaultColSpan}>{emptyDataText}</td>
           </tr>
+          {extraContent}
         </tbody>
       );
 
@@ -67,6 +69,7 @@ export function Table<T extends { _id?: string }>(props: ITableProps<T>) {
             )}
           </tr>
         ))}
+        {extraContent}
       </tbody>
     );
   };

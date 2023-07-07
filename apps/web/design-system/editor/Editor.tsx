@@ -4,25 +4,31 @@ import 'ace-builds/src-noconflict/theme-monokai';
 import { snippetCompleter } from 'ace-builds/src-noconflict/ext-language_tools';
 import { useEffect, useMemo, useRef } from 'react';
 
+interface EditorProps {
+  id: string;
+  name: string;
+  height?: string;
+  minLines?: number;
+  maxLines?: number;
+  readonly?: boolean;
+  variables?: string[];
+  highlightActiveLine?: boolean;
+  onChange?: (value: string) => void;
+  value?: string | Record<string, any>;
+}
+
 export function Editor({
   name,
   id,
   onChange,
   value,
   readonly,
+  minLines,
+  maxLines,
   highlightActiveLine = true,
   height = '300px',
   variables = [],
-}: {
-  id: string;
-  name: string;
-  highlightActiveLine?: boolean;
-  readonly?: boolean;
-  onChange?: (value: string) => void;
-  value?: string;
-  height?: string;
-  variables?: string[];
-}) {
+}: EditorProps) {
   const editorRef = useRef<any>();
   const completor = useMemo(
     () => ({
@@ -57,6 +63,8 @@ export function Editor({
       highlightActiveLine={highlightActiveLine}
       readOnly={readonly}
       value={value ? String(value) : ''}
+      minLines={minLines}
+      maxLines={maxLines}
       wrapEnabled
       setOptions={{
         displayIndentGuides: true,

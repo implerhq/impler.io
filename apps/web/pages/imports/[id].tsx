@@ -12,7 +12,7 @@ import { API_KEYS, CONSTANTS, ROUTES, colors } from '@config';
 import { Tabs } from '@ui/Tabs';
 import { Card } from '@ui/Card';
 import { Button } from '@ui/button';
-import { Schema } from '@components/imports/Schema';
+import { Schema } from '@components/imports/schema';
 import { Snippet } from '@components/imports/Snippet';
 import { Destination } from '@components/imports/Destination';
 
