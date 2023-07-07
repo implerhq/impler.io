@@ -1,11 +1,12 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { API_KEYS } from '@config';
 import { commonApi } from '@libs/api';
+import { notify } from '@libs/notify';
 import { track } from '@libs/amplitude';
 import { IColumn, IErrorObject } from '@impler/shared';
-import { useState } from 'react';
 
 interface UseSchemaProps {
   templateId: string;
@@ -72,6 +73,7 @@ export function useColumnsEditor({ templateId }: UseSchemaProps) {
         queryClient.setQueryData<IColumn[]>([API_KEYS.TEMPLATE_COLUMNS_LIST, templateId], () => data);
         queryClient.invalidateQueries({ queryKey: [API_KEYS.TEMPLATE_CUSTOMIZATION_GET, templateId] });
         track({ name: 'BULK COLUMN UPDATE', properties: {} });
+        notify('COLUMNS_UPDATED');
       },
       onError: (error) => {
         if (error.error && Array.isArray(error.message)) {

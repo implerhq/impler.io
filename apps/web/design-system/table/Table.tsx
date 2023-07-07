@@ -50,6 +50,7 @@ export function Table<T extends { _id?: string }>(props: ITableProps<T>) {
           <tr>
             <td colSpan={headings?.length || defaultColSpan}>{emptyDataText}</td>
           </tr>
+          {extraContent}
         </tbody>
       );
 

@@ -42,10 +42,7 @@ export function useSchema({ templateId }: UseSchemaProps) {
     (data) => commonApi(API_KEYS.COLUMN_CREATE as any, { parameters: [templateId], body: data }),
     {
       onSuccess: (data) => {
-        queryClient.setQueryData<IColumn[]>([API_KEYS.TEMPLATE_COLUMNS_LIST, templateId], (oldData) => [
-          ...(oldData || []),
-          data,
-        ]);
+        queryClient.invalidateQueries({ queryKey: [API_KEYS.TEMPLATE_COLUMNS_LIST, templateId] });
         track({
           name: 'COLUMN CREATE',
           properties: {
