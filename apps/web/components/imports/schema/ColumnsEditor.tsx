@@ -24,7 +24,14 @@ export function ColumnsEditor({ templateId }: SchemaProps) {
         control={control}
         name="columns"
         render={({ field }) => (
-          <Editor value={field.value} id="edit-columns" name="columns" maxLines={30} onChange={field.onChange} />
+          <Editor
+            value={field.value}
+            id="edit-columns"
+            name="columns"
+            maxLines={30}
+            minLines={30}
+            onChange={field.onChange}
+          />
         )}
       />
       {errors.columns?.message && <Text color="red">{errors.columns.message}</Text>}

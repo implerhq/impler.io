@@ -8,6 +8,7 @@ interface EditorProps {
   id: string;
   name: string;
   height?: string;
+  minLines?: number;
   maxLines?: number;
   readonly?: boolean;
   variables?: string[];
@@ -22,6 +23,7 @@ export function Editor({
   onChange,
   value,
   readonly,
+  minLines,
   maxLines,
   highlightActiveLine = true,
   height = '300px',
@@ -61,6 +63,7 @@ export function Editor({
       highlightActiveLine={highlightActiveLine}
       readOnly={readonly}
       value={value ? String(value) : ''}
+      minLines={minLines}
       maxLines={maxLines}
       wrapEnabled
       setOptions={{
