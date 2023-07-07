@@ -51,9 +51,9 @@ export const TEXTS = {
     UPLOAD_AGAIN: 'Upload new File',
   },
   PROMPT: {
-    title: `Are You sure? You'll lost your progress`,
-    SUBTITLE_CLOSE: 'Your Import is in progress, Clicking Yes will close the widget',
-    SUBTITLE_RESET: 'Your Import is in progress, Clicking Yes will reset your import',
+    title: `Are you sure? You will lose your work in progress.`,
+    SUBTITLE_CLOSE: 'Your import is in progress, clicking <b>Yes</b> will reset it.',
+    SUBTITLE_RESET: 'Your import is in progress, clicking <b>Yes</b> will reset it.',
     YES: 'Yes',
     NO: 'No',
   },
