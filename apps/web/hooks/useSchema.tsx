@@ -111,10 +111,10 @@ export function useSchema({ templateId }: UseSchemaProps) {
     control,
     columns,
     register,
-    isColumnCreateLoading,
-    handleSubmit: handleSubmit(onAddColumnSubmit),
-    isLoading: isColumnListLoading,
     onEditColumnClick,
     onDeleteColumnClick,
+    isColumnCreateLoading,
+    isLoading: isColumnListLoading,
+    handleSubmit: handleSubmit(onAddColumnSubmit),
   };
 }

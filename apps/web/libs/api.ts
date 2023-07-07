@@ -52,6 +52,10 @@ const routes: Record<string, Route> = {
     url: (templateId) => `/v1/template/${templateId}`,
     method: 'PUT',
   },
+  [API_KEYS.TEMPLATE_COLUMNS_UPDATE]: {
+    url: (templateId) => `/v1/template/${templateId}/columns`,
+    method: 'PUT',
+  },
   [API_KEYS.TEMPLATE_DELETE]: {
     url: (templateId) => `/v1/template/${templateId}`,
     method: 'DELETE',

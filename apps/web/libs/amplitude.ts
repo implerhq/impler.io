@@ -11,6 +11,10 @@ type TrackData =
       };
     }
   | {
+      name: 'BULK COLUMN UPDATE';
+      properties: Record<string, never>;
+    }
+  | {
       name: 'SIGNUP';
       properties: {
         id: string;

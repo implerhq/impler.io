@@ -1,22 +1,11 @@
 import { Controller } from 'react-hook-form';
-import { Accordion, Group, List, Title, Text, useMantineColorScheme } from '@mantine/core';
+import { Accordion, Group, Title, Text, useMantineColorScheme } from '@mantine/core';
 
 import { colors } from '@config';
 import { Button } from '@ui/button';
 import { Editor } from '@ui/editor/Editor';
 import { useEditor } from '@hooks/useEditor';
-
-function PossibleJSONErrors() {
-  return (
-    <>
-      <Text td="underline">This can be the reason:</Text>
-      <List>
-        <List.Item>Extra comma (,) at the end or missing comma (,) in between.</List.Item>
-        <List.Item>Keys are not quoted into double quote (&quot;).</List.Item>
-      </List>
-    </>
-  );
-}
+import { PossibleJSONErrors } from '@components/common/PossibleJsonErrors';
 
 interface OutputEditorProps {
   templateId: string;
