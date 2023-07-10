@@ -76,7 +76,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
 
   useEffect(() => {
     if (templateId) setValue('templateId', templateId);
-  }, []);
+  }, [templateId]);
 
   const findTemplate = (): ITemplate | undefined => {
     let foundTemplate: ITemplate | undefined;
