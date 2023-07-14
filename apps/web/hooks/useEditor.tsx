@@ -68,6 +68,9 @@ export function useEditor({ templateId }: UseEditorProps) {
 
   const validateFormat = (data: string): boolean => {
     try {
+      // Remove single-line & multi-line comments
+      data = data.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
+
       JSON.parse(data);
 
       return true;
@@ -82,7 +85,7 @@ export function useEditor({ templateId }: UseEditorProps) {
       try {
         validateFormat(chunkFormat);
       } catch (error) {
-        setError('chunkFormat', {
+        return setError('chunkFormat', {
           type: (error as any).type,
           message: (error as Error).message,
         });
@@ -91,7 +94,7 @@ export function useEditor({ templateId }: UseEditorProps) {
       try {
         validateFormat(recordFormat);
       } catch (error) {
-        setError('recordFormat', {
+        return setError('recordFormat', {
           type: (error as any).type,
           message: (error as Error).message,
         });
