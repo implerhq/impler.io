@@ -42,7 +42,7 @@ export function OutputEditor({ templateId }: OutputEditorProps) {
         <div style={{ width: '80%' }}>
           <Controller
             control={control}
-            name="recordFormat"
+            name="combinedFormat"
             render={({ field }) => (
               <Editor
                 name="recordItem"
@@ -53,8 +53,8 @@ export function OutputEditor({ templateId }: OutputEditorProps) {
               />
             )}
           />
-          {errors.recordFormat?.message && <Text color="red">{errors.recordFormat.message}</Text>}
-          {errors.recordFormat?.type === 'JSON' && <PossibleJSONErrors />}
+          {errors.combinedFormat?.message && <Text color="red">{errors.combinedFormat.message}</Text>}
+          {errors.combinedFormat?.type === 'JSON' && <PossibleJSONErrors />}
         </div>
         <div style={{ width: '20%', display: 'flex', flexDirection: 'column', gap: '5' }}>
           <VarLabel label="System Variables">

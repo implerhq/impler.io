@@ -14,14 +14,21 @@ export class CustomizationResponseDto {
   })
   @IsString()
   @IsOptional()
-  recordFormat: string;
+  recordFormat?: string;
 
   @ApiProperty({
     description: 'JSON structure on, How chunk will be formatted',
   })
   @IsString()
   @IsOptional()
-  chunkFormat: string;
+  chunkFormat?: string;
+
+  @ApiProperty({
+    description: 'Combined JSON structure for both record and chunk',
+  })
+  @IsString()
+  @IsOptional()
+  combinedFormat?: string;
 
   @ApiProperty({
     description: 'Flag indicating if record format is updated',

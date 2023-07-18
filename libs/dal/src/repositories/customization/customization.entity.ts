@@ -11,7 +11,11 @@ export class CustomizationEntity {
 
   chunkFormat: string;
 
+  combinedFormat: string;
+
   isRecordFormatUpdated: boolean;
 
   isChunkFormatUpdated: boolean;
+
+  isCombinedFormatUpdated: boolean;
 }

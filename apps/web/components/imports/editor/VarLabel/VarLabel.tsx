@@ -9,7 +9,7 @@ interface VarLabelProps {
 }
 
 export const VarLabel = ({ label, children }: PropsWithChildren<VarLabelProps>) => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const theme = useMantineTheme();
 
   return (

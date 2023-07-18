@@ -5,6 +5,8 @@ export interface ICustomization {
   chunkVariables: string[];
   recordFormat: string;
   chunkFormat: string;
+  combinedFormat: string;
+  isCombinedFormatUpdated: boolean;
   isRecordFormatUpdated: boolean;
   isChunkFormatUpdated: boolean;
 }

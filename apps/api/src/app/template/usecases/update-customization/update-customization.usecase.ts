@@ -2,13 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { CustomizationRepository } from '@impler/dal';
 import { UpdateCustomizationCommand } from './update-customization.command';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
-import { createVariable } from '@impler/shared';
+import { createVariable, getRecordFormat } from '@impler/shared';
 
 @Injectable()
 export class UpdateCustomization {
   constructor(private customizationRepository: CustomizationRepository) {}
 
   async execute(_templateId: string, data: UpdateCustomizationCommand) {
+    if (!data.combinedFormat) {
+      const formats = getRecordFormat(data.combinedFormat);
+      if (formats) {
+        data.chunkFormat = formats.chunkFormat;
+        data.recordFormat = formats.recordFormat;
+      }
+    }
     const customization = await this.customizationRepository.findOne({ _templateId });
     if (!customization) {
       throw new DocumentNotFoundException('Customization', _templateId);
@@ -20,6 +27,7 @@ export class UpdateCustomization {
       },
       {
         ...data,
+        isCombinedFormatUpdated: data.combinedFormat !== customization.combinedFormat,
         isRecordFormatUpdated: data.recordFormat !== customization.recordFormat,
         isChunkFormatUpdated: data.chunkFormat !== customization.chunkFormat,
       }
