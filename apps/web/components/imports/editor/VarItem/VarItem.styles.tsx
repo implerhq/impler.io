@@ -14,17 +14,8 @@ const getRootStyles = (theme: MantineTheme): React.CSSProperties => ({
   justifyContent: 'space-between',
 });
 
-const getTypeSyles = (theme: MantineTheme): React.CSSProperties => ({
-  padding: 5,
-  marginLeft: 5,
-  borderRadius: 7,
-  display: 'inline',
-  backgroundColor: theme.colorScheme === 'dark' ? colors.BGSecondaryDark : colors.BGSecondaryLight,
-});
-
 export default createStyles((theme: MantineTheme): Record<string, any> => {
   return {
     root: getRootStyles(theme),
-    type: getTypeSyles(theme),
   };
 });

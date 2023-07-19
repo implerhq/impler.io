@@ -1,4 +1,6 @@
+import { forwardRef } from 'react';
 import { UnstyledButton, Text } from '@mantine/core';
+
 import useStyles from './VarItem.styles';
 
 interface VarItemProps {
@@ -7,13 +9,15 @@ interface VarItemProps {
   icon?: React.ReactNode;
 }
 
-export const VarItem = ({ name, onClick, icon }: VarItemProps) => {
+export const VarItem = forwardRef<HTMLButtonElement, VarItemProps>(({ name, onClick, icon }: VarItemProps, ref) => {
   const { classes } = useStyles();
 
   return (
-    <UnstyledButton onClick={onClick} className={classes.root}>
-      <Text>{name}</Text>
+    <UnstyledButton onClick={onClick} className={classes.root} ref={ref}>
+      <Text truncate>{name}</Text>
       {icon}
     </UnstyledButton>
   );
-};
+});
+
+VarItem.displayName = 'VarItem';
