@@ -6,7 +6,20 @@ export function createRecordFormat(variables: string[]): string {
 
   return JSON.stringify(recordFormat, null, tabWidth);
 }
+export function updateCombinedFormat(format: string, variables: string[]): string {
+  const combinedFormat = JSON.parse(format);
+  const regex = /%.*?%/g;
+  const recordFormat = variables.reduce((acc, variable) => {
+    return { ...acc, [variable]: createVariable(variable) };
+  }, {});
+  Object.keys(combinedFormat).forEach((key) => {
+    if (regex.test(key) && typeof combinedFormat[key] === 'object' && !Array.isArray(combinedFormat[key])) {
+      combinedFormat[key] = recordFormat;
+    }
+  });
 
+  return JSON.stringify(combinedFormat, null, tabWidth);
+}
 export function createVariable(name: string) {
   return `{{${name}}}`;
 }

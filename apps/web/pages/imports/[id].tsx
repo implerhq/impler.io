@@ -65,6 +65,8 @@ export default function ImportDetails({ template }: ImportDetailProps) {
         <Card title="Total Error Records" subtitle={String(templateData.totalInvalidRecords)} />
       </Group>
       <Tabs
+        allowTabDeactivation
+        keepMounted={false}
         items={[
           {
             value: 'schema',

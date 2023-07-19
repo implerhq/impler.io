@@ -14,6 +14,7 @@ export class UpdateCustomizationRequestDto {
     description: 'Format for chunk of records',
     nullable: false,
   })
+  @IsOptional()
   @IsString()
   chunkFormat: string;
 

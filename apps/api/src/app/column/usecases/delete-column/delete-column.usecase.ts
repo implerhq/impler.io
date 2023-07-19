@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { createRecordFormat } from '@impler/shared';
+import { createRecordFormat, updateCombinedFormat } from '@impler/shared';
 import { ColumnRepository, ColumnEntity, CustomizationRepository } from '@impler/dal';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
 
@@ -26,6 +26,9 @@ export class DeleteColumn {
 
     if (!customization.isRecordFormatUpdated) {
       customization.recordFormat = createRecordFormat(customization.recordVariables);
+    }
+    if (!customization.isCombinedFormatUpdated) {
+      customization.combinedFormat = updateCombinedFormat(customization.combinedFormat, customization.recordVariables);
     }
     await this.customizationRepository.update({ _templateId }, customization);
   }

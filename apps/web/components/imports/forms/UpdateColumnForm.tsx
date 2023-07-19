@@ -1,18 +1,17 @@
 import { modals } from '@mantine/modals';
 import { API_KEYS, MODAL_KEYS } from '@config';
 import { IColumn, IErrorObject } from '@impler/shared';
-import { QueryClient, useMutation } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
 import { ColumnForm } from './ColumnForm';
 
 interface UpdateColumnFormProps {
   data: IColumn;
-  templateId: string;
-  queryClient: QueryClient;
+  refetchColumns: () => void;
 }
 
-export function UpdateColumnForm({ data, templateId, queryClient }: UpdateColumnFormProps) {
+export function UpdateColumnForm({ data, refetchColumns }: UpdateColumnFormProps) {
   const { mutate: updateColumn, isLoading: isColumnUpdateLoading } = useMutation<
     IColumn,
     IErrorObject,
@@ -22,19 +21,8 @@ export function UpdateColumnForm({ data, templateId, queryClient }: UpdateColumn
     [API_KEYS.COLUMN_UPDATE, data._id],
     (newData) => commonApi(API_KEYS.COLUMN_UPDATE as any, { parameters: [data._id], body: newData }),
     {
-      onSuccess: (updatedData) => {
-        queryClient.setQueryData<IColumn[]>(
-          [API_KEYS.TEMPLATE_COLUMNS_LIST, templateId],
-          (oldData) =>
-            oldData?.map((item) => {
-              if (item._id === data._id) {
-                return updatedData;
-              }
-
-              return item;
-            }) || []
-        );
-        queryClient.invalidateQueries({ queryKey: [API_KEYS.TEMPLATE_CUSTOMIZATION_GET, templateId] });
+      onSuccess: () => {
+        refetchColumns();
         modals.close(MODAL_KEYS.COLUMN_UPDATE);
       },
     }
