@@ -19,7 +19,19 @@ export class CSVFileService extends FileService {
       };
       const fileContent = file.buffer.toString(FileEncodingsEnum.CSV);
 
-      parseString(fileContent, options)
+      parseString(fileContent, {
+        ...options,
+        headers: (headers) => {
+          // rename duplicate
+          headers.map((el, i, ar) => {
+            if (ar.indexOf(el) !== i) {
+              headers[i] = `${el}_${i}`;
+            }
+          });
+
+          return headers;
+        },
+      })
         .on('error', (error) => {
           if (error.message.includes('Parse Error')) {
             reject(new InvalidFileException());
