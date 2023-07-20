@@ -7,6 +7,7 @@ export interface IShowPayload {
   authHeaderValue?: string;
   primaryColor?: string;
   colorScheme?: string;
+  title?: string;
 }
 export interface IOption {
   value: string;

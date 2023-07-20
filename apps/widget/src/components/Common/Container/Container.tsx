@@ -117,6 +117,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
         >
           <NotificationsProvider>
             <Provider
+              title={secondaryPayload?.title}
               // api
               api={api}
               // impler-context
