@@ -1,6 +1,6 @@
 import { modals } from '@mantine/modals';
 import { useForm } from 'react-hook-form';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
 import { track } from '@libs/amplitude';
@@ -15,7 +15,6 @@ interface UseSchemaProps {
 }
 
 export function useSchema({ templateId }: UseSchemaProps) {
-  const queryClient = useQueryClient();
   const {
     register,
     control,
@@ -28,9 +27,12 @@ export function useSchema({ templateId }: UseSchemaProps) {
       type: 'String',
     },
   });
-  const { data: columns, isLoading: isColumnListLoading } = useQuery<unknown, IErrorObject, IColumn[], string[]>(
-    [API_KEYS.TEMPLATE_COLUMNS_LIST, templateId],
-    () => commonApi<IColumn[]>(API_KEYS.TEMPLATE_COLUMNS_LIST as any, { parameters: [templateId] })
+  const {
+    data: columns,
+    isLoading: isColumnListLoading,
+    refetch: refetchColumns,
+  } = useQuery<unknown, IErrorObject, IColumn[], string[]>([API_KEYS.TEMPLATE_COLUMNS_LIST, templateId], () =>
+    commonApi<IColumn[]>(API_KEYS.TEMPLATE_COLUMNS_LIST as any, { parameters: [templateId] })
   );
   const { mutate: createColumn, isLoading: isColumnCreateLoading } = useMutation<
     IColumn,
@@ -42,7 +44,7 @@ export function useSchema({ templateId }: UseSchemaProps) {
     (data) => commonApi(API_KEYS.COLUMN_CREATE as any, { parameters: [templateId], body: data }),
     {
       onSuccess: (data) => {
-        queryClient.invalidateQueries({ queryKey: [API_KEYS.TEMPLATE_COLUMNS_LIST, templateId] });
+        refetchColumns();
         track({
           name: 'COLUMN CREATE',
           properties: {
@@ -59,7 +61,6 @@ export function useSchema({ templateId }: UseSchemaProps) {
         });
         reset();
         setFocus('name');
-        queryClient.invalidateQueries({ queryKey: [API_KEYS.TEMPLATE_CUSTOMIZATION_GET, templateId] });
       },
     }
   );
@@ -67,11 +68,8 @@ export function useSchema({ templateId }: UseSchemaProps) {
     [API_KEYS.COLUMN_DELETE, templateId],
     (columnId) => commonApi(API_KEYS.COLUMN_DELETE as any, { parameters: [columnId] }),
     {
-      onSuccess: (_data, columnIdVariable) => {
-        queryClient.setQueryData<IColumn[]>([API_KEYS.TEMPLATE_COLUMNS_LIST, templateId], (oldData) => {
-          return oldData?.filter((item) => item._id !== columnIdVariable);
-        });
-        queryClient.invalidateQueries({ queryKey: [API_KEYS.TEMPLATE_CUSTOMIZATION_GET, templateId] });
+      onSuccess: () => {
+        refetchColumns();
       },
     }
   );
@@ -82,7 +80,7 @@ export function useSchema({ templateId }: UseSchemaProps) {
       modals.open({
         modalId: MODAL_KEYS.COLUMN_UPDATE,
         title: MODAL_TITLES.COLUMN_UPDATE,
-        children: <UpdateColumnForm data={columnData} templateId={templateId} queryClient={queryClient} />,
+        children: <UpdateColumnForm data={columnData} refetchColumns={refetchColumns} />,
       });
     }
   }

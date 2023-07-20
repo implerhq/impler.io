@@ -25,6 +25,13 @@ const customizationSchema = new Schema(
       type: String,
       required: true,
     },
+    combinedFormat: {
+      type: String,
+    },
+    isCombinedFormatUpdated: {
+      type: Boolean,
+      default: false,
+    },
     isRecordFormatUpdated: {
       type: Boolean,
       default: false,

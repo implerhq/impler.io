@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { CONSTANTS } from '@shared/constants';
-import { FileMimeTypesEnum } from '@impler/shared';
 import { FileNameService } from '@shared/services/file';
 import { StorageService } from '@impler/shared/dist/services/storage';
 import { AddColumnCommand } from 'app/column/commands/add-column.command';
 import { ColumnRepository, CustomizationRepository, TemplateRepository } from '@impler/dal';
+import { FileMimeTypesEnum, createRecordFormat, updateCombinedFormat } from '@impler/shared';
 
 @Injectable()
 export class UpdateTemplateColumns {
@@ -34,25 +34,16 @@ export class UpdateTemplateColumns {
   }
 
   listRecordVariables(data: AddColumnCommand[]): string[] {
-    return data.map((column) => `record.${column.key}`);
+    return data.map((column) => column.key);
   }
 
-  createRecordFormat(data: AddColumnCommand[]): string {
-    const recordVariables = this.listRecordVariables(data);
-    const recordFormat = recordVariables.reduce((acc, variable) => {
-      return { ...acc, [variable]: '' };
-    }, {});
-
-    return JSON.stringify(recordFormat);
-  }
-
-  async updateCustomizationData(data: AddColumnCommand[], templateId: string) {
+  async updateCustomizationData(data: AddColumnCommand[], _templateId: string) {
     let customization = await this.customizationRepository.findOne({
-      _templateId: templateId,
+      _templateId,
     });
     if (!customization) {
       customization = await this.customizationRepository.create({
-        _templateId: templateId,
+        _templateId,
         chunkFormat: CONSTANTS.CHUNK_FORMAT,
         recordFormat: '{}',
         chunkVariables: CONSTANTS.CHUNK_VARIABLES,
@@ -61,10 +52,13 @@ export class UpdateTemplateColumns {
     customization.recordVariables = this.listRecordVariables(data);
 
     if (!customization.isRecordFormatUpdated) {
-      customization.recordFormat = this.createRecordFormat(data);
+      customization.recordFormat = createRecordFormat(customization.recordVariables);
+    }
+    if (!customization.isCombinedFormatUpdated) {
+      customization.combinedFormat = updateCombinedFormat(CONSTANTS.COMBINED_FORMAT, customization.recordVariables);
     }
 
-    await this.customizationRepository.update({ _id: templateId }, customization);
+    await this.customizationRepository.update({ _templateId }, customization);
   }
 
   createCSVFileHeadingContent(data: AddColumnCommand[]): string {
