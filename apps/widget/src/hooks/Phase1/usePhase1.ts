@@ -16,7 +16,7 @@ interface IUsePhase1Props {
 
 export function usePhase1({ goNext }: IUsePhase1Props) {
   const { api } = useAPIState();
-  const { setUploadInfo } = useAppState();
+  const { setUploadInfo, setTemplateInfo } = useAppState();
   const [templates, setTemplates] = useState<IOption[]>([]);
   const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
   const { projectId, templateId, authHeaderValue, extra } = useImplerState();
@@ -32,6 +32,12 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
           value: item._id,
         }))
       );
+      if (templateId) {
+        const foundTemplate = templatesResponse.find((templateItem) => templateItem._id === templateId);
+        if (foundTemplate) {
+          setTemplateInfo(foundTemplate);
+        }
+      }
     },
     onError(error: IErrorObject) {
       notifier.showError({ message: error.message, title: error.error });
@@ -76,7 +82,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
 
   useEffect(() => {
     if (templateId) setValue('templateId', templateId);
-  }, []);
+  }, [templateId]);
 
   const findTemplate = (): ITemplate | undefined => {
     let foundTemplate: ITemplate | undefined;
@@ -90,7 +96,14 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
 
     return undefined;
   };
-
+  const onTemplateChange = (newTemplateId: string) => {
+    const foundTemplate = dataTemplates?.find((templateItem) => templateItem._id === newTemplateId);
+    if (foundTemplate) {
+      setTemplateInfo(foundTemplate);
+      setValue('templateId', newTemplateId);
+      trigger('templateId');
+    }
+  };
   const onDownload = async () => {
     setIsDownloadInProgress(true);
     const isTemplateValid = await trigger('templateId');
@@ -123,11 +136,11 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
   return {
     control,
     errors,
-    trigger,
     register,
     templates,
-    isUploadLoading,
     onDownload,
+    isUploadLoading,
+    onTemplateChange,
     isDownloadInProgress,
     isInitialDataLoaded: isFetched && !isLoading,
     showSelectTemplate: !templateId,

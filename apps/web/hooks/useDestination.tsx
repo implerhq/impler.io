@@ -15,13 +15,15 @@ interface UseDestinationProps {
 interface UpdateDestinationData {
   authHeaderName: string;
   callbackUrl: string;
+  chunkSize: number;
 }
 
 export function useDestination({ template }: UseDestinationProps) {
   const queryClient = useQueryClient();
   const {
-    register,
     reset,
+    control,
+    register,
     handleSubmit,
     formState: { errors },
   } = useForm<UpdateDestinationData>();
@@ -50,6 +52,7 @@ export function useDestination({ template }: UseDestinationProps) {
     reset({
       authHeaderName: template.authHeaderName,
       callbackUrl: template.callbackUrl,
+      chunkSize: template.chunkSize,
     });
   }, [template, reset]);
 
@@ -66,6 +69,7 @@ export function useDestination({ template }: UseDestinationProps) {
 
   return {
     errors,
+    control,
     register,
     isUpdateImportLoading,
     onSubmit: handleSubmit(onSubmit),

@@ -1,12 +1,16 @@
-import { IsDefined, IsString, IsOptional } from 'class-validator';
+import { IsString, IsOptional } from 'class-validator';
 import { BaseCommand } from '@shared/commands/base.command';
 
 export class UpdateCustomizationCommand extends BaseCommand {
-  @IsDefined()
+  @IsOptional()
   @IsString()
-  recordFormat: string;
+  recordFormat?: string;
 
   @IsString()
   @IsOptional()
   chunkFormat: string;
+
+  @IsString()
+  @IsOptional()
+  combinedFormat?: string;
 }

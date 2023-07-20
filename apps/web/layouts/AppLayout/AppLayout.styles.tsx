@@ -17,6 +17,7 @@ const getLogoContainerStyles = (theme: MantineTheme): React.CSSProperties => ({
   alignItems: 'center',
   paddingBlock: theme.spacing.lg,
   paddingLeft: theme.spacing.md,
+  justifyContent: 'center',
 });
 
 const getMainStyles = (theme: MantineTheme): React.CSSProperties => ({

@@ -12,7 +12,7 @@ import { API_KEYS, CONSTANTS, ROUTES, colors } from '@config';
 import { Tabs } from '@ui/Tabs';
 import { Card } from '@ui/Card';
 import { Button } from '@ui/button';
-import { Schema } from '@components/imports/Schema';
+import { Schema } from '@components/imports/schema';
 import { Snippet } from '@components/imports/Snippet';
 import { Destination } from '@components/imports/Destination';
 
@@ -21,7 +21,7 @@ import { EditIcon } from '@assets/icons/Edit.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
 import { LeftArrowIcon } from '@assets/icons/LeftArrow.icon';
 
-const Editor = dynamic(() => import('@components/imports/Editor'), { ssr: false });
+const Editor = dynamic(() => import('@components/imports/editor').then((mod) => mod.OutputEditor), { ssr: false });
 
 interface ImportDetailProps {
   template: ITemplate;
@@ -65,6 +65,8 @@ export default function ImportDetails({ template }: ImportDetailProps) {
         <Card title="Total Error Records" subtitle={String(templateData.totalInvalidRecords)} />
       </Group>
       <Tabs
+        allowTabDeactivation
+        keepMounted={false}
         items={[
           {
             value: 'schema',

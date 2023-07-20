@@ -1,44 +1,78 @@
 import { modals } from '@mantine/modals';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useForm } from 'react-hook-form';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
+import { track } from '@libs/amplitude';
 import { IColumn, IErrorObject } from '@impler/shared';
 import { API_KEYS, MODAL_KEYS, MODAL_TITLES } from '@config';
 
-import { AddColumnForm } from '@components/imports/forms/AddColumnForm';
-import { UpdateColumnForm } from '@components/imports/forms/UpdateColumnForm';
 import { ConfirmDelete } from '@components/imports/forms/ConfirmDelete';
+import { UpdateColumnForm } from '@components/imports/forms/UpdateColumnForm';
 
 interface UseSchemaProps {
   templateId: string;
 }
 
 export function useSchema({ templateId }: UseSchemaProps) {
-  const queryClient = useQueryClient();
-  const { data: columns, isLoading: isColumnListLoading } = useQuery<unknown, IErrorObject, IColumn[], string[]>(
-    [API_KEYS.TEMPLATE_COLUMNS_LIST, templateId],
-    () => commonApi<IColumn[]>(API_KEYS.TEMPLATE_COLUMNS_LIST as any, { parameters: [templateId] })
+  const {
+    register,
+    control,
+    reset,
+    setFocus,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IColumn>({
+    defaultValues: {
+      type: 'String',
+    },
+  });
+  const {
+    data: columns,
+    isLoading: isColumnListLoading,
+    refetch: refetchColumns,
+  } = useQuery<unknown, IErrorObject, IColumn[], string[]>([API_KEYS.TEMPLATE_COLUMNS_LIST, templateId], () =>
+    commonApi<IColumn[]>(API_KEYS.TEMPLATE_COLUMNS_LIST as any, { parameters: [templateId] })
+  );
+  const { mutate: createColumn, isLoading: isColumnCreateLoading } = useMutation<
+    IColumn,
+    IErrorObject,
+    IColumn,
+    string[]
+  >(
+    [API_KEYS.COLUMN_CREATE, templateId],
+    (data) => commonApi(API_KEYS.COLUMN_CREATE as any, { parameters: [templateId], body: data }),
+    {
+      onSuccess: (data) => {
+        refetchColumns();
+        track({
+          name: 'COLUMN CREATE',
+          properties: {
+            columnType: data.type as string,
+            hasExtraColumnKeys: false,
+            isRequired: data.isRequired,
+            isUnique: data.isUnique,
+          } as {
+            columnType: string;
+            isRequired: boolean;
+            isUnique: boolean;
+            hasExtraColumnKeys: boolean;
+          },
+        });
+        reset();
+        setFocus('name');
+      },
+    }
   );
   const { mutate: onDelete } = useMutation<unknown, IErrorObject, string, string[]>(
     [API_KEYS.COLUMN_DELETE, templateId],
     (columnId) => commonApi(API_KEYS.COLUMN_DELETE as any, { parameters: [columnId] }),
     {
-      onSuccess: (_data, columnIdVariable) => {
-        queryClient.setQueryData<IColumn[]>([API_KEYS.TEMPLATE_COLUMNS_LIST, templateId], (oldData) => {
-          return oldData?.filter((item) => item._id !== columnIdVariable);
-        });
-        queryClient.invalidateQueries({ queryKey: [API_KEYS.TEMPLATE_CUSTOMIZATION_GET, templateId] });
+      onSuccess: () => {
+        refetchColumns();
       },
     }
   );
-
-  function onAddColumnClick() {
-    modals.open({
-      modalId: MODAL_KEYS.COLUMN_CREATE,
-      title: MODAL_TITLES.COLUMN_CREATE,
-      children: <AddColumnForm templateId={templateId} queryClient={queryClient} />,
-    });
-  }
 
   function onEditColumnClick(columnId: string) {
     const columnData = columns?.find((item) => item._id === columnId);
@@ -46,7 +80,7 @@ export function useSchema({ templateId }: UseSchemaProps) {
       modals.open({
         modalId: MODAL_KEYS.COLUMN_UPDATE,
         title: MODAL_TITLES.COLUMN_UPDATE,
-        children: <UpdateColumnForm data={columnData} templateId={templateId} queryClient={queryClient} />,
+        children: <UpdateColumnForm data={columnData} refetchColumns={refetchColumns} />,
       });
     }
   }
@@ -63,12 +97,19 @@ export function useSchema({ templateId }: UseSchemaProps) {
       children: <ConfirmDelete onConfirm={() => onConfirmDelete(columnId)} />,
     });
   }
+  function onAddColumnSubmit(data: IColumn) {
+    createColumn(data);
+  }
 
   return {
+    errors,
+    control,
     columns,
-    isLoading: isColumnListLoading,
-    onAddColumnClick,
+    register,
     onEditColumnClick,
     onDeleteColumnClick,
+    isColumnCreateLoading,
+    isLoading: isColumnListLoading,
+    handleSubmit: handleSubmit(onAddColumnSubmit),
   };
 }

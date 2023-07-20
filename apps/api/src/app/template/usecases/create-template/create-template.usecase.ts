@@ -15,6 +15,7 @@ export class CreateTemplate {
     await this.customizationRepository.create({
       _templateId: template._id,
       chunkFormat: CONSTANTS.CHUNK_FORMAT,
+      combinedFormat: CONSTANTS.COMBINED_FORMAT,
       recordFormat: '{}',
       chunkVariables: CONSTANTS.CHUNK_VARIABLES,
     });

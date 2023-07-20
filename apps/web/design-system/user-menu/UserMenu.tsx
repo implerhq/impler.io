@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import useStyles from './UserMenu.styles';
-import { ChevronDown } from '@assets/icons';
+import { ChevronDownIcon } from '@assets/icons';
 import { Avatar, Group, UnstyledButton, Text, Menu } from '@mantine/core';
 
 interface UserButtonProps extends React.ComponentPropsWithoutRef<'button'> {
@@ -40,7 +40,7 @@ const UserButton = forwardRef<HTMLButtonElement, UserButtonProps>(
             {email}
           </Text>
         </div>
-        {icon || <ChevronDown />}
+        {icon || <ChevronDownIcon />}
       </Group>
     </UnstyledButton>
   )

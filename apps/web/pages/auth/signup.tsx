@@ -25,7 +25,7 @@ export default function SignupPage({}) {
           md: 'flex-start',
         }}
       >
-        <Image src={DarkLogo} alt="Impler Logo" />
+        <Image src={DarkLogo} width={80} alt="Impler Logo" />
         <Title order={1} color="white">
           Signup yourself
         </Title>

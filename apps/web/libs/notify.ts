@@ -27,6 +27,11 @@ const Messages: Record<string, NotifyProps> = {
     message: 'New access-token is re-generated and updated in the project',
     color: 'green',
   },
+  [NOTIFICATION_KEYS.COLUMNS_UPDATED]: {
+    title: 'Columns updated',
+    message: 'Columns has been updated',
+    color: 'green',
+  },
 };
 
 interface NotifyProps {

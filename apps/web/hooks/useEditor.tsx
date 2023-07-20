@@ -12,8 +12,7 @@ interface UseEditorProps {
 }
 
 interface CustomizationDataFormat {
-  recordFormat: string;
-  chunkFormat: string;
+  combinedFormat: string;
 }
 
 export function useEditor({ templateId }: UseEditorProps) {
@@ -36,8 +35,7 @@ export function useEditor({ templateId }: UseEditorProps) {
     {
       onSuccess(data) {
         reset({
-          recordFormat: data.recordFormat,
-          chunkFormat: data.chunkFormat,
+          combinedFormat: data.combinedFormat,
         });
       },
     }
@@ -78,27 +76,20 @@ export function useEditor({ templateId }: UseEditorProps) {
   };
   const onSaveClick = () => {
     handleSubmit((data) => {
-      const { chunkFormat, recordFormat } = data;
+      let { combinedFormat } = data;
+      // Remove single-line & multi-line comments
+      combinedFormat = combinedFormat.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
       try {
-        validateFormat(chunkFormat);
+        validateFormat(combinedFormat);
       } catch (error) {
-        setError('chunkFormat', {
+        return setError('combinedFormat', {
           type: (error as any).type,
           message: (error as Error).message,
         });
       }
 
-      try {
-        validateFormat(recordFormat);
-      } catch (error) {
-        setError('recordFormat', {
-          type: (error as any).type,
-          message: (error as Error).message,
-        });
-      }
       updateCustomization({
-        recordFormat,
-        chunkFormat,
+        combinedFormat,
       });
     })();
   };

@@ -1,11 +1,13 @@
 import { Prism } from '@mantine/prism';
 import { ITemplate } from '@impler/shared';
+import { Controller } from 'react-hook-form';
 import { Code, Stack, Accordion, Title, useMantineColorScheme } from '@mantine/core';
 
-import { REGULAR_EXPRESSIONS, colors } from '@config';
 import { Input } from '@ui/input';
 import { Button } from '@ui/button';
 import { APIBlock } from '@ui/api-block';
+import { NumberInput } from '@ui/number-input';
+import { REGULAR_EXPRESSIONS, colors } from '@config';
 import { useDestination } from '@hooks/useDestination';
 
 interface DestinationProps {
@@ -15,7 +17,7 @@ interface DestinationProps {
 
 export function Destination({ template, accessToken }: DestinationProps) {
   const { colorScheme } = useMantineColorScheme();
-  const { register, errors, onSubmit, isUpdateImportLoading } = useDestination({ template });
+  const { register, control, errors, onSubmit, isUpdateImportLoading } = useDestination({ template });
 
   return (
     <>
@@ -40,6 +42,20 @@ export function Destination({ template, accessToken }: DestinationProps) {
                   error={errors.callbackUrl ? 'Please enter valid URL' : undefined}
                 />
                 <Input placeholder="Auth Header Name" register={register('authHeaderName')} />
+                <Controller
+                  control={control}
+                  name="chunkSize"
+                  render={({ field }) => (
+                    <NumberInput
+                      placeholder="100"
+                      register={{
+                        value: field.value,
+                        onChange: field.onChange,
+                      }}
+                      error={errors.chunkSize?.message}
+                    />
+                  )}
+                />
                 <Button loading={isUpdateImportLoading} type="submit">
                   Save
                 </Button>

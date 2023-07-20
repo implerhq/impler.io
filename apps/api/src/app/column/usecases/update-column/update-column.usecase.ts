@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { FileMimeTypesEnum, createRecordFormat } from '@impler/shared';
+import { FileMimeTypesEnum, createRecordFormat, updateCombinedFormat } from '@impler/shared';
 import { FileNameService } from '@shared/services/file';
 import { StorageService } from '@impler/shared/dist/services/storage';
 import { UpdateColumnCommand } from '../../commands/update-column.command';
@@ -44,6 +44,9 @@ export class UpdateColumn {
     customization.recordVariables = variables;
     if (!customization.isRecordFormatUpdated) {
       customization.recordFormat = createRecordFormat(variables);
+    }
+    if (!customization.isCombinedFormatUpdated) {
+      customization.combinedFormat = updateCombinedFormat(customization.combinedFormat, variables);
     }
     await this.customizationRepository.update({ _templateId }, customization);
   }

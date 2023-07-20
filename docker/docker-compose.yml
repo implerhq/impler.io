@@ -14,7 +14,7 @@ services:
       - 27017:27017
     restart: unless-stopped
   api:
-    image: "ghcr.io/implerhq/impler/api:0.6.0"
+    image: "ghcr.io/implerhq/impler/api:0.6.2"
     depends_on:
       - mongodb
       - rabbitmq
@@ -45,7 +45,7 @@ services:
     ports:
       - "3000:3000"
   queue-manager:
-    image: "ghcr.io/implerhq/impler/queue-manager:0.6.0"
+    image: "ghcr.io/implerhq/impler/queue-manager:0.6.2"
     depends_on:
       - api
       - rabbitmq
@@ -60,7 +60,7 @@ services:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
   widget:
-    image: "ghcr.io/implerhq/impler/widget:0.6.0"
+    image: "ghcr.io/implerhq/impler/widget:0.6.2"
     depends_on:
       - api
     container_name: widget
@@ -74,7 +74,7 @@ services:
   embed:
     depends_on:
       - widget
-    image: "ghcr.io/implerhq/impler/embed:0.6.0"
+    image: "ghcr.io/implerhq/impler/embed:0.6.2"
     container_name: embed
     environment:
       WIDGET_URL: ${WIDGET_BASE_URL}
@@ -83,7 +83,7 @@ services:
   web:
     depends_on:
       - api
-    image: "ghcr.io/implerhq/impler/web:0.6.0"
+    image: "ghcr.io/implerhq/impler/web:0.6.2"
     container_name: web
     environment:
       NEXT_PUBLIC_API_BASE_URL: ${API_ROOT_URL}

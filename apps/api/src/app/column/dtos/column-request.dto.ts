@@ -3,7 +3,6 @@ import {
   ArrayMinSize,
   IsArray,
   IsBoolean,
-  IsDefined,
   IsOptional,
   IsString,
   IsEnum,
@@ -60,7 +59,6 @@ export class ColumnRequestDto {
   @IsEnum(ColumnTypesEnum, {
     message: `type must be one of ${Object.values(ColumnTypesEnum).join(', ')}`,
   })
-  @IsDefined()
   type: ColumnTypesEnum;
 
   @ApiPropertyOptional({

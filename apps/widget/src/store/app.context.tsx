@@ -1,14 +1,15 @@
 import React, { createContext, useContext, useState } from 'react';
-import { IUpload } from '@impler/shared';
+import { ITemplate, IUpload } from '@impler/shared';
 import { IAppStore } from '../types';
 
 interface AppContextProviderProps
   extends React.PropsWithChildren,
-    Omit<IAppStore, 'uploadInfo' | 'setUploadInfo' | 'reset'> {}
+    Omit<IAppStore, 'uploadInfo' | 'setUploadInfo' | 'reset' | 'templateInfo' | 'setTemplateInfo'> {}
 
 const AppContext = createContext<IAppStore | null>(null);
 
-const AppContextProvider = ({ children, primaryColor }: AppContextProviderProps) => {
+const AppContextProvider = ({ children, primaryColor, title }: AppContextProviderProps) => {
+  const [templateInfo, setTemplateInfo] = useState<ITemplate>({} as ITemplate);
   const [uploadInfo, setUploadInfo] = useState<IUpload>({} as IUpload);
 
   const reset = () => {
@@ -16,7 +17,11 @@ const AppContextProvider = ({ children, primaryColor }: AppContextProviderProps)
   };
 
   return (
-    <AppContext.Provider value={{ uploadInfo, setUploadInfo, reset, primaryColor }}>{children}</AppContext.Provider>
+    <AppContext.Provider
+      value={{ title, templateInfo, setTemplateInfo, uploadInfo, setUploadInfo, reset, primaryColor }}
+    >
+      {children}
+    </AppContext.Provider>
   );
 };
 

@@ -19,14 +19,14 @@ export function Phase1(props: IPhase1Props) {
   const { classes } = useStyles();
   const { onNextClick: goNext } = props;
   const {
-    showSelectTemplate,
     onSubmit,
-    trigger,
     control,
     templates,
-    isInitialDataLoaded,
-    isUploadLoading,
     onDownload,
+    isUploadLoading,
+    onTemplateChange,
+    showSelectTemplate,
+    isInitialDataLoaded,
     isDownloadInProgress,
   } = usePhase1({
     goNext,
@@ -50,10 +50,7 @@ export function Phase1(props: IPhase1Props) {
                 data={templates}
                 width="50%"
                 error={fieldState.error?.message}
-                onChange={(value) => {
-                  field.onChange(value);
-                  trigger('templateId');
-                }}
+                onChange={onTemplateChange}
                 value={field.value}
                 ref={field.ref}
               />

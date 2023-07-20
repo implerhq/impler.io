@@ -26,9 +26,7 @@ export function PromptModal(props: IPromptModalProps) {
         <Title color={colors.red} order={3} mt="sm">
           {TEXTS.PROMPT.title}
         </Title>
-        <Text color="dimmed" mb="sm">
-          {subTitle[action || '']}
-        </Text>
+        <Text color="dimmed" mb="sm" dangerouslySetInnerHTML={{ __html: subTitle[action || ''] }} />
         <Group spacing="sm" style={{ flexDirection: 'row' }}>
           <Button onClick={onCancel} color="gray" variant="outline">
             {TEXTS.PROMPT.NO}

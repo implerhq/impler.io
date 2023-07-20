@@ -1,7 +1,7 @@
 import { IconType } from '@types';
 import { IconSizes } from 'config';
 
-export const ChevronDown = ({ size = 'sm' }: IconType) => {
+export const ChevronDownIcon = ({ size = 'sm' }: IconType) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
