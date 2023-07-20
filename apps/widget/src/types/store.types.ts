@@ -14,6 +14,7 @@ export interface IApiStore {
 }
 
 export interface IAppStore {
+  title?: string;
   templateInfo: ITemplate;
   uploadInfo: IUpload;
   reset: () => void;

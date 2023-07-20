@@ -5,6 +5,7 @@ import APIContextProvider from '@store/api.context';
 import AppContextProvider from '@store/app.context';
 
 interface IProviderProps {
+  title?: string;
   // api-context
   api: ApiService;
   // impler-context
@@ -17,7 +18,7 @@ interface IProviderProps {
 }
 
 export function Provider(props: PropsWithChildren<IProviderProps>) {
-  const { api, projectId, templateId, accessToken, extra, authHeaderValue, children, primaryColor } = props;
+  const { api, title, projectId, templateId, accessToken, extra, authHeaderValue, children, primaryColor } = props;
 
   return (
     <ImplerContextProvider
@@ -28,7 +29,9 @@ export function Provider(props: PropsWithChildren<IProviderProps>) {
       authHeaderValue={authHeaderValue}
     >
       <APIContextProvider api={api}>
-        <AppContextProvider primaryColor={primaryColor}>{children}</AppContextProvider>
+        <AppContextProvider title={title} primaryColor={primaryColor}>
+          {children}
+        </AppContextProvider>
       </APIContextProvider>
     </ImplerContextProvider>
   );

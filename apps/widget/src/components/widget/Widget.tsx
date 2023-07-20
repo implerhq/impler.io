@@ -16,7 +16,7 @@ import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
 export function Widget() {
   const defaultDataCount = 0;
   const queryClient = useQueryClient();
-  const { reset: resetAppState, uploadInfo, templateInfo } = useAppState();
+  const { reset: resetAppState, uploadInfo, templateInfo, title } = useAppState();
   const [phase, setPhase] = useState<PhasesEum>(PhasesEum.UPLOAD);
   const [dataCount, setDataCount] = useState<number>(defaultDataCount);
   const [promptContinueAction, setPromptContinueAction] = useState<PromptModalTypesEnum>();
@@ -63,7 +63,7 @@ export function Widget() {
 
   return (
     <Modal opened onClose={onClose}>
-      <Layout active={phase} title={templateInfo?.name}>
+      <Layout active={phase} title={title || templateInfo?.name}>
         {PhaseView[phase]}
         <PromptModal
           onCancel={onPromptCancel}

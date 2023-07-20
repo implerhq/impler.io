@@ -1,6 +1,6 @@
-import { EventTypesEnum, IShowPayload, IUpload } from '@impler/shared';
 import { useCallback, useEffect, useState } from 'react';
 import { logError } from '../utils/logger';
+import { EventTypesEnum, IShowPayload, IUpload } from '@impler/shared';
 import { EventCalls, UploadTemplateData, UploadData } from '../components/button/Button.types';
 
 interface ShowWidgetProps {
@@ -9,6 +9,7 @@ interface ShowWidgetProps {
 
 interface UseImplerProps {
   projectId: string;
+  title?: string;
   templateId?: string;
   accessToken?: string;
   primaryColor?: string;
@@ -26,6 +27,7 @@ export function useImpler({
   templateId,
   accessToken,
   authHeaderValue,
+  title,
   extra,
   onUploadComplete,
   onWidgetClose,
@@ -75,6 +77,7 @@ export function useImpler({
       const payload: IShowPayload = {
         templateId,
       };
+      if (title) payload.title = title;
       if (colorScheme) payload.colorScheme = colorScheme;
       else {
         const preferColorScheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
