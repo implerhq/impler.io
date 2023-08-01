@@ -80,7 +80,7 @@ export function getRecordFormat(chunkFormat: string) {
   const regex = /%.*?%/g;
   let recordFormat = null;
   Object.keys(format).forEach((key) => {
-    if (regex.test(key) && typeof format[key] !== 'object') {
+    if (regex.test(key) && typeof format[key] === 'object') {
       recordFormat = format[key];
       delete format[key];
       format[key.slice(1, -1)] = createVariable('data');
