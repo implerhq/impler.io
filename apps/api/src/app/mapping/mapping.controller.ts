@@ -4,19 +4,21 @@ import { ACCESS_KEY_NAME, Defaults, UploadStatusEnum } from '@impler/shared';
 import { MappingEntity } from '@impler/dal';
 
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
+import { validateNotFound } from '@shared/helpers/common.helper';
+import { validateUploadStatus } from '@shared/helpers/upload.helpers';
+import { GetUpload } from '@shared/usecases/get-upload/get-upload.usecase';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 import { GetUploadCommand } from '@shared/usecases/get-upload/get-upload.command';
+
+import { UpdateMappingDto } from './dtos/update-columns.dto';
 import { DoMapping } from './usecases/do-mapping/do-mapping.usecase';
-import { DoMappingCommand } from './usecases/do-mapping/do-mapping.command';
-import { GetUpload } from '@shared/usecases/get-upload/get-upload.usecase';
 import { GetMappings } from './usecases/get-mappings/get-mappings.usecase';
-import { UpdateMappingCommand } from './usecases/update-mappings/update-mappings.command';
+import { DoMappingCommand } from './usecases/do-mapping/do-mapping.command';
 import { UpdateMappings } from './usecases/update-mappings/update-mappings.usecase';
 import { FinalizeUpload } from './usecases/finalize-upload/finalize-upload.usecase';
-import { UpdateMappingDto } from './dtos/update-columns.dto';
 import { ValidateMapping } from './usecases/validate-mapping/validate-mapping.usecase';
-import { validateUploadStatus } from '@shared/helpers/upload.helpers';
-import { validateNotFound } from '@shared/helpers/common.helper';
+import { UpdateMappingCommand } from './usecases/update-mappings/update-mappings.command';
+import { ReanameFileHeadings } from './usecases/rename-file-headings/rename-file-headings.usecase';
 
 @Controller('/mapping')
 @ApiTags('Mappings')
@@ -29,7 +31,8 @@ export class MappingController {
     private getMappings: GetMappings,
     private updateMappings: UpdateMappings,
     private finalizeUpload: FinalizeUpload,
-    private validateMapping: ValidateMapping
+    private validateMapping: ValidateMapping,
+    private renameFileHeadings: ReanameFileHeadings
   ) {}
 
   @Get(':uploadId')
@@ -93,7 +96,7 @@ export class MappingController {
 
     // save mapping
     if (Array.isArray(body) && body.length > Defaults.ZERO) {
-      this.updateMappings.execute(
+      await this.updateMappings.execute(
         body
           .filter((columnDataItem) => !!columnDataItem.columnHeading)
           .map((updateColumnData) =>
@@ -107,7 +110,9 @@ export class MappingController {
       );
     }
 
+    const { totalRecords, _allDataFileId } = await this.renameFileHeadings.execute(_uploadId);
+
     // update mapping status
-    return this.finalizeUpload.execute(_uploadId);
+    return this.finalizeUpload.execute(_uploadId, totalRecords, _allDataFileId);
   }
 }
