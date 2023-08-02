@@ -26,11 +26,16 @@ import {
   GetCustomization,
   UpdateCustomization,
   UpdateCustomizationCommand,
+  GetValidations,
+  UpdateValidations,
+  UpdateValidationsCommand,
 } from './usecases';
 import { ColumnResponseDto } from 'app/column/dtos/column-response.dto';
 import { ColumnRequestDto } from 'app/column/dtos/column-request.dto';
 import { CustomizationResponseDto } from './dtos/customization-response.dto';
 import { UpdateCustomizationRequestDto } from './dtos/update-customization-request.dto';
+import { ValidationsResponseDto } from './dtos/validations-response.dto';
+import { UpdateValidationsRequestDto } from './dtos/update-validations-request.dto';
 
 @Controller('/template')
 @ApiTags('Template')
@@ -40,7 +45,9 @@ export class TemplateController {
   constructor(
     private getTemplateColumns: GetTemplateColumns,
     private getUploads: GetUploads,
+    private getValidations: GetValidations,
     private getCustomization: GetCustomization,
+    private updateValidations: UpdateValidations,
     private updateCustomization: UpdateCustomization,
     private createTemplateUsecase: CreateTemplate,
     private updateTemplateUsecase: UpdateTemplate,
@@ -199,5 +206,30 @@ export class TemplateController {
     @Body() body: UpdateCustomizationRequestDto
   ): Promise<CustomizationResponseDto> {
     return this.updateCustomization.execute(templateId, UpdateCustomizationCommand.create(body));
+  }
+
+  @Get(':templateId/validations')
+  @ApiOperation({
+    summary: 'Get template validations',
+  })
+  @ApiOkResponse({
+    type: ValidationsResponseDto,
+  })
+  async getValidationsRoute(@Param('templateId', ValidateMongoId) templateId: string): Promise<ValidationsResponseDto> {
+    return this.getValidations.execute(templateId);
+  }
+
+  @Put(':templateId/validations')
+  @ApiOperation({
+    summary: 'Update template validations',
+  })
+  @ApiOkResponse({
+    type: ValidationsResponseDto,
+  })
+  async updateValidationsRoute(
+    @Param('templateId', ValidateMongoId) templateId: string,
+    @Body() body: UpdateValidationsRequestDto
+  ): Promise<ValidationsResponseDto> {
+    return this.updateValidations.execute(templateId, UpdateValidationsCommand.create(body));
   }
 }

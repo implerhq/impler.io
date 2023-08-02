@@ -31,9 +31,7 @@ export function OutputEditor({ templateId }: OutputEditorProps) {
           </Text>
         </div>
 
-        <Group>
-          <Button onClick={onSaveClick}>Save</Button>
-        </Group>
+        <Button onClick={onSaveClick}>Save</Button>
       </Group>
       <Alert icon={<InformationIcon />} p="xs">
         <Code>{`%<var>%`}</Code> will be used to loop over data items.
@@ -49,7 +47,7 @@ export function OutputEditor({ templateId }: OutputEditorProps) {
                 id="record-item"
                 value={field.value}
                 onChange={field.onChange}
-                variables={customization?.recordVariables}
+                variables={[...(customization?.recordVariables || []), ...(customization?.chunkVariables || [])]}
               />
             )}
           />
