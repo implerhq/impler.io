@@ -11,14 +11,19 @@ export abstract class FileService {
 }
 
 export class CSVFileService extends FileService {
-  async getFileInformation(file: Express.Multer.File, options?: ParserOptionsArgs): Promise<IFileInformation> {
+  async getFileInformation(file: string | Express.Multer.File, options?: ParserOptionsArgs): Promise<IFileInformation> {
     return new Promise((resolve, reject) => {
       const information: IFileInformation = {
         data: [],
         headings: [],
         totalRecords: 0,
       };
-      const fileContent = file.buffer.toString(FileEncodingsEnum.CSV);
+      let fileContent: string;
+      if (typeof file === 'string') {
+        fileContent = file;
+      } else {
+        fileContent = file.buffer.toString(FileEncodingsEnum.CSV);
+      }
 
       parseString(fileContent, {
         ...options,
@@ -41,10 +46,9 @@ export class CSVFileService extends FileService {
           }
         })
         .on('headers', (headers) => information.headings.push(...headers))
-        .on('data', (row) => information.data.push(row))
+        .on('data', () => information.totalRecords++)
         .on('end', () => {
-          if (!information.data.length) return reject(new EmptyFileException());
-          information.totalRecords = information.data.length;
+          if (!information.totalRecords) return reject(new EmptyFileException());
           resolve(information);
         });
     });
@@ -84,6 +88,20 @@ export class ExcelFileService extends FileService {
       totalRecords: data.length,
     };
   }
+  convertToCsv(file: Express.Multer.File): string {
+    const fileContent = file.buffer.toString(FileEncodingsEnum.EXCEL);
+    const workbookHeaders = XLSX.read(fileContent);
+    const sheet = workbookHeaders.Sheets[workbookHeaders.SheetNames[Defaults.ZERO]];
+
+    return XLSX.utils.sheet_to_csv(sheet, {
+      /*
+       * FS: ',',
+       * RS: '\n',
+       * strip: true,
+       * blankrows: false,
+       */
+    });
+  }
   renameJSONHeaders(jsonData: any[], headings: string[]): Record<string, unknown>[] {
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.json_to_sheet(jsonData);
@@ -95,9 +113,14 @@ export class ExcelFileService extends FileService {
 }
 
 export class CSVFileService2 {
-  getFileHeaders(file: Express.Multer.File, options?: ParseConfig): Promise<string[]> {
+  getFileHeaders(file: string | Express.Multer.File, options?: ParseConfig): Promise<string[]> {
     return new Promise((resolve, reject) => {
-      const fileContent = file.buffer.toString(FileEncodingsEnum.CSV);
+      let fileContent = '';
+      if (typeof file === 'string') {
+        fileContent = file;
+      } else {
+        fileContent = file.buffer.toString(FileEncodingsEnum.CSV);
+      }
       parse(fileContent, {
         ...(options || {}),
         preview: 1,
