@@ -110,9 +110,9 @@ export class MappingController {
       );
     }
 
-    const { totalRecords, _allDataFileId } = await this.renameFileHeadings.execute(_uploadId);
+    const { totalRecords, _allDataFileId, headings } = await this.renameFileHeadings.execute(_uploadId);
 
     // update mapping status
-    return this.finalizeUpload.execute(_uploadId, totalRecords, _allDataFileId);
+    return this.finalizeUpload.execute(_uploadId, totalRecords, _allDataFileId, headings);
   }
 }

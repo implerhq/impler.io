@@ -61,10 +61,10 @@ export class ReviewController {
     type: PaginationResponseDto,
   })
   async getReview(
+    @Res() res: Response,
     @Param('uploadId') _uploadId: string,
     @Query('page') page = Defaults.ONE,
-    @Query('limit') limit = Defaults.PAGE_LIMIT,
-    @Res() res: Response
+    @Query('limit') limit = Defaults.PAGE_LIMIT
   ) {
     const uploadData = await this.getUploadInvalidData.execute(_uploadId);
     if (!uploadData) throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
@@ -75,20 +75,21 @@ export class ReviewController {
     res.setHeader('Connection', 'keep-alive');
     res.setHeader('Cache-Control', 'no-cache');
 
+    let invalidDataFilePath: string;
     if (uploadData.status === UploadStatusEnum.MAPPED) {
-      return await this.doReview.execute(_uploadId, res, limit);
+      invalidDataFilePath = await this.doReview.execute(_uploadId);
     } else {
-      // Uploaded file is already reviewed, return reviewed data
-      const invalidData = await this.getFileInvalidData.execute(
-        (uploadData._invalidDataFileId as unknown as FileEntity).path
-      );
-      const { data, ...rest } = paginateRecords(invalidData, page, limit);
-      for (const item of data) {
-        res.write(`data: ${JSON.stringify(item)}\n\n`);
-      }
-      res.write(`data: ${JSON.stringify(rest)}\n\n`);
-      res.end();
+      invalidDataFilePath = (uploadData._invalidDataFileId as unknown as FileEntity).path;
     }
+
+    // Uploaded file is already reviewed, return reviewed data
+    const invalidData = await this.getFileInvalidData.execute(invalidDataFilePath);
+    const { data, ...rest } = paginateRecords(invalidData, page, limit);
+    for (const item of data) {
+      res.write(`data: ${JSON.stringify(item)}\n\n`);
+    }
+    res.write(`data: ${JSON.stringify(rest)}\n\n`);
+    res.end();
   }
 
   @Post(':uploadId/confirm')

@@ -6,10 +6,10 @@ import { UploadStatusEnum } from '@impler/shared';
 export class FinalizeUpload {
   constructor(private uploadRepository: UploadRepository) {}
 
-  async execute(_uploadId: string, totalRecords: number, _allDataFileId: string) {
+  async execute(_uploadId: string, totalRecords: number, _allDataFileId: string, headings: string[]) {
     return await this.uploadRepository.findOneAndUpdate(
       { _id: _uploadId },
-      { status: UploadStatusEnum.MAPPED, totalRecords, _allDataFileId }
+      { status: UploadStatusEnum.MAPPED, totalRecords, _allDataFileId, headings }
     );
   }
 }

@@ -1,24 +1,123 @@
-import { Response } from 'express';
-import * as Papa from 'papaparse';
+import * as fs from 'fs';
 import { Readable } from 'stream';
+import * as Papa from 'papaparse';
 import addFormats from 'ajv-formats';
 import addKeywords from 'ajv-keywords';
-import Ajv, { ErrorObject } from 'ajv';
-import { FileNameService } from '@shared/services';
-
-import { ColumnTypesEnum, FileEncodingsEnum, FileMimeTypesEnum, UploadStatusEnum } from '@impler/shared';
 import { Injectable, BadRequestException } from '@nestjs/common';
+import Ajv, { AnySchemaObject, ErrorObject, ValidateFunction } from 'ajv';
+
 import {
-  ColumnEntity,
-  MappingEntity,
-  FileRepository,
   ColumnRepository,
   UploadRepository,
   MappingRepository,
+  FileEntity,
+  ColumnEntity,
+  ValidatorRepository,
+  FileRepository,
 } from '@impler/dal';
-import { APIMessages } from '@shared/constants';
 import { StorageService } from '@impler/shared/dist/services/storage';
+import { ColumnTypesEnum, FileEncodingsEnum, FileMimeTypesEnum, UploadStatusEnum } from '@impler/shared';
+
+import { APIMessages } from '@shared/constants';
+import { FileNameService } from '@shared/services';
+import { SManager } from 'app/review/service/Sandbox';
 import { FileNotExistError } from '@shared/errors/file-not-exist.error';
+
+interface IDataItem {
+  index: number;
+  errors?: Record<string, string>;
+  isValid: boolean;
+  record: Record<string, any>;
+}
+interface IBatchItem {
+  uploadId: string;
+  data: IDataItem[];
+  batchCount: number;
+  extra: any;
+  totalRecords: number;
+}
+
+const batchLimit = 500;
+const mainCode = `
+const fs = require('fs');
+const { code } = require('./code');
+let input = fs.readFileSync('./input.json', 'utf8');
+
+const startTime = Date.now();
+input = JSON.parse(input);
+
+function deepCopy(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}
+
+function saveOutput(output, startTime) {
+  fs.writeFileSync('./output.json', JSON.stringify({
+    output,
+    status: "OK"
+  }));
+  fs.writeFileSync('./meta.txt', 'time: ' + ((Date.now() - startTime) / 1000));
+}
+
+function saveError(error, startTime) {
+  console.error(error);
+  fs.writeFileSync('./meta.txt', 'time: ' + ((Date.now() - startTime) / 1000));
+  fs.writeFileSync('./output.json', JSON.stringify({
+    status: "ERROR",
+    output: error.message
+  }))
+}
+
+function isObjectEmpty(obj) {
+    for(let i in obj) return false; 
+    return true;
+}
+
+function processErrors(batchData, errors) {
+  if(!Array.isArray(errors) || (Array.isArray(errors) && errors.length === 0)) {
+    return batchData;
+  }
+  let rowIndexToUpdate, combinedErrors, isErrorsEmpty;
+  errors.forEach(error => {
+      rowIndexToUpdate = error.index - Math.max(0, (batchData.batchCount - 1 * batchData.chunkSize));
+      rowIndexToUpdate -= 1;
+        if(
+        rowIndexToUpdate <= batchData.batchCount * batchData.chunkSize && 
+        (typeof error.errors === 'object' && !Array.isArray(error.errors) && error.errors !== null)
+        ) {
+            combinedErrors = Object.assign(batchData.data[rowIndexToUpdate].errors, error.errors);
+            isErrorsEmpty = isObjectEmpty(combinedErrors);
+            batchData.data[rowIndexToUpdate] = {
+                ...batchData.data[rowIndexToUpdate],
+                errors: combinedErrors,
+                isValid: isErrorsEmpty
+            }
+        }
+  })
+  return batchData;
+}
+
+
+if (typeof code === 'function') {
+  if(code.constructor.name === 'AsyncFunction') {
+    code(input).then((outputErrors) => {
+      let output = processErrors(input, outputErrors);
+      saveOutput(output, startTime);
+      process.exit(0);
+    }).catch((error) => {
+      saveError(error, startTime);
+    });
+  } else {
+    try {
+      const outputErrors = code(input);
+      let output = processErrors(input, outputErrors);
+      saveOutput(output, startTime);
+      process.exit(0);
+    } catch (error) {
+      saveError(error, startTime);
+    }
+  }
+}
+`;
 
 const ajv = new Ajv({
   allErrors: true,
@@ -46,6 +145,20 @@ ajv.addKeyword({
   },
 });
 
+const uniqueItems: Record<string, Set<any>> = {};
+ajv.addKeyword({
+  keyword: 'uniqueCheck',
+  schema: false, // keyword value is not used, can be true
+  validate: function (data: any, dataPath: AnySchemaObject) {
+    if (uniqueItems[dataPath.parentDataProperty].has(data)) {
+      return false;
+    }
+    uniqueItems[dataPath.parentDataProperty].add(data);
+
+    return true;
+  },
+});
+
 @Injectable()
 export class DoReview {
   constructor(
@@ -53,22 +166,21 @@ export class DoReview {
     private storageService: StorageService,
     private columnRepository: ColumnRepository,
     private mappingRepository: MappingRepository,
+    private validatorRepository: ValidatorRepository,
+    private fileNameService: FileNameService,
     private fileRepository: FileRepository,
-    private fileNameService: FileNameService
+    private sandboxManager: SManager
   ) {}
 
-  async execute(uploadId: string, res: Response, limit: number) {
-    const uploadInfo = await this.uploadRepository.getUploadInformation(uploadId);
+  async execute(_uploadId: string) {
+    const uploadInfo = await this.uploadRepository.getUploadInformation(_uploadId);
     if (!uploadInfo) {
       throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
     }
     if (uploadInfo.status !== UploadStatusEnum.MAPPED) {
       throw new BadRequestException(APIMessages.FILE_MAPPING_REMAINING);
     }
-    const fileInfo = await this.fileRepository.findById(uploadInfo._uploadedFileId);
-    const fileStream = await this.storageService.getFileStream(fileInfo.path);
-
-    const mappings = await this.mappingRepository.find({ _uploadId: uploadId }, '_columnId columnHeading');
+    const mappings = await this.mappingRepository.getMappingWithColumnInfo(_uploadId);
     const columns = await this.columnRepository.find(
       { _templateId: uploadInfo._templateId },
       'isRequired isUnique selectValues type regex'
@@ -76,91 +188,33 @@ export class DoReview {
     const schema = this.buildAJVSchema(columns, mappings);
     const validator = ajv.compile(schema);
 
-    const validFilePath = this.fileNameService.getValidDataFilePath(uploadId);
-    const invalidFilePath = this.fileNameService.getInvalidDataFilePath(uploadId);
-    const invalidCsvDataFilePath = this.fileNameService.getInvalidCSVDataFilePath(uploadId);
-    const validDataStream = new Readable({
-      read() {},
-    });
-    const invalidDataStream = new Readable({
-      read() {},
-    });
-    const invalidCsvDataStream = new Readable({
-      read() {},
-    });
-    this.storageService.writeStream(validFilePath, validDataStream, FileMimeTypesEnum.JSON);
-    this.storageService.writeStream(invalidFilePath, invalidDataStream, FileMimeTypesEnum.JSON);
-    this.storageService.writeStream(invalidCsvDataFilePath, invalidCsvDataStream, FileMimeTypesEnum.CSV);
-    invalidCsvDataStream.push(['index', 'message', ...uploadInfo.headings].join(',') + '\n');
-    res.write('\n');
+    const allDataFileInfo = uploadInfo._allDataFileId as unknown as FileEntity;
+    const validations = await this.validatorRepository.findOne({ _templateId: uploadInfo._templateId });
 
-    let validRecords = 0,
-      invalidRecords = 0,
-      totalRecords = 0;
+    if (validations && validations.onBatchInitialize) {
+      const batches = await this.batchRun({
+        _uploadId,
+        allDataFilePath: allDataFileInfo.path,
+        headings: uploadInfo.headings,
+        validator,
+        extra: uploadInfo.extra,
+        totalRecords: uploadInfo.totalRecords,
+      });
 
-    Papa.parse(fileStream, {
-      dynamicTyping: false,
-      skipEmptyLines: true,
-      step: (results: Papa.ParseStepResult<any>) => {
-        const record = results.data;
-        const recordObj = uploadInfo.headings.reduce((acc, heading, index) => {
-          acc[heading] = record[index];
-
-          return acc;
-        }, {});
-        totalRecords++;
-
-        if (totalRecords > 1) {
-          const isValid = validator(recordObj);
-          if (!isValid) {
-            const message = this.getErrors(validator.errors);
-            const invalidItem = {
-              index: totalRecords,
-              message,
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              ...recordObj,
-            };
-            if (totalRecords <= limit) res.write('data:' + JSON.stringify(invalidItem) + '\n\n');
-            invalidDataStream.push((invalidRecords === 0 ? '[' : ',') + JSON.stringify(invalidItem));
-            invalidCsvDataStream.push([totalRecords, message, ...record].join(',') + '\n');
-            invalidRecords++;
-          } else {
-            validDataStream.push((validRecords === 0 ? '[' : ',') + JSON.stringify(recordObj));
-            validRecords++;
-          }
-        }
-      },
-      complete: () => {
-        validDataStream.push(']');
-        invalidDataStream.push(']');
-        validDataStream.push(null);
-        invalidDataStream.push(null);
-        invalidCsvDataStream.push(null);
-        this.saveFileContents({
-          uploadId,
-          invalidRecords,
-          totalRecords,
-          validRecords,
-        });
-        res.write(
-          'data: ' +
-            JSON.stringify({
-              limit,
-              page: 1,
-              totalPages: Math.ceil(invalidRecords / limit),
-              totalRecords,
-              invalidRecords,
-              invalidCsvDataFilePath,
-            }) +
-            '\n\n'
-        );
-        res.end();
-      },
-      error: (err) => {
-        console.log(err);
-      },
-    });
+      return this.processBatches({
+        batches,
+        headings: uploadInfo.headings,
+        onBatchInitialize: validations.onBatchInitialize,
+        uploadId: _uploadId,
+      });
+    } else {
+      return this.normalRun({
+        allDataFilePath: allDataFileInfo.path,
+        headings: uploadInfo.headings,
+        uploadId: _uploadId,
+        validator,
+      });
+    }
   }
 
   async getFileContent(path): Promise<string> {
@@ -176,19 +230,19 @@ export class DoReview {
     }
   }
 
-  private buildAJVSchema(columns: ColumnEntity[], mappings: MappingEntity[]) {
+  private buildAJVSchema(columns: ColumnEntity[], mappings: any[]) {
     const formattedColumns: Record<string, ColumnEntity> = columns.reduce((acc, column) => {
       acc[column._id] = { ...column };
 
       return acc;
     }, {});
     const properties: Record<string, unknown> = mappings.reduce((acc, mapping) => {
-      acc[mapping.columnHeading] = this.getProperty(formattedColumns[mapping._columnId]);
+      acc[mapping.columnHeading] = this.getProperty(formattedColumns[mapping.column._columnId]);
 
       return acc;
     }, {});
     const requiredProperties: string[] = mappings.reduce((acc, mapping) => {
-      if (formattedColumns[mapping._columnId].isRequired) acc.push(mapping.columnHeading);
+      if (formattedColumns[mapping.column._columnId].isRequired) acc.push(mapping.column.key);
 
       return acc;
     }, []);
@@ -218,7 +272,10 @@ export class DoReview {
       case ColumnTypesEnum.SELECT:
         property = {
           type: 'string',
-          enum: column.selectValues || [],
+          ...(Array.isArray(column.selectValues) &&
+            column.selectValues.length > 0 && {
+              enum: column.selectValues,
+            }),
         };
         break;
       case ColumnTypesEnum.REGEX:
@@ -244,15 +301,15 @@ export class DoReview {
     };
   }
 
-  private getErrors(errors: ErrorObject[]) {
+  private getErrorsObject(errors: ErrorObject[]): Record<string, string> {
     let field: string;
 
-    return errors.reduce((message, error) => {
+    return errors.reduce((obj, error) => {
       [, field] = error.instancePath.split('/');
+      obj[field] = this.getMessage(error, field || error.schema[0]);
 
-      // eslint-disable-next-line no-magic-numbers
-      return (message += this.getMessage(error, field || error.schema[0]));
-    }, '');
+      return obj;
+    }, {});
   }
 
   private getMessage(error: ErrorObject, field: string): string {
@@ -303,6 +360,215 @@ export class DoReview {
     return '`' + field + '`' + message;
   }
 
+  private async executeBatchInSandbox(batchItem: IBatchItem, sandboxManager: SManager, onBatchInitialize: string) {
+    const sandbox = await sandboxManager.obtainSandbox(batchItem.uploadId);
+    sandbox.clean();
+    const sandboxPath = sandbox.getSandboxFolderPath();
+
+    fs.writeFileSync(
+      `${sandboxPath}/input.json`,
+      JSON.stringify({
+        ...batchItem,
+        chunkSize: batchLimit,
+        /*
+         * fileName: "asdf",
+         * extra: "",
+         * totalRecords: "",
+         */
+      })
+    );
+    fs.writeFileSync(`${sandboxPath}/code.js`, onBatchInitialize);
+    fs.writeFileSync(`${sandboxPath}/main.js`, mainCode);
+
+    const nodeExecutablePath = process.execPath;
+
+    return await sandbox.runCommandLine(`${nodeExecutablePath} main.js`);
+  }
+
+  private async normalRun({
+    allDataFilePath,
+    validator,
+    headings,
+    uploadId,
+  }: {
+    uploadId: string;
+    allDataFilePath: string;
+    validator: ValidateFunction;
+    headings: string[];
+  }): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      const validFilePath = this.fileNameService.getValidDataFilePath(uploadId);
+      const invalidFilePath = this.fileNameService.getInvalidDataFilePath(uploadId);
+      const invalidCsvDataFilePath = this.fileNameService.getInvalidCSVDataFilePath(uploadId);
+      const csvFileStream = await this.storageService.getFileStream(allDataFilePath);
+      const validDataStream = new Readable({
+        read() {},
+      });
+      const invalidDataStream = new Readable({
+        read() {},
+      });
+      const invalidCsvDataStream = new Readable({
+        read() {},
+      });
+      this.storageService.writeStream(validFilePath, validDataStream, FileMimeTypesEnum.JSON);
+      this.storageService.writeStream(invalidFilePath, invalidDataStream, FileMimeTypesEnum.JSON);
+      this.storageService.writeStream(invalidCsvDataFilePath, invalidCsvDataStream, FileMimeTypesEnum.CSV);
+      invalidCsvDataStream.push(`"index","message","${headings.join('","')}\n`);
+
+      let totalRecords = 0,
+        invalidRecords = 0,
+        validRecords = 0,
+        item: any;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      Papa.parse(csvFileStream, {
+        dynamicTyping: false,
+        skipEmptyLines: true,
+        step: (results: Papa.ParseStepResult<any>) => {
+          totalRecords++;
+          const record = results.data;
+          const recordObj = headings.reduce((acc, heading, index) => {
+            acc[heading] = record[index];
+
+            return acc;
+          }, {});
+
+          if (totalRecords > 1) {
+            const isValid = validator(recordObj);
+            if (!isValid) {
+              const errors = this.getErrorsObject(validator.errors);
+              const message = Object.values(errors).join(', ');
+              item = {
+                index: totalRecords,
+                errors: errors,
+                isValid: false,
+                record: recordObj,
+              };
+              invalidDataStream.push((invalidRecords === 0 ? '[' : ',') + JSON.stringify(item));
+              invalidCsvDataStream.push(`"${totalRecords}","${message}","${record.join('","')}"\n`);
+              invalidRecords++;
+            } else {
+              item = {
+                index: totalRecords,
+                isValid: true,
+                record: recordObj,
+              };
+              validDataStream.push((validRecords === 0 ? '[' : ',') + JSON.stringify(item));
+              validRecords++;
+            }
+          }
+        },
+        complete: async () => {
+          validDataStream.push(']');
+          invalidDataStream.push(']');
+          validDataStream.push(null);
+          invalidDataStream.push(null);
+          invalidCsvDataStream.push(null);
+          const invalidDataFilePath = await this.saveFileContents({
+            uploadId,
+            invalidRecords,
+            totalRecords,
+            validRecords,
+          });
+          resolve(invalidDataFilePath);
+        },
+        error: (err) => {
+          reject(err);
+        },
+      });
+    });
+  }
+
+  private async batchRun({
+    allDataFilePath,
+    headings,
+    validator,
+    _uploadId,
+    extra,
+    totalRecords,
+  }: {
+    _uploadId: string;
+    allDataFilePath: string;
+    headings: string[];
+    validator: ValidateFunction;
+    extra: any;
+    totalRecords: number;
+  }): Promise<IBatchItem[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const csvFileStream = await this.storageService.getFileStream(allDataFilePath);
+
+        let recordsCount = 0,
+          batchCount = 1;
+        const batches: IBatchItem[] = [];
+        const batchRecords: IDataItem[] = [];
+
+        Papa.parse(csvFileStream, {
+          dynamicTyping: false,
+          skipEmptyLines: true,
+          step: (results: Papa.ParseStepResult<any>) => {
+            recordsCount++;
+            const record = results.data;
+            const recordObj = headings.reduce((acc, heading, index) => {
+              acc[heading] = record[index];
+
+              return acc;
+            }, {});
+
+            if (recordsCount > 1) {
+              // skip headings
+              const isValid = validator(recordObj);
+              if (!isValid) {
+                const errors = this.getErrorsObject(validator.errors);
+                batchRecords.push({
+                  index: recordsCount - 1,
+                  errors: errors,
+                  isValid: false,
+                  record: recordObj,
+                });
+              } else {
+                batchRecords.push({
+                  index: recordsCount - 1,
+                  isValid: true,
+                  errors: {},
+                  record: recordObj,
+                });
+              }
+              if (batchRecords.length === batchLimit) {
+                batches.push({
+                  uploadId: _uploadId,
+                  data: batchRecords,
+                  batchCount,
+                  extra,
+                  totalRecords,
+                });
+                batchRecords.length = 0;
+                batchCount++;
+              }
+            }
+          },
+          complete() {
+            if (batchRecords.length > 0) {
+              batches.push({
+                uploadId: _uploadId,
+                data: batchRecords,
+                batchCount,
+                extra,
+                totalRecords,
+              });
+            }
+            resolve(batches);
+          },
+          error: (err) => {
+            reject(err);
+          },
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
   private async saveFileContents({
     uploadId,
     totalRecords,
@@ -340,6 +606,76 @@ export class DoReview {
         invalidRecords,
       }
     );
+
+    return invalidDataFilePath;
+  }
+
+  private async processBatches({
+    uploadId,
+    headings,
+    batches,
+    onBatchInitialize,
+  }: {
+    batches: IBatchItem[];
+    uploadId: string;
+    headings: string[];
+    onBatchInitialize: string;
+  }) {
+    const validFilePath = this.fileNameService.getValidDataFilePath(uploadId);
+    const invalidFilePath = this.fileNameService.getInvalidDataFilePath(uploadId);
+    const invalidCsvDataFilePath = this.fileNameService.getInvalidCSVDataFilePath(uploadId);
+
+    const validDataStream = new Readable({
+      read() {},
+    });
+    const invalidDataStream = new Readable({
+      read() {},
+    });
+    const invalidCsvDataStream = new Readable({
+      read() {},
+    });
+
+    this.storageService.writeStream(validFilePath, validDataStream, FileMimeTypesEnum.JSON);
+    this.storageService.writeStream(invalidFilePath, invalidDataStream, FileMimeTypesEnum.JSON);
+    this.storageService.writeStream(invalidCsvDataFilePath, invalidCsvDataStream, FileMimeTypesEnum.CSV);
+    invalidCsvDataStream.push(`"index","message","${headings.join('","')}\n`);
+
+    const batchProcess = await Promise.all(
+      batches.map((batch) => this.executeBatchInSandbox(batch, this.sandboxManager, onBatchInitialize))
+    );
+    const processedArray = batchProcess.flat();
+    let totalRecords = 0,
+      validRecords = 0,
+      invalidRecords = 0;
+    let processOutput, message: string;
+    for (const processData of processedArray) {
+      processOutput = (processData.output as unknown as any).output;
+      // eslint-disable-next-line @typescript-eslint/no-loop-func
+      processOutput.data.forEach((item: any) => {
+        totalRecords++;
+        if (item.isValid) {
+          validDataStream.push((validRecords === 0 ? '[' : ',') + JSON.stringify(item));
+          validRecords++;
+        } else {
+          message = Object.values(item.errors).join(', ');
+          invalidDataStream.push((invalidRecords === 0 ? '[' : ',') + JSON.stringify(item));
+          invalidCsvDataStream.push(`"${totalRecords}","${message}","${Object.values(item.record).join('","')}"\n`);
+          invalidRecords++;
+        }
+      });
+    }
+    validDataStream.push(']');
+    invalidDataStream.push(']');
+    validDataStream.push(null);
+    invalidDataStream.push(null);
+    invalidCsvDataStream.push(null);
+
+    return await this.saveFileContents({
+      invalidRecords,
+      totalRecords,
+      uploadId,
+      validRecords,
+    });
   }
 
   private async makeFileEntry(fileName: string, filePath: string) {

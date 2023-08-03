@@ -62,44 +62,46 @@ export function Validator({ templateId }: ValidatorProps) {
               Instructions
             </Accordion.Control>
             <Accordion.Panel>
-              <List>
+              <List spacing="xs">
                 <List.Item>
                   You can use <Code>axios@1.9.0</Code> library to make http requests.
                 </List.Item>
                 <List.Item>
                   Following keys are available in <Code>params</Code> object to use in your code:
-                  <List>
-                    <List.Item>
-                      <Code>uploadId</Code> - id of current upload
-                    </List.Item>
-                    <List.Item>
-                      <Code>fileName</Code> - name of current file
-                    </List.Item>
-                    <List.Item>
-                      <Code>data</Code> - array of records, available keys in record are:{' '}
-                      <Code>{editorVariables.join(', ')}</Code>
-                    </List.Item>
-                    <List.Item>
-                      <Code>extra</Code> - extra data passed to upload
-                    </List.Item>
-                    <List.Item>
-                      <Code>totalRecords</Code> - total number of records in file
-                    </List.Item>
-                    <List.Item>
-                      <Code>chunkSize</Code> - number of records in current chunk
-                    </List.Item>
-                  </List>
-                </List.Item>
-                <List.Item>
-                  You can use <Code>console.log</Code> and <Code>console.error</Code>, to debug your code, output will
-                  be available in browser console.
+                  <Code block>
+                    {`{
+  uploadId: string;
+  extra: string | number | json;
+  fileName: string;
+  data: [
+    {
+      index: number;
+      record: {
+        [key: string]: string | number; // key is from "Schema Variables" mentioned below
+      };
+      errors: {};
+      isValid: boolean;
+    }
+  ]
+  totalRecords: number;
+  chunkSize: number;
+}
+`}
+                  </Code>
                 </List.Item>
                 <List.Item>
                   You need to return result of validation as array like,
-                  <Code block>{`[\n\t{ index: 1, errors: { email: 'email is already exists' } }\n]`}</Code>
+                  <Code block>{`[
+  { 
+    index: 1, 
+    errors: {
+      email: 'email is already exists'
+    } 
+  }
+]`}</Code>
                 </List.Item>
                 <List.Item>
-                  In case of all records are valid, you need to return empty array <Code>[]</Code>
+                  In case of all records are valid, you can return empty array <Code>[]</Code>
                 </List.Item>
               </List>
             </Accordion.Panel>

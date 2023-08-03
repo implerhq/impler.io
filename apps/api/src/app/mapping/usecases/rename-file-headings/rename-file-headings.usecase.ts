@@ -15,7 +15,7 @@ export class ReanameFileHeadings {
     private mappingRepository: MappingRepository
   ) {}
 
-  async execute(_uploadId: string): Promise<{ totalRecords: number; _allDataFileId: string }> {
+  async execute(_uploadId: string): Promise<{ totalRecords: number; _allDataFileId: string; headings: string[] }> {
     return new Promise(async (resolve, reject) => {
       try {
         const uploadInfo = await this.uploadRepository.findById(_uploadId, 'headings _uploadedFileId');
@@ -60,7 +60,7 @@ export class ReanameFileHeadings {
           })
           .on('end', () => {
             allCSVDataFileStream.push(null);
-            resolve({ totalRecords, _allDataFileId: allDataFileEntry._id });
+            resolve({ totalRecords, _allDataFileId: allDataFileEntry._id, headings: newHeadings });
           });
       } catch (error) {
         reject(error);

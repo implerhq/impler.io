@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { API_KEYS } from '@config';
+import { notify } from '@libs/notify';
 import { commonApi } from '@libs/api';
 import { ICustomization, IErrorObject, IValidator } from '@impler/shared';
 
@@ -33,7 +34,7 @@ export function useValidator({ templateId }: UseSchemaProps) {
     {
       onSuccess(data) {
         setEditorVariables([
-          ...(data.chunkVariables.map((variable) => variable.substring(2, variable.length - 2)) || []),
+          ...(data.recordVariables.map((variable) => variable.substring(2, variable.length - 2)) || []),
         ]);
       },
     }
@@ -52,8 +53,17 @@ export function useValidator({ templateId }: UseSchemaProps) {
     IErrorObject,
     ValidationsData,
     string[]
-  >([API_KEYS.VALIDATIONS_UPDATE, templateId], (body) =>
-    commonApi<IValidator>(API_KEYS.VALIDATIONS_UPDATE as any, { parameters: [templateId], body })
+  >(
+    [API_KEYS.VALIDATIONS_UPDATE, templateId],
+    (body) => commonApi<IValidator>(API_KEYS.VALIDATIONS_UPDATE as any, { parameters: [templateId], body }),
+    {
+      onSuccess() {
+        notify('VALIDATIONS_UPDATED');
+      },
+      onError(error) {
+        notify('VALIDATIONS_UPDATED', { title: 'Something went wrong!', message: error?.message, color: 'red' });
+      },
+    }
   );
   const onSaveValidationsClick = (data: ValidationsData) => {
     updateValidations(data);

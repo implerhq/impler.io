@@ -19,7 +19,7 @@ export const useEventSourceQuery = (uploadId: string) => {
         (event) => {
           const eventData = event.data && JSON.parse(event.data);
           if (eventData) {
-            if (eventData.invalidRecords && eventData.invalidCsvDataFilePath) {
+            if (eventData.limit && eventData.page && eventData.totalPages) {
               queryClient.setQueryData<IReviewData>([`review-stream`, page], (oldData) => {
                 return {
                   ...(oldData || {}),
