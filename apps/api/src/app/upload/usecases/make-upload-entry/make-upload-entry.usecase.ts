@@ -67,7 +67,7 @@ export class MakeUploadEntry {
       typeof file === 'string' ? file : file.buffer,
       FileMimeTypesEnum.CSV
     );
-    const uploadedFileName = this.fileNameService.getUploadedFileName(fileOriginalName);
+    const uploadedFileName = 'uploaded.csv';
     const fileEntry = await this.fileRepository.create({
       mimeType: FileMimeTypesEnum.CSV,
       name: uploadedFileName,

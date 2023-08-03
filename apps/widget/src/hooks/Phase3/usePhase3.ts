@@ -14,13 +14,35 @@ interface IUsePhase3Props {
 export function usePhase3({ onNext }: IUsePhase3Props) {
   const { api } = useAPIState();
   const { uploadInfo, setUploadInfo } = useAppState();
+
+  const { isLoading: isConfirmReviewLoading, mutate: confirmReview } = useMutation<
+    IUpload,
+    IErrorObject,
+    boolean,
+    [string]
+  >(
+    [`confirm:${uploadInfo._id}`],
+    (processInvalidRecords) => api.confirmReview(uploadInfo._id, processInvalidRecords),
+    {
+      onSuccess(uploadData) {
+        setUploadInfo(uploadData);
+        onNext(uploadData);
+      },
+      onError(error: IErrorObject) {
+        notifier.showError({ message: error.message, title: error.error });
+      },
+    }
+  );
   const {
     page,
     setPage,
     totalPages,
     data: reviewData,
     isLoading: isReviewDataLoading,
-  } = useEventSourceQuery(uploadInfo._id);
+  } = useEventSourceQuery({
+    onConfirm: confirmReview,
+    uploadId: uploadInfo._id,
+  });
 
   const { mutate: getSignedUrl } = useMutation<string, IErrorObject, [string, string]>(
     [`getSignedUrl:${uploadInfo._id}`],
@@ -47,24 +69,6 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
         notifier.showError({ message: error.message, title: error.error });
       },
       enabled: false,
-    }
-  );
-  const { isLoading: isConfirmReviewLoading, mutate: confirmReview } = useMutation<
-    IUpload,
-    IErrorObject,
-    boolean,
-    [string]
-  >(
-    [`confirm:${uploadInfo._id}`],
-    (processInvalidRecords) => api.confirmReview(uploadInfo._id, processInvalidRecords),
-    {
-      onSuccess(uploadData) {
-        setUploadInfo(uploadData);
-        onNext(uploadData);
-      },
-      onError(error: IErrorObject) {
-        notifier.showError({ message: error.message, title: error.error });
-      },
     }
   );
 

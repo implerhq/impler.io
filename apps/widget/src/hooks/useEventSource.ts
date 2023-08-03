@@ -5,7 +5,12 @@ import { useQueryClient, useQuery } from '@tanstack/react-query';
 
 const defaultPage = 1;
 
-export const useEventSourceQuery = (uploadId: string) => {
+interface UseEventSourceQueryProps {
+  onConfirm: (processInvalidRecord: boolean) => void;
+  uploadId: string;
+}
+
+export const useEventSourceQuery = ({ onConfirm, uploadId }: UseEventSourceQueryProps) => {
   const queryClient = useQueryClient();
   const [page, setPage] = useState<number>(defaultPage);
   const [totalPages, setTotalPages] = useState<number>(defaultPage);
@@ -19,7 +24,9 @@ export const useEventSourceQuery = (uploadId: string) => {
         (event) => {
           const eventData = event.data && JSON.parse(event.data);
           if (eventData) {
-            if (eventData.limit && eventData.page && eventData.totalPages) {
+            if (eventData.limit && eventData.page) {
+              if (eventData.totalRecords === 0) onConfirm(false);
+
               queryClient.setQueryData<IReviewData>([`review-stream`, page], (oldData) => {
                 return {
                   ...(oldData || {}),

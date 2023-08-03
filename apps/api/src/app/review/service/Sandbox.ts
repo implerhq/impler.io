@@ -337,7 +337,7 @@ export class SManager {
     oldestSandbox.used = true;
     oldestSandbox.cached = false;
     oldestSandbox.resourceId = key;
-    oldestSandbox.addDependencies(oldestSandbox.getSandboxFolderPath());
+    // oldestSandbox.addDependencies(oldestSandbox.getSandboxFolderPath());
 
     release();
 

@@ -10,18 +10,16 @@ import {
   ColumnRepository,
   UploadRepository,
   MappingRepository,
-  FileEntity,
   ColumnEntity,
   ValidatorRepository,
   FileRepository,
 } from '@impler/dal';
 import { StorageService } from '@impler/shared/dist/services/storage';
-import { ColumnTypesEnum, FileEncodingsEnum, FileMimeTypesEnum, UploadStatusEnum } from '@impler/shared';
+import { ColumnTypesEnum, FileMimeTypesEnum, UploadStatusEnum } from '@impler/shared';
 
 import { APIMessages } from '@shared/constants';
 import { FileNameService } from '@shared/services';
 import { SManager } from 'app/review/service/Sandbox';
-import { FileNotExistError } from '@shared/errors/file-not-exist.error';
 
 interface IDataItem {
   index: number;
@@ -123,7 +121,7 @@ const ajv = new Ajv({
   allErrors: true,
   coerceTypes: true,
   allowUnionTypes: true,
-  removeAdditional: true,
+  // removeAdditional: true,
   verbose: true,
 });
 addFormats(ajv, ['email']);
@@ -177,9 +175,6 @@ export class DoReview {
     if (!uploadInfo) {
       throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
     }
-    if (uploadInfo.status !== UploadStatusEnum.MAPPED) {
-      throw new BadRequestException(APIMessages.FILE_MAPPING_REMAINING);
-    }
     const mappings = await this.mappingRepository.getMappingWithColumnInfo(_uploadId);
     const columns = await this.columnRepository.find(
       { _templateId: uploadInfo._templateId },
@@ -188,13 +183,13 @@ export class DoReview {
     const schema = this.buildAJVSchema(columns, mappings);
     const validator = ajv.compile(schema);
 
-    const allDataFileInfo = uploadInfo._allDataFileId as unknown as FileEntity;
+    const uploadedFileInfo = await this.fileRepository.findById(uploadInfo._uploadedFileId);
     const validations = await this.validatorRepository.findOne({ _templateId: uploadInfo._templateId });
 
     if (validations && validations.onBatchInitialize) {
       const batches = await this.batchRun({
         _uploadId,
-        allDataFilePath: allDataFileInfo.path,
+        allDataFilePath: uploadedFileInfo.path,
         headings: uploadInfo.headings,
         validator,
         extra: uploadInfo.extra,
@@ -209,24 +204,11 @@ export class DoReview {
       });
     } else {
       return this.normalRun({
-        allDataFilePath: allDataFileInfo.path,
+        allDataFilePath: uploadedFileInfo.path,
         headings: uploadInfo.headings,
         uploadId: _uploadId,
         validator,
       });
-    }
-  }
-
-  async getFileContent(path): Promise<string> {
-    try {
-      const dataContent = await this.storageService.getFileContent(path, FileEncodingsEnum.JSON);
-
-      return JSON.parse(dataContent);
-    } catch (error) {
-      if (error instanceof FileNotExistError) {
-        throw new BadRequestException(APIMessages.FILE_NOT_FOUND_IN_STORAGE);
-      }
-      throw error;
     }
   }
 
@@ -251,7 +233,7 @@ export class DoReview {
       type: 'object',
       properties,
       required: requiredProperties,
-      additionalProperties: false,
+      // additionalProperties: false,
     };
   }
 
@@ -385,6 +367,36 @@ export class DoReview {
     return await sandbox.runCommandLine(`${nodeExecutablePath} main.js`);
   }
 
+  private getStreams({ uploadId, headings }: { uploadId: string; headings: string[] }) {
+    const validFilePath = this.fileNameService.getValidDataFilePath(uploadId);
+    const invalidFilePath = this.fileNameService.getInvalidDataFilePath(uploadId);
+    const invalidCsvDataFilePath = this.fileNameService.getInvalidCSVDataFilePath(uploadId);
+
+    const validDataStream = new Readable({
+      read() {},
+    });
+    const invalidDataStream = new Readable({
+      read() {},
+    });
+    const invalidCsvDataStream = new Readable({
+      read() {},
+    });
+
+    this.storageService.writeStream(validFilePath, validDataStream, FileMimeTypesEnum.JSON);
+    this.storageService.writeStream(invalidFilePath, invalidDataStream, FileMimeTypesEnum.JSON);
+    this.storageService.writeStream(invalidCsvDataFilePath, invalidCsvDataStream, FileMimeTypesEnum.CSV);
+    invalidCsvDataStream.push(`"index","message","${headings.join('","')}\n`);
+
+    invalidDataStream.push(`[`);
+    validDataStream.push(`[`);
+
+    return {
+      validDataStream,
+      invalidDataStream,
+      invalidCsvDataStream,
+    };
+  }
+
   private async normalRun({
     allDataFilePath,
     validator,
@@ -397,23 +409,11 @@ export class DoReview {
     headings: string[];
   }): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      const validFilePath = this.fileNameService.getValidDataFilePath(uploadId);
-      const invalidFilePath = this.fileNameService.getInvalidDataFilePath(uploadId);
-      const invalidCsvDataFilePath = this.fileNameService.getInvalidCSVDataFilePath(uploadId);
+      const { validDataStream, invalidCsvDataStream, invalidDataStream } = this.getStreams({
+        uploadId,
+        headings,
+      });
       const csvFileStream = await this.storageService.getFileStream(allDataFilePath);
-      const validDataStream = new Readable({
-        read() {},
-      });
-      const invalidDataStream = new Readable({
-        read() {},
-      });
-      const invalidCsvDataStream = new Readable({
-        read() {},
-      });
-      this.storageService.writeStream(validFilePath, validDataStream, FileMimeTypesEnum.JSON);
-      this.storageService.writeStream(invalidFilePath, invalidDataStream, FileMimeTypesEnum.JSON);
-      this.storageService.writeStream(invalidCsvDataFilePath, invalidCsvDataStream, FileMimeTypesEnum.CSV);
-      invalidCsvDataStream.push(`"index","message","${headings.join('","')}\n`);
 
       let totalRecords = 0,
         invalidRecords = 0,
@@ -444,7 +444,7 @@ export class DoReview {
                 isValid: false,
                 record: recordObj,
               };
-              invalidDataStream.push((invalidRecords === 0 ? '[' : ',') + JSON.stringify(item));
+              invalidDataStream.push((invalidRecords === 0 ? '' : ',') + JSON.stringify(item));
               invalidCsvDataStream.push(`"${totalRecords}","${message}","${record.join('","')}"\n`);
               invalidRecords++;
             } else {
@@ -453,7 +453,7 @@ export class DoReview {
                 isValid: true,
                 record: recordObj,
               };
-              validDataStream.push((validRecords === 0 ? '[' : ',') + JSON.stringify(item));
+              validDataStream.push((validRecords === 0 ? '' : ',') + JSON.stringify(item));
               validRecords++;
             }
           }
@@ -464,17 +464,20 @@ export class DoReview {
           validDataStream.push(null);
           invalidDataStream.push(null);
           invalidCsvDataStream.push(null);
-          const invalidDataFilePath = await this.saveFileContents({
-            uploadId,
-            invalidRecords,
-            totalRecords,
-            validRecords,
-          });
-          resolve(invalidDataFilePath);
         },
         error: (err) => {
           reject(err);
         },
+      });
+
+      invalidCsvDataStream.on('close', async () => {
+        const invalidDataFilePath = await this.saveFileContents({
+          uploadId,
+          invalidRecords,
+          totalRecords,
+          validRecords,
+        });
+        resolve(invalidDataFilePath);
       });
     });
   }
@@ -620,61 +623,52 @@ export class DoReview {
     uploadId: string;
     headings: string[];
     onBatchInitialize: string;
-  }) {
-    const validFilePath = this.fileNameService.getValidDataFilePath(uploadId);
-    const invalidFilePath = this.fileNameService.getInvalidDataFilePath(uploadId);
-    const invalidCsvDataFilePath = this.fileNameService.getInvalidCSVDataFilePath(uploadId);
-
-    const validDataStream = new Readable({
-      read() {},
-    });
-    const invalidDataStream = new Readable({
-      read() {},
-    });
-    const invalidCsvDataStream = new Readable({
-      read() {},
-    });
-
-    this.storageService.writeStream(validFilePath, validDataStream, FileMimeTypesEnum.JSON);
-    this.storageService.writeStream(invalidFilePath, invalidDataStream, FileMimeTypesEnum.JSON);
-    this.storageService.writeStream(invalidCsvDataFilePath, invalidCsvDataStream, FileMimeTypesEnum.CSV);
-    invalidCsvDataStream.push(`"index","message","${headings.join('","')}\n`);
-
-    const batchProcess = await Promise.all(
-      batches.map((batch) => this.executeBatchInSandbox(batch, this.sandboxManager, onBatchInitialize))
-    );
-    const processedArray = batchProcess.flat();
-    let totalRecords = 0,
-      validRecords = 0,
-      invalidRecords = 0;
-    let processOutput, message: string;
-    for (const processData of processedArray) {
-      processOutput = (processData.output as unknown as any).output;
-      // eslint-disable-next-line @typescript-eslint/no-loop-func
-      processOutput.data.forEach((item: any) => {
-        totalRecords++;
-        if (item.isValid) {
-          validDataStream.push((validRecords === 0 ? '[' : ',') + JSON.stringify(item));
-          validRecords++;
-        } else {
-          message = Object.values(item.errors).join(', ');
-          invalidDataStream.push((invalidRecords === 0 ? '[' : ',') + JSON.stringify(item));
-          invalidCsvDataStream.push(`"${totalRecords}","${message}","${Object.values(item.record).join('","')}"\n`);
-          invalidRecords++;
-        }
+  }): Promise<string> {
+    return new Promise(async (resolve) => {
+      const { validDataStream, invalidCsvDataStream, invalidDataStream } = this.getStreams({
+        uploadId,
+        headings,
       });
-    }
-    validDataStream.push(']');
-    invalidDataStream.push(']');
-    validDataStream.push(null);
-    invalidDataStream.push(null);
-    invalidCsvDataStream.push(null);
 
-    return await this.saveFileContents({
-      invalidRecords,
-      totalRecords,
-      uploadId,
-      validRecords,
+      const batchProcess = await Promise.all(
+        batches.map((batch) => this.executeBatchInSandbox(batch, this.sandboxManager, onBatchInitialize))
+      );
+      const processedArray = batchProcess.flat();
+      let totalRecords = 0,
+        validRecords = 0,
+        invalidRecords = 0;
+      let processOutput, message: string;
+      for (const processData of processedArray) {
+        processOutput = (processData.output as unknown as any).output;
+        // eslint-disable-next-line @typescript-eslint/no-loop-func
+        processOutput.data.forEach((item: any) => {
+          totalRecords++;
+          if (item.isValid) {
+            validDataStream.push((validRecords === 0 ? '' : ',') + JSON.stringify(item));
+            validRecords++;
+          } else {
+            message = Object.values(item.errors).join(', ');
+            invalidDataStream.push((invalidRecords === 0 ? '' : ',') + JSON.stringify(item));
+            invalidCsvDataStream.push(`"${totalRecords}","${message}","${Object.values(item.record).join('","')}"\n`);
+            invalidRecords++;
+          }
+        });
+      }
+      validDataStream.push(']');
+      invalidDataStream.push(']');
+      validDataStream.push(null);
+      invalidDataStream.push(null);
+      invalidCsvDataStream.push(null);
+
+      invalidCsvDataStream.on('close', async () => {
+        const invalidDataFilePath = await this.saveFileContents({
+          uploadId,
+          invalidRecords,
+          totalRecords,
+          validRecords,
+        });
+        resolve(invalidDataFilePath);
+      });
     });
   }
 

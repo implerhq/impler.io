@@ -14,7 +14,6 @@ import {
   StartProcess,
   UpdateImportCount,
   GetFileInvalidData,
-  ReanameFileHeadings,
   StartProcessCommand,
   GetUploadInvalidData,
   UpdateImportCountCommand,
@@ -36,7 +35,6 @@ export class ReviewController {
     private startProcess: StartProcess,
     private updateImportCount: UpdateImportCount,
     private getFileInvalidData: GetFileInvalidData,
-    private renameFileHeadings: ReanameFileHeadings,
     private getUploadInvalidData: GetUploadInvalidData
   ) {}
 
@@ -113,13 +111,6 @@ export class ReviewController {
 
     // upload files with status reviewing can only be confirmed
     validateUploadStatus(uploadInformation.status as UploadStatusEnum, [UploadStatusEnum.REVIEWING]);
-
-    // rename file headings
-    await this.renameFileHeadings.execute(
-      _uploadId,
-      uploadInformation._validDataFileId,
-      uploadInformation._invalidDataFileId
-    );
 
     await this.updateImportCount.execute(
       uploadInformation._templateId,

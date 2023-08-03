@@ -82,7 +82,7 @@ export class S3StorageService implements StorageService {
       return await streamToString(data.Body as Readable, encoding);
     } catch (error) {
       if (error.code === Defaults.NOT_FOUND_STATUS_CODE || error.message === 'The specified key does not exist.') {
-        throw new FileNotExistError();
+        throw new FileNotExistError(key);
       }
       throw error;
     }

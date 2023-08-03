@@ -94,12 +94,10 @@ export class ExcelFileService extends FileService {
     const sheet = workbookHeaders.Sheets[workbookHeaders.SheetNames[Defaults.ZERO]];
 
     return XLSX.utils.sheet_to_csv(sheet, {
-      /*
-       * FS: ',',
-       * RS: '\n',
-       * strip: true,
-       * blankrows: false,
-       */
+      blankrows: false,
+      FS: ',',
+      RS: '\n',
+      strip: true,
     });
   }
   renameJSONHeaders(jsonData: any[], headings: string[]): Record<string, unknown>[] {
