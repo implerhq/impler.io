@@ -639,20 +639,24 @@ export class DoReview {
         invalidRecords = 0;
       let processOutput, message: string;
       for (const processData of processedArray) {
-        processOutput = (processData.output as unknown as any).output;
-        // eslint-disable-next-line @typescript-eslint/no-loop-func
-        processOutput.data.forEach((item: any) => {
-          totalRecords++;
-          if (item.isValid) {
-            validDataStream.push((validRecords === 0 ? '' : ',') + JSON.stringify(item));
-            validRecords++;
-          } else {
-            message = Object.values(item.errors).join(', ');
-            invalidDataStream.push((invalidRecords === 0 ? '' : ',') + JSON.stringify(item));
-            invalidCsvDataStream.push(`"${totalRecords}","${message}","${Object.values(item.record).join('","')}"\n`);
-            invalidRecords++;
-          }
-        });
+        if (processData.output) {
+          processOutput = (processData.output as unknown as any).output;
+          // eslint-disable-next-line @typescript-eslint/no-loop-func
+          processOutput.data.forEach((item: any) => {
+            totalRecords++;
+            if (item.isValid) {
+              validDataStream.push((validRecords === 0 ? '' : ',') + JSON.stringify(item));
+              validRecords++;
+            } else {
+              message = Object.values(item.errors).join(', ');
+              invalidDataStream.push((invalidRecords === 0 ? '' : ',') + JSON.stringify(item));
+              invalidCsvDataStream.push(`"${totalRecords}","${message}","${Object.values(item.record).join('","')}"\n`);
+              invalidRecords++;
+            }
+          });
+        } else {
+          console.log(processData.standardOutput, processData.standardError);
+        }
       }
       validDataStream.push(']');
       invalidDataStream.push(']');
