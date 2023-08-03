@@ -5,7 +5,7 @@ import { CommonRepository, FileEntity, FileRepository, TemplateRepository, Uploa
 import { AddUploadEntryCommand } from './add-upload-entry.command';
 import { MakeUploadEntryCommand } from './make-upload-entry.command';
 import { StorageService } from '@impler/shared/dist/services/storage';
-import { CSVFileService, ExcelFileService, FileNameService } from '@shared/services/file';
+import { CSVFileService2, ExcelFileService, FileNameService } from '@shared/services/file';
 
 @Injectable()
 export class MakeUploadEntry {
@@ -26,12 +26,12 @@ export class MakeUploadEntry {
       csvFile = fileService.convertToCsv(file);
     } else if (file.mimetype === FileMimeTypesEnum.CSV) {
       csvFile = file;
-    } else if (file.mimetype !== FileMimeTypesEnum.CSV) {
+    } else {
       throw new Error('Invalid file type');
     }
 
-    const fileService = new CSVFileService();
-    const fileInformation = await fileService.getFileInformation(csvFile, { headers: true });
+    const fileService = new CSVFileService2();
+    const fileHeadings = await fileService.getFileHeaders(csvFile);
     const uploadId = this.commonRepository.generateMongoId().toString();
     const fileEntity = await this.makeFileEntry(uploadId, csvFile, fileOriginalName);
 
@@ -51,8 +51,7 @@ export class MakeUploadEntry {
         uploadId,
         extra,
         authHeaderValue,
-        headings: fileInformation.headings,
-        totalRecords: fileInformation.totalRecords,
+        headings: fileHeadings,
       })
     );
   }

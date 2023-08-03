@@ -427,13 +427,13 @@ export class DoReview {
         step: (results: Papa.ParseStepResult<any>) => {
           totalRecords++;
           const record = results.data;
-          const recordObj = headings.reduce((acc, heading, index) => {
-            acc[heading] = record[index];
-
-            return acc;
-          }, {});
 
           if (totalRecords > 1) {
+            const recordObj = headings.reduce((acc, heading, index) => {
+              acc[heading] = record[index];
+
+              return acc;
+            }, {});
             const isValid = validator(recordObj);
             if (!isValid) {
               const errors = this.getErrorsObject(validator.errors);

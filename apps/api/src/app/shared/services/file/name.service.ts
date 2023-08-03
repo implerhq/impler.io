@@ -32,7 +32,7 @@ export class FileNameService {
     return `all-data.csv`;
   }
   getAllCSVDataFilePath(uploadId: string): string {
-    return `${uploadId}/${this.getAllJsonDataFileName()}`;
+    return `${uploadId}/${this.getAllCSVDataFileName()}`;
   }
   getInvalidDataFileName(): string {
     return `invalid-data.json`;

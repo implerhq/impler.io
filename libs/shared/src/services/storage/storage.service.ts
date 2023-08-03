@@ -89,13 +89,20 @@ export class S3StorageService implements StorageService {
   }
 
   async getFileStream(key: string): Promise<Readable> {
-    const command = new GetObjectCommand({
-      Bucket: process.env.S3_BUCKET_NAME,
-      Key: key,
-    });
-    const data = await this.s3.send(command);
+    try {
+      const command = new GetObjectCommand({
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: key,
+      });
+      const data = await this.s3.send(command);
 
-    return data.Body as Readable;
+      return data.Body as Readable;
+    } catch (error) {
+      if (error.code === Defaults.NOT_FOUND_STATUS_CODE || error.message === 'The specified key does not exist.') {
+        throw new FileNotExistError(key);
+      }
+      throw error;
+    }
   }
 
   async writeStream(key: string, stream: Readable, contentType: string): Promise<PutObjectCommandOutput> {
