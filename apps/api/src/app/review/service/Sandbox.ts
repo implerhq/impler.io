@@ -69,7 +69,9 @@ export class Sandbox {
     if (executionMode === ExecutionModeEnum.UNSANDBOXED) {
       const sanboxPath = path.join(__dirname, './sandbox/' + this.boxId);
       if (!fs.existsSync(sanboxPath)) {
-        fs.mkdirSync(sanboxPath);
+        fs.mkdirSync(sanboxPath, {
+          recursive: true,
+        });
       }
 
       return sanboxPath;
