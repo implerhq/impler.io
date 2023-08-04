@@ -25,6 +25,7 @@ export const useEventSourceQuery = ({ onConfirm, uploadId }: UseEventSourceQuery
           const eventData = event.data && JSON.parse(event.data);
           if (eventData) {
             if (eventData.limit && eventData.page) {
+              // eslint-disable-next-line no-magic-numbers
               if (eventData.totalRecords === 0) onConfirm(false);
 
               queryClient.setQueryData<IReviewData>([`review-stream`, page], (oldData) => {
