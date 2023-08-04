@@ -1,5 +1,6 @@
 import * as XLSX from 'xlsx';
 import { Defaults, FileEncodingsEnum, IFileInformation } from '@impler/shared';
+import { ParseConfig, parse } from 'papaparse';
 import { ParserOptionsArgs, parseString } from 'fast-csv';
 import { EmptyFileException } from '@shared/exceptions/empty-file.exception';
 import { APIMessages } from '@shared/constants';
@@ -10,14 +11,19 @@ export abstract class FileService {
 }
 
 export class CSVFileService extends FileService {
-  async getFileInformation(file: Express.Multer.File, options?: ParserOptionsArgs): Promise<IFileInformation> {
+  async getFileInformation(file: string | Express.Multer.File, options?: ParserOptionsArgs): Promise<IFileInformation> {
     return new Promise((resolve, reject) => {
       const information: IFileInformation = {
         data: [],
         headings: [],
         totalRecords: 0,
       };
-      const fileContent = file.buffer.toString(FileEncodingsEnum.CSV);
+      let fileContent: string;
+      if (typeof file === 'string') {
+        fileContent = file;
+      } else {
+        fileContent = file.buffer.toString(FileEncodingsEnum.CSV);
+      }
 
       parseString(fileContent, {
         ...options,
@@ -40,10 +46,9 @@ export class CSVFileService extends FileService {
           }
         })
         .on('headers', (headers) => information.headings.push(...headers))
-        .on('data', (row) => information.data.push(row))
+        .on('data', () => information.totalRecords++)
         .on('end', () => {
-          if (!information.data.length) return reject(new EmptyFileException());
-          information.totalRecords = information.data.length;
+          if (!information.totalRecords) return reject(new EmptyFileException());
           resolve(information);
         });
     });
@@ -83,6 +88,18 @@ export class ExcelFileService extends FileService {
       totalRecords: data.length,
     };
   }
+  convertToCsv(file: Express.Multer.File): string {
+    const fileContent = file.buffer.toString(FileEncodingsEnum.EXCEL);
+    const workbookHeaders = XLSX.read(fileContent);
+    const sheet = workbookHeaders.Sheets[workbookHeaders.SheetNames[Defaults.ZERO]];
+
+    return XLSX.utils.sheet_to_csv(sheet, {
+      blankrows: false,
+      FS: ',',
+      RS: '\n',
+      strip: true,
+    });
+  }
   renameJSONHeaders(jsonData: any[], headings: string[]): Record<string, unknown>[] {
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.json_to_sheet(jsonData);
@@ -90,5 +107,36 @@ export class ExcelFileService extends FileService {
     XLSX.utils.book_append_sheet(wb, ws);
 
     return XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[Defaults.ZERO]]);
+  }
+}
+
+export class CSVFileService2 {
+  getFileHeaders(file: string | Express.Multer.File, options?: ParseConfig): Promise<string[]> {
+    return new Promise((resolve, reject) => {
+      let fileContent = '';
+      if (typeof file === 'string') {
+        fileContent = file;
+      } else {
+        fileContent = file.buffer.toString(FileEncodingsEnum.CSV);
+      }
+      parse(fileContent, {
+        ...(options || {}),
+        preview: 1,
+        step: (results) => {
+          if (Object.keys(results.data).length > Defaults.ONE) {
+            resolve(results.data);
+          } else {
+            reject(new EmptyFileException());
+          }
+        },
+        error: (error) => {
+          if (error.message.includes('Parse Error')) {
+            reject(new InvalidFileException());
+          } else {
+            reject(error);
+          }
+        },
+      });
+    });
   }
 }

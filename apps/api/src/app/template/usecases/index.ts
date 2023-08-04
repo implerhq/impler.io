@@ -7,10 +7,13 @@ import { GetTemplateDetails } from './get-template-details/get-template-details.
 import { UpdateTemplateColumns } from './update-template-columns/update-template-columns.usecase';
 import { UpdateCustomization } from './update-customization/update-customization.usecase';
 import { GetCustomization } from './get-customization/get-customization.usecase';
+import { UpdateValidations } from './update-validations/update-validations.usecase';
+import { GetValidations } from './get-validations/get-validations.usecase';
 
 import { GetUploadsCommand } from './get-uploads/get-uploads.command';
 import { CreateTemplateCommand } from './create-template/create-template.command';
 import { UpdateTemplateCommand } from './update-template/update-template.command';
+import { UpdateValidationsCommand } from './update-validations/update-validations.command';
 import { UpdateCustomizationCommand } from './update-customization/update-customization.command';
 
 export const USE_CASES = [
@@ -23,6 +26,8 @@ export const USE_CASES = [
   UpdateTemplateColumns,
   UpdateCustomization,
   GetCustomization,
+  GetValidations,
+  UpdateValidations,
   //
 ];
 
@@ -36,5 +41,13 @@ export {
   UpdateTemplateColumns,
   UpdateCustomization,
   GetCustomization,
+  GetValidations,
+  UpdateValidations,
 };
-export { CreateTemplateCommand, UpdateTemplateCommand, GetUploadsCommand, UpdateCustomizationCommand };
+export {
+  CreateTemplateCommand,
+  UpdateValidationsCommand,
+  UpdateTemplateCommand,
+  GetUploadsCommand,
+  UpdateCustomizationCommand,
+};

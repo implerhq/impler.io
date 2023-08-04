@@ -21,7 +21,12 @@ import { EditIcon } from '@assets/icons/Edit.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
 import { LeftArrowIcon } from '@assets/icons/LeftArrow.icon';
 
-const Editor = dynamic(() => import('@components/imports/editor').then((mod) => mod.OutputEditor), { ssr: false });
+const Editor = dynamic(() => import('@components/imports/editor').then((mod) => mod.OutputEditor), {
+  ssr: false,
+});
+const Validator = dynamic(() => import('@components/imports/validator').then((mod) => mod.Validator), {
+  ssr: false,
+});
 
 interface ImportDetailProps {
   template: ITemplate;
@@ -72,6 +77,11 @@ export default function ImportDetails({ template }: ImportDetailProps) {
             value: 'schema',
             title: 'Schema',
             content: <Schema templateId={template._id} />,
+          },
+          {
+            value: 'validator',
+            title: 'Validator',
+            content: <Validator templateId={template._id} />,
           },
           {
             value: 'snippet',

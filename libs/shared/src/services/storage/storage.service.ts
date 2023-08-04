@@ -1,4 +1,5 @@
 import { Readable } from 'stream';
+import { Upload } from '@aws-sdk/lib-storage';
 import {
   S3Client,
   PutObjectCommand,
@@ -19,6 +20,8 @@ export interface IFilePath {
 export abstract class StorageService {
   abstract uploadFile(key: string, file: Buffer | string, contentType: string): Promise<PutObjectCommandOutput>;
   abstract getFileContent(key: string, encoding?: BufferEncoding): Promise<string>;
+  abstract getFileStream(key: string): Promise<Readable>;
+  abstract writeStream(key: string, stream: Readable, contentType: string): Promise<PutObjectCommandOutput>;
   abstract deleteFile(key: string): Promise<void>;
   abstract isConnected(): boolean;
   abstract getSignedUrl(key: string): Promise<string>;
@@ -79,10 +82,41 @@ export class S3StorageService implements StorageService {
       return await streamToString(data.Body as Readable, encoding);
     } catch (error) {
       if (error.code === Defaults.NOT_FOUND_STATUS_CODE || error.message === 'The specified key does not exist.') {
-        throw new FileNotExistError();
+        throw new FileNotExistError(key);
       }
       throw error;
     }
+  }
+
+  async getFileStream(key: string): Promise<Readable> {
+    try {
+      const command = new GetObjectCommand({
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: key,
+      });
+      const data = await this.s3.send(command);
+
+      return data.Body as Readable;
+    } catch (error) {
+      if (error.code === Defaults.NOT_FOUND_STATUS_CODE || error.message === 'The specified key does not exist.') {
+        throw new FileNotExistError(key);
+      }
+      throw error;
+    }
+  }
+
+  async writeStream(key: string, stream: Readable, contentType: string): Promise<PutObjectCommandOutput> {
+    const upload = new Upload({
+      client: this.s3,
+      params: {
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: key,
+        Body: stream,
+        ContentType: contentType,
+      },
+    });
+
+    return await upload.done();
   }
 
   async deleteFile(key: string): Promise<void> {

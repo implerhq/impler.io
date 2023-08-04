@@ -1,5 +1,6 @@
+import { Response } from 'express';
 import { ApiOperation, ApiTags, ApiSecurity, ApiQuery, ApiOkResponse } from '@nestjs/swagger';
-import { BadRequestException, Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, Query, Res, UseGuards } from '@nestjs/common';
 
 import { APIMessages } from '@shared/constants';
 import { FileEntity, UploadEntity } from '@impler/dal';
@@ -11,10 +12,8 @@ import {
   DoReview,
   GetUpload,
   StartProcess,
-  SaveReviewData,
   UpdateImportCount,
   GetFileInvalidData,
-  ReanameFileHeadings,
   StartProcessCommand,
   GetUploadInvalidData,
   UpdateImportCountCommand,
@@ -29,14 +28,11 @@ import { PaginationResponseDto } from '@shared/dtos/pagination-response.dto';
 @Controller('/review')
 @ApiTags('Review')
 @ApiSecurity(ACCESS_KEY_NAME)
-@UseGuards(JwtAuthGuard)
 export class ReviewController {
   constructor(
     private doReview: DoReview,
     private getUpload: GetUpload,
     private startProcess: StartProcess,
-    private renameFileHeadings: ReanameFileHeadings,
-    private saveReviewData: SaveReviewData,
     private updateImportCount: UpdateImportCount,
     private getFileInvalidData: GetFileInvalidData,
     private getUploadInvalidData: GetUploadInvalidData
@@ -63,36 +59,39 @@ export class ReviewController {
     type: PaginationResponseDto,
   })
   async getReview(
+    @Res() res: Response,
     @Param('uploadId') _uploadId: string,
     @Query('page') page = Defaults.ONE,
     @Query('limit') limit = Defaults.PAGE_LIMIT
-  ): Promise<PaginationResponseDto> {
+  ) {
     const uploadData = await this.getUploadInvalidData.execute(_uploadId);
     if (!uploadData) throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
 
-    // Only Mapped & Reviewing status are allowed
-    validateUploadStatus(uploadData.status as UploadStatusEnum, [UploadStatusEnum.MAPPED, UploadStatusEnum.REVIEWING]);
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('Cache-Control', 'no-cache');
 
-    // Get Invalid Data either from Validation or Validation Result
-    let invalidData = [];
+    let invalidDataFilePath: string;
     if (uploadData.status === UploadStatusEnum.MAPPED) {
-      // uploaded file is mapped, do review
-      const reviewData = await this.doReview.execute(_uploadId);
-      // save invalid data to storage
-      await this.saveReviewData.execute(_uploadId, reviewData.invalid, reviewData.valid);
-
-      invalidData = reviewData.invalid;
+      invalidDataFilePath = await this.doReview.execute(_uploadId);
     } else {
-      // Uploaded file is already reviewed, return reviewed data
-      invalidData = await this.getFileInvalidData.execute(
-        (uploadData._invalidDataFileId as unknown as FileEntity).path
-      );
+      invalidDataFilePath = (uploadData._invalidDataFileId as unknown as FileEntity).path;
     }
 
-    return paginateRecords(invalidData, page, limit);
+    // Uploaded file is already reviewed, return reviewed data
+    const invalidData = await this.getFileInvalidData.execute(invalidDataFilePath);
+    const { data, ...rest } = paginateRecords(invalidData, page, limit);
+    for (const item of data) {
+      res.write(`data: ${JSON.stringify(item)}\n\n`);
+    }
+    res.write(`data: ${JSON.stringify(rest)}\n\n`);
+    res.end();
   }
 
   @Post(':uploadId/confirm')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Confirm review data for uploaded file',
   })
@@ -112,13 +111,6 @@ export class ReviewController {
 
     // upload files with status reviewing can only be confirmed
     validateUploadStatus(uploadInformation.status as UploadStatusEnum, [UploadStatusEnum.REVIEWING]);
-
-    // rename file headings
-    await this.renameFileHeadings.execute(
-      _uploadId,
-      uploadInformation._validDataFileId,
-      uploadInformation._invalidDataFileId
-    );
 
     await this.updateImportCount.execute(
       uploadInformation._templateId,

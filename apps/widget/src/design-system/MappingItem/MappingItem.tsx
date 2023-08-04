@@ -6,6 +6,7 @@ import { ChevronDown, GreenCheck } from '../../icons';
 interface IOption {
   label: string;
   value: string;
+  disabled?: boolean;
 }
 
 interface IMappingItem {
