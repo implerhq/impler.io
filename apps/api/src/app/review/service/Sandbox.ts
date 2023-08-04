@@ -297,7 +297,7 @@ export class SManager {
   private readonly mutex: AsynMutex.Mutex = new AsynMutex.Mutex();
 
   constructor() {
-    for (let boxId = 0; boxId < 1000; ++boxId) {
+    for (let boxId = 0; boxId < 10; ++boxId) {
       this.sanboxes.set(
         boxId,
         new Sandbox({
