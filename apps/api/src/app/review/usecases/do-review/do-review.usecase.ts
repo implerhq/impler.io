@@ -32,7 +32,7 @@ interface IBatchItem {
   data: IDataItem[];
   batchCount: number;
   extra: any;
-  totalRecords: number;
+  // totalRecords: number;
 }
 
 const batchLimit = 500;
@@ -46,6 +46,10 @@ input = JSON.parse(input);
 
 function deepCopy(obj) {
   return JSON.parse(JSON.stringify(obj));
+}
+
+function saveCodeOutput(output) {
+  fs.writeFileSync('./code-output.json', JSON.stringify(output));
 }
 
 function saveOutput(output, startTime) {
@@ -66,8 +70,8 @@ function saveError(error, startTime) {
 }
 
 function isObjectEmpty(obj) {
-    for(let i in obj) return false; 
-    return true;
+  for(let i in obj) return false; 
+  return true;
 }
 
 function processErrors(batchData, errors) {
@@ -76,21 +80,21 @@ function processErrors(batchData, errors) {
   }
   let rowIndexToUpdate, combinedErrors, isErrorsEmpty;
   errors.forEach(error => {
-      rowIndexToUpdate = error.index - Math.max(0, (batchData.batchCount - 1 * batchData.chunkSize));
-      rowIndexToUpdate -= 1;
-        if(
-        rowIndexToUpdate <= batchData.batchCount * batchData.chunkSize && 
-        (typeof error.errors === 'object' && !Array.isArray(error.errors) && error.errors !== null)
-        ) {
-            combinedErrors = Object.assign(batchData.data[rowIndexToUpdate].errors, error.errors);
-            isErrorsEmpty = isObjectEmpty(combinedErrors);
-            batchData.data[rowIndexToUpdate] = {
-                ...batchData.data[rowIndexToUpdate],
-                errors: combinedErrors,
-                isValid: isErrorsEmpty
-            }
-        }
-  })
+    rowIndexToUpdate = error.index - Math.max(0, ((batchData.batchCount - 1)* input.chunkSize));
+    rowIndexToUpdate -= 1;
+    if(
+      rowIndexToUpdate <= batchData.batchCount * input.chunkSize && 
+      (typeof error.errors === 'object' && !Array.isArray(error.errors) && error.errors !== null)
+    ) {
+      combinedErrors = Object.assign(batchData.data[rowIndexToUpdate]?.errors || {}, error.errors);
+      isErrorsEmpty = isObjectEmpty(combinedErrors);
+      batchData.data[rowIndexToUpdate] = {
+        ...batchData.data[rowIndexToUpdate],
+        errors: combinedErrors,
+        isValid: isErrorsEmpty
+      }
+    }
+  });
   return batchData;
 }
 
@@ -98,6 +102,7 @@ function processErrors(batchData, errors) {
 if (typeof code === 'function') {
   if(code.constructor.name === 'AsyncFunction') {
     code(input).then((outputErrors) => {
+      saveCodeOutput(outputErrors);
       let output = processErrors(input, outputErrors);
       saveOutput(output, startTime);
       process.exit(0);
@@ -107,6 +112,7 @@ if (typeof code === 'function') {
   } else {
     try {
       const outputErrors = code(input);
+      saveCodeOutput(outputErrors);
       let output = processErrors(input, outputErrors);
       saveOutput(output, startTime);
       process.exit(0);
@@ -193,7 +199,6 @@ export class DoReview {
         headings: uploadInfo.headings,
         validator,
         extra: uploadInfo.extra,
-        totalRecords: uploadInfo.totalRecords,
       });
 
       return this.processBatches({
@@ -351,6 +356,7 @@ export class DoReview {
       `${sandboxPath}/input.json`,
       JSON.stringify({
         ...batchItem,
+        sandboxPath: sandboxPath,
         chunkSize: batchLimit,
         /*
          * fileName: "asdf",
@@ -488,14 +494,12 @@ export class DoReview {
     validator,
     _uploadId,
     extra,
-    totalRecords,
   }: {
     _uploadId: string;
     allDataFilePath: string;
     headings: string[];
     validator: ValidateFunction;
     extra: any;
-    totalRecords: number;
   }): Promise<IBatchItem[]> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -538,13 +542,16 @@ export class DoReview {
                 });
               }
               if (batchRecords.length === batchLimit) {
-                batches.push({
-                  uploadId: _uploadId,
-                  data: batchRecords,
-                  batchCount,
-                  extra,
-                  totalRecords,
-                });
+                batches.push(
+                  JSON.parse(
+                    JSON.stringify({
+                      uploadId: _uploadId,
+                      data: batchRecords,
+                      batchCount,
+                      extra,
+                    })
+                  )
+                );
                 batchRecords.length = 0;
                 batchCount++;
               }
@@ -557,7 +564,6 @@ export class DoReview {
                 data: batchRecords,
                 batchCount,
                 extra,
-                totalRecords,
               });
             }
             resolve(batches);
@@ -639,7 +645,11 @@ export class DoReview {
         invalidRecords = 0;
       let processOutput, message: string;
       for (const processData of processedArray) {
-        if (processData.output) {
+        if (
+          processData.output &&
+          typeof (processData.output as any)?.output === 'object' &&
+          !Array.isArray((processData.output as any)?.output)
+        ) {
           processOutput = (processData.output as unknown as any).output;
           // eslint-disable-next-line @typescript-eslint/no-loop-func
           processOutput.data.forEach((item: any) => {

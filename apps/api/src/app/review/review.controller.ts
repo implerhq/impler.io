@@ -1,6 +1,5 @@
-import { Response } from 'express';
 import { ApiOperation, ApiTags, ApiSecurity, ApiQuery, ApiOkResponse } from '@nestjs/swagger';
-import { BadRequestException, Body, Controller, Get, Param, Post, Query, Res, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 
 import { APIMessages } from '@shared/constants';
 import { FileEntity, UploadEntity } from '@impler/dal';
@@ -59,19 +58,12 @@ export class ReviewController {
     type: PaginationResponseDto,
   })
   async getReview(
-    @Res() res: Response,
     @Param('uploadId') _uploadId: string,
     @Query('page') page = Defaults.ONE,
     @Query('limit') limit = Defaults.PAGE_LIMIT
   ) {
     const uploadData = await this.getUploadInvalidData.execute(_uploadId);
     if (!uploadData) throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
-
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Connection', 'keep-alive');
-    res.setHeader('Cache-Control', 'no-cache');
 
     let invalidDataFilePath: string;
     if (uploadData.status === UploadStatusEnum.MAPPED) {
@@ -82,12 +74,8 @@ export class ReviewController {
 
     // Uploaded file is already reviewed, return reviewed data
     const invalidData = await this.getFileInvalidData.execute(invalidDataFilePath);
-    const { data, ...rest } = paginateRecords(invalidData, page, limit);
-    for (const item of data) {
-      res.write(`data: ${JSON.stringify(item)}\n\n`);
-    }
-    res.write(`data: ${JSON.stringify(rest)}\n\n`);
-    res.end();
+
+    return paginateRecords(invalidData, page, limit);
   }
 
   @Post(':uploadId/confirm')
