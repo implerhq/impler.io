@@ -42,7 +42,6 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     onError(error: IErrorObject) {
       notifier.showError({ message: error.message, title: error.error });
     },
-    refetchOnWindowFocus: true,
   });
   const { isLoading: isUploadLoading, mutate: submitUpload } = useMutation<IUpload, IErrorObject, IUploadValues>(
     ['upload'],
