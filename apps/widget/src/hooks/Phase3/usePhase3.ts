@@ -1,19 +1,24 @@
-import { logAmplitudeEvent } from '@amplitude';
+import { useState } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+
 import { variables } from '@config';
-import { useEventSourceQuery } from '@hooks/useEventSource';
-import { IErrorObject, IUpload } from '@impler/shared';
+import { logAmplitudeEvent } from '@amplitude';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { IErrorObject, IReviewData, IUpload } from '@impler/shared';
 import { downloadFileFromURL, getFileNameFromUrl, notifier } from '@util';
 
 interface IUsePhase3Props {
   onNext: (uploadData: IUpload) => void;
 }
 
+const defaultPage = 1;
+
 export function usePhase3({ onNext }: IUsePhase3Props) {
   const { api } = useAPIState();
   const { uploadInfo, setUploadInfo } = useAppState();
+  const [page, setPage] = useState<number>(defaultPage);
+  const [totalPages, setTotalPages] = useState<number>(defaultPage);
 
   const { isLoading: isConfirmReviewLoading, mutate: confirmReview } = useMutation<
     IUpload,
@@ -34,15 +39,30 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     }
   );
   const {
-    page,
-    setPage,
-    totalPages,
     data: reviewData,
     isLoading: isReviewDataLoading,
-  } = useEventSourceQuery({
-    onConfirm: confirmReview,
-    uploadId: uploadInfo._id,
-  });
+    isFetched: isReviewDataFetched,
+  } = useQuery<IReviewData, IErrorObject, IReviewData, [string, number]>(
+    [`review`, page],
+    () => api.getReviewData(uploadInfo._id, page),
+    {
+      onSuccess(data) {
+        logAmplitudeEvent('VALIDATE', {
+          invalidRecords: data.totalRecords,
+        });
+        if (!data.totalRecords) {
+          // Confirm review if spreadsheet do not have invalid records
+          confirmReview(false);
+        } else {
+          setPage(Number(data.page));
+          setTotalPages(data.totalPages);
+        }
+      },
+      onError(error: IErrorObject) {
+        notifier.showError({ message: error.message, title: error.error });
+      },
+    }
+  );
 
   const { mutate: getSignedUrl } = useMutation<string, IErrorObject, [string, string]>(
     [`getSignedUrl:${uploadInfo._id}`],
@@ -92,6 +112,6 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     reviewData: reviewData?.data || [],
     // eslint-disable-next-line no-magic-numbers
     totalData: reviewData?.totalRecords || 0,
-    isInitialDataLoaded: !isReviewDataLoading,
+    isInitialDataLoaded: isReviewDataFetched && !isReviewDataLoading,
   };
 }
