@@ -63,13 +63,13 @@ export const TEXTS = {
   },
   NOTIFICATIONS: {
     INCOMPLETE_TEMPLATE: {
-      title: 'Oops!',
-      message: 'This import is empty! Please try again with a different import.',
+      title: 'Sorry!',
+      message: 'This import do not have any columns. Please try again after some time!',
     },
     TEMPLATE_NOT_FOUND: {
-      title: 'Oops!',
+      title: 'Sorry!',
       message:
-        "It looks we couldn't find the template you want to import, Our team is informed about it. Please try again after some time!",
+        "We couldn't find the template you're importing, Our team is informed about it. Please try again after some time!",
     },
   },
 };

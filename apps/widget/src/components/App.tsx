@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import * as Sentry from '@sentry/react';
 import { Integrations } from '@sentry/tracing';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -29,16 +30,19 @@ if (AMPLITUDE_ID) {
 }
 
 export function App() {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        refetchOnWindowFocus: false,
-        refetchOnReconnect: false,
-        retry: false,
-        staleTime: variables.twentyFourHoursInMs,
-      },
-    },
-  });
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            refetchOnWindowFocus: false,
+            refetchOnReconnect: false,
+            retry: false,
+            staleTime: variables.twentyFourHoursInMs,
+          },
+        },
+      })
+  );
 
   return (
     <QueryClientProvider client={queryClient}>
