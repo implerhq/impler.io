@@ -1,4 +1,4 @@
-import { Readable } from 'stream';
+import { PassThrough, Readable } from 'stream';
 import { Upload } from '@aws-sdk/lib-storage';
 import {
   S3Client,
@@ -21,7 +21,7 @@ export abstract class StorageService {
   abstract uploadFile(key: string, file: Buffer | string, contentType: string): Promise<PutObjectCommandOutput>;
   abstract getFileContent(key: string, encoding?: BufferEncoding): Promise<string>;
   abstract getFileStream(key: string): Promise<Readable>;
-  abstract writeStream(key: string, stream: Readable, contentType: string): Promise<PutObjectCommandOutput>;
+  abstract writeStream(key: string, stream: Readable, contentType: string): Upload;
   abstract deleteFile(key: string): Promise<void>;
   abstract isConnected(): boolean;
   abstract getSignedUrl(key: string): Promise<string>;
@@ -105,9 +105,10 @@ export class S3StorageService implements StorageService {
     }
   }
 
-  async writeStream(key: string, stream: Readable, contentType: string): Promise<PutObjectCommandOutput> {
-    const upload = new Upload({
+  writeStream(key: string, stream: Readable | PassThrough, contentType: string): Upload {
+    return new Upload({
       client: this.s3,
+      queueSize: 4,
       params: {
         Bucket: process.env.S3_BUCKET_NAME,
         Key: key,
@@ -115,8 +116,6 @@ export class S3StorageService implements StorageService {
         ContentType: contentType,
       },
     });
-
-    return await upload.done();
   }
 
   async deleteFile(key: string): Promise<void> {

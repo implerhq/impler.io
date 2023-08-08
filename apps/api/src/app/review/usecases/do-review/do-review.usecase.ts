@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { Readable } from 'stream';
+import { PassThrough } from 'stream';
 import * as Papa from 'papaparse';
 import addFormats from 'ajv-formats';
 import addKeywords from 'ajv-keywords';
@@ -378,28 +378,42 @@ export class DoReview {
     const invalidFilePath = this.fileNameService.getInvalidDataFilePath(uploadId);
     const invalidCsvDataFilePath = this.fileNameService.getInvalidCSVDataFilePath(uploadId);
 
-    const validDataStream = new Readable({
-      read() {},
-    });
-    const invalidDataStream = new Readable({
-      read() {},
-    });
-    const invalidCsvDataStream = new Readable({
-      read() {},
-    });
+    const invalidDataStream = new PassThrough();
+    const validDataStream = new PassThrough();
+    const invalidCsvDataStream = new PassThrough();
 
-    this.storageService.writeStream(validFilePath, validDataStream, FileMimeTypesEnum.JSON);
-    this.storageService.writeStream(invalidFilePath, invalidDataStream, FileMimeTypesEnum.JSON);
-    this.storageService.writeStream(invalidCsvDataFilePath, invalidCsvDataStream, FileMimeTypesEnum.CSV);
+    const validDataWriteStream = this.storageService.writeStream(
+      validFilePath,
+      validDataStream,
+      FileMimeTypesEnum.JSON
+    );
+    const invalidDataWriteStream = this.storageService.writeStream(
+      invalidFilePath,
+      invalidDataStream,
+      FileMimeTypesEnum.JSON
+    );
+    const invalidCsvDataWriteStream = this.storageService.writeStream(
+      invalidCsvDataFilePath,
+      invalidCsvDataStream,
+      FileMimeTypesEnum.CSV
+    );
     invalidCsvDataStream.push(`"index","message","${headings.join('","')}\n`);
 
     invalidDataStream.push(`[`);
     validDataStream.push(`[`);
 
     return {
+      validFilePath,
+      invalidFilePath,
+      invalidCsvDataFilePath,
+
       validDataStream,
       invalidDataStream,
       invalidCsvDataStream,
+
+      validDataWriteStream,
+      invalidDataWriteStream,
+      invalidCsvDataWriteStream,
     };
   }
 
@@ -415,7 +429,14 @@ export class DoReview {
     headings: string[];
   }): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      const { validDataStream, invalidCsvDataStream, invalidDataStream } = this.getStreams({
+      const {
+        validDataStream,
+        invalidCsvDataStream,
+        invalidDataStream,
+        invalidCsvDataWriteStream,
+        invalidDataWriteStream,
+        validDataWriteStream,
+      } = this.getStreams({
         uploadId,
         headings,
       });
@@ -467,23 +488,26 @@ export class DoReview {
         complete: async () => {
           validDataStream.push(']');
           invalidDataStream.push(']');
-          validDataStream.push(null);
-          invalidDataStream.push(null);
-          invalidCsvDataStream.push(null);
+
+          validDataStream.end();
+          invalidDataStream.end();
+          invalidCsvDataStream.end();
+
+          await invalidDataWriteStream.done();
+          await validDataWriteStream.done();
+          await invalidCsvDataWriteStream.done();
+
+          const invalidDataFilePath = await this.saveFileContents({
+            uploadId,
+            invalidRecords,
+            totalRecords,
+            validRecords,
+          });
+          resolve(invalidDataFilePath);
         },
         error: (err) => {
           reject(err);
         },
-      });
-
-      invalidCsvDataStream.on('close', async () => {
-        const invalidDataFilePath = await this.saveFileContents({
-          uploadId,
-          invalidRecords,
-          totalRecords,
-          validRecords,
-        });
-        resolve(invalidDataFilePath);
       });
     });
   }
@@ -631,7 +655,14 @@ export class DoReview {
     onBatchInitialize: string;
   }): Promise<string> {
     return new Promise(async (resolve) => {
-      const { validDataStream, invalidCsvDataStream, invalidDataStream } = this.getStreams({
+      const {
+        invalidDataWriteStream,
+        validDataWriteStream,
+        invalidCsvDataWriteStream,
+        invalidDataStream,
+        invalidCsvDataStream,
+        validDataStream,
+      } = this.getStreams({
         uploadId,
         headings,
       });
@@ -670,19 +701,22 @@ export class DoReview {
       }
       validDataStream.push(']');
       invalidDataStream.push(']');
-      validDataStream.push(null);
-      invalidDataStream.push(null);
-      invalidCsvDataStream.push(null);
 
-      invalidCsvDataStream.on('close', async () => {
-        const invalidDataFilePath = await this.saveFileContents({
-          uploadId,
-          invalidRecords,
-          totalRecords,
-          validRecords,
-        });
-        resolve(invalidDataFilePath);
+      validDataStream.end();
+      invalidDataStream.end();
+      invalidCsvDataStream.end();
+
+      await invalidDataWriteStream.done();
+      await validDataWriteStream.done();
+      await invalidCsvDataWriteStream.done();
+
+      const invalidDataFilePath = await this.saveFileContents({
+        uploadId,
+        invalidRecords,
+        totalRecords,
+        validRecords,
       });
+      resolve(invalidDataFilePath);
     });
   }
 
