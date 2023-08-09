@@ -10,5 +10,5 @@ export function middleware(request: NextRequest) {
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ['/', '/imports/:path*'],
+  matcher: ['/((?!auth*|api|_next/static|_next/image|favicon.ico).*)'],
 };
