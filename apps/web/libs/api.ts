@@ -100,6 +100,14 @@ const routes: Record<string, Route> = {
     url: () => `/v1/environment/api-keys/regenerate`,
     method: 'GET',
   },
+  [API_KEYS.VALIDATIONS]: {
+    url: (templateId) => `/v1/template/${templateId}/validations`,
+    method: 'GET',
+  },
+  [API_KEYS.VALIDATIONS_UPDATE]: {
+    url: (templateId) => `/v1/template/${templateId}/validations`,
+    method: 'PUT',
+  },
 };
 
 function handleResponseStatusAndContentType(response: Response) {

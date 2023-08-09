@@ -168,7 +168,7 @@ export class ProcessFileConsumer extends BaseConsumer {
   }: IBuildSendDataParameters): { sendData: Record<string, unknown>; page: number } {
     const slicedData = data
       .slice(Math.max((page - DEFAULT_PAGE) * chunkSize, MIN_LIMIT), Math.min(page * chunkSize, data.length))
-      .map((obj) => replaceVariablesInObject(JSON.parse(recordFormat), obj));
+      .map((obj) => replaceVariablesInObject(JSON.parse(recordFormat), obj.record));
 
     return {
       sendData: replaceVariablesInObject(JSON.parse(chunkFormat), {

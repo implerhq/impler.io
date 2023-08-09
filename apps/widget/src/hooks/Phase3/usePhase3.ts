@@ -1,23 +1,43 @@
-import { logAmplitudeEvent } from '@amplitude';
+import { useState } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+
 import { variables } from '@config';
-import { IErrorObject, IReviewData, IUpload } from '@impler/shared';
+import { logAmplitudeEvent } from '@amplitude';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { IErrorObject, IReviewData, IUpload } from '@impler/shared';
 import { downloadFileFromURL, getFileNameFromUrl, notifier } from '@util';
-import { useState } from 'react';
-
-const defaultPage = 1;
 
 interface IUsePhase3Props {
   onNext: (uploadData: IUpload) => void;
 }
+
+const defaultPage = 1;
 
 export function usePhase3({ onNext }: IUsePhase3Props) {
   const { api } = useAPIState();
   const { uploadInfo, setUploadInfo } = useAppState();
   const [page, setPage] = useState<number>(defaultPage);
   const [totalPages, setTotalPages] = useState<number>(defaultPage);
+
+  const { isLoading: isConfirmReviewLoading, mutate: confirmReview } = useMutation<
+    IUpload,
+    IErrorObject,
+    boolean,
+    [string]
+  >(
+    [`confirm:${uploadInfo._id}`],
+    (processInvalidRecords) => api.confirmReview(uploadInfo._id, processInvalidRecords),
+    {
+      onSuccess(uploadData) {
+        setUploadInfo(uploadData);
+        onNext(uploadData);
+      },
+      onError(error: IErrorObject) {
+        notifier.showError({ message: error.message, title: error.error });
+      },
+    }
+  );
   const {
     data: reviewData,
     isLoading: isReviewDataLoading,
@@ -43,6 +63,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
       },
     }
   );
+
   const { mutate: getSignedUrl } = useMutation<string, IErrorObject, [string, string]>(
     [`getSignedUrl:${uploadInfo._id}`],
     ([fileUrl]) => api.getSignedUrl(getFileNameFromUrl(fileUrl)),
@@ -70,32 +91,13 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
       enabled: false,
     }
   );
-  const { isLoading: isConfirmReviewLoading, mutate: confirmReview } = useMutation<
-    IUpload,
-    IErrorObject,
-    boolean,
-    [string]
-  >(
-    [`confirm:${uploadInfo._id}`],
-    (processInvalidRecords) => api.confirmReview(uploadInfo._id, processInvalidRecords),
-    {
-      onSuccess(uploadData) {
-        setUploadInfo(uploadData);
-        onNext(uploadData);
-      },
-      onError(error: IErrorObject) {
-        notifier.showError({ message: error.message, title: error.error });
-      },
-    }
-  );
 
   const onPageChange = (newPageNumber: number) => {
     setPage(newPageNumber);
   };
 
   const onExportData = () => {
-    if (!uploadInfo.invalidCSVDataFileUrl) getUpload();
-    else getSignedUrl([uploadInfo.invalidCSVDataFileUrl, `invalid-data-${uploadInfo._id}.csv`]);
+    getUpload();
   };
 
   return {

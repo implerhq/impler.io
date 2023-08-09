@@ -6,9 +6,9 @@ export class AddUploadEntryCommand extends BaseCommand {
   @IsString()
   _templateId: string;
 
-  @IsDefined()
+  @IsOptional()
   @IsString()
-  _allDataFileId: string;
+  _allDataFileId?: string;
 
   @IsDefined()
   @IsString()

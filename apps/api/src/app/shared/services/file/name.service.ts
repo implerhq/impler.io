@@ -28,6 +28,12 @@ export class FileNameService {
   getAllJsonDataFilePath(uploadId: string): string {
     return `${uploadId}/${this.getAllJsonDataFileName()}`;
   }
+  getAllCSVDataFileName(): string {
+    return `all-data.csv`;
+  }
+  getAllCSVDataFilePath(uploadId: string): string {
+    return `${uploadId}/${this.getAllCSVDataFileName()}`;
+  }
   getInvalidDataFileName(): string {
     return `invalid-data.json`;
   }
