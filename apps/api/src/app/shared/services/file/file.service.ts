@@ -74,7 +74,10 @@ export class ExcelFileService extends FileService {
     }
 
     const data: Record<string, unknown>[] = XLSX.utils.sheet_to_json(
-      workbookHeaders.Sheets[workbookHeaders.SheetNames[Defaults.ZERO]]
+      workbookHeaders.Sheets[workbookHeaders.SheetNames[Defaults.ZERO]],
+      {
+        defval: '',
+      }
     );
 
     return {
