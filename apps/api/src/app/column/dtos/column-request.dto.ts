@@ -1,6 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  ArrayMinSize,
   IsArray,
   IsBoolean,
   IsOptional,
@@ -12,7 +11,7 @@ import {
   Validate,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ColumnTypesEnum, Defaults } from '@impler/shared';
+import { ColumnTypesEnum } from '@impler/shared';
 import { IsValidRegex } from '@shared/framework/is-valid-regex.validator';
 
 export class ColumnRequestDto {
@@ -81,10 +80,8 @@ export class ColumnRequestDto {
     description: 'List of possible values for column if type is Select',
   })
   @ValidateIf((object) => object.type === ColumnTypesEnum.SELECT)
-  @IsArray()
-  @ArrayMinSize(Defaults.ONE)
   @Type(() => Array<string>)
-  selectValues: string[];
+  selectValues: string[] = [];
 
   @ApiProperty({
     description: 'Sequence of column',

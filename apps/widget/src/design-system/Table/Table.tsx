@@ -1,9 +1,7 @@
 import React from 'react';
-import { getErrorObject } from '@impler/shared';
 import { Table as MantineTable } from '@mantine/core';
 import useStyles from './Table.style';
 import { InvalidWarning } from '../InvalidWarning';
-import { variables } from '../../config/variable.config';
 
 interface IHeadingItem {
   title: string;
@@ -32,6 +30,7 @@ export function Table(props: ITableProps) {
     return (
       <thead className={classes.heading}>
         <tr>
+          <th style={{ textAlign: 'center', width: '4%' }}>#</th>
           {headings.map((heading: IHeadingItem, index: number) => (
             <th style={{ textAlign: 'center', width: heading.width || '' }} key={index}>
               {heading.title}
@@ -43,7 +42,6 @@ export function Table(props: ITableProps) {
   };
 
   const TBody = () => {
-    let errorObject: Record<string, string>;
     if (isHeadingsEmpty) return <tbody />;
 
     if (isDataEmpty)
@@ -57,26 +55,23 @@ export function Table(props: ITableProps) {
 
     return (
       <tbody>
-        {data.map((item: Record<string, string>, i: number) => {
-          errorObject = getErrorObject(item[variables.error]);
-
-          return (
-            <tr key={item.id || i}>
-              {headings.map((heading: IHeadingItem, fieldIndex: number) =>
-                errorObject[heading.key] ? (
-                  // if error exist for column
-                  <td key={fieldIndex} className={classes.invalidColumn}>
-                    {item[heading.key]}
-                    <InvalidWarning label={errorObject[heading.key]} />
-                  </td>
-                ) : (
-                  // normal column
-                  <td key={fieldIndex}>{item[heading.key]}</td>
-                )
-              )}
-            </tr>
-          );
-        })}
+        {data.map((item: Record<string, any>, i: number) => (
+          <tr key={item.index || i}>
+            <td style={{ textAlign: 'center' }}>{item.index}</td>
+            {headings.map((heading: IHeadingItem, fieldIndex: number) =>
+              item.errors && item.errors[heading.key] ? (
+                // if error exist for column
+                <td key={fieldIndex} className={classes.invalidColumn}>
+                  {item.record[heading.key]}
+                  <InvalidWarning label={item.errors[heading.key]} />
+                </td>
+              ) : (
+                // normal column
+                <td key={fieldIndex}>{item.record[heading.key]}</td>
+              )
+            )}
+          </tr>
+        ))}
       </tbody>
     );
   };

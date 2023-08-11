@@ -1,12 +1,14 @@
 import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-json5';
 import 'ace-builds/src-noconflict/theme-monokai';
+import 'ace-builds/src-noconflict/mode-javascript';
 import { snippetCompleter } from 'ace-builds/src-noconflict/ext-language_tools';
 import { useEffect, useMemo, useRef } from 'react';
 
 interface EditorProps {
   id: string;
   name: string;
+  mode?: 'json5' | 'javascript';
   height?: string;
   minLines?: number;
   maxLines?: number;
@@ -20,6 +22,7 @@ interface EditorProps {
 export function Editor({
   name,
   id,
+  mode = 'json5',
   onChange,
   value,
   readonly,
@@ -51,7 +54,7 @@ export function Editor({
     <AceEditor
       data-test-id={id}
       style={{ width: '100%' }}
-      mode="json5"
+      mode={mode}
       theme="monokai"
       name={name}
       ref={editorRef}

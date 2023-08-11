@@ -32,6 +32,11 @@ const Messages: Record<string, NotifyProps> = {
     message: 'Columns has been updated',
     color: 'green',
   },
+  [NOTIFICATION_KEYS.VALIDATIONS_UPDATED]: {
+    title: 'Validations updated',
+    message: 'Validations has been updated',
+    color: 'green',
+  },
 };
 
 interface NotifyProps {

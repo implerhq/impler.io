@@ -18,7 +18,7 @@ export function Phase2(props: IPhase2Props) {
   const { classes } = useStyles();
   const { onPrevClick, onNextClick } = props;
   const [wrapperHeight, setWrapperHeight] = useState(defaulWrappertHeight);
-  const { headings, mappings, control, onSubmit, isInitialDataLoaded, isMappingFinalizing } = usePhase2({
+  const { headings, mappings, control, onSubmit, onFieldSelect, isInitialDataLoaded, isMappingFinalizing } = usePhase2({
     goNext: onNextClick,
   });
   const wrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
@@ -56,7 +56,10 @@ export function Phase2(props: IPhase2Props) {
                     options={headings}
                     heading={mappingItem.column.name}
                     value={field.value}
-                    onChange={field.onChange}
+                    onChange={(value) => {
+                      field.onChange(value);
+                      onFieldSelect(value);
+                    }}
                     ref={field.ref}
                   />
                 )}
