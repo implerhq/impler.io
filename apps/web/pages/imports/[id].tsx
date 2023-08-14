@@ -10,7 +10,6 @@ import { useImportDetails } from '@hooks/useImportDetails';
 import { API_KEYS, CONSTANTS, ROUTES, colors } from '@config';
 
 import { Tabs } from '@ui/Tabs';
-import { Card } from '@ui/Card';
 import { Button } from '@ui/button';
 import { Schema } from '@components/imports/schema';
 import { Snippet } from '@components/imports/Snippet';
@@ -59,11 +58,6 @@ export default function ImportDetails({ template }: ImportDetailProps) {
           </Button>
         </Group>
       </Flex>
-      <Group spacing="sm" w="100%" grow>
-        <Card title="Total Imports" subtitle={String(templateData.totalUploads)} color="primary" />
-        <Card title="Total Imported Records" subtitle={String(templateData.totalRecords)} />
-        <Card title="Total Error Records" subtitle={String(templateData.totalInvalidRecords)} />
-      </Group>
       <Tabs
         allowTabDeactivation
         keepMounted={false}

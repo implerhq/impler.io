@@ -3,11 +3,11 @@ import { createStyles, MantineTheme } from '@mantine/core';
 
 const getTabListStyles = (theme: MantineTheme): React.CSSProperties => ({
   padding: 5,
-  width: 'max-content',
   backgroundColor: theme.colorScheme === 'dark' ? colors.BGPrimaryDark : colors.BGPrimaryLight,
 });
 
 const getTabStyles = (theme: MantineTheme) => ({
+  flexGrow: 1,
   color: theme.colorScheme === 'dark' ? colors.white : colors.black,
   borderRadius: 0,
   '&:hover': {
