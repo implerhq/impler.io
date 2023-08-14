@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { GetServerSideProps } from 'next';
-import { Flex, Group, Title, useMantineTheme } from '@mantine/core';
+import { ActionIcon, Flex, Group, Title, useMantineTheme } from '@mantine/core';
 
 import { commonApi } from '@libs/api';
 import { ITemplate } from '@impler/shared';
@@ -48,16 +48,18 @@ export default function ImportDetails({ template }: ImportDetailProps) {
           <Button variant="outline" component={Link} href={ROUTES.IMPORTS} color="invariant">
             <LeftArrowIcon />
           </Button>
-          <Title order={2}>{templateData.name}</Title>
+          <Group spacing={0}>
+            <Title order={2}>{templateData.name}</Title>
+            <ActionIcon onClick={onUpdateClick} p={0}>
+              <EditIcon color={colors.blue} size="sm" />
+            </ActionIcon>
+          </Group>
         </Group>
         <Group spacing="xs">
-          <Button disabled={!isImplerInitiated} onClick={() => showWidget({ colorScheme })}>
+          <Button disabled={!isImplerInitiated} color="green" onClick={() => showWidget({ colorScheme })}>
             Import
           </Button>
-          <Button onClick={onUpdateClick}>
-            <EditIcon />
-          </Button>
-          <Button color="red" onClick={onDeleteClick}>
+          <Button variant="outline" color="red" onClick={onDeleteClick}>
             <DeleteIcon />
           </Button>
         </Group>
