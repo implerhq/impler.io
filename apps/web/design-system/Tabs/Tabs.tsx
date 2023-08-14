@@ -4,6 +4,7 @@ import useStyles from './Tabs.styles';
 interface TabItem {
   value: string;
   title: string;
+  icon?: React.ReactNode;
   content: React.ReactNode;
 }
 
@@ -27,7 +28,7 @@ export function Tabs({ items, keepMounted, allowTabDeactivation, defaultValue }:
     >
       <MantineTabs.List>
         {items.map((item) => (
-          <MantineTabs.Tab key={item.value} value={item.value}>
+          <MantineTabs.Tab key={item.value} value={item.value} icon={item.icon}>
             {item.title}
           </MantineTabs.Tab>
         ))}
