@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { GetServerSideProps } from 'next';
-import { Flex, Group, Title, useMantineTheme } from '@mantine/core';
+import { ActionIcon, Flex, Group, Title, useMantineTheme } from '@mantine/core';
 
 import { commonApi } from '@libs/api';
 import { ITemplate } from '@impler/shared';
@@ -10,14 +10,17 @@ import { useImportDetails } from '@hooks/useImportDetails';
 import { API_KEYS, CONSTANTS, ROUTES, colors } from '@config';
 
 import { Tabs } from '@ui/Tabs';
-import { Card } from '@ui/Card';
 import { Button } from '@ui/button';
 import { Schema } from '@components/imports/schema';
 import { Snippet } from '@components/imports/Snippet';
 import { Destination } from '@components/imports/Destination';
 
 import { AppLayout } from '@layouts/AppLayout';
+import { OneIcon } from '@assets/icons/One.icon';
+import { TwoIcon } from '@assets/icons/Two.icon';
 import { EditIcon } from '@assets/icons/Edit.icon';
+import { FourIcon } from '@assets/icons/Four.icon';
+import { ThreeIcon } from '@assets/icons/Three.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
 import { LeftArrowIcon } from '@assets/icons/LeftArrow.icon';
 
@@ -50,25 +53,22 @@ export default function ImportDetails({ template }: ImportDetailProps) {
           <Button variant="outline" component={Link} href={ROUTES.IMPORTS} color="invariant">
             <LeftArrowIcon />
           </Button>
-          <Title order={2}>{templateData.name}</Title>
+          <Group spacing={0}>
+            <Title order={2}>{templateData.name}</Title>
+            <ActionIcon onClick={onUpdateClick} p={0}>
+              <EditIcon color={colors.blue} size="sm" />
+            </ActionIcon>
+          </Group>
         </Group>
         <Group spacing="xs">
-          <Button disabled={!isImplerInitiated} onClick={() => showWidget({ colorScheme })}>
+          <Button disabled={!isImplerInitiated} color="green" onClick={() => showWidget({ colorScheme })}>
             Import
           </Button>
-          <Button onClick={onUpdateClick}>
-            <EditIcon />
-          </Button>
-          <Button color="red" onClick={onDeleteClick}>
+          <Button variant="outline" color="red" onClick={onDeleteClick}>
             <DeleteIcon />
           </Button>
         </Group>
       </Flex>
-      <Group spacing="sm" w="100%" grow>
-        <Card title="Total Imports" subtitle={String(templateData.totalUploads)} color="primary" />
-        <Card title="Total Imported Records" subtitle={String(templateData.totalRecords)} />
-        <Card title="Total Error Records" subtitle={String(templateData.totalInvalidRecords)} />
-      </Group>
       <Tabs
         allowTabDeactivation
         keepMounted={false}
@@ -76,6 +76,7 @@ export default function ImportDetails({ template }: ImportDetailProps) {
           {
             value: 'schema',
             title: 'Schema',
+            icon: <OneIcon size="xs" />,
             content: <Schema templateId={template._id} />,
           },
           {
@@ -86,19 +87,22 @@ export default function ImportDetails({ template }: ImportDetailProps) {
           {
             value: 'snippet',
             title: 'Snippet',
+            icon: <TwoIcon size="xs" />,
             content: (
               <Snippet templateId={template._id} projectId={template._projectId} accessToken={profile?.accessToken} />
             ),
           },
           {
-            value: 'output',
-            title: 'Output',
-            content: <Editor templateId={template._id} />,
-          },
-          {
             value: 'destination',
             title: 'Destination',
+            icon: <ThreeIcon size="xs" />,
             content: <Destination template={template} accessToken={profile?.accessToken} />,
+          },
+          {
+            value: 'output',
+            title: 'Output',
+            icon: <FourIcon size="xs" />,
+            content: <Editor templateId={template._id} />,
           },
         ]}
         defaultValue="schema"
