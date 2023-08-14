@@ -16,7 +16,11 @@ import { Snippet } from '@components/imports/Snippet';
 import { Destination } from '@components/imports/Destination';
 
 import { AppLayout } from '@layouts/AppLayout';
+import { OneIcon } from '@assets/icons/One.icon';
+import { TwoIcon } from '@assets/icons/Two.icon';
 import { EditIcon } from '@assets/icons/Edit.icon';
+import { FourIcon } from '@assets/icons/Four.icon';
+import { ThreeIcon } from '@assets/icons/Three.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
 import { LeftArrowIcon } from '@assets/icons/LeftArrow.icon';
 
@@ -65,24 +69,28 @@ export default function ImportDetails({ template }: ImportDetailProps) {
           {
             value: 'schema',
             title: 'Schema',
+            icon: <OneIcon size="xs" />,
             content: <Schema templateId={template._id} />,
           },
           {
             value: 'snippet',
             title: 'Snippet',
+            icon: <TwoIcon size="xs" />,
             content: (
               <Snippet templateId={template._id} projectId={template._projectId} accessToken={profile?.accessToken} />
             ),
           },
           {
-            value: 'output',
-            title: 'Output',
-            content: <Editor templateId={template._id} />,
-          },
-          {
             value: 'destination',
             title: 'Destination',
+            icon: <ThreeIcon size="xs" />,
             content: <Destination template={template} accessToken={profile?.accessToken} />,
+          },
+          {
+            value: 'output',
+            title: 'Output',
+            icon: <FourIcon size="xs" />,
+            content: <Editor templateId={template._id} />,
           },
         ]}
         defaultValue="schema"

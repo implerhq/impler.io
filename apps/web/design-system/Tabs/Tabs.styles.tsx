@@ -22,10 +22,26 @@ const getPanelStyles = (theme: MantineTheme): React.CSSProperties => ({
   paddingTop: theme.spacing.xs,
 });
 
+const getTabIconStyles = (theme: MantineTheme) => ({
+  width: 20,
+  height: 20,
+  marginRight: theme.spacing.xs,
+  backgroundColor: theme.colorScheme === 'dark' ? colors.BGSecondaryDark : colors.BGSecondaryLight,
+  borderRadius: 20,
+  '& path': {
+    fill: theme.colorScheme === 'dark' ? colors.white : colors.black,
+  },
+});
+const getTabLabelStyles = (theme: MantineTheme) => ({
+  fontSize: theme.fontSizes.md,
+});
+
 export default createStyles((theme: MantineTheme): Record<string, any> => {
   return {
     tabsList: getTabListStyles(theme),
     tab: getTabStyles(theme),
+    tabLabel: getTabLabelStyles(theme),
     panel: getPanelStyles(theme),
+    tabIcon: getTabIconStyles(theme),
   };
 });
