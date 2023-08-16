@@ -1,6 +1,6 @@
 import { modals } from '@mantine/modals';
 import { useForm } from 'react-hook-form';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
 import { track } from '@libs/amplitude';
@@ -15,24 +15,15 @@ interface UseSchemaProps {
 }
 
 export function useSchema({ templateId }: UseSchemaProps) {
-  const {
-    register,
-    control,
-    reset,
-    setFocus,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<IColumn>({
+  const queryClient = useQueryClient();
+  const { register, control, reset, setFocus, handleSubmit } = useForm<IColumn>({
     defaultValues: {
       type: 'String',
     },
   });
-  const {
-    data: columns,
-    isLoading: isColumnListLoading,
-    refetch: refetchColumns,
-  } = useQuery<unknown, IErrorObject, IColumn[], string[]>([API_KEYS.TEMPLATE_COLUMNS_LIST, templateId], () =>
-    commonApi<IColumn[]>(API_KEYS.TEMPLATE_COLUMNS_LIST as any, { parameters: [templateId] })
+  const { data: columns, isLoading: isColumnListLoading } = useQuery<unknown, IErrorObject, IColumn[], string[]>(
+    [API_KEYS.TEMPLATE_COLUMNS_LIST, templateId],
+    () => commonApi<IColumn[]>(API_KEYS.TEMPLATE_COLUMNS_LIST as any, { parameters: [templateId] })
   );
   const { mutate: createColumn, isLoading: isColumnCreateLoading } = useMutation<
     IColumn,
@@ -44,7 +35,7 @@ export function useSchema({ templateId }: UseSchemaProps) {
     (data) => commonApi(API_KEYS.COLUMN_CREATE as any, { parameters: [templateId], body: data }),
     {
       onSuccess: (data) => {
-        refetchColumns();
+        queryClient.invalidateQueries([API_KEYS.TEMPLATE_COLUMNS_LIST, templateId]);
         track({
           name: 'COLUMN CREATE',
           properties: {
@@ -69,7 +60,7 @@ export function useSchema({ templateId }: UseSchemaProps) {
     (columnId) => commonApi(API_KEYS.COLUMN_DELETE as any, { parameters: [columnId] }),
     {
       onSuccess: () => {
-        refetchColumns();
+        queryClient.invalidateQueries([API_KEYS.TEMPLATE_COLUMNS_LIST, templateId]);
       },
     }
   );
@@ -80,7 +71,12 @@ export function useSchema({ templateId }: UseSchemaProps) {
       modals.open({
         modalId: MODAL_KEYS.COLUMN_UPDATE,
         title: MODAL_TITLES.COLUMN_UPDATE,
-        children: <UpdateColumnForm data={columnData} refetchColumns={refetchColumns} />,
+        children: (
+          <UpdateColumnForm
+            data={columnData}
+            refetchColumns={() => queryClient.invalidateQueries([API_KEYS.TEMPLATE_COLUMNS_LIST, templateId])}
+          />
+        ),
       });
     }
   }
@@ -102,7 +98,6 @@ export function useSchema({ templateId }: UseSchemaProps) {
   }
 
   return {
-    errors,
     control,
     columns,
     register,
