@@ -27,94 +27,96 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
     });
 
   return (
-    <Table<IColumn>
-      emptyDataText='No columns found click on "+" to add new column'
-      headings={[
-        {
-          title: 'Name',
-          key: 'name',
-          width: '25%',
-        },
-        {
-          title: 'Type',
-          key: 'type',
-          width: '25%',
-        },
-        {
-          title: 'Is required?',
-          key: 'isRequired',
-          width: '10%',
-          Cell: (item) => item.isRequired && <CheckIcon color={colors.success} />,
-        },
-        {
-          title: 'Is unique?',
-          key: 'isUnique',
-          width: '10%',
-          Cell: (item) => item.isUnique && <CheckIcon color={colors.success} />,
-        },
-        {
-          title: '',
-          key: 'actions',
-          Cell: (item) => (
-            <Flex justify="flex-end" gap="xs">
-              <IconButton label="Edit" onClick={() => onEditColumnClick(item._id)}>
-                <EditIcon color={colors.blue} />
-              </IconButton>
-              <IconButton label="Delete" onClick={() => onDeleteColumnClick(item._id)}>
-                <DeleteIcon color={colors.danger} />
-              </IconButton>
-            </Flex>
-          ),
-        },
-      ]}
-      extraContent={
-        <tr>
-          {showAddRow ? (
-            <>
-              <td>
-                <Flex gap="xs">
-                  <Input autoFocus variant="default" placeholder="Column Name" {...register('name')} />
-                  <Input placeholder="Column Key" {...register('key')} />
-                </Flex>
-              </td>
-              <td>
-                <Controller
-                  control={control}
-                  name="type"
-                  render={({ field }) => (
-                    <Select data={COLUMN_TYPES} placeholder="Select Type" variant="default" {...field} />
-                  )}
-                />
-              </td>
-              <td>
-                <Checkbox title="Is Required?" {...register('isRequired')} />
-              </td>
-              <td>
-                <Checkbox title="Is Unique?" {...register('isUnique')} />
-              </td>
-              <td>
-                <Flex gap="xs" justify="flex-end">
-                  <ActionIcon color="blue" onClick={handleSubmit} loading={isColumnCreateLoading}>
-                    <CheckIcon color={colors.blue} />
+    <form onSubmit={handleSubmit}>
+      <Table<IColumn>
+        emptyDataText='No columns found click on "+" to add new column'
+        headings={[
+          {
+            title: 'Name',
+            key: 'name',
+            width: '25%',
+          },
+          {
+            title: 'Type',
+            key: 'type',
+            width: '25%',
+          },
+          {
+            title: 'Is required?',
+            key: 'isRequired',
+            width: '10%',
+            Cell: (item) => item.isRequired && <CheckIcon color={colors.success} />,
+          },
+          {
+            title: 'Is unique?',
+            key: 'isUnique',
+            width: '10%',
+            Cell: (item) => item.isUnique && <CheckIcon color={colors.success} />,
+          },
+          {
+            title: '',
+            key: 'actions',
+            Cell: (item) => (
+              <Flex justify="flex-end" gap="xs">
+                <IconButton label="Edit" onClick={() => onEditColumnClick(item._id)}>
+                  <EditIcon color={colors.blue} />
+                </IconButton>
+                <IconButton label="Delete" onClick={() => onDeleteColumnClick(item._id)}>
+                  <DeleteIcon color={colors.danger} />
+                </IconButton>
+              </Flex>
+            ),
+          },
+        ]}
+        extraContent={
+          <tr>
+            {showAddRow ? (
+              <>
+                <td>
+                  <Flex gap="xs">
+                    <Input autoFocus required placeholder="Column Name" {...register('name')} />
+                    <Input required placeholder="Column Key" {...register('key')} />
+                  </Flex>
+                </td>
+                <td>
+                  <Controller
+                    control={control}
+                    name="type"
+                    render={({ field }) => (
+                      <Select data={COLUMN_TYPES} placeholder="Select Type" variant="default" {...field} />
+                    )}
+                  />
+                </td>
+                <td>
+                  <Checkbox title="Is Required?" {...register('isRequired')} />
+                </td>
+                <td>
+                  <Checkbox title="Is Unique?" {...register('isUnique')} />
+                </td>
+                <td>
+                  <Flex gap="xs" justify="flex-end">
+                    <ActionIcon color="blue" type="submit" loading={isColumnCreateLoading}>
+                      <CheckIcon color={colors.blue} />
+                    </ActionIcon>
+                    <ActionIcon color="red" onClick={() => setShowAddRow(false)}>
+                      <CloseIcon />
+                    </ActionIcon>
+                  </Flex>
+                </td>
+              </>
+            ) : (
+              <td colSpan={5}>
+                <Tooltip label="Add new column" withArrow position="top-start">
+                  <ActionIcon bg={colors.yellow} variant="transparent" onClick={() => setShowAddRow(true)}>
+                    <AddIcon color={colors.white} />
                   </ActionIcon>
-                  <ActionIcon color="red" onClick={() => setShowAddRow(false)}>
-                    <CloseIcon />
-                  </ActionIcon>
-                </Flex>
+                </Tooltip>
               </td>
-            </>
-          ) : (
-            <td colSpan={5}>
-              <Tooltip label="Add new column" withArrow>
-                <ActionIcon variant="light" onClick={() => setShowAddRow(true)}>
-                  <AddIcon color={colors.yellow} />
-                </ActionIcon>
-              </Tooltip>
-            </td>
-          )}
-        </tr>
-      }
-      data={columns}
-    />
+            )}
+          </tr>
+        }
+        data={columns}
+      />
+    </form>
   );
 }

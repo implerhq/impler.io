@@ -37,7 +37,9 @@ interface ImportDetailProps {
 
 export default function ImportDetails({ template }: ImportDetailProps) {
   const { colorScheme } = useMantineTheme();
-  const { onUpdateClick, onDeleteClick, templateData, profile, onSpreadsheetImported } = useImportDetails({ template });
+  const { onUpdateClick, onDeleteClick, templateData, profile, onSpreadsheetImported, columns } = useImportDetails({
+    template,
+  });
   const { showWidget, isImplerInitiated } = useImpler({
     templateId: template._id,
     projectId: template._projectId,
@@ -61,7 +63,11 @@ export default function ImportDetails({ template }: ImportDetailProps) {
           </Group>
         </Group>
         <Group spacing="xs">
-          <Button disabled={!isImplerInitiated} color="green" onClick={() => showWidget({ colorScheme })}>
+          <Button
+            disabled={!isImplerInitiated || columns?.length === 0}
+            color="green"
+            onClick={() => showWidget({ colorScheme })}
+          >
             Import
           </Button>
           <Button variant="outline" color="red" onClick={onDeleteClick}>
@@ -70,7 +76,6 @@ export default function ImportDetails({ template }: ImportDetailProps) {
         </Group>
       </Flex>
       <Tabs
-        allowTabDeactivation
         keepMounted={false}
         items={[
           {
