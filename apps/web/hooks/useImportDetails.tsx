@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
 import { track } from '@libs/amplitude';
-import { ITemplate, IErrorObject } from '@impler/shared';
+import { ITemplate, IErrorObject, IColumn } from '@impler/shared';
 import { UpdateImportForm } from '@components/imports/forms/UpdateImportForm';
 import { API_KEYS, CONSTANTS, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS, ROUTES } from '@config';
 
@@ -25,6 +25,10 @@ export function useImportDetails({ template }: useImportDetailProps) {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
     }
+  );
+  const { data: columns, isLoading: isColumnListLoading } = useQuery<unknown, IErrorObject, IColumn[], string[]>(
+    [API_KEYS.TEMPLATE_COLUMNS_LIST, template._id],
+    () => commonApi<IColumn[]>(API_KEYS.TEMPLATE_COLUMNS_LIST as any, { parameters: [template._id] })
   );
   const [profile] = useLocalStorage<IProfileData>({ key: CONSTANTS.PROFILE_STORAGE_NAME });
 
@@ -86,5 +90,5 @@ export function useImportDetails({ template }: useImportDetailProps) {
     });
   };
 
-  return { onSpreadsheetImported, profile, onUpdateClick, onDeleteClick, templateData };
+  return { columns, isColumnListLoading, onSpreadsheetImported, profile, onUpdateClick, onDeleteClick, templateData };
 }
