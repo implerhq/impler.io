@@ -85,11 +85,6 @@ export default function ImportDetails({ template }: ImportDetailProps) {
             content: <Schema templateId={template._id} />,
           },
           {
-            value: 'validator',
-            title: 'Validator',
-            content: <Validator templateId={template._id} />,
-          },
-          {
             value: 'snippet',
             title: 'Snippet',
             icon: <TwoIcon size="xs" />,
@@ -103,6 +98,15 @@ export default function ImportDetails({ template }: ImportDetailProps) {
             icon: <ThreeIcon size="xs" />,
             content: <Destination template={template} accessToken={profile?.accessToken} />,
           },
+          ...(process.env.NEXT_PUBLIC_CUSTOM_VALIDATION_ENABLED === 'true'
+            ? [
+                {
+                  value: 'validator',
+                  title: 'Validator',
+                  content: <Validator templateId={template._id} />,
+                },
+              ]
+            : []),
           {
             value: 'output',
             title: 'Output',
