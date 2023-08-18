@@ -5,7 +5,7 @@ export class FileNameService {
     return url.origin;
   }
   getSampleFileName(templateId: string): string {
-    return `${templateId}/sample.csv`;
+    return `${templateId}/sample.xlsx`;
   }
   getSampleFileUrl(templateId: string): string {
     const fileName = this.getSampleFileName(templateId);

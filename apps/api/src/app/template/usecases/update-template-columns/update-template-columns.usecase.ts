@@ -1,36 +1,26 @@
 import { Injectable } from '@nestjs/common';
 
 import { CONSTANTS } from '@shared/constants';
-import { FileNameService } from '@shared/services/file';
-import { StorageService } from '@impler/shared/dist/services/storage';
 import { AddColumnCommand } from 'app/column/commands/add-column.command';
-import { ColumnRepository, CustomizationRepository, TemplateRepository } from '@impler/dal';
-import { FileMimeTypesEnum, createRecordFormat, updateCombinedFormat } from '@impler/shared';
+import { ColumnRepository, CustomizationRepository } from '@impler/dal';
+import { createRecordFormat, updateCombinedFormat } from '@impler/shared';
+import { SaveSampleFile } from '@shared/usecases/save-sample-file/save-sample-file.usecase';
 
 @Injectable()
 export class UpdateTemplateColumns {
   constructor(
+    private saveSampleFile: SaveSampleFile,
     private columnRepository: ColumnRepository,
-    private storageService: StorageService,
-    private fileNameService: FileNameService,
-    private templateRepository: TemplateRepository,
     private customizationRepository: CustomizationRepository
   ) {}
 
   async execute(command: AddColumnCommand[], _templateId: string) {
     await this.columnRepository.deleteMany({ _templateId });
-    await this.saveSampleFile(command, _templateId);
     await this.updateCustomizationData(command, _templateId);
+    const columns = await this.columnRepository.createMany(command);
+    await this.saveSampleFile.execute(columns, _templateId);
 
-    return this.columnRepository.createMany(command);
-  }
-
-  async saveSampleFile(data: AddColumnCommand[], templateId: string) {
-    const csvContent = this.createCSVFileHeadingContent(data);
-    const fileName = this.fileNameService.getSampleFileName(templateId);
-    const sampleFileUrl = this.fileNameService.getSampleFileUrl(templateId);
-    await this.storageService.uploadFile(fileName, csvContent, FileMimeTypesEnum.CSV);
-    await this.templateRepository.update({ _id: templateId }, { sampleFileUrl });
+    return columns;
   }
 
   listRecordVariables(data: AddColumnCommand[]): string[] {

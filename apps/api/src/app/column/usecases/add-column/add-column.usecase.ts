@@ -1,17 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { FileMimeTypesEnum, createRecordFormat, updateCombinedFormat } from '@impler/shared';
-import { ColumnRepository, TemplateRepository, CustomizationRepository, CustomizationEntity } from '@impler/dal';
+import { createRecordFormat, updateCombinedFormat } from '@impler/shared';
+import { ColumnRepository, CustomizationRepository, CustomizationEntity } from '@impler/dal';
 import { AddColumnCommand } from '../../commands/add-column.command';
-import { StorageService } from '@impler/shared/dist/services/storage';
-import { FileNameService } from '@shared/services/file';
+import { SaveSampleFile } from '@shared/usecases/save-sample-file/save-sample-file.usecase';
 
 @Injectable()
 export class AddColumn {
   constructor(
+    private saveSampleFile: SaveSampleFile,
     private columnRepository: ColumnRepository,
-    private storageService: StorageService,
-    private fileNameService: FileNameService,
-    private templateRepository: TemplateRepository,
     private customizationRepository: CustomizationRepository
   ) {}
 
@@ -21,13 +18,11 @@ export class AddColumn {
       ...command,
       sequence: columns.length,
     });
-    const columnKeys = columns.map((columnItem) => columnItem.key);
-    columnKeys.push(column.key);
     const variables = columns.map((columnItem) => columnItem.key);
     variables.push(column.key);
 
     await this.updateCustomization(_templateId, variables);
-    await this.saveSampleFile(columnKeys.join(','), _templateId);
+    await this.saveSampleFile.execute([...columns, column], _templateId);
 
     return column;
   }
@@ -46,12 +41,5 @@ export class AddColumn {
       updateData.combinedFormat = updateCombinedFormat(customization.combinedFormat, variables);
     }
     await this.customizationRepository.update({ _templateId }, updateData);
-  }
-
-  async saveSampleFile(csvContent: string, templateId: string) {
-    const fileName = this.fileNameService.getSampleFileName(templateId);
-    const sampleFileUrl = this.fileNameService.getSampleFileUrl(templateId);
-    await this.storageService.uploadFile(fileName, csvContent, FileMimeTypesEnum.CSV);
-    await this.templateRepository.update({ _id: templateId }, { sampleFileUrl });
   }
 }

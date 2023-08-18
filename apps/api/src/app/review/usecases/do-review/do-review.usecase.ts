@@ -126,6 +126,7 @@ if (typeof code === 'function') {
 const ajv = new Ajv({
   allErrors: true,
   coerceTypes: true,
+  useDefaults: 'empty',
   allowUnionTypes: true,
   // removeAdditional: true,
   verbose: true,
@@ -149,7 +150,7 @@ ajv.addKeyword({
   },
 });
 
-const uniqueItems: Record<string, Set<any>> = {};
+let uniqueItems: Record<string, Set<any>> = {};
 ajv.addKeyword({
   keyword: 'uniqueCheck',
   schema: false, // keyword value is not used, can be true
@@ -192,6 +193,8 @@ export class DoReview {
     const uploadedFileInfo = await this.fileRepository.findById(uploadInfo._uploadedFileId);
     const validations = await this.validatorRepository.findOne({ _templateId: uploadInfo._templateId });
 
+    let response: string;
+
     if (validations && validations.onBatchInitialize) {
       const batches = await this.batchRun({
         _uploadId,
@@ -201,20 +204,25 @@ export class DoReview {
         extra: uploadInfo.extra,
       });
 
-      return this.processBatches({
+      response = await this.processBatches({
         batches,
         headings: uploadInfo.headings,
         onBatchInitialize: validations.onBatchInitialize,
         uploadId: _uploadId,
       });
     } else {
-      return this.normalRun({
+      response = await this.normalRun({
         allDataFilePath: uploadedFileInfo.path,
         headings: uploadInfo.headings,
         uploadId: _uploadId,
         validator,
       });
     }
+
+    // resetting uniqueItems
+    uniqueItems = {};
+
+    return response;
   }
 
   private buildAJVSchema(columns: ColumnEntity[], mappings: any[]) {
@@ -233,6 +241,13 @@ export class DoReview {
 
       return acc;
     }, []);
+
+    // setting uniqueItems to empty set to avoid error
+    mappings.forEach((mapping) => {
+      if (formattedColumns[mapping.column._columnId].isUnique) {
+        uniqueItems[mapping.columnHeading] = new Set();
+      }
+    });
 
     return {
       type: 'object',
@@ -253,15 +268,17 @@ export class DoReview {
         break;
       case ColumnTypesEnum.NUMBER:
         property = {
-          type: 'number',
+          allOf: [{ type: 'integer' }, ...(!column.isRequired ? [{ type: ['integer', 'null'] }] : [])],
+          ...(!column.isRequired && { default: null }),
         };
         break;
       case ColumnTypesEnum.SELECT:
         property = {
           type: 'string',
+          ...(!column.isRequired && { default: '' }),
           ...(Array.isArray(column.selectValues) &&
             column.selectValues.length > 0 && {
-              enum: column.selectValues,
+              enum: [...column.selectValues, ...(column.isRequired ? [] : [''])],
             }),
         };
         break;
@@ -271,13 +288,17 @@ export class DoReview {
         property = { type: 'string', regexp: { pattern: pattern || full, flags: flags || '' } };
         break;
       case ColumnTypesEnum.EMAIL:
-        property = { type: 'string', format: 'email' };
+        property = {
+          type: ['string', 'null'],
+          format: 'email',
+          default: null,
+        };
         break;
       case ColumnTypesEnum.DATE:
-        property = { type: 'string', format: 'custom-date-time' };
+        property = { type: ['string', 'null'], format: 'custom-date-time', default: null };
         break;
       case ColumnTypesEnum.ANY:
-        property = { type: ['string', 'number', 'object'] };
+        property = { type: ['string', 'number', 'object', 'null'] };
         break;
     }
 
@@ -316,7 +337,9 @@ export class DoReview {
         break;
       // common cases
       case error.keyword === 'type':
-        message = ' ' + error.message;
+        if (error.params.type === 'integer') {
+          message = ` must be a number`;
+        } else message = ' ' + error.message;
         break;
       case error.keyword === 'enum':
         message = ` must be from [${error.params.allowedValues}]`;
