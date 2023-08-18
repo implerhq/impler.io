@@ -149,7 +149,7 @@ ajv.addKeyword({
   },
 });
 
-const uniqueItems: Record<string, Set<any>> = {};
+let uniqueItems: Record<string, Set<any>> = {};
 ajv.addKeyword({
   keyword: 'uniqueCheck',
   schema: false, // keyword value is not used, can be true
@@ -192,6 +192,8 @@ export class DoReview {
     const uploadedFileInfo = await this.fileRepository.findById(uploadInfo._uploadedFileId);
     const validations = await this.validatorRepository.findOne({ _templateId: uploadInfo._templateId });
 
+    let response: string;
+
     if (validations && validations.onBatchInitialize) {
       const batches = await this.batchRun({
         _uploadId,
@@ -201,20 +203,25 @@ export class DoReview {
         extra: uploadInfo.extra,
       });
 
-      return this.processBatches({
+      response = await this.processBatches({
         batches,
         headings: uploadInfo.headings,
         onBatchInitialize: validations.onBatchInitialize,
         uploadId: _uploadId,
       });
     } else {
-      return this.normalRun({
+      response = await this.normalRun({
         allDataFilePath: uploadedFileInfo.path,
         headings: uploadInfo.headings,
         uploadId: _uploadId,
         validator,
       });
     }
+
+    // resetting uniqueItems
+    uniqueItems = {};
+
+    return response;
   }
 
   private buildAJVSchema(columns: ColumnEntity[], mappings: any[]) {
@@ -233,6 +240,13 @@ export class DoReview {
 
       return acc;
     }, []);
+
+    // setting uniqueItems to empty set to avoid error
+    mappings.forEach((mapping) => {
+      if (formattedColumns[mapping.column._columnId].isUnique) {
+        uniqueItems[mapping.columnHeading] = new Set();
+      }
+    });
 
     return {
       type: 'object',

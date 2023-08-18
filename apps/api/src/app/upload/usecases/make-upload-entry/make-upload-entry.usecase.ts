@@ -23,7 +23,7 @@ export class MakeUploadEntry {
     let csvFile: string | Express.Multer.File = file;
     if (file.mimetype === FileMimeTypesEnum.EXCEL || file.mimetype === FileMimeTypesEnum.EXCELX) {
       const fileService = new ExcelFileService();
-      csvFile = fileService.convertToCsv(file);
+      csvFile = await fileService.convertToCsv(file);
     } else if (file.mimetype === FileMimeTypesEnum.CSV) {
       csvFile = file;
     } else {
