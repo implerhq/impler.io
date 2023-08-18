@@ -114,7 +114,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
 
     const foundTemplate = findTemplate();
     if (foundTemplate && foundTemplate.sampleFileUrl) {
-      getSignedUrl([foundTemplate.sampleFileUrl, foundTemplate.name + ' (sample).csv']);
+      getSignedUrl([foundTemplate.sampleFileUrl, foundTemplate.name + ' (sample).xlsx']);
     }
     setIsDownloadInProgress(false);
   };
