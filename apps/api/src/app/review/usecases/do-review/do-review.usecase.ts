@@ -126,6 +126,7 @@ if (typeof code === 'function') {
 const ajv = new Ajv({
   allErrors: true,
   coerceTypes: true,
+  useDefaults: 'empty',
   allowUnionTypes: true,
   // removeAdditional: true,
   verbose: true,
@@ -267,15 +268,17 @@ export class DoReview {
         break;
       case ColumnTypesEnum.NUMBER:
         property = {
-          type: 'number',
+          allOf: [{ type: 'integer' }, ...(!column.isRequired ? [{ type: ['integer', 'null'] }] : [])],
+          ...(!column.isRequired && { default: null }),
         };
         break;
       case ColumnTypesEnum.SELECT:
         property = {
           type: 'string',
+          ...(!column.isRequired && { default: '' }),
           ...(Array.isArray(column.selectValues) &&
             column.selectValues.length > 0 && {
-              enum: column.selectValues,
+              enum: [...column.selectValues, ...(column.isRequired ? [] : [''])],
             }),
         };
         break;
@@ -285,13 +288,17 @@ export class DoReview {
         property = { type: 'string', regexp: { pattern: pattern || full, flags: flags || '' } };
         break;
       case ColumnTypesEnum.EMAIL:
-        property = { type: 'string', format: 'email' };
+        property = {
+          type: ['string', 'null'],
+          format: 'email',
+          default: null,
+        };
         break;
       case ColumnTypesEnum.DATE:
-        property = { type: 'string', format: 'custom-date-time' };
+        property = { type: ['string', 'null'], format: 'custom-date-time', default: null };
         break;
       case ColumnTypesEnum.ANY:
-        property = { type: ['string', 'number', 'object'] };
+        property = { type: ['string', 'number', 'object', 'null'] };
         break;
     }
 
@@ -330,7 +337,9 @@ export class DoReview {
         break;
       // common cases
       case error.keyword === 'type':
-        message = ' ' + error.message;
+        if (error.params.type === 'integer') {
+          message = ` must be a number`;
+        } else message = ' ' + error.message;
         break;
       case error.keyword === 'enum':
         message = ` must be from [${error.params.allowedValues}]`;
