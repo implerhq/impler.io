@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import getConfig from 'next/config';
 import { GetServerSideProps } from 'next';
 import { ActionIcon, Flex, Group, Title, useMantineTheme } from '@mantine/core';
 
@@ -34,6 +35,8 @@ const Validator = dynamic(() => import('@components/imports/validator').then((mo
 interface ImportDetailProps {
   template: ITemplate;
 }
+
+const { publicRuntimeConfig } = getConfig();
 
 export default function ImportDetails({ template }: ImportDetailProps) {
   const { colorScheme } = useMantineTheme();
@@ -98,7 +101,7 @@ export default function ImportDetails({ template }: ImportDetailProps) {
             icon: <ThreeIcon size="xs" />,
             content: <Destination template={template} accessToken={profile?.accessToken} />,
           },
-          ...(process.env.NEXT_PUBLIC_CUSTOM_VALIDATION_ENABLED === 'true'
+          ...(publicRuntimeConfig.NEXT_PUBLIC_CUSTOM_VALIDATION_ENABLED === 'true'
             ? [
                 {
                   value: 'validator',
