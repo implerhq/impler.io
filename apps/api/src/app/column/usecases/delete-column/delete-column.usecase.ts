@@ -13,7 +13,7 @@ export class DeleteColumn {
   ) {}
 
   async execute(_id: string) {
-    const column = await this.columnRepository.findById(_id, '_templateId');
+    const column = await this.columnRepository.findById(_id);
     if (!column) {
       throw new DocumentNotFoundException('Column', _id);
     }
