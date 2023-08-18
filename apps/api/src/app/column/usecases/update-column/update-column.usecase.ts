@@ -1,18 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { FileMimeTypesEnum, createRecordFormat, updateCombinedFormat } from '@impler/shared';
-import { FileNameService } from '@shared/services/file';
-import { StorageService } from '@impler/shared/dist/services/storage';
+import { createRecordFormat, updateCombinedFormat } from '@impler/shared';
 import { UpdateColumnCommand } from '../../commands/update-column.command';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
-import { ColumnRepository, TemplateRepository, CustomizationRepository } from '@impler/dal';
+import { ColumnRepository, CustomizationRepository } from '@impler/dal';
+import { SaveSampleFile } from '@shared/usecases/save-sample-file/save-sample-file.usecase';
 
 @Injectable()
 export class UpdateColumn {
   constructor(
+    private saveSampleFile: SaveSampleFile,
     private columnRepository: ColumnRepository,
-    private storageService: StorageService,
-    private fileNameService: FileNameService,
-    private templateRepository: TemplateRepository,
     private customizationRepository: CustomizationRepository
   ) {}
 
@@ -23,11 +20,17 @@ export class UpdateColumn {
     }
 
     const isKeyUpdated = command.key !== column.key;
+    const isTypeUpdated = command.type !== column.type;
+    const isFieldConditionUpdated =
+      JSON.stringify(column.selectValues) !== JSON.stringify(command.selectValues) ||
+      column.isRequired !== command.isRequired;
 
     column = await this.columnRepository.findOneAndUpdate({ _id }, command);
     const columns = await this.columnRepository.find({ _templateId: column._templateId });
-    const columnKeys = columns.map((columnItem) => columnItem.key);
-    await this.saveSampleFile(columnKeys.join(','), column._templateId);
+
+    if (isKeyUpdated || isTypeUpdated || isFieldConditionUpdated) {
+      await this.saveSampleFile.execute(columns, column._templateId);
+    }
 
     if (isKeyUpdated) {
       const variables = columns.map((columnItem) => columnItem.key);
@@ -49,12 +52,5 @@ export class UpdateColumn {
       customization.combinedFormat = updateCombinedFormat(customization.combinedFormat, variables);
     }
     await this.customizationRepository.update({ _templateId }, customization);
-  }
-
-  async saveSampleFile(csvContent: string, templateId: string) {
-    const fileName = this.fileNameService.getSampleFileName(templateId);
-    const sampleFileUrl = this.fileNameService.getSampleFileUrl(templateId);
-    await this.storageService.uploadFile(fileName, csvContent, FileMimeTypesEnum.CSV);
-    await this.templateRepository.update({ _id: templateId }, { sampleFileUrl });
   }
 }

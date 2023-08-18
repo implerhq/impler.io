@@ -1,10 +1,12 @@
 import * as XLSX from 'xlsx';
-import { Defaults, FileEncodingsEnum, IFileInformation } from '@impler/shared';
+import * as ExcelJS from 'exceljs';
+import { ColumnTypesEnum, Defaults, FileEncodingsEnum, IFileInformation } from '@impler/shared';
 import { ParseConfig, parse } from 'papaparse';
 import { ParserOptionsArgs, parseString } from 'fast-csv';
 import { EmptyFileException } from '@shared/exceptions/empty-file.exception';
 import { APIMessages } from '@shared/constants';
 import { InvalidFileException } from '@shared/exceptions/invalid-file.exception';
+import { IExcelFileHeading } from '@shared/types/file.types';
 
 export abstract class FileService {
   abstract getFileInformation(file: Express.Multer.File, options?: ParserOptionsArgs): Promise<IFileInformation>;
@@ -102,6 +104,107 @@ export class ExcelFileService extends FileService {
       RS: '\n',
       strip: true,
     });
+  }
+  formatName(name: string): string {
+    return name.replace(/[^a-zA-Z0-9]/g, '');
+  }
+  addSelectSheet(wb: ExcelJS.Workbook, heading: IExcelFileHeading): string {
+    const name = this.formatName(heading.key);
+    const companies = wb.addWorksheet(name);
+    const companyHeadings = [name];
+    companies.addRow(companyHeadings);
+    heading.selectValues.forEach((value) => companies.addRow([value]));
+
+    return name;
+  }
+  addSelectValidation({
+    ws,
+    range,
+    keyName,
+    isRequired,
+  }: {
+    ws: ExcelJS.Worksheet;
+    range: string;
+    keyName: string;
+    isRequired: boolean;
+  }) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    ws.dataValidations.add(range, {
+      type: 'list',
+      allowBlank: !isRequired,
+      formulae: [`${keyName}!$A$2:$A$9999`],
+      showErrorMessage: true,
+      errorTitle: 'Invalid Value',
+      error: 'Please select from the list',
+    });
+  }
+  addDateValidation({ ws, range, isRequired }: { ws: ExcelJS.Worksheet; range: string; isRequired: boolean }) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    ws.dataValidations.add(range, {
+      type: 'date',
+      allowBlank: !isRequired,
+      operator: 'greaterThan',
+      formulae: [''],
+      showErrorMessage: true,
+      error: 'Please select a date',
+      errorTitle: 'Invalid Date',
+      showInputMessage: true,
+      promptTitle: 'Date',
+      prompt: 'Select a date',
+    });
+  }
+  getExcelColumnNameFromIndex(columnNumber: number) {
+    // To store result (Excel column name)
+    const columnName = [];
+
+    while (columnNumber > 0) {
+      // Find remainder
+      const rem = columnNumber % 26;
+
+      /*
+       * If remainder is 0, then a
+       * 'Z' must be there in output
+       */
+      if (rem == 0) {
+        columnName.push('Z');
+        columnNumber = Math.floor(columnNumber / 26) - 1;
+      } // If remainder is non-zero
+      else {
+        columnName.push(String.fromCharCode(rem - 1 + 'A'.charCodeAt(0)));
+        columnNumber = Math.floor(columnNumber / 26);
+      }
+    }
+
+    return columnName.reverse().join('');
+  }
+  getExcelFileForHeadings(headings: IExcelFileHeading[]): Promise<any> {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Data');
+    const headingNames = headings.map((heading) => heading.key);
+    worksheet.addRow(headingNames);
+    headings.forEach((heading, index) => {
+      if (heading.type === ColumnTypesEnum.SELECT) {
+        const keyName = this.addSelectSheet(workbook, heading);
+        const columnName = this.getExcelColumnNameFromIndex(index + 1);
+        this.addSelectValidation({
+          ws: worksheet,
+          range: `${columnName}2:${columnName}9999`,
+          keyName,
+          isRequired: heading.isRequired,
+        });
+      } else if (heading.type === ColumnTypesEnum.DATE) {
+        const columnName = this.getExcelColumnNameFromIndex(index + 1);
+        this.addDateValidation({
+          ws: worksheet,
+          range: `${columnName}2:${columnName}9999`,
+          isRequired: heading.isRequired,
+        });
+      }
+    });
+
+    return workbook.xlsx.writeBuffer();
   }
   renameJSONHeaders(jsonData: any[], headings: string[]): Record<string, unknown>[] {
     const wb = XLSX.utils.book_new();
