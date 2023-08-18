@@ -9,6 +9,7 @@ import { UpdateCustomization } from './update-customization/update-customization
 import { GetCustomization } from './get-customization/get-customization.usecase';
 import { UpdateValidations } from './update-validations/update-validations.usecase';
 import { GetValidations } from './get-validations/get-validations.usecase';
+import { SaveSampleFile } from '@shared/usecases/save-sample-file/save-sample-file.usecase';
 
 import { GetUploadsCommand } from './get-uploads/get-uploads.command';
 import { CreateTemplateCommand } from './create-template/create-template.command';
@@ -28,6 +29,7 @@ export const USE_CASES = [
   GetCustomization,
   GetValidations,
   UpdateValidations,
+  SaveSampleFile,
   //
 ];
 
