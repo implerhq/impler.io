@@ -10,6 +10,7 @@ const webhookSchema = new Schema(
     },
     callDate: Date,
     status: String,
+    error: Schema.Types.Mixed,
     failedReason: String,
     pageNumber: Number,
     responseStatusCode: Number,
