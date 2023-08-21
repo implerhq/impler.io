@@ -136,9 +136,14 @@ export class ProcessFileConsumer extends BaseConsumer {
       baseResponse.status = StatusEnum.FAILED;
       if (axios.isAxiosError(error)) {
         if (error.response) {
+          baseResponse.error = {
+            error: error.toJSON(),
+            data: error.response.data,
+          };
           baseResponse.failedReason = 'Application Error';
           baseResponse.responseStatusCode = error.response.status;
         } else if (error.request) {
+          baseResponse.error = error.toJSON();
           baseResponse.failedReason = 'Network Error';
           baseResponse.responseStatusCode = error.request.status;
         } else {

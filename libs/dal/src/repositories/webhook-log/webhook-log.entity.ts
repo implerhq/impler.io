@@ -7,6 +7,8 @@ export class WebhookLogEntity {
 
   status: string;
 
+  error: any;
+
   failedReason: string;
 
   pageNumber: number;
