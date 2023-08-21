@@ -1,5 +1,5 @@
+import axios from 'axios';
 import { variables } from '@config';
-import { saveAs } from 'file-saver';
 
 // eslint-disable-next-line no-magic-numbers
 export function formatBytes(bytes, decimals = 2) {
@@ -26,10 +26,31 @@ function isValidHttpUrl(string: string) {
   return url.protocol === 'http:' || url.protocol === 'https:';
 }
 
+function fetchFile(urlToFetch: string, name: string) {
+  axios({
+    url: urlToFetch,
+    method: 'GET',
+    // headers: headers,
+    responseType: 'blob', // important
+  }).then((response) => {
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', name);
+    document.body.appendChild(link);
+    link.click();
+
+    // Clean up and remove the link
+    link.parentNode?.removeChild(link);
+
+    return response;
+  });
+}
+
 export function downloadFileFromURL(url: string, name: string) {
   if (!isValidHttpUrl(url)) return;
 
-  saveAs(url, name);
+  fetchFile(url, name);
 }
 
 export function getFileNameFromUrl(url: string) {

@@ -1,9 +1,9 @@
 {
   "name": "@impler/embed",
-  "version": "0.1.15",
+  "version": "0.7.1",
   "private": true,
   "license": "MIT",
-  "author": "knovator",
+  "author": "implerhq",
   "main": "dist/embed.umd.min.js",
   "module": "dist/embed.es5.min.js",
   "typings": "dist/types/embed.d.ts",

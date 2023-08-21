@@ -20,3 +20,7 @@ services:
     build:
       dockerfile: "libs/embed/Dockerfile"
       context: ".."
+  web:
+    build:
+      dockerfile: "apps/web/Dockerfile"
+      context: ".."

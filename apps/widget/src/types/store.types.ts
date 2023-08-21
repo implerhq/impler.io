@@ -1,9 +1,9 @@
 import { ApiService } from '@impler/client';
-import { IUpload } from '@impler/shared';
+import { IUpload, ITemplate } from '@impler/shared';
 
 export interface IImplerStore {
   projectId: string;
-  template?: string;
+  templateId?: string;
   accessToken?: string;
   extra?: string;
   authHeaderValue?: string;
@@ -14,8 +14,11 @@ export interface IApiStore {
 }
 
 export interface IAppStore {
+  title?: string;
+  templateInfo: ITemplate;
   uploadInfo: IUpload;
   reset: () => void;
   primaryColor: string;
+  setTemplateInfo: (templateInfo: ITemplate) => void;
   setUploadInfo: (uploadInfo: IUpload) => void;
 }

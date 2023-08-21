@@ -1,29 +1,44 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Response } from 'express';
 import { ApiOperation, ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
-import { CreateProjectRequestDto } from './dtos/create-project-request.dto';
-import { ProjectResponseDto } from './dtos/project-response.dto';
-import { GetProjects } from './usecases/get-projects/get-projects.usecase';
-import { CreateProject } from './usecases/create-project/create-project.usecase';
-import { CreateProjectCommand } from './usecases/create-project/create-project.command';
-import { UpdateProjectRequestDto } from './dtos/update-project-request.dto';
-import { UpdateProject } from './usecases/update-project/update-project.usecase';
-import { UpdateProjectCommand } from './usecases/update-project/update-project.command';
-import { DeleteProject } from './usecases/delete-project/delete-project.usecase';
-import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
+import { Body, Controller, Delete, Get, Param, Post, Put, Res, UseGuards } from '@nestjs/common';
+
+import { ACCESS_KEY_NAME, IJwtPayload } from '@impler/shared';
+import { UserSession } from '@shared/framework/user.decorator';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
-import { APIKeyGuard } from '@shared/framework/auth.gaurd';
-import { ACCESS_KEY_NAME } from '@impler/shared';
+
+import { ProjectResponseDto } from './dtos/project-response.dto';
+import { CreateProjectRequestDto } from './dtos/create-project-request.dto';
+import { UpdateProjectRequestDto } from './dtos/update-project-request.dto';
+import { TemplateResponseDto } from 'app/template/dtos/template-response.dto';
+
+import {
+  GetProjects,
+  GetTemplates,
+  CreateProject,
+  UpdateProject,
+  DeleteProject,
+  GetEnvironment,
+  CreateProjectCommand,
+  UpdateProjectCommand,
+} from './usecases';
+import { AuthService } from 'app/auth/services/auth.service';
+import { CONSTANTS, COOKIE_CONFIG } from '@shared/constants';
+import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
+import { EnvironmentResponseDto } from 'app/environment/dtos/environment-response.dto';
 
 @Controller('/project')
 @ApiTags('Project')
 @ApiSecurity(ACCESS_KEY_NAME)
-@UseGuards(APIKeyGuard)
+@UseGuards(JwtAuthGuard)
 export class ProjectController {
   constructor(
     private getProjectsUsecase: GetProjects,
     private createProjectUsecase: CreateProject,
     private updateProjectUsecase: UpdateProject,
-    private deleteProjectUsecase: DeleteProject
+    private deleteProjectUsecase: DeleteProject,
+    private authService: AuthService,
+    private getTemplates: GetTemplates,
+    private getEnvironment: GetEnvironment
   ) {}
 
   @Get('')
@@ -33,8 +48,30 @@ export class ProjectController {
   @ApiOkResponse({
     type: [ProjectResponseDto],
   })
-  getProjects(): Promise<ProjectResponseDto[]> {
-    return this.getProjectsUsecase.execute();
+  getProjects(@UserSession() user: IJwtPayload): Promise<ProjectResponseDto[]> {
+    return this.getProjectsUsecase.execute(user._id);
+  }
+
+  @Get(':projectId/templates')
+  @ApiOperation({
+    summary: 'Get all templates for project',
+  })
+  @ApiOkResponse({
+    type: [TemplateResponseDto],
+  })
+  getTemplatesRoute(@Param('projectId', ValidateMongoId) projectId: string): Promise<TemplateResponseDto[]> {
+    return this.getTemplates.execute(projectId);
+  }
+
+  @Get(':projectId/environment')
+  @ApiOperation({
+    summary: 'Get environment for project',
+  })
+  @ApiOkResponse({
+    type: EnvironmentResponseDto,
+  })
+  getEnvironmentRoute(@Param('projectId', ValidateMongoId) projectId: string): Promise<EnvironmentResponseDto> {
+    return this.getEnvironment.execute(projectId);
   }
 
   @Post('')
@@ -44,14 +81,33 @@ export class ProjectController {
   @ApiOkResponse({
     type: ProjectResponseDto,
   })
-  createProject(@Body() body: CreateProjectRequestDto): Promise<ProjectResponseDto> {
-    return this.createProjectUsecase.execute(
+  async createProject(
+    @UserSession() user: IJwtPayload,
+    @Body() body: CreateProjectRequestDto,
+    @Res({ passthrough: true }) res: Response
+  ): Promise<{ project: ProjectResponseDto; environment: EnvironmentResponseDto }> {
+    const projectWithEnvironment = await this.createProjectUsecase.execute(
       CreateProjectCommand.create({
-        code: body.code,
         name: body.name,
-        authHeaderName: body.authHeaderName,
+        _userId: user._id,
       })
     );
+    const token = this.authService.getSignedToken(
+      {
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        profilePicture: user.profilePicture,
+      },
+      projectWithEnvironment.project._id
+    );
+    res.cookie(CONSTANTS.AUTH_COOKIE_NAME, token, {
+      ...COOKIE_CONFIG,
+      domain: process.env.COOKIE_DOMAIN,
+    });
+
+    return projectWithEnvironment;
   }
 
   @Put(':projectId')
@@ -62,18 +118,15 @@ export class ProjectController {
     type: ProjectResponseDto,
   })
   async updateProject(
+    @UserSession() user: IJwtPayload,
     @Body() body: UpdateProjectRequestDto,
     @Param('projectId', ValidateMongoId) projectId: string
   ): Promise<ProjectResponseDto> {
-    const document = await this.updateProjectUsecase.execute(
+    return this.updateProjectUsecase.execute(
       UpdateProjectCommand.create({ name: body.name, authHeaderName: body.authHeaderName }),
-      projectId
+      projectId,
+      user._id
     );
-    if (!document) {
-      throw new DocumentNotFoundException('Project', projectId);
-    }
-
-    return document;
   }
 
   @Delete(':projectId')
@@ -83,12 +136,10 @@ export class ProjectController {
   @ApiOkResponse({
     type: ProjectResponseDto,
   })
-  async deleteProject(@Param('projectId', ValidateMongoId) projectId: string): Promise<ProjectResponseDto> {
-    const document = await this.deleteProjectUsecase.execute(projectId);
-    if (!document) {
-      throw new DocumentNotFoundException('Project', projectId);
-    }
-
-    return document;
+  async deleteProject(
+    @UserSession() user: IJwtPayload,
+    @Param('projectId', ValidateMongoId) projectId: string
+  ): Promise<ProjectResponseDto> {
+    return await this.deleteProjectUsecase.execute(projectId, user._id);
   }
 }

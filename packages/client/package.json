@@ -1,16 +1,16 @@
 {
   "name": "@impler/client",
-  "version": "0.1.15",
+  "version": "0.7.1",
   "description": "API client to be used in end user environments",
   "license": "MIT",
-  "author": "knovator",
-  "repository": "https://github.com/knovator/impler.io",
+  "author": "implerhq",
+  "repository": "https://github.com/implerhq/impler.io",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
   "private": true,
   "keywords": [
     "impler",
-    "knovator",
+    "implerhq",
     "data-import",
     "excel-import",
     "csv-import"
@@ -41,7 +41,7 @@
     "typescript": "4.8.4"
   },
   "dependencies": {
-    "@impler/shared": "^0.1.15",
+    "@impler/shared": "^0.7.1",
     "axios": "^0.26.1"
   },
   "engines": {

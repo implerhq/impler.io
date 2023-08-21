@@ -1,36 +1,38 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags, ApiSecurity, ApiQuery, ApiOkResponse } from '@nestjs/swagger';
-import { FileEntity, UploadEntity } from '@impler/dal';
-import { ACCESS_KEY_NAME, UploadStatusEnum } from '@impler/shared';
+import { BadRequestException, Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+
 import { APIMessages } from '@shared/constants';
-import { APIKeyGuard } from '@shared/framework/auth.gaurd';
+import { FileEntity, UploadEntity } from '@impler/dal';
+import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { validateUploadStatus } from '@shared/helpers/upload.helpers';
-import { DoReview } from './usecases/do-review/do-review.usecase';
-import { GetUploadInvalidData } from './usecases/get-upload-invalid-data/get-upload-invalid-data.usecase';
-import { SaveReviewData } from './usecases/save-review-data/save-review-data.usecase';
-import { GetFileInvalidData } from './usecases/get-file-invalid-data/get-file-invalid-data.usecase';
+import { Defaults, ACCESS_KEY_NAME, UploadStatusEnum } from '@impler/shared';
+
+import {
+  DoReview,
+  GetUpload,
+  StartProcess,
+  UpdateImportCount,
+  GetFileInvalidData,
+  StartProcessCommand,
+  GetUploadInvalidData,
+  UpdateImportCountCommand,
+} from './usecases';
+
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 import { ConfirmReviewRequestDto } from './dtos/confirm-review-request.dto';
 import { GetUploadCommand } from '@shared/usecases/get-upload/get-upload.command';
-import { GetUpload } from '@shared/usecases/get-upload/get-upload.usecase';
 import { paginateRecords, validateNotFound } from '@shared/helpers/common.helper';
-import { StartProcess } from './usecases/start-process/start-process.usecase';
-import { StartProcessCommand } from './usecases/start-process/start-process.command';
 import { PaginationResponseDto } from '@shared/dtos/pagination-response.dto';
-import { Defaults } from '@impler/shared';
-import { ReanameFileHeadings } from './usecases/rename-file-headings/rename-file-headings.usecase';
 
 @Controller('/review')
 @ApiTags('Review')
 @ApiSecurity(ACCESS_KEY_NAME)
-@UseGuards(APIKeyGuard)
 export class ReviewController {
   constructor(
     private doReview: DoReview,
     private getUpload: GetUpload,
     private startProcess: StartProcess,
-    private renameFileHeadings: ReanameFileHeadings,
-    private saveReviewData: SaveReviewData,
+    private updateImportCount: UpdateImportCount,
     private getFileInvalidData: GetFileInvalidData,
     private getUploadInvalidData: GetUploadInvalidData
   ) {}
@@ -59,33 +61,25 @@ export class ReviewController {
     @Param('uploadId') _uploadId: string,
     @Query('page') page = Defaults.ONE,
     @Query('limit') limit = Defaults.PAGE_LIMIT
-  ): Promise<PaginationResponseDto> {
+  ) {
     const uploadData = await this.getUploadInvalidData.execute(_uploadId);
     if (!uploadData) throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
 
-    // Only Mapped & Reviewing status are allowed
-    validateUploadStatus(uploadData.status as UploadStatusEnum, [UploadStatusEnum.MAPPED, UploadStatusEnum.REVIEWING]);
-
-    // Get Invalid Data either from Validation or Validation Result
-    let invalidData = [];
+    let invalidDataFilePath: string;
     if (uploadData.status === UploadStatusEnum.MAPPED) {
-      // uploaded file is mapped, do review
-      const reviewData = await this.doReview.execute(_uploadId);
-      // save invalid data to storage
-      await this.saveReviewData.execute(_uploadId, reviewData.invalid, reviewData.valid);
-
-      invalidData = reviewData.invalid;
+      invalidDataFilePath = await this.doReview.execute(_uploadId);
     } else {
-      // Uploaded file is already reviewed, return reviewed data
-      invalidData = await this.getFileInvalidData.execute(
-        (uploadData._invalidDataFileId as unknown as FileEntity).path
-      );
+      invalidDataFilePath = (uploadData._invalidDataFileId as unknown as FileEntity).path;
     }
+
+    // Uploaded file is already reviewed, return reviewed data
+    const invalidData = await this.getFileInvalidData.execute(invalidDataFilePath);
 
     return paginateRecords(invalidData, page, limit);
   }
 
   @Post(':uploadId/confirm')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Confirm review data for uploaded file',
   })
@@ -96,7 +90,7 @@ export class ReviewController {
     const uploadInformation = await this.getUpload.execute(
       GetUploadCommand.create({
         uploadId: _uploadId,
-        select: 'status _validDataFileId _invalidDataFileId',
+        select: 'status _validDataFileId _invalidDataFileId totalRecords invalidRecords _templateId',
       })
     );
 
@@ -106,11 +100,12 @@ export class ReviewController {
     // upload files with status reviewing can only be confirmed
     validateUploadStatus(uploadInformation.status as UploadStatusEnum, [UploadStatusEnum.REVIEWING]);
 
-    // rename file headings
-    await this.renameFileHeadings.execute(
-      _uploadId,
-      uploadInformation._validDataFileId,
-      uploadInformation._invalidDataFileId
+    await this.updateImportCount.execute(
+      uploadInformation._templateId,
+      UpdateImportCountCommand.create({
+        totalRecords: uploadInformation.totalRecords,
+        totalInvalidRecords: uploadInformation.invalidRecords,
+      })
     );
 
     return this.startProcess.execute(

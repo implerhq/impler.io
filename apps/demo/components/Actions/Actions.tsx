@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { saveAs } from 'file-saver';
-import { Button } from '@impler/react';
+import { useImpler } from '@impler/react';
 import { IUpload } from '@impler/shared';
 import { constants, variables } from '@config';
 import { useAppState } from '@context/app.context';
@@ -25,15 +25,24 @@ const Actions = ({ PROJECT_ID, ACCESS_TOKEN, PRIMARY_COLOR, TEMPLATE }: ActionPr
     setShowInvalidRecords,
     setTotalRecords,
   } = useAppState();
+  const onUploadComplete = useCallback(
+    (uploadData: IUpload) => {
+      setUpload(uploadData);
+      setPage(variables.ONE);
+      setShowInvalidRecords(false);
+      setTotalRecords(uploadData.validRecords);
+      setHasInvalidRecords(uploadData.invalidRecords > variables.ZERO);
+    },
+    [setHasInvalidRecords, setPage, setShowInvalidRecords, setTotalRecords, setUpload]
+  );
+  const { isImplerInitiated, showWidget } = useImpler({
+    projectId: PROJECT_ID,
+    accessToken: ACCESS_TOKEN,
+    templateId: TEMPLATE,
+    primaryColor: PRIMARY_COLOR,
+    onUploadComplete: onUploadComplete,
+  });
   const { classes } = useStyles(showInvalidRecords);
-
-  const onUploadComplete = (uploadData: IUpload) => {
-    setUpload(uploadData);
-    setPage(variables.ONE);
-    setShowInvalidRecords(false);
-    setTotalRecords(uploadData.validRecords);
-    setHasInvalidRecords(uploadData.invalidRecords > variables.ZERO);
-  };
 
   const onShowInvalidChanges = (status: boolean) => {
     setShowInvalidRecords(status);
@@ -48,20 +57,19 @@ const Actions = ({ PROJECT_ID, ACCESS_TOKEN, PRIMARY_COLOR, TEMPLATE }: ActionPr
   return (
     <div className={classes.wrapper}>
       <Flex direction="row" align="center" gap="sm">
-        <Button
-          projectId={PROJECT_ID}
-          accessToken={ACCESS_TOKEN}
-          template={TEMPLATE}
-          primaryColor={PRIMARY_COLOR}
+        <MantineButton
+          onClick={() => showWidget({ colorScheme: 'dark' })}
           className={classes.button}
-          onUploadComplete={onUploadComplete}
-        />
+          disabled={!isImplerInitiated}
+        >
+          Import temperature data
+        </MantineButton>
         {hasInvalidRecords && (
           <Switch
             label="Show Invalid Data"
             color="white"
             checked={showInvalidRecords}
-            onChange={(e) => onShowInvalidChanges(e.target.checked)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => onShowInvalidChanges(e.target.checked)}
             classNames={{
               root: classes.root,
               track: classes.track,
@@ -74,7 +82,7 @@ const Actions = ({ PROJECT_ID, ACCESS_TOKEN, PRIMARY_COLOR, TEMPLATE }: ActionPr
         onClick={() => saveAs(constants.DATA_FILE_URL, constants.DATA_FILE_NAME)}
         className={classes.button}
       >
-        Download Temperature Data
+        Download sample data
       </MantineButton>
     </div>
   );

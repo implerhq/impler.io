@@ -6,7 +6,7 @@ import { ACCESS_KEY_NAME, Defaults, UploadStatusEnum } from '@impler/shared';
 import { Body, Controller, Get, Param, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags, ApiSecurity, ApiConsumes, ApiOperation, ApiParam, ApiQuery, ApiOkResponse } from '@nestjs/swagger';
 
-import { APIKeyGuard } from '@shared/framework/auth.gaurd';
+import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { validateNotFound } from '@shared/helpers/common.helper';
 import { validateUploadStatus } from '@shared/helpers/upload.helpers';
 import { PaginationResponseDto } from '@shared/dtos/pagination-response.dto';
@@ -25,7 +25,7 @@ import { GetUploadProcessInformation } from './usecases/get-upload-process-info/
 @Controller('/upload')
 @ApiTags('Uploads')
 @ApiSecurity(ACCESS_KEY_NAME)
-@UseGuards(APIKeyGuard)
+@UseGuards(JwtAuthGuard)
 export class UploadController {
   constructor(
     private makeUploadEntry: MakeUploadEntry,
@@ -34,14 +34,14 @@ export class UploadController {
     private paginateFileContent: PaginateFileContent
   ) {}
 
-  @Post(':template')
+  @Post(':templateId')
   @ApiOperation({
     summary: `Upload file to template`,
   })
   @ApiParam({
-    name: 'template',
+    name: 'templateId',
     required: true,
-    description: 'ID or CODE of the template',
+    description: 'ID of the template',
     type: 'string',
   })
   @ApiConsumes('multipart/form-data')
@@ -49,7 +49,7 @@ export class UploadController {
   async uploadFile(
     @UploadedFile('file', ValidImportFile) file: Express.Multer.File,
     @Body() body: UploadRequestDto,
-    @Param('template', ValidateTemplate) templateId: string
+    @Param('templateId', ValidateTemplate) templateId: string
   ) {
     return await this.makeUploadEntry.execute(
       MakeUploadEntryCommand.create({

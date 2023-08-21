@@ -1,7 +1,7 @@
 {
   "name": "@impler/dal",
-  "version": "0.1.15",
-  "author": "knovator",
+  "version": "0.7.1",
+  "author": "implerhq",
   "license": "MIT",
   "private": true,
   "main": "dist/index.js",
@@ -16,7 +16,9 @@
     "lint:fix": "eslint src --fix"
   },
   "dependencies": {
+    "@impler/shared": "^0.7.1",
     "class-transformer": "^0.5.1",
+    "date-fns": "^2.30.0",
     "mongoose": "^6.6.1",
     "rimraf": "^3.0.2"
   },

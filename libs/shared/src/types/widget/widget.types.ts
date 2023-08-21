@@ -3,9 +3,11 @@ export interface IInitPayload {
 }
 export interface IShowPayload {
   extra?: string;
-  template?: string;
+  templateId?: string;
   authHeaderValue?: string;
   primaryColor?: string;
+  colorScheme?: string;
+  title?: string;
 }
 export interface IOption {
   value: string;

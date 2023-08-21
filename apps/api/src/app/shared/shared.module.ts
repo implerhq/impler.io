@@ -8,10 +8,15 @@ import {
   ProjectRepository,
   TemplateRepository,
   UploadRepository,
+  UserRepository,
+  EnvironmentRepository,
+  CustomizationRepository,
+  ValidatorRepository,
 } from '@impler/dal';
 import { S3StorageService, StorageService } from '@impler/shared/dist/services/storage';
-import { CSVFileService, ExcelFileService } from './file/file.service';
-import { FileNameService } from './file/name.service';
+import { CSVFileService2, ExcelFileService } from './services/file/file.service';
+import { EmailService, SESEmailService } from './services/email.service';
+import { FileNameService } from './services/file/name.service';
 
 const DAL_MODELS = [
   ProjectRepository,
@@ -21,13 +26,21 @@ const DAL_MODELS = [
   UploadRepository,
   MappingRepository,
   CommonRepository,
+  UserRepository,
+  EnvironmentRepository,
+  CustomizationRepository,
+  ValidatorRepository,
 ];
-const FILE_SERVICES = [CSVFileService, FileNameService, ExcelFileService];
+const FILE_SERVICES = [CSVFileService2, FileNameService, ExcelFileService];
 
 const dalService = new DalService();
 
 function getStorageServiceClass() {
   return S3StorageService;
+}
+
+function getEmailServiceClass() {
+  return SESEmailService;
 }
 
 const PROVIDERS = [
@@ -43,6 +56,10 @@ const PROVIDERS = [
   {
     provide: StorageService,
     useClass: getStorageServiceClass(),
+  },
+  {
+    provide: EmailService,
+    useClass: getEmailServiceClass(),
   },
   ...FILE_SERVICES,
 ];

@@ -5,14 +5,8 @@ import { PhasesEum } from '@types';
 
 interface IHeadingProps {
   active: PhasesEum;
+  title?: string;
 }
-
-const Titles = {
-  [PhasesEum.UPLOAD]: TEXTS.TITLES.UPLOAD,
-  [PhasesEum.MAPPING]: TEXTS.TITLES.MAPPING,
-  [PhasesEum.REVIEW]: TEXTS.TITLES.REVIEW,
-  [PhasesEum.COMPLETE]: TEXTS.TITLES.COMPLETE,
-};
 
 const Steps = [
   {
@@ -29,13 +23,12 @@ const Steps = [
   },
 ];
 
-export function Heading(props: IHeadingProps) {
-  const { active } = props;
+export function Heading({ active, title }: IHeadingProps) {
   const theme = useMantineTheme();
 
   return (
     <Group style={{ justifyContent: 'space-between' }} mb="lg">
-      <Title order={3}>{Titles[active]}</Title>
+      <Title order={3}>{title}</Title>
       <Stepper active={active} steps={Steps} primaryColor={theme.colors.primary[variables.colorIndex]} />
     </Group>
   );

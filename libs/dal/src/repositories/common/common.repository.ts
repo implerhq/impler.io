@@ -16,7 +16,7 @@ export class CommonRepository {
     return Types.ObjectId.isValid(id);
   }
 
-  generateMongoId(): string {
-    return new Types.ObjectId().toString();
+  generateMongoId(inputId?: string): Types.ObjectId {
+    return new Types.ObjectId(inputId);
   }
 }

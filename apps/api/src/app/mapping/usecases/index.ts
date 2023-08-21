@@ -3,6 +3,7 @@ import { GetMappings } from './get-mappings/get-mappings.usecase';
 import { UpdateMappings } from './update-mappings/update-mappings.usecase';
 import { FinalizeUpload } from './finalize-upload/finalize-upload.usecase';
 import { ValidateMapping } from './validate-mapping/validate-mapping.usecase';
+import { ReanameFileHeadings } from './rename-file-headings/rename-file-headings.usecase';
 import { GetUpload } from '@shared/usecases/get-upload/get-upload.usecase';
 
 export const USE_CASES = [
@@ -11,6 +12,7 @@ export const USE_CASES = [
   UpdateMappings,
   FinalizeUpload,
   ValidateMapping,
+  ReanameFileHeadings,
   GetUpload,
   //
 ];

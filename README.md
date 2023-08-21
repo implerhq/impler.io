@@ -19,11 +19,11 @@
     <a href="https://docs.impler.io"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://demo.impler.io">View Demo</a>
+    <a href="https://web.impler.io">Try Now</a>
     ·
-    <a href="https://github.com/knovator/impler.io/issues/new?assignees=&labels=&template=bug_report.md&title=">Report Bug</a>
+    <a href="https://github.com/implerhq/impler.io/issues/new?assignees=&labels=&template=bug_report.md&title=">Report Bug</a>
     ·
-    <a href="https://github.com/knovator/impler.io/issues/new?assignees=&labels=&template=feature_request.md&title=">Request Feature</a>
+    <a href="https://github.com/implerhq/impler.io/issues/new?assignees=&labels=&template=feature_request.md&title=">Request Feature</a>
   </p>
 </div>
 
@@ -74,23 +74,11 @@ To set up `impler.io` locally, you need the following things installed in your c
 3. `mongodb`
 
 Follow these steps to setup the project locally,
-1. Clone the repo, `git clone https://github.com/knovator/impler.io`.
+1. Clone the repo, `git clone https://github.com/implerhq/impler.io`.
 2. Install the dependencies, `pnpm install`.
 3. Do setups for projects by running, `pnpm setup:project`.
 4. Start the application, `pnpm start:dev`.
-5. Start interacting with API by visiting `http://localhost:3000/api` or see demo on `http://localhost:5173`.
-
-### Add Import Schema
-
-After doing setup, you can easily make call to the `impler` through **Swagger UI** provided at `http://localhost:3000/api`, 
-1. Create `project` by calling `/v1/project` API, and Copy `_id` from the response.
-2. Create `template` by calling `/v1/template/{projectId}` API, and Copy `_id` from the response.
-3. Update `columns` for template by calling `/v1/column/{templateId}` API.
-
-### See Demo
-
-If you're running `impler` locally, after [adding-schema](#add-import-schema) you can start interacting with import widget from `http://localhost:5173`.
-
+5. Go to web app, `http://localhost:4200`.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -124,22 +112,22 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Knovator - [@knovator](https://twitter.com/knovator)
+Implerhq - [@implerhq](https://www.linkedin.com/company/implerhq)
 
-Project Link: [https://github.com/knovator/impler.io](https://github.com/knovator/impler.io)
+Project Link: [https://github.com/implerhq/impler.io](https://github.com/implerhq/impler.io)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/knovator/impler.io.svg?style=for-the-badge
-[contributors-url]: https://github.com/knovator/impler.io/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/knovator/impler.io.svg?style=for-the-badge
-[forks-url]: https://github.com/knovator/impler.io/network/members
-[stars-shield]: https://img.shields.io/github/stars/knovator/impler.io.svg?style=for-the-badge
-[stars-url]: https://github.com/knovator/impler.io/stargazers
-[issues-shield]: https://img.shields.io/github/issues/knovator/impler.io.svg?style=for-the-badge
-[issues-url]: https://github.com/knovator/impler.io/issues
-[license-shield]: https://img.shields.io/github/license/knovator/impler.io.svg?style=for-the-badge
-[license-url]: https://github.com/knovator/impler.io/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/implerhq/impler.io.svg?style=for-the-badge
+[contributors-url]: https://github.com/implerhq/impler.io/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/implerhq/impler.io.svg?style=for-the-badge
+[forks-url]: https://github.com/implerhq/impler.io/network/members
+[stars-shield]: https://img.shields.io/github/stars/implerhq/impler.io.svg?style=for-the-badge
+[stars-url]: https://github.com/implerhq/impler.io/stargazers
+[issues-shield]: https://img.shields.io/github/issues/implerhq/impler.io.svg?style=for-the-badge
+[issues-url]: https://github.com/implerhq/impler.io/issues
+[license-shield]: https://img.shields.io/github/license/implerhq/impler.io.svg?style=for-the-badge
+[license-url]: https://github.com/implerhq/impler.io/blob/master/LICENSE.txt

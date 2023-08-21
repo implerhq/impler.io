@@ -39,3 +39,11 @@ export function paginateRecords(data: any[], page: number, limit: number): Pagin
     totalRecords: data.length,
   };
 }
+
+export function isDateString(date: string | number): boolean {
+  if (!date) return false;
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  return new Date(date) != 'Invalid Date' && !isNaN(new Date(date));
+}

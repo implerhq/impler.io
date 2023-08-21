@@ -7,10 +7,10 @@ const templateSchema = new Schema(
     name: {
       type: Schema.Types.String,
     },
-    code: {
+    callbackUrl: {
       type: Schema.Types.String,
     },
-    callbackUrl: {
+    authHeaderName: {
       type: Schema.Types.String,
     },
     chunkSize: {
@@ -23,6 +23,18 @@ const templateSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'Project',
       index: true,
+    },
+    totalUploads: {
+      type: Schema.Types.Number,
+      default: 0,
+    },
+    totalRecords: {
+      type: Schema.Types.Number,
+      default: 0,
+    },
+    totalInvalidRecords: {
+      type: Schema.Types.Number,
+      default: 0,
     },
   },
   { ...schemaOptions }

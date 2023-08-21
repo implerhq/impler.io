@@ -8,5 +8,5 @@ export class ValidRequestCommand extends BaseCommand {
 
   @IsString()
   @IsOptional()
-  template: string;
+  templateId: string;
 }

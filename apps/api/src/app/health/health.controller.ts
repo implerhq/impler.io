@@ -5,7 +5,7 @@ import { HealthCheck, HealthCheckService } from '@nestjs/terminus';
 import { version } from '../../../package.json';
 import { Defaults } from '@impler/shared';
 import { StorageService } from '@impler/shared/dist/services/storage';
-import { QueueService } from '@shared/storage/queue.service';
+import { QueueService } from '@shared/services/queue.service';
 
 @Controller('health-check')
 @ApiExcludeController()

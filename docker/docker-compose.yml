@@ -14,7 +14,7 @@ services:
       - 27017:27017
     restart: unless-stopped
   api:
-    image: "ghcr.io/knovator/impler/api:0.1.15"
+    image: "ghcr.io/implerhq/impler/api:0.7.1"
     depends_on:
       - mongodb
       - rabbitmq
@@ -22,20 +22,30 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV}
       PORT: ${API_PORT}
-      FRONT_BASE_URL: ${WIDGET_URL}
+      WIDGET_BASE_URL: ${WIDGET_BASE_URL}
+      WEB_BASE_URL: ${WEB_BASE_URL}
       MONGO_URL: ${MONGO_URL}
       S3_REGION: ${S3_REGION}
       S3_LOCAL_STACK: ${S3_LOCAL_STACK}
       S3_BUCKET_NAME: ${S3_BUCKET_NAME}
-      ACCESS_KEY: ${ACCESS_KEY}
+      JWT_SECRET: ${JWT_SECRET}
       SENTRY_DSN: ${SENTRY_DSN}
+      COOKIE_DOMAIN: ${COOKIE_DOMAIN}
       RABBITMQ_CONN_URL: ${RABBITMQ_CONN_URL}
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      GITHUB_OAUTH_CLIENT_ID: ${GITHUB_OAUTH_CLIENT_ID}
+      GITHUB_OAUTH_CLIENT_SECRET: ${GITHUB_OAUTH_CLIENT_SECRET}
+      GITHUB_OAUTH_REDIRECT: ${GITHUB_OAUTH_REDIRECT}
+      SES_REGION: ${SES_REGION}
+      SES_ACCESS_KEY_ID: ${SES_ACCESS_KEY_ID}
+      SES_SECRET_ACCESS_KEY: ${SES_SECRET_ACCESS_KEY}
+      EMAIL_FROM: ${EMAIL_FROM}
+      EMAIL_FROM_NAME: ${EMAIL_FROM_NAME}
     ports:
       - "3000:3000"
   queue-manager:
-    image: "ghcr.io/knovator/impler/queue-manager:0.1.15"
+    image: "ghcr.io/implerhq/impler/queue-manager:0.7.1"
     depends_on:
       - api
       - rabbitmq
@@ -50,7 +60,7 @@ services:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
   widget:
-    image: "ghcr.io/knovator/impler/widget:0.1.15"
+    image: "ghcr.io/implerhq/impler/widget:0.7.1"
     depends_on:
       - api
     container_name: widget
@@ -64,12 +74,25 @@ services:
   embed:
     depends_on:
       - widget
-    image: "ghcr.io/knovator/impler/embed:0.1.15"
+    image: "ghcr.io/implerhq/impler/embed:0.7.1"
     container_name: embed
     environment:
-      WIDGET_URL: ${WIDGET_URL}
+      WIDGET_URL: ${WIDGET_BASE_URL}
     ports:
       - 4701:4701
+  web:
+    depends_on:
+      - api
+    image: "ghcr.io/implerhq/impler/web:0.7.1"
+    container_name: web
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: ${API_ROOT_URL}
+      NEXT_PUBLIC_EMBED_URL: ${WIDGET_EMBED_PATH}
+      NEXT_PUBLIC_AMPLITUDE_ID: ${WEB_AMPLITUDE_ID}
+      NEXT_PUBLIC_GTM_ID: ${NEXT_PUBLIC_GTM_ID}
+      NEXT_PUBLIC_GOOGLE_ANALYTICS_ID: ${NEXT_PUBLIC_GOOGLE_ANALYTICS_ID}
+    ports:
+      - 4200:4200
   rabbitmq:
     image: rabbitmq:3-alpine
     container_name: 'rabbitmq'

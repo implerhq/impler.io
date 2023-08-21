@@ -7,8 +7,6 @@ export class ColumnEntity {
 
   alternateKeys: string[];
 
-  apiResponseKey?: string;
-
   isRequired: boolean;
 
   isUnique: boolean;

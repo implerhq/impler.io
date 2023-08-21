@@ -39,7 +39,7 @@ const Pagination = ({ limit, onLimitChange, dataLength, page, setPage, totalPage
           size="xs"
           radius={0}
           value={limit}
-          onChange={(e) => onLimitChange(Number(e.target.value))}
+          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onLimitChange(Number(e.target.value))}
           disabled={dataLength === variables.ZERO}
           classNames={{ input: classes.selectInput }}
         />

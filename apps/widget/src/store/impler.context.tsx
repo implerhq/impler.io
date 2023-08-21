@@ -7,7 +7,7 @@ const ImplerContext = createContext<IImplerStore | null>(null);
 
 const ImplerContextProvider = ({
   projectId,
-  template,
+  templateId,
   accessToken,
   authHeaderValue,
   extra,
@@ -18,7 +18,7 @@ const ImplerContextProvider = ({
     <ImplerContext.Provider
       value={{
         projectId,
-        template,
+        templateId,
         accessToken,
         authHeaderValue,
         extra,

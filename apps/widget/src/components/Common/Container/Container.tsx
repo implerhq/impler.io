@@ -2,6 +2,7 @@ import { useEffect, useState, PropsWithChildren } from 'react';
 import * as WebFont from 'webfontloader';
 import { useParams } from 'react-router-dom';
 import { Global } from '@emotion/react';
+import { useQueryClient } from '@tanstack/react-query';
 import { NotificationsProvider } from '@mantine/notifications';
 import { MantineProvider } from '@mantine/core';
 import { logAmplitudeEvent } from '@amplitude';
@@ -18,6 +19,7 @@ let api: ApiService;
 
 export function Container({ children }: PropsWithChildren<{}>) {
   if (!api) api = new ApiService(API_URL);
+  const queryClient = useQueryClient();
   const { projectId = '' } = useParams<{ projectId: string }>();
   const [showWidget, setShowWidget] = useState<boolean>(false);
   const [primaryPayload, setPrimaryPayload] = useState<IInitPayload>();
@@ -54,6 +56,8 @@ export function Container({ children }: PropsWithChildren<{}>) {
       refetch();
     }
     if (data && data.type === EventTypesEnum.SHOW_WIDGET) {
+      queryClient.resetQueries();
+      queryClient.invalidateQueries();
       logAmplitudeEvent('OPEN', { hasExtra: data.value.extra !== undefined });
       setShowWidget(true);
       setSecondaryPayload({ ...data.value, primaryColor: data.value.primaryColor || colors.primary });
@@ -91,6 +95,11 @@ export function Container({ children }: PropsWithChildren<{}>) {
             background: secondaryPayload.primaryColor,
             borderRadius: '10px',
           },
+          ...(secondaryPayload?.colorScheme && {
+            ':root': {
+              colorScheme: secondaryPayload.colorScheme,
+            },
+          }),
         }}
       />
       {primaryPayload ? (
@@ -112,11 +121,12 @@ export function Container({ children }: PropsWithChildren<{}>) {
         >
           <NotificationsProvider>
             <Provider
+              title={secondaryPayload?.title}
               // api
               api={api}
               // impler-context
               projectId={projectId}
-              template={secondaryPayload.template}
+              templateId={secondaryPayload.templateId}
               accessToken={primaryPayload.accessToken}
               authHeaderValue={secondaryPayload?.authHeaderValue}
               extra={secondaryPayload?.extra}

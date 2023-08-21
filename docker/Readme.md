@@ -16,7 +16,7 @@ Clone the Impler repo and enter the docker directory locally:
 
 ```sh
 # Get the code
-git clone --depth 1 https://github.com/knovator/impler.io
+git clone --depth 1 https://github.com/implerhq/impler.io
 
 # Go to the docker folder
 cd impler.io/docker
@@ -39,7 +39,7 @@ While we provide you with some example secrets for getting started, you should N
 
 Update the `.env` file with your own secrets. In particular, these are required:
 
-- `ACCESS_KEY`: used by the API as a header to authenticate `API` requests.
+- `JWT_SECRET`: used by `jsonwebtoken` to create and manage tokens.
 
 ## Configuration
 
@@ -52,4 +52,4 @@ We strongly recommend that you decouple your database before deploying.
 
 ## Next steps
 
-- Got a question? [Ask here](https://github.com/knovator/impler.io/discussions).
+- Got a question? [Ask here](https://github.com/implerhq/impler.io/discussions).

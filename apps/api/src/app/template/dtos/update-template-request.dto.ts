@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsNumber, IsNotEmpty, IsUrl } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsNotEmpty, IsUrl, ValidateIf } from 'class-validator';
 
 export class UpdateTemplateRequestDto {
   @ApiProperty({
@@ -13,9 +13,17 @@ export class UpdateTemplateRequestDto {
     description: 'Callback URL of the template, gets called when sending data to the application',
     nullable: false,
   })
-  @IsUrl()
   @IsOptional()
+  @ValidateIf((e) => e.callbackUrl !== '')
+  @IsUrl()
   callbackUrl?: string;
+
+  @ApiProperty({
+    description: 'Name of auth header to be sent to the application',
+  })
+  @IsString()
+  @IsOptional()
+  authHeaderName?: string;
 
   @ApiProperty({
     description: 'Size of data in rows that gets sent to the application',

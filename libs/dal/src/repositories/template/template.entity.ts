@@ -3,13 +3,19 @@ export class TemplateEntity {
 
   name: string;
 
-  code: string;
-
   callbackUrl: string;
+
+  authHeaderName: string;
 
   chunkSize: number;
 
   sampleFileUrl: string;
 
   _projectId: string;
+
+  totalUploads: number;
+
+  totalRecords: number;
+
+  totalInvalidRecords: number;
 }

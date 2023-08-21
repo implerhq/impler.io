@@ -1,9 +1,11 @@
 import { ProcessFileCachedData } from '@impler/shared';
 
 export interface ISendDataParameters {
-  data: ISendData;
+  data: Record<string, unknown>;
   url: string;
+  page: number;
   method: 'POST';
+  uploadId: string;
   headers?: Record<string, string>;
 }
 export interface IBuildSendDataParameters {
@@ -15,6 +17,8 @@ export interface IBuildSendDataParameters {
   uploadId: string;
   fileName: string;
   extra?: string;
+  recordFormat: string;
+  chunkFormat: string;
 }
 export interface IGetNextDataParameters extends ProcessFileCachedData {
   validData: any[];

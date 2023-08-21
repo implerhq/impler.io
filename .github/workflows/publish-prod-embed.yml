@@ -46,10 +46,10 @@ jobs:
       - name: Build, tag, and push image to Github Container Registry
         id: build-image
         env:
-          REGISTERY_OWNER: knovator
+          REGISTERY_OWNER: implerhq
           DOCKER_NAME: impler/embed
           IMAGE_TAG: ${{ github.sha }}
-          GH_ACTOR: knovator
+          GH_ACTOR: implerhq
           GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
         run: |
           echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin

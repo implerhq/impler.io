@@ -78,7 +78,7 @@ export function Phase3(props: IPhase3Props) {
           style={{
             height: tableWrapperDimensions.height,
           }}
-          headings={[{ key: 'index', title: '#', width: '4%' }, ...heaings]}
+          headings={heaings}
           data={reviewData}
           emptyDataText=""
         />

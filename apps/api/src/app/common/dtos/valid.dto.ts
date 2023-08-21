@@ -10,9 +10,9 @@ export class ValidRequestDto {
   projectId: string;
 
   @ApiProperty({
-    description: 'ID or Code of the template',
+    description: 'ID of the template',
   })
   @IsString()
   @IsOptional()
-  template?: string;
+  templateId?: string;
 }

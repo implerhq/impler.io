@@ -10,7 +10,7 @@
     ·
     <a href="https://discord.impler.io">Join Discord</a>
     ·
-    <a href="https://github.com/knovator/impler.io/issues/new">Report Bug</a>
+    <a href="https://github.com/implerhq/impler.io/issues/new">Report Bug</a>
   </p>
   
 ## ⭐️ Why
