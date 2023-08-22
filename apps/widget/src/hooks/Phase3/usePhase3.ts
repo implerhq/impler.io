@@ -83,7 +83,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     {
       onSuccess(data) {
         setUploadInfo(data);
-        getSignedUrl([data.invalidCSVDataFileUrl, `invalid-data-${uploadInfo._id}.csv`]);
+        getSignedUrl([data.invalidCSVDataFileUrl, `invalid-data-${uploadInfo._id}.xlsx`]);
       },
       onError(error: IErrorObject) {
         notifier.showError({ message: error.message, title: error.error });

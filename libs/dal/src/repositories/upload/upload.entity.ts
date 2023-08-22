@@ -11,8 +11,6 @@ export class UploadEntity {
 
   _invalidDataFileId: string;
 
-  _invalidCSVDataFileId: string;
-
   invalidCSVDataFileUrl: string;
 
   headings: string[];

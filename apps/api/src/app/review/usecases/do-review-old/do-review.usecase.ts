@@ -92,7 +92,7 @@ export class DoReview {
 
     const validFilePath = this.fileNameService.getValidDataFilePath(uploadId);
     const invalidFilePath = this.fileNameService.getInvalidDataFilePath(uploadId);
-    const invalidCsvDataFilePath = this.fileNameService.getInvalidCSVDataFilePath(uploadId);
+    const invalidCsvDataFilePath = this.fileNameService.getInvalidExcelDataFilePath(uploadId);
     const validDataStream = new Readable({
       read() {},
     });
@@ -330,16 +330,13 @@ export class DoReview {
   }) {
     const validDataFileName = this.fileNameService.getValidDataFileName();
     const invalidDataFileName = this.fileNameService.getInvalidDataFileName();
-    const invalidCsvFileName = this.fileNameService.getInvalidCSVDataFileName();
 
     const validDataFilePath = this.fileNameService.getValidDataFilePath(uploadId);
     const invalidDataFilePath = this.fileNameService.getInvalidDataFilePath(uploadId);
-    const invalidCsvFilePath = this.fileNameService.getInvalidCSVDataFilePath(uploadId);
-    const invalidCSVDataFileUrl = this.fileNameService.getInvalidCSVDataFileUrl(uploadId);
+    const invalidCSVDataFileUrl = this.fileNameService.getInvalidExcelDataFileUrl(uploadId);
 
     const validDataFile = await this.makeFileEntry(validDataFileName, validDataFilePath);
     const invalidDataFile = await this.makeFileEntry(invalidDataFileName, invalidDataFilePath);
-    const invalidCsvFile = await this.makeFileEntry(invalidCsvFileName, invalidCsvFilePath);
 
     await this.uploadRepository.update(
       { _id: uploadId },
@@ -347,7 +344,6 @@ export class DoReview {
         status: UploadStatusEnum.REVIEWING,
         _validDataFileId: validDataFile._id,
         _invalidDataFileId: invalidDataFile._id,
-        _invalidCSVDataFileId: invalidCsvFile._id,
         invalidCSVDataFileUrl,
         totalRecords,
         validRecords,
