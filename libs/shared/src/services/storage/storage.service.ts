@@ -18,7 +18,11 @@ export interface IFilePath {
 }
 
 export abstract class StorageService {
-  abstract uploadFile(key: string, file: Buffer | string, contentType: string): Promise<PutObjectCommandOutput>;
+  abstract uploadFile(
+    key: string,
+    file: Buffer | string | PassThrough,
+    contentType: string
+  ): Promise<PutObjectCommandOutput>;
   abstract getFileContent(key: string, encoding?: BufferEncoding): Promise<string>;
   abstract getFileStream(key: string): Promise<Readable>;
   abstract writeStream(key: string, stream: Readable, contentType: string): Upload;

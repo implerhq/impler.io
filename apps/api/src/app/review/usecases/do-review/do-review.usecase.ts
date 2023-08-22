@@ -1,7 +1,8 @@
 import * as fs from 'fs';
-import { PassThrough } from 'stream';
 import * as Papa from 'papaparse';
+import * as ExcelJS from 'exceljs';
 import addFormats from 'ajv-formats';
+import { PassThrough } from 'stream';
 import addKeywords from 'ajv-keywords';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import Ajv, { AnySchemaObject, ErrorObject, ValidateFunction } from 'ajv';
@@ -397,13 +398,20 @@ export class DoReview {
   }
 
   private getStreams({ uploadId, headings }: { uploadId: string; headings: string[] }) {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('data');
+    worksheet.columns = [
+      { header: 'Index', key: 'index' },
+      { header: 'Message', key: 'message' },
+      ...headings.map((heading) => ({ header: heading, key: heading })),
+    ];
+
     const validFilePath = this.fileNameService.getValidDataFilePath(uploadId);
     const invalidFilePath = this.fileNameService.getInvalidDataFilePath(uploadId);
-    const invalidCsvDataFilePath = this.fileNameService.getInvalidCSVDataFilePath(uploadId);
+    const invalidExcelDataFilePath = this.fileNameService.getInvalidExcelDataFilePath(uploadId);
 
     const invalidDataStream = new PassThrough();
     const validDataStream = new PassThrough();
-    const invalidCsvDataStream = new PassThrough();
 
     const validDataWriteStream = this.storageService.writeStream(
       validFilePath,
@@ -415,28 +423,23 @@ export class DoReview {
       invalidDataStream,
       FileMimeTypesEnum.JSON
     );
-    const invalidCsvDataWriteStream = this.storageService.writeStream(
-      invalidCsvDataFilePath,
-      invalidCsvDataStream,
-      FileMimeTypesEnum.CSV
-    );
-    invalidCsvDataStream.push(`"index","message","${headings.join('","')}\n`);
 
     invalidDataStream.push(`[`);
     validDataStream.push(`[`);
 
     return {
+      workbook,
+      worksheet,
+
       validFilePath,
       invalidFilePath,
-      invalidCsvDataFilePath,
+      invalidExcelDataFilePath,
 
       validDataStream,
       invalidDataStream,
-      invalidCsvDataStream,
 
       validDataWriteStream,
       invalidDataWriteStream,
-      invalidCsvDataWriteStream,
     };
   }
 
@@ -453,10 +456,12 @@ export class DoReview {
   }): Promise<string> {
     return new Promise(async (resolve, reject) => {
       const {
+        workbook,
+        worksheet,
+        invalidExcelDataFilePath,
+
         validDataStream,
-        invalidCsvDataStream,
         invalidDataStream,
-        invalidCsvDataWriteStream,
         invalidDataWriteStream,
         validDataWriteStream,
       } = this.getStreams({
@@ -479,7 +484,7 @@ export class DoReview {
           const record = results.data;
 
           if (totalRecords > 1) {
-            const recordObj = headings.reduce((acc, heading, index) => {
+            const recordObj: Record<string, unknown> = headings.reduce((acc, heading, index) => {
               acc[heading] = record[index];
 
               return acc;
@@ -495,7 +500,7 @@ export class DoReview {
                 record: recordObj,
               };
               invalidDataStream.push((invalidRecords === 0 ? '' : ',') + JSON.stringify(item));
-              invalidCsvDataStream.push(`"${totalRecords}","${message}","${record.join('","')}"\n`);
+              worksheet.addRow(Object.assign({ index: totalRecords, message }, recordObj)).commit();
               invalidRecords++;
             } else {
               item = {
@@ -514,11 +519,12 @@ export class DoReview {
 
           validDataStream.end();
           invalidDataStream.end();
-          invalidCsvDataStream.end();
 
           await invalidDataWriteStream.done();
           await validDataWriteStream.done();
-          await invalidCsvDataWriteStream.done();
+
+          const sheetBuffer = await workbook.xlsx.writeBuffer();
+          await this.storageService.uploadFile(invalidExcelDataFilePath, sheetBuffer as any, FileMimeTypesEnum.EXCELX);
 
           const invalidDataFilePath = await this.saveFileContents({
             uploadId,
@@ -638,16 +644,13 @@ export class DoReview {
   }) {
     const validDataFileName = this.fileNameService.getValidDataFileName();
     const invalidDataFileName = this.fileNameService.getInvalidDataFileName();
-    const invalidCsvFileName = this.fileNameService.getInvalidCSVDataFileName();
 
     const validDataFilePath = this.fileNameService.getValidDataFilePath(uploadId);
     const invalidDataFilePath = this.fileNameService.getInvalidDataFilePath(uploadId);
-    const invalidCsvFilePath = this.fileNameService.getInvalidCSVDataFilePath(uploadId);
-    const invalidCSVDataFileUrl = this.fileNameService.getInvalidCSVDataFileUrl(uploadId);
+    const invalidExcelDataFileUrl = this.fileNameService.getInvalidExcelDataFileUrl(uploadId);
 
     const validDataFile = await this.makeFileEntry(validDataFileName, validDataFilePath);
     const invalidDataFile = await this.makeFileEntry(invalidDataFileName, invalidDataFilePath);
-    const invalidCsvFile = await this.makeFileEntry(invalidCsvFileName, invalidCsvFilePath);
 
     await this.uploadRepository.update(
       { _id: uploadId },
@@ -655,8 +658,7 @@ export class DoReview {
         status: UploadStatusEnum.REVIEWING,
         _validDataFileId: validDataFile._id,
         _invalidDataFileId: invalidDataFile._id,
-        _invalidCSVDataFileId: invalidCsvFile._id,
-        invalidCSVDataFileUrl,
+        invalidCSVDataFileUrl: invalidExcelDataFileUrl,
         totalRecords,
         validRecords,
         invalidRecords,
@@ -679,12 +681,14 @@ export class DoReview {
   }): Promise<string> {
     return new Promise(async (resolve) => {
       const {
+        workbook,
+        worksheet,
+        invalidExcelDataFilePath,
+
+        validDataStream,
+        invalidDataStream,
         invalidDataWriteStream,
         validDataWriteStream,
-        invalidCsvDataWriteStream,
-        invalidDataStream,
-        invalidCsvDataStream,
-        validDataStream,
       } = this.getStreams({
         uploadId,
         headings,
@@ -714,7 +718,7 @@ export class DoReview {
             } else {
               message = Object.values(item.errors).join(', ');
               invalidDataStream.push((invalidRecords === 0 ? '' : ',') + JSON.stringify(item));
-              invalidCsvDataStream.push(`"${totalRecords}","${message}","${Object.values(item.record).join('","')}"\n`);
+              worksheet.addRow(Object.assign({ index: totalRecords, message }, item.record)).commit();
               invalidRecords++;
             }
           });
@@ -727,11 +731,12 @@ export class DoReview {
 
       validDataStream.end();
       invalidDataStream.end();
-      invalidCsvDataStream.end();
 
       await invalidDataWriteStream.done();
       await validDataWriteStream.done();
-      await invalidCsvDataWriteStream.done();
+
+      const sheetBuffer = await workbook.xlsx.writeBuffer();
+      await this.storageService.uploadFile(invalidExcelDataFilePath, sheetBuffer as any, FileMimeTypesEnum.EXCELX);
 
       const invalidDataFilePath = await this.saveFileContents({
         uploadId,

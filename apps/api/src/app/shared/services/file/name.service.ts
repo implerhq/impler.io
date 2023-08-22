@@ -40,14 +40,14 @@ export class FileNameService {
   getInvalidDataFilePath(uploadId: string): string {
     return `${uploadId}/${this.getInvalidDataFileName()}`;
   }
-  getInvalidCSVDataFileName(): string {
-    return 'invalid-data.csv';
+  getInvalidExcelDataFileName(): string {
+    return 'invalid-data.xlsx';
   }
-  getInvalidCSVDataFilePath(uploadId: string): string {
-    return `${uploadId}/${this.getInvalidCSVDataFileName()}`;
+  getInvalidExcelDataFilePath(uploadId: string): string {
+    return `${uploadId}/${this.getInvalidExcelDataFileName()}`;
   }
-  getInvalidCSVDataFileUrl(uploadId: string): string {
-    const path = this.getInvalidCSVDataFilePath(uploadId);
+  getInvalidExcelDataFileUrl(uploadId: string): string {
+    const path = this.getInvalidExcelDataFilePath(uploadId);
     const origin = this.getURLOrigin();
 
     return [origin, process.env.S3_BUCKET_NAME, path].join('/');

@@ -5,7 +5,6 @@ export interface IUpload {
   _allDataFileId: string;
   _validDataFileId: string;
   _invalidDataFileId: string;
-  _invalidCSVDataFileId: string;
   invalidCSVDataFileUrl: string;
   headings: string[];
   uploadedDate: Date;
