@@ -3,7 +3,6 @@ export const CONSTANTS = {
   AUTH_COOKIE_NAME: 'authentication',
   AUTHENTICATION_ERROR_CODE: 'AuthenticationError',
   PROFILE_STORAGE_NAME: 'profile',
-  EMBED_URL: 'https://embed.impler.io/embed.umd.min.js',
   REACT_DOCUMENTATION_URL: 'https://docs.impler.io/widget/react-component#props',
 };
 
