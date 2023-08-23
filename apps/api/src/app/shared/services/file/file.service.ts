@@ -10,11 +10,19 @@ export class ExcelFileService {
     return new Promise(async (resolve) => {
       const workbook = new ExcelJS.Workbook();
       await workbook.xlsx.load(file.buffer);
-      workbook.csv.writeBuffer().then((buffer) => {
-        resolve(buffer.toString());
+      workbook.csv
+        .writeBuffer({
+          includeEmptyRows: true,
+          formatterOptions: {
+            escape: '',
+            headers: true,
+          },
+        })
+        .then((buffer) => {
+          resolve(buffer.toString());
 
-        return '';
-      });
+          return '';
+        });
     });
   }
   formatName(name: string): string {
