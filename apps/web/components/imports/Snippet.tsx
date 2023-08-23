@@ -1,3 +1,4 @@
+import getConfig from 'next/config';
 import { Prism } from '@mantine/prism';
 import { Accordion, Code, Text, Title, useMantineColorScheme } from '@mantine/core';
 
@@ -8,6 +9,8 @@ interface SnippetProps {
   templateId: string;
   accessToken?: string;
 }
+
+const { publicRuntimeConfig } = getConfig();
 
 export function Snippet({ projectId, templateId, accessToken }: SnippetProps) {
   const { colorScheme } = useMantineColorScheme();
@@ -25,7 +28,8 @@ export function Snippet({ projectId, templateId, accessToken }: SnippetProps) {
             </Title>
           </Accordion.Control>
           <Accordion.Panel>
-            <Prism language="markup">{`<script type="text/javascript" src="${CONSTANTS.EMBED_URL}" async></script>`}</Prism>
+            {/* eslint-disable-next-line max-len */}
+            <Prism language="markup">{`<script type="text/javascript" src="${publicRuntimeConfig.NEXT_PUBLIC_EMBED_URL}" async></script>`}</Prism>
           </Accordion.Panel>
         </Accordion.Item>
 
