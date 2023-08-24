@@ -233,7 +233,7 @@ export class DoReview {
       return acc;
     }, {});
     const properties: Record<string, unknown> = mappings.reduce((acc, mapping) => {
-      acc[mapping.columnHeading] = this.getProperty(formattedColumns[mapping.column._columnId]);
+      acc[mapping.column.key] = this.getProperty(formattedColumns[mapping.column._columnId]);
 
       return acc;
     }, {});
@@ -246,7 +246,7 @@ export class DoReview {
     // setting uniqueItems to empty set to avoid error
     mappings.forEach((mapping) => {
       if (formattedColumns[mapping.column._columnId].isUnique) {
-        uniqueItems[mapping.columnHeading] = new Set();
+        uniqueItems[mapping.column.key] = new Set();
       }
     });
 
