@@ -12,6 +12,13 @@ export class ExcelFileService {
       await workbook.xlsx.load(file.buffer);
       workbook.csv
         .writeBuffer({
+          map(value) {
+            if (typeof value === 'object' && value && value.text) {
+              return value.text;
+            }
+
+            return value;
+          },
           includeEmptyRows: true,
           formatterOptions: {
             escape: '',
