@@ -1,4 +1,4 @@
-import { TEXTS } from '@config';
+import { TEXTS, variables } from '@config';
 import { Select } from '@ui/Select';
 import { Button } from '@ui/Button';
 import { Dropzone } from '@ui/Dropzone';
@@ -81,9 +81,8 @@ export function Phase1(props: IPhase1Props) {
               });
             }}
             className={classes.dropzone}
-            // eslint-disable-next-line no-magic-numbers
             onDrop={(selectedFile) => {
-              field.onChange(selectedFile[0]);
+              field.onChange(selectedFile[variables.baseIndex]);
               setError('file', {});
             }}
             onClear={() => field.onChange(undefined)}
