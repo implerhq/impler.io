@@ -23,6 +23,7 @@ export function Phase1(props: IPhase1Props) {
     control,
     templates,
     onDownload,
+    setError,
     isUploadLoading,
     onTemplateChange,
     showSelectTemplate,
@@ -34,7 +35,7 @@ export function Phase1(props: IPhase1Props) {
 
   return (
     <>
-      <LoadingOverlay visible={!isInitialDataLoaded || isUploadLoading} />
+      <LoadingOverlay visible={!isInitialDataLoaded} />
       <Group className={classes.templateContainer} spacing="lg" noWrap>
         {showSelectTemplate && (
           <Controller
@@ -72,9 +73,19 @@ export function Phase1(props: IPhase1Props) {
         }}
         render={({ field, fieldState }) => (
           <Dropzone
+            loading={isUploadLoading}
+            onReject={() => {
+              setError('file', {
+                message: `File type not supported! Please select a .csv or .xlsx file.`,
+                type: 'manual',
+              });
+            }}
             className={classes.dropzone}
             // eslint-disable-next-line no-magic-numbers
-            onDrop={(selectedFile) => field.onChange(selectedFile[0])}
+            onDrop={(selectedFile) => {
+              field.onChange(selectedFile[0]);
+              setError('file', {});
+            }}
             onClear={() => field.onChange(undefined)}
             title={TEXTS.PHASE1.SELECT_FILE}
             file={field.value}

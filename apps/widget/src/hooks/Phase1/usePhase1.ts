@@ -75,6 +75,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     trigger,
     getValues,
     setValue,
+    setError,
     handleSubmit,
     formState: { errors },
   } = useForm<IFormvalues>();
@@ -135,6 +136,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
   return {
     control,
     errors,
+    setError,
     register,
     templates,
     onDownload,

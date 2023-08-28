@@ -14,7 +14,7 @@ export const TEXTS = {
   DROPZONE: {
     TITLE: 'Drop your file here or ',
     BROWSE: 'Browse',
-    SUBTITLE: 'Select any .csv, .xlx or .xlsx file',
+    SUBTITLE: 'Bring any .csv or .xlsx file here to start Import',
     FILE_SELECTION: 'File selected successfully',
   },
   PHASE1: {
