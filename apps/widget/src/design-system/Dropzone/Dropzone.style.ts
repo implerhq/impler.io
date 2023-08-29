@@ -26,11 +26,14 @@ export const getIconStyles = (theme) => ({
 });
 
 export const getCheckIconStyles = (theme) => ({
-  height: 60,
+  height: 40,
   backgroundColor: colors.success,
   borderRadius: '50%',
   color: 'white',
   display: 'block',
+  [`@media (min-width: ${theme.breakpoints.md}px)`]: {
+    height: 50,
+  },
 });
 
 export const getWrapperStyles = (theme) => ({

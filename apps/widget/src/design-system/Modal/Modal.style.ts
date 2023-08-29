@@ -19,8 +19,16 @@ export const getModalBodyStyles = (theme: MantineTheme): React.CSSProperties => 
   flexGrow: 1,
 });
 
+export const getTitleStyles = (theme: MantineTheme) => ({
+  visibility: 'visible',
+  [`@media (min-width: ${theme.breakpoints.md}px)`]: {
+    visibility: 'hidden',
+  },
+});
+
 export default createStyles((theme: MantineTheme, params, getRef): Record<string, any> => {
   return {
+    title: getTitleStyles(theme),
     header: getHeaderStyles(theme),
     modal: getModalStyles(theme),
     body: getModalBodyStyles(theme),

@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
+import { createStyles } from '@mantine/core';
 import { colors } from '../../config/colors.config';
-import { createStyles, MantineTheme } from '@mantine/core';
-import { IStepperProps } from './Stepper';
 
-export const getSeparatorStyles = (theme: MantineTheme) => ({
+export const getSeparatorStyles = () => ({
   backgroundColor: 'none',
   flex: 0,
   marginLeft: 7,
@@ -11,19 +9,20 @@ export const getSeparatorStyles = (theme: MantineTheme) => ({
   color: colors.lightGray,
 });
 
-export const getStepLabelStyles = (theme: MantineTheme) => ({
+export const getStepLabelStyles = () => ({
   color: colors.darkDeem,
   fontWeight: 600,
 });
 
-export const getStepBodyStyles = (theme: MantineTheme) => ({
-  marginLeft: '5px',
-});
-
-export default createStyles((theme: MantineTheme, params: IStepperProps, getRef): Record<string, any> => {
+export default createStyles((): Record<string, any> => {
   return {
-    separator: getSeparatorStyles(theme),
-    stepLabel: getStepLabelStyles(theme),
-    stepBody: getStepBodyStyles(theme),
+    steps: {
+      flexWrap: 'wrap',
+    },
+    stepBody: {
+      marginLeft: '5px',
+    },
+    separator: getSeparatorStyles(),
+    stepLabel: getStepLabelStyles(),
   };
 });

@@ -43,7 +43,7 @@ export function Dropzone(props: IDropzoneProps) {
             <Group position="center" mb="sm">
               <CheckIcon className={classes.checkIcon} />
             </Group>
-            <Text size="xl" mb="sm" align="center">
+            <Text size="lg" mb="sm" align="center">
               {TEXTS.DROPZONE.FILE_SELECTION}
             </Text>
             {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
