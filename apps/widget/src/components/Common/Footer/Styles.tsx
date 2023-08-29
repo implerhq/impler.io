@@ -3,7 +3,11 @@ import { colors } from '@config';
 import { createStyles, MantineTheme } from '@mantine/core';
 
 export const getWrapperStyles = (theme: MantineTheme): React.CSSProperties => ({
+  flexDirection: 'column-reverse',
   justifyContent: 'space-between',
+  [`@media (min-width: ${theme.breakpoints.md}px)`]: {
+    flexDirection: 'row',
+  },
 });
 
 export const getPoweredByLinkStyles = (theme: MantineTheme): React.CSSProperties => ({

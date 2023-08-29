@@ -1,16 +1,17 @@
 import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+
 import { Modal } from '@ui/Modal';
 import { ParentWindow } from '@util';
-import { useAppState } from '@store/app.context';
-import { useQueryClient } from '@tanstack/react-query';
-import { PhasesEum, PromptModalTypesEnum } from '@types';
+import { IUpload } from '@impler/shared';
 import { Phase1 } from './Phases/Phase1';
 import { Phase2 } from './Phases/Phase2';
 import { Phase3 } from './Phases/Phase3';
 import { Phase4 } from './Phases/Phase4';
+import { useAppState } from '@store/app.context';
 import { PromptModal } from './Phases/PromptModal';
 import { Layout } from 'components/Common/Layout';
-import { IUpload } from '@impler/shared';
+import { PhasesEum, PromptModalTypesEnum } from '@types';
 import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
 
 export function Widget() {
@@ -62,7 +63,7 @@ export function Widget() {
   };
 
   return (
-    <Modal opened onClose={onClose}>
+    <Modal title={title || templateInfo?.name} opened onClose={onClose}>
       <Layout active={phase} title={title || templateInfo?.name}>
         {PhaseView[phase]}
         <PromptModal

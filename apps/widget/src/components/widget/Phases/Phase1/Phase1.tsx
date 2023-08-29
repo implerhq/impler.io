@@ -59,7 +59,7 @@ export function Phase1(props: IPhase1Props) {
           />
         )}
         <div className={classes.download}>
-          <Button loading={isDownloadInProgress} size="sm" leftIcon={<Download />} onClick={onDownload}>
+          <Button loading={isDownloadInProgress} leftIcon={<Download />} onClick={onDownload}>
             {TEXTS.PHASE1.DOWNLOAD_SAMPLE}
           </Button>
         </div>

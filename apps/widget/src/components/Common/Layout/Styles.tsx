@@ -1,10 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
 import { createStyles, MantineTheme } from '@mantine/core';
 
-export const getRootStyles = (theme: MantineTheme): React.CSSProperties => ({
-  paddingRight: 24,
-  paddingLeft: 24,
-  paddingBottom: 24,
+export const getRootStyles = (theme: MantineTheme) => ({
+  paddingBottom: 16,
+  '@media (min-width: 768px)': {
+    paddingRight: 24,
+    paddingLeft: 24,
+    paddingBottom: 24,
+  },
   border: '1px solid transparent',
   display: 'flex',
   flexDirection: 'column',

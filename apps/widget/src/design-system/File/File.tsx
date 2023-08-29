@@ -25,9 +25,14 @@ export function File(props: IFile) {
     <Group className={classes.root}>
       <Group spacing="xs">
         <FileIcon className={classes.fileIcon} fill={colors.darkDeem} />
-        <Text size="sm" inline className={classes.nameText}>
-          {name}
-        </Text>
+        <Group spacing={0} noWrap>
+          <Text size="sm" inline className={classes.nameText}>
+            {name.split('.')[0]}
+          </Text>
+          <Text size="sm" inline className={classes.extensionText}>
+            .{name.split('.').pop()}
+          </Text>
+        </Group>
       </Group>
       <Group spacing="xs">
         <Text size="sm" inline className={classes.sizeText}>

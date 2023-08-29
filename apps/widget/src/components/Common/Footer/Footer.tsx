@@ -80,13 +80,13 @@ export function Footer(props: IFooterProps) {
   };
 
   return (
-    <Group className={classes.wrapper}>
+    <Group className={classes.wrapper} spacing="xs">
       <a className={classes.poweredBy} href={variables.implerWebsite} target="_blank" rel="noopener noreferrer">
         <Text size="xs">
           Powered by <img src="/logo-full.png" className={classes.implerImage} />
         </Text>
       </a>
-      <Group spacing="md">{FooterActions[active]}</Group>
+      <Group spacing="xs">{FooterActions[active]}</Group>
     </Group>
   );
 }
