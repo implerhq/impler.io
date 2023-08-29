@@ -20,6 +20,7 @@ import { AppLayout } from '@layouts/AppLayout';
 import { OneIcon } from '@assets/icons/One.icon';
 import { TwoIcon } from '@assets/icons/Two.icon';
 import { EditIcon } from '@assets/icons/Edit.icon';
+import { FiveIcon } from '@assets/icons/Five.icon';
 import { FourIcon } from '@assets/icons/Four.icon';
 import { ThreeIcon } from '@assets/icons/Three.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
@@ -88,24 +89,25 @@ export default function ImportDetails({ template }: ImportDetailProps) {
             content: <Schema templateId={template._id} />,
           },
           {
+            value: 'destination',
+            title: 'Destination',
+            icon: <TwoIcon size="xs" />,
+            content: <Destination template={template} accessToken={profile?.accessToken} />,
+          },
+          {
             value: 'snippet',
             title: 'Snippet',
-            icon: <TwoIcon size="xs" />,
+            icon: <ThreeIcon size="xs" />,
             content: (
               <Snippet templateId={template._id} projectId={template._projectId} accessToken={profile?.accessToken} />
             ),
-          },
-          {
-            value: 'destination',
-            title: 'Destination',
-            icon: <ThreeIcon size="xs" />,
-            content: <Destination template={template} accessToken={profile?.accessToken} />,
           },
           ...(publicRuntimeConfig.NEXT_PUBLIC_CUSTOM_VALIDATION_ENABLED === 'true'
             ? [
                 {
                   value: 'validator',
                   title: 'Validator',
+                  icon: <FourIcon size="xs" />,
                   content: <Validator templateId={template._id} />,
                 },
               ]
@@ -113,7 +115,12 @@ export default function ImportDetails({ template }: ImportDetailProps) {
           {
             value: 'output',
             title: 'Output',
-            icon: <FourIcon size="xs" />,
+            icon:
+              publicRuntimeConfig.NEXT_PUBLIC_CUSTOM_VALIDATION_ENABLED === 'true' ? (
+                <FiveIcon size="xs" />
+              ) : (
+                <FourIcon size="xs" />
+              ),
             content: <Editor templateId={template._id} />,
           },
         ]}
