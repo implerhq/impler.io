@@ -30,7 +30,7 @@ export const MappingItem = React.forwardRef<HTMLInputElement, IMappingItem>((pro
     value,
     onChange,
     placeholder = 'Select field',
-    size = 'sm',
+    size = 'xs',
     searchable = true,
     mappingFailedText = 'Not Mapped',
     mappingSucceedText = 'Mapping Successfull',
@@ -46,8 +46,8 @@ export const MappingItem = React.forwardRef<HTMLInputElement, IMappingItem>((pro
 
   return (
     <Group className={classes.root} noWrap>
-      <Group className={classes.selectionRoot} align="stretch" ref={groupRef} noWrap>
-        <Text size={size} className={classes.heading}>
+      <Group className={classes.selectionRoot} align="stretch" noWrap>
+        <Text size={size} className={classes.heading} ref={groupRef}>
           {heading}
           {required ? <span className={classes.required}>&nbsp;*</span> : null}
         </Text>
@@ -58,7 +58,6 @@ export const MappingItem = React.forwardRef<HTMLInputElement, IMappingItem>((pro
           classNames={{ root: classes.selectRoot, input: classes.select }}
           rightSection={<ChevronDown />}
           clearable
-          size={size}
           searchable={searchable}
           dropdownComponent="div"
           onChange={(selectedValue) => onChange && onChange(selectedValue)}

@@ -13,6 +13,9 @@ export const getTableStyles = (theme: MantineTheme) => ({
     'z-index': 1,
     background: colors.gray,
   },
+  'tbody tr td': {
+    padding: `7px 10px`,
+  },
 });
 
 export const getHeadingStyles = (theme: MantineTheme): React.CSSProperties => ({
@@ -21,6 +24,9 @@ export const getHeadingStyles = (theme: MantineTheme): React.CSSProperties => ({
 
 export const getInvalidColumnStyles = (theme: MantineTheme): React.CSSProperties => ({
   backgroundColor: colors.lightDanger,
+  display: 'flex',
+  gap: 2,
+  justifyContent: 'space-between',
 });
 
 export default createStyles((theme: MantineTheme, params, getRef): Record<string, any> => {

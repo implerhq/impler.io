@@ -16,7 +16,7 @@ export interface IStepperProps {
 
 export function Stepper(props: IStepperProps) {
   const { active, steps, primaryColor } = props;
-  const { classes } = useStyles(props);
+  const { classes } = useStyles();
 
   const getColor = (index: number): DefaultMantineColor => {
     if (index == active) {

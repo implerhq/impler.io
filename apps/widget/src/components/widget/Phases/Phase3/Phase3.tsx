@@ -63,12 +63,14 @@ export function Phase3(props: IPhase3Props) {
   return (
     <>
       <LoadingOverlay visible={!isInitialDataLoaded || isConfirmReviewLoading} />
-      <Group className={classes.textContainer} align="center">
+      <Group className={classes.textContainer} align="center" spacing="xs">
         <Group align="center" spacing="xs">
           <Warning fill={colors.red} className={classes.warningIcon} />
-          <Text color={colors.red}>{TEXTS.PHASE3.INVALID_DATA_INFO}</Text>
+          <Text size="xs" inline color={colors.red} style={{ flex: 1 }}>
+            {TEXTS.PHASE3.INVALID_DATA_INFO}
+          </Text>
         </Group>
-        <Button size="sm" leftIcon={<Download />} onClick={onExportData}>
+        <Button leftIcon={<Download />} onClick={onExportData}>
           {TEXTS.PHASE3.EXPORT_DATA}
         </Button>
       </Group>
