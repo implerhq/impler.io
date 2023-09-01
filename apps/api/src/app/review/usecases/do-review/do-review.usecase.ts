@@ -372,29 +372,37 @@ export class DoReview {
   }
 
   private async executeBatchInSandbox(batchItem: IBatchItem, sandboxManager: SManager, onBatchInitialize: string) {
-    const sandbox = await sandboxManager.obtainSandbox(batchItem.uploadId);
-    sandbox.clean();
-    const sandboxPath = sandbox.getSandboxFolderPath();
+    try {
+      const sandbox = await sandboxManager.obtainSandbox(batchItem.uploadId);
+      sandbox.clean();
+      const sandboxPath = sandbox.getSandboxFolderPath();
 
-    fs.writeFileSync(
-      `${sandboxPath}/input.json`,
-      JSON.stringify({
-        ...batchItem,
-        sandboxPath: sandboxPath,
-        chunkSize: batchLimit,
-        /*
-         * fileName: "asdf",
-         * extra: "",
-         * totalRecords: "",
-         */
-      })
-    );
-    fs.writeFileSync(`${sandboxPath}/code.js`, onBatchInitialize);
-    fs.writeFileSync(`${sandboxPath}/main.js`, mainCode);
+      if (!fs.existsSync(sandboxPath)) {
+        await sandbox.init();
+      }
 
-    const nodeExecutablePath = process.execPath;
+      fs.writeFileSync(
+        `${sandboxPath}/input.json`,
+        JSON.stringify({
+          ...batchItem,
+          sandboxPath: sandboxPath,
+          chunkSize: batchLimit,
+          /*
+           * fileName: "asdf",
+           * extra: "",
+           * totalRecords: "",
+           */
+        })
+      );
+      fs.writeFileSync(`${sandboxPath}/code.js`, onBatchInitialize);
+      fs.writeFileSync(`${sandboxPath}/main.js`, mainCode);
 
-    return await sandbox.runCommandLine(`${nodeExecutablePath} main.js`);
+      const nodeExecutablePath = process.execPath;
+
+      return await sandbox.runCommandLine(`${nodeExecutablePath} main.js`);
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 
   private getStreams({ uploadId, headings }: { uploadId: string; headings: string[] }) {
@@ -704,6 +712,7 @@ export class DoReview {
       let processOutput, message: string;
       for (const processData of processedArray) {
         if (
+          processData &&
           processData.output &&
           typeof (processData.output as any)?.output === 'object' &&
           !Array.isArray((processData.output as any)?.output)
@@ -723,7 +732,7 @@ export class DoReview {
             }
           });
         } else {
-          console.log(processData.standardOutput, processData.standardError);
+          console.log(processData);
         }
       }
       validDataStream.push(']');

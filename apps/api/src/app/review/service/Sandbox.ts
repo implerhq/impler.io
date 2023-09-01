@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import { ExecOptions } from 'node:child_process';
 import { Injectable } from '@nestjs/common';
 import { arch, cwd } from 'node:process';
 import { exec } from 'node:child_process';
@@ -37,6 +38,10 @@ export type ExecuteIsolateResult = {
 const executionMode: ExecutionModeEnum = (process.env.EXECUTION_MODE ||
   ExecutionModeEnum.UNSANDBOXED) as ExecutionModeEnum;
 
+type PnpmCoreCommand = 'add' | 'init' | 'link';
+type PnpmDependencyCommand = 'tsc';
+type PnpmCommand = PnpmCoreCommand | PnpmDependencyCommand;
+
 export class Sandbox {
   private static readonly isolateExecutableName = getIsolateExecutableName();
   private static readonly sandboxRunTimeSeconds = 10;
@@ -63,6 +68,40 @@ export class Sandbox {
     this.cached = request.cached;
     this.resourceId = request.resourceId;
     this.lastUsed = request.lastUsed;
+  }
+
+  async init() {
+    if (executionMode === ExecutionModeEnum.UNSANDBOXED) {
+      const sandboxFolderPath = this.getSandboxFolderPath();
+      fs.mkdirSync(sandboxFolderPath, { recursive: true });
+    } else {
+      await Sandbox.runIsolate('--box-id=' + this.boxId + ' --init');
+      await this.executePnpm(this.getSandboxFolderPath(), 'init');
+      await this.executePnpm(this.getSandboxFolderPath(), 'add', 'axios', '--save');
+    }
+  }
+
+  async executePnpm(directory: string, command: PnpmCommand, ...args: string[]) {
+    return new Promise((resolve, reject) => {
+      const fullCommand = `npx pnpm ${command} ${args.join(' ')}`;
+
+      const execOptions: ExecOptions = {
+        cwd: directory,
+      };
+      exec(fullCommand, execOptions, (error, stdoutput, stderr) => {
+        if (error) {
+          reject(error);
+
+          return;
+        }
+
+        if (stderr) {
+          reject(error);
+        }
+
+        resolve({ verdict: EngineResponseStatusEnum.OK });
+      });
+    });
   }
 
   getSandboxFolderPath(): string {
@@ -162,7 +201,14 @@ export class Sandbox {
   }
 
   async clean(): Promise<void> {
-    const filesToDelete = ['_standardOutput.txt', '_standardError.txt', 'output.json', 'meta.txt'];
+    const filesToDelete = [
+      '_standardOutput.txt',
+      '_standardError.txt',
+      'output.json',
+      'input.json',
+      'code.js',
+      'meta.txt',
+    ];
     filesToDelete.map((file: string) => {
       const filePath = this.getSandboxFilePath(file);
       if (fs.existsSync(filePath)) {
@@ -224,54 +270,42 @@ export class Sandbox {
     } else {
       try {
         const metaFile = this.getSandboxFilePath('meta.txt');
-        /*
-         *
-         * await Sandbox.runIsolate(
-         *   `--dir=/etc/:rw --dir=/opt/:rw --dir=/usr/bin --stdout=_standardOutput.txt --stderr=_standardError.txt --run  --box-id=${this.boxId} --share-net --processes --share-net --run ` +
-         *     commandLine
-         * );
-         */
+        const etcDir = path.resolve('./src/config/etc/');
 
         await Sandbox.runIsolate(
-          `--dir=/etc/:rw --dir=/opt/:rw --dir=/usr/bin --share-net --box-id=` +
+          `--dir=/usr/bin/ --dir=/etc/=${etcDir} --share-net --box-id=` +
             this.boxId +
-            ` --processes --wall-time=${Sandbox.sandboxRunTimeSeconds} --share-net --meta=` +
+            ` --processes --wall-time=${Sandbox.sandboxRunTimeSeconds} --meta=` +
             metaFile +
             ' --stdout=_standardOutput.txt' +
             ' --stderr=_standardError.txt --run ' +
-            ' --env=HOME=/tmp/ ' +
-            ' --env=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin ' +
-            ` --env=NODE_PATH=${this.getSandboxFolderPath()} ` +
+            ' --env=HOME=/tmp/' +
+            " --env=NODE_OPTIONS='--enable-source-maps' " +
             commandLine
         );
+
+        let timeInSeconds = 0;
+        if (this.checkFileExists(this.getSandboxFilePath('meta.txt'))) {
+          const metaResult = await this.parseMetaFile();
+          timeInSeconds = Number.parseFloat(metaResult.time as string);
+        }
+
+        const isOutputFileExists = fs.existsSync(this.getSandboxFilePath('output.json'));
+
+        const result = {
+          timeInSeconds,
+          verdict: EngineResponseStatusEnum.OK,
+          output: isOutputFileExists ? await this.parseFunctionOutput() : '',
+          standardOutput: fs.readFileSync(this.getSandboxFilePath('_standardOutput.txt'), {
+            encoding: 'utf-8',
+          }),
+          standardError: fs.readFileSync(this.getSandboxFilePath('_standardError.txt'), { encoding: 'utf-8' }),
+        };
+
+        return result;
       } catch (e) {
-        console.log('error occured', e);
+        throw new Error(e.message);
       }
-
-      let timeInSeconds = 0;
-      if (this.checkFileExists(this.getSandboxFilePath('meta.txt'))) {
-        const metaResult = await this.parseMetaFile();
-        timeInSeconds = Number.parseFloat(metaResult.time as string);
-      }
-
-      /*
-       * const engineResponse = await this.parseFunctionOutput();
-       * const output = engineResponse.output;
-       * const verdict = engineResponse.status;
-       */
-      const isOutputFileExists = fs.existsSync(this.getSandboxFilePath('output.json'));
-
-      const result = {
-        timeInSeconds,
-        verdict: EngineResponseStatusEnum.OK,
-        output: isOutputFileExists ? await this.parseFunctionOutput() : '',
-        standardOutput: fs.readFileSync(this.getSandboxFilePath('_standardOutput.txt'), {
-          encoding: 'utf-8',
-        }),
-        standardError: fs.readFileSync(this.getSandboxFilePath('_standardError.txt'), { encoding: 'utf-8' }),
-      };
-
-      return result;
     }
   }
 
@@ -308,7 +342,6 @@ export class SManager {
           lastUsed: 0,
         })
       );
-      fs.mkdirSync(this.sanboxes.get(boxId).getSandboxFolderPath(), { recursive: true });
     }
     SManager._instance = this;
   }

@@ -13,7 +13,10 @@ services:
     ports:
       - 27017:27017
     restart: unless-stopped
+    networks:
+      - impler
   api:
+    privileged: true
     image: "ghcr.io/implerhq/impler/api:0.8.0"
     depends_on:
       - mongodb
@@ -44,6 +47,8 @@ services:
       EMAIL_FROM_NAME: ${EMAIL_FROM_NAME}
     ports:
       - "3000:3000"
+    networks:
+      - impler
   queue-manager:
     image: "ghcr.io/implerhq/impler/queue-manager:0.8.0"
     depends_on:
@@ -59,6 +64,8 @@ services:
       S3_BUCKET_NAME: ${S3_BUCKET_NAME}
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    networks:
+      - impler
   widget:
     image: "ghcr.io/implerhq/impler/widget:0.8.0"
     depends_on:
@@ -71,6 +78,8 @@ services:
       REACT_APP_AMPLITUDE_ID: ${AMPLITUDE_ID}
     ports:
       - 3500:3500
+    networks:
+      - impler
   embed:
     depends_on:
       - widget
@@ -80,6 +89,8 @@ services:
       WIDGET_URL: ${WIDGET_BASE_URL}
     ports:
       - 4701:4701
+    networks:
+      - impler
   web:
     depends_on:
       - api
@@ -93,6 +104,8 @@ services:
       NEXT_PUBLIC_GOOGLE_ANALYTICS_ID: ${NEXT_PUBLIC_GOOGLE_ANALYTICS_ID}
     ports:
       - 4200:4200
+    networks:
+      - impler
   rabbitmq:
     image: rabbitmq:3-alpine
     container_name: 'rabbitmq'
@@ -104,5 +117,9 @@ services:
       interval: 5s
       timeout: 15s
       retries: 1
+    networks:
+      - impler
 volumes:
   mongodb: ~
+networks:
+  impler:
