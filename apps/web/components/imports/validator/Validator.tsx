@@ -124,7 +124,9 @@ export function Validator({ templateId }: ValidatorProps) {
                 />
               )}
             />
-            {!testCodeResult?.passed && <Text color="red">It seems there is some issues with code!</Text>}
+            {testCodeResult && !testCodeResult.passed && (
+              <Text color="red">It seems there is some issues with code!</Text>
+            )}
           </div>
           <div style={{ width: '20%', display: 'flex', flexDirection: 'column', gap: '5' }}>
             <VarLabel label="System Variables">
