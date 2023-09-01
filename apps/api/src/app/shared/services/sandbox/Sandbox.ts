@@ -29,7 +29,12 @@ export type EngineResponse<T> = {
   output: T;
 };
 export type ExecuteIsolateResult = {
-  output: unknown;
+  output:
+    | string
+    | {
+        output: unknown;
+        status: EngineResponseStatusEnum;
+      };
   timeInSeconds: number;
   verdict: EngineResponseStatusEnum;
   standardOutput: string;
@@ -272,17 +277,21 @@ export class Sandbox {
         const metaFile = this.getSandboxFilePath('meta.txt');
         const etcDir = path.resolve('./src/config/etc/');
 
-        await Sandbox.runIsolate(
-          `--dir=/usr/bin/ --dir=/etc/=${etcDir} --share-net --box-id=` +
-            this.boxId +
-            ` --processes --wall-time=${Sandbox.sandboxRunTimeSeconds} --meta=` +
-            metaFile +
-            ' --stdout=_standardOutput.txt' +
-            ' --stderr=_standardError.txt --run ' +
-            ' --env=HOME=/tmp/' +
-            " --env=NODE_OPTIONS='--enable-source-maps' " +
-            commandLine
-        );
+        try {
+          await Sandbox.runIsolate(
+            `--dir=/usr/bin/ --dir=/etc/=${etcDir} --share-net --box-id=` +
+              this.boxId +
+              ` --processes --wall-time=${Sandbox.sandboxRunTimeSeconds} --meta=` +
+              metaFile +
+              ' --stdout=_standardOutput.txt' +
+              ' --stderr=_standardError.txt --run ' +
+              ' --env=HOME=/tmp/' +
+              " --env=NODE_OPTIONS='--enable-source-maps' " +
+              commandLine
+          );
+        } catch (error) {
+          // catch compilation errors
+        }
 
         let timeInSeconds = 0;
         if (this.checkFileExists(this.getSandboxFilePath('meta.txt'))) {
