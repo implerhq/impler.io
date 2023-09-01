@@ -1,5 +1,20 @@
 version: "3"
 services:
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    logging:
+      driver: "none"
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - mongodb:/data/db
+    ports:
+      - 27017:27017
+    restart: unless-stopped
+    networks:
+      - impler
   api:
     privileged: true
     build:
@@ -89,5 +104,7 @@ services:
       - 4200:4200
     networks:
       - impler
+volumes:
+  mongodb: ~
 networks:
   impler:
