@@ -36,6 +36,7 @@ import { CustomizationResponseDto } from './dtos/customization-response.dto';
 import { UpdateCustomizationRequestDto } from './dtos/update-customization-request.dto';
 import { ValidationsResponseDto } from './dtos/validations-response.dto';
 import { UpdateValidationsRequestDto } from './dtos/update-validations-request.dto';
+import { UpdateValidationResponseDto } from './dtos/update-validation-response.dto';
 
 @Controller('/template')
 @ApiTags('Template')
@@ -224,12 +225,12 @@ export class TemplateController {
     summary: 'Update template validations',
   })
   @ApiOkResponse({
-    type: ValidationsResponseDto,
+    type: UpdateValidationResponseDto,
   })
   async updateValidationsRoute(
     @Param('templateId', ValidateMongoId) templateId: string,
     @Body() body: UpdateValidationsRequestDto
-  ): Promise<ValidationsResponseDto> {
+  ): Promise<UpdateValidationResponseDto> {
     return this.updateValidations.execute(templateId, UpdateValidationsCommand.create(body));
   }
 }
