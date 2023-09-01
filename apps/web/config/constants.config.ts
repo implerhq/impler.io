@@ -26,6 +26,8 @@ export const MODAL_KEYS = {
   COLUMN_CREATE: 'COLUMN_CREATE',
   COLUMN_UPDATE: 'COLUMN_UPDATE',
   COLUMN_DELETE: 'COLUMN_DELETE',
+
+  VALIDATIONS_OUTPUT: 'VALIDATIONS_OUTPUT',
 };
 
 export const MODAL_TITLES = {
@@ -35,6 +37,8 @@ export const MODAL_TITLES = {
   IMPORT_DELETE: 'Delete Import',
   COLUMN_UPDATE: 'Update Column',
   COLUMN_DELETE: 'Delete Column',
+
+  VALIDATIONS_OUTPUT: 'Test code output',
 };
 
 export const API_KEYS = {

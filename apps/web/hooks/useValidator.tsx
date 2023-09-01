@@ -1,14 +1,22 @@
 import { useState } from 'react';
+import { modals } from '@mantine/modals';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { API_KEYS } from '@config';
 import { notify } from '@libs/notify';
 import { commonApi } from '@libs/api';
+import { API_KEYS, MODAL_KEYS, MODAL_TITLES } from '@config';
 import { ICustomization, IErrorObject, IValidator } from '@impler/shared';
+import { CodeOutput } from '@components/imports/validator/CodeOutput';
 
 interface UseSchemaProps {
   templateId: string;
+}
+
+interface TestCodeResult {
+  passed: boolean;
+  standardOutput: string;
+  standardError: string;
 }
 
 interface ValidationsData {
@@ -22,6 +30,7 @@ export function useValidator({ templateId }: UseSchemaProps) {
     handleSubmit,
     formState: { errors },
   } = useForm<ValidationsData>();
+  const [testCodeResult, setTestCodeResult] = useState<TestCodeResult>();
   const [editorVariables, setEditorVariables] = useState<string[]>([]);
   const { data: customization, isFetching: isCustomizationsLoading } = useQuery<
     ICustomization,
@@ -49,16 +58,35 @@ export function useValidator({ templateId }: UseSchemaProps) {
     }
   );
   const { mutate: updateValidations, isLoading: isUpdateValidationsLoading } = useMutation<
-    IValidator,
+    {
+      passed: boolean;
+      standardOutput: string;
+      standardError: string;
+    },
     IErrorObject,
     ValidationsData,
     string[]
   >(
     [API_KEYS.VALIDATIONS_UPDATE, templateId],
-    (body) => commonApi<IValidator>(API_KEYS.VALIDATIONS_UPDATE as any, { parameters: [templateId], body }),
+    (body) => commonApi<TestCodeResult>(API_KEYS.VALIDATIONS_UPDATE as any, { parameters: [templateId], body }),
     {
-      onSuccess() {
-        notify('VALIDATIONS_UPDATED');
+      onSuccess(output) {
+        setTestCodeResult(output);
+        if (!output.passed) {
+          modals.open({
+            modalId: MODAL_KEYS.VALIDATIONS_OUTPUT,
+            title: MODAL_TITLES.VALIDATIONS_OUTPUT,
+
+            children: <CodeOutput output={output.standardOutput} error={output.standardError} />,
+          });
+          notify('VALIDATIONS_UPDATED', {
+            title: 'Validation code update failed!',
+            message: 'It seems there is some issues with code!',
+            color: 'red',
+          });
+        } else {
+          notify('VALIDATIONS_UPDATED');
+        }
       },
       onError(error) {
         notify('VALIDATIONS_UPDATED', { title: 'Something went wrong!', message: error?.message, color: 'red' });
@@ -68,6 +96,14 @@ export function useValidator({ templateId }: UseSchemaProps) {
   const onSaveValidationsClick = (data: ValidationsData) => {
     updateValidations(data);
   };
+  const onViewCodeResultClick = () => {
+    modals.open({
+      modalId: MODAL_KEYS.VALIDATIONS_OUTPUT,
+      title: MODAL_TITLES.VALIDATIONS_OUTPUT,
+
+      children: <CodeOutput output={testCodeResult?.standardOutput} error={testCodeResult?.standardError} />,
+    });
+  };
 
   return {
     errors,
@@ -75,7 +111,9 @@ export function useValidator({ templateId }: UseSchemaProps) {
     validations,
     handleSubmit,
     customization,
+    testCodeResult,
     editorVariables,
+    onViewCodeResultClick,
     isValidationsLoading: isValidationsLoading || isCustomizationsLoading,
     onSave: handleSubmit(onSaveValidationsClick),
     isUpdateValidationsLoading,
