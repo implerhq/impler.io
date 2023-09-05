@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useImplerState } from '@store/impler.context';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { useAPIState } from '@store/api.context';
-import { IErrorObject, IOption, ITemplate, IUpload } from '@impler/shared';
-import { useAppState } from '@store/app.context';
-import { downloadFileFromURL, getFileNameFromUrl, notifier, ParentWindow } from '@util';
-import { IFormvalues, IUploadValues } from '@types';
-import { variables } from '@config';
 import { logAmplitudeEvent } from '@amplitude';
+import { useMutation, useQuery } from '@tanstack/react-query';
+
+import { variables } from '@config';
+import { useAPIState } from '@store/api.context';
+import { useAppState } from '@store/app.context';
+import { IFormvalues, IUploadValues } from '@types';
+import { useImplerState } from '@store/impler.context';
+import { IErrorObject, IOption, ITemplate, IUpload } from '@impler/shared';
+import { downloadFile, downloadFileFromURL, getFileNameFromUrl, notifier, ParentWindow } from '@util';
 
 interface IUsePhase1Props {
   goNext: () => void;
@@ -16,7 +17,7 @@ interface IUsePhase1Props {
 
 export function usePhase1({ goNext }: IUsePhase1Props) {
   const { api } = useAPIState();
-  const { setUploadInfo, setTemplateInfo } = useAppState();
+  const { setUploadInfo, setTemplateInfo, data } = useAppState();
   const [templates, setTemplates] = useState<IOption[]>([]);
   const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
   const { projectId, templateId, authHeaderValue, extra } = useImplerState();
@@ -69,6 +70,24 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
       },
     }
   );
+  const { mutate: downloadSample } = useMutation<
+    ArrayBuffer,
+    IErrorObject,
+    [string, Record<string, string | number>[] | undefined, string]
+  >(
+    ['downloadSample'],
+    ([providedTemplateId, prefilledData]) => api.downloadSample(providedTemplateId, prefilledData),
+    {
+      onSuccess(excelFileData, queryVariables) {
+        downloadFile(
+          new Blob([excelFileData], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          }),
+          queryVariables[variables.secondIndex] as string
+        );
+      },
+    }
+  );
   const {
     control,
     register,
@@ -114,7 +133,9 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     }
 
     const foundTemplate = findTemplate();
-    if (foundTemplate && foundTemplate.sampleFileUrl) {
+    if (foundTemplate && Array.isArray(data) && data.length > variables.baseIndex) {
+      downloadSample([foundTemplate._id, data, foundTemplate.name + '.xlsx']);
+    } else if (foundTemplate && foundTemplate.sampleFileUrl) {
       getSignedUrl([foundTemplate.sampleFileUrl, foundTemplate.name + ' (sample).xlsx']);
     }
     setIsDownloadInProgress(false);

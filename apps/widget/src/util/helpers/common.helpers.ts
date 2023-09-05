@@ -26,6 +26,18 @@ function isValidHttpUrl(string: string) {
   return url.protocol === 'http:' || url.protocol === 'https:';
 }
 
+export function downloadFile(blob: Blob, name: string) {
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', name);
+  document.body.appendChild(link);
+  link.click();
+
+  // Clean up and remove the link
+  link.parentNode?.removeChild(link);
+}
+
 function fetchFile(urlToFetch: string, name: string) {
   axios({
     url: urlToFetch,
@@ -33,15 +45,7 @@ function fetchFile(urlToFetch: string, name: string) {
     // headers: headers,
     responseType: 'blob', // important
   }).then((response) => {
-    const url = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', name);
-    document.body.appendChild(link);
-    link.click();
-
-    // Clean up and remove the link
-    link.parentNode?.removeChild(link);
+    downloadFile(new Blob([response.data]), name);
 
     return response;
   });

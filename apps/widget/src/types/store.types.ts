@@ -15,6 +15,7 @@ export interface IApiStore {
 
 export interface IAppStore {
   title?: string;
+  data?: Record<string, string | number>[];
   templateInfo: ITemplate;
   uploadInfo: IUpload;
   reset: () => void;

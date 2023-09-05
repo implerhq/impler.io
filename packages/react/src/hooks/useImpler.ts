@@ -13,6 +13,7 @@ interface UseImplerProps {
   templateId?: string;
   accessToken?: string;
   primaryColor?: string;
+  data?: Record<string, string | any>[];
   extra?: string | Record<string, any>;
   authHeaderValue?: string | (() => string) | (() => Promise<string>);
   onUploadStart?: (value: UploadTemplateData) => void;
@@ -29,6 +30,7 @@ export function useImpler({
   authHeaderValue,
   title,
   extra,
+  data,
   onUploadComplete,
   onWidgetClose,
   onUploadStart,
@@ -37,19 +39,19 @@ export function useImpler({
   const [isImplerInitiated, setIsImplerInitiated] = useState(false);
 
   const onEventHappen = useCallback(
-    (data: EventCalls) => {
-      switch (data.type) {
+    (eventData: EventCalls) => {
+      switch (eventData.type) {
         case EventTypesEnum.WIDGET_READY:
           setIsImplerInitiated(true);
           break;
         case EventTypesEnum.UPLOAD_STARTED:
-          if (onUploadStart) onUploadStart(data.value);
+          if (onUploadStart) onUploadStart(eventData.value);
           break;
         case EventTypesEnum.UPLOAD_TERMINATED:
-          if (onUploadTerminate) onUploadTerminate(data.value);
+          if (onUploadTerminate) onUploadTerminate(eventData.value);
           break;
         case EventTypesEnum.UPLOAD_COMPLETED:
-          if (onUploadComplete) onUploadComplete(data.value);
+          if (onUploadComplete) onUploadComplete(eventData.value);
           break;
         case EventTypesEnum.CLOSE_WIDGET:
           if (onWidgetClose) onWidgetClose();
@@ -76,6 +78,7 @@ export function useImpler({
     if (isImplerInitiated) {
       const payload: IShowPayload = {
         templateId,
+        data,
       };
       if (title) payload.title = title;
       if (colorScheme) payload.colorScheme = colorScheme;

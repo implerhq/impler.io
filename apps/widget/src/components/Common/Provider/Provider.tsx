@@ -5,7 +5,10 @@ import APIContextProvider from '@store/api.context';
 import AppContextProvider from '@store/app.context';
 
 interface IProviderProps {
+  // app-context
   title?: string;
+  primaryColor: string;
+  data?: Record<string, string | number>[];
   // api-context
   api: ApiService;
   // impler-context
@@ -14,11 +17,11 @@ interface IProviderProps {
   accessToken?: string;
   extra?: string;
   authHeaderValue?: string;
-  primaryColor: string;
 }
 
 export function Provider(props: PropsWithChildren<IProviderProps>) {
-  const { api, title, projectId, templateId, accessToken, extra, authHeaderValue, children, primaryColor } = props;
+  const { api, data, title, projectId, templateId, accessToken, extra, authHeaderValue, children, primaryColor } =
+    props;
 
   return (
     <ImplerContextProvider
@@ -29,7 +32,7 @@ export function Provider(props: PropsWithChildren<IProviderProps>) {
       authHeaderValue={authHeaderValue}
     >
       <APIContextProvider api={api}>
-        <AppContextProvider title={title} primaryColor={primaryColor}>
+        <AppContextProvider title={title} primaryColor={primaryColor} data={data}>
           {children}
         </AppContextProvider>
       </APIContextProvider>

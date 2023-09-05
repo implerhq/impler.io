@@ -32,8 +32,8 @@ export class HttpClient {
     return this.callWrapper(this.axiosClient.get.bind(this, url, { params }));
   }
 
-  async post(url: string, body = {}, headers: AxiosRequestHeaders = {}) {
-    return this.callWrapper(this.axiosClient.post.bind(this, url, body, { headers }));
+  async post(url: string, body = {}, headers: AxiosRequestHeaders = {}, responseType?: XMLHttpRequestResponseType) {
+    return this.callWrapper(this.axiosClient.post.bind(this, url, body, { headers, responseType }));
   }
 
   async patch(url: string, body = {}) {
