@@ -106,7 +106,7 @@ export class ExcelFileService {
 
     return columnName.reverse().join('');
   }
-  getExcelFileForHeadings(headings: IExcelFileHeading[]): Promise<any> {
+  getExcelFileForHeadings(headings: IExcelFileHeading[], data?: Record<string, any>[]): Promise<Buffer> {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Data');
     const headingNames = headings.map((heading) => heading.key);
@@ -131,7 +131,16 @@ export class ExcelFileService {
       }
     });
 
-    return workbook.xlsx.writeBuffer();
+    if (Array.isArray(data) && data.length > 0) {
+      const rows: string[][] = data.reduce<string[][]>((acc: string[][], rowItem: Record<string, any>) => {
+        acc.push(headingNames.map((headingKey) => rowItem[headingKey]));
+
+        return acc;
+      }, []);
+      worksheet.addRows(rows);
+    }
+
+    return workbook.xlsx.writeBuffer() as Promise<Buffer>;
   }
 }
 
