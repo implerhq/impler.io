@@ -3,6 +3,7 @@ import { GetTemplateColumns } from './get-columns/get-columns.usecase';
 import { CreateTemplate } from './create-template/create-template.usecase';
 import { UpdateTemplate } from './update-template/update-template.usecase';
 import { DeleteTemplate } from './delete-template/delete-template.usecase';
+import { DownloadSample } from './download-sample/download-sample.usecase';
 import { GetTemplateDetails } from './get-template-details/get-template-details.usecase';
 import { UpdateTemplateColumns } from './update-template-columns/update-template-columns.usecase';
 import { UpdateCustomization } from './update-customization/update-customization.usecase';
@@ -30,6 +31,7 @@ export const USE_CASES = [
   GetValidations,
   UpdateValidations,
   SaveSampleFile,
+  DownloadSample,
   //
 ];
 
@@ -44,6 +46,7 @@ export {
   UpdateCustomization,
   GetCustomization,
   GetValidations,
+  DownloadSample,
   UpdateValidations,
 };
 export {
