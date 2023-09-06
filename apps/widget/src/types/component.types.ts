@@ -32,4 +32,5 @@ export interface IFormvalues {
 export interface IUploadValues extends IFormvalues {
   authHeaderValue?: string;
   extra?: string;
+  schema?: string;
 }

@@ -8,6 +8,7 @@ export interface IShowPayload {
   primaryColor?: string;
   colorScheme?: string;
   title?: string;
+  schema?: string;
   data?: Record<string, string | any>[];
 }
 export interface IOption {

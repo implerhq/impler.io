@@ -8,7 +8,7 @@ interface AppContextProviderProps
 
 const AppContext = createContext<IAppStore | null>(null);
 
-const AppContextProvider = ({ children, primaryColor, title, data }: AppContextProviderProps) => {
+const AppContextProvider = ({ children, primaryColor, title, data, schema }: AppContextProviderProps) => {
   const [templateInfo, setTemplateInfo] = useState<ITemplate>({} as ITemplate);
   const [uploadInfo, setUploadInfo] = useState<IUpload>({} as IUpload);
 
@@ -18,7 +18,7 @@ const AppContextProvider = ({ children, primaryColor, title, data }: AppContextP
 
   return (
     <AppContext.Provider
-      value={{ title, templateInfo, setTemplateInfo, uploadInfo, setUploadInfo, reset, primaryColor, data }}
+      value={{ title, templateInfo, setTemplateInfo, uploadInfo, setUploadInfo, reset, primaryColor, data, schema }}
     >
       {children}
     </AppContext.Provider>
