@@ -7,16 +7,9 @@ import addKeywords from 'ajv-keywords';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import Ajv, { AnySchemaObject, ErrorObject, ValidateFunction } from 'ajv';
 
-import {
-  ColumnRepository,
-  UploadRepository,
-  MappingRepository,
-  ColumnEntity,
-  ValidatorRepository,
-  FileRepository,
-} from '@impler/dal';
 import { StorageService } from '@impler/shared/dist/services/storage';
 import { ColumnTypesEnum, FileMimeTypesEnum, UploadStatusEnum } from '@impler/shared';
+import { UploadRepository, MappingRepository, ColumnEntity, ValidatorRepository, FileRepository } from '@impler/dal';
 
 import { APIMessages } from '@shared/constants';
 import { FileNameService } from '@shared/services';
@@ -82,7 +75,6 @@ export class DoReview {
   constructor(
     private uploadRepository: UploadRepository,
     private storageService: StorageService,
-    private columnRepository: ColumnRepository,
     private mappingRepository: MappingRepository,
     private validatorRepository: ValidatorRepository,
     private fileNameService: FileNameService,
@@ -96,11 +88,7 @@ export class DoReview {
       throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
     }
     const mappings = await this.mappingRepository.getMappingWithColumnInfo(_uploadId);
-    const columns = await this.columnRepository.find(
-      { _templateId: uploadInfo._templateId },
-      'isRequired isUnique selectValues type regex'
-    );
-    const schema = this.buildAJVSchema(columns, mappings);
+    const schema = this.buildAJVSchema(JSON.parse(uploadInfo.customSchema), mappings);
     const validator = ajv.compile(schema);
 
     const uploadedFileInfo = await this.fileRepository.findById(uploadInfo._uploadedFileId);

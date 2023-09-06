@@ -7,3 +7,12 @@ export enum ColumnTypesEnum {
   'SELECT' = 'Select',
   'ANY' = 'Any',
 }
+
+export interface ISchemaItem {
+  key: string;
+  isRequired?: boolean;
+  isUnique?: boolean;
+  selectValues?: string[];
+  type?: ColumnTypesEnum;
+  regex?: string;
+}

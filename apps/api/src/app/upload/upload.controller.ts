@@ -57,6 +57,7 @@ export class UploadController {
         templateId,
         extra: body.extra,
         authHeaderValue: body.authHeaderValue,
+        schema: body.schema,
       })
     );
   }

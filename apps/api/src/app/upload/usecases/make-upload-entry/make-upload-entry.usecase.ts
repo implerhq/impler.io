@@ -1,7 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { FileMimeTypesEnum, UploadStatusEnum, Defaults } from '@impler/shared';
-import { CommonRepository, FileEntity, FileRepository, TemplateRepository, UploadRepository } from '@impler/dal';
+import { FileMimeTypesEnum, UploadStatusEnum, Defaults, ISchemaItem } from '@impler/shared';
+import {
+  ColumnEntity,
+  ColumnRepository,
+  CommonRepository,
+  FileEntity,
+  FileRepository,
+  TemplateRepository,
+  UploadRepository,
+} from '@impler/dal';
 
+import { mergeObjects } from '@shared/helpers/common.helper';
 import { AddUploadEntryCommand } from './add-upload-entry.command';
 import { MakeUploadEntryCommand } from './make-upload-entry.command';
 import { StorageService } from '@impler/shared/dist/services/storage';
@@ -15,10 +24,11 @@ export class MakeUploadEntry {
     private fileRepository: FileRepository,
     private storageService: StorageService,
     private fileNameService: FileNameService,
+    private columnRepository: ColumnRepository,
     private templateRepository: TemplateRepository
   ) {}
 
-  async execute({ file, templateId, extra, authHeaderValue }: MakeUploadEntryCommand) {
+  async execute({ file, templateId, extra, authHeaderValue, schema }: MakeUploadEntryCommand) {
     const fileOriginalName = file.originalname;
     let csvFile: string | Express.Multer.File = file;
     if (file.mimetype === FileMimeTypesEnum.EXCEL || file.mimetype === FileMimeTypesEnum.EXCELX) {
@@ -28,6 +38,41 @@ export class MakeUploadEntry {
       csvFile = file;
     } else {
       throw new Error('Invalid file type');
+    }
+
+    const columns = await this.columnRepository.find(
+      {
+        _templateId: templateId,
+      },
+      'key isRequired isUnique selectValues type regex sequence',
+      {
+        sort: 'sequence',
+      }
+    );
+    let parsedSchema: ISchemaItem[], combinedSchema: string;
+    try {
+      parsedSchema = JSON.parse(schema);
+    } catch (error) {}
+    if (Array.isArray(parsedSchema) && parsedSchema.length > 0) {
+      const formattedColumns: Record<string, ColumnEntity> = columns.reduce((acc, column) => {
+        acc[column.key] = { ...column };
+
+        return acc;
+      }, {});
+      parsedSchema.forEach((schemaItem) => {
+        if (formattedColumns.hasOwnProperty(schemaItem.key)) {
+          mergeObjects(formattedColumns[schemaItem.key], schemaItem, [
+            'isRequired',
+            'isUnique',
+            'selectValues',
+            'type',
+            'regex',
+          ]);
+        }
+      });
+      combinedSchema = JSON.stringify(Object.values(formattedColumns));
+    } else {
+      combinedSchema = JSON.stringify(columns);
     }
 
     const fileService = new CSVFileService2();
@@ -44,16 +89,15 @@ export class MakeUploadEntry {
       }
     );
 
-    return this.addUploadEntry(
-      AddUploadEntryCommand.create({
-        _templateId: templateId,
-        _uploadedFileId: fileEntity._id,
-        uploadId,
-        extra,
-        authHeaderValue,
-        headings: fileHeadings,
-      })
-    );
+    return this.addUploadEntry({
+      _templateId: templateId,
+      _uploadedFileId: fileEntity._id,
+      uploadId,
+      extra,
+      authHeaderValue,
+      schema: combinedSchema,
+      headings: fileHeadings,
+    });
   }
 
   private async makeFileEntry(
@@ -86,6 +130,7 @@ export class MakeUploadEntry {
     extra,
     authHeaderValue,
     headings,
+    schema,
     totalRecords,
   }: AddUploadEntryCommand) {
     return this.uploadRepository.create({
@@ -94,6 +139,7 @@ export class MakeUploadEntry {
       _templateId,
       _allDataFileId,
       extra: extra,
+      customSchema: schema,
       headings: Array.isArray(headings) ? headings : [],
       status: UploadStatusEnum.UPLOADED,
       authHeaderValue: authHeaderValue,
