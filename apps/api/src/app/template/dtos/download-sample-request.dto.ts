@@ -1,11 +1,11 @@
-import { IsOptional, IsArray } from 'class-validator';
+import { IsOptional, IsArray, IsJSON } from 'class-validator';
 
 export class DownloadSampleDto {
   @IsArray()
   @IsOptional()
   data: Record<string, unknown>[];
 
-  @IsArray()
+  @IsJSON()
   @IsOptional()
-  schema: Record<string, unknown>[];
+  schema?: string;
 }

@@ -122,12 +122,14 @@ export class ApiService {
 
   async downloadSample(
     templateId: string,
-    data?: Record<string, string | number>[]
+    data?: Record<string, string | number>[],
+    schema?: string
   ) {
     return this.httpClient.post(
       `/template/${templateId}/sample`,
       {
         data,
+        schema,
       },
       {},
       'blob'
