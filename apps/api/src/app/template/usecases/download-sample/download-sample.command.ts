@@ -1,4 +1,4 @@
-import { IsOptional, IsArray } from 'class-validator';
+import { IsOptional, IsArray, IsJSON } from 'class-validator';
 import { BaseCommand } from '@shared/commands/base.command';
 
 export class DownloadSampleCommand extends BaseCommand {
@@ -6,7 +6,7 @@ export class DownloadSampleCommand extends BaseCommand {
   @IsOptional()
   data: Record<string, unknown>[];
 
-  @IsArray()
+  @IsJSON()
   @IsOptional()
-  schema: Record<string, unknown>[];
+  schema?: string;
 }

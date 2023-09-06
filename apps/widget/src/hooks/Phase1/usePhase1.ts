@@ -70,20 +70,16 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
       },
     }
   );
-  const { mutate: downloadSample } = useMutation<
-    ArrayBuffer,
-    IErrorObject,
-    [string, Record<string, string | number>[] | undefined, string]
-  >(
+  const { mutate: downloadSample } = useMutation<ArrayBuffer, IErrorObject, [string, string]>(
     ['downloadSample'],
-    ([providedTemplateId, prefilledData]) => api.downloadSample(providedTemplateId, prefilledData),
+    ([providedTemplateId]) => api.downloadSample(providedTemplateId, data, schema),
     {
       onSuccess(excelFileData, queryVariables) {
         downloadFile(
           new Blob([excelFileData], {
             type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
           }),
-          queryVariables[variables.secondIndex] as string
+          queryVariables[variables.firstIndex] as string
         );
       },
     }
@@ -133,8 +129,8 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     }
 
     const foundTemplate = findTemplate();
-    if (foundTemplate && Array.isArray(data) && data.length > variables.baseIndex) {
-      downloadSample([foundTemplate._id, data, foundTemplate.name + '.xlsx']);
+    if (foundTemplate && ((Array.isArray(data) && data.length > variables.baseIndex) || schema)) {
+      downloadSample([foundTemplate._id, foundTemplate.name + '.xlsx']);
     } else if (foundTemplate && foundTemplate.sampleFileUrl) {
       getSignedUrl([foundTemplate.sampleFileUrl, foundTemplate.name + ' (sample).xlsx']);
     }

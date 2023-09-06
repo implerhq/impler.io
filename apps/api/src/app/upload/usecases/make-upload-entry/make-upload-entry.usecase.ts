@@ -51,7 +51,7 @@ export class MakeUploadEntry {
     );
     let parsedSchema: ISchemaItem[], combinedSchema: string;
     try {
-      parsedSchema = JSON.parse(schema);
+      if (schema) parsedSchema = JSON.parse(schema);
     } catch (error) {}
     if (Array.isArray(parsedSchema) && parsedSchema.length > 0) {
       const formattedColumns: Record<string, ColumnEntity> = columns.reduce((acc, column) => {
