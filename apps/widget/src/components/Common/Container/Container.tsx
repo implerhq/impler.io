@@ -121,6 +121,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
         >
           <NotificationsProvider>
             <Provider
+              schema={secondaryPayload?.schema}
               title={secondaryPayload?.title}
               // api
               api={api}

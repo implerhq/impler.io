@@ -15,5 +15,9 @@ export class MakeUploadEntryCommand extends BaseCommand {
 
   @IsOptional()
   @IsString()
+  schema?: string;
+
+  @IsOptional()
+  @IsString()
   authHeaderValue?: string;
 }

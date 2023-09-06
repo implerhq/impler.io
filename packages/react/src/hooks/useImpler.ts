@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { logError } from '../utils/logger';
-import { EventTypesEnum, IShowPayload, IUpload } from '@impler/shared';
+import { EventTypesEnum, IShowPayload, IUpload, ISchemaItem } from '@impler/shared';
 import { EventCalls, UploadTemplateData, UploadData } from '../components/button/Button.types';
 
 interface ShowWidgetProps {
   colorScheme?: 'light' | 'dark';
+  schema?: ISchemaItem[];
+  data?: Record<string, string | any>[];
 }
 
 interface UseImplerProps {
@@ -13,7 +15,6 @@ interface UseImplerProps {
   templateId?: string;
   accessToken?: string;
   primaryColor?: string;
-  data?: Record<string, string | any>[];
   extra?: string | Record<string, any>;
   authHeaderValue?: string | (() => string) | (() => Promise<string>);
   onUploadStart?: (value: UploadTemplateData) => void;
@@ -30,7 +31,6 @@ export function useImpler({
   authHeaderValue,
   title,
   extra,
-  data,
   onUploadComplete,
   onWidgetClose,
   onUploadStart,
@@ -74,12 +74,15 @@ export function useImpler({
     else initWidget();
   }, [accessToken, templateId, initWidget]);
 
-  const showWidget = async ({ colorScheme }: ShowWidgetProps) => {
+  const showWidget = async ({ colorScheme, data, schema }: ShowWidgetProps) => {
     if (isImplerInitiated) {
       const payload: IShowPayload = {
         templateId,
         data,
       };
+      if (Array.isArray(schema) && schema.length > 0) {
+        payload.schema = JSON.stringify(schema);
+      }
       if (title) payload.title = title;
       if (colorScheme) payload.colorScheme = colorScheme;
       else {

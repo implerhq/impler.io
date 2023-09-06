@@ -17,7 +17,7 @@ interface IUsePhase1Props {
 
 export function usePhase1({ goNext }: IUsePhase1Props) {
   const { api } = useAPIState();
-  const { setUploadInfo, setTemplateInfo, data } = useAppState();
+  const { setUploadInfo, setTemplateInfo, schema, data } = useAppState();
   const [templates, setTemplates] = useState<IOption[]>([]);
   const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
   const { projectId, templateId, authHeaderValue, extra } = useImplerState();
@@ -150,6 +150,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
         ...submitData,
         authHeaderValue,
         extra,
+        schema,
       });
     }
   };

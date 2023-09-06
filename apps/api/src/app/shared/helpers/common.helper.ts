@@ -14,6 +14,14 @@ export function validateNotFound(data: any, entityName: 'upload'): boolean {
   }
 }
 
+export function mergeObjects(obj1: any, obj2: any, keysToMerge: string[]) {
+  for (const key of keysToMerge) {
+    if (obj2.hasOwnProperty(key)) {
+      obj1[key] = obj2[key];
+    }
+  }
+}
+
 export function paginateRecords(data: any[], page: number, limit: number): PaginationResult {
   if (!page || Number(page) < Defaults.ONE) page = Defaults.ONE;
   else page = Number(page);

@@ -1,27 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { Defaults, UploadStatusEnum } from '@impler/shared';
-import { ColumnEntity, ColumnRepository, MappingEntity, MappingRepository, UploadRepository } from '@impler/dal';
+import { ColumnEntity, MappingEntity, MappingRepository, UploadRepository } from '@impler/dal';
 import { DoMappingCommand } from './do-mapping.command';
 
 @Injectable()
 export class DoMapping {
-  constructor(
-    private columnRepository: ColumnRepository,
-    private mappingRepository: MappingRepository,
-    private uploadRepository: UploadRepository
-  ) {}
+  constructor(private mappingRepository: MappingRepository, private uploadRepository: UploadRepository) {}
 
   async execute(command: DoMappingCommand) {
-    const columns = await this.columnRepository.find(
-      {
-        _templateId: command._templateId,
-      },
-      'key alternateKeys sequence',
-      {
-        sort: 'sequence',
-      }
-    );
-    const mapping = this.buildMapping(columns, command.headings, command._uploadId);
+    const uploadInfo = await this.uploadRepository.findById(command._uploadId, 'customSchema');
+    const mapping = this.buildMapping(JSON.parse(uploadInfo.customSchema), command.headings, command._uploadId);
     const createdHeadings = await this.mappingRepository.createMany(mapping);
     await this.uploadRepository.update({ _id: command._uploadId }, { status: UploadStatusEnum.MAPPING });
 
