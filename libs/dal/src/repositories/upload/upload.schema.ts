@@ -41,6 +41,7 @@ const uploadSchema = new Schema(
     authHeaderValue: String,
     status: String,
     extra: String,
+    customSchema: String,
     processInvalidRecords: {
       type: Boolean,
       default: false,

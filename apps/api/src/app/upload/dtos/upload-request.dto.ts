@@ -17,6 +17,14 @@ export class UploadRequestDto {
   authHeaderValue: string;
 
   @ApiProperty({
+    description: 'Custom schema if provided by user',
+    required: false,
+  })
+  @IsOptional()
+  @IsJSON()
+  schema: string;
+
+  @ApiProperty({
     description: 'Payload to send during webhook call',
     required: false,
   })

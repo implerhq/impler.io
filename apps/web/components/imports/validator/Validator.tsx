@@ -34,9 +34,10 @@ export function Validator({ templateId }: ValidatorProps) {
     'params.chunkSize',
   ];
   const { colorScheme } = useMantineColorScheme();
-  const { control, editorVariables, onSave, isUpdateValidationsLoading, isValidationsLoading } = useValidator({
-    templateId,
-  });
+  const { control, editorVariables, onSave, isUpdateValidationsLoading, isValidationsLoading, testCodeResult } =
+    useValidator({
+      templateId,
+    });
 
   return (
     <div style={{ position: 'relative' }}>
@@ -53,7 +54,7 @@ export function Validator({ templateId }: ValidatorProps) {
           </div>
 
           <Button onClick={onSave} loading={isUpdateValidationsLoading}>
-            Save
+            Test and Save
           </Button>
         </Group>
         <Accordion variant="contained">
@@ -123,6 +124,9 @@ export function Validator({ templateId }: ValidatorProps) {
                 />
               )}
             />
+            {testCodeResult && !testCodeResult.passed && (
+              <Text color="red">It seems there is some issues with code!</Text>
+            )}
           </div>
           <div style={{ width: '20%', display: 'flex', flexDirection: 'column', gap: '5' }}>
             <VarLabel label="System Variables">

@@ -30,4 +30,6 @@ export class UploadEntity {
   extra: string;
 
   processInvalidRecords: boolean;
+
+  customSchema: string;
 }

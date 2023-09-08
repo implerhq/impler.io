@@ -7,20 +7,13 @@ import addKeywords from 'ajv-keywords';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import Ajv, { AnySchemaObject, ErrorObject, ValidateFunction } from 'ajv';
 
-import {
-  ColumnRepository,
-  UploadRepository,
-  MappingRepository,
-  ColumnEntity,
-  ValidatorRepository,
-  FileRepository,
-} from '@impler/dal';
 import { StorageService } from '@impler/shared/dist/services/storage';
 import { ColumnTypesEnum, FileMimeTypesEnum, UploadStatusEnum } from '@impler/shared';
+import { UploadRepository, MappingRepository, ColumnEntity, ValidatorRepository, FileRepository } from '@impler/dal';
 
 import { APIMessages } from '@shared/constants';
 import { FileNameService } from '@shared/services';
-import { SManager } from 'app/review/service/Sandbox';
+import { SManager, BATCH_LIMIT, MAIN_CODE } from '@shared/services/sandbox';
 
 interface IDataItem {
   index: number;
@@ -35,94 +28,6 @@ interface IBatchItem {
   extra: any;
   // totalRecords: number;
 }
-
-const batchLimit = 500;
-const mainCode = `
-const fs = require('fs');
-const { code } = require('./code');
-let input = fs.readFileSync('./input.json', 'utf8');
-
-const startTime = Date.now();
-input = JSON.parse(input);
-
-function deepCopy(obj) {
-  return JSON.parse(JSON.stringify(obj));
-}
-
-function saveCodeOutput(output) {
-  fs.writeFileSync('./code-output.json', JSON.stringify(output));
-}
-
-function saveOutput(output, startTime) {
-  fs.writeFileSync('./output.json', JSON.stringify({
-    output,
-    status: "OK"
-  }));
-  fs.writeFileSync('./meta.txt', 'time: ' + ((Date.now() - startTime) / 1000));
-}
-
-function saveError(error, startTime) {
-  console.error(error);
-  fs.writeFileSync('./meta.txt', 'time: ' + ((Date.now() - startTime) / 1000));
-  fs.writeFileSync('./output.json', JSON.stringify({
-    status: "ERROR",
-    output: error.message
-  }))
-}
-
-function isObjectEmpty(obj) {
-  for(let i in obj) return false; 
-  return true;
-}
-
-function processErrors(batchData, errors) {
-  if(!Array.isArray(errors) || (Array.isArray(errors) && errors.length === 0)) {
-    return batchData;
-  }
-  let rowIndexToUpdate, combinedErrors, isErrorsEmpty;
-  errors.forEach(error => {
-    rowIndexToUpdate = error.index - Math.max(0, ((batchData.batchCount - 1)* input.chunkSize));
-    rowIndexToUpdate -= 1;
-    if(
-      rowIndexToUpdate <= batchData.batchCount * input.chunkSize && 
-      (typeof error.errors === 'object' && !Array.isArray(error.errors) && error.errors !== null)
-    ) {
-      combinedErrors = Object.assign(batchData.data[rowIndexToUpdate]?.errors || {}, error.errors);
-      isErrorsEmpty = isObjectEmpty(combinedErrors);
-      batchData.data[rowIndexToUpdate] = {
-        ...batchData.data[rowIndexToUpdate],
-        errors: combinedErrors,
-        isValid: isErrorsEmpty
-      }
-    }
-  });
-  return batchData;
-}
-
-
-if (typeof code === 'function') {
-  if(code.constructor.name === 'AsyncFunction') {
-    code(input).then((outputErrors) => {
-      saveCodeOutput(outputErrors);
-      let output = processErrors(input, outputErrors);
-      saveOutput(output, startTime);
-      process.exit(0);
-    }).catch((error) => {
-      saveError(error, startTime);
-    });
-  } else {
-    try {
-      const outputErrors = code(input);
-      saveCodeOutput(outputErrors);
-      let output = processErrors(input, outputErrors);
-      saveOutput(output, startTime);
-      process.exit(0);
-    } catch (error) {
-      saveError(error, startTime);
-    }
-  }
-}
-`;
 
 const ajv = new Ajv({
   allErrors: true,
@@ -170,7 +75,6 @@ export class DoReview {
   constructor(
     private uploadRepository: UploadRepository,
     private storageService: StorageService,
-    private columnRepository: ColumnRepository,
     private mappingRepository: MappingRepository,
     private validatorRepository: ValidatorRepository,
     private fileNameService: FileNameService,
@@ -184,11 +88,7 @@ export class DoReview {
       throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
     }
     const mappings = await this.mappingRepository.getMappingWithColumnInfo(_uploadId);
-    const columns = await this.columnRepository.find(
-      { _templateId: uploadInfo._templateId },
-      'isRequired isUnique selectValues type regex'
-    );
-    const schema = this.buildAJVSchema(columns, mappings);
+    const schema = this.buildAJVSchema(JSON.parse(uploadInfo.customSchema), mappings);
     const validator = ajv.compile(schema);
 
     const uploadedFileInfo = await this.fileRepository.findById(uploadInfo._uploadedFileId);
@@ -372,29 +272,37 @@ export class DoReview {
   }
 
   private async executeBatchInSandbox(batchItem: IBatchItem, sandboxManager: SManager, onBatchInitialize: string) {
-    const sandbox = await sandboxManager.obtainSandbox(batchItem.uploadId);
-    sandbox.clean();
-    const sandboxPath = sandbox.getSandboxFolderPath();
+    try {
+      const sandbox = await sandboxManager.obtainSandbox(batchItem.uploadId);
+      sandbox.clean();
+      const sandboxPath = sandbox.getSandboxFolderPath();
 
-    fs.writeFileSync(
-      `${sandboxPath}/input.json`,
-      JSON.stringify({
-        ...batchItem,
-        sandboxPath: sandboxPath,
-        chunkSize: batchLimit,
-        /*
-         * fileName: "asdf",
-         * extra: "",
-         * totalRecords: "",
-         */
-      })
-    );
-    fs.writeFileSync(`${sandboxPath}/code.js`, onBatchInitialize);
-    fs.writeFileSync(`${sandboxPath}/main.js`, mainCode);
+      if (!fs.existsSync(sandboxPath)) {
+        await sandbox.init();
+      }
 
-    const nodeExecutablePath = process.execPath;
+      fs.writeFileSync(
+        `${sandboxPath}/input.json`,
+        JSON.stringify({
+          ...batchItem,
+          sandboxPath: sandboxPath,
+          chunkSize: BATCH_LIMIT,
+          /*
+           * fileName: "asdf",
+           * extra: "",
+           * totalRecords: "",
+           */
+        })
+      );
+      fs.writeFileSync(`${sandboxPath}/code.js`, onBatchInitialize);
+      fs.writeFileSync(`${sandboxPath}/main.js`, MAIN_CODE);
 
-    return await sandbox.runCommandLine(`${nodeExecutablePath} main.js`);
+      const nodeExecutablePath = process.execPath;
+
+      return await sandbox.runCommandLine(`${nodeExecutablePath} main.js`);
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 
   private getStreams({ uploadId, headings }: { uploadId: string; headings: string[] }) {
@@ -594,7 +502,7 @@ export class DoReview {
                   record: recordObj,
                 });
               }
-              if (batchRecords.length === batchLimit) {
+              if (batchRecords.length === BATCH_LIMIT) {
                 batches.push(
                   JSON.parse(
                     JSON.stringify({
@@ -704,6 +612,7 @@ export class DoReview {
       let processOutput, message: string;
       for (const processData of processedArray) {
         if (
+          processData &&
           processData.output &&
           typeof (processData.output as any)?.output === 'object' &&
           !Array.isArray((processData.output as any)?.output)
@@ -723,7 +632,7 @@ export class DoReview {
             }
           });
         } else {
-          console.log(processData.standardOutput, processData.standardError);
+          console.log(processData);
         }
       }
       validDataStream.push(']');

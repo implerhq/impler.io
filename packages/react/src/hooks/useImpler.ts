@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { logError } from '../utils/logger';
-import { EventTypesEnum, IShowPayload, IUpload } from '@impler/shared';
+import { EventTypesEnum, IShowPayload, IUpload, ISchemaItem } from '@impler/shared';
 import { EventCalls, UploadTemplateData, UploadData } from '../components/button/Button.types';
 
 interface ShowWidgetProps {
   colorScheme?: 'light' | 'dark';
+  schema?: ISchemaItem[];
+  data?: Record<string, string | any>[];
 }
 
 interface UseImplerProps {
@@ -37,19 +39,19 @@ export function useImpler({
   const [isImplerInitiated, setIsImplerInitiated] = useState(false);
 
   const onEventHappen = useCallback(
-    (data: EventCalls) => {
-      switch (data.type) {
+    (eventData: EventCalls) => {
+      switch (eventData.type) {
         case EventTypesEnum.WIDGET_READY:
           setIsImplerInitiated(true);
           break;
         case EventTypesEnum.UPLOAD_STARTED:
-          if (onUploadStart) onUploadStart(data.value);
+          if (onUploadStart) onUploadStart(eventData.value);
           break;
         case EventTypesEnum.UPLOAD_TERMINATED:
-          if (onUploadTerminate) onUploadTerminate(data.value);
+          if (onUploadTerminate) onUploadTerminate(eventData.value);
           break;
         case EventTypesEnum.UPLOAD_COMPLETED:
-          if (onUploadComplete) onUploadComplete(data.value);
+          if (onUploadComplete) onUploadComplete(eventData.value);
           break;
         case EventTypesEnum.CLOSE_WIDGET:
           if (onWidgetClose) onWidgetClose();
@@ -72,11 +74,15 @@ export function useImpler({
     else initWidget();
   }, [accessToken, templateId, initWidget]);
 
-  const showWidget = async ({ colorScheme }: ShowWidgetProps) => {
+  const showWidget = async ({ colorScheme, data, schema }: ShowWidgetProps) => {
     if (isImplerInitiated) {
       const payload: IShowPayload = {
         templateId,
+        data,
       };
+      if (Array.isArray(schema) && schema.length > 0) {
+        payload.schema = JSON.stringify(schema);
+      }
       if (title) payload.title = title;
       if (colorScheme) payload.colorScheme = colorScheme;
       else {

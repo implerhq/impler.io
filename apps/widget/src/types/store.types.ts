@@ -15,10 +15,12 @@ export interface IApiStore {
 
 export interface IAppStore {
   title?: string;
+  data?: Record<string, string | number>[];
   templateInfo: ITemplate;
   uploadInfo: IUpload;
   reset: () => void;
   primaryColor: string;
+  schema?: string;
   setTemplateInfo: (templateInfo: ITemplate) => void;
   setUploadInfo: (uploadInfo: IUpload) => void;
 }

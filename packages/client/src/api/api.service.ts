@@ -49,12 +49,14 @@ export class ApiService {
     file: File;
     authHeaderValue?: string;
     extra?: string;
+    schema?: string;
   }) {
     const formData = new FormData();
     formData.append('file', data.file);
     if (data.authHeaderValue)
       formData.append('authHeaderValue', data.authHeaderValue);
     if (data.extra) formData.append('extra', data.extra);
+    if (data.schema) formData.append('schema', data.schema);
 
     return this.httpClient.post(`/upload/${data.templateId}`, formData, {
       'Content-Type': 'multipart/form-data',
@@ -116,5 +118,21 @@ export class ApiService {
     return this.httpClient.post(`/common/signed-url`, {
       key,
     }) as Promise<string>;
+  }
+
+  async downloadSample(
+    templateId: string,
+    data?: Record<string, string | number>[],
+    schema?: string
+  ) {
+    return this.httpClient.post(
+      `/template/${templateId}/sample`,
+      {
+        data,
+        schema,
+      },
+      {},
+      'blob'
+    ) as Promise<ArrayBuffer>;
   }
 }

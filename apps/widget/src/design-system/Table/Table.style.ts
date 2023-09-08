@@ -24,8 +24,6 @@ export const getHeadingStyles = (theme: MantineTheme): React.CSSProperties => ({
 
 export const getInvalidColumnStyles = (theme: MantineTheme): React.CSSProperties => ({
   backgroundColor: colors.lightDanger,
-  display: 'flex',
-  gap: 2,
   justifyContent: 'space-between',
 });
 
