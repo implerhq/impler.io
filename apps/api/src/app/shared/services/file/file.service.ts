@@ -163,7 +163,7 @@ export class CSVFileService2 {
           if (recordIndex === Defaults.ZERO) {
             if (Array.isArray(results.data) && results.data.length > Defaults.ZERO) headings = results.data as string[];
             else reject(new EmptyFileException());
-          }
+          } else resolve(headings);
         },
         error: (error) => {
           if (error.message.includes('Parse Error')) {
@@ -175,8 +175,6 @@ export class CSVFileService2 {
         complete: () => {
           if (recordIndex !== Defaults.ONE) {
             reject(new EmptyFileException());
-          } else {
-            resolve(headings);
           }
         },
       });
