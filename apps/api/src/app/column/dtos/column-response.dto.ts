@@ -17,7 +17,7 @@ export class ColumnResponseDto {
     description: 'Alternative possible keys of the column',
     type: Array<string>,
   })
-  alternateKeys: string[];
+  alternateKeys?: string[];
 
   @ApiPropertyOptional({
     description: 'While true, it Indicates column value should exists in data',
@@ -38,20 +38,20 @@ export class ColumnResponseDto {
   @ApiPropertyOptional({
     description: 'Regex if type is Regex',
   })
-  regex: string;
+  regex?: string;
 
   @ApiPropertyOptional({
     description: 'Description of Regex',
   })
-  regexDescription: string;
+  regexDescription?: string;
 
   @ApiPropertyOptional({
     description: 'List of possible values for column if type is Select',
   })
-  selectValues: string[];
+  selectValues?: string[];
 
   @ApiProperty({
     description: 'Sequence of column',
   })
-  sequence: number;
+  sequence?: number;
 }

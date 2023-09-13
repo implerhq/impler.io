@@ -8,8 +8,8 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import Ajv, { AnySchemaObject, ErrorObject, ValidateFunction } from 'ajv';
 
 import { StorageService } from '@impler/shared/dist/services/storage';
-import { ColumnTypesEnum, FileMimeTypesEnum, UploadStatusEnum } from '@impler/shared';
-import { UploadRepository, MappingRepository, ColumnEntity, ValidatorRepository, FileRepository } from '@impler/dal';
+import { UploadRepository, ValidatorRepository, FileRepository } from '@impler/dal';
+import { ColumnTypesEnum, FileMimeTypesEnum, ITemplateSchemaItem, UploadStatusEnum } from '@impler/shared';
 
 import { APIMessages } from '@shared/constants';
 import { FileNameService } from '@shared/services';
@@ -75,7 +75,6 @@ export class DoReview {
   constructor(
     private uploadRepository: UploadRepository,
     private storageService: StorageService,
-    private mappingRepository: MappingRepository,
     private validatorRepository: ValidatorRepository,
     private fileNameService: FileNameService,
     private fileRepository: FileRepository,
@@ -87,8 +86,7 @@ export class DoReview {
     if (!uploadInfo) {
       throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
     }
-    const mappings = await this.mappingRepository.getMappingWithColumnInfo(_uploadId);
-    const schema = this.buildAJVSchema(JSON.parse(uploadInfo.customSchema), mappings);
+    const schema = this.buildAJVSchema(JSON.parse(uploadInfo.customSchema));
     const validator = ajv.compile(schema);
 
     const uploadedFileInfo = await this.fileRepository.findById(uploadInfo._uploadedFileId);
@@ -126,27 +124,27 @@ export class DoReview {
     return response;
   }
 
-  private buildAJVSchema(columns: ColumnEntity[], mappings: any[]) {
-    const formattedColumns: Record<string, ColumnEntity> = columns.reduce((acc, column) => {
-      acc[column._id] = { ...column };
+  private buildAJVSchema(columns: ITemplateSchemaItem[]) {
+    const formattedColumns: Record<string, ITemplateSchemaItem> = columns.reduce((acc, column) => {
+      acc[column.key] = { ...column };
 
       return acc;
     }, {});
-    const properties: Record<string, unknown> = mappings.reduce((acc, mapping) => {
-      acc[mapping.column.key] = this.getProperty(formattedColumns[mapping.column._columnId]);
+    const properties: Record<string, unknown> = columns.reduce((acc, column) => {
+      acc[column.key] = this.getProperty(formattedColumns[column.key]);
 
       return acc;
     }, {});
-    const requiredProperties: string[] = mappings.reduce((acc, mapping) => {
-      if (formattedColumns[mapping.column._columnId].isRequired) acc.push(mapping.column.key);
+    const requiredProperties: string[] = columns.reduce((acc, column) => {
+      if (formattedColumns[column.key].isRequired) acc.push(column.key);
 
       return acc;
     }, []);
 
     // setting uniqueItems to empty set to avoid error
-    mappings.forEach((mapping) => {
-      if (formattedColumns[mapping.column._columnId].isUnique) {
-        uniqueItems[mapping.column.key] = new Set();
+    columns.forEach((column) => {
+      if (formattedColumns[column.key].isUnique) {
+        uniqueItems[column.key] = new Set();
       }
     });
 
@@ -158,7 +156,7 @@ export class DoReview {
     };
   }
 
-  private getProperty(column: ColumnEntity): Record<string, unknown> {
+  private getProperty(column: ITemplateSchemaItem): Record<string, unknown> {
     let property: Record<string, unknown> = {};
 
     switch (column.type) {

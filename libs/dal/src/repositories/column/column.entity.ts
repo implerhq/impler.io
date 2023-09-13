@@ -5,7 +5,7 @@ export class ColumnEntity {
 
   key: string;
 
-  alternateKeys: string[];
+  alternateKeys?: string[];
 
   isRequired: boolean;
 
@@ -13,13 +13,13 @@ export class ColumnEntity {
 
   type: string;
 
-  regex: string;
+  regex?: string;
 
-  regexDescription: string;
+  regexDescription?: string;
 
-  selectValues: string[];
+  selectValues?: string[];
 
-  sequence: number;
+  sequence?: number;
 
   _templateId: string;
 }

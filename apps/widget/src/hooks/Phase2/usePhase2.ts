@@ -45,7 +45,8 @@ export function usePhase2({ goNext }: IUsePhase2Props) {
         );
         reset({
           mappings: mappingsResponse.map((mapping) => ({
-            _columnId: mapping.column._columnId,
+            key: mapping.key,
+            name: mapping.name,
             columnHeading: mapping.columnHeading,
           })),
         });

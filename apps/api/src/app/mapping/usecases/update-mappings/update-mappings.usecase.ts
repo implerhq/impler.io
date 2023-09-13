@@ -1,14 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { MappingRepository } from '@impler/dal';
-import { UpdateMappingCommand } from './update-mappings.command';
+import { UploadRepository } from '@impler/dal';
+import { ITemplateSchemaItem } from '@impler/shared';
 
 @Injectable()
 export class UpdateMappings {
-  constructor(private mappingRepository: MappingRepository) {}
+  constructor(private uploadRepository: UploadRepository) {}
 
-  async execute(command: UpdateMappingCommand[], _uploadId: string) {
-    await this.mappingRepository.deleteMany({ _uploadId });
-
-    return this.mappingRepository.createMany(command);
+  async execute(templateSchema: ITemplateSchemaItem[], _uploadId: string) {
+    await this.uploadRepository.update(
+      {
+        _id: _uploadId,
+      },
+      { customSchema: JSON.stringify(templateSchema) }
+    );
   }
 }

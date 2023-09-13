@@ -153,14 +153,16 @@ export class CSVFileService2 {
       } else {
         fileContent = file.buffer.toString(FileEncodingsEnum.CSV);
       }
+      let headings: string[];
+      let recordIndex = -1;
       parse(fileContent, {
         ...(options || {}),
-        preview: 1,
+        preview: 2,
         step: (results) => {
-          if (Object.keys(results.data).length > Defaults.ONE) {
-            resolve(results.data);
-          } else {
-            reject(new EmptyFileException());
+          recordIndex++;
+          if (recordIndex === Defaults.ZERO) {
+            if (Array.isArray(results.data) && results.data.length > Defaults.ZERO) headings = results.data as string[];
+            else reject(new EmptyFileException());
           }
         },
         error: (error) => {
@@ -168,6 +170,13 @@ export class CSVFileService2 {
             reject(new InvalidFileException());
           } else {
             reject(error);
+          }
+        },
+        complete: () => {
+          if (recordIndex !== Defaults.ONE) {
+            reject(new EmptyFileException());
+          } else {
+            resolve(headings);
           }
         },
       });
