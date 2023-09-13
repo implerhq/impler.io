@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { logError } from '../utils/logger';
-import { EventTypesEnum, IShowPayload, IUpload, ISchemaItem } from '@impler/shared';
-import { EventCalls, UploadTemplateData, UploadData } from '../components/button/Button.types';
+import { EventTypesEnum, IShowPayload, IUpload } from '@impler/shared';
+import { EventCalls, UploadTemplateData, UploadData, ISchemaItem } from '../components/button/Button.types';
 
 interface ShowWidgetProps {
   colorScheme?: 'light' | 'dark';
