@@ -51,7 +51,7 @@ export class UploadController {
     @Body() body: UploadRequestDto,
     @Param('templateId', ValidateTemplate) templateId: string
   ) {
-    return await this.makeUploadEntry.execute(
+    return this.makeUploadEntry.execute(
       MakeUploadEntryCommand.create({
         file: file,
         templateId,

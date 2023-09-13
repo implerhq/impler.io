@@ -33,6 +33,17 @@ export enum EventTypesEnum {
   UPLOAD_COMPLETED = 'UPLOAD_COMPLETED',
 }
 
+export interface ISchemaItem {
+  key: string;
+  name: string;
+  alternateKeys?: string[];
+  isRequired?: boolean;
+  isUnique?: boolean;
+  selectValues?: string[];
+  type?: 'String' | 'Number' | 'Date' | 'Email' | 'Regex' | 'Select' | 'Any';
+  regex?: string;
+}
+
 export type EventCalls =
   | {
       type: EventTypesEnum.UPLOAD_STARTED;

@@ -95,7 +95,7 @@ export class TemplateController {
     summary: 'Get template columns',
   })
   @ApiOkResponse({
-    type: [TemplateResponseDto],
+    type: [ColumnResponseDto],
   })
   async getColumns(@Param('templateId') _templateId: string): Promise<ColumnResponseDto[]> {
     return this.getTemplateColumns.execute(_templateId);

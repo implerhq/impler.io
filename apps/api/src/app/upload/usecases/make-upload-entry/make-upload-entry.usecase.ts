@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { FileMimeTypesEnum, UploadStatusEnum, Defaults, ISchemaItem } from '@impler/shared';
 import {
-  ColumnEntity,
+  FileMimeTypesEnum,
+  UploadStatusEnum,
+  Defaults,
+  ISchemaItem,
+  ITemplateSchemaItem,
+  ColumnTypesEnum,
+} from '@impler/shared';
+import {
   ColumnRepository,
   CommonRepository,
   FileEntity,
@@ -10,7 +16,6 @@ import {
   UploadRepository,
 } from '@impler/dal';
 
-import { mergeObjects } from '@shared/helpers/common.helper';
 import { AddUploadEntryCommand } from './add-upload-entry.command';
 import { MakeUploadEntryCommand } from './make-upload-entry.command';
 import { StorageService } from '@impler/shared/dist/services/storage';
@@ -44,7 +49,7 @@ export class MakeUploadEntry {
       {
         _templateId: templateId,
       },
-      'key isRequired isUnique selectValues type regex sequence',
+      'name key isRequired isUnique selectValues type regex sequence',
       {
         sort: 'sequence',
       }
@@ -54,21 +59,21 @@ export class MakeUploadEntry {
       if (schema) parsedSchema = JSON.parse(schema);
     } catch (error) {}
     if (Array.isArray(parsedSchema) && parsedSchema.length > 0) {
-      const formattedColumns: Record<string, ColumnEntity> = columns.reduce((acc, column) => {
-        acc[column.key] = { ...column };
-
-        return acc;
-      }, {});
+      const formattedColumns: Record<string, Partial<ITemplateSchemaItem>> = {};
       parsedSchema.forEach((schemaItem) => {
-        if (formattedColumns.hasOwnProperty(schemaItem.key)) {
-          mergeObjects(formattedColumns[schemaItem.key], schemaItem, [
-            'isRequired',
-            'isUnique',
-            'selectValues',
-            'type',
-            'regex',
-          ]);
-        }
+        // overrides duplicate
+        formattedColumns[schemaItem.key] = {
+          name: schemaItem.name || 'Untitled Column',
+          isRequired: schemaItem.isRequired || false,
+          key: schemaItem.key,
+          type: schemaItem.type || ColumnTypesEnum.STRING,
+          regex: schemaItem.regex,
+          selectValues: schemaItem.selectValues || [],
+          isUnique: schemaItem.isUnique || false,
+
+          sequence: Object.keys(formattedColumns).length,
+          columnHeading: '',
+        };
       });
       combinedSchema = JSON.stringify(Object.values(formattedColumns));
     } else {

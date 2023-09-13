@@ -1,7 +1,6 @@
 import { Body, Controller, Get, Param, ParseArrayPipe, Post, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiSecurity, ApiOperation, ApiBody } from '@nestjs/swagger';
-import { ACCESS_KEY_NAME, Defaults, UploadStatusEnum } from '@impler/shared';
-import { MappingEntity } from '@impler/dal';
+import { ACCESS_KEY_NAME, Defaults, ITemplateSchemaItem, UploadStatusEnum } from '@impler/shared';
 
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { validateNotFound } from '@shared/helpers/common.helper';
@@ -11,14 +10,15 @@ import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 import { GetUploadCommand } from '@shared/usecases/get-upload/get-upload.command';
 
 import { UpdateMappingDto } from './dtos/update-columns.dto';
-import { DoMapping } from './usecases/do-mapping/do-mapping.usecase';
-import { GetMappings } from './usecases/get-mappings/get-mappings.usecase';
-import { DoMappingCommand } from './usecases/do-mapping/do-mapping.command';
-import { UpdateMappings } from './usecases/update-mappings/update-mappings.usecase';
-import { FinalizeUpload } from './usecases/finalize-upload/finalize-upload.usecase';
-import { ValidateMapping } from './usecases/validate-mapping/validate-mapping.usecase';
-import { UpdateMappingCommand } from './usecases/update-mappings/update-mappings.command';
-import { ReanameFileHeadings } from './usecases/rename-file-headings/rename-file-headings.usecase';
+import {
+  DoMapping,
+  GetMappings,
+  FinalizeUpload,
+  ReanameFileHeadings,
+  DoMappingCommand,
+  UpdateMappings,
+  ValidateMapping,
+} from './usecases';
 
 @Controller('/mapping')
 @ApiTags('Mappings')
@@ -29,8 +29,8 @@ export class MappingController {
     private getUpload: GetUpload,
     private doMapping: DoMapping,
     private getMappings: GetMappings,
-    private updateMappings: UpdateMappings,
     private finalizeUpload: FinalizeUpload,
+    private updateMappings: UpdateMappings,
     private validateMapping: ValidateMapping,
     private renameFileHeadings: ReanameFileHeadings
   ) {}
@@ -39,7 +39,9 @@ export class MappingController {
   @ApiOperation({
     summary: 'Get mapping information for uploaded file',
   })
-  async getMappingInformation(@Param('uploadId', ValidateMongoId) uploadId: string): Promise<Partial<MappingEntity>[]> {
+  async getMappingInformation(
+    @Param('uploadId', ValidateMongoId) uploadId: string
+  ): Promise<Partial<ITemplateSchemaItem>[]> {
     const uploadInformation = await this.getUpload.execute(
       GetUploadCommand.create({
         uploadId,
@@ -81,7 +83,7 @@ export class MappingController {
     const uploadInformation = await this.getUpload.execute(
       GetUploadCommand.create({
         uploadId: _uploadId,
-        select: 'status',
+        select: 'status customSchema headings',
       })
     );
 
@@ -92,22 +94,23 @@ export class MappingController {
     validateUploadStatus(uploadInformation.status as UploadStatusEnum, [UploadStatusEnum.MAPPING]);
 
     // validate mapping data
-    await this.validateMapping.execute(body, _uploadId);
+    this.validateMapping.execute(
+      body,
+      _uploadId,
+      JSON.parse(uploadInformation.customSchema),
+      uploadInformation.headings
+    );
 
     // save mapping
     if (Array.isArray(body) && body.length > Defaults.ZERO) {
-      await this.updateMappings.execute(
-        body
-          .filter((columnDataItem) => !!columnDataItem.columnHeading)
-          .map((updateColumnData) =>
-            UpdateMappingCommand.create({
-              _columnId: updateColumnData._columnId,
-              _uploadId,
-              columnHeading: updateColumnData.columnHeading,
-            })
-          ),
-        _uploadId
-      );
+      const templateSchema = await this.getMappings.execute(_uploadId);
+      templateSchema.forEach((schemaItem: ITemplateSchemaItem, index: number) => {
+        const foundColumn = body.find((item) => item.key === schemaItem.key);
+        if (foundColumn) {
+          templateSchema[index].columnHeading = foundColumn.columnHeading;
+        }
+      });
+      await this.updateMappings.execute(templateSchema, _uploadId);
     }
 
     const { headings } = await this.renameFileHeadings.execute(_uploadId);
