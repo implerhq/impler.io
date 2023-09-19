@@ -29,6 +29,8 @@ if (process.env.SENTRY_DSN) {
 // Validate the ENV variables after launching SENTRY, so missing variables will report to sentry
 validateEnv();
 
+const extendedBodySizeRoutes = ['/v1/template/:templateId/sample'];
+
 export async function bootstrap(expressApp?): Promise<INestApplication> {
   let app;
   if (expressApp) {
@@ -53,6 +55,8 @@ export async function bootstrap(expressApp?): Promise<INestApplication> {
   );
 
   app.use(cookieParser());
+  app.use(extendedBodySizeRoutes, bodyParser.json({ limit: '20mb' }));
+  app.use(extendedBodySizeRoutes, bodyParser.urlencoded({ limit: '20mb', extended: true }));
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
 
