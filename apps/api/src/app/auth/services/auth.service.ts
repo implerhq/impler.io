@@ -1,6 +1,7 @@
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { IJwtPayload } from '@impler/shared';
+import { CONSTANTS } from '@shared/constants';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserEntity, UserRepository, EnvironmentRepository } from '@impler/dal';
 import { UserNotFoundException } from '@shared/exceptions/user-not-found.exception';
@@ -140,7 +141,8 @@ export class AuthService {
           accessToken: user.accessToken,
         },
         {
-          expiresIn: '30 days',
+          secret: process.env.JWT_SECRET,
+          expiresIn: CONSTANTS.maxAge,
           issuer: 'impler',
         }
       )

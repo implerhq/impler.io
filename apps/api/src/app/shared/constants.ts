@@ -29,7 +29,7 @@ export const CONSTANTS = {
   PASSWORD_SALT: 10,
   AUTH_COOKIE_NAME: 'authentication',
   // eslint-disable-next-line no-magic-numbers
-  maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+  maxAge: 1000 * 60 * 60 * 24 * 1, // 1 day
   DEFAULT_USER_AVATAR: 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y',
   CHUNK_VARIABLES: ['page', 'chunkSize', 'isInvalidRecords', 'template', 'uploadId', 'fileName', 'extra'],
   CHUNK_FORMAT: `{

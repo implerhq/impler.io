@@ -1,6 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import getConfig from 'next/config';
+import { track } from '@libs/amplitude';
 import App, { AppProps } from 'next/app';
 import { Poppins } from '@next/font/google';
 import { useLocalStorage } from '@mantine/hooks';
@@ -10,8 +11,10 @@ import { init } from '@amplitude/analytics-browser';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ColorSchemeProvider, MantineProvider, ColorScheme } from '@mantine/core';
 
+import { commonApi } from '@libs/api';
+import { IErrorObject } from '@impler/shared';
 import { addOpacityToHex } from 'shared/utils';
-import { mantineConfig, colors } from '@config';
+import { mantineConfig, colors, API_KEYS, CONSTANTS, ROUTES } from '@config';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -28,6 +31,19 @@ const client = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       retry: false,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      onError: async (err: IErrorObject) => {
+        if (err && err.statusCode === 401) {
+          await commonApi(API_KEYS.LOGOUT as any, {});
+          localStorage.removeItem(CONSTANTS.PROFILE_STORAGE_NAME);
+          track({
+            name: 'LOGOUT',
+            properties: {},
+          });
+          window.location.href = ROUTES.SIGNIN;
+        }
+      },
     },
   },
 });

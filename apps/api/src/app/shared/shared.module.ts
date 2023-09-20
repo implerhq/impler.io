@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import {
   ColumnRepository,
   CommonRepository,
@@ -62,6 +63,7 @@ const PROVIDERS = [
     useClass: getEmailServiceClass(),
   },
   ...FILE_SERVICES,
+  JwtService,
 ];
 
 @Module({

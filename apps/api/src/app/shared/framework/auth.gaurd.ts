@@ -3,6 +3,7 @@ import { ACCESS_KEY_NAME } from '@impler/shared';
 import { CONSTANTS } from '@shared/constants';
 import { AuthService } from 'app/auth/services/auth.service';
 import { AuthGuard } from '@nestjs/passport';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class APIKeyGuard implements CanActivate {
@@ -23,7 +24,7 @@ export class APIKeyGuard implements CanActivate {
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
-  constructor(@Inject(forwardRef(() => AuthService)) private authService: AuthService) {
+  constructor(@Inject(forwardRef(() => AuthService)) private authService: AuthService, private jwtService: JwtService) {
     super();
   }
 
@@ -40,7 +41,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
       return true;
     } else if (req.cookies && req.cookies[CONSTANTS.AUTH_COOKIE_NAME]) {
-      return true;
+      try {
+        await this.jwtService.verifyAsync(req.cookies[CONSTANTS.AUTH_COOKIE_NAME].replace('Bearer ', ''), {
+          secret: process.env.JWT_SECRET as string,
+        });
+
+        return true;
+      } catch (err) {}
     }
 
     throw new UnauthorizedException();
