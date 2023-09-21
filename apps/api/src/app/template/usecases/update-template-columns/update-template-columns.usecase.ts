@@ -28,12 +28,9 @@ export class UpdateTemplateColumns {
   }
 
   async updateCustomizationData(data: AddColumnCommand[], _templateId: string) {
-    let customization = await this.customizationRepository.findOne(
-      {
-        _templateId,
-      },
-      'recordVariables recordFormat combinedFormat isRecordFormatUpdated isCombinedFormatUpdated'
-    );
+    let customization = await this.customizationRepository.findOne({
+      _templateId,
+    });
     const customizationUpdate: Partial<CustomizationEntity> = {};
     if (!customization) {
       customization = await this.customizationRepository.create({
