@@ -93,15 +93,11 @@ export class Sandbox {
       const execOptions: ExecOptions = {
         cwd: directory,
       };
-      exec(fullCommand, execOptions, (error, stdoutput, stderr) => {
+      exec(fullCommand, execOptions, (error) => {
         if (error) {
           reject(error);
 
           return;
-        }
-
-        if (stderr) {
-          reject(error);
         }
 
         resolve({ verdict: EngineResponseStatusEnum.OK });
