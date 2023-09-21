@@ -29,7 +29,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   async canActivate(context: ExecutionContext) {
     const req = context.switchToHttp().getRequest();
-    if (req.cookies && req.headers[ACCESS_KEY_NAME]) {
+    if (req.headers && req.headers[ACCESS_KEY_NAME]) {
       const accessKey = req.headers[ACCESS_KEY_NAME];
 
       const tokenResult = await this.authService.apiKeyAuthenticate(accessKey);
