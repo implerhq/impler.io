@@ -17,7 +17,7 @@ services:
       - impler
   api:
     privileged: true
-    image: "ghcr.io/implerhq/impler/api:0.9.2"
+    image: "ghcr.io/implerhq/impler/api:0.9.3"
     depends_on:
       - mongodb
       - rabbitmq
@@ -50,7 +50,7 @@ services:
     networks:
       - impler
   queue-manager:
-    image: "ghcr.io/implerhq/impler/queue-manager:0.9.2"
+    image: "ghcr.io/implerhq/impler/queue-manager:0.9.3"
     depends_on:
       - api
       - rabbitmq
@@ -67,7 +67,7 @@ services:
     networks:
       - impler
   widget:
-    image: "ghcr.io/implerhq/impler/widget:0.9.2"
+    image: "ghcr.io/implerhq/impler/widget:0.9.3"
     depends_on:
       - api
     container_name: widget
@@ -83,7 +83,7 @@ services:
   embed:
     depends_on:
       - widget
-    image: "ghcr.io/implerhq/impler/embed:0.9.2"
+    image: "ghcr.io/implerhq/impler/embed:0.9.3"
     container_name: embed
     environment:
       WIDGET_URL: ${WIDGET_BASE_URL}
@@ -94,7 +94,7 @@ services:
   web:
     depends_on:
       - api
-    image: "ghcr.io/implerhq/impler/web:0.9.2"
+    image: "ghcr.io/implerhq/impler/web:0.9.3"
     container_name: web
     environment:
       NEXT_PUBLIC_API_BASE_URL: ${API_ROOT_URL}
