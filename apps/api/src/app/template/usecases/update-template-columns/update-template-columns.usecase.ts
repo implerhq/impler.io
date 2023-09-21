@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { CONSTANTS } from '@shared/constants';
 import { AddColumnCommand } from 'app/column/commands/add-column.command';
-import { ColumnRepository, CustomizationRepository } from '@impler/dal';
+import { ColumnRepository, CustomizationEntity, CustomizationRepository } from '@impler/dal';
 import { createRecordFormat, updateCombinedFormat } from '@impler/shared';
 import { SaveSampleFile } from '@shared/usecases/save-sample-file/save-sample-file.usecase';
 
@@ -28,9 +28,13 @@ export class UpdateTemplateColumns {
   }
 
   async updateCustomizationData(data: AddColumnCommand[], _templateId: string) {
-    let customization = await this.customizationRepository.findOne({
-      _templateId,
-    });
+    let customization = await this.customizationRepository.findOne(
+      {
+        _templateId,
+      },
+      'recordVariables recordFormat combinedFormat isRecordFormatUpdated isCombinedFormatUpdated'
+    );
+    const customizationUpdate: Partial<CustomizationEntity> = {};
     if (!customization) {
       customization = await this.customizationRepository.create({
         _templateId,
@@ -39,21 +43,18 @@ export class UpdateTemplateColumns {
         chunkVariables: CONSTANTS.CHUNK_VARIABLES,
       });
     }
-    customization.recordVariables = this.listRecordVariables(data);
+    customizationUpdate.recordVariables = this.listRecordVariables(data);
 
     if (!customization.isRecordFormatUpdated) {
-      customization.recordFormat = createRecordFormat(customization.recordVariables);
+      customizationUpdate.recordFormat = createRecordFormat(customization.recordVariables);
     }
     if (!customization.isCombinedFormatUpdated) {
-      customization.combinedFormat = updateCombinedFormat(CONSTANTS.COMBINED_FORMAT, customization.recordVariables);
+      customizationUpdate.combinedFormat = updateCombinedFormat(
+        CONSTANTS.COMBINED_FORMAT,
+        customization.recordVariables
+      );
     }
 
-    await this.customizationRepository.update({ _templateId }, customization);
-  }
-
-  createCSVFileHeadingContent(data: AddColumnCommand[]): string {
-    const headings = data.map((column) => column.key);
-
-    return headings.join(',');
+    await this.customizationRepository.update({ _templateId }, customizationUpdate);
   }
 }
