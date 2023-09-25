@@ -37,6 +37,11 @@ const Messages: Record<string, NotifyProps> = {
     message: 'Validations has been updated',
     color: 'green',
   },
+  [NOTIFICATION_KEYS.ERROR_OCCURED]: {
+    title: 'Something went wrong!',
+    message: 'Something is not right! Our team is informed about it, please try again after some time.',
+    color: 'red',
+  },
 };
 
 interface NotifyProps {

@@ -1,14 +1,20 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { CustomizationRepository } from '@impler/dal';
 import { UpdateCustomizationCommand } from './update-customization.command';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
 import { createVariable, getRecordFormat } from '@impler/shared';
+import { HyperDXNestLoggerModule, HyperDXNestLogger } from '@hyperdx/node-logger';
 
 @Injectable()
 export class UpdateCustomization {
-  constructor(private customizationRepository: CustomizationRepository) {}
+  constructor(
+    private customizationRepository: CustomizationRepository,
+    @Inject(HyperDXNestLoggerModule.HDX_LOGGER_MODULE_PROVIDER)
+    private readonly logger: HyperDXNestLogger
+  ) {}
 
   async execute(_templateId: string, data: UpdateCustomizationCommand) {
+    this.logger.info({ message: '🐱' });
     if (!data.combinedFormat && !data.chunkFormat && !data.recordFormat) {
       throw new HttpException('At least one of combinedFormat, chunkFormat or recordFormat must be provided.', 400);
     }

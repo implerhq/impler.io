@@ -83,7 +83,7 @@ export class AuthController {
     return response.redirect(url);
   }
 
-  @Get('/user')
+  @Get('/me')
   async user(@UserSession() user: IJwtPayload) {
     return user;
   }

@@ -101,6 +101,12 @@ type TrackData =
   | {
       name: 'LOGOUT';
       properties: Record<string, never>;
+    }
+  | {
+      name: 'ERROR';
+      properties: {
+        message: string;
+      };
     };
 
 export function track({ name, properties }: TrackData) {
