@@ -10,7 +10,7 @@ import { API_KEYS, NOTIFICATION_KEYS, ROUTES } from '@config';
 import { IErrorObject, IProjectPayload, IEnvironmentData } from '@impler/shared';
 
 export function useApp() {
-  const { replace } = useRouter();
+  const { replace, pathname } = useRouter();
   const queryClient = useQueryClient();
   const { profileInfo, setProfileInfo } = useAppState();
   const { isFetching: isProfileLoading } = useQuery<unknown, IErrorObject, IProfileData, [string]>(
@@ -46,12 +46,11 @@ export function useApp() {
     ICreateProjectData,
     string[]
   >([API_KEYS.PROJECT_CREATE], (data) => commonApi(API_KEYS.PROJECT_CREATE as any, { body: data }), {
-    onSuccess: ({ project }) => {
+    onSuccess: ({ project, environment }) => {
       if (project) {
-        queryClient.setQueryData<IProjectPayload[]>([API_KEYS.PROJECTS_LIST], (oldData) => [
-          ...(oldData || []),
-          project,
-        ]);
+        queryClient.setQueryData<IProjectPayload[]>([API_KEYS.PROJECTS_LIST], () => {
+          return [...(projects || []), project];
+        });
         track({
           name: 'PROJECT CREATE',
           properties: {
@@ -62,7 +61,11 @@ export function useApp() {
           setProfileInfo({
             ...profileInfo,
             _projectId: project._id,
+            accessToken: environment.apiKeys[0].key,
           });
+        }
+        if (![ROUTES.SETTINGS, ROUTES.ACTIVITIES, ROUTES.IMPORTS].includes(pathname)) {
+          replace(ROUTES.IMPORTS);
         }
         notify(NOTIFICATION_KEYS.PROJECT_CREATED, {
           title: 'Project created',
@@ -78,7 +81,9 @@ export function useApp() {
         ...profileInfo,
         _projectId: id,
       });
-      replace(ROUTES.IMPORTS);
+      if (![ROUTES.SETTINGS, ROUTES.ACTIVITIES, ROUTES.IMPORTS].includes(pathname)) {
+        replace(ROUTES.IMPORTS);
+      }
       track({
         name: 'PROJECT SWITCH',
         properties: {},
