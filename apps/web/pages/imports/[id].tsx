@@ -47,7 +47,7 @@ export default function ImportDetails({ template }: ImportDetailProps) {
   const { showWidget, isImplerInitiated } = useImpler({
     templateId: template._id,
     projectId: template._projectId,
-    accessToken: profileInfo!.accessToken,
+    accessToken: profileInfo?.accessToken,
     primaryColor: colors.blue,
     onUploadComplete: onSpreadsheetImported,
   });
