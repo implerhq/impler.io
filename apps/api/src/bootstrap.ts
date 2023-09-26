@@ -1,18 +1,18 @@
 import './config';
 
 import { HyperDXNestLoggerModule } from '@hyperdx/node-logger';
-import { INestApplication, ValidationPipe, Logger } from '@nestjs/common';
 import * as compression from 'compression';
 import { NestFactory } from '@nestjs/core';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { AppModule } from './app.module';
-import { validateEnv } from './config/env-validator';
-import { ACCESS_KEY_NAME } from '@impler/shared';
+import { INestApplication, ValidationPipe, Logger } from '@nestjs/common';
 
-// Validate the ENV variables after launching SENTRY, so missing variables will report to sentry
+import { AppModule } from './app.module';
+import { ACCESS_KEY_NAME } from '@impler/shared';
+import { validateEnv } from './config/env-validator';
+
 validateEnv();
 
 const extendedBodySizeRoutes = ['/v1/template/:templateId/sample'];
@@ -31,7 +31,7 @@ export async function bootstrap(expressApp?): Promise<INestApplication> {
   } else {
     app = await NestFactory.create(AppModule, {
       logger: HyperDXNestLoggerModule.createLogger({
-        // baseUrl: process.env.HYPERDX_URL,
+        baseUrl: process.env.HYPERDX_URL,
         apiKey: process.env.HYPERDX_KEY,
         maxLevel: 'info',
         service: 'impler-api',
