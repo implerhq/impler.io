@@ -8,8 +8,13 @@ import { useAppState } from 'store/app.context';
 
 export function useSummary() {
   const { profileInfo } = useAppState();
-  const { data: summaryData, isLoading: isSummaryLoading } = useQuery<unknown, IErrorObject, ISummaryData, string[]>(
-    [API_KEYS.IMPORT_SUMMARY],
+  const { data: summaryData, isLoading: isSummaryLoading } = useQuery<
+    unknown,
+    IErrorObject,
+    ISummaryData,
+    (string | undefined)[]
+  >(
+    [API_KEYS.IMPORT_SUMMARY, profileInfo?._projectId],
     () =>
       commonApi<ISummaryData>(API_KEYS.IMPORT_SUMMARY as any, {
         parameters: [profileInfo!._projectId],

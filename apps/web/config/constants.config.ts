@@ -97,8 +97,10 @@ export const ROUTES = {
   SIGNUP: '/auth/signup',
   SIGNIN: '/auth/signin',
   SIGNIN_ONBOARDING: '/auth/onboard',
-  IMPORTS: '/imports',
   REQUEST_FORGOT_PASSWORD: '/auth/reset/request',
+  IMPORTS: '/imports',
+  SETTINGS: '/settings',
+  ACTIVITIES: '/activities',
 };
 
 export const REGULAR_EXPRESSIONS = {

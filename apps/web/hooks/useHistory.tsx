@@ -20,7 +20,7 @@ export function useHistory() {
     IHistoryData,
     (string | number | undefined | Date)[]
   >(
-    [API_KEYS.IMPORTS_LIST, limit, page, name, date],
+    [API_KEYS.IMPORTS_LIST, profileInfo?._projectId, limit, page, name, date],
     () =>
       commonApi<IHistoryData>(API_KEYS.IMPORTS_LIST as any, {
         parameters: [profileInfo!._projectId],

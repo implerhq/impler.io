@@ -99,6 +99,7 @@ export class ProjectController {
         lastName: user.lastName,
         email: user.email,
         profilePicture: user.profilePicture,
+        accessToken: projectWithEnvironment.environment.apiKeys[0].key,
       },
       projectWithEnvironment.project._id
     );
