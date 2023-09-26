@@ -18,12 +18,12 @@ export class EnvironmentController {
     summary: 'Regenerate API key',
   })
   async regenerateApiKey(@UserSession() user: IJwtPayload, @Res() response: Response) {
-    const { token } = await this.regenerateAPIKey.execute(user);
+    const { token, accessToken } = await this.regenerateAPIKey.execute(user);
     response.cookie(CONSTANTS.AUTH_COOKIE_NAME, token, {
       ...COOKIE_CONFIG,
       domain: process.env.COOKIE_DOMAIN,
     });
 
-    return response.send({ token });
+    return response.send({ accessToken });
   }
 }

@@ -8,24 +8,29 @@ import { IErrorObject } from '@impler/shared';
 import { useAppState } from 'store/app.context';
 
 interface RegenerateData {
-  token: string;
+  accessToken: string;
 }
 
 export function useSettings() {
-  const { profileInfo } = useAppState();
+  const { profileInfo, setProfileInfo } = useAppState();
   const { mutate: regenerateAccessToken, isLoading: isAccessTokenRegenerating } = useMutation<
     RegenerateData,
     IErrorObject,
     void,
-    unknown
-  >([API_KEYS.REGENERATE], () => commonApi<RegenerateData>('REGENERATE', {}), {
+    (string | undefined)[]
+  >([API_KEYS.REGENERATE, profileInfo?._projectId], () => commonApi<RegenerateData>('REGENERATE', {}), {
     onSuccess: (data) => {
-      console.log(data);
       track({
         name: 'REGENERATE TOKEN',
         properties: {},
       });
       notify('REGENERATED');
+      if (profileInfo) {
+        setProfileInfo({
+          ...profileInfo,
+          accessToken: data.accessToken,
+        });
+      }
     },
   });
 
