@@ -1,6 +1,6 @@
 {
   "name": "@impler/web",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "author": "implerhq",
   "license": "MIT",
   "private": true,
@@ -20,8 +20,8 @@
     "@emotion/react": "^11.10.5",
     "@emotion/server": "^11.10.0",
     "@hyperdx/browser": "^0.18.4",
-    "@impler/react": "workspace:^0.9.3",
-    "@impler/shared": "workspace:^0.9.3",
+    "@impler/react": "workspace:^0.9.4",
+    "@impler/shared": "workspace:^0.9.4",
     "@mantine/carousel": "6.0.6",
     "@mantine/core": "6.0.6",
     "@mantine/dates": "6.0.6",

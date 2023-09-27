@@ -1,6 +1,6 @@
 {
   "name": "@impler/api",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "author": "implerhq",
   "license": "MIT",
   "private": true,
@@ -21,8 +21,8 @@
     "@aws-sdk/client-s3": "^3.185.0",
     "@aws-sdk/client-ses": "^3.354.0",
     "@hyperdx/node-logger": "^0.2.8",
-    "@impler/dal": "^0.9.3",
-    "@impler/shared": "^0.9.3",
+    "@impler/dal": "^0.9.4",
+    "@impler/shared": "^0.9.4",
     "@nestjs/common": "^9.1.2",
     "@nestjs/core": "^9.1.2",
     "@nestjs/jwt": "^10.0.1",
