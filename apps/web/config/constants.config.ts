@@ -72,6 +72,7 @@ export const API_KEYS = {
   IMPORTS_LIST: 'IMPORTS_LIST',
   IMPORT_SUMMARY: 'IMPORT_SUMMARY',
 
+  ME: 'ME',
   REGENERATE: 'REGENERATE',
 };
 
@@ -87,6 +88,8 @@ export const NOTIFICATION_KEYS = {
   COLUMNS_UPDATED: 'COLUMNS_UPDATED',
   VALIDATIONS_UPDATED: 'VALIDATIONS_UPDATED',
   REGENERATED: 'REGENERATED',
+
+  ERROR_OCCURED: 'ERROR_OCCURED',
 };
 
 export const ROUTES = {
@@ -94,8 +97,10 @@ export const ROUTES = {
   SIGNUP: '/auth/signup',
   SIGNIN: '/auth/signin',
   SIGNIN_ONBOARDING: '/auth/onboard',
-  IMPORTS: '/imports',
   REQUEST_FORGOT_PASSWORD: '/auth/reset/request',
+  IMPORTS: '/imports',
+  SETTINGS: '/settings',
+  ACTIVITIES: '/activities',
 };
 
 export const REGULAR_EXPRESSIONS = {

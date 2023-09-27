@@ -4,7 +4,7 @@ import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 
 import { track } from '@libs/amplitude';
-import { CONSTANTS, ROUTES } from '@config';
+import { ROUTES } from '@config';
 import { Signin } from '@components/signin';
 import { OnboardLayout } from '@layouts/OnboardLayout';
 
@@ -16,7 +16,6 @@ export default function SigninPage() {
   useEffect(() => {
     if (query?.token) {
       const profileData = jwt<IProfileData>(query.token as string);
-      localStorage.setItem(CONSTANTS.PROFILE_STORAGE_NAME, JSON.stringify(profileData));
       track({
         name: 'GITHUB CONTINUE',
         properties: {

@@ -22,7 +22,8 @@ declare namespace NodeJS {
     GITHUB_OAUTH_CLIENT_ID: string;
     GITHUB_OAUTH_CLIENT_SECRET: string;
 
-    SENTRY_DSN: string;
+    HYPERDX_KEY: string;
+    HYPERDX_URL: string;
 
     SES_REGION: string;
     SES_ACCESS_KEY_ID: string;

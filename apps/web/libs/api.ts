@@ -108,6 +108,10 @@ const routes: Record<string, Route> = {
     url: (templateId) => `/v1/template/${templateId}/validations`,
     method: 'PUT',
   },
+  [API_KEYS.ME]: {
+    url: () => `/v1/auth/me`,
+    method: 'GET',
+  },
 };
 
 function handleResponseStatusAndContentType(response: Response) {

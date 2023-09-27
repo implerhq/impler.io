@@ -1,7 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import getConfig from 'next/config';
-import { track } from '@libs/amplitude';
+import HyperDX from '@hyperdx/browser';
 import App, { AppProps } from 'next/app';
 import { Poppins } from '@next/font/google';
 import { useLocalStorage } from '@mantine/hooks';
@@ -12,9 +12,11 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ColorSchemeProvider, MantineProvider, ColorScheme } from '@mantine/core';
 
 import { commonApi } from '@libs/api';
-import { IErrorObject } from '@impler/shared';
+import { notify } from '@libs/notify';
+import { track } from '@libs/amplitude';
 import { addOpacityToHex } from 'shared/utils';
-import { mantineConfig, colors, API_KEYS, CONSTANTS, ROUTES } from '@config';
+import { StoreWrapper } from 'store/StoreWrapper';
+import { mantineConfig, colors, API_KEYS, ROUTES, NOTIFICATION_KEYS } from '@config';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -25,18 +27,35 @@ if (typeof window !== 'undefined' && publicRuntimeConfig.NEXT_PUBLIC_AMPLITUDE_I
     },
   });
 }
+if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_HYPERDX_KEY && process.env.NEXT_PUBLIC_HYPERDX_URL) {
+  HyperDX.init({
+    disableReplay: true,
+    disableIntercom: true,
+    url: process.env.NEXT_PUBLIC_HYPERDX_URL,
+    apiKey: process.env.NEXT_PUBLIC_HYPERDX_KEY,
+    service: 'impler-web',
+    consoleCapture: true,
+    advancedNetworkCapture: true,
+  });
+}
 
 const client = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
       retry: false,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      onError: async (err: IErrorObject) => {
-        if (err && err.statusCode === 401) {
+      onError: async (err: any) => {
+        if (err && err.message === 'Failed to fetch') {
+          track({
+            name: 'ERROR',
+            properties: {
+              message: err.message,
+            },
+          });
+          notify(NOTIFICATION_KEYS.ERROR_OCCURED);
+          window.location.href = ROUTES.SIGNIN;
+        } else if (err && err.statusCode === 401) {
           await commonApi(API_KEYS.LOGOUT as any, {});
-          localStorage.removeItem(CONSTANTS.PROFILE_STORAGE_NAME);
           track({
             name: 'LOGOUT',
             properties: {},
@@ -108,11 +127,13 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                 },
               }}
             >
-              {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-              {/* @ts-ignore */}
-              <Layout {...(Component.Layout ? { pageProps } : {})}>
-                <Component {...pageProps} />
-              </Layout>
+              <StoreWrapper>
+                {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+                {/* @ts-ignore */}
+                <Layout {...(Component.Layout ? { pageProps } : {})}>
+                  <Component {...pageProps} />
+                </Layout>
+              </StoreWrapper>
             </ModalsProvider>
           </MantineProvider>
         </ColorSchemeProvider>

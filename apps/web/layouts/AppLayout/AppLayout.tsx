@@ -15,7 +15,6 @@ import LogoBlack from '@assets/images/full-logo-dark.png';
 import LogoWhite from '@assets/images/full-logo-light.png';
 import { LogoutIcon } from '@assets/icons/Logout.icon';
 
-import { CONSTANTS } from '@config';
 import { useApp } from '@hooks/useApp';
 import { NavItem } from '@ui/nav-item';
 import { UserMenu } from '@ui/user-menu';
@@ -35,7 +34,7 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
   const { classes } = useStyles();
   const navRef = useRef<HTMLElement>(null);
   const { colorScheme } = useMantineColorScheme();
-  const { profile, projects, createProject, logout, setProjectId, isProjectsLoading } = useApp();
+  const { profile, projects, createProject, logout, setProjectId, isProjectsLoading, isProfileLoading } = useApp();
 
   return (
     <>
@@ -49,7 +48,7 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
         <link rel="icon" href={colorScheme === 'dark' ? '/favicon-dark.ico' : '/favicon-light.ico'} />
       </Head>
       <div className={classes.root}>
-        <LoadingOverlay visible={isProjectsLoading} />
+        <LoadingOverlay visible={isProjectsLoading || isProfileLoading} />
         <aside className={classes.aside}>
           <div className={classes.logoContainer}>
             <Image src={colorScheme === 'dark' ? LogoWhite : LogoBlack} alt="Impler Logo" width={140} />
@@ -130,12 +129,11 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
           widgetId={publicRuntimeConfig.NEXT_PUBLIC_TAWK_WIDGET_ID}
           ref={twakRef}
           onLoad={() => {
-            if (typeof window !== 'undefined' && localStorage.getItem(CONSTANTS.PROFILE_STORAGE_NAME)) {
-              const user = JSON.parse(localStorage.getItem(CONSTANTS.PROFILE_STORAGE_NAME)!);
+            if (typeof window !== 'undefined' && profile) {
               twakRef.current?.setAttributes({
-                id: user._id,
-                name: user.firstName,
-                email: user.email,
+                id: profile._id,
+                name: profile.firstName,
+                email: profile.email,
               });
             }
           }}

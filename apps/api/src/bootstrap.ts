@@ -1,32 +1,18 @@
 import './config';
 
-import * as Sentry from '@sentry/node';
-import { INestApplication, ValidationPipe, Logger } from '@nestjs/common';
+import { HyperDXNestLoggerModule } from '@hyperdx/node-logger';
 import * as compression from 'compression';
 import { NestFactory } from '@nestjs/core';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { INestApplication, ValidationPipe, Logger } from '@nestjs/common';
+
 import { AppModule } from './app.module';
-import { validateEnv } from './config/env-validator';
 import { ACCESS_KEY_NAME } from '@impler/shared';
-import { version } from '../package.json';
+import { validateEnv } from './config/env-validator';
 
-if (process.env.SENTRY_DSN) {
-  Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-    environment: process.env.NODE_ENV,
-    release: `v${version}`,
-    ignoreErrors: ['Non-Error exception captured'],
-    integrations: [
-      // enable HTTP calls tracing
-      new Sentry.Integrations.Http({ tracing: true }),
-    ],
-  });
-}
-
-// Validate the ENV variables after launching SENTRY, so missing variables will report to sentry
 validateEnv();
 
 const extendedBodySizeRoutes = ['/v1/template/:templateId/sample'];
@@ -34,14 +20,23 @@ const extendedBodySizeRoutes = ['/v1/template/:templateId/sample'];
 export async function bootstrap(expressApp?): Promise<INestApplication> {
   let app;
   if (expressApp) {
-    app = await NestFactory.create(AppModule, new ExpressAdapter(expressApp));
+    app = await NestFactory.create(AppModule, new ExpressAdapter(expressApp), {
+      logger: HyperDXNestLoggerModule.createLogger({
+        baseUrl: process.env.HYPERDX_URL,
+        apiKey: process.env.HYPERDX_KEY,
+        maxLevel: 'info',
+        service: 'impler-api',
+      }),
+    });
   } else {
-    app = await NestFactory.create(AppModule);
-  }
-
-  if (process.env.SENTRY_DSN) {
-    app.use(Sentry.Handlers.requestHandler());
-    app.use(Sentry.Handlers.tracingHandler());
+    app = await NestFactory.create(AppModule, {
+      logger: HyperDXNestLoggerModule.createLogger({
+        baseUrl: process.env.HYPERDX_URL,
+        apiKey: process.env.HYPERDX_KEY,
+        maxLevel: 'info',
+        service: 'impler-api',
+      }),
+    });
   }
 
   app.enableCors(corsOptionsDelegate);

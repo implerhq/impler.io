@@ -1,8 +1,9 @@
-import { HttpException, Injectable } from '@nestjs/common';
 import { CustomizationRepository } from '@impler/dal';
+import { createVariable, getRecordFormat } from '@impler/shared';
+import { HttpException, Injectable } from '@nestjs/common';
+
 import { UpdateCustomizationCommand } from './update-customization.command';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
-import { createVariable, getRecordFormat } from '@impler/shared';
 
 @Injectable()
 export class UpdateCustomization {

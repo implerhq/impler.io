@@ -41,13 +41,13 @@ const { publicRuntimeConfig } = getConfig();
 
 export default function ImportDetails({ template }: ImportDetailProps) {
   const { colorScheme } = useMantineTheme();
-  const { onUpdateClick, onDeleteClick, templateData, profile, onSpreadsheetImported, columns } = useImportDetails({
+  const { onUpdateClick, onDeleteClick, templateData, profileInfo, onSpreadsheetImported, columns } = useImportDetails({
     template,
   });
   const { showWidget, isImplerInitiated } = useImpler({
     templateId: template._id,
     projectId: template._projectId,
-    accessToken: profile?.accessToken,
+    accessToken: profileInfo?.accessToken,
     primaryColor: colors.blue,
     onUploadComplete: onSpreadsheetImported,
   });
@@ -92,14 +92,18 @@ export default function ImportDetails({ template }: ImportDetailProps) {
             value: 'destination',
             title: 'Destination',
             icon: <TwoIcon size="xs" />,
-            content: <Destination template={template} accessToken={profile?.accessToken} />,
+            content: <Destination template={template} accessToken={profileInfo?.accessToken} />,
           },
           {
             value: 'snippet',
             title: 'Snippet',
             icon: <ThreeIcon size="xs" />,
             content: (
-              <Snippet templateId={template._id} projectId={template._projectId} accessToken={profile?.accessToken} />
+              <Snippet
+                templateId={template._id}
+                projectId={template._projectId}
+                accessToken={profileInfo?.accessToken}
+              />
             ),
           },
           ...(publicRuntimeConfig.NEXT_PUBLIC_CUSTOM_VALIDATION_ENABLED === 'true'
