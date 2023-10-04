@@ -36,6 +36,7 @@ export class ColumnController {
         regex: body.regex,
         regexDescription: body.regexDescription,
         selectValues: body.selectValues,
+        dateFormats: body.dateFormats,
         sequence: body.sequence,
         _templateId,
         type: body.type,

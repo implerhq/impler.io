@@ -5,4 +5,5 @@ export const Defaults = {
   NOT_FOUND_STATUS_CODE: 404,
   READY_STATE: 1,
   CHUNK_SIZE: 100,
+  DATE_FORMATS: ['DD/MM/YYYY'],
 };

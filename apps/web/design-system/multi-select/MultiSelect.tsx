@@ -13,6 +13,7 @@ interface MultiSelectProps {
   clearable?: boolean;
   getCreateLabel?: (value: string) => string;
   onChange?: (value: string[]) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 export function MultiSelect({
@@ -25,6 +26,7 @@ export function MultiSelect({
   noFoundText,
   clearable,
   creatable,
+  onKeyDown,
   getCreateLabel,
 }: MultiSelectProps) {
   const { classes } = useStyles();
@@ -42,6 +44,7 @@ export function MultiSelect({
       value={value}
       onCreate={onCreate}
       onChange={onChange}
+      onKeyDown={onKeyDown}
     />
   );
 }

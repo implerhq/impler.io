@@ -85,7 +85,7 @@ export class DoReview {
     const mappings = await this.mappingRepository.find({ _uploadId: uploadId }, '_columnId columnHeading');
     const columns = await this.columnRepository.find(
       { _templateId: uploadInfo._templateId },
-      'isRequired isUnique selectValues type regex'
+      'isRequired isUnique selectValues dateFormats type regex'
     );
     const schema = this.buildAJVSchema(columns, mappings);
     const validator = ajv.compile(schema);

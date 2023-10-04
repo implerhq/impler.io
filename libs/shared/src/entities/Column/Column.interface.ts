@@ -9,6 +9,7 @@ export interface IColumn {
   regex?: string;
   regexDescription?: string;
   selectValues?: string[];
+  dateFormats?: string[];
   sequence?: number;
   _templateId: string;
 }

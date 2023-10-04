@@ -12,6 +12,10 @@ const columnSchema = new Schema(
     regex: String,
     regexDescription: String,
     selectValues: [String],
+    dateFormats: {
+      type: [String],
+      default: ['DD/MM/YYYY'],
+    },
     sequence: Number,
     _templateId: {
       type: Schema.Types.String,

@@ -50,6 +50,11 @@ export class ColumnResponseDto {
   })
   selectValues?: string[];
 
+  @ApiPropertyOptional({
+    description: 'List of possible date formats for column if type is Date',
+  })
+  dateFormats?: string[];
+
   @ApiProperty({
     description: 'Sequence of column',
   })

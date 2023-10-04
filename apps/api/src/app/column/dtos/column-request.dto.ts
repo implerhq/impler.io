@@ -11,7 +11,7 @@ import {
   Validate,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ColumnTypesEnum } from '@impler/shared';
+import { ColumnTypesEnum, Defaults } from '@impler/shared';
 import { IsValidRegex } from '@shared/framework/is-valid-regex.validator';
 
 export class ColumnRequestDto {
@@ -82,6 +82,13 @@ export class ColumnRequestDto {
   @ValidateIf((object) => object.type === ColumnTypesEnum.SELECT)
   @Type(() => Array<string>)
   selectValues: string[] = [];
+
+  @ApiPropertyOptional({
+    description: 'List of date formats for column if type is Date',
+  })
+  @ValidateIf((object) => object.type === ColumnTypesEnum.DATE)
+  @Type(() => Array<string>)
+  dateFormats: string[] = Defaults.DATE_FORMATS;
 
   @ApiProperty({
     description: 'Sequence of column',
