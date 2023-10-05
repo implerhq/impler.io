@@ -613,15 +613,14 @@ export class DoReview {
         headings,
       });
 
-      const batchProcess = await Promise.all(
+      const batchProcessData = await Promise.all(
         batches.map((batch) => this.executeBatchInSandbox(batch, this.sandboxManager, onBatchInitialize))
       );
-      const processedArray = batchProcess.flat();
       let totalRecords = 0,
         validRecords = 0,
         invalidRecords = 0;
       let processOutput, message: string;
-      for (const processData of processedArray) {
+      for (const processData of batchProcessData) {
         if (
           processData &&
           processData.output &&
