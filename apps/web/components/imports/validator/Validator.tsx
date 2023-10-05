@@ -124,7 +124,7 @@ export function Validator({ templateId }: ValidatorProps) {
                 />
               )}
             />
-            {testCodeResult && !testCodeResult.passed && (
+            {testCodeResult && testCodeResult.passed && (
               <Text color="red">It seems there is some issues with code!</Text>
             )}
           </div>
