@@ -95,7 +95,7 @@ export class DoReview {
 
     let response: string;
 
-    if (validations && !validations.onBatchInitialize) {
+    if (validations && validations.onBatchInitialize) {
       const batches = await this.batchRun({
         _uploadId,
         allDataFilePath: uploadedFileInfo.path,
