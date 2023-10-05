@@ -124,7 +124,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 clearable
                 searchable
                 value={value}
-                placeholder="Date Formats"
+                placeholder="Valid Date Formats, i.e. DD/MM/YYYY, DD/MM/YY"
                 data={Array.isArray(value) ? value : []}
                 getCreateLabel={(query) => `Add "${query}"`}
                 onCreate={(newItem) => {
