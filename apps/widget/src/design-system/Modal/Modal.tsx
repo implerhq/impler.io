@@ -17,15 +17,20 @@ export function Modal(props: PropsWithChildren<IModalProps>) {
 
   return (
     <MantineModal
-      onClose={onClose}
+      size="100%"
       opened={opened}
-      transitionDuration={1000}
-      transitionTimingFunction="ease"
-      transition="scale"
-      overlayOpacity={0.4}
-      overlayBlur={0.8}
-      centered={centered}
+      onClose={onClose}
+      transitionProps={{
+        duration: 1000,
+        timingFunction: 'ease',
+        transition: 'scale',
+      }}
+      overlayProps={{
+        opacity: 0.4,
+        blur: 0.8,
+      }}
       title={title}
+      centered={centered}
       classNames={classes}
     >
       {children}

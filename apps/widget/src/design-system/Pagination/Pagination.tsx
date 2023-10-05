@@ -24,7 +24,7 @@ export function Pagination(props: IPaginationProps) {
         boundaries={isLessThanMd ? variables.baseIndex : variables.firstIndex}
         classNames={classes}
         total={total}
-        page={page}
+        value={page}
         size={size}
         onChange={onChange}
       />

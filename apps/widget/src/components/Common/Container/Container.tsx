@@ -3,7 +3,7 @@ import * as WebFont from 'webfontloader';
 import { useParams } from 'react-router-dom';
 import { Global } from '@emotion/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { NotificationsProvider } from '@mantine/notifications';
+import { Notifications } from '@mantine/notifications';
 import { MantineProvider } from '@mantine/core';
 import { logAmplitudeEvent } from '@amplitude';
 
@@ -119,25 +119,24 @@ export function Container({ children }: PropsWithChildren<{}>) {
             primaryShade: variables.colorIndex,
           }}
         >
-          <NotificationsProvider>
-            <Provider
-              schema={secondaryPayload?.schema}
-              title={secondaryPayload?.title}
-              // api
-              api={api}
-              // impler-context
-              projectId={projectId}
-              data={secondaryPayload.data}
-              templateId={secondaryPayload.templateId}
-              accessToken={primaryPayload.accessToken}
-              authHeaderValue={secondaryPayload?.authHeaderValue}
-              extra={secondaryPayload?.extra}
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              primaryColor={secondaryPayload.primaryColor!}
-            >
-              {children}
-            </Provider>
-          </NotificationsProvider>
+          <Provider
+            schema={secondaryPayload?.schema}
+            title={secondaryPayload?.title}
+            // api
+            api={api}
+            // impler-context
+            projectId={projectId}
+            data={secondaryPayload.data}
+            templateId={secondaryPayload.templateId}
+            accessToken={primaryPayload.accessToken}
+            authHeaderValue={secondaryPayload?.authHeaderValue}
+            extra={secondaryPayload?.extra}
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            primaryColor={secondaryPayload.primaryColor!}
+          >
+            {children}
+            <Notifications />
+          </Provider>
         </MantineProvider>
       ) : null}
     </>
