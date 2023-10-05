@@ -1,7 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
 import getConfig from 'next/config';
-import HyperDX from '@hyperdx/browser';
 import App, { AppProps } from 'next/app';
 import { Poppins } from '@next/font/google';
 import { useLocalStorage } from '@mantine/hooks';
@@ -25,17 +24,6 @@ if (typeof window !== 'undefined' && publicRuntimeConfig.NEXT_PUBLIC_AMPLITUDE_I
     defaultTracking: {
       attribution: false,
     },
-  });
-}
-if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_HYPERDX_KEY && process.env.NEXT_PUBLIC_HYPERDX_URL) {
-  HyperDX.init({
-    disableReplay: true,
-    disableIntercom: true,
-    url: process.env.NEXT_PUBLIC_HYPERDX_URL,
-    apiKey: process.env.NEXT_PUBLIC_HYPERDX_KEY,
-    service: 'impler-web',
-    consoleCapture: true,
-    advancedNetworkCapture: true,
   });
 }
 

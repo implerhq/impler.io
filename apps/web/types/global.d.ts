@@ -11,8 +11,6 @@ namespace NodeJS {
     NEXT_PUBLIC_TAWK_WIDGET_ID: string;
 
     NEXT_PUBLIC_GTM_ID: string;
-    NEXT_PUBLIC_HYPERDX_URL: string;
-    NEXT_PUBLIC_HYPERDX_KEY: string;
     NEXT_PUBLIC_GOOGLE_ANALYTICS_ID: string;
   }
 }
