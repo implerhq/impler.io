@@ -42,6 +42,7 @@
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "date-fns": "^2.30.0",
+    "dayjs": "^1.11.10",
     "dotenv": "^16.0.2",
     "envalid": "^7.3.1",
     "exceljs": "^4.3.0",
@@ -55,7 +56,8 @@
     "passport-oauth2": "^1.6.1",
     "rimraf": "^3.0.2",
     "source-map-support": "^0.5.21",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.0/xlsx-0.20.0.tgz"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.1.5",

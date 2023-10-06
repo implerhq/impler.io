@@ -19,6 +19,8 @@ export class ColumnEntity {
 
   selectValues?: string[];
 
+  dateFormats?: string[];
+
   sequence?: number;
 
   _templateId: string;

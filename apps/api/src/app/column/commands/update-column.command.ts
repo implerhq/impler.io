@@ -41,6 +41,11 @@ export class UpdateColumnCommand extends BaseCommand {
   @Type(() => Array<string>)
   selectValues: string[];
 
+  @IsArray()
+  @IsOptional()
+  @Type(() => Array<string>)
+  dateFormats: string[];
+
   @IsNumber()
   @IsOptional()
   sequence: number;

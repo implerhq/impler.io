@@ -167,6 +167,7 @@ export class TemplateController {
           regex: columnData.regex,
           regexDescription: columnData.regexDescription,
           selectValues: columnData.selectValues,
+          dateFormats: columnData.dateFormats,
           sequence: columnData.sequence,
           _templateId,
           type: columnData.type,
