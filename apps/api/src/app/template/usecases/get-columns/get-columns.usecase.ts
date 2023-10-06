@@ -8,7 +8,7 @@ export class GetTemplateColumns {
   async execute(_templateId: string) {
     return this.columnRepository.find(
       { _templateId },
-      '_id name key type alternateKeys isRequired isUnique selectValues sequence'
+      '_id name key type alternateKeys isRequired isUnique selectValues dateFormats sequence'
     );
   }
 }

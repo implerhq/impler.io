@@ -38,6 +38,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
         regex: data.regex,
         regexDescription: data.regexDescription,
         selectValues: data.selectValues,
+        dateFormats: data.dateFormats,
         type: data.type,
         alternateKeys: data.alternateKeys,
       });
@@ -89,7 +90,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
             />
           </>
         )}
-        {typeValue === 'Select' && (
+        {typeValue === 'Select' ? (
           <Controller
             name="selectValues"
             control={control}
@@ -111,7 +112,30 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
               />
             )}
           />
-        )}
+        ) : null}
+        {typeValue === 'Date' ? (
+          <Controller
+            name="dateFormats"
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <MultiSelect
+                creatable
+                clearable
+                searchable
+                value={value}
+                placeholder="Valid Date Formats, i.e. DD/MM/YYYY, DD/MM/YY"
+                data={['DD/MM/YYYY', 'DD/MM/YY', 'MM/DD/YYYY', 'MM/DD/YY', ...(Array.isArray(value) ? value : [])]}
+                getCreateLabel={(query) => `Add "${query}"`}
+                onCreate={(newItem) => {
+                  onChange([...(Array.isArray(value) ? value : []), newItem]);
+
+                  return newItem;
+                }}
+                onChange={onChange}
+              />
+            )}
+          />
+        ) : null}
         <Group spacing="xs">
           <Checkbox label="Is Required?" register={register('isRequired')} />
           {typeValue !== 'Select' && <Checkbox label="Is Unique?" register={register('isUnique')} />}

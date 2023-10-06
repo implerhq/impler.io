@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as dayjs from 'dayjs';
 import * as Papa from 'papaparse';
 import * as ExcelJS from 'exceljs';
 import addFormats from 'ajv-formats';
@@ -39,12 +40,12 @@ const ajv = new Ajv({
 });
 addFormats(ajv, ['email']);
 addKeywords(ajv);
-ajv.addFormat('custom-date-time', function (dateTimeString) {
-  if (typeof dateTimeString === 'object') {
-    dateTimeString = (dateTimeString as Date).toISOString();
-  }
-
-  return !isNaN(Date.parse(dateTimeString)); // any test that returns true/false
+let dateFormats: Record<string, string[]> = {};
+ajv.addKeyword('customDateChecker', {
+  keyword: 'customDateChecker',
+  validate: function (_valid, date, _schema, dataPath) {
+    return dayjs(date, dateFormats[dataPath.parentDataProperty]).isValid();
+  },
 });
 
 // Empty keyword
@@ -120,6 +121,7 @@ export class DoReview {
 
     // resetting uniqueItems
     uniqueItems = {};
+    dateFormats = {};
 
     return response;
   }
@@ -145,6 +147,13 @@ export class DoReview {
     columns.forEach((column) => {
       if (formattedColumns[column.key].isUnique) {
         uniqueItems[column.key] = new Set();
+      }
+      if (
+        formattedColumns[column.key].type === ColumnTypesEnum.DATE &&
+        Array.isArray(formattedColumns[column.key].dateFormats) &&
+        formattedColumns[column.key].dateFormats.length > 0
+      ) {
+        dateFormats[column.key] = formattedColumns[column.key].dateFormats;
       }
     });
 
@@ -194,7 +203,7 @@ export class DoReview {
         };
         break;
       case ColumnTypesEnum.DATE:
-        property = { type: ['string', 'null'], format: 'custom-date-time', default: null };
+        property = { type: ['string', 'null'], customDateChecker: true, default: null };
         break;
       case ColumnTypesEnum.ANY:
         property = { type: ['string', 'number', 'object', 'null'] };
@@ -225,6 +234,10 @@ export class DoReview {
       // empty string case
       case error.keyword === 'emptyCheck':
         message = ` must not be empty`;
+        break;
+      // customDateChecker
+      case error.keyword === 'customDateChecker':
+        message = ` must match format from [${dateFormats[field].toString()}]`;
         break;
       // uniqueCheck
       case error.keyword === 'uniqueCheck':

@@ -40,6 +40,7 @@ export function MultiSelect({
       getCreateLabel={getCreateLabel}
       creatable={creatable}
       value={value}
+      withinPortal
       onCreate={onCreate}
       onChange={onChange}
     />

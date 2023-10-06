@@ -40,6 +40,7 @@ export interface ISchemaItem {
   isRequired?: boolean;
   isUnique?: boolean;
   selectValues?: string[];
+  dateFormats?: string[];
   type?: 'String' | 'Number' | 'Date' | 'Email' | 'Regex' | 'Select' | 'Any';
   regex?: string;
 }

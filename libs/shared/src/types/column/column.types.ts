@@ -15,6 +15,7 @@ export interface ISchemaItem {
   isRequired?: boolean;
   isUnique?: boolean;
   selectValues?: string[];
+  dateFormats?: string[];
   type?: ColumnTypesEnum;
   regex?: string;
 }
