@@ -13,6 +13,10 @@ export class UploadEntity {
 
   invalidCSVDataFileUrl: string;
 
+  originalFileName: string;
+
+  originalFileType: string;
+
   headings: string[];
 
   uploadedDate: Date;

@@ -16,6 +16,15 @@ export class FileNameService {
   getFileExtension(fileName: string): string {
     return fileName.split('.').pop();
   }
+  getOriginalFileName(fileName: string): string {
+    const filenameWithoutExtension = fileName.split('.').slice(0, -1).join('.');
+    const random = Math.random().toString(36).slice(2);
+
+    return `${filenameWithoutExtension}-${random}.${this.getFileExtension(fileName)}`;
+  }
+  getOriginalFilePath(uploadId: string, fileName: string): string {
+    return `${uploadId}/${fileName}`;
+  }
   getUploadedFilePath(uploadId: string, fileName: string): string {
     return `${uploadId}/${this.getUploadedFileName(fileName)}`;
   }
