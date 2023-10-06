@@ -28,6 +28,12 @@ const uploadSchema = new Schema(
     invalidCSVDataFileUrl: {
       type: Schema.Types.String,
     },
+    originalFileName: {
+      type: Schema.Types.String,
+    },
+    originalFileType: {
+      type: Schema.Types.String,
+    },
     uploadedDate: {
       type: Schema.Types.Date,
       default: Date.now,

@@ -86,6 +86,10 @@ export class MakeUploadEntry {
     const uploadId = this.commonRepository.generateMongoId().toString();
     const fileEntity = await this.makeFileEntry(uploadId, csvFile, fileOriginalName);
 
+    const originalFileName = this.fileNameService.getOriginalFileName(fileOriginalName);
+    const originalFilePath = this.fileNameService.getOriginalFilePath(uploadId, originalFileName);
+    await this.storageService.uploadFile(originalFilePath, file.buffer, file.mimetype);
+
     await this.templateRepository.findOneAndUpdate(
       { _id: templateId },
       {
@@ -96,13 +100,15 @@ export class MakeUploadEntry {
     );
 
     return this.addUploadEntry({
-      _templateId: templateId,
-      _uploadedFileId: fileEntity._id,
-      uploadId,
       extra,
+      uploadId,
       authHeaderValue,
+      originalFileName,
       schema: combinedSchema,
       headings: fileHeadings,
+      _templateId: templateId,
+      _uploadedFileId: fileEntity._id,
+      originalFileType: file.mimetype,
     });
   }
 
@@ -117,7 +123,7 @@ export class MakeUploadEntry {
       typeof file === 'string' ? file : file.buffer,
       FileMimeTypesEnum.CSV
     );
-    const uploadedFileName = 'uploaded.csv';
+    const uploadedFileName = this.fileNameService.getUploadedFileName(fileOriginalName);
     const fileEntry = await this.fileRepository.create({
       mimeType: FileMimeTypesEnum.CSV,
       name: uploadedFileName,
@@ -138,6 +144,8 @@ export class MakeUploadEntry {
     headings,
     schema,
     totalRecords,
+    originalFileName,
+    originalFileType,
   }: AddUploadEntryCommand) {
     return this.uploadRepository.create({
       _id: uploadId,
@@ -145,6 +153,8 @@ export class MakeUploadEntry {
       _templateId,
       _allDataFileId,
       extra: extra,
+      originalFileType,
+      originalFileName,
       customSchema: schema,
       headings: Array.isArray(headings) ? headings : [],
       status: UploadStatusEnum.UPLOADED,

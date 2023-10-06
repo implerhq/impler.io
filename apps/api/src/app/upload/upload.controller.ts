@@ -1,9 +1,21 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 import _whatever from 'multer';
+import { Response } from 'express';
 import { FileEntity } from '@impler/dal';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ACCESS_KEY_NAME, Defaults, UploadStatusEnum } from '@impler/shared';
-import { Body, Controller, Get, Param, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Res,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ApiTags, ApiSecurity, ApiConsumes, ApiOperation, ApiParam, ApiQuery, ApiOkResponse } from '@nestjs/swagger';
 
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
@@ -17,10 +29,8 @@ import { GetUploadCommand } from '@shared/usecases/get-upload/get-upload.command
 import { ValidateTemplate } from '@shared/validations/valid-template.validation';
 
 import { UploadRequestDto } from './dtos/upload-request.dto';
-import { MakeUploadEntry } from './usecases/make-upload-entry/make-upload-entry.usecase';
 import { MakeUploadEntryCommand } from './usecases/make-upload-entry/make-upload-entry.command';
-import { PaginateFileContent } from './usecases/paginate-file-content/paginate-file-content.usecase';
-import { GetUploadProcessInformation } from './usecases/get-upload-process-info/get-upload-process-info.usecase';
+import { MakeUploadEntry, PaginateFileContent, GetUploadProcessInformation, GetOriginalFileContent } from './usecases';
 
 @Controller('/upload')
 @ApiTags('Uploads')
@@ -30,6 +40,7 @@ export class UploadController {
   constructor(
     private makeUploadEntry: MakeUploadEntry,
     private getUpload: GetUpload,
+    private getOriginalFileContent: GetOriginalFileContent,
     private getUploadProcessInfo: GetUploadProcessInformation,
     private paginateFileContent: PaginateFileContent
   ) {}
@@ -83,6 +94,21 @@ export class UploadController {
     );
 
     return uploadInfo.headings;
+  }
+
+  @Get(':uploadId/files/original')
+  @ApiOperation({
+    summary: 'Get original uploaded file',
+  })
+  @ApiOkResponse({
+    description: 'Returns original uploaded file',
+  })
+  async getOriginalFile(@Param('uploadId', ValidateMongoId) uploadId: string, @Res() res: Response) {
+    const { name, content, type } = await this.getOriginalFileContent.execute(uploadId);
+
+    res.setHeader('Content-Type', type);
+    res.setHeader('Content-Disposition', 'attachment; filename=' + name);
+    res.send(content);
   }
 
   @Get(':uploadId/rows/valid')
