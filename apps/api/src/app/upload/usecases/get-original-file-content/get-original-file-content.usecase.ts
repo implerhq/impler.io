@@ -1,5 +1,5 @@
 import { Readable } from 'stream';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UploadRepository } from '@impler/dal';
 import { FileNameService } from '@shared/services';
 import { StorageService } from '@impler/shared/dist/services/storage';
@@ -17,6 +17,9 @@ export class GetOriginalFileContent {
     const upload = await this.uploadRepository.findById(_uploadId, 'originalFileName originalFileType');
     if (!upload) {
       throw new DocumentNotFoundException('Upload', _uploadId);
+    }
+    if (!upload.originalFileName || !upload.originalFileType) {
+      throw new NotFoundException();
     }
     const content = await this.storageService.getFileStream(
       this.fileNameService.getOriginalFilePath(_uploadId, upload.originalFileName)
