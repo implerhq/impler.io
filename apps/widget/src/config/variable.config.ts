@@ -28,4 +28,5 @@ export const AMPLITUDE = {
   CONFIRM: 'confirm',
   UPLOAD_AGAIN: 'upload again',
   RESET: 'reset',
+  RECORDS: 'records',
 };
