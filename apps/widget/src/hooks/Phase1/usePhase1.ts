@@ -4,12 +4,13 @@ import { logAmplitudeEvent } from '@amplitude';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { variables } from '@config';
+import { downloadFile } from '@impler/shared';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { IFormvalues, IUploadValues } from '@types';
 import { useImplerState } from '@store/impler.context';
 import { IErrorObject, IOption, ITemplate, IUpload } from '@impler/shared';
-import { downloadFile, downloadFileFromURL, getFileNameFromUrl, notifier, ParentWindow } from '@util';
+import { downloadFileFromURL, getFileNameFromUrl, notifier, ParentWindow } from '@util';
 
 interface IUsePhase1Props {
   goNext: () => void;

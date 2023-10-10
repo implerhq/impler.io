@@ -8,10 +8,14 @@ import { IExcelFileHeading } from '@shared/types/file.types';
 
 export class ExcelFileService {
   async convertToCsv(file: Express.Multer.File): Promise<string> {
-    return new Promise(async (resolve) => {
-      const wb = XLSX.read(file.buffer);
-      const ws = wb.Sheets[wb.SheetNames[0]];
-      resolve(XLSX.utils.sheet_to_csv(ws));
+    return new Promise(async (resolve, reject) => {
+      try {
+        const wb = XLSX.read(file.buffer);
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        resolve(XLSX.utils.sheet_to_csv(ws));
+      } catch (error) {
+        reject(error);
+      }
     });
   }
   formatName(name: string): string {

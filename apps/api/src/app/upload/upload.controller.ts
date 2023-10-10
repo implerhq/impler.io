@@ -105,10 +105,9 @@ export class UploadController {
   })
   async getOriginalFile(@Param('uploadId', ValidateMongoId) uploadId: string, @Res() res: Response) {
     const { name, content, type } = await this.getOriginalFileContent.execute(uploadId);
-
     res.setHeader('Content-Type', type);
     res.setHeader('Content-Disposition', 'attachment; filename=' + name);
-    res.send(content);
+    content.pipe(res);
   }
 
   @Get(':uploadId/rows/valid')

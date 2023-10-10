@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { variables } from '@config';
+import { downloadFile } from '@impler/shared';
 
 // eslint-disable-next-line no-magic-numbers
 export function formatBytes(bytes, decimals = 2) {
@@ -24,18 +25,6 @@ function isValidHttpUrl(string: string) {
   }
 
   return url.protocol === 'http:' || url.protocol === 'https:';
-}
-
-export function downloadFile(blob: Blob, name: string) {
-  const url = window.URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.setAttribute('download', name);
-  document.body.appendChild(link);
-  link.click();
-
-  // Clean up and remove the link
-  link.parentNode?.removeChild(link);
 }
 
 function fetchFile(urlToFetch: string, name: string) {

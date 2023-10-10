@@ -108,6 +108,10 @@ const routes: Record<string, Route> = {
     url: (templateId) => `/v1/template/${templateId}/validations`,
     method: 'PUT',
   },
+  [API_KEYS.DONWLOAD_ORIGINAL_FILE]: {
+    url: (uploadId) => `/v1/upload/${uploadId}/files/original`,
+    method: 'GET',
+  },
   [API_KEYS.ME]: {
     url: () => `/v1/auth/me`,
     method: 'GET',
@@ -120,7 +124,10 @@ function handleResponseStatusAndContentType(response: Response) {
   if (contentType === null) return Promise.resolve(null);
   else if (contentType.startsWith('application/json;')) return response.json();
   else if (contentType.startsWith('text/plain;')) return response.text();
-  else throw new Error(`Unsupported response content-type: ${contentType}`);
+  else if (contentType.startsWith('text/csv')) return response.text();
+  else if (contentType.startsWith('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) {
+    return response.arrayBuffer();
+  } else throw new Error(`Unsupported response content-type: ${contentType}`);
 }
 
 function queryObjToString(obj?: Record<string, string | number | undefined>): string {

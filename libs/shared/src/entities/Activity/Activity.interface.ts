@@ -4,6 +4,7 @@ export interface IHistoryRecord {
   status: string;
   uploadedDate: string;
   validRecords: number;
+  originalFileName: string;
   name: string;
 }
 
