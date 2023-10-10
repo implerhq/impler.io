@@ -10,7 +10,7 @@ import Ajv, { AnySchemaObject, ErrorObject, ValidateFunction } from 'ajv';
 
 import { StorageService } from '@impler/shared/dist/services/storage';
 import { UploadRepository, ValidatorRepository, FileRepository } from '@impler/dal';
-import { ColumnTypesEnum, FileMimeTypesEnum, ITemplateSchemaItem, UploadStatusEnum } from '@impler/shared';
+import { ColumnTypesEnum, Defaults, FileMimeTypesEnum, ITemplateSchemaItem, UploadStatusEnum } from '@impler/shared';
 
 import { APIMessages } from '@shared/constants';
 import { FileNameService } from '@shared/services';
@@ -148,12 +148,13 @@ export class DoReview {
       if (formattedColumns[column.key].isUnique) {
         uniqueItems[column.key] = new Set();
       }
-      if (
-        formattedColumns[column.key].type === ColumnTypesEnum.DATE &&
-        Array.isArray(formattedColumns[column.key].dateFormats) &&
-        formattedColumns[column.key].dateFormats.length > 0
-      ) {
-        dateFormats[column.key] = formattedColumns[column.key].dateFormats;
+      if (formattedColumns[column.key].type === ColumnTypesEnum.DATE) {
+        if (
+          Array.isArray(formattedColumns[column.key].dateFormats) &&
+          formattedColumns[column.key].dateFormats.length > 0
+        )
+          dateFormats[column.key] = formattedColumns[column.key].dateFormats;
+        else dateFormats[column.key] = Defaults.DATE_FORMATS;
       }
     });
 
