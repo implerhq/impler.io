@@ -149,6 +149,7 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
                 uploadedDate: 1,
                 totalRecords: 1,
                 validRecords: 1,
+                originalFileName: 1,
                 status: 1,
                 _template: {
                   name: 1,
