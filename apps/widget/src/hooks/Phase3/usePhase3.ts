@@ -30,6 +30,18 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     (processInvalidRecords) => api.confirmReview(uploadInfo._id, processInvalidRecords),
     {
       onSuccess(uploadData) {
+        logAmplitudeEvent('RECORDS', {
+          type: 'invalid',
+          records: uploadData.invalidRecords,
+        });
+        logAmplitudeEvent('RECORDS', {
+          type: 'valid',
+          records: uploadData.totalRecords - uploadData.invalidRecords,
+        });
+        logAmplitudeEvent('RECORDS', {
+          type: 'total',
+          records: uploadData.totalRecords,
+        });
         setUploadInfo(uploadData);
         onNext(uploadData);
       },
