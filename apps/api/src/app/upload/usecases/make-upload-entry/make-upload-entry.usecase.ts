@@ -19,6 +19,7 @@ import {
 import { AddUploadEntryCommand } from './add-upload-entry.command';
 import { MakeUploadEntryCommand } from './make-upload-entry.command';
 import { StorageService } from '@impler/shared/dist/services/storage';
+import { FileParseError } from '@shared/exceptions/file-parse-issue.exception';
 import { CSVFileService2, ExcelFileService, FileNameService } from '@shared/services/file';
 
 @Injectable()
@@ -37,8 +38,12 @@ export class MakeUploadEntry {
     const fileOriginalName = file.originalname;
     let csvFile: string | Express.Multer.File = file;
     if (file.mimetype === FileMimeTypesEnum.EXCEL || file.mimetype === FileMimeTypesEnum.EXCELX) {
-      const fileService = new ExcelFileService();
-      csvFile = await fileService.convertToCsv(file);
+      try {
+        const fileService = new ExcelFileService();
+        csvFile = await fileService.convertToCsv(file);
+      } catch (error) {
+        throw new FileParseError();
+      }
     } else if (file.mimetype === FileMimeTypesEnum.CSV) {
       csvFile = file;
     } else {
