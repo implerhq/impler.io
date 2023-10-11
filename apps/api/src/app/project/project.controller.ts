@@ -111,6 +111,35 @@ export class ProjectController {
     return projectWithEnvironment;
   }
 
+  @Put('/switch/:projectId')
+  @ApiOperation({
+    summary: 'Switch project',
+  })
+  async switchProject(
+    @UserSession() user: IJwtPayload,
+    @Param('projectId', ValidateMongoId) projectId: string,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    const projectEnvironment = await this.getEnvironment.execute(projectId);
+    const token = this.authService.getSignedToken(
+      {
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        profilePicture: user.profilePicture,
+        accessToken: projectEnvironment.apiKeys[0].key,
+      },
+      projectEnvironment._projectId
+    );
+    res.cookie(CONSTANTS.AUTH_COOKIE_NAME, token, {
+      ...COOKIE_CONFIG,
+      domain: process.env.COOKIE_DOMAIN,
+    });
+
+    return;
+  }
+
   @Put(':projectId')
   @ApiOperation({
     summary: 'Update project',

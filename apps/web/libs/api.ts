@@ -15,6 +15,10 @@ const routes: Record<string, Route> = {
     url: () => '/v1/project',
     method: 'POST',
   },
+  [API_KEYS.PROJECT_SWITCH]: {
+    url: (projectId) => `/v1/project/switch/${projectId}`,
+    method: 'PUT',
+  },
   [API_KEYS.PROJECT_ENVIRONMENT]: {
     url: (projectId) => `/v1/project/${projectId}/environment`,
     method: 'GET',
