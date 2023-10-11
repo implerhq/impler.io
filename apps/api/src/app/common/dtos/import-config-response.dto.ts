@@ -3,7 +3,7 @@ import { IsBoolean, IsDefined } from 'class-validator';
 
 export class ImportConfigResponseDto {
   @ApiPropertyOptional({
-    description: 'Id of the project',
+    description: 'Whether to show branding',
   })
   @IsDefined()
   @IsBoolean()
