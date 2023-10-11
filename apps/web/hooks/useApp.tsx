@@ -40,6 +40,10 @@ export function useApp() {
       replace(ROUTES.SIGNIN);
     },
   });
+  const { mutate: switchProject } = useMutation<unknown, IErrorObject, string, string[]>(
+    [API_KEYS.PROJECT_SWITCH],
+    (projectId) => commonApi(API_KEYS.PROJECT_SWITCH as any, { parameters: [projectId] })
+  );
   const { mutate: createProject, isLoading: isCreateProjectLoading } = useMutation<
     { project: IProjectPayload; environment: IEnvironmentData },
     IErrorObject,
@@ -74,13 +78,14 @@ export function useApp() {
       }
     },
   });
-  const onProjectIdChange = (id: string) => {
+  const onProjectIdChange = async (id: string) => {
     const project = projects?.find((projectItem) => projectItem._id === id);
     if (project && profileInfo) {
       setProfileInfo({
         ...profileInfo,
         _projectId: id,
       });
+      switchProject(id);
       if (![ROUTES.SETTINGS, ROUTES.ACTIVITIES, ROUTES.IMPORTS].includes(pathname)) {
         replace(ROUTES.IMPORTS);
       }
