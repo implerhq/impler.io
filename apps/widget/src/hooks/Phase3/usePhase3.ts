@@ -40,11 +40,6 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
           host: location.host,
           records: uploadData.totalRecords - uploadData.invalidRecords,
         });
-        logAmplitudeEvent('RECORDS', {
-          type: 'total',
-          host: location.host,
-          records: uploadData.totalRecords,
-        });
         setUploadInfo(uploadData);
         onNext(uploadData);
       },

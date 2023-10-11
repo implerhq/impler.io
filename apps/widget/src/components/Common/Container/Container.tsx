@@ -48,7 +48,11 @@ export function Container({ children }: PropsWithChildren<{}>) {
   }, []);
 
   function messageEventHandler({ data }: { data?: MessageHandlerDataType }) {
-    if (data && data.type === EventTypesEnum.INIT_IFRAME) {
+    if (
+      data &&
+      data.type === EventTypesEnum.INIT_IFRAME &&
+      JSON.stringify(data.value) !== JSON.stringify(primaryPayload)
+    ) {
       setPrimaryPayload(data.value);
       if (data.value?.accessToken) {
         api.setAuthorizationToken(data.value.accessToken);
@@ -59,8 +63,8 @@ export function Container({ children }: PropsWithChildren<{}>) {
       queryClient.resetQueries();
       queryClient.invalidateQueries();
       logAmplitudeEvent('OPEN', { hasExtra: data.value.extra !== undefined });
-      setShowWidget(true);
       setSecondaryPayload({ ...data.value, primaryColor: data.value.primaryColor || colors.primary });
+      setShowWidget(true);
     }
   }
 

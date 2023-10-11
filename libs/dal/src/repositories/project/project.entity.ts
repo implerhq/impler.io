@@ -4,4 +4,6 @@ export class ProjectEntity {
   name: string;
 
   _userId: string;
+
+  showBranding: boolean;
 }
