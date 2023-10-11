@@ -4,7 +4,7 @@ import { logAmplitudeEvent } from '@amplitude';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { variables } from '@config';
-import { downloadFile } from '@impler/shared';
+import { IImportConfig, downloadFile } from '@impler/shared';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { IFormvalues, IUploadValues } from '@types';
@@ -18,10 +18,22 @@ interface IUsePhase1Props {
 
 export function usePhase1({ goNext }: IUsePhase1Props) {
   const { api } = useAPIState();
-  const { setUploadInfo, setTemplateInfo, schema, data } = useAppState();
   const [templates, setTemplates] = useState<IOption[]>([]);
-  const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
+  const { setUploadInfo, setTemplateInfo, setImportConfig, schema, data } = useAppState();
   const { projectId, templateId, authHeaderValue, extra } = useImplerState();
+  const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
+  const { isFetched: isImportConfigLoaded, isLoading: isImportConfigLoading } = useQuery<
+    IImportConfig,
+    IErrorObject,
+    IImportConfig
+  >(['importConfig'], () => api.getImportConfig(projectId), {
+    onSuccess(importConfigResponse) {
+      setImportConfig(importConfigResponse);
+    },
+    onError(error: IErrorObject) {
+      notifier.showError({ message: error.message, title: error.error });
+    },
+  });
   const {
     data: dataTemplates,
     isFetched,
@@ -162,7 +174,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     isUploadLoading,
     onTemplateChange,
     isDownloadInProgress,
-    isInitialDataLoaded: isFetched && !isLoading,
+    isInitialDataLoaded: isFetched && !isLoading && isImportConfigLoaded && !isImportConfigLoading,
     showSelectTemplate: !templateId,
     onSubmit: handleSubmit(onSubmit),
   };

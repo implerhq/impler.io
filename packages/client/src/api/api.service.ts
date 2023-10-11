@@ -6,6 +6,7 @@ import {
   IReviewData,
   ITemplate,
   PaginationResult,
+  IImportConfig,
 } from '@impler/shared';
 
 export class ApiService {
@@ -42,6 +43,12 @@ export class ApiService {
 
   async checkIsRequestvalid(projectId: string, template?: string) {
     return this.httpClient.post(`/common/valid`, { projectId, template });
+  }
+
+  async getImportConfig(projectId: string) {
+    return this.httpClient.get(
+      `/common/import-config?projectId=${projectId}`
+    ) as Promise<IImportConfig>;
   }
 
   async uploadFile(data: {

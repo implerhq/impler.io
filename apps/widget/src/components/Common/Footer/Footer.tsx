@@ -3,6 +3,7 @@ import { Button } from '@ui/Button';
 import { TEXTS, variables } from '@config';
 import { PhasesEum } from '@types';
 import useStyles from './Styles';
+import { useAppState } from '@store/app.context';
 
 interface IFooterProps {
   active: PhasesEum;
@@ -15,6 +16,7 @@ interface IFooterProps {
 }
 
 export function Footer(props: IFooterProps) {
+  const { importConfig } = useAppState();
   const { classes } = useStyles();
   const {
     active,
@@ -81,11 +83,15 @@ export function Footer(props: IFooterProps) {
 
   return (
     <Group className={classes.wrapper} spacing="xs">
-      <a className={classes.poweredBy} href={variables.implerWebsite} target="_blank" rel="noopener noreferrer">
-        <Text size="xs">
-          Powered by <img src="/logo-full.png" className={classes.implerImage} />
-        </Text>
-      </a>
+      {!(importConfig && importConfig.showBranding === false) ? (
+        <a className={classes.poweredBy} href={variables.implerWebsite} target="_blank" rel="noopener noreferrer">
+          <Text size="xs">
+            Powered by <img src="/logo-full.png" className={classes.implerImage} />
+          </Text>
+        </a>
+      ) : (
+        <div />
+      )}
       <Group spacing="xs">{FooterActions[active]}</Group>
     </Group>
   );

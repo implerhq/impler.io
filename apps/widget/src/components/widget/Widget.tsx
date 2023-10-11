@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 
 import { Modal } from '@ui/Modal';
 import { ParentWindow } from '@util';
@@ -16,7 +15,6 @@ import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
 
 export function Widget() {
   const defaultDataCount = 0;
-  const queryClient = useQueryClient();
   const { reset: resetAppState, uploadInfo, templateInfo, title } = useAppState();
   const [phase, setPhase] = useState<PhasesEum>(PhasesEum.UPLOAD);
   const [dataCount, setDataCount] = useState<number>(defaultDataCount);
@@ -46,7 +44,6 @@ export function Widget() {
   };
   const resetProgress = () => {
     resetAppState();
-    queryClient.clear();
     setPhase(PhasesEum.UPLOAD);
   };
   const onComplete = (uploadData: IUpload) => {
