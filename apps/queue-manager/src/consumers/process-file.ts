@@ -9,17 +9,11 @@ import {
   replaceVariablesInObject,
 } from '@impler/shared';
 import { StorageService } from '@impler/shared/dist/services/storage';
-import {
-  FileEntity,
-  UploadRepository,
-  TemplateRepository,
-  WebhookLogRepository,
-  WebhookLogEntity,
-  CustomizationRepository,
-} from '@impler/dal';
+import { FileEntity, UploadRepository, WebhookLogEntity, TemplateRepository, WebhookLogRepository } from '@impler/dal';
+
 import { BaseConsumer } from './base.consumer';
-import { getStorageServiceClass } from '../helpers/storage.helper';
 import { publishToQueue } from '../bootstrap';
+import { getStorageServiceClass } from '../helpers/storage.helper';
 import { ISendDataParameters, IBuildSendDataParameters, IGetNextDataParameters } from '../types/file-processing.types';
 
 const MIN_LIMIT = 0;
@@ -28,7 +22,6 @@ const DEFAULT_PAGE = 1;
 export class ProcessFileConsumer extends BaseConsumer {
   private templateRepository: TemplateRepository = new TemplateRepository();
   private uploadRepository: UploadRepository = new UploadRepository();
-  private customizationRepository: CustomizationRepository = new CustomizationRepository();
   private webhookLogRepository: WebhookLogRepository = new WebhookLogRepository();
   private storageService: StorageService = getStorageServiceClass();
 
@@ -171,23 +164,29 @@ export class ProcessFileConsumer extends BaseConsumer {
     recordFormat,
     extra = '',
   }: IBuildSendDataParameters): { sendData: Record<string, unknown>; page: number } {
-    const slicedData = data
-      .slice(Math.max((page - DEFAULT_PAGE) * chunkSize, MIN_LIMIT), Math.min(page * chunkSize, data.length))
-      .map((obj) => replaceVariablesInObject(JSON.parse(recordFormat), obj.record));
+    let slicedData = data.slice(
+      Math.max((page - DEFAULT_PAGE) * chunkSize, MIN_LIMIT),
+      Math.min(page * chunkSize, data.length)
+    );
+    if (recordFormat)
+      slicedData = slicedData.map((obj) => replaceVariablesInObject(JSON.parse(recordFormat), obj.record));
+    else slicedData = slicedData.map((obj) => obj.record);
+
+    const sendData = {
+      data: slicedData,
+      extra: extra ? JSON.parse(extra) : '',
+      isInvalidRecords,
+      page,
+      fileName,
+      chunkSize: slicedData.length,
+      template,
+      totalPages: this.getTotalPages(data.length, chunkSize),
+      totalRecords: data.length,
+      uploadId,
+    };
 
     return {
-      sendData: replaceVariablesInObject(JSON.parse(chunkFormat), {
-        data: slicedData,
-        extra: extra ? JSON.parse(extra) : '',
-        isInvalidRecords,
-        page,
-        fileName,
-        chunkSize: slicedData.length,
-        template,
-        totalPages: this.getTotalPages(data.length, chunkSize),
-        totalRecords: data.length,
-        uploadId,
-      } as any),
+      sendData: chunkFormat ? replaceVariablesInObject(JSON.parse(chunkFormat), sendData as any) : sendData,
       page,
     };
   }
@@ -239,13 +238,7 @@ export class ProcessFileConsumer extends BaseConsumer {
   private async getInitialCachedData(_uploadId: string): Promise<ProcessFileCachedData> {
     // Get Upload Information
     const uploadata = await this.uploadRepository.getUploadProcessInformation(_uploadId);
-
     if (!uploadata._validDataFileId && !uploadata._invalidDataFileId) return null;
-
-    const customization = await this.customizationRepository.findOne(
-      { _templateId: uploadata._templateId },
-      'recordFormat chunkFormat'
-    );
 
     // Get template information
     const templateData = await this.templateRepository.findById(
@@ -267,8 +260,8 @@ export class ProcessFileConsumer extends BaseConsumer {
       validDataFilePath: (uploadata._validDataFileId as unknown as FileEntity)?.path,
       fileName: (uploadata._uploadedFileId as unknown as FileEntity)?.originalName,
       extra: uploadata.extra,
-      recordFormat: customization.recordFormat,
-      chunkFormat: customization.chunkFormat,
+      recordFormat: uploadata.customRecordFormat,
+      chunkFormat: uploadata.customChunkFormat,
     };
   }
 

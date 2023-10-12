@@ -20,4 +20,8 @@ export class AddUploadEntryCommand {
   originalFileName: string;
 
   originalFileType: string;
+
+  customRecordFormat?: string;
+
+  customChunkFormat?: string;
 }

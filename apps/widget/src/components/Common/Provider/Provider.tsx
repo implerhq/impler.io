@@ -8,6 +8,7 @@ interface IProviderProps {
   // app-context
   title?: string;
   primaryColor: string;
+  output?: string;
   schema?: string;
   data?: Record<string, string | number>[];
   // api-context
@@ -25,6 +26,7 @@ export function Provider(props: PropsWithChildren<IProviderProps>) {
     api,
     data,
     title,
+    output,
     projectId,
     templateId,
     accessToken,
@@ -44,7 +46,7 @@ export function Provider(props: PropsWithChildren<IProviderProps>) {
       authHeaderValue={authHeaderValue}
     >
       <APIContextProvider api={api}>
-        <AppContextProvider title={title} primaryColor={primaryColor} data={data} schema={schema}>
+        <AppContextProvider output={output} title={title} primaryColor={primaryColor} data={data} schema={schema}>
           {children}
         </AppContextProvider>
       </APIContextProvider>

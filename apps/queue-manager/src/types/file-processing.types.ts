@@ -17,8 +17,8 @@ export interface IBuildSendDataParameters {
   uploadId: string;
   fileName: string;
   extra?: string;
-  recordFormat: string;
-  chunkFormat: string;
+  recordFormat?: string;
+  chunkFormat?: string;
 }
 export interface IGetNextDataParameters extends ProcessFileCachedData {
   validData: any[];

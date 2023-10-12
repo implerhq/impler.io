@@ -21,6 +21,7 @@ export interface IAppStore {
   reset: () => void;
   primaryColor: string;
   schema?: string;
+  output?: string;
   importConfig: IImportConfig;
   setUploadInfo: (uploadInfo: IUpload) => void;
   setTemplateInfo: (templateInfo: ITemplate) => void;
