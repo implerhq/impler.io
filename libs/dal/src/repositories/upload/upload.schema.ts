@@ -48,6 +48,8 @@ const uploadSchema = new Schema(
     status: String,
     extra: String,
     customSchema: String,
+    customRecordFormat: String,
+    customChunkFormat: String,
     processInvalidRecords: {
       type: Boolean,
       default: false,

@@ -57,6 +57,7 @@ export class ApiService {
     authHeaderValue?: string;
     extra?: string;
     schema?: string;
+    output?: string;
   }) {
     const formData = new FormData();
     formData.append('file', data.file);
@@ -64,6 +65,7 @@ export class ApiService {
       formData.append('authHeaderValue', data.authHeaderValue);
     if (data.extra) formData.append('extra', data.extra);
     if (data.schema) formData.append('schema', data.schema);
+    if (data.output) formData.append('output', data.output);
 
     return this.httpClient.post(`/upload/${data.templateId}`, formData, {
       'Content-Type': 'multipart/form-data',

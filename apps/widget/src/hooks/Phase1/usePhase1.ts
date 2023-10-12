@@ -19,7 +19,7 @@ interface IUsePhase1Props {
 export function usePhase1({ goNext }: IUsePhase1Props) {
   const { api } = useAPIState();
   const [templates, setTemplates] = useState<IOption[]>([]);
-  const { setUploadInfo, setTemplateInfo, setImportConfig, schema, data } = useAppState();
+  const { setUploadInfo, setTemplateInfo, setImportConfig, output, schema, data } = useAppState();
   const { projectId, templateId, authHeaderValue, extra } = useImplerState();
   const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
   const { isFetched: isImportConfigLoaded, isLoading: isImportConfigLoading } = useQuery<
@@ -160,6 +160,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
         authHeaderValue,
         extra,
         schema,
+        output,
       });
     }
   };

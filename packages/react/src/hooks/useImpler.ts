@@ -7,6 +7,7 @@ interface ShowWidgetProps {
   colorScheme?: 'light' | 'dark';
   schema?: ISchemaItem[];
   data?: Record<string, string | any>[];
+  output?: Record<string, string | any>;
 }
 
 interface UseImplerProps {
@@ -74,7 +75,7 @@ export function useImpler({
     else initWidget();
   }, [accessToken, templateId, initWidget]);
 
-  const showWidget = async ({ colorScheme, data, schema }: ShowWidgetProps) => {
+  const showWidget = async ({ colorScheme, data, schema, output }: ShowWidgetProps) => {
     if (isImplerInitiated) {
       const payload: IShowPayload = {
         templateId,
@@ -82,6 +83,9 @@ export function useImpler({
       };
       if (Array.isArray(schema) && schema.length > 0) {
         payload.schema = JSON.stringify(schema);
+      }
+      if (typeof output === 'object' && !Array.isArray(output) && output !== null) {
+        payload.output = JSON.stringify(output);
       }
       if (title) payload.title = title;
       if (colorScheme) payload.colorScheme = colorScheme;

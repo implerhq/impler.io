@@ -10,6 +10,7 @@ export interface IShowPayload {
   title?: string;
   schema?: string;
   data?: Record<string, string | any>[];
+  output?: string;
 }
 export interface IOption {
   value: string;

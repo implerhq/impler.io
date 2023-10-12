@@ -6,10 +6,12 @@ import {
   ISchemaItem,
   ITemplateSchemaItem,
   ColumnTypesEnum,
+  getRecordFormat,
 } from '@impler/shared';
 import {
   ColumnRepository,
   CommonRepository,
+  CustomizationRepository,
   FileEntity,
   FileRepository,
   TemplateRepository,
@@ -19,22 +21,23 @@ import {
 import { AddUploadEntryCommand } from './add-upload-entry.command';
 import { MakeUploadEntryCommand } from './make-upload-entry.command';
 import { StorageService } from '@impler/shared/dist/services/storage';
-import { FileParseError } from '@shared/exceptions/file-parse-issue.exception';
+import { FileParseException } from '@shared/exceptions/file-parse-issue.exception';
 import { CSVFileService2, ExcelFileService, FileNameService } from '@shared/services/file';
 
 @Injectable()
 export class MakeUploadEntry {
   constructor(
-    private uploadRepository: UploadRepository,
-    private commonRepository: CommonRepository,
     private fileRepository: FileRepository,
     private storageService: StorageService,
     private fileNameService: FileNameService,
+    private uploadRepository: UploadRepository,
+    private commonRepository: CommonRepository,
     private columnRepository: ColumnRepository,
-    private templateRepository: TemplateRepository
+    private templateRepository: TemplateRepository,
+    private customizationRepository: CustomizationRepository
   ) {}
 
-  async execute({ file, templateId, extra, authHeaderValue, schema }: MakeUploadEntryCommand) {
+  async execute({ file, templateId, extra, authHeaderValue, schema, output }: MakeUploadEntryCommand) {
     const fileOriginalName = file.originalname;
     let csvFile: string | Express.Multer.File = file;
     if (file.mimetype === FileMimeTypesEnum.EXCEL || file.mimetype === FileMimeTypesEnum.EXCELX) {
@@ -42,7 +45,7 @@ export class MakeUploadEntry {
         const fileService = new ExcelFileService();
         csvFile = await fileService.convertToCsv(file);
       } catch (error) {
-        throw new FileParseError();
+        throw new FileParseException();
       }
     } else if (file.mimetype === FileMimeTypesEnum.CSV) {
       csvFile = file;
@@ -59,7 +62,7 @@ export class MakeUploadEntry {
         sort: 'sequence',
       }
     );
-    let parsedSchema: ISchemaItem[], combinedSchema: string;
+    let parsedSchema: ISchemaItem[], combinedSchema: string, customRecordFormat: string, customChunkFormat: string;
     try {
       if (schema) parsedSchema = JSON.parse(schema);
     } catch (error) {}
@@ -73,17 +76,35 @@ export class MakeUploadEntry {
           key: schemaItem.key,
           type: schemaItem.type || ColumnTypesEnum.STRING,
           regex: schemaItem.regex,
-          selectValues: Array.isArray(schemaItem.selectValues) ? schemaItem.selectValues : [],
+          selectValues:
+            schemaItem.type == ColumnTypesEnum.SELECT && Array.isArray(schemaItem.selectValues)
+              ? schemaItem.selectValues
+              : [],
           dateFormats: Array.isArray(schemaItem.dateFormats) ? schemaItem.dateFormats : Defaults.DATE_FORMATS,
           isUnique: schemaItem.isUnique || false,
 
           sequence: Object.keys(formattedColumns).length,
-          columnHeading: '',
+          columnHeading: '', // used later during mapping
         };
       });
       combinedSchema = JSON.stringify(Object.values(formattedColumns));
+      if (output) {
+        const formats = getRecordFormat(output);
+        if (formats) {
+          customChunkFormat = formats.chunkFormat;
+          customRecordFormat = formats.recordFormat;
+        }
+      }
     } else {
       combinedSchema = JSON.stringify(columns);
+      const defaultCustomization = await this.customizationRepository.findOne(
+        {
+          _templateId: templateId,
+        },
+        'chunkFormat recordFormat'
+      );
+      customChunkFormat = defaultCustomization.chunkFormat;
+      customRecordFormat = defaultCustomization.recordFormat;
     }
 
     const fileService = new CSVFileService2();
@@ -109,6 +130,8 @@ export class MakeUploadEntry {
       uploadId,
       authHeaderValue,
       originalFileName,
+      customChunkFormat,
+      customRecordFormat,
       schema: combinedSchema,
       headings: fileHeadings,
       _templateId: templateId,
@@ -151,6 +174,8 @@ export class MakeUploadEntry {
     totalRecords,
     originalFileName,
     originalFileType,
+    customChunkFormat,
+    customRecordFormat,
   }: AddUploadEntryCommand) {
     return this.uploadRepository.create({
       _id: uploadId,
@@ -165,6 +190,8 @@ export class MakeUploadEntry {
       status: UploadStatusEnum.UPLOADED,
       authHeaderValue: authHeaderValue,
       totalRecords: totalRecords || Defaults.ZERO,
+      customChunkFormat,
+      customRecordFormat,
     });
   }
 }

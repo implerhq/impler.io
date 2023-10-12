@@ -36,4 +36,8 @@ export class UploadEntity {
   processInvalidRecords: boolean;
 
   customSchema: string;
+
+  customRecordFormat: string;
+
+  customChunkFormat: string;
 }

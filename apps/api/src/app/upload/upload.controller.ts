@@ -38,8 +38,8 @@ import { MakeUploadEntry, PaginateFileContent, GetUploadProcessInformation, GetO
 @UseGuards(JwtAuthGuard)
 export class UploadController {
   constructor(
-    private makeUploadEntry: MakeUploadEntry,
     private getUpload: GetUpload,
+    private makeUploadEntry: MakeUploadEntry,
     private getOriginalFileContent: GetOriginalFileContent,
     private getUploadProcessInfo: GetUploadProcessInformation,
     private paginateFileContent: PaginateFileContent
@@ -69,6 +69,7 @@ export class UploadController {
         extra: body.extra,
         authHeaderValue: body.authHeaderValue,
         schema: body.schema,
+        output: body.output,
       })
     );
   }
