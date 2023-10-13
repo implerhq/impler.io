@@ -182,13 +182,14 @@ export class DoReview {
         };
         break;
       case ColumnTypesEnum.SELECT:
+        const selectValues =
+          Array.isArray(column.selectValues) && column.selectValues.length > 0
+            ? [...column.selectValues, ...(column.isRequired ? [] : [''])]
+            : [];
         property = {
           type: 'string',
+          enum: Array.from(new Set(selectValues)), // handle duplicate
           ...(!column.isRequired && { default: '' }),
-          ...(Array.isArray(column.selectValues) &&
-            column.selectValues.length > 0 && {
-              enum: [...column.selectValues, ...(column.isRequired ? [] : [''])],
-            }),
         };
         break;
       case ColumnTypesEnum.REGEX:
