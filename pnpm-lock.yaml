@@ -63,8 +63,8 @@ importers:
       '@aws-sdk/client-s3': ^3.185.0
       '@aws-sdk/client-ses': ^3.354.0
       '@hyperdx/node-logger': ^0.2.8
-      '@impler/dal': ^0.11.0
-      '@impler/shared': ^0.11.0
+      '@impler/dal': ^0.11.1
+      '@impler/shared': ^0.11.1
       '@nestjs/cli': ^9.1.5
       '@nestjs/common': ^9.1.2
       '@nestjs/core': ^9.1.2
@@ -196,9 +196,9 @@ importers:
   apps/demo:
     specifiers:
       '@emotion/react': ^11.10.5
-      '@impler/client': ^0.11.0
-      '@impler/react': ^0.11.0
-      '@impler/shared': ^0.11.0
+      '@impler/client': ^0.11.1
+      '@impler/react': ^0.11.1
+      '@impler/shared': ^0.11.1
       '@mantine/core': ^5.9.5
       '@mantine/hooks': ^5.9.5
       '@mantine/next': ^5.9.5
@@ -244,8 +244,8 @@ importers:
 
   apps/queue-manager:
     specifiers:
-      '@impler/dal': ^0.11.0
-      '@impler/shared': ^0.11.0
+      '@impler/dal': ^0.11.1
+      '@impler/shared': ^0.11.1
       '@types/node': ^18.7.18
       axios: ^0.26.1
       dotenv: ^16.0.2
@@ -273,8 +273,8 @@ importers:
       '@emotion/react': ^11.10.5
       '@emotion/server': ^11.10.0
       '@hyperdx/browser': ^0.18.4
-      '@impler/react': workspace:^0.11.0
-      '@impler/shared': workspace:^0.11.0
+      '@impler/react': workspace:^0.11.1
+      '@impler/shared': workspace:^0.11.1
       '@mantine/carousel': 6.0.6
       '@mantine/core': 6.0.6
       '@mantine/dates': 6.0.6
@@ -356,8 +356,8 @@ importers:
     specifiers:
       '@craco/craco': ^6.4.5
       '@emotion/react': ^11.10.5
-      '@impler/client': ^0.11.0
-      '@impler/shared': ^0.11.0
+      '@impler/client': ^0.11.1
+      '@impler/shared': ^0.11.1
       '@mantine/core': ^5.6.3
       '@mantine/dropzone': ^5.6.3
       '@mantine/hooks': ^6.0.19
@@ -419,7 +419,7 @@ importers:
 
   libs/dal:
     specifiers:
-      '@impler/shared': ^0.11.0
+      '@impler/shared': ^0.11.1
       '@types/node': ^18.7.18
       class-transformer: ^0.5.1
       date-fns: ^2.30.0
@@ -509,7 +509,7 @@ importers:
 
   packages/client:
     specifiers:
-      '@impler/shared': ^0.11.0
+      '@impler/shared': ^0.11.1
       '@types/node': ^18.11.9
       axios: ^0.26.1
       rimraf: ^3.0.2
@@ -527,7 +527,7 @@ importers:
   packages/react:
     specifiers:
       '@babel/core': ^7.19.6
-      '@impler/shared': ^0.11.0
+      '@impler/shared': ^0.11.1
       '@rollup/plugin-commonjs': ^21.0.1
       '@rollup/plugin-node-resolve': ^13.1.3
       '@rollup/plugin-typescript': ^8.3.0
