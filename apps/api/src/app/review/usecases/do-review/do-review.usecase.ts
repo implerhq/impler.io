@@ -253,7 +253,9 @@ export class DoReview {
       case error.keyword === 'type':
         if (error.params.type === 'integer') {
           message = ` must be a number`;
-        } else message = ' ' + error.message;
+        } else if (Array.isArray(error.params.type) && error.params.type.toString() === 'integer,null')
+          message = ` must be a number or empty`;
+        else message = ' ' + error.message;
         break;
       case error.keyword === 'enum':
         message = ` must be from [${error.params.allowedValues}]`;
@@ -391,7 +393,7 @@ export class DoReview {
       });
       const csvFileStream = await this.storageService.getFileStream(allDataFilePath);
 
-      let totalRecords = 0,
+      let totalRecords = -1,
         invalidRecords = 0,
         validRecords = 0,
         item: any;
@@ -404,13 +406,13 @@ export class DoReview {
           totalRecords++;
           const record = results.data;
 
-          if (totalRecords > 1) {
+          if (totalRecords >= 1) {
             const recordObj: Record<string, unknown> = headings.reduce((acc, heading, index) => {
               acc[heading] = record[index];
 
               return acc;
             }, {});
-            const isValid = validator(recordObj);
+            const isValid = validator({ ...recordObj });
             if (!isValid) {
               const errors = this.getErrorsObject(validator.errors);
               const message = Object.values(errors).join(', ');
@@ -479,7 +481,7 @@ export class DoReview {
       try {
         const csvFileStream = await this.storageService.getFileStream(allDataFilePath);
 
-        let recordsCount = 0,
+        let recordsCount = -1,
           batchCount = 1;
         const batches: IBatchItem[] = [];
         const batchRecords: IDataItem[] = [];
@@ -496,9 +498,9 @@ export class DoReview {
               return acc;
             }, {});
 
-            if (recordsCount > 1) {
+            if (recordsCount >= 1) {
               // skip headings
-              const isValid = validator(recordObj);
+              const isValid = validator({ ...recordObj });
               if (!isValid) {
                 const errors = this.getErrorsObject(validator.errors);
                 batchRecords.push({
