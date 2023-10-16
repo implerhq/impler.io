@@ -19,34 +19,46 @@ export class DoMapping {
   }
 
   private buildMapping(columns: ITemplateSchemaItem[], headings: string[]): ITemplateSchemaItem[] {
+    const mapHeadings = [...headings];
     for (const column of columns) {
-      const heading = this.findBestMatchingHeading(headings, column.key, column.alternateKeys);
-      if (heading) {
-        column.columnHeading = heading;
+      const headingIndex = this.findBestMatchingHeading(mapHeadings, column.key, column.alternateKeys);
+      if (headingIndex > Defaults.MINUS_ONE) {
+        const [heading] = mapHeadings.splice(headingIndex, Defaults.ONE);
+        if (heading) {
+          column.columnHeading = heading;
+        }
       }
     }
 
     return columns;
   }
 
-  private findBestMatchingHeading(headings: string[], key: string, alternateKeys: string[]): string | null {
-    const mappedHeading = headings.find((heading: string) => this.checkStringEqual(heading, key));
-    if (mappedHeading) {
+  private findBestMatchingHeading(headings: string[], key: string, alternateKeys: string[]): number {
+    const mappedHeadingIndex = headings.findIndex((heading: string) => this.checkStringEqual(heading, key));
+    if (mappedHeadingIndex > Defaults.MINUS_ONE) {
       // compare key
-      return mappedHeading;
+      return mappedHeadingIndex;
     } else if (Array.isArray(alternateKeys) && alternateKeys.length) {
       // compare alternateKeys
-      const intersection = headings.find(
+      const intersectionIndex = headings.findIndex(
         (heading: string) => !!alternateKeys.find((altKey) => this.checkStringEqual(altKey, heading))
       );
 
-      return intersection;
+      return intersectionIndex;
     }
 
-    return null;
+    return Defaults.MINUS_ONE;
   }
 
   private checkStringEqual(a: string, b: string): boolean {
-    return String(a).localeCompare(String(b), undefined, { sensitivity: 'accent' }) === Defaults.ZERO;
+    const str1 = String(a).trim().toLowerCase();
+    const str2 = String(b).trim().toLowerCase();
+
+    const eualityCheck = str1.localeCompare(str2, undefined, { sensitivity: 'accent' }) === Defaults.ZERO;
+    if (eualityCheck) return true;
+
+    const includeCheck = str1.includes(str2) || str2.includes(str1);
+
+    return includeCheck;
   }
 }
