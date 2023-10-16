@@ -83,7 +83,7 @@ export function Footer(props: IFooterProps) {
 
   return (
     <Group className={classes.wrapper} spacing="xs">
-      {!(importConfig && importConfig.showBranding === false) ? (
+      {importConfig && importConfig.showBranding === true ? (
         <a className={classes.poweredBy} href={variables.implerWebsite} target="_blank" rel="noopener noreferrer">
           <Text size="xs">
             Powered by <img src="/logo-full.png" className={classes.implerImage} />
