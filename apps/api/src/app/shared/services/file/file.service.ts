@@ -12,7 +12,12 @@ export class ExcelFileService {
       try {
         const wb = XLSX.read(file.buffer);
         const ws = wb.Sheets[wb.SheetNames[0]];
-        resolve(XLSX.utils.sheet_to_csv(ws));
+        resolve(
+          XLSX.utils.sheet_to_csv(ws, {
+            blankrows: false,
+            skipHidden: true,
+          })
+        );
       } catch (error) {
         reject(error);
       }

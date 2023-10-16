@@ -391,7 +391,7 @@ export class DoReview {
       });
       const csvFileStream = await this.storageService.getFileStream(allDataFilePath);
 
-      let totalRecords = 0,
+      let totalRecords = -1,
         invalidRecords = 0,
         validRecords = 0,
         item: any;
@@ -404,13 +404,13 @@ export class DoReview {
           totalRecords++;
           const record = results.data;
 
-          if (totalRecords > 1) {
+          if (totalRecords >= 1) {
             const recordObj: Record<string, unknown> = headings.reduce((acc, heading, index) => {
               acc[heading] = record[index];
 
               return acc;
             }, {});
-            const isValid = validator(recordObj);
+            const isValid = validator({ ...recordObj });
             if (!isValid) {
               const errors = this.getErrorsObject(validator.errors);
               const message = Object.values(errors).join(', ');
