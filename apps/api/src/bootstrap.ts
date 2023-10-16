@@ -76,7 +76,7 @@ const corsOptionsDelegate = function (req, callback) {
     credentials: true,
     origin: [process.env.WIDGET_BASE_URL, process.env.WEB_BASE_URL],
     preflightContinue: false,
-    allowedHeaders: ['Content-Type', ACCESS_KEY_NAME, 'sentry-trace', 'baggage'],
+    allowedHeaders: ['Content-Type', 'x-openreplay-session-token', ACCESS_KEY_NAME, 'sentry-trace', 'baggage'],
     methods: ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   };
 

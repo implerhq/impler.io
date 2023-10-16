@@ -282,6 +282,7 @@ importers:
       '@mantine/notifications': 6.0.6
       '@mantine/prism': 6.0.6
       '@next/font': 13.1.1
+      '@openreplay/tracker': ^9.0.9
       '@storybook/builder-webpack5': ^6.5.16
       '@storybook/manager-webpack5': ^6.5.16
       '@storybook/react': ^6.5.13
@@ -322,6 +323,7 @@ importers:
       '@mantine/notifications': 6.0.6_feqrfkte3oaz5jjghkdwfk53i4
       '@mantine/prism': 6.0.6_feqrfkte3oaz5jjghkdwfk53i4
       '@next/font': 13.1.1
+      '@openreplay/tracker': 9.0.9
       '@tanstack/react-query': 4.14.5_biqbaboplfbrettd7655fr4n2y
       '@tawk.to/tawk-messenger-react': 2.0.1_lbqamd2wfmenkveygahn4wdfcq
       chart.js: 4.3.0
@@ -7346,6 +7348,10 @@ packages:
   /@mdx-js/util/1.6.22:
     resolution: {integrity: sha512-H1rQc1ZOHANWBvPcW+JpGwr+juXSxM8Q8YCkm3GhZd8REu1fHR3z99CErO1p9pkcfcxZnMdIZdIsXkOHY0NilA==}
 
+  /@medv/finder/3.1.0:
+    resolution: {integrity: sha512-ojkXjR3K0Zz3jnCR80tqPL+0yvbZk/lEodb6RIVjLz7W8RVA2wrw8ym/CzCpXO9SYVUIKHFUpc7jvf8UKfIM3w==}
+    dev: false
+
   /@mrmlnc/readdir-enhanced/2.2.1:
     resolution: {integrity: sha512-bPHp6Ji8b41szTOcaP63VlnbbO5Ny6dwAATtY6JTjh5N2OLrb5Qk/Th5cRkRQhkWCt+EJsYrNB0MiL+Gpn6e3g==}
     engines: {node: '>=4'}
@@ -8229,6 +8235,15 @@ packages:
     dependencies:
       '@octokit/openapi-types': 16.0.0
     dev: true
+
+  /@openreplay/tracker/9.0.9:
+    resolution: {integrity: sha512-t0+2a0P1UZwP7SWiddr1XWOEH98dPPBvb+DAr+eq3KMUO3njUaXi5KBM0Njrd240QLgeTrA5QV2Aa0mvUfwm0A==}
+    engines: {node: '>=14.0'}
+    dependencies:
+      '@medv/finder': 3.1.0
+      error-stack-parser: 2.1.4
+      fflate: 0.7.4
+    dev: false
 
   /@parcel/watcher/2.0.4:
     resolution: {integrity: sha512-cTDi+FUDBIUOBKEtj+nhiJ71AZVlkAsQFuGQTun5tV9mwQBQgZvhCzG+URPQc8myeN32yRVZEfVAPCs1RW+Jvg==}
@@ -18531,6 +18546,10 @@ packages:
 
   /fetch-retry/5.0.3:
     resolution: {integrity: sha512-uJQyMrX5IJZkhoEUBQ3EjxkeiZkppBd5jS/fMTJmfZxLSiaQjv2zD0kTvuvkSH89uFvgSlB6ueGpjD3HWN7Bxw==}
+
+  /fflate/0.7.4:
+    resolution: {integrity: sha512-5u2V/CDW15QM1XbbgS+0DfPxVB+jUKhWEKuuFuHncbk3tEEqzmoXL+2KyOFuKGqOnmdIy0/davWF1CkuwtibCw==}
+    dev: false
 
   /figgy-pudding/3.5.2:
     resolution: {integrity: sha512-0btnI/H8f2pavGMN8w40mlSKOfTK2SVJmBfBeVIj3kNw0swwgzyRq0d5TJVOwodFmtvpPeWPN/MCcfuWF0Ezbw==}
