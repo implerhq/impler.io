@@ -1,6 +1,5 @@
 import './config';
 
-import { HyperDXNestLoggerModule } from '@hyperdx/node-logger';
 import * as compression from 'compression';
 import { NestFactory } from '@nestjs/core';
 import * as bodyParser from 'body-parser';
@@ -20,23 +19,9 @@ const extendedBodySizeRoutes = ['/v1/template/:templateId/sample'];
 export async function bootstrap(expressApp?): Promise<INestApplication> {
   let app;
   if (expressApp) {
-    app = await NestFactory.create(AppModule, new ExpressAdapter(expressApp), {
-      logger: HyperDXNestLoggerModule.createLogger({
-        baseUrl: process.env.HYPERDX_URL,
-        apiKey: process.env.HYPERDX_KEY,
-        maxLevel: 'info',
-        service: 'impler-api',
-      }),
-    });
+    app = await NestFactory.create(AppModule, new ExpressAdapter(expressApp));
   } else {
-    app = await NestFactory.create(AppModule, {
-      logger: HyperDXNestLoggerModule.createLogger({
-        baseUrl: process.env.HYPERDX_URL,
-        apiKey: process.env.HYPERDX_KEY,
-        maxLevel: 'info',
-        service: 'impler-api',
-      }),
-    });
+    app = await NestFactory.create(AppModule);
   }
 
   app.enableCors(corsOptionsDelegate);
@@ -91,7 +76,7 @@ const corsOptionsDelegate = function (req, callback) {
     credentials: true,
     origin: [process.env.WIDGET_BASE_URL, process.env.WEB_BASE_URL],
     preflightContinue: false,
-    allowedHeaders: ['Content-Type', ACCESS_KEY_NAME, 'sentry-trace', 'baggage'],
+    allowedHeaders: ['Content-Type', 'x-openreplay-session-token', ACCESS_KEY_NAME, 'sentry-trace', 'baggage'],
     methods: ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   };
 

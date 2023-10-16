@@ -1,4 +1,3 @@
-import { HyperDXNestLoggerModule } from '@hyperdx/node-logger';
 import { DynamicModule, Logger, Module } from '@nestjs/common';
 import { Type } from '@nestjs/common/interfaces/type.interface';
 import { ForwardReference } from '@nestjs/common/interfaces/modules/forward-reference.interface';
@@ -28,12 +27,6 @@ const modules: Array<Type | DynamicModule | Promise<DynamicModule> | ForwardRefe
   AuthModule,
   EnvironmentModule,
   ActivityModule,
-  HyperDXNestLoggerModule.forRoot({
-    baseUrl: process.env.HYPERDX_URL,
-    apiKey: process.env.HYPERDX_KEY,
-    maxLevel: 'info',
-    service: 'impler-api',
-  }),
 ];
 
 const providers = [Logger];

@@ -1,19 +1,17 @@
 import Head from 'next/head';
 import Image from 'next/image';
-import getConfig from 'next/config';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
+
 import { PropsWithChildren, useRef } from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import TawkMessengerReact from '@tawk.to/tawk-messenger-react';
 import { Flex, Group, LoadingOverlay, Select, Stack, Title, useMantineColorScheme } from '@mantine/core';
 
+import useStyles from './AppLayout.styles';
+import { LogoutIcon } from '@assets/icons/Logout.icon';
 import { ImportIcon } from '@assets/icons/Import.icon';
 import { ActivitiesIcon } from '@assets/icons/Activities.icon';
-import useStyles from './AppLayout.styles';
 import LogoBlack from '@assets/images/full-logo-dark.png';
 import LogoWhite from '@assets/images/full-logo-light.png';
-import { LogoutIcon } from '@assets/icons/Logout.icon';
 
 import { useApp } from '@hooks/useApp';
 import { NavItem } from '@ui/nav-item';
@@ -22,7 +20,9 @@ import { track } from '@libs/amplitude';
 import { ColorSchemeToggle } from '@ui/toggle-color-scheme';
 import { SettingsIcon } from '@assets/icons/Settings.icon';
 
-const { publicRuntimeConfig } = getConfig();
+const Support = dynamic(() => import('components/common/Support').then((mod) => mod.Support), {
+  ssr: false,
+});
 
 interface PageProps {
   title?: string;
@@ -30,7 +30,7 @@ interface PageProps {
 
 export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps: PageProps }>) {
   const router = useRouter();
-  const twakRef = useRef<any>();
+
   const { classes } = useStyles();
   const navRef = useRef<HTMLElement>(null);
   const { colorScheme } = useMantineColorScheme();
@@ -123,22 +123,7 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
           </div>
         </main>
       </div>
-      {publicRuntimeConfig.NEXT_PUBLIC_TAWK_PROPERTY_ID && publicRuntimeConfig.NEXT_PUBLIC_TAWK_WIDGET_ID ? (
-        <TawkMessengerReact
-          propertyId={publicRuntimeConfig.NEXT_PUBLIC_TAWK_PROPERTY_ID}
-          widgetId={publicRuntimeConfig.NEXT_PUBLIC_TAWK_WIDGET_ID}
-          ref={twakRef}
-          onLoad={() => {
-            if (typeof window !== 'undefined' && profile) {
-              twakRef.current?.setAttributes({
-                id: profile._id,
-                name: profile.firstName,
-                email: profile.email,
-              });
-            }
-          }}
-        />
-      ) : null}
+      <Support profile={profile} />
     </>
   );
 }

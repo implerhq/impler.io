@@ -1,5 +1,4 @@
 import { useRouter } from 'next/router';
-import HyperDX from '@hyperdx/browser';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
@@ -19,11 +18,6 @@ export function useApp() {
     {
       onSuccess(profileData) {
         setProfileInfo(profileData);
-        HyperDX.setGlobalAttributes({
-          userId: profileData._id,
-          userEmail: profileData.email,
-          userName: profileData.firstName + profileData.lastName,
-        });
       },
     }
   );
