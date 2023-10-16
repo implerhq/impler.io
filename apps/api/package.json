@@ -20,7 +20,6 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.185.0",
     "@aws-sdk/client-ses": "^3.354.0",
-    "@hyperdx/node-logger": "^0.2.8",
     "@impler/dal": "^0.11.1",
     "@impler/shared": "^0.11.1",
     "@nestjs/common": "^9.1.2",
