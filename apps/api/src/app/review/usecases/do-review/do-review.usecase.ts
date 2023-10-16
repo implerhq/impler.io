@@ -253,7 +253,9 @@ export class DoReview {
       case error.keyword === 'type':
         if (error.params.type === 'integer') {
           message = ` must be a number`;
-        } else message = ' ' + error.message;
+        } else if (Array.isArray(error.params.type) && error.params.type.toString() === 'integer,null')
+          message = ` must be a number or empty`;
+        else message = ' ' + error.message;
         break;
       case error.keyword === 'enum':
         message = ` must be from [${error.params.allowedValues}]`;
@@ -479,7 +481,7 @@ export class DoReview {
       try {
         const csvFileStream = await this.storageService.getFileStream(allDataFilePath);
 
-        let recordsCount = 0,
+        let recordsCount = -1,
           batchCount = 1;
         const batches: IBatchItem[] = [];
         const batchRecords: IDataItem[] = [];
@@ -496,9 +498,9 @@ export class DoReview {
               return acc;
             }, {});
 
-            if (recordsCount > 1) {
+            if (recordsCount >= 1) {
               // skip headings
-              const isValid = validator(recordObj);
+              const isValid = validator({ ...recordObj });
               if (!isValid) {
                 const errors = this.getErrorsObject(validator.errors);
                 batchRecords.push({
