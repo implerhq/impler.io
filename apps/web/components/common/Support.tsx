@@ -34,9 +34,11 @@ export function Support({ profile }: SupportProps) {
       tracker.start();
     }
     if (profile) {
-      tracker.setUserID(profile.email);
-      tracker.setMetadata('lastname', profile.lastName);
-      tracker.setMetadata('firstname', profile.firstName);
+      if (tracker) {
+        tracker.setUserID(profile.email);
+        tracker.setMetadata('lastname', profile.lastName);
+        tracker.setMetadata('firstname', profile.firstName);
+      }
       twakRef.current?.setAttributes({
         id: profile._id,
         name: profile.firstName,
