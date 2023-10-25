@@ -7,6 +7,7 @@ import {
   ITemplate,
   PaginationResult,
   IImportConfig,
+  ISchemaColumn,
 } from '@impler/shared';
 
 export class ApiService {
@@ -109,6 +110,12 @@ export class ApiService {
 
   async getUpload(uploadId: string) {
     return this.httpClient.get(`/upload/${uploadId}`) as Promise<IUpload>;
+  }
+
+  async getColumns(uploadId: string) {
+    return this.httpClient.get(`/upload/${uploadId}/columns`) as Promise<
+      ISchemaColumn[]
+    >;
   }
 
   async getValidUploadedRows(uploadId: string, page: number, limit: number) {

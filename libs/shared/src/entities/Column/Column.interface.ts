@@ -13,3 +13,7 @@ export interface IColumn {
   sequence?: number;
   _templateId: string;
 }
+
+export interface ISchemaColumn extends IColumn {
+  columnHeading: string;
+}

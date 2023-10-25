@@ -1,18 +1,21 @@
+import { Group, Text } from '@mantine/core';
+import { useRef, useState, useEffect } from 'react';
+
+import { PhasesEum } from '@types';
 import { colors, TEXTS } from '@config';
+import { IUpload } from '@impler/shared';
 import { usePhase3 } from '@hooks/Phase3/usePhase3';
 import { Download, Warning } from '@icons';
-import { IUpload } from '@impler/shared';
-import { Group, Text } from '@mantine/core';
-import { PhasesEum } from '@types';
-import { Button } from '@ui/Button';
-import { LoadingOverlay } from '@ui/LoadingOverlay';
-import { Pagination } from '@ui/Pagination';
-import { Table } from '@ui/Table';
-import { Footer } from 'components/Common/Footer';
-import { useRef, useState, useEffect } from 'react';
-import { ConfirmModal } from '../ConfirmModal';
+
 import useStyles from './Styles';
+import { Button } from '@ui/Button';
+import { Pagination } from '@ui/Pagination';
+import { ConfirmModal } from '../ConfirmModal';
+import { Table } from 'components/Common/Table';
+import { Footer } from 'components/Common/Footer';
+import { LoadingOverlay } from '@ui/LoadingOverlay';
 import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
+// import { Table } from '@ui/Table';
 
 interface IPhase3Props {
   onNextClick: (uploadData: IUpload) => void;
@@ -26,16 +29,17 @@ export function Phase3(props: IPhase3Props) {
   const {
     onPageChange,
     onExportData,
-    heaings,
     isInitialDataLoaded,
     reviewData,
     page,
+    columnDefs,
     totalPages,
     totalData,
     onConfirmReview,
     isConfirmReviewLoading,
   } = usePhase3({ onNext: onNextClick });
   const tableWrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
   const [tableWrapperDimensions, setTableWrapperDimentions] = useState({
     height: 200,
     width: 500,
@@ -77,12 +81,13 @@ export function Phase3(props: IPhase3Props) {
 
       <div ref={tableWrapperRef} style={{ flexGrow: 1 }}>
         <Table
-          style={{
-            height: tableWrapperDimensions.height,
-          }}
-          headings={heaings}
+          /*
+           * style={{
+           *   height: tableWrapperDimensions.height,
+           * }}
+           */
+          columnDefs={columnDefs}
           data={reviewData}
-          emptyDataText=""
         />
       </div>
       <Pagination page={page} total={totalPages} onChange={onPageChange} />
