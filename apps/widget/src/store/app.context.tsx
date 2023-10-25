@@ -11,7 +11,7 @@ interface AppContextProviderProps
 
 const AppContext = createContext<IAppStore | null>(null);
 
-const AppContextProvider = ({ children, primaryColor, title, data, schema, output }: AppContextProviderProps) => {
+const AppContextProvider = ({ children, primaryColor, title, data, schema, output, host }: AppContextProviderProps) => {
   const [importConfig, setImportConfig] = useState<IImportConfig>({} as IImportConfig);
   const [templateInfo, setTemplateInfo] = useState<ITemplate>({} as ITemplate);
   const [uploadInfo, setUploadInfo] = useState<IUpload>({} as IUpload);
@@ -26,6 +26,7 @@ const AppContextProvider = ({ children, primaryColor, title, data, schema, outpu
     <AppContext.Provider
       value={{
         title,
+        host,
         templateInfo,
         importConfig,
         setImportConfig,

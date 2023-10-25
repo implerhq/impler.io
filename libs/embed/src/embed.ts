@@ -78,7 +78,10 @@ class Impler {
     this.iframe?.contentWindow?.postMessage(
       {
         type: EventTypesEnum.SHOW_WIDGET,
-        value: payload,
+        value: {
+          ...payload,
+          host: location.host,
+        },
       },
       '*'
     );

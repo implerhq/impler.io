@@ -11,6 +11,7 @@ interface IProviderProps {
   output?: string;
   schema?: string;
   data?: Record<string, string | number>[];
+  host: string;
   // api-context
   api: ApiService;
   // impler-context
@@ -35,6 +36,7 @@ export function Provider(props: PropsWithChildren<IProviderProps>) {
     children,
     primaryColor,
     schema,
+    host,
   } = props;
 
   return (
@@ -46,7 +48,14 @@ export function Provider(props: PropsWithChildren<IProviderProps>) {
       authHeaderValue={authHeaderValue}
     >
       <APIContextProvider api={api}>
-        <AppContextProvider output={output} title={title} primaryColor={primaryColor} data={data} schema={schema}>
+        <AppContextProvider
+          host={host}
+          output={output}
+          title={title}
+          primaryColor={primaryColor}
+          data={data}
+          schema={schema}
+        >
           {children}
         </AppContextProvider>
       </APIContextProvider>
