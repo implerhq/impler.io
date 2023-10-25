@@ -16,7 +16,7 @@ const defaultPage = 1;
 
 export function usePhase3({ onNext }: IUsePhase3Props) {
   const { api } = useAPIState();
-  const { uploadInfo, setUploadInfo } = useAppState();
+  const { uploadInfo, setUploadInfo, host } = useAppState();
   const [page, setPage] = useState<number>(defaultPage);
   const [totalPages, setTotalPages] = useState<number>(defaultPage);
 
@@ -32,12 +32,12 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
       onSuccess(uploadData) {
         logAmplitudeEvent('RECORDS', {
           type: 'invalid',
-          host: location.host,
+          host,
           records: uploadData.invalidRecords,
         });
         logAmplitudeEvent('RECORDS', {
           type: 'valid',
-          host: location.host,
+          host,
           records: uploadData.totalRecords - uploadData.invalidRecords,
         });
         setUploadInfo(uploadData);

@@ -19,6 +19,7 @@ export interface IAppStore {
   templateInfo: ITemplate;
   uploadInfo: IUpload;
   reset: () => void;
+  host: string;
   primaryColor: string;
   schema?: string;
   output?: string;

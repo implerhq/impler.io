@@ -23,7 +23,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
   const { projectId = '' } = useParams<{ projectId: string }>();
   const [showWidget, setShowWidget] = useState<boolean>(false);
   const [primaryPayload, setPrimaryPayload] = useState<IInitPayload>();
-  const [secondaryPayload, setSecondaryPayload] = useState<IShowPayload>({ primaryColor: colors.primary });
+  const [secondaryPayload, setSecondaryPayload] = useState<IShowPayload>({ host: '', primaryColor: colors.primary });
   const { isAuthenticated, refetch } = useAuthentication({ api, projectId });
 
   useEffect(() => {
@@ -125,6 +125,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
         >
           <NotificationsProvider>
             <Provider
+              host={secondaryPayload.host}
               output={secondaryPayload?.output}
               schema={secondaryPayload?.schema}
               title={secondaryPayload?.title}
