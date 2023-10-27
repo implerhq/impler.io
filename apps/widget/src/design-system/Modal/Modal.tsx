@@ -1,7 +1,6 @@
 import { PropsWithChildren } from 'react';
-import { Modal as MantineModal } from '@mantine/core';
 import useStyles from './Modal.style';
-
+import { Modal as MantineModal } from '@mantine/core';
 interface IModalProps extends JSX.ElementChildrenAttribute {
   title?: string;
   opened: boolean;
@@ -17,13 +16,13 @@ export function Modal(props: PropsWithChildren<IModalProps>) {
 
   return (
     <MantineModal
+      trapFocus
       onClose={onClose}
       opened={opened}
-      transitionDuration={1000}
-      transitionTimingFunction="ease"
-      transition="scale"
-      overlayOpacity={0.4}
-      overlayBlur={0.8}
+      overlayProps={{
+        opacity: 0.4,
+        blur: 0.8,
+      }}
       centered={centered}
       title={title}
       classNames={classes}
