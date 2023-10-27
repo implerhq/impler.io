@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { Modal } from '@ui/Modal';
+import { variables } from '@config';
 import { ParentWindow } from '@util';
 import { IUpload } from '@impler/shared';
 import { Phase1 } from './Phases/Phase1';
@@ -15,7 +16,7 @@ import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
 
 export function Widget() {
   const defaultDataCount = 0;
-  const { reset: resetAppState, uploadInfo, templateInfo, title } = useAppState();
+  const { showWidget, setShowWidget, reset: resetAppState, uploadInfo, templateInfo, title } = useAppState();
   const [phase, setPhase] = useState<PhasesEum>(PhasesEum.UPLOAD);
   const [dataCount, setDataCount] = useState<number>(defaultDataCount);
   const [promptContinueAction, setPromptContinueAction] = useState<PromptModalTypesEnum>();
@@ -38,9 +39,12 @@ export function Widget() {
     else setPromptContinueAction(PromptModalTypesEnum.CLOSE);
   };
   const closeWidget = () => {
+    setShowWidget(false);
     resetAmplitude();
-    ParentWindow.Close();
     resetProgress();
+    setTimeout(() => {
+      ParentWindow.Close();
+    }, variables.closeDelayInMS);
   };
   const resetProgress = () => {
     resetAppState();
@@ -60,7 +64,7 @@ export function Widget() {
   };
 
   return (
-    <Modal title={title || templateInfo?.name} opened onClose={onClose}>
+    <Modal title={title || templateInfo?.name} opened={showWidget} onClose={onClose}>
       <Layout active={phase} title={title || templateInfo?.name}>
         {PhaseView[phase]}
         <PromptModal

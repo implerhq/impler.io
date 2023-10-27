@@ -8,7 +8,6 @@ const ImplerContext = createContext<IImplerStore | null>(null);
 const ImplerContextProvider = ({
   projectId,
   templateId,
-  accessToken,
   authHeaderValue,
   extra,
   // other
@@ -19,7 +18,6 @@ const ImplerContextProvider = ({
       value={{
         projectId,
         templateId,
-        accessToken,
         authHeaderValue,
         extra,
       }}

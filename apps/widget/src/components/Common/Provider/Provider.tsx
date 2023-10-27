@@ -12,12 +12,13 @@ interface IProviderProps {
   schema?: string;
   data?: Record<string, string | number>[];
   host: string;
+  showWidget: boolean;
+  setShowWidget: (status: boolean) => void;
   // api-context
   api: ApiService;
   // impler-context
   projectId: string;
   templateId?: string;
-  accessToken?: string;
   extra?: string;
   authHeaderValue?: string;
 }
@@ -30,8 +31,9 @@ export function Provider(props: PropsWithChildren<IProviderProps>) {
     output,
     projectId,
     templateId,
-    accessToken,
     extra,
+    showWidget,
+    setShowWidget,
     authHeaderValue,
     children,
     primaryColor,
@@ -43,18 +45,19 @@ export function Provider(props: PropsWithChildren<IProviderProps>) {
     <ImplerContextProvider
       projectId={projectId}
       templateId={templateId}
-      accessToken={accessToken}
       extra={extra}
       authHeaderValue={authHeaderValue}
     >
       <APIContextProvider api={api}>
         <AppContextProvider
           host={host}
-          output={output}
-          title={title}
-          primaryColor={primaryColor}
           data={data}
+          title={title}
+          output={output}
           schema={schema}
+          showWidget={showWidget}
+          primaryColor={primaryColor}
+          setShowWidget={setShowWidget}
         >
           {children}
         </AppContextProvider>
