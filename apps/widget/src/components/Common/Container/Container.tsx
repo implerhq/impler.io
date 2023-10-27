@@ -1,11 +1,11 @@
-import { useEffect, useState, PropsWithChildren } from 'react';
 import * as WebFont from 'webfontloader';
-import { useParams } from 'react-router-dom';
 import { Global } from '@emotion/react';
-import { useQueryClient } from '@tanstack/react-query';
-import { NotificationsProvider } from '@mantine/notifications';
-import { MantineProvider } from '@mantine/core';
+import { useParams } from 'react-router-dom';
 import { logAmplitudeEvent } from '@amplitude';
+import { MantineProvider } from '@mantine/core';
+import { useQueryClient } from '@tanstack/react-query';
+import { Notifications } from '@mantine/notifications';
+import { useEffect, useState, PropsWithChildren } from 'react';
 
 import { Provider } from '../Provider';
 import { ApiService } from '@impler/client';
@@ -68,7 +68,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
     }
   }
 
-  if (!(isAuthenticated && showWidget)) return null;
+  if (!isAuthenticated) return null;
 
   return (
     <>
@@ -106,46 +106,45 @@ export function Container({ children }: PropsWithChildren<{}>) {
           }),
         }}
       />
-      {primaryPayload ? (
-        <MantineProvider
-          withGlobalStyles
-          withNormalizeCSS
-          theme={{
-            ...mantineConfig,
-            colors: {
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              primary: generateShades(secondaryPayload.primaryColor),
-            },
-            primaryColor: 'primary',
+      <MantineProvider
+        withGlobalStyles
+        withNormalizeCSS
+        theme={{
+          ...mantineConfig,
+          colors: {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
-            primaryShade: variables.colorIndex,
-          }}
+            primary: generateShades(secondaryPayload.primaryColor),
+          },
+          primaryColor: 'primary',
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          primaryShade: variables.colorIndex,
+        }}
+      >
+        <Notifications />
+        <Provider
+          showWidget={showWidget}
+          host={secondaryPayload.host}
+          setShowWidget={setShowWidget}
+          output={secondaryPayload?.output}
+          schema={secondaryPayload?.schema}
+          title={secondaryPayload?.title}
+          // api
+          api={api}
+          // impler-context
+          projectId={projectId}
+          data={secondaryPayload.data}
+          templateId={secondaryPayload.templateId}
+          accessToken={primaryPayload?.accessToken}
+          authHeaderValue={secondaryPayload?.authHeaderValue}
+          extra={secondaryPayload?.extra}
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          primaryColor={secondaryPayload.primaryColor!}
         >
-          <NotificationsProvider>
-            <Provider
-              host={secondaryPayload.host}
-              output={secondaryPayload?.output}
-              schema={secondaryPayload?.schema}
-              title={secondaryPayload?.title}
-              // api
-              api={api}
-              // impler-context
-              projectId={projectId}
-              data={secondaryPayload.data}
-              templateId={secondaryPayload.templateId}
-              accessToken={primaryPayload.accessToken}
-              authHeaderValue={secondaryPayload?.authHeaderValue}
-              extra={secondaryPayload?.extra}
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              primaryColor={secondaryPayload.primaryColor!}
-            >
-              {children}
-            </Provider>
-          </NotificationsProvider>
-        </MantineProvider>
-      ) : null}
+          {children}
+        </Provider>
+      </MantineProvider>
     </>
   );
 }
