@@ -4,7 +4,6 @@ import { IUpload, ITemplate, IImportConfig } from '@impler/shared';
 export interface IImplerStore {
   projectId: string;
   templateId?: string;
-  accessToken?: string;
   extra?: string;
   authHeaderValue?: string;
 }

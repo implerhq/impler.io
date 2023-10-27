@@ -136,7 +136,6 @@ export function Container({ children }: PropsWithChildren<{}>) {
           projectId={projectId}
           data={secondaryPayload.data}
           templateId={secondaryPayload.templateId}
-          accessToken={primaryPayload?.accessToken}
           authHeaderValue={secondaryPayload?.authHeaderValue}
           extra={secondaryPayload?.extra}
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
