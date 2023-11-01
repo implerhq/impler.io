@@ -2,6 +2,7 @@ export interface IInitPayload {
   accessToken?: string;
 }
 export interface IShowPayload {
+  host: string;
   extra?: string;
   templateId?: string;
   authHeaderValue?: string;

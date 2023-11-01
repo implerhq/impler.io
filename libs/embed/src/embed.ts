@@ -62,7 +62,7 @@ class Impler {
     var elem = document.querySelector(`.${WRAPPER_CLASS_NAME}`) as HTMLBodyElement;
 
     if (elem) {
-      elem.style.display = 'none';
+      elem.style.visibility = 'hidden';
     }
   };
 
@@ -72,13 +72,16 @@ class Impler {
     var elem = document.querySelector(`.${WRAPPER_CLASS_NAME}`) as HTMLBodyElement;
 
     if (elem) {
-      elem.style.display = 'inline-block';
+      elem.style.visibility = 'visible';
     }
 
     this.iframe?.contentWindow?.postMessage(
       {
         type: EventTypesEnum.SHOW_WIDGET,
-        value: payload,
+        value: {
+          ...payload,
+          host: location.host,
+        },
       },
       '*'
     );
@@ -191,11 +194,12 @@ class Impler {
       const wrapper = document.createElement('div');
 
       wrapper.className = WRAPPER_CLASS_NAME;
-      wrapper.style.display = 'none';
+      wrapper.style.visibility = 'hidden';
       wrapper.id = WEASL_WRAPPER_ID;
-      (
-        wrapper as any
-      ).style = `z-index: ${Number.MAX_SAFE_INTEGER}; width: 0; height: 0; position: relative; display: none;`;
+      wrapper.style.zIndex = String(Number.MAX_SAFE_INTEGER);
+      wrapper.style.width = '0';
+      wrapper.style.height = '0';
+      wrapper.style.position = 'relative';
       wrapper.appendChild(this.iframe);
       document.body.appendChild(wrapper);
     }

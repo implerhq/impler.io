@@ -8,7 +8,7 @@ export const getHeaderStyles = (theme: MantineTheme): React.CSSProperties => ({
 });
 
 export const getModalStyles = (theme: MantineTheme): React.CSSProperties => ({
-  padding: '100px',
+  flex: 'unset',
   height: 'calc(100vh - 20%)',
   width: 'calc(100vw - 20%)',
   display: 'flex',
@@ -30,7 +30,7 @@ export default createStyles((theme: MantineTheme, params, getRef): Record<string
   return {
     title: getTitleStyles(theme),
     header: getHeaderStyles(theme),
-    modal: getModalStyles(theme),
+    content: getModalStyles(theme),
     body: getModalBodyStyles(theme),
   };
 });

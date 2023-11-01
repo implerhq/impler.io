@@ -4,7 +4,6 @@ import { IUpload, ITemplate, IImportConfig } from '@impler/shared';
 export interface IImplerStore {
   projectId: string;
   templateId?: string;
-  accessToken?: string;
   extra?: string;
   authHeaderValue?: string;
 }
@@ -19,10 +18,13 @@ export interface IAppStore {
   templateInfo: ITemplate;
   uploadInfo: IUpload;
   reset: () => void;
+  host: string;
   primaryColor: string;
   schema?: string;
   output?: string;
+  showWidget: boolean;
   importConfig: IImportConfig;
+  setShowWidget: (status: boolean) => void;
   setUploadInfo: (uploadInfo: IUpload) => void;
   setTemplateInfo: (templateInfo: ITemplate) => void;
   setImportConfig: (importConfig: IImportConfig) => void;
