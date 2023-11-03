@@ -3,7 +3,9 @@ export type NotificationContent = { title: string; message: string };
 export type TableSchema = {
   field?: string;
   headerName?: string;
-  valueGetter?: string;
+  tooltipValueGetter?: (props: any) => string | any;
+  tooltipComponentParams?: Record<string, any>;
+  valueGetter?: string | ((props: any) => string | any);
   cellRenderer?: (props: any) => string | any;
   cellEditor?:
     | 'agTextCellEditor'

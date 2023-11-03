@@ -1,4 +1,5 @@
 import { Group, Text } from '@mantine/core';
+import { AgGridReact } from 'ag-grid-react';
 import { useRef, useState, useEffect } from 'react';
 
 import { PhasesEum } from '@types';
@@ -24,18 +25,22 @@ interface IPhase3Props {
 
 export function Phase3(props: IPhase3Props) {
   const { classes } = useStyles();
+  const tableRef = useRef<AgGridReact>(null);
   const { onNextClick, onPrevClick } = props;
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const {
-    onPageChange,
-    onExportData,
-    isInitialDataLoaded,
-    reviewData,
     page,
+    dataList,
+    validator,
+    totalData,
     columnDefs,
     totalPages,
-    totalData,
+    reviewData,
+    setDataList,
+    onPageChange,
+    onExportData,
     onConfirmReview,
+    isInitialDataLoaded,
     isConfirmReviewLoading,
   } = usePhase3({ onNext: onNextClick });
   const tableWrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
@@ -63,6 +68,25 @@ export function Phase3(props: IPhase3Props) {
     setShowConfirmModal(false);
     onConfirmReview(exempt);
   };
+  const onCellValueEdit = (index: number, field: string, newValue: any) => {
+    const newList = [...dataList];
+    if (newList[index] && validator) {
+      const item = newList[index];
+      const isValid = validator(field, newValue);
+      if (isValid) {
+        delete item.errors[field];
+        if (Object.keys(item.errors).length === 0) {
+          item.isValid = true;
+        }
+        item.record[field] = newValue;
+        newList[index] = item;
+        setDataList(newList);
+        tableRef.current?.api.applyTransactionAsync({
+          update: newList,
+        });
+      }
+    }
+  };
 
   return (
     <>
@@ -86,8 +110,10 @@ export function Phase3(props: IPhase3Props) {
            *   height: tableWrapperDimensions.height,
            * }}
            */
-          columnDefs={columnDefs}
+          ref={tableRef}
           data={reviewData}
+          columnDefs={columnDefs}
+          onCellValueEdit={onCellValueEdit}
         />
       </div>
       <Pagination page={page} total={totalPages} onChange={onPageChange} />
