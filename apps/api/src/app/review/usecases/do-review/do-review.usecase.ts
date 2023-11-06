@@ -331,7 +331,8 @@ export class DoReview {
 
     const validFilePath = this.fileNameService.getValidDataFilePath(uploadId);
     const invalidFilePath = this.fileNameService.getInvalidDataFilePath(uploadId);
-    const invalidExcelDataFilePath = this.fileNameService.getInvalidExcelDataFilePath(uploadId);
+
+    const invalidExcelDataFilePath = this.fileNameService.getInvalidExcelDataFilePath(uploadId, '');
 
     const invalidDataStream = new PassThrough();
     const validDataStream = new PassThrough();
@@ -570,7 +571,11 @@ export class DoReview {
 
     const validDataFilePath = this.fileNameService.getValidDataFilePath(uploadId);
     const invalidDataFilePath = this.fileNameService.getInvalidDataFilePath(uploadId);
-    const invalidExcelDataFileUrl = this.fileNameService.getInvalidExcelDataFileUrl(uploadId);
+
+    const getOriginalFileName = (await this.uploadRepository.getUploadInformation(uploadId)).originalFileName;
+    const originalName = getOriginalFileName.slice(0, getOriginalFileName.lastIndexOf('-'));
+
+    const invalidExcelDataFileUrl = this.fileNameService.getInvalidExcelDataFileUrl(uploadId, originalName);
 
     const validDataFile = await this.makeFileEntry(validDataFileName, validDataFilePath);
     const invalidDataFile = await this.makeFileEntry(invalidDataFileName, invalidDataFilePath);
