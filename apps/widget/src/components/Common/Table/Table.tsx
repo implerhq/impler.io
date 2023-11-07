@@ -1,98 +1,116 @@
-import { AgGridReact } from 'ag-grid-react';
-import { forwardRef, useMemo } from 'react';
+import { forwardRef } from 'react';
+import { HotTable } from '@handsontable/react';
+import {
+  TextCellType,
+  DateCellType,
+  NumericCellType,
+  registerCellType,
+  CheckboxCellType,
+  DropdownCellType,
+} from 'handsontable/cellTypes';
+import {
+  registerEditor,
+  BaseEditor,
+  SelectEditor,
+  NumericEditor,
+  TextEditor,
+  CheckboxEditor,
+} from 'handsontable/editors';
+import Handsontable from 'handsontable';
+import { HotItemSchema } from '@types';
+import { registerValidator, dateValidator } from 'handsontable/validators';
 
-import { TableSchema } from '@types';
-import { DatePickerRenderer } from './DatePickerRenderer';
+registerCellType(NumericCellType);
+registerCellType(CheckboxCellType);
+registerCellType(DateCellType);
+registerCellType(TextCellType);
+registerCellType(DropdownCellType);
 
-import './Styles.css';
-import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS, always needed
-import 'ag-grid-community/styles/ag-theme-alpine.min.css'; // Optional theme CSS
-import 'react-datepicker/dist/react-datepicker.css';
-import { ErrorTooltip } from '@ui/ErrorTooltip';
+registerEditor(SelectEditor);
+registerEditor(NumericEditor);
+registerEditor(TextEditor);
+registerEditor(CheckboxEditor);
+registerEditor(BaseEditor);
+
+registerValidator(dateValidator);
+
+import 'handsontable/dist/handsontable.full.min.css';
 
 interface TableProps {
+  headings: string[];
+  height?: string | number;
+  width?: string | number;
+  afterRender?: () => void;
   data: Record<string, any>[];
-  columnDefs: TableSchema[];
-  onCellValueEdit: (index: number, field: string, newValue: any) => void;
+  columnDefs: HotItemSchema[];
+  onCellValueEdit?: (index: number, field: string, newValue: any) => void;
 }
 
-export const Table = forwardRef<AgGridReact, TableProps>(
-  ({ onCellValueEdit, columnDefs, data }: TableProps, gridRef) => {
-    const defaultColDef = useMemo(
-      () => ({
-        sortable: false,
-        filter: false,
-        suppressFilterSearch: true,
-        tooltipComponent: ErrorTooltip,
-      }),
-      []
-    );
-    /*
-     *   const addRow = () => {
-     *     gridRef.current?.api.applyTransaction({ add: [{}] });
-     *   };
-     */
+function checkEmpty(value: any) {
+  return value === null || value === undefined || value === '';
+}
 
+Handsontable.validators.registerValidator('text', function validator(value, callback) {
+  if (!this.allowEmpty && checkEmpty(value)) {
+    return callback(false);
+  }
+  if (typeof value !== 'string') {
+    return callback(false);
+  }
+  if (!this.allowDuplicate) {
+    const lastSelected = this.instance.getSelectedLast();
+    if (lastSelected) {
+      const colDataArr = this.instance.getDataAtCol(lastSelected[1]);
+      if (colDataArr.includes(value)) {
+        return callback(false);
+      }
+    }
+  }
+  callback(true);
+});
+Handsontable.validators.registerValidator('regex', function validator(value, callback) {
+  if (!this.allowEmpty && checkEmpty(value)) {
+    return callback(false);
+  }
+  if (!this.allowEmpty && this.regex && !new RegExp(this.regex).test(value)) {
+    return callback(false);
+  }
+  if (!this.allowDuplicate) {
+    const lastSelected = this.instance.getSelectedLast();
+    if (lastSelected) {
+      const colDataArr = this.instance.getDataAtCol(lastSelected[1]);
+      console.log(colDataArr, value);
+      if (colDataArr.includes(value)) {
+        return callback(false);
+      }
+    }
+  }
+  callback(true);
+});
+Handsontable.validators.registerValidator('select', function validator(value, callback) {
+  if (!this.allowEmpty && checkEmpty(value)) {
+    return callback(false);
+  }
+  if (!this.allowEmpty && Array.isArray(this.selectOptions) && !this.selectOptions.includes(value)) {
+    return callback(false);
+  }
+  callback(true);
+});
+
+export const Table = forwardRef<HotTable, TableProps>(
+  ({ afterRender, height = 'auto', width = 'auto', headings, columnDefs, data }: TableProps, gridRef) => {
     return (
-      <AgGridReact
+      <HotTable
         ref={gridRef}
-        className="ag-theme-alpine"
-        enterNavigatesVertically
-        enterNavigatesVerticallyAfterEdit
-        components={{
-          DatePickerRenderer,
-        }}
-        rowData={data}
-        tooltipShowDelay={0}
-        columnDefs={columnDefs}
-        defaultColDef={defaultColDef}
-        onCellEditingStopped={(e) => {
-          const columnDef = e.column.getUserProvidedColDef();
-          if (columnDef && columnDef.headerName) {
-            const colId = columnDef.headerName;
-            onCellValueEdit(e.rowIndex!, colId, e.newValue);
-          }
-        }}
-        /*
-         *   const totalRecords = e.api.getDisplayedRowCount();
-         *   const currentIndex = e.rowIndex;
-         *   const isLastRow = currentIndex === totalRecords - 1;
-         */
-        /*
-         *   const columns = gridRef?.columnApi?.getColumns(),
-         *     colId = e.column.getColId();
-         *   const columnIndex = columns?.findIndex((col) => col.getColId() === colId);
-         *   const isLastColumn = columnIndex === columns!.length - 2;
-         *   console.log(isLastColumn);
-         *   console.log(e.data); // prints record
-         *   if (isLastRow) {
-         *     // add row
-         *     e.api.applyTransaction({
-         *       add: [{}],
-         *     });
-         *   }
-         *   if (isLastColumn) {
-         *     focusFirstCellOfRow(currentIndex! + 1);
-         *   }
-         */
-        // }}
-        /*
-         * rowSelection="multiple" // Options - allows click selection of rows
-         * onCellClicked={cellClickedListener} // Optional - registering for Grid Event
-         */
+        data={data}
+        width={width}
+        height={height}
+        rowHeaders={true}
+        colHeaders={headings}
+        afterRender={afterRender}
+        columns={columnDefs}
+        licenseKey="non-commercial-and-evaluation" // for non-commercial use only
       />
     );
   }
 );
-{
-  /*
-   * <Button
-   *    onClick={() => {
-   *      addRow();
-   *      focusFirstCellOfRow(gridRef.current!.api.getDisplayedRowCount() - 1);
-   *    }}
-   *  >
-   *    +
-   *  </Button>
-   */
-}

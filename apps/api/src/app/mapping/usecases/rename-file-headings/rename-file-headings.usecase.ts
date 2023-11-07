@@ -13,8 +13,8 @@ export class ReanameFileHeadings {
         const templateColumnItems = JSON.parse(uploadInfo.customSchema) as ITemplateSchemaItem[];
 
         const newHeadings = uploadInfo.headings.reduce((headingsArr, heading) => {
-          const foundMapping = templateColumnItems.find((mapping) => mapping.columnHeading === heading);
-          if (foundMapping) headingsArr.push(foundMapping.key);
+          const foundColumnMapping = templateColumnItems.find((mapping) => mapping.columnHeading === heading);
+          if (foundColumnMapping) headingsArr.push(foundColumnMapping.name);
           else headingsArr.push(heading);
 
           return headingsArr;

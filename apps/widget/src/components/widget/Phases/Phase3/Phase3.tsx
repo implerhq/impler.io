@@ -1,12 +1,12 @@
 import { Group, Text } from '@mantine/core';
-import { AgGridReact } from 'ag-grid-react';
+import { HotTable } from '@handsontable/react';
 import { useRef, useState, useEffect } from 'react';
 
 import { PhasesEum } from '@types';
 import { colors, TEXTS } from '@config';
 import { IUpload } from '@impler/shared';
-import { usePhase3 } from '@hooks/Phase3/usePhase3';
 import { Download, Warning } from '@icons';
+import { usePhase3 } from '@hooks/Phase3/usePhase3';
 
 import useStyles from './Styles';
 import { Button } from '@ui/Button';
@@ -16,7 +16,6 @@ import { Table } from 'components/Common/Table';
 import { Footer } from 'components/Common/Footer';
 import { LoadingOverlay } from '@ui/LoadingOverlay';
 import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
-// import { Table } from '@ui/Table';
 
 interface IPhase3Props {
   onNextClick: (uploadData: IUpload) => void;
@@ -25,18 +24,16 @@ interface IPhase3Props {
 
 export function Phase3(props: IPhase3Props) {
   const { classes } = useStyles();
-  const tableRef = useRef<AgGridReact>(null);
+  const tableRef = useRef<HotTable>(null);
   const { onNextClick, onPrevClick } = props;
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const {
     page,
-    dataList,
-    validator,
+    headings,
     totalData,
     columnDefs,
     totalPages,
     reviewData,
-    setDataList,
     onPageChange,
     onExportData,
     onConfirmReview,
@@ -68,25 +65,6 @@ export function Phase3(props: IPhase3Props) {
     setShowConfirmModal(false);
     onConfirmReview(exempt);
   };
-  const onCellValueEdit = (index: number, field: string, newValue: any) => {
-    const newList = [...dataList];
-    if (newList[index] && validator) {
-      const item = newList[index];
-      const isValid = validator(field, newValue);
-      if (isValid) {
-        delete item.errors[field];
-        if (Object.keys(item.errors).length === 0) {
-          item.isValid = true;
-        }
-        item.record[field] = newValue;
-        newList[index] = item;
-        setDataList(newList);
-        tableRef.current?.api.applyTransactionAsync({
-          update: newList,
-        });
-      }
-    }
-  };
 
   return (
     <>
@@ -105,15 +83,15 @@ export function Phase3(props: IPhase3Props) {
 
       <div ref={tableWrapperRef} style={{ flexGrow: 1 }}>
         <Table
-          /*
-           * style={{
-           *   height: tableWrapperDimensions.height,
-           * }}
-           */
+          width={tableWrapperDimensions.width}
+          height={tableWrapperDimensions.height}
+          afterRender={() => {
+            tableRef.current?.__hotInstance?.validateCells();
+          }}
           ref={tableRef}
           data={reviewData}
+          headings={headings}
           columnDefs={columnDefs}
-          onCellValueEdit={onCellValueEdit}
         />
       </div>
       <Pagination page={page} total={totalPages} onChange={onPageChange} />
