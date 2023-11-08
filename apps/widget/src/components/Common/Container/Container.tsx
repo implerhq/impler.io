@@ -63,7 +63,6 @@ export function Container({ children }: PropsWithChildren<{}>) {
       queryClient.resetQueries();
       queryClient.invalidateQueries();
       logAmplitudeEvent('OPEN', { hasExtra: data.value.extra !== undefined });
-
       setSecondaryPayload({ ...data.value, primaryColor: data.value.primaryColor || colors.primary });
       setShowWidget(true);
     }

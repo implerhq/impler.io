@@ -15,7 +15,6 @@ import { ColumnTypesEnum, Defaults, FileMimeTypesEnum, ITemplateSchemaItem, Uplo
 import { APIMessages } from '@shared/constants';
 import { FileNameService } from '@shared/services';
 import { SManager, BATCH_LIMIT, MAIN_CODE } from '@shared/services/sandbox';
-import { GetTemplateDetails } from 'app/template/usecases';
 
 interface IDataItem {
   index: number;
@@ -332,7 +331,6 @@ export class DoReview {
 
     const validFilePath = this.fileNameService.getValidDataFilePath(uploadId);
     const invalidFilePath = this.fileNameService.getInvalidDataFilePath(uploadId);
-
     const invalidExcelDataFilePath = this.fileNameService.getInvalidExcelDataFilePath(uploadId);
 
     const invalidDataStream = new PassThrough();
