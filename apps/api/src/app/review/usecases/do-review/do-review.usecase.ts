@@ -76,7 +76,6 @@ ajv.addKeyword({
 export class DoReview {
   constructor(
     private uploadRepository: UploadRepository,
-    private getTemplateDetail: GetTemplateDetails,
     private storageService: StorageService,
     private validatorRepository: ValidatorRepository,
     private fileNameService: FileNameService,
