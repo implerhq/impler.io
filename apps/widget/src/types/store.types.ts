@@ -17,7 +17,7 @@ export interface IAppStore {
   data?: Record<string, string | number>[];
   templateInfo: ITemplate;
   uploadInfo: IUpload;
-  reset: () => void;
+  reset: (TemplateName: string) => void;
   host: string;
   primaryColor: string;
   schema?: string;

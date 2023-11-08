@@ -26,9 +26,9 @@ const AppContextProvider = ({
   const [templateInfo, setTemplateInfo] = useState<ITemplate>({} as ITemplate);
   const [uploadInfo, setUploadInfo] = useState<IUpload>({} as IUpload);
 
-  const reset = () => {
+  const reset = (ProjectName: string) => {
     setImportConfig({} as IImportConfig);
-    setTemplateInfo({} as ITemplate);
+    setTemplateInfo({ name: ProjectName } as ITemplate);
     setUploadInfo({} as IUpload);
   };
 
@@ -59,6 +59,7 @@ const AppContextProvider = ({
 
 export function useAppState() {
   const context = useContext(AppContext);
+
   if (!context) throw new Error('App Context must be used within AppContextProvider');
 
   return context;

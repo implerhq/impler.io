@@ -47,7 +47,7 @@ export function Widget() {
     }, variables.closeDelayInMS);
   };
   const resetProgress = () => {
-    resetAppState();
+    resetAppState.call(null, templateInfo?.name);
     setPhase(PhasesEum.UPLOAD);
   };
   const onComplete = (uploadData: IUpload) => {

@@ -19,7 +19,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
   const { uploadInfo, setUploadInfo, host } = useAppState();
   const [page, setPage] = useState<number>(defaultPage);
   const [totalPages, setTotalPages] = useState<number>(defaultPage);
-
+  const { templateInfo } = useAppState();
   const { isLoading: isConfirmReviewLoading, mutate: confirmReview } = useMutation<
     IUpload,
     IErrorObject,
@@ -93,7 +93,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     {
       onSuccess(data) {
         setUploadInfo(data);
-        getSignedUrl([data.invalidCSVDataFileUrl, `invalid-data-${uploadInfo._id}.xlsx`]);
+        getSignedUrl([data.invalidCSVDataFileUrl, `${templateInfo.name}-invalid-data.xlsx`]);
       },
       onError(error: IErrorObject) {
         notifier.showError({ message: error.message, title: error.error });

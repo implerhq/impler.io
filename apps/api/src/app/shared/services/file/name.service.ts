@@ -50,14 +50,14 @@ export class FileNameService {
     return `${uploadId}/${this.getInvalidDataFileName()}`;
   }
 
-  getInvalidExcelDataFileName(originalName: string): string {
-    return `${originalName}_invalid_data.xlsx`;
+  getInvalidExcelDataFileName(): string {
+    return `invalid-data.xlsx`;
   }
-  getInvalidExcelDataFilePath(uploadId: string, originalName: string): string {
-    return `${uploadId}/${this.getInvalidExcelDataFileName(originalName)}`;
+  getInvalidExcelDataFilePath(uploadId: string): string {
+    return `${uploadId}/${this.getInvalidExcelDataFileName()}`;
   }
-  getInvalidExcelDataFileUrl(uploadId: string, originalName: string): string {
-    const path = this.getInvalidExcelDataFilePath(uploadId, originalName);
+  getInvalidExcelDataFileUrl(uploadId: string): string {
+    const path = this.getInvalidExcelDataFilePath(uploadId);
     const origin = this.getURLOrigin();
 
     return [origin, process.env.S3_BUCKET_NAME, path].join('/');
