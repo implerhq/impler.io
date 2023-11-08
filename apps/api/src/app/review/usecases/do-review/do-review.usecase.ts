@@ -570,7 +570,6 @@ export class DoReview {
 
     const validDataFilePath = this.fileNameService.getValidDataFilePath(uploadId);
     const invalidDataFilePath = this.fileNameService.getInvalidDataFilePath(uploadId);
-
     const invalidExcelDataFileUrl = this.fileNameService.getInvalidExcelDataFileUrl(uploadId);
 
     const validDataFile = await this.makeFileEntry(validDataFileName, validDataFilePath);
