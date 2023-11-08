@@ -48,7 +48,6 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
       );
       if (templateId) {
         const foundTemplate = templatesResponse.find((templateItem) => templateItem._id === templateId);
-
         if (foundTemplate) {
           setTemplateInfo(foundTemplate);
         }

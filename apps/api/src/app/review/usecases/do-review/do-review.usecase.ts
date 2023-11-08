@@ -16,7 +16,6 @@ import { APIMessages } from '@shared/constants';
 import { FileNameService } from '@shared/services';
 import { SManager, BATCH_LIMIT, MAIN_CODE } from '@shared/services/sandbox';
 
-
 interface IDataItem {
   index: number;
   errors?: Record<string, string>;
@@ -332,7 +331,6 @@ export class DoReview {
 
     const validFilePath = this.fileNameService.getValidDataFilePath(uploadId);
     const invalidFilePath = this.fileNameService.getInvalidDataFilePath(uploadId);
-
     const invalidExcelDataFilePath = this.fileNameService.getInvalidExcelDataFilePath(uploadId);
 
     const invalidDataStream = new PassThrough();
@@ -572,7 +570,6 @@ export class DoReview {
 
     const validDataFilePath = this.fileNameService.getValidDataFilePath(uploadId);
     const invalidDataFilePath = this.fileNameService.getInvalidDataFilePath(uploadId);
-
     const invalidExcelDataFileUrl = this.fileNameService.getInvalidExcelDataFileUrl(uploadId);
 
     const validDataFile = await this.makeFileEntry(validDataFileName, validDataFilePath);

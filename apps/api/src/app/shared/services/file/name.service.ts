@@ -49,7 +49,6 @@ export class FileNameService {
   getInvalidDataFilePath(uploadId: string): string {
     return `${uploadId}/${this.getInvalidDataFileName()}`;
   }
-
   getInvalidExcelDataFileName(): string {
     return 'invalid-data.xlsx';
   }
