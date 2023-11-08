@@ -15,7 +15,7 @@ import { ColumnTypesEnum, Defaults, FileMimeTypesEnum, ITemplateSchemaItem, Uplo
 import { APIMessages } from '@shared/constants';
 import { FileNameService } from '@shared/services';
 import { SManager, BATCH_LIMIT, MAIN_CODE } from '@shared/services/sandbox';
-import { GetTemplateDetails } from 'app/template/usecases';
+
 
 interface IDataItem {
   index: number;
@@ -76,7 +76,6 @@ ajv.addKeyword({
 export class DoReview {
   constructor(
     private uploadRepository: UploadRepository,
-    private getTemplateDetail: GetTemplateDetails,
     private storageService: StorageService,
     private validatorRepository: ValidatorRepository,
     private fileNameService: FileNameService,
