@@ -26,9 +26,9 @@ const AppContextProvider = ({
   const [templateInfo, setTemplateInfo] = useState<ITemplate>({} as ITemplate);
   const [uploadInfo, setUploadInfo] = useState<IUpload>({} as IUpload);
 
-  const reset = (ProjectName: string) => {
+  const reset = () => {
     setImportConfig({} as IImportConfig);
-    setTemplateInfo({ name: ProjectName } as ITemplate);
+    setTemplateInfo({} as ITemplate);
     setUploadInfo({} as IUpload);
   };
 
