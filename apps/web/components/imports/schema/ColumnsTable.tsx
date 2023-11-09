@@ -14,7 +14,7 @@ import { EditIcon } from '@assets/icons/Edit.icon';
 import { CloseIcon } from '@assets/icons/Close.icon';
 import { CheckIcon } from '@assets/icons/Check.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
-import { MultiSelect } from '@ui/multi-select';
+import { MultiSelect } from '@mantine/core';
 
 interface ColumnsTableProps {
   templateId: string;
@@ -83,8 +83,8 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
           <tr>
             {showAddRow ? (
               <>
-                <td colSpan={'4'} style={{ borderRight: 'none' }}>
-                  <Flex gap="xs" align={'center'} m={'sm'}>
+                <td colSpan={4} style={{ borderRight: 'none' }}>
+                  <Flex gap="xs" align={'center'}>
                     <Input autoFocus required placeholder="Column Name" {...register('name')} />
                     <Input required placeholder="Column Key" {...register('key')} />
                     <Controller
@@ -159,9 +159,8 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
 
                     <Checkbox label="Is Required?" title="Is Required?" {...register('isRequired')} id="isRequired" />
 
-                    <Checkbox label="Is Required?" title="Is Unique?" {...register('isUnique')} id="isUnique" />
+                    <Checkbox label="Is Unique?" title="Is Unique?" {...register('isUnique')} id="isUnique" />
                   </Flex>
-                  {/* <Flex gap="xs"></Flex> */}
                 </td>
                 <td style={{ borderLeft: 'none' }}>
                   <Flex justify={'end'}>
