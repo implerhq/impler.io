@@ -80,107 +80,99 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
           },
         ]}
         extraContent={
-          <tr style={{ borderTop: '0.0625rem solid #373A40' }}>
+          <tr>
             {showAddRow ? (
               <>
-                <Flex gap="xs" align={'center'} m={'sm'} style={{ width: '60vw' }}>
-                  <Input autoFocus required placeholder="Column Name" {...register('name')} />
-                  <Input required placeholder="Column Key" {...register('key')} />
-                  <Controller
-                    control={control}
-                    name="type"
-                    render={({ field }) => {
-                      return (
-                        <>
-                          <Select data={COLUMN_TYPES} placeholder="Select Type" variant="default" {...field} />
-                          {typeValue === 'Regex' && (
-                            <>
-                              <Input
-                                placeholder="Regular expression"
-                                {...register('regex')}
-                                required
-                                error={errors.regex?.message}
-                              />
-                            </>
-                          )}
-                          {typeValue === 'Select' ? (
-                            <Controller
-                              name="selectValues"
-                              control={control}
-                              render={({ field: { value, onChange } }) => (
-                                <MultiSelect
-                                  placeholder="Select Values"
-                                  creatable
-                                  clearable
-                                  searchable
-                                  getCreateLabel={(query) => `+ Add ${query}`}
-                                  data={Array.isArray(value) ? value : []}
-                                  value={value}
-                                  onCreate={(newItem) => {
-                                    onChange([...(Array.isArray(value) ? value : []), newItem]);
+                <td colSpan={'4'} style={{ borderRight: 'none' }}>
+                  <Flex gap="xs" align={'center'} m={'sm'}>
+                    <Input autoFocus required placeholder="Column Name" {...register('name')} />
+                    <Input required placeholder="Column Key" {...register('key')} />
+                    <Controller
+                      control={control}
+                      name="type"
+                      render={({ field }) => (
+                        <Select data={COLUMN_TYPES} placeholder="Select Type" variant="default" {...field} />
+                      )}
+                    />
+                    {typeValue === 'Regex' && (
+                      <>
+                        <Input
+                          placeholder="Regular expression"
+                          {...register('regex')}
+                          required
+                          error={errors.regex?.message}
+                        />
+                      </>
+                    )}
+                    {typeValue === 'Select' ? (
+                      <Controller
+                        name="selectValues"
+                        control={control}
+                        render={({ field: { value, onChange } }) => (
+                          <MultiSelect
+                            placeholder="Select Values"
+                            creatable
+                            clearable
+                            searchable
+                            getCreateLabel={(query) => `+ Add ${query}`}
+                            data={Array.isArray(value) ? value : []}
+                            value={value}
+                            onCreate={(newItem) => {
+                              onChange([...(Array.isArray(value) ? value : []), newItem]);
 
-                                    return newItem;
-                                  }}
-                                  onChange={onChange}
-                                />
-                              )}
-                            />
-                          ) : null}
-                          {typeValue === 'Date' ? (
-                            <Controller
-                              name="dateFormats"
-                              control={control}
-                              render={({ field: { value, onChange } }) => (
-                                <MultiSelect
-                                  creatable
-                                  clearable
-                                  searchable
-                                  value={value}
-                                  placeholder="Valid Date Formats, i.e. DD/MM/YYYY, DD/MM/YY"
-                                  data={[
-                                    'DD/MM/YYYY',
-                                    'DD/MM/YY',
-                                    'MM/DD/YYYY',
-                                    'MM/DD/YY',
-                                    ...(Array.isArray(value) ? value : []),
-                                  ]}
-                                  getCreateLabel={(query) => `Add "${query}"`}
-                                  onCreate={(newItem) => {
-                                    onChange([...(Array.isArray(value) ? value : []), newItem]);
+                              return newItem;
+                            }}
+                            onChange={onChange}
+                          />
+                        )}
+                      />
+                    ) : null}
+                    {typeValue === 'Date' ? (
+                      <Controller
+                        name="dateFormats"
+                        control={control}
+                        render={({ field: { value, onChange } }) => (
+                          <MultiSelect
+                            creatable
+                            clearable
+                            searchable
+                            value={value}
+                            placeholder="Valid Date Formats, i.e. DD/MM/YYYY, DD/MM/YY"
+                            data={[
+                              'DD/MM/YYYY',
+                              'DD/MM/YY',
+                              'MM/DD/YYYY',
+                              'MM/DD/YY',
+                              ...(Array.isArray(value) ? value : []),
+                            ]}
+                            getCreateLabel={(query) => `Add "${query}"`}
+                            onCreate={(newItem) => {
+                              onChange([...(Array.isArray(value) ? value : []), newItem]);
 
-                                    return newItem;
-                                  }}
-                                  onChange={onChange}
-                                />
-                              )}
-                            />
-                          ) : null}
-                        </>
-                      );
-                    }}
-                  />
+                              return newItem;
+                            }}
+                            onChange={onChange}
+                          />
+                        )}
+                      />
+                    ) : null}
 
-                  <label htmlFor="isRequired">
-                    <Flex gap={'xs'}>
-                      isRequired
-                      <Checkbox title="Is Required?" {...register('isRequired')} id="isRequired" />
-                    </Flex>
-                  </label>
-                  <label htmlFor="isUnique">
-                    <Flex gap={'xs'}>
-                      isUnique
-                      <Checkbox title="Is Unique?" {...register('isUnique')} id="isUnique" />
-                    </Flex>
-                  </label>
+                    <Checkbox label="Is Required?" title="Is Required?" {...register('isRequired')} id="isRequired" />
 
-                  <ActionIcon color="blue" type="submit" loading={isColumnCreateLoading}>
-                    <CheckIcon color={colors.blue} />
-                  </ActionIcon>
-                  <ActionIcon color="red" onClick={() => setShowAddRow(false)}>
-                    <CloseIcon />
-                  </ActionIcon>
-                </Flex>
-                {/* <Flex gap="xs"></Flex> */}
+                    <Checkbox label="Is Required?" title="Is Unique?" {...register('isUnique')} id="isUnique" />
+                  </Flex>
+                  {/* <Flex gap="xs"></Flex> */}
+                </td>
+                <td style={{ borderLeft: 'none' }}>
+                  <Flex justify={'end'}>
+                    <ActionIcon color="blue" type="submit" loading={isColumnCreateLoading}>
+                      <CheckIcon color={colors.blue} />
+                    </ActionIcon>
+                    <ActionIcon color="red" onClick={() => setShowAddRow(false)}>
+                      <CloseIcon />
+                    </ActionIcon>
+                  </Flex>
+                </td>
               </>
             ) : (
               <td colSpan={5}>
