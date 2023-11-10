@@ -108,15 +108,15 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                     )}
                     {typeValue === 'Select' ? (
                       <Controller
-                        name="alternateKeys"
+                        name="selectValues"
                         control={control}
                         render={({ field: { value, onChange } }) => (
                           <MultiSelect
-                            placeholder="Excel column keys"
+                            placeholder="Select Values"
                             creatable
                             clearable
                             searchable
-                            getCreateLabel={(query) => `+ ${query}`}
+                            getCreateLabel={(query) => `+ Add ${query}`}
                             data={Array.isArray(value) ? value : []}
                             value={value}
                             onCreate={(newItem) => {
