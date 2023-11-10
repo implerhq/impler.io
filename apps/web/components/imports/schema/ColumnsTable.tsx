@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
-import { ActionIcon, Checkbox, Flex, Input, Select, Tooltip } from '@mantine/core';
+import { ActionIcon, Checkbox, Select, Flex, Input, Tooltip } from '@mantine/core';
 
 import { colors } from '@config';
 import { Table } from '@ui/table';
@@ -22,6 +22,7 @@ interface ColumnsTableProps {
 
 export function ColumnsTable({ templateId }: ColumnsTableProps) {
   const [showAddRow, setShowAddRow] = useState(false);
+
   const {
     register,
     watch,
@@ -35,6 +36,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
   } = useSchema({
     templateId,
   });
+
   const typeValue = watch('type');
 
   return (
@@ -85,7 +87,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
               <>
                 <td colSpan={4} style={{ borderRight: 'none' }}>
                   <Flex gap="xs" align={'center'}>
-                    <Input autoFocus required placeholder="Column Name" {...register('name')} />
+                    <Input autoFocus={typeValue === 'Name'} required placeholder="Column Name" {...register('name')} />
                     <Input required placeholder="Column Key" {...register('key')} />
                     <Controller
                       control={control}
@@ -106,15 +108,15 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                     )}
                     {typeValue === 'Select' ? (
                       <Controller
-                        name="selectValues"
+                        name="alternateKeys"
                         control={control}
                         render={({ field: { value, onChange } }) => (
                           <MultiSelect
-                            placeholder="Select Values"
+                            placeholder="Excel column keys"
                             creatable
                             clearable
                             searchable
-                            getCreateLabel={(query) => `+ Add ${query}`}
+                            getCreateLabel={(query) => `+ ${query}`}
                             data={Array.isArray(value) ? value : []}
                             value={value}
                             onCreate={(newItem) => {
@@ -123,6 +125,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                               return newItem;
                             }}
                             onChange={onChange}
+                            style={{ width: '100%' }}
                           />
                         )}
                       />
@@ -152,6 +155,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                               return newItem;
                             }}
                             onChange={onChange}
+                            style={{ width: '100%' }}
                           />
                         )}
                       />
