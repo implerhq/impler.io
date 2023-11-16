@@ -22,7 +22,7 @@ interface ColumnsTableProps {
 
 export function ColumnsTable({ templateId }: ColumnsTableProps) {
   const [showAddRow, setShowAddRow] = useState(false);
-  const [isFocuedOnSelect, setIsFocusOnSelect] = useState(false);
+  const [isSelectFocused, setIsSelectFocused] = useState(false);
 
   const {
     register,
@@ -45,7 +45,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
       onSubmit={(e) => {
         e.preventDefault();
         handleSubmit();
-        setIsFocusOnSelect(false);
+        setIsSelectFocused(false);
       }}
     >
       <Table<IColumn>
@@ -105,8 +105,8 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                           placeholder="Select Type"
                           variant="default"
                           {...field}
-                          autoFocus={isFocuedOnSelect}
-                          onFocus={() => setIsFocusOnSelect(true)}
+                          autoFocus={isSelectFocused}
+                          onFocus={() => setIsSelectFocused(true)}
                         />
                       )}
                     />
