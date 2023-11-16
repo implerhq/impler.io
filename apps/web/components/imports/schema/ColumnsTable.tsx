@@ -22,6 +22,7 @@ interface ColumnsTableProps {
 
 export function ColumnsTable({ templateId }: ColumnsTableProps) {
   const [showAddRow, setShowAddRow] = useState(false);
+  const [isFocuedOnSelect, setIsFocusOnSelect] = useState(false);
 
   const {
     register,
@@ -40,7 +41,13 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
   const typeValue = watch('type');
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleSubmit();
+        setIsFocusOnSelect(false);
+      }}
+    >
       <Table<IColumn>
         emptyDataText='No columns found click on "+" to add new column'
         headings={[
@@ -87,13 +94,20 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
               <>
                 <td colSpan={4} style={{ borderRight: 'none' }}>
                   <Flex gap="xs" align={'center'}>
-                    <Input autoFocus={typeValue === 'Name'} required placeholder="Column Name" {...register('name')} />
+                    <Input autoFocus required placeholder="Column Name" {...register('name')} />
                     <Input required placeholder="Column Key" {...register('key')} />
                     <Controller
                       control={control}
                       name="type"
                       render={({ field }) => (
-                        <Select data={COLUMN_TYPES} placeholder="Select Type" variant="default" {...field} />
+                        <Select
+                          data={COLUMN_TYPES}
+                          placeholder="Select Type"
+                          variant="default"
+                          {...field}
+                          autoFocus={isFocuedOnSelect}
+                          onFocus={() => setIsFocusOnSelect(true)}
+                        />
                       )}
                     />
                     {typeValue === 'Regex' && (
@@ -160,9 +174,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                         )}
                       />
                     ) : null}
-
-                    <Checkbox label="Is Required?" title="Is Required?" {...register('isRequired')} id="isRequired" />
-
+                    <Checkbox label="Is Required?" title="Is Required?" {...register('isRequired')} id="isRequired" />{' '}
                     <Checkbox label="Is Unique?" title="Is Unique?" {...register('isUnique')} id="isUnique" />
                   </Flex>
                 </td>
