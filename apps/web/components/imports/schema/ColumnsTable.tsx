@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { ActionIcon, Checkbox, Select, Flex, Input, Tooltip } from '@mantine/core';
 
@@ -22,7 +22,7 @@ interface ColumnsTableProps {
 
 export function ColumnsTable({ templateId }: ColumnsTableProps) {
   const [showAddRow, setShowAddRow] = useState(false);
-  const [isSelectFocused, setIsSelectFocused] = useState(false);
+  const SelectRef = useRef(false);
 
   const {
     register,
@@ -45,7 +45,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
       onSubmit={(e) => {
         e.preventDefault();
         handleSubmit();
-        setIsSelectFocused(false);
+        SelectRef.current = false;
       }}
     >
       <Table<IColumn>
@@ -105,8 +105,8 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                           placeholder="Select Type"
                           variant="default"
                           {...field}
-                          autoFocus={isSelectFocused}
-                          onFocus={() => setIsSelectFocused(true)}
+                          autoFocus={SelectRef.current}
+                          onFocus={() => (SelectRef.current = true)}
                         />
                       )}
                     />
