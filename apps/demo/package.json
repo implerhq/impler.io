@@ -28,7 +28,7 @@
     "react-dom": "18.2.0",
     "react-query": "^3.39.2",
     "rimraf": "^3.0.2",
-    "sharp": "^0.31.3"
+    "sharp": "^0.32.6"
   },
   "devDependencies": {
     "@types/file-saver": "^2.0.5",
