@@ -16,7 +16,7 @@ interface UseSchemaProps {
 
 export function useSchema({ templateId }: UseSchemaProps) {
   const queryClient = useQueryClient();
-  const { register, control, reset, setFocus, handleSubmit } = useForm<IColumn>({
+  const { register, control, watch, reset, setFocus, handleSubmit, formState } = useForm<IColumn>({
     defaultValues: {
       type: 'String',
     },
@@ -101,6 +101,8 @@ export function useSchema({ templateId }: UseSchemaProps) {
     control,
     columns,
     register,
+    watch,
+    formState,
     onEditColumnClick,
     onDeleteColumnClick,
     isColumnCreateLoading,
