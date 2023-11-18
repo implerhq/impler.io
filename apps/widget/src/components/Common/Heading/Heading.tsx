@@ -31,6 +31,7 @@ export function Heading({ active, title }: IHeadingProps) {
 
   return (
     <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
+      // eslint-disable-next-line no-magic-numbers
       {active === 0 ? (
         <></>
       ) : (
