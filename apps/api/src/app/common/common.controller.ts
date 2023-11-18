@@ -20,7 +20,7 @@ export class CommonController {
   @ApiOperation({
     summary: 'Check if request is valid (Checks Auth)',
   })
-  async isRequestValid(@Body() body: ValidRequestDto): Promise<boolean> {
+  async isRequestValid(@Body() body: ValidRequestDto): Promise<{ success: boolean }> {
     return this.validRequest.execute(
       ValidRequestCommand.create({
         projectId: body.projectId,

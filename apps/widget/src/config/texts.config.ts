@@ -1,11 +1,13 @@
 export const TEXTS = {
   TITLES: {
+    VALIDATE: 'Validate',
     UPLOAD: 'Upload',
     MAPPING: 'Mapping',
     REVIEW: 'Review',
     COMPLETE: 'Complete',
   },
   STEPS: {
+    VALIDATE: 'Validate',
     UPLOAD: 'Upload',
     MAPPING: 'Mapping',
     REVIEW: 'Review',

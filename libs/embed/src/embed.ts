@@ -175,6 +175,7 @@ class Impler {
     const allowedCalls: string[] = [];
     const priorCalls =
       window.impler && window.impler._c && typeof window.impler._c === 'object' ? window.impler._c : [];
+
     priorCalls.forEach((call: string[]) => {
       const method: any = call[0];
       const args = call[1];
@@ -190,7 +191,6 @@ class Impler {
   mountIframe = () => {
     if (!document.getElementById(IFRAME_ID) && this.iframe) {
       window.addEventListener('message', this.receiveMessage, false);
-
       const wrapper = document.createElement('div');
 
       wrapper.className = WRAPPER_CLASS_NAME;

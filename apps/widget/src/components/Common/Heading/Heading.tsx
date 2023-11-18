@@ -10,6 +10,9 @@ interface IHeadingProps {
 
 const Steps = [
   {
+    label: TEXTS.STEPS.VALIDATE,
+  },
+  {
     label: TEXTS.STEPS.UPLOAD,
   },
   {
@@ -28,10 +31,14 @@ export function Heading({ active, title }: IHeadingProps) {
 
   return (
     <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
-      <Group style={{ justifyContent: 'space-between' }} mb="lg">
-        <Title order={3}>{title}</Title>
-        <Stepper active={active} steps={Steps} primaryColor={theme.colors.primary[variables.colorIndex]} />
-      </Group>
+      {active === 0 ? (
+        <></>
+      ) : (
+        <Group style={{ justifyContent: 'space-between' }} mb="lg">
+          <Title order={3}>{title}</Title>
+          <Stepper active={active} steps={Steps} primaryColor={theme.colors.primary[variables.colorIndex]} />
+        </Group>
+      )}
     </MediaQuery>
   );
 }

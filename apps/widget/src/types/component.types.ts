@@ -17,6 +17,7 @@ export enum PromptModalTypesEnum {
 }
 
 export enum PhasesEum {
+  VALIDATE,
   UPLOAD,
   MAPPING,
   REVIEW,

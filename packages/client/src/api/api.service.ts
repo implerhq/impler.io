@@ -41,8 +41,8 @@ export class ApiService {
     this.isAuthenticated = false;
   }
 
-  async checkIsRequestvalid(projectId: string, template?: string) {
-    return this.httpClient.post(`/common/valid`, { projectId, template });
+  async checkIsRequestvalid(projectId: string, templateId?: string) {
+    return this.httpClient.post(`/common/valid`, { projectId, templateId });
   }
 
   async getImportConfig(projectId: string) {
