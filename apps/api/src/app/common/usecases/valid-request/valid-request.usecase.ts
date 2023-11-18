@@ -10,21 +10,24 @@ export class ValidRequest {
 
   async execute(command: ValidRequestCommand): Promise<{ success: boolean }> {
     try {
-      if (!!command.templateId) {
-        const templateCount = await this.templateRepository.count({
-          _id: command.templateId,
-          _projectId: command.projectId,
-        });
-        if (!templateCount) {
-          throw new DocumentNotFoundException('Template', command.templateId, APIMessages.INCORRECT_KEYS_FOND);
-        }
-      } else {
+      if (command.projectId) {
         const projectCount = await this.projectRepository.count({
           _id: command.projectId,
         });
 
         if (!projectCount) {
-          throw new DocumentNotFoundException('Project', command.projectId, APIMessages.INCORRECT_KEYS_FOND);
+          throw new DocumentNotFoundException('Project', command.projectId, APIMessages.INCORRECT_KEYS_FOUND);
+        }
+      }
+
+      if (command.templateId) {
+        const templateCount = await this.templateRepository.count({
+          _id: command.templateId,
+          _projectId: command.projectId,
+        });
+
+        if (!templateCount) {
+          throw new DocumentNotFoundException('Template', command.templateId, APIMessages.INCORRECT_KEYS_FOUND);
         }
       }
 

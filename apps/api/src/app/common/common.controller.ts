@@ -24,7 +24,7 @@ export class CommonController {
     return this.validRequest.execute(
       ValidRequestCommand.create({
         projectId: body.projectId,
-        templateId: body.templateId,
+        templateId: body.template,
       })
     );
   }

@@ -17,6 +17,8 @@ export function Phase0(props: IPhase0Props) {
 
   useEffect(() => {
     handleValidate();
+
+    return () => {};
   }, []);
 
   return (
@@ -24,7 +26,18 @@ export function Phase0(props: IPhase0Props) {
       {isLoading ? (
         <LoadingOverlay visible={!isLoading} />
       ) : isError ? (
-        <Alert color="yellow" style={{ textAlign: 'center' }}>
+        <Alert
+          color="yellow"
+          style={{
+            textAlign: 'center',
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%,-50%)',
+            maxWidth: '100%',
+            border: '.1rem solid #FFC300',
+          }}
+        >
           {isError}
         </Alert>
       ) : (
