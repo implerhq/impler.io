@@ -34,8 +34,10 @@ export function Phase3(props: IPhase3Props) {
     columnDefs,
     totalPages,
     reviewData,
+    updateRecord,
     onPageChange,
     onExportData,
+    setReviewData,
     onConfirmReview,
     isInitialDataLoaded,
     isConfirmReviewLoading,
@@ -85,10 +87,21 @@ export function Phase3(props: IPhase3Props) {
         <Table
           width={tableWrapperDimensions.width}
           height={tableWrapperDimensions.height}
-          afterRender={() => {
-            tableRef.current?.__hotInstance?.validateCells();
-          }}
           ref={tableRef}
+          onValueChange={(row, prop, oldVal, newVal) => {
+            const name = String(prop).replace('record.', '');
+
+            const currentData = [...reviewData];
+            if (currentData && oldVal !== newVal) {
+              if (!currentData[row].updated) {
+                currentData[row].updated = {};
+              }
+              currentData[row].record[name] = newVal;
+              currentData[row].updated[name] = true;
+              setReviewData(currentData);
+              updateRecord(currentData[row]);
+            }
+          }}
           data={reviewData}
           headings={headings}
           columnDefs={columnDefs}

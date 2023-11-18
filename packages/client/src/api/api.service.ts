@@ -8,6 +8,7 @@ import {
   PaginationResult,
   IImportConfig,
   ISchemaColumn,
+  IRecord,
 } from '@impler/shared';
 
 export class ApiService {
@@ -150,5 +151,9 @@ export class ApiService {
       {},
       'blob'
     ) as Promise<ArrayBuffer>;
+  }
+
+  async updateRecord(uploadId: string, record: IRecord) {
+    return this.httpClient.put(`/review/${uploadId}/record`, record);
   }
 }

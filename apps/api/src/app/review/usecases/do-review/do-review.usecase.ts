@@ -1,19 +1,18 @@
 import * as fs from 'fs';
 import * as dayjs from 'dayjs';
+import { Model } from 'mongoose';
+import { Writable } from 'stream';
 import * as Papa from 'papaparse';
-import * as ExcelJS from 'exceljs';
 import addFormats from 'ajv-formats';
-import { PassThrough } from 'stream';
 import addKeywords from 'ajv-keywords';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import Ajv, { AnySchemaObject, ErrorObject, ValidateFunction } from 'ajv';
 
 import { StorageService } from '@impler/shared/dist/services/storage';
-import { UploadRepository, ValidatorRepository, FileRepository } from '@impler/dal';
-import { ColumnTypesEnum, Defaults, FileMimeTypesEnum, ITemplateSchemaItem, UploadStatusEnum } from '@impler/shared';
+import { UploadRepository, ValidatorRepository, FileRepository, DalService } from '@impler/dal';
+import { ColumnTypesEnum, Defaults, ITemplateSchemaItem, UploadStatusEnum } from '@impler/shared';
 
 import { APIMessages } from '@shared/constants';
-import { FileNameService } from '@shared/services';
 import { SManager, BATCH_LIMIT, MAIN_CODE } from '@shared/services/sandbox';
 
 interface IDataItem {
@@ -21,6 +20,7 @@ interface IDataItem {
   errors?: Record<string, string>;
   isValid: boolean;
   record: Record<string, any>;
+  updated: Record<string, boolean>;
 }
 interface IBatchItem {
   uploadId: string;
@@ -73,16 +73,20 @@ ajv.addKeyword({
 
 @Injectable()
 export class DoReview {
+  private _modal: Model<any>;
+
   constructor(
     private uploadRepository: UploadRepository,
     private storageService: StorageService,
     private validatorRepository: ValidatorRepository,
-    private fileNameService: FileNameService,
     private fileRepository: FileRepository,
-    private sandboxManager: SManager
+    private sandboxManager: SManager,
+    private dalService: DalService
   ) {}
 
   async execute(_uploadId: string) {
+    this._modal = await this.dalService.createRecordCollection(_uploadId);
+
     const uploadInfo = await this.uploadRepository.getUploadInformation(_uploadId);
     if (!uploadInfo) {
       throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
@@ -93,7 +97,7 @@ export class DoReview {
     const uploadedFileInfo = await this.fileRepository.findById(uploadInfo._uploadedFileId);
     const validations = await this.validatorRepository.findOne({ _templateId: uploadInfo._templateId });
 
-    let response: string;
+    let response: number;
 
     if (validations && validations.onBatchInitialize) {
       const batches = await this.batchRun({
@@ -128,33 +132,33 @@ export class DoReview {
 
   private buildAJVSchema(columns: ITemplateSchemaItem[]) {
     const formattedColumns: Record<string, ITemplateSchemaItem> = columns.reduce((acc, column) => {
-      acc[column.key] = { ...column };
+      acc[column.name] = { ...column };
 
       return acc;
     }, {});
     const properties: Record<string, unknown> = columns.reduce((acc, column) => {
-      acc[column.key] = this.getProperty(formattedColumns[column.key]);
+      acc[column.name] = this.getProperty(formattedColumns[column.name]);
 
       return acc;
     }, {});
     const requiredProperties: string[] = columns.reduce((acc, column) => {
-      if (formattedColumns[column.key].isRequired) acc.push(column.key);
+      if (formattedColumns[column.name].isRequired) acc.push(column.name);
 
       return acc;
     }, []);
 
     // setting uniqueItems to empty set to avoid error
     columns.forEach((column) => {
-      if (formattedColumns[column.key].isUnique) {
-        uniqueItems[column.key] = new Set();
+      if (formattedColumns[column.name].isUnique) {
+        uniqueItems[column.name] = new Set();
       }
-      if (formattedColumns[column.key].type === ColumnTypesEnum.DATE) {
+      if (formattedColumns[column.name].type === ColumnTypesEnum.DATE) {
         if (
-          Array.isArray(formattedColumns[column.key].dateFormats) &&
-          formattedColumns[column.key].dateFormats.length > 0
+          Array.isArray(formattedColumns[column.name].dateFormats) &&
+          formattedColumns[column.name].dateFormats.length > 0
         )
-          dateFormats[column.key] = formattedColumns[column.key].dateFormats;
-        else dateFormats[column.key] = Defaults.DATE_FORMATS;
+          dateFormats[column.name] = formattedColumns[column.name].dateFormats;
+        else dateFormats[column.name] = Defaults.DATE_FORMATS;
       }
     });
 
@@ -320,49 +324,28 @@ export class DoReview {
     }
   }
 
-  private getStreams({ uploadId, headings }: { uploadId: string; headings: string[] }) {
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('data');
-    worksheet.columns = [
-      { header: 'Index', key: 'index' },
-      { header: 'Message', key: 'message' },
-      ...headings.map((heading) => ({ header: heading, key: heading })),
-    ];
-
-    const validFilePath = this.fileNameService.getValidDataFilePath(uploadId);
-    const invalidFilePath = this.fileNameService.getInvalidDataFilePath(uploadId);
-    const invalidExcelDataFilePath = this.fileNameService.getInvalidExcelDataFilePath(uploadId);
-
-    const invalidDataStream = new PassThrough();
-    const validDataStream = new PassThrough();
-
-    const validDataWriteStream = this.storageService.writeStream(
-      validFilePath,
-      validDataStream,
-      FileMimeTypesEnum.JSON
-    );
-    const invalidDataWriteStream = this.storageService.writeStream(
-      invalidFilePath,
-      invalidDataStream,
-      FileMimeTypesEnum.JSON
-    );
-
-    invalidDataStream.push(`[`);
-    validDataStream.push(`[`);
+  private getStreams({}: { uploadId: string; headings: string[] }) {
+    const recordsModal = this._modal;
+    const dataRecords = [];
+    const dataStream = new Writable({
+      objectMode: true,
+      async write(chunk, encoding, callback) {
+        dataRecords.push(chunk);
+        if (dataRecords.length === BATCH_LIMIT) {
+          await recordsModal.insertMany(dataRecords);
+          dataRecords.length = 0;
+        }
+        callback();
+      },
+      async final(callback) {
+        await recordsModal.insertMany(dataRecords);
+        dataRecords.length = 0;
+        callback();
+      },
+    });
 
     return {
-      workbook,
-      worksheet,
-
-      validFilePath,
-      invalidFilePath,
-      invalidExcelDataFilePath,
-
-      validDataStream,
-      invalidDataStream,
-
-      validDataWriteStream,
-      invalidDataWriteStream,
+      dataStream,
     };
   }
 
@@ -376,18 +359,9 @@ export class DoReview {
     allDataFilePath: string;
     validator: ValidateFunction;
     headings: string[];
-  }): Promise<string> {
+  }): Promise<number> {
     return new Promise(async (resolve, reject) => {
-      const {
-        workbook,
-        worksheet,
-        invalidExcelDataFilePath,
-
-        validDataStream,
-        invalidDataStream,
-        invalidDataWriteStream,
-        validDataWriteStream,
-      } = this.getStreams({
+      const { dataStream } = this.getStreams({
         uploadId,
         headings,
       });
@@ -415,47 +389,37 @@ export class DoReview {
             const isValid = validator({ ...recordObj });
             if (!isValid) {
               const errors = this.getErrorsObject(validator.errors);
-              const message = Object.values(errors).join(', ');
               item = {
                 index: totalRecords,
                 errors: errors,
                 isValid: false,
                 record: recordObj,
+                updated: {},
               };
-              invalidDataStream.push((invalidRecords === 0 ? '' : ',') + JSON.stringify(item));
-              worksheet.addRow(Object.assign({ index: totalRecords, message }, recordObj)).commit();
               invalidRecords++;
             } else {
               item = {
                 index: totalRecords,
                 isValid: true,
                 record: recordObj,
+                errors: {},
+                updated: {},
               };
-              validDataStream.push((validRecords === 0 ? '' : ',') + JSON.stringify(item));
               validRecords++;
             }
+            dataStream.write(item);
           }
         },
         complete: async () => {
-          validDataStream.push(']');
-          invalidDataStream.push(']');
+          dataStream.end();
 
-          validDataStream.end();
-          invalidDataStream.end();
-
-          await invalidDataWriteStream.done();
-          await validDataWriteStream.done();
-
-          const sheetBuffer = await workbook.xlsx.writeBuffer();
-          await this.storageService.uploadFile(invalidExcelDataFilePath, sheetBuffer as any, FileMimeTypesEnum.EXCELX);
-
-          const invalidDataFilePath = await this.saveFileContents({
+          await this.saveFileContents({
             uploadId,
             invalidRecords,
             totalRecords,
             validRecords,
           });
-          resolve(invalidDataFilePath);
+          resolve(totalRecords);
         },
         error: (err) => {
           reject(err);
@@ -508,6 +472,7 @@ export class DoReview {
                   errors: errors,
                   isValid: false,
                   record: recordObj,
+                  updated: {},
                 });
               } else {
                 batchRecords.push({
@@ -515,6 +480,7 @@ export class DoReview {
                   isValid: true,
                   errors: {},
                   record: recordObj,
+                  updated: {},
                 });
               }
               if (batchRecords.length === BATCH_LIMIT) {
@@ -565,30 +531,15 @@ export class DoReview {
     validRecords: number;
     invalidRecords: number;
   }) {
-    const validDataFileName = this.fileNameService.getValidDataFileName();
-    const invalidDataFileName = this.fileNameService.getInvalidDataFileName();
-
-    const validDataFilePath = this.fileNameService.getValidDataFilePath(uploadId);
-    const invalidDataFilePath = this.fileNameService.getInvalidDataFilePath(uploadId);
-    const invalidExcelDataFileUrl = this.fileNameService.getInvalidExcelDataFileUrl(uploadId);
-
-    const validDataFile = await this.makeFileEntry(validDataFileName, validDataFilePath);
-    const invalidDataFile = await this.makeFileEntry(invalidDataFileName, invalidDataFilePath);
-
     await this.uploadRepository.update(
       { _id: uploadId },
       {
         status: UploadStatusEnum.REVIEWING,
-        _validDataFileId: validDataFile._id,
-        _invalidDataFileId: invalidDataFile._id,
-        invalidCSVDataFileUrl: invalidExcelDataFileUrl,
         totalRecords,
         validRecords,
         invalidRecords,
       }
     );
-
-    return invalidDataFilePath;
   }
 
   private async processBatches({
@@ -601,18 +552,9 @@ export class DoReview {
     uploadId: string;
     headings: string[];
     onBatchInitialize: string;
-  }): Promise<string> {
+  }): Promise<number> {
     return new Promise(async (resolve) => {
-      const {
-        workbook,
-        worksheet,
-        invalidExcelDataFilePath,
-
-        validDataStream,
-        invalidDataStream,
-        invalidDataWriteStream,
-        validDataWriteStream,
-      } = this.getStreams({
+      const { dataStream } = this.getStreams({
         uploadId,
         headings,
       });
@@ -624,7 +566,7 @@ export class DoReview {
       let totalRecords = 0,
         validRecords = 0,
         invalidRecords = 0;
-      let processOutput, message: string;
+      let processOutput;
       for (const processData of processedArray) {
         if (
           processData &&
@@ -636,13 +578,10 @@ export class DoReview {
           // eslint-disable-next-line @typescript-eslint/no-loop-func
           processOutput.data.forEach((item: any) => {
             totalRecords++;
+            dataStream.write(item);
             if (item.isValid) {
-              validDataStream.push((validRecords === 0 ? '' : ',') + JSON.stringify(item));
               validRecords++;
             } else {
-              message = Object.values(item.errors).join(', ');
-              invalidDataStream.push((invalidRecords === 0 ? '' : ',') + JSON.stringify(item));
-              worksheet.addRow(Object.assign({ index: totalRecords, message }, item.record)).commit();
               invalidRecords++;
             }
           });
@@ -650,34 +589,14 @@ export class DoReview {
           console.log(processData);
         }
       }
-      validDataStream.push(']');
-      invalidDataStream.push(']');
 
-      validDataStream.end();
-      invalidDataStream.end();
-
-      await invalidDataWriteStream.done();
-      await validDataWriteStream.done();
-
-      const sheetBuffer = await workbook.xlsx.writeBuffer();
-      await this.storageService.uploadFile(invalidExcelDataFilePath, sheetBuffer as any, FileMimeTypesEnum.EXCELX);
-
-      const invalidDataFilePath = await this.saveFileContents({
+      await this.saveFileContents({
         uploadId,
         invalidRecords,
         totalRecords,
         validRecords,
       });
-      resolve(invalidDataFilePath);
-    });
-  }
-
-  private async makeFileEntry(fileName: string, filePath: string) {
-    return await this.fileRepository.create({
-      mimeType: FileMimeTypesEnum.JSON,
-      name: fileName,
-      originalName: fileName,
-      path: filePath,
+      resolve(totalRecords);
     });
   }
 }

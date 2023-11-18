@@ -1,5 +1,6 @@
 import { forwardRef } from 'react';
 import { HotTable } from '@handsontable/react';
+import { Tooltip } from 'bootstrap';
 import {
   TextCellType,
   DateCellType,
@@ -18,6 +19,7 @@ import {
 } from 'handsontable/editors';
 import Handsontable from 'handsontable';
 import { HotItemSchema } from '@types';
+import { IRecord } from '@impler/shared';
 import { registerValidator, dateValidator } from 'handsontable/validators';
 
 registerCellType(NumericCellType);
@@ -34,7 +36,7 @@ registerEditor(BaseEditor);
 
 registerValidator(dateValidator);
 
-import 'handsontable/dist/handsontable.full.min.css';
+import './HandsonTable.styles.min.css';
 
 interface TableProps {
   headings: string[];
@@ -43,72 +45,75 @@ interface TableProps {
   afterRender?: () => void;
   data: Record<string, any>[];
   columnDefs: HotItemSchema[];
-  onCellValueEdit?: (index: number, field: string, newValue: any) => void;
+  onValueChange?: (row: number, prop: string, oldVal: any, newVal: any) => void;
 }
 
-function checkEmpty(value: any) {
-  return value === null || value === undefined || value === '';
-}
+Handsontable.renderers.registerRenderer(
+  'custom',
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+  function renderer(instance, TD, row, col, prop, value, cellProperties) {
+    const name = String(prop).replace('record.', '');
+    const soureData = instance.getSourceDataAtRow(row) as IRecord;
 
-Handsontable.validators.registerValidator('text', function validator(value, callback) {
-  if (!this.allowEmpty && checkEmpty(value)) {
-    return callback(false);
-  }
-  if (typeof value !== 'string') {
-    return callback(false);
-  }
-  if (!this.allowDuplicate) {
-    const lastSelected = this.instance.getSelectedLast();
-    if (lastSelected) {
-      const colDataArr = this.instance.getDataAtCol(lastSelected[1]);
-      if (colDataArr.includes(value)) {
-        return callback(false);
-      }
+    if (soureData.updated && soureData.updated[name]) {
+      if (soureData.errors[name]) {
+        TD.innerHTML =
+          soureData.record[name] +
+          `<svg xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle;float: right;cursor: pointer;color:#795e00;" viewBox="-2 -2 24 24" width="20" fill="currentColor">
+            <path d="M10 20C4.477 20 0 15.523 0 10S4.477 0 10 0s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-13a1 1 0 0 1 1 1v5a1 1 0 0 1-2 0V6a1 1 0 0 1 1-1zm0 10a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"></path>
+          </svg>`;
+      } else TD.innerText = soureData.record[name];
+
+      TD.style.textAlign = 'left';
+      TD.style.backgroundColor = '#ffda5b';
+
+      return TD;
     }
-  }
-  callback(true);
-});
-Handsontable.validators.registerValidator('regex', function validator(value, callback) {
-  if (!this.allowEmpty && checkEmpty(value)) {
-    return callback(false);
-  }
-  if (!this.allowEmpty && this.regex && !new RegExp(this.regex).test(value)) {
-    return callback(false);
-  }
-  if (!this.allowDuplicate) {
-    const lastSelected = this.instance.getSelectedLast();
-    if (lastSelected) {
-      const colDataArr = this.instance.getDataAtCol(lastSelected[1]);
-      console.log(colDataArr, value);
-      if (colDataArr.includes(value)) {
-        return callback(false);
-      }
+    if (soureData.errors[name]) {
+      TD.innerHTML =
+        soureData.record[name] +
+        `<svg xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle;float: right;cursor: pointer;color:#ff1111;" viewBox="-2 -2 24 24" width="20" fill="currentColor">
+              <path d="M10 20C4.477 20 0 15.523 0 10S4.477 0 10 0s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-13a1 1 0 0 1 1 1v5a1 1 0 0 1-2 0V6a1 1 0 0 1 1-1zm0 10a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"></path>
+            </svg>`;
+
+      new Tooltip(TD, {
+        container: 'body',
+        trigger: 'hover',
+        title: soureData.errors[name],
+        placement: 'auto',
+      });
+      TD.style.textAlign = 'left';
+      TD.style.backgroundColor = '#fdebeb';
+
+      return TD;
     }
+    TD.innerText = soureData.record[name];
+
+    return TD;
   }
-  callback(true);
-});
-Handsontable.validators.registerValidator('select', function validator(value, callback) {
-  if (!this.allowEmpty && checkEmpty(value)) {
-    return callback(false);
-  }
-  if (!this.allowEmpty && Array.isArray(this.selectOptions) && !this.selectOptions.includes(value)) {
-    return callback(false);
-  }
-  callback(true);
-});
+);
 
 export const Table = forwardRef<HotTable, TableProps>(
-  ({ afterRender, height = 'auto', width = 'auto', headings, columnDefs, data }: TableProps, gridRef) => {
+  (
+    { afterRender, height = 'auto', width = 'auto', headings, columnDefs, data, onValueChange }: TableProps,
+    gridRef
+  ) => {
     return (
       <HotTable
         ref={gridRef}
         data={data}
         width={width}
         height={height}
-        rowHeaders={true}
+        afterChange={(changes) => {
+          if (onValueChange && Array.isArray(changes)) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            onValueChange(changes[0][0], changes[0][1], changes[0][2], changes[0][3]);
+          }
+        }}
+        columns={columnDefs}
         colHeaders={headings}
         afterRender={afterRender}
-        columns={columnDefs}
         licenseKey="non-commercial-and-evaluation" // for non-commercial use only
       />
     );

@@ -7,7 +7,7 @@ import { logAmplitudeEvent } from '@amplitude';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { downloadFileFromURL, getFileNameFromUrl, notifier } from '@util';
-import { ColumnTypesEnum, ISchemaColumn, IErrorObject, IReviewData, IUpload } from '@impler/shared';
+import { ColumnTypesEnum, ISchemaColumn, IErrorObject, IReviewData, IUpload, IRecord } from '@impler/shared';
 
 interface IUsePhase3Props {
   onNext: (uploadData: IUpload) => void;
@@ -17,6 +17,7 @@ const defaultPage = 1;
 
 export function usePhase3({ onNext }: IUsePhase3Props) {
   const { api } = useAPIState();
+  const [reviewData, setReviewData] = useState<IRecord[]>([]);
   const [page, setPage] = useState<number>(defaultPage);
   const [headings, setHeadings] = useState<string[]>([]);
   const { uploadInfo, setUploadInfo, host } = useAppState();
@@ -29,23 +30,29 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     {
       onSuccess(data) {
         const newColumnDefs: HotItemSchema[] = [];
-        const newHeadings: string[] = [];
+        const newHeadings: string[] = ['#'];
+        newColumnDefs.push({
+          type: 'text',
+          data: 'index',
+          readOnly: true,
+          editor: false,
+        });
         data.forEach((column: ISchemaColumn) => {
           newHeadings.push(column.name);
           switch (column.type) {
             case ColumnTypesEnum.STRING:
               newColumnDefs.push({
                 type: 'text',
-                validator: 'text',
                 data: `record.${column.name}`,
                 allowEmpty: !column.isRequired,
                 allowDuplicate: !column.isUnique,
+                renderer: 'custom',
               });
               break;
             case ColumnTypesEnum.NUMBER:
               newColumnDefs.push({
                 type: 'numeric',
-                validator: 'numeric',
+                renderer: 'custom',
                 data: `record.${column.name}`,
                 allowEmpty: !column.isRequired,
                 allowDuplicate: !column.isUnique,
@@ -54,7 +61,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
             case ColumnTypesEnum.DATE:
               newColumnDefs.push({
                 type: 'date',
-                validator: 'date',
+                renderer: 'custom',
                 data: `record.${column.name}`,
                 allowEmpty: !column.isRequired,
                 allowDuplicate: !column.isUnique,
@@ -63,7 +70,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
             case ColumnTypesEnum.EMAIL:
               newColumnDefs.push({
                 type: 'text',
-                validator: 'regex',
+                renderer: 'custom',
                 data: `record.${column.name}`,
                 allowEmpty: !column.isRequired,
                 allowDuplicate: !column.isUnique,
@@ -73,7 +80,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
             case ColumnTypesEnum.SELECT:
               newColumnDefs.push({
                 editor: 'select',
-                validator: 'select',
+                renderer: 'custom',
                 data: `record.${column.name}`,
                 allowEmpty: !column.isRequired,
                 selectOptions: column.selectValues,
@@ -82,7 +89,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
             case ColumnTypesEnum.REGEX:
               newColumnDefs.push({
                 type: 'text',
-                validator: 'regex',
+                renderer: 'custom',
                 regex: column.regex,
                 data: `record.${column.name}`,
                 allowEmpty: !column.isRequired,
@@ -93,7 +100,6 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
             default:
               newColumnDefs.push({
                 type: 'text',
-                validator: 'autocomplete',
                 data: `record.${column.name}`,
                 allowEmpty: !column.isRequired,
                 allowDuplicate: !column.isUnique,
@@ -136,7 +142,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     }
   );
   const {
-    data: reviewData,
+    data: reviewDataResponse,
     isLoading: isReviewDataLoading,
     isFetched: isReviewDataFetched,
   } = useQuery<IReviewData, IErrorObject, IReviewData, [string, number]>(
@@ -144,6 +150,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     () => api.getReviewData(uploadInfo._id, page),
     {
       onSuccess(data) {
+        setReviewData(data.data);
         logAmplitudeEvent('VALIDATE', {
           invalidRecords: data.totalRecords,
         });
@@ -160,6 +167,9 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     }
   );
 
+  const { mutate: updateRecord } = useMutation<unknown, IErrorObject, IRecord, [string]>([`update`], (record) =>
+    api.updateRecord(uploadInfo._id, record)
+  );
   const { mutate: getSignedUrl } = useMutation<string, IErrorObject, [string, string]>(
     [`getSignedUrl:${uploadInfo._id}`],
     ([fileUrl]) => api.getSignedUrl(getFileNameFromUrl(fileUrl)),
@@ -191,7 +201,6 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
   const onPageChange = (newPageNumber: number) => {
     setPage(newPageNumber);
   };
-
   const onExportData = () => {
     getUpload();
   };
@@ -201,14 +210,16 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     headings,
     totalPages,
     columnDefs,
+    updateRecord,
     onPageChange,
     onExportData,
+    setReviewData,
     isGetUploadLoading,
     isConfirmReviewLoading,
+    reviewData: reviewData || [],
     onConfirmReview: confirmReview,
-    reviewData: reviewData?.data || [],
     // eslint-disable-next-line no-magic-numbers
-    totalData: reviewData?.totalRecords || 0,
+    totalData: reviewDataResponse?.totalRecords || 0,
     isInitialDataLoaded: isReviewDataFetched && !isReviewDataLoading,
   };
 }
