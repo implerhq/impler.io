@@ -5,6 +5,7 @@ export type NotificationContent = { title: string; message: string };
 
 export type HotItemSchema = {
   data: string;
+  className?: string;
   readOnly?: boolean;
   editor?: 'base' | 'select' | boolean;
   validator?: 'numeric' | 'date' | 'base' | 'autocomplete' | 'text' | 'regex' | 'select';

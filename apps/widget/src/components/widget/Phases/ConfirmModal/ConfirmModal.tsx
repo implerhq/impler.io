@@ -1,36 +1,45 @@
-import { Warning } from '@icons';
+import { CheckIcon } from '@icons';
 import { colors, TEXTS } from '@config';
 import { Button } from '@ui/Button';
-import useStyles from './Styles';
 import { Group, Modal as MantineModal, Text, Title } from '@mantine/core';
 import { replaceVariablesInString, numberFormatter } from '@impler/shared';
 
 interface IConfirmModalProps {
   opened: boolean;
-  wrongDataCount: number;
   onClose: () => void;
-  onConfirm: (exempt: boolean) => void;
+  totalRecords: number;
+  onConfirm: () => void;
 }
 
 export function ConfirmModal(props: IConfirmModalProps) {
-  const { classes } = useStyles();
-  const { opened, onClose, wrongDataCount, onConfirm } = props;
+  const { opened, onClose, onConfirm, totalRecords } = props;
 
   return (
     <MantineModal centered opened={opened} onClose={onClose} withCloseButton={false} padding="xl" size="lg">
-      <Group spacing={0} className={classes.wrapper}>
-        <Warning fill={colors.red} className={classes.warning} />
-        <Title color={colors.red} order={3} mt="sm">
-          {replaceVariablesInString(TEXTS.CONFIRM_MODAL.title, { count: numberFormatter(wrongDataCount) })}
+      <Group spacing="sm" style={{ flexDirection: 'column', textAlign: 'center' }}>
+        <CheckIcon
+          styles={{
+            width: 40,
+            height: 40,
+            padding: 2,
+            borderRadius: '100%',
+            color: colors.success,
+            backgroundColor: colors.lightSuccess,
+          }}
+        />
+        <Title color={colors.success} order={3} mt="sm">
+          All records are found valid!
         </Title>
         <Text color="dimmed" mb="sm">
-          {TEXTS.CONFIRM_MODAL.subTitle}
+          {replaceVariablesInString(TEXTS.PHASE3.ALL_VALID_CONFIRMATION, {
+            total: numberFormatter(totalRecords),
+          })}
         </Text>
-        <Group spacing="xs" className={classes.actions}>
-          <Button onClick={() => onConfirm(false)} variant="outline">
-            {TEXTS.CONFIRM_MODAL.EXEMPT_CONTINUE}
+        <Group spacing="sm" style={{ flexDirection: 'row' }}>
+          <Button onClick={onClose} color="gray" variant="outline">
+            {TEXTS.PROMPT.NO}
           </Button>
-          <Button onClick={() => onConfirm(true)}>{TEXTS.CONFIRM_MODAL.KEEP_CONTINUE}</Button>
+          <Button onClick={onConfirm}>{TEXTS.PROMPT.YES}</Button>
         </Group>
       </Group>
     </MantineModal>

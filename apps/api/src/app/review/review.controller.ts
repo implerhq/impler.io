@@ -10,16 +10,15 @@ import { Defaults, ACCESS_KEY_NAME, UploadStatusEnum } from '@impler/shared';
 import {
   DoReview,
   GetUpload,
+  DoReReview,
   UpdateRecord,
   StartProcess,
   GetUploadData,
   UpdateImportCount,
-  StartProcessCommand,
   UpdateImportCountCommand,
 } from './usecases';
 
 import { validateNotFound } from '@shared/helpers/common.helper';
-import { ConfirmReviewRequestDto } from './dtos/confirm-review-request.dto';
 import { PaginationResponseDto } from '@shared/dtos/pagination-response.dto';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 import { GetUploadCommand } from '@shared/usecases/get-upload/get-upload.command';
@@ -31,6 +30,7 @@ export class ReviewController {
   constructor(
     private doReview: DoReview,
     private getUpload: GetUpload,
+    private doReReview: DoReReview,
     private startProcess: StartProcess,
     private updateRecord: UpdateRecord,
     private updateImportCount: UpdateImportCount,
@@ -67,11 +67,24 @@ export class ReviewController {
     });
     if (!uploadData) throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
 
-    if (uploadData.status === UploadStatusEnum.MAPPED) {
-      uploadData.totalRecords = await this.doReview.execute(_uploadId);
-    }
-
     return await this.getFileInvalidData.execute(_uploadId, page, limit, uploadData.totalRecords);
+  }
+
+  @Post(':uploadId')
+  @ApiOperation({
+    summary: 'Review Data',
+  })
+  async doReviewData(@Param('uploadId', ValidateMongoId) _uploadId: string) {
+    const uploadData = await this.getUpload.execute({
+      uploadId: _uploadId,
+    });
+    if (!uploadData) throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
+
+    if (uploadData.status === UploadStatusEnum.MAPPED) {
+      await this.doReview.execute(_uploadId);
+    } else if (uploadData.status === UploadStatusEnum.REVIEWING) {
+      await this.doReReview.execute(_uploadId);
+    }
   }
 
   @Post(':uploadId/confirm')
@@ -79,10 +92,7 @@ export class ReviewController {
   @ApiOperation({
     summary: 'Confirm review data for uploaded file',
   })
-  async doConfirmReview(
-    @Param('uploadId', ValidateMongoId) _uploadId: string,
-    @Body() body: ConfirmReviewRequestDto
-  ): Promise<UploadEntity> {
+  async doConfirmReview(@Param('uploadId', ValidateMongoId) _uploadId: string): Promise<UploadEntity> {
     const uploadInformation = await this.getUpload.execute(
       GetUploadCommand.create({
         uploadId: _uploadId,
@@ -104,12 +114,7 @@ export class ReviewController {
       })
     );
 
-    return this.startProcess.execute(
-      StartProcessCommand.create({
-        _uploadId: _uploadId,
-        processInvalidRecords: body.processInvalidRecords,
-      })
-    );
+    return this.startProcess.execute(_uploadId);
   }
 
   @Put(':uploadId/record')

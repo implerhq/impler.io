@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { variables } from '@config';
+import { notifier } from '@util';
 import { HotItemSchema } from '@types';
 import { logAmplitudeEvent } from '@amplitude';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
-import { downloadFileFromURL, getFileNameFromUrl, notifier } from '@util';
 import { ColumnTypesEnum, ISchemaColumn, IErrorObject, IReviewData, IUpload, IRecord } from '@impler/shared';
+import { variables } from '@config';
 
 interface IUsePhase3Props {
   onNext: (uploadData: IUpload) => void;
@@ -17,12 +17,13 @@ const defaultPage = 1;
 
 export function usePhase3({ onNext }: IUsePhase3Props) {
   const { api } = useAPIState();
-  const [reviewData, setReviewData] = useState<IRecord[]>([]);
   const [page, setPage] = useState<number>(defaultPage);
   const [headings, setHeadings] = useState<string[]>([]);
   const { uploadInfo, setUploadInfo, host } = useAppState();
+  const [reviewData, setReviewData] = useState<IRecord[]>([]);
   const [columnDefs, setColumnDefs] = useState<HotItemSchema[]>([]);
   const [totalPages, setTotalPages] = useState<number>(defaultPage);
+  const [showAllDataValidModal, setShowAllDataValidModal] = useState<boolean | undefined>(undefined);
 
   useQuery<unknown, IErrorObject, ISchemaColumn[], [string, string]>(
     [`columns:${uploadInfo._id}`, uploadInfo._id],
@@ -36,173 +37,128 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
           data: 'index',
           readOnly: true,
           editor: false,
+          className: 'custom-cell',
         });
         data.forEach((column: ISchemaColumn) => {
           newHeadings.push(column.name);
+          const columnItem: HotItemSchema = {
+            className: 'htCenter',
+            data: `record.${column.name}`,
+            allowEmpty: !column.isRequired,
+            allowDuplicate: !column.isUnique,
+          };
           switch (column.type) {
             case ColumnTypesEnum.STRING:
-              newColumnDefs.push({
-                type: 'text',
-                data: `record.${column.name}`,
-                allowEmpty: !column.isRequired,
-                allowDuplicate: !column.isUnique,
-                renderer: 'custom',
-              });
-              break;
-            case ColumnTypesEnum.NUMBER:
-              newColumnDefs.push({
-                type: 'numeric',
-                renderer: 'custom',
-                data: `record.${column.name}`,
-                allowEmpty: !column.isRequired,
-                allowDuplicate: !column.isUnique,
-              });
-              break;
-            case ColumnTypesEnum.DATE:
-              newColumnDefs.push({
-                type: 'date',
-                renderer: 'custom',
-                data: `record.${column.name}`,
-                allowEmpty: !column.isRequired,
-                allowDuplicate: !column.isUnique,
-              });
-              break;
             case ColumnTypesEnum.EMAIL:
-              newColumnDefs.push({
-                type: 'text',
-                renderer: 'custom',
-                data: `record.${column.name}`,
-                allowEmpty: !column.isRequired,
-                allowDuplicate: !column.isUnique,
-                regex: '^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$',
-              });
+            case ColumnTypesEnum.REGEX:
+              columnItem.type = 'text';
+              columnItem.renderer = 'custom';
               break;
             case ColumnTypesEnum.SELECT:
-              newColumnDefs.push({
-                editor: 'select',
-                renderer: 'custom',
-                data: `record.${column.name}`,
-                allowEmpty: !column.isRequired,
-                selectOptions: column.selectValues,
-              });
+              columnItem.type = 'text';
+              columnItem.editor = 'select';
+              columnItem.renderer = 'custom';
+              columnItem.selectOptions = column.selectValues;
               break;
-            case ColumnTypesEnum.REGEX:
-              newColumnDefs.push({
-                type: 'text',
-                renderer: 'custom',
-                regex: column.regex,
-                data: `record.${column.name}`,
-                allowEmpty: !column.isRequired,
-                allowDuplicate: !column.isUnique,
-                allowInvalid: false,
-              });
+            case ColumnTypesEnum.NUMBER:
+              columnItem.type = 'numeric';
+              columnItem.renderer = 'custom';
+              break;
+            case ColumnTypesEnum.DATE:
+              columnItem.type = 'date';
+
+              columnItem.renderer = 'custom';
               break;
             default:
-              newColumnDefs.push({
-                type: 'text',
-                data: `record.${column.name}`,
-                allowEmpty: !column.isRequired,
-                allowDuplicate: !column.isUnique,
-              });
+              columnItem.type = 'text';
               break;
           }
+          newColumnDefs.push(columnItem);
         });
         setHeadings(newHeadings);
         setColumnDefs(newColumnDefs);
       },
     }
   );
-
-  const { isLoading: isConfirmReviewLoading, mutate: confirmReview } = useMutation<
-    IUpload,
-    IErrorObject,
-    boolean,
-    [string]
-  >(
-    [`confirm:${uploadInfo._id}`],
-    (processInvalidRecords) => api.confirmReview(uploadInfo._id, processInvalidRecords),
-    {
-      onSuccess(uploadData) {
-        logAmplitudeEvent('RECORDS', {
-          type: 'invalid',
-          host,
-          records: uploadData.invalidRecords,
-        });
-        logAmplitudeEvent('RECORDS', {
-          type: 'valid',
-          host,
-          records: uploadData.totalRecords - uploadData.invalidRecords,
-        });
-        setUploadInfo(uploadData);
-        onNext(uploadData);
-      },
-      onError(error: IErrorObject) {
-        notifier.showError({ message: error.message, title: error.error });
-      },
-    }
-  );
-  const {
-    data: reviewDataResponse,
-    isLoading: isReviewDataLoading,
-    isFetched: isReviewDataFetched,
-  } = useQuery<IReviewData, IErrorObject, IReviewData, [string, number]>(
-    [`review`, page],
-    () => api.getReviewData(uploadInfo._id, page),
-    {
-      onSuccess(data) {
-        setReviewData(data.data);
-        logAmplitudeEvent('VALIDATE', {
-          invalidRecords: data.totalRecords,
-        });
-        if (!data.totalRecords) {
-          confirmReview(false);
-        } else {
-          setPage(Number(data.page));
-          setTotalPages(data.totalPages);
-        }
-      },
-      onError(error: IErrorObject) {
-        notifier.showError({ message: error.message, title: error.error });
-      },
-    }
-  );
-
-  const { mutate: updateRecord } = useMutation<unknown, IErrorObject, IRecord, [string]>([`update`], (record) =>
-    api.updateRecord(uploadInfo._id, record)
-  );
-  const { mutate: getSignedUrl } = useMutation<string, IErrorObject, [string, string]>(
-    [`getSignedUrl:${uploadInfo._id}`],
-    ([fileUrl]) => api.getSignedUrl(getFileNameFromUrl(fileUrl)),
-    {
-      onSuccess(signedUrl, queryVariables) {
-        logAmplitudeEvent('DOWNLOAD_INVALID_DATA');
-        downloadFileFromURL(signedUrl, queryVariables[variables.firstIndex]);
-      },
-      onError(error: IErrorObject) {
-        notifier.showError({ title: error.error, message: error.message });
-      },
-    }
-  );
-  const { isLoading: isGetUploadLoading, refetch: getUpload } = useQuery<IUpload, IErrorObject, IUpload, [string]>(
+  const { refetch: fetchUploadInfo } = useQuery<IUpload, IErrorObject, IUpload, [string]>(
     [`getUpload:${uploadInfo._id}`],
     () => api.getUpload(uploadInfo._id),
     {
+      enabled: false,
       onSuccess(data) {
         setUploadInfo(data);
-        getSignedUrl([data.invalidCSVDataFileUrl, `invalid-data-${uploadInfo._id}.xlsx`]);
+        if (data.invalidRecords === variables.baseIndex && data.totalRecords) {
+          setShowAllDataValidModal(true);
+        }
       },
-      onError(error: IErrorObject) {
-        notifier.showError({ message: error.message, title: error.error });
-      },
-      enabled: false,
     }
+  );
+  const { mutate: refetchReviewData, isLoading: isReviewDataLoading } = useMutation<
+    IReviewData,
+    IErrorObject,
+    void,
+    [string]
+  >(['review'], () => api.getReviewData(uploadInfo._id, page), {
+    onSuccess(data) {
+      setReviewData(data.data);
+      logAmplitudeEvent('VALIDATE', {
+        invalidRecords: data.totalRecords,
+      });
+      setPage(Number(data.page));
+      setTotalPages(data.totalPages);
+    },
+    onError(error: IErrorObject) {
+      notifier.showError({ message: error.message, title: error.error });
+    },
+  });
+  const { refetch: reReviewData, isLoading: isDoReviewLoading } = useQuery<
+    unknown,
+    IErrorObject,
+    void,
+    [string, string]
+  >([`review`, uploadInfo._id], () => api.doReivewData(uploadInfo._id), {
+    cacheTime: 0,
+    staleTime: 0,
+    onSuccess() {
+      fetchUploadInfo();
+      setPage(defaultPage);
+      refetchReviewData();
+    },
+    onError(error: IErrorObject) {
+      notifier.showError({ message: error.message, title: error.error });
+    },
+  });
+  const { isLoading: isConfirmReviewLoading, mutate: confirmReview } = useMutation<
+    IUpload,
+    IErrorObject,
+    void,
+    [string]
+  >([`confirm:${uploadInfo._id}`], () => api.confirmReview(uploadInfo._id), {
+    onSuccess(uploadData) {
+      logAmplitudeEvent('RECORDS', {
+        type: 'invalid',
+        host,
+        records: uploadData.invalidRecords,
+      });
+      logAmplitudeEvent('RECORDS', {
+        type: 'valid',
+        host,
+        records: uploadData.totalRecords - uploadData.invalidRecords,
+      });
+      setUploadInfo(uploadData);
+      onNext(uploadData);
+    },
+    onError(error: IErrorObject) {
+      notifier.showError({ message: error.message, title: error.error });
+    },
+  });
+  const { mutate: updateRecord } = useMutation<unknown, IErrorObject, IRecord, [string]>([`update`], (record) =>
+    api.updateRecord(uploadInfo._id, record)
   );
 
   const onPageChange = (newPageNumber: number) => {
     setPage(newPageNumber);
-  };
-  const onExportData = () => {
-    getUpload();
+    refetchReviewData();
   };
 
   return {
@@ -210,16 +166,18 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     headings,
     totalPages,
     columnDefs,
+    reReviewData,
     updateRecord,
     onPageChange,
-    onExportData,
     setReviewData,
-    isGetUploadLoading,
+    isDoReviewLoading,
+    isReviewDataLoading,
+    showAllDataValidModal,
     isConfirmReviewLoading,
+    setShowAllDataValidModal,
     reviewData: reviewData || [],
     onConfirmReview: confirmReview,
-    // eslint-disable-next-line no-magic-numbers
-    totalData: reviewDataResponse?.totalRecords || 0,
-    isInitialDataLoaded: isReviewDataFetched && !isReviewDataLoading,
+    totalRecords: uploadInfo.totalRecords ?? undefined,
+    invalidRecords: uploadInfo.invalidRecords ?? undefined,
   };
 }

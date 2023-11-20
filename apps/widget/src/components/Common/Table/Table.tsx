@@ -1,6 +1,8 @@
 import { forwardRef } from 'react';
 import { HotTable } from '@handsontable/react';
-import { Tooltip } from 'bootstrap';
+// eslint-disable-next-line id-length
+import $ from 'jquery';
+
 import {
   TextCellType,
   DateCellType,
@@ -53,6 +55,7 @@ Handsontable.renderers.registerRenderer(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
   function renderer(instance, TD, row, col, prop, value, cellProperties) {
     const name = String(prop).replace('record.', '');
+    TD.classList.add('custom-cell');
     const soureData = instance.getSourceDataAtRow(row) as IRecord;
 
     if (soureData.updated && soureData.updated[name]) {
@@ -62,31 +65,33 @@ Handsontable.renderers.registerRenderer(
           `<svg xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle;float: right;cursor: pointer;color:#795e00;" viewBox="-2 -2 24 24" width="20" fill="currentColor">
             <path d="M10 20C4.477 20 0 15.523 0 10S4.477 0 10 0s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-13a1 1 0 0 1 1 1v5a1 1 0 0 1-2 0V6a1 1 0 0 1 1-1zm0 10a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"></path>
           </svg>`;
-      } else TD.innerText = soureData.record[name];
-
-      TD.style.textAlign = 'left';
+      } else {
+        TD.innerText = soureData.record[name];
+        $(TD).tooltip('dispose');
+      }
       TD.style.backgroundColor = '#ffda5b';
 
       return TD;
     }
-    if (soureData.errors[name]) {
+    if (soureData.errors && soureData.errors[name]) {
       TD.innerHTML =
         soureData.record[name] +
         `<svg xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle;float: right;cursor: pointer;color:#ff1111;" viewBox="-2 -2 24 24" width="20" fill="currentColor">
               <path d="M10 20C4.477 20 0 15.523 0 10S4.477 0 10 0s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-13a1 1 0 0 1 1 1v5a1 1 0 0 1-2 0V6a1 1 0 0 1 1-1zm0 10a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"></path>
             </svg>`;
 
-      new Tooltip(TD, {
+      $(TD).tooltip({
         container: 'body',
         trigger: 'hover',
         title: soureData.errors[name],
         placement: 'auto',
       });
-      TD.style.textAlign = 'left';
       TD.style.backgroundColor = '#fdebeb';
 
       return TD;
     }
+
+    $(TD).tooltip('dispose');
     TD.innerText = soureData.record[name];
 
     return TD;
@@ -106,11 +111,15 @@ export const Table = forwardRef<HotTable, TableProps>(
         height={height}
         afterChange={(changes) => {
           if (onValueChange && Array.isArray(changes)) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            onValueChange(changes[0][0], changes[0][1], changes[0][2], changes[0][3]);
+            changes.forEach((change) => {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              onValueChange(change[0], change[1], change[2], change[3]);
+            });
           }
         }}
+        fillHandle
+        stretchH="all"
         columns={columnDefs}
         colHeaders={headings}
         afterRender={afterRender}

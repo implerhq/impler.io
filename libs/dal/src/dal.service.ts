@@ -27,6 +27,9 @@ export class DalService {
     await mongoose.connection.dropDatabase();
   }
 
+  getRecordCollection(_uploadId: string): mongoose.Model<RecordEntity> {
+    return mongoose.models[`${_uploadId}-records`];
+  }
   async createRecordCollection(_uploadId: string): Promise<mongoose.Model<any>> {
     return mongoose.model(`${_uploadId}-records`, RecordSchema);
   }
@@ -52,5 +55,11 @@ export class DalService {
       },
       record
     );
+  }
+  getRecordBulkOp(_uploadId: string) {
+    const model = mongoose.models[`${_uploadId}-records`];
+    if (!model) return;
+
+    return model.collection.initializeUnorderedBulkOp();
   }
 }

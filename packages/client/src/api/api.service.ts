@@ -91,6 +91,10 @@ export class ApiService {
     ) as Promise<IUpload>;
   }
 
+  async doReivewData(uploadId: string) {
+    return this.httpClient.post(`/review/${uploadId}`);
+  }
+
   async getReviewData(
     uploadId: string,
     page?: number,
@@ -103,10 +107,10 @@ export class ApiService {
     ) as Promise<IReviewData>;
   }
 
-  async confirmReview(uploadId: string, processInvalidRecords?: boolean) {
-    return this.httpClient.post(`/review/${uploadId}/confirm`, {
-      processInvalidRecords,
-    }) as Promise<IUpload>;
+  async confirmReview(uploadId: string) {
+    return this.httpClient.post(
+      `/review/${uploadId}/confirm`
+    ) as Promise<IUpload>;
   }
 
   async getUpload(uploadId: string) {

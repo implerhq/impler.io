@@ -1,6 +1,7 @@
 export const colors = {
   primary: '#24A0ED',
   success: '#569D4F',
+  lightSuccess: '#F0FDF4',
   darkDeem: '#666666',
   lightDeem: '#CCCCCC',
   lightGray: '#F8F8F8',
