@@ -41,6 +41,7 @@ export default function ImportDetails({ template }: ImportDetailProps) {
   const { onUpdateClick, onDeleteClick, templateData, profileInfo, onSpreadsheetImported, columns } = useImportDetails({
     template,
   });
+
   const { showWidget, isImplerInitiated } = useImpler({
     templateId: template._id,
     projectId: template._projectId,
@@ -67,7 +68,22 @@ export default function ImportDetails({ template }: ImportDetailProps) {
           <Button
             disabled={!isImplerInitiated || columns?.length === 0}
             color="green"
-            onClick={() => showWidget({ colorScheme })}
+            onClick={() =>
+              showWidget({
+                colorScheme,
+
+                schema: [
+                  {
+                    name: 'country',
+                    key: 'country',
+                    type: 'Select',
+                    selectValues: ['as'],
+                    dateFormats: ['asas'],
+                    isUnique: false,
+                  },
+                ],
+              })
+            }
           >
             Import
           </Button>
@@ -132,6 +148,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       parameters: [templateId],
       cookie: `${CONSTANTS.AUTH_COOKIE_NAME}=${authenticationToken}`,
     });
+
     if (!template) throw new Error();
 
     return {

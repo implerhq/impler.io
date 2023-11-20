@@ -15,7 +15,7 @@ export class ApiService {
   isAuthenticated = false;
 
   constructor(private backendUrl: string) {
-    this.httpClient = new HttpClient(backendUrl);
+    this.httpClient = new HttpClient(this.backendUrl);
   }
 
   constructQueryString(obj: Record<string, string | number>): string {
@@ -41,8 +41,16 @@ export class ApiService {
     this.isAuthenticated = false;
   }
 
-  async checkIsRequestvalid(projectId: string, templateId?: string) {
-    return this.httpClient.post(`/common/valid`, { projectId, templateId });
+  async checkIsRequestvalid(
+    projectId: string,
+    templateId?: string,
+    schema?: string
+  ) {
+    return this.httpClient.post(`/common/valid`, {
+      projectId,
+      templateId,
+      schema,
+    });
   }
 
   async getImportConfig(projectId: string) {

@@ -14,5 +14,8 @@ export class ValidRequestDto {
   })
   @IsString()
   @IsOptional()
-  template?: string;
+  templateId?: string;
+
+  @IsOptional()
+  schema?: string;
 }

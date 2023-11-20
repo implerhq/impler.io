@@ -3,6 +3,9 @@ import { ProjectRepository, TemplateRepository } from '@impler/dal';
 import { ValidRequestCommand } from './valid-request.command';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
 import { APIMessages } from '@shared/constants';
+import { plainToClass } from 'class-transformer';
+import { validate } from 'class-validator';
+import { SchemaDto } from 'app/common/dtos/Schema.dto';
 
 @Injectable()
 export class ValidRequest {
@@ -28,6 +31,36 @@ export class ValidRequest {
 
         if (!templateCount) {
           throw new DocumentNotFoundException('Template', command.templateId, APIMessages.INCORRECT_KEYS_FOUND);
+        }
+      }
+
+      if (command.schema) {
+        const parsedSchema: SchemaDto = JSON.parse(command.schema);
+
+        const errors: string[] = [];
+        if (!Array.isArray(parsedSchema)) {
+          throw new DocumentNotFoundException(
+            'Schema',
+            command.schema,
+            'Invalid schema input. An array of objects is expected.'
+          );
+        }
+
+        for (const item of parsedSchema) {
+          const columnDto = plainToClass(SchemaDto, item);
+          const validationErrors = await validate(columnDto);
+
+          if (validationErrors.length > 0) {
+            errors.push(
+              `Schema Error : ${validationErrors
+                .map((err) => {
+                  return Object.values(err.constraints);
+                })
+                .join(', ')}`
+            );
+
+            throw new DocumentNotFoundException('Schema', command.schema, errors.toString());
+          }
         }
       }
 

@@ -10,21 +10,23 @@ interface IPhase0Props {
 
 export function Phase0(props: IPhase0Props) {
   const { onValidationSuccess: goNext, onError: onError } = props;
-  const { isLoading, isError, handleValidate } = usePhase0({
+  const { isLoading, isError, handleValidate, isWidgetOpened } = usePhase0({
     goNext,
     onError,
   });
 
   useEffect(() => {
-    handleValidate();
-
-    return () => {};
-  }, []);
+    (async function () {
+      try {
+        await handleValidate();
+      } catch (error) {}
+    })();
+  }, [isWidgetOpened]);
 
   return (
     <>
       {isLoading ? (
-        <LoadingOverlay visible={!isLoading} />
+        <LoadingOverlay visible={isLoading} />
       ) : isError ? (
         <Alert
           color="yellow"

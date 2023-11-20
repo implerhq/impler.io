@@ -1,5 +1,6 @@
 import { IErrorObject } from '@impler/shared';
 import { useAPIState } from '@store/api.context';
+import { useAppState } from '@store/app.context';
 import { useImplerState } from '@store/impler.context';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -16,11 +17,12 @@ export function usePhase0({ goNext, onError }: IUsePhase0Props) {
   const [isError, setIsError] = useState('');
 
   const { projectId, templateId } = useImplerState();
+  const AppContext = useAppState();
 
   const { refetch } = useQuery<boolean, IErrorObject, any, string[]>(
     ['valid', projectId],
 
-    () => api.checkIsRequestvalid(projectId, templateId) as Promise<boolean>,
+    () => api.checkIsRequestvalid(projectId, templateId, AppContext.schema) as Promise<boolean>,
     {
       onSuccess(valid) {
         setIsLoading(false);
@@ -37,12 +39,13 @@ export function usePhase0({ goNext, onError }: IUsePhase0Props) {
   );
 
   const handleValidate = async () => {
-    await refetch();
+    return await refetch();
   };
 
   return {
     isLoading,
     isError,
     handleValidate,
+    isWidgetOpened: AppContext.showWidget,
   };
 }

@@ -9,4 +9,7 @@ export class ValidRequestCommand extends BaseCommand {
   @IsString()
   @IsOptional()
   templateId: string;
+
+  @IsOptional()
+  schema: string;
 }
