@@ -25,6 +25,7 @@ export const APIMessages = {
   OPERATION_NOT_ALLOWED: `You're not allowed to perform this action.`,
   EMAIL_ALREADY_EXISTS: 'Email already exists',
   INCORRECT_KEYS_FOUND: 'Invalid keys found! Please check and correct them from web',
+  INVALID_AUTH_TOKEN: 'Invalid authentication token',
 };
 
 export const CONSTANTS = {

@@ -1,4 +1,4 @@
-import { Injectable, HttpStatus, HttpException } from '@nestjs/common';
+import { Injectable, HttpStatus, HttpException, UnauthorizedException } from '@nestjs/common';
 import { ProjectRepository, TemplateRepository } from '@impler/dal';
 import { ValidRequestCommand } from './valid-request.command';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
@@ -71,6 +71,16 @@ export class ValidRequest {
         throw new HttpException(
           {
             message: error.message,
+            errorCode: error.getStatus(),
+          },
+          HttpStatus.NOT_FOUND
+        );
+      }
+
+      if (error instanceof UnauthorizedException) {
+        throw new HttpException(
+          {
+            message: APIMessages.INVALID_AUTH_TOKEN,
             errorCode: error.getStatus(),
           },
           HttpStatus.NOT_FOUND
