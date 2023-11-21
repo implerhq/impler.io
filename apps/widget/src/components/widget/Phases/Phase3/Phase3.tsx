@@ -45,7 +45,6 @@ export function Phase3(props: IPhase3Props) {
     setShowAllDataValidModal,
   } = usePhase3({ onNext: onNextClick });
   const tableWrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
   const [tableWrapperDimensions, setTableWrapperDimentions] = useState({
     height: 200,
     width: 500,
@@ -54,7 +53,7 @@ export function Phase3(props: IPhase3Props) {
   useEffect(() => {
     //  setting wrapper height
     setTableWrapperDimentions({
-      height: tableWrapperRef.current.getBoundingClientRect().height,
+      height: tableWrapperRef.current.getBoundingClientRect().height - 40,
       width: tableWrapperRef.current.getBoundingClientRect().width,
     });
   }, []);

@@ -15,12 +15,14 @@ export class StartProcess {
         { _id: _uploadId },
         { status: UploadStatusEnum.PROCESSING }
       );
-
-      this.queueService.publishToQueue(QueuesEnum.PROCESS_FILE, { uploadId: _uploadId });
     } else {
       // else complete the upload process
       upload = await this.uploadRepository.findOneAndUpdate({ _id: _uploadId }, { status: UploadStatusEnum.COMPLETED });
     }
+    this.queueService.publishToQueue(QueuesEnum.END_IMPORT, {
+      uploadId: _uploadId,
+      processFile: !!(upload._templateId as unknown as TemplateEntity)?.callbackUrl,
+    });
 
     return upload;
   }

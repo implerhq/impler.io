@@ -111,7 +111,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
       notifier.showError({ message: error.message, title: error.error });
     },
   });
-  const { refetch: reReviewData, isLoading: isDoReviewLoading } = useQuery<
+  const { refetch: reReviewData, isFetching: isDoReviewLoading } = useQuery<
     unknown,
     IErrorObject,
     void,

@@ -12,7 +12,6 @@ export interface IBuildSendDataParameters {
   data: any[];
   page: number;
   chunkSize: number;
-  isInvalidRecords: boolean;
   template: string;
   uploadId: string;
   fileName: string;
@@ -21,8 +20,7 @@ export interface IBuildSendDataParameters {
   chunkFormat?: string;
 }
 export interface IGetNextDataParameters extends ProcessFileCachedData {
-  validData: any[];
-  invalidData: any[];
+  allData: any[];
 }
 
 export interface ISendDataResponse {

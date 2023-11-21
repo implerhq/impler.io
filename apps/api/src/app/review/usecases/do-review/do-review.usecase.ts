@@ -1,5 +1,6 @@
 import * as dayjs from 'dayjs';
 import { Model } from 'mongoose';
+import { Writable } from 'stream';
 import addFormats from 'ajv-formats';
 import addKeywords from 'ajv-keywords';
 import Ajv, { AnySchemaObject } from 'ajv';
@@ -8,6 +9,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { APIMessages } from '@shared/constants';
 import { UploadStatusEnum } from '@impler/shared';
 import { BaseReview } from './base-review.usecase';
+import { BATCH_LIMIT } from '@shared/services/sandbox';
 import { StorageService } from '@impler/shared/dist/services/storage';
 import { UploadRepository, ValidatorRepository, FileRepository, DalService } from '@impler/dal';
 
@@ -76,7 +78,7 @@ export class DoReview extends BaseReview {
   async execute(_uploadId: string) {
     this._modal = await this.dalService.createRecordCollection(_uploadId);
 
-    const uploadInfo = await this.uploadRepository.getUploadInformation(_uploadId);
+    const uploadInfo = await this.uploadRepository.findById(_uploadId);
     if (!uploadInfo) {
       throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
     }
@@ -127,6 +129,30 @@ export class DoReview extends BaseReview {
     await this.saveResults(response);
 
     return response;
+  }
+
+  getStreams({ recordsModal }: { recordsModal: Model<any> }) {
+    const dataRecords = [];
+    const dataStream = new Writable({
+      objectMode: true,
+      async write(chunk, encoding, callback) {
+        dataRecords.push(chunk);
+        if (dataRecords.length === BATCH_LIMIT) {
+          await recordsModal.insertMany(dataRecords);
+          dataRecords.length = 0;
+        }
+        callback();
+      },
+      async final(callback) {
+        await recordsModal.insertMany(dataRecords);
+        dataRecords.length = 0;
+        callback();
+      },
+    });
+
+    return {
+      dataStream,
+    };
   }
 
   private async saveResults({ uploadId, totalRecords, validRecords, invalidRecords }: ISaveResults) {

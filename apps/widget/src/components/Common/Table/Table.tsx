@@ -118,7 +118,10 @@ export const Table = forwardRef<HotTable, TableProps>(
             });
           }
         }}
-        fillHandle
+        fillHandle={{
+          autoInsertRow: false,
+          direction: 'vertical',
+        }}
         stretchH="all"
         columns={columnDefs}
         colHeaders={headings}

@@ -1,12 +1,12 @@
 import * as dayjs from 'dayjs';
 import { Model } from 'mongoose';
+import { Writable } from 'stream';
 import addFormats from 'ajv-formats';
 import addKeywords from 'ajv-keywords';
 import Ajv, { AnySchemaObject, ValidateFunction } from 'ajv';
 import { Injectable, BadRequestException } from '@nestjs/common';
 
 import { UploadStatusEnum } from '@impler/shared';
-import { StorageService } from '@impler/shared/dist/services/storage';
 import { UploadRepository, ValidatorRepository, DalService } from '@impler/dal';
 
 import { APIMessages } from '@shared/constants';
@@ -81,7 +81,6 @@ export class DoReReview extends BaseReview {
 
   constructor(
     private dalService: DalService,
-    private storageService: StorageService,
     private uploadRepository: UploadRepository,
     private validatorRepository: ValidatorRepository
   ) {
@@ -91,7 +90,7 @@ export class DoReReview extends BaseReview {
   async execute(_uploadId: string) {
     this._modal = this.dalService.getRecordCollection(_uploadId);
 
-    const uploadInfo = await this.uploadRepository.getUploadInformation(_uploadId);
+    const uploadInfo = await this.uploadRepository.findById(_uploadId);
     if (!uploadInfo) {
       throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
     }
@@ -158,6 +157,27 @@ export class DoReReview extends BaseReview {
     return response;
   }
 
+  getStreams({ uploadId }: { uploadId: string }) {
+    const bulkOp = this.dalService.getRecordBulkOp(uploadId);
+    const dataStream = new Writable({
+      objectMode: true,
+      async write(record, encoding, callback) {
+        bulkOp.find({ index: record.index }).updateOne({ $set: record });
+        callback();
+      },
+      async final(callback) {
+        try {
+          await bulkOp.execute();
+        } catch (error) {}
+        callback();
+      },
+    });
+
+    return {
+      dataStream,
+    };
+  }
+
   private async batchValidate({
     extra,
     uploadId,
@@ -170,7 +190,7 @@ export class DoReReview extends BaseReview {
     validator: ValidateFunction;
   }) {
     const { dataStream } = this.getStreams({
-      recordsModal: this._modal,
+      uploadId,
     });
     const batches = await this.prepareBatches({
       extra,
@@ -198,6 +218,10 @@ export class DoReReview extends BaseReview {
     let batchCount = 1;
     const batches: IBatchItem[] = [];
     const batchRecords: IDataItem[] = [];
+    if (!this._modal) {
+      console.log(`Modal not found for upload ${uploadId}`, this._modal);
+      this._modal = this.dalService.getRecordCollection(uploadId);
+    }
 
     for await (const record of this._modal.find()) {
       const validationResultItem = this.validateRecord({
@@ -220,6 +244,18 @@ export class DoReReview extends BaseReview {
         batchRecords.length = 0;
         batchCount++;
       }
+    }
+    if (batchRecords.length > 0) {
+      batches.push(
+        JSON.parse(
+          JSON.stringify({
+            uploadId,
+            data: batchRecords,
+            batchCount,
+            extra,
+          })
+        )
+      );
     }
 
     return batches;

@@ -28,20 +28,25 @@ export class DalService {
   }
 
   getRecordCollection(_uploadId: string): mongoose.Model<RecordEntity> {
-    return mongoose.models[`${_uploadId}-records`];
+    let collectionModal = mongoose.models[`${_uploadId}-records`];
+
+    if (!collectionModal) {
+      collectionModal = mongoose.model(`${_uploadId}-records`, RecordSchema, `${_uploadId}-records`);
+    }
+
+    return collectionModal;
   }
   async createRecordCollection(_uploadId: string): Promise<mongoose.Model<any>> {
     return mongoose.model(`${_uploadId}-records`, RecordSchema);
   }
   async dropRecordCollection(_uploadId: string) {
-    const model = mongoose.models[`${_uploadId}-records`];
-
+    const model = this.getRecordCollection(_uploadId);
     if (!model) return;
 
     await model.collection.drop();
   }
   async getRecords(_uploadId: string, page: number, limit: number): Promise<RecordEntity[]> {
-    const model = mongoose.models[`${_uploadId}-records`];
+    const model = this.getRecordCollection(_uploadId);
 
     if (!model) return [];
 
@@ -52,7 +57,7 @@ export class DalService {
       .exec();
   }
   async updateRecord(_uploadId: string, index: number, record: RecordEntity) {
-    const model = mongoose.models[`${_uploadId}-records`];
+    const model = this.getRecordCollection(_uploadId);
     if (!model) return;
     if (record._id) delete record._id;
 
@@ -64,9 +69,15 @@ export class DalService {
     );
   }
   getRecordBulkOp(_uploadId: string) {
-    const model = mongoose.models[`${_uploadId}-records`];
+    const model = this.getRecordCollection(_uploadId);
     if (!model) return;
 
     return model.collection.initializeUnorderedBulkOp();
+  }
+  getAllRecords(_uploadId: string) {
+    const model = this.getRecordCollection(_uploadId);
+    if (!model) return;
+
+    return model.find({}, 'index isValid errors record');
   }
 }

@@ -32,6 +32,7 @@ export enum FileEncodingsEnum {
 
 export enum QueuesEnum {
   'PROCESS_FILE' = 'PROCESS_FILE',
+  'END_IMPORT' = 'END_IMPORT',
 }
 
 export type ProcessFileCachedData = {
@@ -40,13 +41,10 @@ export type ProcessFileCachedData = {
   chunkSize: number;
   name: string; // template name
   extra?: string;
-  isInvalidRecords: boolean;
-  processInvalidRecords: boolean;
   authHeaderName: string;
   authHeaderValue: string;
   _templateId: string;
-  validDataFilePath?: string;
-  invalidDataFilePath?: string;
+  allDataFilePath?: string;
   fileName: string;
   recordFormat?: string;
   chunkFormat?: string;
@@ -57,6 +55,11 @@ export type ProcessFileData = {
   cache?: ProcessFileCachedData;
 };
 export type PublishToQueueData = ProcessFileData;
+
+export type EndImportData = {
+  uploadId: string;
+  processFile: boolean;
+};
 
 export interface IFileInformation {
   headings: string[];

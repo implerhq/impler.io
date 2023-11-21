@@ -1,5 +1,4 @@
 import * as fs from 'fs';
-import { Model } from 'mongoose';
 import * as Papa from 'papaparse';
 import { Writable } from 'stream';
 import { ErrorObject, ValidateFunction } from 'ajv';
@@ -340,7 +339,7 @@ export class BaseReview {
 
             if (recordsCount >= 1) {
               const validationResultItem = this.validateRecord({
-                index: recordsCount - 1,
+                index: recordsCount,
                 record: recordObj,
                 validator,
               });
@@ -380,30 +379,6 @@ export class BaseReview {
         reject(error);
       }
     });
-  }
-
-  getStreams({ recordsModal }: { recordsModal: Model<any> }) {
-    const dataRecords = [];
-    const dataStream = new Writable({
-      objectMode: true,
-      async write(chunk, encoding, callback) {
-        dataRecords.push(chunk);
-        if (dataRecords.length === BATCH_LIMIT) {
-          await recordsModal.insertMany(dataRecords);
-          dataRecords.length = 0;
-        }
-        callback();
-      },
-      async final(callback) {
-        await recordsModal.insertMany(dataRecords);
-        dataRecords.length = 0;
-        callback();
-      },
-    });
-
-    return {
-      dataStream,
-    };
   }
 
   async processBatches({
