@@ -50,6 +50,7 @@ export class ValidRequest {
           const columnDto = plainToClass(SchemaDto, item);
           const validationErrors = await validate(columnDto);
 
+          // eslint-disable-next-line no-magic-numbers
           if (validationErrors.length > 0) {
             errors.push(
               `Schema Error : ${validationErrors

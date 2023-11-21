@@ -21,7 +21,9 @@ export function Phase0(props: IPhase0Props) {
         await handleValidate();
       } catch (error) {}
     })();
-  }, [isWidgetOpened]);
+
+    () => {};
+  }, [isWidgetOpened, isError]);
 
   return (
     <>

@@ -2,7 +2,7 @@ import { IErrorObject } from '@impler/shared';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { useImplerState } from '@store/impler.context';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 
 interface IUsePhase0Props {
@@ -19,7 +19,7 @@ export function usePhase0({ goNext, onError }: IUsePhase0Props) {
   const { projectId, templateId } = useImplerState();
   const AppContext = useAppState();
 
-  const { refetch } = useQuery<boolean, IErrorObject, any, string[]>(
+  const { mutate: checkIsRequestvalid } = useMutation<boolean, IErrorObject, any, string[]>(
     ['valid', projectId],
 
     () => api.checkIsRequestvalid(projectId, templateId, AppContext.schema) as Promise<boolean>,
@@ -39,7 +39,7 @@ export function usePhase0({ goNext, onError }: IUsePhase0Props) {
   );
 
   const handleValidate = async () => {
-    return await refetch();
+    return checkIsRequestvalid({ projectId, templateId, schema: AppContext.schema });
   };
 
   return {

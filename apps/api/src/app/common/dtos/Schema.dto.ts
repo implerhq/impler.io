@@ -9,6 +9,7 @@ import {
   ValidateIf,
   IsNotEmpty,
   Validate,
+  ArrayMinSize,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ColumnTypesEnum, Defaults } from '@impler/shared';
@@ -27,7 +28,7 @@ export class SchemaDto {
   })
   @IsNotEmpty({ message: 'key should not empty' })
   @IsString({ message: 'key must be a string' })
-  key: string | '';
+  key: string;
 
   @ApiProperty({
     description: 'Alternative possible keys of the column',
@@ -82,7 +83,12 @@ export class SchemaDto {
   @ApiPropertyOptional({
     description: 'List of possible values for column if type is Select',
   })
+  @ValidateIf((object) => object.type === ColumnTypesEnum.SELECT, {
+    message: 'SelectValues should not empty if type is SELECT',
+  })
   @IsArray({ message: 'SelectValues must be an array' })
+  // eslint-disable-next-line no-magic-numbers
+  @ArrayMinSize(1, { message: 'selectValues should not empty' })
   @Type(() => Array)
   @IsOptional()
   selectValues: string[] = [];
@@ -90,6 +96,12 @@ export class SchemaDto {
   @ApiPropertyOptional({
     description: 'List of date formats for column if type is Date',
   })
+  @ValidateIf((object) => object.type === ColumnTypesEnum.DATE, {
+    message: 'dateFormat should not empty if type is DATE',
+  })
+  @IsArray({ message: 'dateFormat must be an array' })
+  // eslint-disable-next-line no-magic-numbers
+  @ArrayMinSize(1, { message: 'dateFormat should not empty' })
   @Type(() => Array<string>)
   dateFormats: string[] = Defaults.DATE_FORMATS;
 
