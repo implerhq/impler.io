@@ -72,13 +72,6 @@ export default function ImportDetails({ template }: ImportDetailProps) {
             onClick={() =>
               showWidget({
                 colorScheme,
-                schema: [
-                  {
-                    name: 'country',
-                    key: 'country',
-                    type: 'Regex',
-                  },
-                ],
               })
             }
           >
