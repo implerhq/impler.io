@@ -44,6 +44,10 @@ export class HttpClient {
     return this.callWrapper(this.axiosClient.patch.bind(this, url, body));
   }
 
+  async delete(url: string) {
+    return this.callWrapper(this.axiosClient.delete.bind(this, url));
+  }
+
   private callWrapper(axiosCall: any) {
     return new Promise(async (resolve, reject) => {
       try {

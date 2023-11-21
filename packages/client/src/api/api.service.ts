@@ -117,6 +117,10 @@ export class ApiService {
     return this.httpClient.get(`/upload/${uploadId}`) as Promise<IUpload>;
   }
 
+  async terminateUpload(uploadId: string) {
+    return this.httpClient.delete(`/upload/${uploadId}`) as Promise<IUpload>;
+  }
+
   async getColumns(uploadId: string) {
     return this.httpClient.get(`/upload/${uploadId}/columns`) as Promise<
       ISchemaColumn[]

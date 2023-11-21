@@ -7,6 +7,7 @@ export enum UploadStatusEnum {
   'CONFIRMED' = 'Confirmed',
   'PROCESSING' = 'Processing',
   'COMPLETED' = 'Completed',
+  'TERMINATED' = 'Terminated',
 }
 
 export const SupportedFileMimeTypes = [

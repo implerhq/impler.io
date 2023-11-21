@@ -33,6 +33,13 @@ export class DalService {
   async createRecordCollection(_uploadId: string): Promise<mongoose.Model<any>> {
     return mongoose.model(`${_uploadId}-records`, RecordSchema);
   }
+  async dropRecordCollection(_uploadId: string) {
+    const model = mongoose.models[`${_uploadId}-records`];
+
+    if (!model) return;
+
+    await model.collection.drop();
+  }
   async getRecords(_uploadId: string, page: number, limit: number): Promise<RecordEntity[]> {
     const model = mongoose.models[`${_uploadId}-records`];
 

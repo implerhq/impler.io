@@ -7,6 +7,7 @@ import { ACCESS_KEY_NAME, Defaults, UploadStatusEnum } from '@impler/shared';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -31,6 +32,7 @@ import { ValidateTemplate } from '@shared/validations/valid-template.validation'
 import { UploadRequestDto } from './dtos/upload-request.dto';
 import { MakeUploadEntryCommand } from './usecases/make-upload-entry/make-upload-entry.command';
 import {
+  TerminateUpload,
   MakeUploadEntry,
   GetUploadColumns,
   PaginateFileContent,
@@ -45,6 +47,7 @@ import {
 export class UploadController {
   constructor(
     private getUpload: GetUpload,
+    private terminateUpload: TerminateUpload,
     private makeUploadEntry: MakeUploadEntry,
     private getUploadColumns: GetUploadColumns,
     private getOriginalFileContent: GetOriginalFileContent,
@@ -102,6 +105,14 @@ export class UploadController {
     );
 
     return uploadInfo.headings;
+  }
+
+  @Delete(':uploadId')
+  @ApiOperation({
+    summary: 'Terminate upload',
+  })
+  async terminate(@Param('uploadId', ValidateMongoId) uploadId: string) {
+    return this.terminateUpload.execute(uploadId);
   }
 
   @Get(':uploadId/columns')
