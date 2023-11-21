@@ -16,14 +16,16 @@ export function Phase0(props: IPhase0Props) {
   });
 
   useEffect(() => {
-    (async function () {
-      try {
-        await handleValidate();
-      } catch (error) {}
-    })();
+    if (isWidgetOpened) {
+      (async function () {
+        try {
+          await handleValidate();
+        } catch (error) {}
+      })();
 
-    () => {};
-  }, [isWidgetOpened, isError]);
+      () => {};
+    }
+  }, [isWidgetOpened]);
 
   return (
     <>

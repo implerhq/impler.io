@@ -65,10 +65,9 @@ export class SchemaDto {
   @ApiPropertyOptional({
     description: 'Regex if type is Regex',
   })
-  @ValidateIf((object) => object.type === ColumnTypesEnum.REGEX, {
+  @Validate(IsValidRegex, {
     message: 'Invalid regex pattern',
   })
-  @Validate(IsValidRegex)
   @IsNotEmpty()
   regex: string;
 
