@@ -448,6 +448,7 @@ export class BaseReview {
           console.log(processData);
         }
       }
+      dataStream.end();
       resolve({
         uploadId,
         invalidRecords,
