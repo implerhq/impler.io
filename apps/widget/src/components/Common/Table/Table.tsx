@@ -59,7 +59,7 @@ Handsontable.renderers.registerRenderer(
     const soureData = instance.getSourceDataAtRow(row) as IRecord;
 
     if (soureData.updated && soureData.updated[name]) {
-      if (soureData.errors[name]) {
+      if (soureData.errors && soureData.errors[name]) {
         TD.innerHTML =
           soureData.record[name] +
           `<svg xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle;float: right;cursor: pointer;color:#795e00;" viewBox="-2 -2 24 24" width="20" fill="currentColor">
