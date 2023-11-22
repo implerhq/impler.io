@@ -41,7 +41,6 @@ export default function ImportDetails({ template }: ImportDetailProps) {
   const { onUpdateClick, onDeleteClick, templateData, profileInfo, onSpreadsheetImported, columns } = useImportDetails({
     template,
   });
-
   const { showWidget, isImplerInitiated } = useImpler({
     templateId: template._id,
     projectId: template._projectId,
@@ -70,9 +69,7 @@ export default function ImportDetails({ template }: ImportDetailProps) {
             disabled={!isImplerInitiated || columns?.length === 0}
             color="green"
             onClick={() =>
-              showWidget({
-                colorScheme,
-              })
+              showWidget({colorScheme})
             }
           >
             Import
