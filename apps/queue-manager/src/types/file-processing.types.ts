@@ -37,6 +37,5 @@ export interface ISendData {
   page: number;
   pageSize: number;
   extra: string;
-  isInvalidRecords: boolean;
   fileName: string;
 }
