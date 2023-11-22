@@ -66,6 +66,10 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
               break;
             case ColumnTypesEnum.DATE:
               columnItem.type = 'date';
+              if (column.dateFormats?.length) {
+                columnItem.dateFormat = column.dateFormats[variables.baseIndex];
+                columnItem.correctFormat = true;
+              }
 
               columnItem.renderer = 'custom';
               break;
