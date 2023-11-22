@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import { logError } from '../utils/logger';
 import { EventTypesEnum, IShowPayload, IUpload } from '@impler/shared';
+
+import { logError } from '../utils/logger';
 import { EventCalls, UploadTemplateData, UploadData, ISchemaItem } from '../components/button/Button.types';
 
 interface ShowWidgetProps {
@@ -62,24 +63,22 @@ export function useImpler({
     [onUploadComplete, onUploadStart, onUploadTerminate, onWidgetClose]
   );
 
-  const initWidget = useCallback(() => {
-    if (window.impler) {
-      window.impler.init(projectId, { accessToken });
-      window.impler.on('message', onEventHappen);
-    }
-  }, [accessToken, onEventHappen, projectId]);
-
   useEffect(() => {
     if (!window.impler) logError('IMPLER_UNDEFINED_ERROR');
-    else if (!projectId) logError('PROJECTID_NOT_SPECIFIED');
-    else initWidget();
-  }, [accessToken, templateId, initWidget]);
+    else {
+      window.impler.init();
+      window.impler.on('message', onEventHappen);
+    }
+  }, []);
 
   const showWidget = async ({ colorScheme, data, schema, output }: ShowWidgetProps) => {
     if (isImplerInitiated) {
       const payload: IShowPayload = {
         templateId,
         data,
+        host: '',
+        projectId,
+        accessToken,
       };
       if (Array.isArray(schema) && schema.length > 0) {
         payload.schema = JSON.stringify(schema);

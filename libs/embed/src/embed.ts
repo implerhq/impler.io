@@ -41,10 +41,8 @@ class Impler {
     this.listeners[name] = cb;
   };
 
-  init = (projectId: string, payload: any) => {
-    this.projectId = projectId;
-    this.initPayload = payload;
-    this.initializeIframe(projectId);
+  init = () => {
+    this.initializeIframe();
     this.mountIframe();
   };
 
@@ -91,8 +89,6 @@ class Impler {
   ensureMounted = () => {
     if (!document.getElementById(IFRAME_ID)) {
       throw new UnmountedError('impler.init needs to be called first');
-    } else if (!this.isAuthenticated) {
-      throw new AuthenticationError(this.authenticationError || `You're not authenticated to access the widget`);
     }
   };
 
@@ -135,13 +131,13 @@ class Impler {
     this.listeners['message']({ type, value });
   }
 
-  initializeIframe = (projectId: string) => {
+  initializeIframe = () => {
     let iframe: HTMLIFrameElement;
     if (!document.getElementById(IFRAME_ID)) {
       const iframe = document.createElement('iframe');
 
       iframe.style.backgroundColor = 'transparent';
-      iframe.src = `${IFRAME_URL}/${projectId}?`;
+      iframe.src = `${IFRAME_URL}/widget`;
       iframe.id = IFRAME_ID;
       iframe.style.border = 'none';
       iframe.style.position = 'fixed';
@@ -175,7 +171,6 @@ class Impler {
     const allowedCalls: string[] = [];
     const priorCalls =
       window.impler && window.impler._c && typeof window.impler._c === 'object' ? window.impler._c : [];
-
     priorCalls.forEach((call: string[]) => {
       const method: any = call[0];
       const args = call[1];
@@ -191,6 +186,7 @@ class Impler {
   mountIframe = () => {
     if (!document.getElementById(IFRAME_ID) && this.iframe) {
       window.addEventListener('message', this.receiveMessage, false);
+
       const wrapper = document.createElement('div');
 
       wrapper.className = WRAPPER_CLASS_NAME;
