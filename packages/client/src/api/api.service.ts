@@ -15,7 +15,7 @@ export class ApiService {
   isAuthenticated = false;
 
   constructor(private backendUrl: string) {
-    this.httpClient = new HttpClient(this.backendUrl);
+    this.httpClient = new HttpClient(backendUrl);
   }
 
   constructQueryString(obj: Record<string, string | number>): string {
