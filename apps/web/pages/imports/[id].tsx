@@ -68,9 +68,7 @@ export default function ImportDetails({ template }: ImportDetailProps) {
             // eslint-disable-next-line no-magic-numbers
             disabled={!isImplerInitiated || columns?.length === 0}
             color="green"
-            onClick={() =>
-              showWidget({colorScheme})
-            }
+            onClick={() => showWidget({ colorScheme })}
           >
             Import
           </Button>
