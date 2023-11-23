@@ -32,12 +32,13 @@ export const TEXTS = {
     NAME_IN_SHEET_TITLE: 'Column in your sheet',
   },
   PHASE3: {
-    VALID_DATA_INFO: 'All {total} rows are found valid!',
-    INVALID_DATA_INFO: 'Out of {total} rows, {invalid} rows have invalid data. Please update the data and try again.',
+    VALID_DATA_INFO: 'All {total} row(s) are found valid!',
+    INVALID_DATA_INFO:
+      'Out of {total} row(s), {invalid} row(s) have invalid data. Please update the data and try again.',
     EXPORT_DATA: 'Export Data',
     RE_REVIEW_DATA: 'Re-Review Data',
     COMPLETE: 'Complete',
-    ALL_VALID_CONFIRMATION: 'All {total} rows found valid! Would you like to complete the Import?',
+    ALL_VALID_CONFIRMATION: 'All {total} row(s) found valid! Would you like to complete the Import?',
   },
   PHASE4: {
     CLOSE: 'Close',

@@ -1,7 +1,10 @@
 import * as fs from 'fs';
+import * as dayjs from 'dayjs';
 import * as Papa from 'papaparse';
 import { Writable } from 'stream';
-import { ErrorObject, ValidateFunction } from 'ajv';
+import addFormats from 'ajv-formats';
+import addKeywords from 'ajv-keywords';
+import Ajv, { AnySchemaObject, ErrorObject, ValidateFunction } from 'ajv';
 
 import { ColumnTypesEnum, Defaults, ITemplateSchemaItem } from '@impler/shared';
 
@@ -28,6 +31,7 @@ interface IRunData {
   dataStream: Writable;
   validator: ValidateFunction;
   extra: any;
+  dateFormats: Record<string, string[]>;
 }
 
 interface ISaveResults {
@@ -39,11 +43,19 @@ interface ISaveResults {
 
 export class BaseReview {
   private sandboxManager: SManager;
-  constructor(private dateFormats: Record<string, string[]>) {
+  constructor() {
     this.sandboxManager = new SManager();
   }
 
-  buildAJVSchema(columns: ITemplateSchemaItem[], uniqueItems: Record<string, Set<any>>) {
+  buildAJVSchema({
+    columns,
+    dateFormats,
+    uniqueItems,
+  }: {
+    columns: ITemplateSchemaItem[];
+    dateFormats: Record<string, string[]>;
+    uniqueItems: Record<string, Set<any>>;
+  }) {
     const formattedColumns: Record<string, ITemplateSchemaItem> = columns.reduce((acc, column) => {
       acc[column.name] = { ...column };
 
@@ -70,8 +82,8 @@ export class BaseReview {
           Array.isArray(formattedColumns[column.name].dateFormats) &&
           formattedColumns[column.name].dateFormats.length > 0
         )
-          this.dateFormats[column.name] = formattedColumns[column.name].dateFormats;
-        else this.dateFormats[column.name] = Defaults.DATE_FORMATS;
+          dateFormats[column.name] = formattedColumns[column.name].dateFormats;
+        else dateFormats[column.name] = Defaults.DATE_FORMATS;
       }
     });
 
@@ -136,18 +148,18 @@ export class BaseReview {
     };
   }
 
-  private getErrorsObject(errors: ErrorObject[]): Record<string, string> {
+  private getErrorsObject(errors: ErrorObject[], dateFormats: Record<string, string[]>): Record<string, string> {
     let field: string;
 
     return errors.reduce((obj, error) => {
       [, field] = error.instancePath.split('/');
-      obj[field] = this.getMessage(error, field || error.schema[0]);
+      obj[field] = this.getMessage(error, field || error.schema[0], dateFormats);
 
       return obj;
     }, {});
   }
 
-  private getMessage(error: ErrorObject, field: string): string {
+  private getMessage(error: ErrorObject, field: string, dateFormats: Record<string, string[]>): string {
     let message = '';
     switch (true) {
       // empty string case
@@ -156,7 +168,7 @@ export class BaseReview {
         break;
       // customDateChecker
       case error.keyword === 'customDateChecker':
-        message = ` must match format from [${this.dateFormats[field].toString()}]`;
+        message = ` must match format from [${dateFormats[field].toString()}]`;
         break;
       // uniqueCheck
       case error.keyword === 'uniqueCheck':
@@ -237,7 +249,14 @@ export class BaseReview {
     }
   }
 
-  async normalRun({ csvFileStream, validator, uploadId, headings, dataStream }: IRunData): Promise<ISaveResults> {
+  async normalRun({
+    csvFileStream,
+    validator,
+    uploadId,
+    headings,
+    dateFormats,
+    dataStream,
+  }: IRunData): Promise<ISaveResults> {
     return new Promise(async (resolve, reject) => {
       let totalRecords = -1,
         invalidRecords = 0,
@@ -261,6 +280,7 @@ export class BaseReview {
               index: totalRecords,
               record: recordObj,
               validator,
+              dateFormats,
             });
             if (validationResultItem.isValid) {
               validRecords++;
@@ -290,14 +310,16 @@ export class BaseReview {
     index,
     record,
     validator,
+    dateFormats,
   }: {
     index: number;
     record: Record<string, any>;
     validator: ValidateFunction;
+    dateFormats: Record<string, string[]>;
   }) {
     const isValid = validator({ ...record });
     if (!isValid) {
-      const errors = this.getErrorsObject(validator.errors);
+      const errors = this.getErrorsObject(validator.errors, dateFormats);
 
       return {
         index,
@@ -317,7 +339,59 @@ export class BaseReview {
     }
   }
 
-  async batchRun({ headings, validator, uploadId, extra, csvFileStream }: IRunData): Promise<IBatchItem[]> {
+  getAjvValidator(dateFormats: Record<string, string[]>, uniqueItems: Record<string, Set<any>>) {
+    const ajv = new Ajv({
+      allErrors: true,
+      coerceTypes: true,
+      useDefaults: 'empty',
+      allowUnionTypes: true,
+      // removeAdditional: true,
+      verbose: true,
+    });
+    addFormats(ajv, ['email']);
+    addKeywords(ajv);
+
+    // Empty keyword
+    ajv.addKeyword({
+      keyword: 'emptyCheck',
+      schema: false,
+      compile: () => {
+        return (data) => (data === undefined || data === null || data === '' ? false : true);
+      },
+    });
+
+    // const dateFormats: Record<string, string[]> = {};
+    ajv.addKeyword('customDateChecker', {
+      keyword: 'customDateChecker',
+      validate: function (_valid, date, _schema, dataPath) {
+        return dayjs(date, dateFormats[dataPath.parentDataProperty]).isValid();
+      },
+    });
+    // const uniqueItems: Record<string, Set<any>> = {};
+    ajv.addKeyword({
+      keyword: 'uniqueCheck',
+      schema: false, // keyword value is not used, can be true
+      validate: function (data: any, dataPath: AnySchemaObject) {
+        if (uniqueItems[dataPath.parentDataProperty].has(data)) {
+          return false;
+        }
+        uniqueItems[dataPath.parentDataProperty].add(data);
+
+        return true;
+      },
+    });
+
+    return ajv;
+  }
+
+  async batchRun({
+    headings,
+    validator,
+    uploadId,
+    extra,
+    csvFileStream,
+    dateFormats,
+  }: IRunData): Promise<IBatchItem[]> {
     return new Promise(async (resolve, reject) => {
       try {
         let recordsCount = -1,
@@ -342,6 +416,7 @@ export class BaseReview {
                 index: recordsCount,
                 record: recordObj,
                 validator,
+                dateFormats,
               });
               batchRecords.push(validationResultItem);
               if (batchRecords.length === BATCH_LIMIT) {

@@ -8,10 +8,10 @@ export type HotItemSchema = {
   className?: string;
   readOnly?: boolean;
   editor?: 'base' | 'select' | boolean;
-  validator?: 'numeric' | 'date' | 'base' | 'autocomplete' | 'text' | 'regex' | 'select';
+  dateFormat?: string;
+  correctFormat?: boolean;
   selectOptions?: string[];
   type?: 'text' | 'numeric' | 'date' | 'dropdown' | 'autocomplete';
-  regex?: string;
   allowDuplicate?: boolean;
   allowEmpty?: boolean;
   allowInvalid?: boolean;

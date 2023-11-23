@@ -1,9 +1,5 @@
-import * as dayjs from 'dayjs';
 import { Model } from 'mongoose';
 import { Writable } from 'stream';
-import addFormats from 'ajv-formats';
-import addKeywords from 'ajv-keywords';
-import Ajv, { AnySchemaObject } from 'ajv';
 import { Injectable, BadRequestException } from '@nestjs/common';
 
 import { APIMessages } from '@shared/constants';
@@ -20,47 +16,6 @@ interface ISaveResults {
   invalidRecords: number;
 }
 
-const ajv = new Ajv({
-  allErrors: true,
-  coerceTypes: true,
-  useDefaults: 'empty',
-  allowUnionTypes: true,
-  // removeAdditional: true,
-  verbose: true,
-});
-addFormats(ajv, ['email']);
-addKeywords(ajv);
-let dateFormats: Record<string, string[]> = {};
-ajv.addKeyword('customDateChecker', {
-  keyword: 'customDateChecker',
-  validate: function (_valid, date, _schema, dataPath) {
-    return dayjs(date, dateFormats[dataPath.parentDataProperty]).isValid();
-  },
-});
-
-// Empty keyword
-ajv.addKeyword({
-  keyword: 'emptyCheck',
-  schema: false,
-  compile: () => {
-    return (data) => (data === undefined || data === null || data === '' ? false : true);
-  },
-});
-
-let uniqueItems: Record<string, Set<any>> = {};
-ajv.addKeyword({
-  keyword: 'uniqueCheck',
-  schema: false, // keyword value is not used, can be true
-  validate: function (data: any, dataPath: AnySchemaObject) {
-    if (uniqueItems[dataPath.parentDataProperty].has(data)) {
-      return false;
-    }
-    uniqueItems[dataPath.parentDataProperty].add(data);
-
-    return true;
-  },
-});
-
 @Injectable()
 export class DoReview extends BaseReview {
   private _modal: Model<any>;
@@ -72,7 +27,7 @@ export class DoReview extends BaseReview {
     private fileRepository: FileRepository,
     private dalService: DalService
   ) {
-    super(dateFormats);
+    super();
   }
 
   async execute(_uploadId: string) {
@@ -82,7 +37,14 @@ export class DoReview extends BaseReview {
     if (!uploadInfo) {
       throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
     }
-    const schema = this.buildAJVSchema(JSON.parse(uploadInfo.customSchema), uniqueItems);
+    const dateFormats: Record<string, string[]> = {};
+    const uniqueItems: Record<string, Set<any>> = {};
+    const schema = this.buildAJVSchema({
+      columns: JSON.parse(uploadInfo.customSchema),
+      dateFormats,
+      uniqueItems,
+    });
+    const ajv = this.getAjvValidator(dateFormats, uniqueItems);
     const validator = ajv.compile(schema);
 
     const uploadedFileInfo = await this.fileRepository.findById(uploadInfo._uploadedFileId);
@@ -103,6 +65,7 @@ export class DoReview extends BaseReview {
         validator,
         extra: uploadInfo.extra,
         dataStream, // not-used
+        dateFormats,
       });
 
       response = await this.processBatches({
@@ -119,12 +82,9 @@ export class DoReview extends BaseReview {
         headings: uploadInfo.headings,
         uploadId: _uploadId,
         validator,
+        dateFormats,
       });
     }
-
-    // resetting uniqueItems & dateFormats
-    uniqueItems = {};
-    dateFormats = {};
 
     await this.saveResults(response);
 

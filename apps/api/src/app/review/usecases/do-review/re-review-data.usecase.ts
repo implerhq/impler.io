@@ -1,9 +1,6 @@
-import * as dayjs from 'dayjs';
 import { Model } from 'mongoose';
 import { Writable } from 'stream';
-import addFormats from 'ajv-formats';
-import addKeywords from 'ajv-keywords';
-import Ajv, { AnySchemaObject, ValidateFunction } from 'ajv';
+import { ValidateFunction } from 'ajv';
 import { Injectable, BadRequestException } from '@nestjs/common';
 
 import { UploadStatusEnum } from '@impler/shared';
@@ -34,47 +31,6 @@ interface IBatchItem {
   // totalRecords: number;
 }
 
-const ajv = new Ajv({
-  allErrors: true,
-  coerceTypes: true,
-  useDefaults: 'empty',
-  allowUnionTypes: true,
-  // removeAdditional: true,
-  verbose: true,
-});
-addFormats(ajv, ['email']);
-addKeywords(ajv);
-let dateFormats: Record<string, string[]> = {};
-ajv.addKeyword('customDateChecker', {
-  keyword: 'customDateChecker',
-  validate: function (_valid, date, _schema, dataPath) {
-    return dayjs(date, dateFormats[dataPath.parentDataProperty]).isValid();
-  },
-});
-
-// Empty keyword
-ajv.addKeyword({
-  keyword: 'emptyCheck',
-  schema: false,
-  compile: () => {
-    return (data) => (data === undefined || data === null || data === '' ? false : true);
-  },
-});
-
-let uniqueItems: Record<string, Set<any>> = {};
-ajv.addKeyword({
-  keyword: 'uniqueCheck',
-  schema: false, // keyword value is not used, can be true
-  validate: function (data: any, dataPath: AnySchemaObject) {
-    if (uniqueItems[dataPath.parentDataProperty].has(data)) {
-      return false;
-    }
-    uniqueItems[dataPath.parentDataProperty].add(data);
-
-    return true;
-  },
-});
-
 @Injectable()
 export class DoReReview extends BaseReview {
   private _modal: Model<any>;
@@ -84,7 +40,7 @@ export class DoReReview extends BaseReview {
     private uploadRepository: UploadRepository,
     private validatorRepository: ValidatorRepository
   ) {
-    super(dateFormats);
+    super();
   }
 
   async execute(_uploadId: string) {
@@ -94,9 +50,15 @@ export class DoReReview extends BaseReview {
     if (!uploadInfo) {
       throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
     }
-    const schema = this.buildAJVSchema(JSON.parse(uploadInfo.customSchema), uniqueItems);
+    const dateFormats: Record<string, string[]> = {};
+    const uniqueItems: Record<string, Set<any>> = {};
+    const schema = this.buildAJVSchema({
+      columns: JSON.parse(uploadInfo.customSchema),
+      dateFormats,
+      uniqueItems,
+    });
+    const ajv = this.getAjvValidator(dateFormats, uniqueItems);
     const validator = ajv.compile(schema);
-
     const validations = await this.validatorRepository.findOne({ _templateId: uploadInfo._templateId });
 
     let response: ISaveResults = {
@@ -109,6 +71,7 @@ export class DoReReview extends BaseReview {
     if (validations && validations.onBatchInitialize) {
       response = await this.batchValidate({
         validator,
+        dateFormats,
         uploadId: _uploadId,
         extra: uploadInfo.extra,
         onBatchInitialize: validations.onBatchInitialize,
@@ -117,19 +80,24 @@ export class DoReReview extends BaseReview {
       response = await this.normalValidate({
         uploadId: _uploadId,
         validator,
+        dateFormats,
       });
     }
-
-    // resetting uniqueItems & dateFormats
-    uniqueItems = {};
-    dateFormats = {};
 
     await this.saveResults(response);
 
     return response;
   }
 
-  private async normalValidate({ uploadId, validator }: { uploadId: string; validator: ValidateFunction }) {
+  private async normalValidate({
+    dateFormats,
+    uploadId,
+    validator,
+  }: {
+    dateFormats: Record<string, string[]>;
+    uploadId: string;
+    validator: ValidateFunction;
+  }) {
     const bulkOp = this.dalService.getRecordBulkOp(uploadId);
     const response: ISaveResults = {
       uploadId,
@@ -143,6 +111,7 @@ export class DoReReview extends BaseReview {
         index: record.index,
         record: record.record,
         validator,
+        dateFormats,
       });
       response.totalRecords++;
       if (validationResult.isValid) {
@@ -182,12 +151,14 @@ export class DoReReview extends BaseReview {
     extra,
     uploadId,
     validator,
+    dateFormats,
     onBatchInitialize,
   }: {
     extra: any;
     uploadId: string;
     onBatchInitialize: string;
     validator: ValidateFunction;
+    dateFormats: Record<string, string[]>;
   }) {
     const { dataStream } = this.getStreams({
       uploadId,
@@ -196,6 +167,7 @@ export class DoReReview extends BaseReview {
       extra,
       uploadId,
       validator,
+      dateFormats,
     });
 
     return await this.processBatches({
@@ -210,10 +182,12 @@ export class DoReReview extends BaseReview {
     extra,
     uploadId,
     validator,
+    dateFormats,
   }: {
     extra: any;
     uploadId: string;
     validator: ValidateFunction;
+    dateFormats: Record<string, string[]>;
   }) {
     let batchCount = 1;
     const batches: IBatchItem[] = [];
@@ -228,6 +202,7 @@ export class DoReReview extends BaseReview {
         index: record.index,
         record: record.record,
         validator,
+        dateFormats,
       });
       batchRecords.push(validationResultItem);
       if (batchRecords.length === BATCH_LIMIT) {
