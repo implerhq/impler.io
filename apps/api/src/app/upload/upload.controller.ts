@@ -1,12 +1,13 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 import _whatever from 'multer';
 import { Response } from 'express';
-import { FileEntity } from '@impler/dal';
+import { ColumnEntity, FileEntity } from '@impler/dal';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ACCESS_KEY_NAME, Defaults, UploadStatusEnum } from '@impler/shared';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -30,7 +31,14 @@ import { ValidateTemplate } from '@shared/validations/valid-template.validation'
 
 import { UploadRequestDto } from './dtos/upload-request.dto';
 import { MakeUploadEntryCommand } from './usecases/make-upload-entry/make-upload-entry.command';
-import { MakeUploadEntry, PaginateFileContent, GetUploadProcessInformation, GetOriginalFileContent } from './usecases';
+import {
+  TerminateUpload,
+  MakeUploadEntry,
+  GetUploadColumns,
+  PaginateFileContent,
+  GetUploadProcessInformation,
+  GetOriginalFileContent,
+} from './usecases';
 
 @Controller('/upload')
 @ApiTags('Uploads')
@@ -39,7 +47,9 @@ import { MakeUploadEntry, PaginateFileContent, GetUploadProcessInformation, GetO
 export class UploadController {
   constructor(
     private getUpload: GetUpload,
+    private terminateUpload: TerminateUpload,
     private makeUploadEntry: MakeUploadEntry,
+    private getUploadColumns: GetUploadColumns,
     private getOriginalFileContent: GetOriginalFileContent,
     private getUploadProcessInfo: GetUploadProcessInformation,
     private paginateFileContent: PaginateFileContent
@@ -95,6 +105,22 @@ export class UploadController {
     );
 
     return uploadInfo.headings;
+  }
+
+  @Delete(':uploadId')
+  @ApiOperation({
+    summary: 'Terminate upload',
+  })
+  async terminate(@Param('uploadId', ValidateMongoId) uploadId: string) {
+    return this.terminateUpload.execute(uploadId);
+  }
+
+  @Get(':uploadId/columns')
+  @ApiOperation({
+    summary: 'Get upload columns',
+  })
+  async getColumns(@Param('uploadId', ValidateMongoId) uploadId: string): Promise<ColumnEntity[]> {
+    return this.getUploadColumns.execute(uploadId);
   }
 
   @Get(':uploadId/files/original')

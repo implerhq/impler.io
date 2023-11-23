@@ -8,6 +8,7 @@ export * from './repositories/upload';
 export * from './repositories/mapping';
 export * from './repositories/webhook-log';
 export * from './repositories/user';
+export * from './repositories/record';
 export * from './repositories/environment';
 export * from './repositories/customization';
 export * from './repositories/validator';

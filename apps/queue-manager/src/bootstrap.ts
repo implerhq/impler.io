@@ -1,6 +1,6 @@
 import './config/env-config';
 import amqp, { ChannelWrapper } from 'amqp-connection-manager';
-import { ProcessFileConsumer } from './consumers';
+import { ProcessFileConsumer, EndImportConsumer } from './consumers';
 import { QueuesEnum } from '@impler/shared';
 import { DalService } from '@impler/dal';
 import { IAmqpConnectionManager } from 'amqp-connection-manager/dist/esm/AmqpConnectionManager';
@@ -27,10 +27,15 @@ export async function bootstrap() {
 
   // initialize consumers
   const processFileConsumer = new ProcessFileConsumer();
+  const endImportConsumer = new EndImportConsumer();
 
   // add queues to channel
   chanelWrapper.addSetup((channel) => {
     return Promise.all([
+      channel.assertQueue(QueuesEnum.END_IMPORT, {
+        durable: false,
+      }),
+      channel.consume(QueuesEnum.END_IMPORT, endImportConsumer.message.bind(endImportConsumer), { noAck: true }),
       channel.assertQueue(QueuesEnum.PROCESS_FILE, {
         durable: false,
       }),

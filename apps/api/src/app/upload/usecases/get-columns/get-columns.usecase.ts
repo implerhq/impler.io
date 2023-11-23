@@ -2,10 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { UploadRepository } from '@impler/dal';
 
 @Injectable()
-export class GetUploadInvalidData {
+export class GetUploadColumns {
   constructor(private uploadRepository: UploadRepository) {}
 
   async execute(_uploadId: string) {
-    return this.uploadRepository.getUploadInvalidDataInformation(_uploadId);
+    const upload = await this.uploadRepository.findById(_uploadId, 'customSchema');
+
+    return JSON.parse(upload.customSchema);
   }
 }

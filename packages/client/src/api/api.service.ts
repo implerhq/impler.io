@@ -7,6 +7,8 @@ import {
   ITemplate,
   PaginationResult,
   IImportConfig,
+  ISchemaColumn,
+  IRecord,
 } from '@impler/shared';
 
 export class ApiService {
@@ -89,6 +91,10 @@ export class ApiService {
     ) as Promise<IUpload>;
   }
 
+  async doReivewData(uploadId: string) {
+    return this.httpClient.post(`/review/${uploadId}`);
+  }
+
   async getReviewData(
     uploadId: string,
     page?: number,
@@ -101,14 +107,24 @@ export class ApiService {
     ) as Promise<IReviewData>;
   }
 
-  async confirmReview(uploadId: string, processInvalidRecords?: boolean) {
-    return this.httpClient.post(`/review/${uploadId}/confirm`, {
-      processInvalidRecords,
-    }) as Promise<IUpload>;
+  async confirmReview(uploadId: string) {
+    return this.httpClient.post(
+      `/review/${uploadId}/confirm`
+    ) as Promise<IUpload>;
   }
 
   async getUpload(uploadId: string) {
     return this.httpClient.get(`/upload/${uploadId}`) as Promise<IUpload>;
+  }
+
+  async terminateUpload(uploadId: string) {
+    return this.httpClient.delete(`/upload/${uploadId}`) as Promise<IUpload>;
+  }
+
+  async getColumns(uploadId: string) {
+    return this.httpClient.get(`/upload/${uploadId}/columns`) as Promise<
+      ISchemaColumn[]
+    >;
   }
 
   async getValidUploadedRows(uploadId: string, page: number, limit: number) {
@@ -143,5 +159,9 @@ export class ApiService {
       {},
       'blob'
     ) as Promise<ArrayBuffer>;
+  }
+
+  async updateRecord(uploadId: string, record: IRecord) {
+    return this.httpClient.put(`/review/${uploadId}/record`, record);
   }
 }

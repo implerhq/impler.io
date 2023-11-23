@@ -36,8 +36,16 @@ export class HttpClient {
     return this.callWrapper(this.axiosClient.post.bind(this, url, body, { headers, responseType }));
   }
 
+  async put(url: string, body = {}) {
+    return this.callWrapper(this.axiosClient.put.bind(this, url, body));
+  }
+
   async patch(url: string, body = {}) {
     return this.callWrapper(this.axiosClient.patch.bind(this, url, body));
+  }
+
+  async delete(url: string) {
+    return this.callWrapper(this.axiosClient.delete.bind(this, url));
   }
 
   private callWrapper(axiosCall: any) {

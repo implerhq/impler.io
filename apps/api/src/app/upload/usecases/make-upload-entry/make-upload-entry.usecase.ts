@@ -4,6 +4,7 @@ import {
   UploadStatusEnum,
   Defaults,
   ISchemaItem,
+  FileNameService,
   ITemplateSchemaItem,
   ColumnTypesEnum,
   getRecordFormat,
@@ -22,7 +23,7 @@ import { AddUploadEntryCommand } from './add-upload-entry.command';
 import { MakeUploadEntryCommand } from './make-upload-entry.command';
 import { StorageService } from '@impler/shared/dist/services/storage';
 import { FileParseException } from '@shared/exceptions/file-parse-issue.exception';
-import { CSVFileService2, ExcelFileService, FileNameService } from '@shared/services/file';
+import { CSVFileService2, ExcelFileService } from '@shared/services/file';
 
 @Injectable()
 export class MakeUploadEntry {
