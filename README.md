@@ -14,7 +14,7 @@
 <h3 align="center">impler.io</h3>
 
   <p align="center">
-    Open source infrastructure for data import
+    Open source CSV & Excel file Import Experience
     <br />
     <a href="https://docs.impler.io"><strong>Explore the docs »</strong></a>
     <br />
@@ -52,9 +52,9 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-All projects need to give some kind of data import facility, so that their users can import data in application through files like `.csv`, `.xls`, `.xlsx`, etc.
+All projects need to give some kind of data import facility so that their users can import data in the application through files like `.csv`, `.xls` and `.xlsx`.
 
-At first it looks like just importing file and inserting in database, but as the app grows facilities like validating data, data mapping, becomes must. `impler` provides infrastructure to applications, so that they don't have to write code for data import.
+At first, it looks like just importing the file and inserting them into the database, but as the app grows facilities like validating data, and data mapping, becomes a must. `impler` provides a readymade import expeerience to applications, so they don't have to build it from scratch.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -68,7 +68,7 @@ At first it looks like just importing file and inserting in database, but as the
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Setup
-To set up `impler.io` locally, you need the following things installed in your computer.
+To set up `impler.io` locally, you need the following things installed on your computer.
 1. `pnpm`
 2. `localstack`
 3. `mongodb`

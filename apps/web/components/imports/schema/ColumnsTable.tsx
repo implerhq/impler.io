@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Controller } from 'react-hook-form';
-import { ActionIcon, Checkbox, Flex, Input, Select, Tooltip } from '@mantine/core';
+import { ActionIcon, Checkbox, Select, Flex, Input, Tooltip } from '@mantine/core';
 
 import { colors } from '@config';
 import { Table } from '@ui/table';
@@ -14,6 +14,7 @@ import { EditIcon } from '@assets/icons/Edit.icon';
 import { CloseIcon } from '@assets/icons/Close.icon';
 import { CheckIcon } from '@assets/icons/Check.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
+import { MultiSelect } from '@mantine/core';
 
 interface ColumnsTableProps {
   templateId: string;
@@ -21,13 +22,32 @@ interface ColumnsTableProps {
 
 export function ColumnsTable({ templateId }: ColumnsTableProps) {
   const [showAddRow, setShowAddRow] = useState(false);
-  const { register, columns, control, handleSubmit, onEditColumnClick, onDeleteColumnClick, isColumnCreateLoading } =
-    useSchema({
-      templateId,
-    });
+  const SelectRef = useRef(false);
+
+  const {
+    register,
+    watch,
+    columns,
+    control,
+    handleSubmit,
+    onEditColumnClick,
+    onDeleteColumnClick,
+    isColumnCreateLoading,
+    formState: { errors },
+  } = useSchema({
+    templateId,
+  });
+
+  const typeValue = watch('type');
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleSubmit();
+        SelectRef.current = false;
+      }}
+    >
       <Table<IColumn>
         emptyDataText='No columns found click on "+" to add new column'
         headings={[
@@ -72,29 +92,94 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
           <tr>
             {showAddRow ? (
               <>
-                <td>
-                  <Flex gap="xs">
+                <td colSpan={4} style={{ borderRight: 'none' }}>
+                  <Flex gap="xs" align={'center'}>
                     <Input autoFocus required placeholder="Column Name" {...register('name')} />
                     <Input required placeholder="Column Key" {...register('key')} />
+                    <Controller
+                      control={control}
+                      name="type"
+                      render={({ field }) => (
+                        <Select
+                          data={COLUMN_TYPES}
+                          placeholder="Select Type"
+                          variant="default"
+                          {...field}
+                          autoFocus={SelectRef.current}
+                          onFocus={() => (SelectRef.current = true)}
+                        />
+                      )}
+                    />
+                    {typeValue === 'Regex' && (
+                      <>
+                        <Input
+                          placeholder="Regular expression"
+                          {...register('regex')}
+                          required
+                          error={errors.regex?.message}
+                        />
+                      </>
+                    )}
+                    {typeValue === 'Select' ? (
+                      <Controller
+                        name="selectValues"
+                        control={control}
+                        render={({ field: { value, onChange } }) => (
+                          <MultiSelect
+                            placeholder="Select Values"
+                            creatable
+                            clearable
+                            searchable
+                            getCreateLabel={(query) => `+ Add ${query}`}
+                            data={Array.isArray(value) ? value : []}
+                            value={value}
+                            onCreate={(newItem) => {
+                              onChange([...(Array.isArray(value) ? value : []), newItem]);
+
+                              return newItem;
+                            }}
+                            onChange={onChange}
+                            style={{ width: '100%' }}
+                          />
+                        )}
+                      />
+                    ) : null}
+                    {typeValue === 'Date' ? (
+                      <Controller
+                        name="dateFormats"
+                        control={control}
+                        render={({ field: { value, onChange } }) => (
+                          <MultiSelect
+                            creatable
+                            clearable
+                            searchable
+                            value={value}
+                            placeholder="Valid Date Formats, i.e. DD/MM/YYYY, DD/MM/YY"
+                            data={[
+                              'DD/MM/YYYY',
+                              'DD/MM/YY',
+                              'MM/DD/YYYY',
+                              'MM/DD/YY',
+                              ...(Array.isArray(value) ? value : []),
+                            ]}
+                            getCreateLabel={(query) => `Add "${query}"`}
+                            onCreate={(newItem) => {
+                              onChange([...(Array.isArray(value) ? value : []), newItem]);
+
+                              return newItem;
+                            }}
+                            onChange={onChange}
+                            style={{ width: '100%' }}
+                          />
+                        )}
+                      />
+                    ) : null}
+                    <Checkbox label="Is Required?" title="Is Required?" {...register('isRequired')} id="isRequired" />{' '}
+                    <Checkbox label="Is Unique?" title="Is Unique?" {...register('isUnique')} id="isUnique" />
                   </Flex>
                 </td>
-                <td>
-                  <Controller
-                    control={control}
-                    name="type"
-                    render={({ field }) => (
-                      <Select data={COLUMN_TYPES} placeholder="Select Type" variant="default" {...field} />
-                    )}
-                  />
-                </td>
-                <td>
-                  <Checkbox title="Is Required?" {...register('isRequired')} />
-                </td>
-                <td>
-                  <Checkbox title="Is Unique?" {...register('isUnique')} />
-                </td>
-                <td>
-                  <Flex gap="xs" justify="flex-end">
+                <td style={{ borderLeft: 'none' }}>
+                  <Flex justify={'end'}>
                     <ActionIcon color="blue" type="submit" loading={isColumnCreateLoading}>
                       <CheckIcon color={colors.blue} />
                     </ActionIcon>
