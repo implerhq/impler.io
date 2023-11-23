@@ -43,7 +43,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
           newHeadings.push(column.name);
           const columnItem: HotItemSchema = {
             className: 'htCenter',
-            data: `record.${column.name}`,
+            data: `record.${column.key}`,
             allowEmpty: !column.isRequired,
             allowDuplicate: !column.isUnique,
           };

@@ -14,7 +14,7 @@ export class ReanameFileHeadings {
 
         const newHeadings = uploadInfo.headings.reduce((headingsArr, heading) => {
           const foundColumnMapping = templateColumnItems.find((mapping) => mapping.columnHeading === heading);
-          if (foundColumnMapping) headingsArr.push(foundColumnMapping.name);
+          if (foundColumnMapping) headingsArr.push(foundColumnMapping.key);
           else headingsArr.push(heading);
 
           return headingsArr;

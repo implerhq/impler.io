@@ -57,33 +57,33 @@ export class BaseReview {
     uniqueItems: Record<string, Set<any>>;
   }) {
     const formattedColumns: Record<string, ITemplateSchemaItem> = columns.reduce((acc, column) => {
-      acc[column.name] = { ...column };
+      acc[column.key] = { ...column };
 
       return acc;
     }, {});
     const properties: Record<string, unknown> = columns.reduce((acc, column) => {
-      acc[column.name] = this.getProperty(formattedColumns[column.name]);
+      acc[column.key] = this.getProperty(formattedColumns[column.key]);
 
       return acc;
     }, {});
     const requiredProperties: string[] = columns.reduce((acc, column) => {
-      if (formattedColumns[column.name].isRequired) acc.push(column.name);
+      if (formattedColumns[column.key].isRequired) acc.push(column.key);
 
       return acc;
     }, []);
 
     // setting uniqueItems to empty set to avoid error
     columns.forEach((column) => {
-      if (formattedColumns[column.name].isUnique) {
-        uniqueItems[column.name] = new Set();
+      if (formattedColumns[column.key].isUnique) {
+        uniqueItems[column.key] = new Set();
       }
-      if (formattedColumns[column.name].type === ColumnTypesEnum.DATE) {
+      if (formattedColumns[column.key].type === ColumnTypesEnum.DATE) {
         if (
-          Array.isArray(formattedColumns[column.name].dateFormats) &&
-          formattedColumns[column.name].dateFormats.length > 0
+          Array.isArray(formattedColumns[column.key].dateFormats) &&
+          formattedColumns[column.key].dateFormats.length > 0
         )
-          dateFormats[column.name] = formattedColumns[column.name].dateFormats;
-        else dateFormats[column.name] = Defaults.DATE_FORMATS;
+          dateFormats[column.key] = formattedColumns[column.key].dateFormats;
+        else dateFormats[column.key] = Defaults.DATE_FORMATS;
       }
     });
 
