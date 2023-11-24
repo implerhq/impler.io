@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { notifier } from '@util';
+import { variables } from '@config';
 import { HotItemSchema } from '@types';
 import { logAmplitudeEvent } from '@amplitude';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { ColumnTypesEnum, ISchemaColumn, IErrorObject, IReviewData, IUpload, IRecord } from '@impler/shared';
-import { variables } from '@config';
 
 interface IUsePhase3Props {
   onNext: (uploadData: IUpload) => void;
@@ -100,9 +100,9 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
   const { mutate: refetchReviewData, isLoading: isReviewDataLoading } = useMutation<
     IReviewData,
     IErrorObject,
-    void,
+    number,
     [string]
-  >(['review'], () => api.getReviewData(uploadInfo._id, page), {
+  >(['review'], (reviewPageNumber) => api.getReviewData(uploadInfo._id, reviewPageNumber), {
     onSuccess(data) {
       setReviewData(data.data);
       logAmplitudeEvent('VALIDATE', {
@@ -125,8 +125,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     staleTime: 0,
     onSuccess() {
       fetchUploadInfo();
-      setPage(defaultPage);
-      refetchReviewData();
+      refetchReviewData(defaultPage);
     },
     onError(error: IErrorObject) {
       notifier.showError({ message: error.message, title: error.error });
@@ -161,8 +160,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
   );
 
   const onPageChange = (newPageNumber: number) => {
-    setPage(newPageNumber);
-    refetchReviewData();
+    refetchReviewData(newPageNumber);
   };
 
   return {
