@@ -45,6 +45,7 @@ function processErrors(batchData, errors) {
   let rowIndexToUpdate, combinedErrors, isErrorsEmpty;
   errors.forEach(error => {
     rowIndexToUpdate = error.index - Math.max(0, ((batchData.batchCount - 1)* input.chunkSize));
+    rowIndexToUpdate = Math.max(0, rowIndexToUpdate - 1);
     if(
       rowIndexToUpdate <= batchData.batchCount * input.chunkSize && 
       (typeof error.errors === 'object' && !Array.isArray(error.errors) && error.errors !== null)

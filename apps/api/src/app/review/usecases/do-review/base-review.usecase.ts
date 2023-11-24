@@ -372,6 +372,9 @@ export class BaseReview {
       keyword: 'uniqueCheck',
       schema: false, // keyword value is not used, can be true
       validate: function (data: any, dataPath: AnySchemaObject) {
+        if (!String(data)) {
+          return true;
+        }
         if (uniqueItems[dataPath.parentDataProperty].has(data)) {
           return false;
         }
