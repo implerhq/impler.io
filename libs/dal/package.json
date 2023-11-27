@@ -19,7 +19,7 @@
     "@impler/shared": "^0.11.4",
     "class-transformer": "^0.5.1",
     "date-fns": "^2.30.0",
-    "mongoose": "^6.6.1",
+    "mongoose": "8.0.1",
     "rimraf": "^3.0.2"
   },
   "devDependencies": {

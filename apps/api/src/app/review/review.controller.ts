@@ -1,8 +1,8 @@
 import { ApiOperation, ApiTags, ApiSecurity, ApiQuery, ApiOkResponse } from '@nestjs/swagger';
-import { BadRequestException, Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 
 import { APIMessages } from '@shared/constants';
-import { FileEntity, UploadEntity } from '@impler/dal';
+import { RecordEntity, UploadEntity } from '@impler/dal';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { validateUploadStatus } from '@shared/helpers/upload.helpers';
 import { Defaults, ACCESS_KEY_NAME, UploadStatusEnum } from '@impler/shared';
@@ -10,19 +10,18 @@ import { Defaults, ACCESS_KEY_NAME, UploadStatusEnum } from '@impler/shared';
 import {
   DoReview,
   GetUpload,
+  DoReReview,
+  UpdateRecord,
   StartProcess,
+  GetUploadData,
   UpdateImportCount,
-  GetFileInvalidData,
-  StartProcessCommand,
-  GetUploadInvalidData,
   UpdateImportCountCommand,
 } from './usecases';
 
-import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
-import { ConfirmReviewRequestDto } from './dtos/confirm-review-request.dto';
-import { GetUploadCommand } from '@shared/usecases/get-upload/get-upload.command';
-import { paginateRecords, validateNotFound } from '@shared/helpers/common.helper';
+import { validateNotFound } from '@shared/helpers/common.helper';
 import { PaginationResponseDto } from '@shared/dtos/pagination-response.dto';
+import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
+import { GetUploadCommand } from '@shared/usecases/get-upload/get-upload.command';
 
 @Controller('/review')
 @ApiTags('Review')
@@ -31,10 +30,11 @@ export class ReviewController {
   constructor(
     private doReview: DoReview,
     private getUpload: GetUpload,
+    private doReReview: DoReReview,
     private startProcess: StartProcess,
+    private updateRecord: UpdateRecord,
     private updateImportCount: UpdateImportCount,
-    private getFileInvalidData: GetFileInvalidData,
-    private getUploadInvalidData: GetUploadInvalidData
+    private getFileInvalidData: GetUploadData
   ) {}
 
   @Get(':uploadId')
@@ -62,20 +62,29 @@ export class ReviewController {
     @Query('page') page = Defaults.ONE,
     @Query('limit') limit = Defaults.PAGE_LIMIT
   ) {
-    const uploadData = await this.getUploadInvalidData.execute(_uploadId);
+    const uploadData = await this.getUpload.execute({
+      uploadId: _uploadId,
+    });
     if (!uploadData) throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
 
-    let invalidDataFilePath: string;
+    return await this.getFileInvalidData.execute(_uploadId, page, limit, uploadData.totalRecords);
+  }
+
+  @Post(':uploadId')
+  @ApiOperation({
+    summary: 'Review Data',
+  })
+  async doReviewData(@Param('uploadId', ValidateMongoId) _uploadId: string) {
+    const uploadData = await this.getUpload.execute({
+      uploadId: _uploadId,
+    });
+    if (!uploadData) throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
+
     if (uploadData.status === UploadStatusEnum.MAPPED) {
-      invalidDataFilePath = await this.doReview.execute(_uploadId);
-    } else {
-      invalidDataFilePath = (uploadData._invalidDataFileId as unknown as FileEntity).path;
+      await this.doReview.execute(_uploadId);
+    } else if (uploadData.status === UploadStatusEnum.REVIEWING) {
+      await this.doReReview.execute(_uploadId);
     }
-
-    // Uploaded file is already reviewed, return reviewed data
-    const invalidData = await this.getFileInvalidData.execute(invalidDataFilePath);
-
-    return paginateRecords(invalidData, page, limit);
   }
 
   @Post(':uploadId/confirm')
@@ -83,10 +92,7 @@ export class ReviewController {
   @ApiOperation({
     summary: 'Confirm review data for uploaded file',
   })
-  async doConfirmReview(
-    @Param('uploadId', ValidateMongoId) _uploadId: string,
-    @Body() body: ConfirmReviewRequestDto
-  ): Promise<UploadEntity> {
+  async doConfirmReview(@Param('uploadId', ValidateMongoId) _uploadId: string): Promise<UploadEntity> {
     const uploadInformation = await this.getUpload.execute(
       GetUploadCommand.create({
         uploadId: _uploadId,
@@ -108,11 +114,15 @@ export class ReviewController {
       })
     );
 
-    return this.startProcess.execute(
-      StartProcessCommand.create({
-        _uploadId: _uploadId,
-        processInvalidRecords: body.processInvalidRecords,
-      })
-    );
+    return this.startProcess.execute(_uploadId);
+  }
+
+  @Put(':uploadId/record')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Update review data for ongoing import',
+  })
+  async updateReviewData(@Param('uploadId', ValidateMongoId) _uploadId: string, @Body() body: RecordEntity) {
+    await this.updateRecord.execute(_uploadId, body);
   }
 }

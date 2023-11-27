@@ -54,15 +54,6 @@ export function Support({ profile }: SupportProps) {
           propertyId={publicRuntimeConfig.NEXT_PUBLIC_TAWK_PROPERTY_ID}
           widgetId={publicRuntimeConfig.NEXT_PUBLIC_TAWK_WIDGET_ID}
           ref={twakRef}
-          onLoad={() => {
-            if (typeof window !== 'undefined' && profile) {
-              twakRef.current?.setAttributes({
-                id: profile._id,
-                name: profile.firstName,
-                email: profile.email,
-              });
-            }
-          }}
         />
       ) : null}
     </>

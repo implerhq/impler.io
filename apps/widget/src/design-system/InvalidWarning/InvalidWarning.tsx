@@ -1,5 +1,5 @@
 import { Tooltip } from '@mantine/core';
-import { colors } from '../../config/colors.config';
+import { colors } from 'config/colors.config';
 
 interface InvalidWarningProps {
   label: string;

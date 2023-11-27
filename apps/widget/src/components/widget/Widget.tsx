@@ -8,6 +8,7 @@ import { Phase1 } from './Phases/Phase1';
 import { Phase2 } from './Phases/Phase2';
 import { Phase3 } from './Phases/Phase3';
 import { Phase4 } from './Phases/Phase4';
+import { useWidget } from '@hooks/useWidget';
 import { useAppState } from '@store/app.context';
 import { PromptModal } from './Phases/PromptModal';
 import { Layout } from 'components/Common/Layout';
@@ -17,16 +18,18 @@ import { Phase0 } from './Phases/Phase0';
 
 export function Widget() {
   const defaultDataCount = 0;
-  const { showWidget, setShowWidget, reset: resetAppState, uploadInfo, templateInfo, title } = useAppState();
   const [phase, setPhase] = useState<PhasesEum>(PhasesEum.VALIDATE);
+  const { terminateUpload } = useWidget();
   const [dataCount, setDataCount] = useState<number>(defaultDataCount);
   const [promptContinueAction, setPromptContinueAction] = useState<PromptModalTypesEnum>();
+  const { showWidget, setShowWidget, reset: resetAppState, uploadInfo, templateInfo, title } = useAppState();
 
   const onUploadResetClick = () => {
     logAmplitudeEvent('RESET');
     setPromptContinueAction(PromptModalTypesEnum.UPLOAD_AGAIN);
   };
   const onPromptConfirm = () => {
+    terminateUpload();
     setPromptContinueAction(undefined);
     ParentWindow.UploadTerminated({ uploadId: uploadInfo._id });
     if (promptContinueAction === PromptModalTypesEnum.CLOSE) closeWidget();

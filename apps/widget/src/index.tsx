@@ -1,7 +1,9 @@
+import React from 'react';
+import { App } from './components/App';
 import { createRoot } from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
-import { App } from './components/App';
-import React from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min';
 
 const container = document.getElementById('root');
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

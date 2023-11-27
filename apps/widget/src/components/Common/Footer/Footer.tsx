@@ -15,18 +15,17 @@ interface IFooterProps {
   onNextClick: () => void;
 }
 
-export function Footer(props: IFooterProps) {
+export function Footer({
+  active,
+  onNextClick,
+  onPrevClick,
+  primaryButtonLoading,
+  secondaryButtonLoading,
+  primaryButtonDisabled,
+  secondaryButtonDisabled,
+}: IFooterProps) {
   const { importConfig } = useAppState();
   const { classes } = useStyles();
-  const {
-    active,
-    onNextClick,
-    onPrevClick,
-    primaryButtonLoading,
-    secondaryButtonLoading,
-    primaryButtonDisabled,
-    secondaryButtonDisabled,
-  } = props;
 
   const FooterActions = {
     [PhasesEum.UPLOAD]: (
@@ -60,7 +59,7 @@ export function Footer(props: IFooterProps) {
           {TEXTS.PHASE2.UPLOAD_AGAIN}
         </Button>
         <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
-          {TEXTS.PHASE3.CONFIRM_UPLOAD}
+          {TEXTS.PHASE3.RE_REVIEW_DATA}
         </Button>
       </>
     ),

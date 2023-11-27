@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import amqp from 'amqp-connection-manager';
-import { ProcessFileData, PublishToQueueData, QueuesEnum } from '@impler/shared';
+import { EndImportData, ProcessFileData, PublishToQueueData, QueuesEnum } from '@impler/shared';
 
 @Injectable()
 export class QueueService {
@@ -28,6 +28,7 @@ export class QueueService {
     });
   }
 
+  publishToQueue(queueName: QueuesEnum.END_IMPORT, data: EndImportData): void;
   publishToQueue(queueName: QueuesEnum.PROCESS_FILE, data: ProcessFileData): void;
   publishToQueue(queueName: QueuesEnum, data: PublishToQueueData) {
     if (this.connection.isConnected()) {

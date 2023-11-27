@@ -22,10 +22,14 @@ export class BaseRepository<T> {
   }
 
   async findById(id: string, select?: string): Promise<T | null> {
-    const data = await this.MongooseModel.findById(id, select);
-    if (!data) return null;
+    try {
+      const data = await this.MongooseModel.findById(id, select);
+      if (!data) return null;
 
-    return this.mapEntity(data.toObject());
+      return this.mapEntity(data.toObject());
+    } catch (error) {
+      return null;
+    }
   }
 
   async findOne(query: FilterQuery<T & Document>, select?: string) {
