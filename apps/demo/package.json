@@ -1,6 +1,6 @@
 {
   "name": "@impler/demo",
-  "version": "0.11.4",
+  "version": "0.12.0",
   "author": "implerhq",
   "license": "MIT",
   "private": true,
@@ -15,9 +15,9 @@
   },
   "dependencies": {
     "@emotion/react": "^11.10.5",
-    "@impler/client": "^0.11.4",
-    "@impler/react": "^0.11.4",
-    "@impler/shared": "^0.11.4",
+    "@impler/client": "^0.12.0",
+    "@impler/react": "^0.12.0",
+    "@impler/shared": "^0.12.0",
     "@mantine/core": "^5.9.5",
     "@mantine/hooks": "^5.9.5",
     "@mantine/next": "^5.9.5",
