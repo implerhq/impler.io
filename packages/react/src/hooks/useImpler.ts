@@ -80,6 +80,7 @@ export function useImpler({
       const payload: IShowPayload = {
         templateId,
         data,
+        host: '',
       };
       if (Array.isArray(schema) && schema.length > 0) {
         payload.schema = JSON.stringify(schema);
