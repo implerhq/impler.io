@@ -100,7 +100,7 @@ export function Phase3(props: IPhase3Props) {
             const name = String(prop).replace('record.', '');
 
             const currentData = [...reviewData];
-            if (currentData && oldVal !== newVal) {
+            if (currentData && oldVal != newVal) {
               if (!currentData[row].updated) {
                 currentData[row].updated = {};
               }
