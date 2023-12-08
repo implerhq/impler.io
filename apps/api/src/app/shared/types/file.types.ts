@@ -5,4 +5,5 @@ export interface IExcelFileHeading {
   isRequired?: boolean;
   type: ColumnTypesEnum;
   selectValues?: string[];
+  dateFormats?: string[];
 }
