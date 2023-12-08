@@ -7,4 +7,5 @@ export const Defaults = {
   READY_STATE: 1,
   CHUNK_SIZE: 100,
   DATE_FORMATS: ['DD/MM/YYYY'],
+  DATE_FORMAT: 'DD/MM/YYYY',
 };
