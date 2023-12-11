@@ -61,9 +61,7 @@ export function Widget() {
   };
 
   const PhaseView = {
-    [PhasesEum.VALIDATE]: (
-      <Phase0 onValidationSuccess={() => setPhase(PhasesEum.UPLOAD)} onError={() => setPhase(PhasesEum.VALIDATE)} />
-    ),
+    [PhasesEum.VALIDATE]: <Phase0 onValidationSuccess={() => setPhase(PhasesEum.UPLOAD)} />,
     [PhasesEum.UPLOAD]: <Phase1 onNextClick={() => setPhase(PhasesEum.MAPPING)} />,
     [PhasesEum.MAPPING]: <Phase2 onNextClick={() => setPhase(PhasesEum.REVIEW)} onPrevClick={onUploadResetClick} />,
     [PhasesEum.REVIEW]: <Phase3 onNextClick={onComplete} onPrevClick={onUploadResetClick} />,

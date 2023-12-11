@@ -1,18 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDefined, IsOptional, IsString, IsMongoId } from 'class-validator';
+import { IsDefined, IsOptional, IsMongoId } from 'class-validator';
 
 export class ValidRequestDto {
   @ApiProperty({
     description: 'Id of the project',
   })
-  @IsMongoId()
+  @IsMongoId({
+    message: 'Invalid project id',
+  })
   @IsDefined()
   projectId: string;
 
   @ApiProperty({
     description: 'ID of the template',
   })
-  @IsString()
+  @IsMongoId({
+    message: 'Invalid template id',
+  })
   @IsOptional()
   templateId?: string;
 

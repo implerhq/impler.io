@@ -26,8 +26,8 @@ export class SchemaDto {
   @ApiProperty({
     description: 'Key of the column',
   })
-  @IsNotEmpty({ message: 'key should not empty' })
-  @IsString({ message: 'key must be a string' })
+  @IsNotEmpty({ message: "'key' should not empty" })
+  @IsString({ message: "'key' must be a string" })
   key: string;
 
   @ApiProperty({
@@ -42,14 +42,14 @@ export class SchemaDto {
   @ApiPropertyOptional({
     description: 'While true, it Indicates column value should exists in data',
   })
-  @IsBoolean()
+  @IsBoolean({ message: "'isRequired' must be boolean" })
   @IsOptional()
   isRequired = false;
 
   @ApiPropertyOptional({
     description: 'While true, it Indicates column value should be unique in data',
   })
-  @IsBoolean({ message: 'isUnique must be boolean' })
+  @IsBoolean({ message: "'isUnique' must be boolean" })
   @IsOptional()
   isUnique = false;
 
@@ -68,7 +68,10 @@ export class SchemaDto {
   @Validate(IsValidRegex, {
     message: 'Invalid regex pattern',
   })
-  @IsNotEmpty()
+  @IsNotEmpty({
+    message: "'regex' should not empty, when type is Regex",
+  })
+  @ValidateIf((object) => object.type === ColumnTypesEnum.REGEX)
   regex: string;
 
   @ApiPropertyOptional({
@@ -83,11 +86,10 @@ export class SchemaDto {
     description: 'List of possible values for column if type is Select',
   })
   @ValidateIf((object) => object.type === ColumnTypesEnum.SELECT, {
-    message: 'SelectValues should not empty if type is SELECT',
+    message: "'selectValues' should not empty, when type is Select",
   })
-  @IsArray({ message: 'SelectValues must be an array' })
-  // eslint-disable-next-line no-magic-numbers
-  @ArrayMinSize(1, { message: 'selectValues should not empty' })
+  @IsArray({ message: "'selectValues' must be an array, when type is Select" })
+  @ArrayMinSize(1, { message: "'selectValues' should not empty, when type is Select" })
   @Type(() => Array)
   @IsOptional()
   selectValues: string[] = [];
@@ -96,12 +98,11 @@ export class SchemaDto {
     description: 'List of date formats for column if type is Date',
   })
   @ValidateIf((object) => object.type === ColumnTypesEnum.DATE, {
-    message: 'dateFormat should not empty if type is DATE',
+    message: "'dateFormats' should not empty, when type is Date",
   })
-  @IsArray({ message: 'dateFormat must be an array' })
-  // eslint-disable-next-line no-magic-numbers
-  @ArrayMinSize(1, { message: 'dateFormat should not empty' })
   @Type(() => Array<string>)
+  @IsArray({ message: "'dateFormats' must be an array, when type is Date" })
+  @ArrayMinSize(1, { message: "'dateFormats' must not be empty, when type is Date" })
   dateFormats: string[] = Defaults.DATE_FORMATS;
 
   @ApiProperty({

@@ -170,13 +170,13 @@ export class AuthService {
 
   async apiKeyAuthenticate(apiKey: string) {
     const environment = await this.environmentRepository.findByApiKey(apiKey);
-    if (!environment) throw new UnauthorizedException('API Key not found');
+    if (!environment) throw new UnauthorizedException('API Key not found!');
 
     const key = environment.apiKeys.find((i) => i.key === apiKey);
-    if (!key) throw new UnauthorizedException('API Key not found');
+    if (!key) throw new UnauthorizedException('API Key not found!');
 
     const user = await this.getUser({ _id: key._userId });
-    if (!user) throw new UnauthorizedException('User not found');
+    if (!user) throw new UnauthorizedException('User not found!');
 
     return this.getSignedToken(
       {

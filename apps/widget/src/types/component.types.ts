@@ -1,10 +1,14 @@
 import { IShowPayload } from '@impler/shared';
 import { EventTypesEnum } from '@impler/shared';
 
-export type MessageHandlerDataType = {
-  type: EventTypesEnum.SHOW_WIDGET;
-  value: IShowPayload;
-};
+export type MessageHandlerDataType =
+  | {
+      type: EventTypesEnum.INIT_IFRAME;
+    }
+  | {
+      type: EventTypesEnum.SHOW_WIDGET;
+      value: IShowPayload;
+    };
 
 export enum PromptModalTypesEnum {
   'CLOSE' = 'CLOSE',

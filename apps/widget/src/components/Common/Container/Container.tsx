@@ -8,7 +8,6 @@ import { Provider } from '../Provider';
 import { ApiService } from '@impler/client';
 import { MessageHandlerDataType } from '@types';
 import { generateShades, ParentWindow } from '@util';
-import { useAuthentication } from '@hooks/useAuthentication';
 import { IShowPayload, EventTypesEnum } from '@impler/shared';
 import { API_URL, colors, mantineConfig, variables } from '@config';
 
@@ -22,7 +21,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
     accessToken: '',
     primaryColor: colors.primary,
   });
-  const { mutate, showWidget, setShowWidget } = useAuthentication({ api });
+  const [showWidget, setShowWidget] = useState<boolean>(false);
 
   useEffect(() => {
     WebFont.load({
@@ -49,7 +48,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
     if (data && data.type === EventTypesEnum.SHOW_WIDGET) {
       if (data.value.accessToken) {
         api.setAuthorizationToken(data.value.accessToken);
-        mutate([data.value.projectId, data.value.extra !== undefined]);
+        setShowWidget(true);
       }
       setSecondaryPayload({ ...data.value, primaryColor: data.value.primaryColor || colors.primary });
     }
