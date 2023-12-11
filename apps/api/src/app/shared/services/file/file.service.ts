@@ -57,22 +57,6 @@ export class ExcelFileService {
       error: 'Please select from the list',
     });
   }
-  addDateValidation({ ws, range, isRequired }: { ws: ExcelJS.Worksheet; range: string; isRequired: boolean }) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    ws.dataValidations.add(range, {
-      type: 'date',
-      allowBlank: !isRequired,
-      operator: 'greaterThan',
-      formulae: [''],
-      showErrorMessage: true,
-      error: 'Please select a date',
-      errorTitle: 'Invalid Date',
-      showInputMessage: true,
-      promptTitle: 'Date',
-      prompt: 'Select a date',
-    });
-  }
   getExcelColumnNameFromIndex(columnNumber: number) {
     // To store result (Excel column name)
     const columnName = [];
@@ -101,7 +85,16 @@ export class ExcelFileService {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Data');
     const headingNames = headings.map((heading) => heading.key);
-    worksheet.addRow(headingNames);
+    worksheet.columns = headings.map((heading) => {
+      if (heading.type === ColumnTypesEnum.DATE)
+        return {
+          header: heading.key,
+          key: heading.key,
+          style: { numFmt: heading.dateFormats?.[0] || Defaults.DATE_FORMAT },
+        };
+
+      return { header: heading.key, key: heading.key };
+    });
     headings.forEach((heading, index) => {
       if (heading.type === ColumnTypesEnum.SELECT) {
         const keyName = this.addSelectSheet(workbook, heading);
@@ -110,13 +103,6 @@ export class ExcelFileService {
           ws: worksheet,
           range: `${columnName}2:${columnName}9999`,
           keyName,
-          isRequired: heading.isRequired,
-        });
-      } else if (heading.type === ColumnTypesEnum.DATE) {
-        const columnName = this.getExcelColumnNameFromIndex(index + 1);
-        this.addDateValidation({
-          ws: worksheet,
-          range: `${columnName}2:${columnName}9999`,
           isRequired: heading.isRequired,
         });
       }
