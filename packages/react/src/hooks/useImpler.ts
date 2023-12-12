@@ -38,14 +38,12 @@ export function useImpler({
   onUploadStart,
   onUploadTerminate,
 }: UseImplerProps) {
+  const [uuid] = useState(generateUuid());
   const [isImplerInitiated, setIsImplerInitiated] = useState(false);
 
   const onEventHappen = useCallback(
     (eventData: EventCalls) => {
       switch (eventData.type) {
-        case EventTypesEnum.WIDGET_READY:
-          setIsImplerInitiated(true);
-          break;
         case EventTypesEnum.UPLOAD_STARTED:
           if (onUploadStart) onUploadStart(eventData.value);
           break;
@@ -64,16 +62,34 @@ export function useImpler({
   );
 
   useEffect(() => {
+    const readyCheckInterval = setInterval(() => {
+      if (window.impler && window.impler.isReady()) {
+        setIsImplerInitiated(true);
+        clearInterval(readyCheckInterval);
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(readyCheckInterval);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!window.impler) logError('IMPLER_UNDEFINED_ERROR');
     else {
-      window.impler.init();
-      window.impler.on('message', onEventHappen);
+      window.impler.init(uuid);
+      window.impler.on('message', onEventHappen, uuid);
     }
   }, []);
 
+  function generateUuid() {
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+  }
+
   const showWidget = async ({ colorScheme, data, schema, output }: ShowWidgetProps) => {
-    if (isImplerInitiated) {
+    if (window.impler && isImplerInitiated) {
       const payload: IShowPayload = {
+        uuid,
         templateId,
         data,
         host: '',
@@ -108,9 +124,7 @@ export function useImpler({
           payload.authHeaderValue = authHeaderValue;
         }
       }
-      if (window.impler && isImplerInitiated) {
-        window.impler.show(payload);
-      }
+      window.impler.show(payload);
     }
   };
 

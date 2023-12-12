@@ -11,6 +11,7 @@ export interface IShowPayload {
   output?: string;
   projectId: string;
   accessToken: string;
+  uuid: string;
 }
 export interface IOption {
   value: string;

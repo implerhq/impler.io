@@ -16,6 +16,7 @@ let api: ApiService;
 export function Container({ children }: PropsWithChildren<{}>) {
   if (!api) api = new ApiService(API_URL);
   const [secondaryPayload, setSecondaryPayload] = useState<IShowPayload>({
+    uuid: '',
     host: '',
     projectId: '',
     accessToken: '',
@@ -32,11 +33,6 @@ export function Container({ children }: PropsWithChildren<{}>) {
   }, []);
 
   useEffect(() => {
-    if (process.env.NODE_ENV === 'test') {
-      // eslint-disable-next-line
-      (window as any).initHandler = messageEventHandler;
-    }
-
     window.addEventListener('message', messageEventHandler);
 
     ParentWindow.Ready();
@@ -48,8 +44,8 @@ export function Container({ children }: PropsWithChildren<{}>) {
     if (data && data.type === EventTypesEnum.SHOW_WIDGET) {
       if (data.value.accessToken) {
         api.setAuthorizationToken(data.value.accessToken);
-        setShowWidget(true);
       }
+      setShowWidget(true);
       setSecondaryPayload({ ...data.value, primaryColor: data.value.primaryColor || colors.primary });
     }
   }
@@ -118,10 +114,10 @@ export function Container({ children }: PropsWithChildren<{}>) {
           api={api}
           // impler-context
           data={secondaryPayload.data}
+          extra={secondaryPayload?.extra}
           projectId={secondaryPayload.projectId}
           templateId={secondaryPayload.templateId}
           authHeaderValue={secondaryPayload?.authHeaderValue}
-          extra={secondaryPayload?.extra}
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           primaryColor={secondaryPayload.primaryColor!}
         >

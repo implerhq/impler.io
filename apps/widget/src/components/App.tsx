@@ -49,7 +49,7 @@ export function App() {
       <Router basename={CONTEXT_PATH}>
         <Routes>
           <Route
-            path="/:projectId"
+            path="/widget"
             element={
               <AppShell>
                 <WidgetShell>
