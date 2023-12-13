@@ -122,6 +122,7 @@ export const Table = forwardRef<HotTable, TableProps>(
           autoInsertRow: false,
           direction: 'vertical',
         }}
+        colWidths={[5]}
         stretchH="all"
         columns={columnDefs}
         colHeaders={headings}

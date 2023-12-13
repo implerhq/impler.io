@@ -15,6 +15,7 @@ export type HotItemSchema = {
   allowDuplicate?: boolean;
   allowEmpty?: boolean;
   allowInvalid?: boolean;
+  disableVisualSelection?: boolean;
   renderer?:
     | 'custom'
     | ((

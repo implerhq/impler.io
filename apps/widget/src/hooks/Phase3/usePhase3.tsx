@@ -37,7 +37,8 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
           data: 'index',
           readOnly: true,
           editor: false,
-          className: 'custom-cell',
+          className: 'index-cell',
+          disableVisualSelection: true,
         });
         data.forEach((column: ISchemaColumn) => {
           newHeadings.push(column.name);

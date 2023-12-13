@@ -49,3 +49,9 @@
     text-align: center;
     padding: 5px !important;
 }
+.index-cell {
+    text-align: center;
+    background-color: #f0f0f0 !important;
+    color: #222 !important;
+    padding: 5px !important;
+}
