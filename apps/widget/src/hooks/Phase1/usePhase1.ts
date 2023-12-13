@@ -38,25 +38,23 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     data: dataTemplates,
     isFetched,
     isLoading,
-  } = useQuery<ITemplate[], IErrorObject, ITemplate[], string[]>(['templates'], () => api.getTemplates(projectId), {
-    onSuccess(templatesResponse) {
-      setTemplates(
-        templatesResponse.map((item) => ({
-          label: item.name,
-          value: item._id,
-        }))
-      );
-      if (templateId) {
-        const foundTemplate = templatesResponse.find((templateItem) => templateItem._id === templateId);
-        if (foundTemplate) {
-          setTemplateInfo(foundTemplate);
-        }
-      }
-    },
-    onError(error: IErrorObject) {
-      notifier.showError({ message: error.message, title: error.error });
-    },
-  });
+  } = useQuery<ITemplate[], IErrorObject, ITemplate[], string[]>(
+    ['templates', projectId],
+    () => api.getTemplates(projectId),
+    {
+      onSuccess(templatesResponse) {
+        setTemplates(
+          templatesResponse.map((item) => ({
+            label: item.name,
+            value: item._id,
+          }))
+        );
+      },
+      onError(error: IErrorObject) {
+        notifier.showError({ message: error.message, title: error.error });
+      },
+    }
+  );
   const { isLoading: isUploadLoading, mutate: submitUpload } = useMutation<IUpload, IErrorObject, IUploadValues>(
     ['upload'],
     (values: any) => api.uploadFile(values),
@@ -109,8 +107,14 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
   } = useForm<IFormvalues>();
 
   useEffect(() => {
-    if (templateId) setValue('templateId', templateId);
-  }, [templateId]);
+    if (templateId) {
+      setValue('templateId', templateId);
+      const foundTemplate = dataTemplates?.find((templateItem) => templateItem._id === templateId);
+      if (foundTemplate) {
+        setTemplateInfo(foundTemplate);
+      }
+    }
+  }, [templateId, dataTemplates]);
 
   const findTemplate = (): ITemplate | undefined => {
     let foundTemplate: ITemplate | undefined;

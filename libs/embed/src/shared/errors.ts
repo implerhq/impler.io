@@ -6,29 +6,3 @@ export class UnmountedError extends Error {
     this.message = message;
   }
 }
-
-export class ResponseError extends Error {
-  data: any;
-  constructor(message = '', data = {}, ...args: any) {
-    super(message, ...(args as []));
-    this.name = 'ResponseError';
-    this.message = message;
-    this.data = data;
-  }
-}
-
-export class DomainVerificationError extends Error {
-  constructor(message = '', ...args: any) {
-    super(message, ...(args as []));
-    this.name = 'DomainVerificationError';
-    this.message = message;
-  }
-}
-
-export class AuthenticationError extends Error {
-  constructor(message: string, ...args: any) {
-    super(message, ...(args as []));
-    this.name = 'AuthenticationError';
-    this.message = message;
-  }
-}

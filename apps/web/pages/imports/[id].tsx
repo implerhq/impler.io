@@ -65,6 +65,7 @@ export default function ImportDetails({ template }: ImportDetailProps) {
         </Group>
         <Group spacing="xs">
           <Button
+            // eslint-disable-next-line no-magic-numbers
             disabled={!isImplerInitiated || columns?.length === 0}
             color="green"
             onClick={() => showWidget({ colorScheme })}
@@ -127,11 +128,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const templateId = context.params?.id as string | undefined;
     const authenticationToken = context.req.cookies[CONSTANTS.AUTH_COOKIE_NAME];
     if (!templateId || !authenticationToken) throw new Error();
-
     const template = await commonApi<ITemplate>(API_KEYS.TEMPLATE_DETAILS as any, {
       parameters: [templateId],
       cookie: `${CONSTANTS.AUTH_COOKIE_NAME}=${authenticationToken}`,
     });
+
     if (!template) throw new Error();
 
     return {
