@@ -98,13 +98,15 @@ export function Phase3(props: IPhase3Props) {
           ref={tableRef}
           onValueChange={(row, prop, oldVal, newVal) => {
             const name = String(prop).replace('record.', '');
+            let formattedNewVal = newVal;
+            if (typeof newVal === null) formattedNewVal = '';
 
             const currentData = [...reviewData];
-            if (currentData && oldVal != newVal) {
+            if (currentData && oldVal != formattedNewVal) {
               if (!currentData[row].updated) {
                 currentData[row].updated = {};
               }
-              currentData[row].record[name] = newVal;
+              currentData[row].record[name] = formattedNewVal;
               currentData[row].updated[name] = true;
               setReviewData(currentData);
               updateRecord(currentData[row]);
