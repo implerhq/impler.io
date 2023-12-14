@@ -460,8 +460,8 @@ export class BaseReview {
   }
 
   async processBatches({
-    uploadId,
     batches,
+    forItem,
     dataStream,
     onBatchInitialize,
   }: {
@@ -469,16 +469,22 @@ export class BaseReview {
     dataStream: Writable;
     batches: IBatchItem[];
     onBatchInitialize: string;
-  }): Promise<ISaveResults> {
+    forItem?: (item: any) => void;
+  }): Promise<void> {
     return new Promise(async (resolve) => {
       const batchProcess = await Promise.all(
         batches.map((batch) => this.executeBatchInSandbox(batch, this.sandboxManager, onBatchInitialize))
       );
       const processedArray = batchProcess.flat();
-      let totalRecords = 0,
-        validRecords = 0,
-        invalidRecords = 0;
-      let processOutput;
+
+      let processOutput: {
+        uploadId: string;
+        data: any[];
+        batchCount: number;
+        sandboxPath: string;
+        chunkSize: number;
+      };
+
       for (const processData of processedArray) {
         if (
           processData &&
@@ -489,25 +495,15 @@ export class BaseReview {
           processOutput = (processData.output as unknown as any).output;
           // eslint-disable-next-line @typescript-eslint/no-loop-func
           processOutput.data.forEach((item: any) => {
-            totalRecords++;
             dataStream.write(item);
-            if (item.isValid) {
-              validRecords++;
-            } else {
-              invalidRecords++;
-            }
+            forItem?.(item);
           });
         } else {
           console.log(processData);
         }
       }
       dataStream.end();
-      resolve({
-        uploadId,
-        invalidRecords,
-        totalRecords,
-        validRecords,
-      });
+      resolve();
     });
   }
 }

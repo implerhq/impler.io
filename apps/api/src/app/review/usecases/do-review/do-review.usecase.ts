@@ -68,11 +68,26 @@ export class DoReview extends BaseReview {
         dateFormats,
       });
 
-      response = await this.processBatches({
+      response = {
+        uploadId: _uploadId,
+        totalRecords: 0,
+        validRecords: 0,
+        invalidRecords: 0,
+      };
+
+      await this.processBatches({
         batches,
         onBatchInitialize: validations.onBatchInitialize,
         uploadId: _uploadId,
         dataStream,
+        forItem: (item: any) => {
+          response.totalRecords++;
+          if (item.isValid) {
+            response.validRecords++;
+          } else {
+            response.invalidRecords++;
+          }
+        },
       });
     } else {
       response = await this.normalRun({
