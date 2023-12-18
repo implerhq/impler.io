@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { forwardRef } from 'react';
 import { HotTable } from '@handsontable/react';
 // eslint-disable-next-line id-length
