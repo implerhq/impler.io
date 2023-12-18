@@ -36,6 +36,8 @@ jobs:
             ${{ runner.os }}-
 
       - uses: pnpm/action-setup@v2.0.1
+        env:
+          CI: false
         with:
           version: 7.9.4
           run_install: true
