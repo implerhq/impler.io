@@ -26,6 +26,8 @@ jobs:
     - uses: pnpm/action-setup@v2
       name: Install pnpm
       id: pnpm-install
+      env:
+        CI: false
       with:
         version: 7.9.4
         run_install: false
