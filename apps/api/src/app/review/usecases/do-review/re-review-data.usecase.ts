@@ -61,52 +61,56 @@ export class DoReReview extends BaseReview {
     const validator = ajv.compile(schema);
     const validations = await this.validatorRepository.findOne({ _templateId: uploadInfo._templateId });
 
-    let response: ISaveResults = {
+    let result: ISaveResults = {
       uploadId: _uploadId,
-      totalRecords: 0,
-      validRecords: 0,
-      invalidRecords: 0,
+      totalRecords: uploadInfo.totalRecords,
+      validRecords: uploadInfo.validRecords,
+      invalidRecords: uploadInfo.invalidRecords,
     };
 
     if (validations && validations.onBatchInitialize) {
-      response = await this.batchValidate({
+      result = await this.batchValidate({
         validator,
         dateFormats,
         uploadId: _uploadId,
         extra: uploadInfo.extra,
         onBatchInitialize: validations.onBatchInitialize,
+        result,
       });
     } else {
-      response = await this.normalValidate({
+      result = await this.normalValidate({
         uploadId: _uploadId,
         validator,
         dateFormats,
+        result,
       });
     }
 
-    await this.saveResults(response);
+    await this.saveResults(result);
 
-    return response;
+    return result;
   }
 
   private async normalValidate({
-    dateFormats,
+    result,
     uploadId,
     validator,
+    dateFormats,
   }: {
-    dateFormats: Record<string, string[]>;
     uploadId: string;
+    result: ISaveResults;
     validator: ValidateFunction;
+    dateFormats: Record<string, string[]>;
   }) {
     const bulkOp = this.dalService.getRecordBulkOp(uploadId);
     const response: ISaveResults = {
       uploadId,
       totalRecords: 0,
-      validRecords: 0,
-      invalidRecords: 0,
+      validRecords: result.validRecords,
+      invalidRecords: result.invalidRecords,
     };
 
-    for await (const record of this._modal.find()) {
+    for await (const record of this._modal.find({ updated: { $ne: {}, $exists: true } })) {
       const validationResult = this.validateRecord({
         index: record.index,
         record: record.record,
@@ -114,14 +118,18 @@ export class DoReReview extends BaseReview {
         dateFormats,
       });
       response.totalRecords++;
-      if (validationResult.isValid) {
-        response.validRecords++;
-      } else {
+      if (record.isValid && !validationResult.isValid) {
+        response.validRecords--;
         response.invalidRecords++;
+      } else if (!record.isValid && validationResult.isValid) {
+        response.invalidRecords--;
+        response.validRecords++;
       }
       bulkOp.find({ index: record.index }).updateOne({ $set: { ...validationResult } });
     }
-    await bulkOp.execute();
+    if (response.totalRecords > 0) {
+      await bulkOp.execute();
+    }
 
     return response;
   }
@@ -149,6 +157,7 @@ export class DoReReview extends BaseReview {
 
   private async batchValidate({
     extra,
+    result,
     uploadId,
     validator,
     dateFormats,
@@ -156,6 +165,7 @@ export class DoReReview extends BaseReview {
   }: {
     extra: any;
     uploadId: string;
+    result: ISaveResults;
     onBatchInitialize: string;
     validator: ValidateFunction;
     dateFormats: Record<string, string[]>;
@@ -163,19 +173,30 @@ export class DoReReview extends BaseReview {
     const { dataStream } = this.getStreams({
       uploadId,
     });
-    const batches = await this.prepareBatches({
+    const { batches, resultObj } = await this.prepareBatches({
       extra,
       uploadId,
       validator,
       dateFormats,
     });
 
-    return await this.processBatches({
+    await this.processBatches({
       batches,
       uploadId,
       dataStream,
       onBatchInitialize,
+      forItem(item) {
+        if (resultObj[item.index] && !item.isValid) {
+          result.validRecords--;
+          result.invalidRecords++;
+        } else if (!resultObj[item.index] && item.isValid) {
+          result.invalidRecords--;
+          result.validRecords++;
+        }
+      },
     });
+
+    return result;
   }
 
   private async prepareBatches({
@@ -196,14 +217,16 @@ export class DoReReview extends BaseReview {
       console.log(`Modal not found for upload ${uploadId}`, this._modal);
       this._modal = this.dalService.getRecordCollection(uploadId);
     }
+    const resultObj = {};
 
-    for await (const record of this._modal.find()) {
+    for await (const record of this._modal.find({ updated: { $ne: {}, $exists: true } })) {
       const validationResultItem = this.validateRecord({
         index: record.index,
         record: record.record,
         validator,
         dateFormats,
       });
+      resultObj[Number(record.index)] = record.isValid;
       batchRecords.push(validationResultItem);
       if (batchRecords.length === BATCH_LIMIT) {
         batches.push(
@@ -233,15 +256,17 @@ export class DoReReview extends BaseReview {
       );
     }
 
-    return batches;
+    return {
+      batches,
+      resultObj,
+    };
   }
 
-  private async saveResults({ uploadId, totalRecords, validRecords, invalidRecords }: ISaveResults) {
+  private async saveResults({ uploadId, validRecords, invalidRecords }: ISaveResults) {
     await this.uploadRepository.update(
       { _id: uploadId },
       {
         status: UploadStatusEnum.REVIEWING,
-        totalRecords,
         validRecords,
         invalidRecords,
       }
