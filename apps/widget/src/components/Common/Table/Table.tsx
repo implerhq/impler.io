@@ -57,6 +57,7 @@ Handsontable.renderers.registerRenderer(
   function renderer(instance, TD, row, col, prop, value, cellProperties) {
     const name = String(prop).replace('record.', '');
     TD.classList.add('custom-cell');
+    $(TD).tooltip('dispose');
     const soureData = instance.getSourceDataAtRow(row) as IRecord;
 
     if (soureData.updated && soureData.updated[name]) {
@@ -92,7 +93,6 @@ Handsontable.renderers.registerRenderer(
       return TD;
     }
 
-    $(TD).tooltip('dispose');
     TD.innerText = soureData.record[name];
 
     return TD;
