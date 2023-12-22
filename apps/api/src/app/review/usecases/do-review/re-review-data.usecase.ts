@@ -3,7 +3,7 @@ import { Writable } from 'stream';
 import { ValidateFunction } from 'ajv';
 import { Injectable, BadRequestException } from '@nestjs/common';
 
-import { UploadStatusEnum } from '@impler/shared';
+import { ITemplateSchemaItem, UploadStatusEnum } from '@impler/shared';
 import { UploadRepository, ValidatorRepository, DalService } from '@impler/dal';
 
 import { APIMessages } from '@shared/constants';
@@ -60,6 +60,18 @@ export class DoReReview extends BaseReview {
     const ajv = this.getAjvValidator(dateFormats, uniqueItems);
     const validator = ajv.compile(schema);
     const validations = await this.validatorRepository.findOne({ _templateId: uploadInfo._templateId });
+
+    const uniqueFields = (JSON.parse(uploadInfo.customSchema) as ITemplateSchemaItem[])
+      .filter((column) => column.isUnique)
+      .map((column) => column.key);
+    const uniqueFieldData = await this.dalService.getFieldData(_uploadId, uniqueFields);
+
+    uniqueFieldData.forEach((item) => {
+      uniqueFields.forEach((field) => {
+        if (!uniqueItems[field]) uniqueItems[field] = new Set();
+        uniqueItems[field].add(item.record[field]);
+      });
+    });
 
     let result: ISaveResults = {
       uploadId: _uploadId,

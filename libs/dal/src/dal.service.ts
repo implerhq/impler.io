@@ -80,4 +80,35 @@ export class DalService {
 
     return model.find({}, 'index isValid errors record');
   }
+  getFieldData(_uploadId: string, fields: string[]) {
+    const model = this.getRecordCollection(_uploadId);
+    if (!model) return;
+
+    return model.aggregate([
+      {
+        $match: {
+          $or: [
+            {
+              updated: {
+                $exists: false,
+              },
+            },
+            {
+              updated: {
+                $eq: {},
+              },
+            },
+          ],
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          record: {
+            ...fields.reduce((acc, field) => ({ ...acc, [field]: 1 }), {}),
+          },
+        },
+      },
+    ]);
+  }
 }
