@@ -364,10 +364,10 @@ export class BaseReview {
     ajv.addKeyword('customDateChecker', {
       keyword: 'customDateChecker',
       validate: function (_valid, date, _schema, dataPath) {
-        return dayjs(date, dateFormats[dataPath.parentDataProperty]).isValid();
+        return dayjs(date, [...dateFormats[dataPath.parentDataProperty]], true).isValid();
       },
     });
-    // const uniqueItems: Record<string, Set<any>> = {};
+
     ajv.addKeyword({
       keyword: 'uniqueCheck',
       schema: false, // keyword value is not used, can be true
