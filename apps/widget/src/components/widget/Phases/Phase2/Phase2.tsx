@@ -59,7 +59,7 @@ export function Phase2(props: IPhase2Props) {
                     value={field.value}
                     onChange={(value) => {
                       field.onChange(value);
-                      onFieldSelect(value);
+                      onFieldSelect();
                     }}
                     ref={field.ref}
                   />
