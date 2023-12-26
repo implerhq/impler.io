@@ -3,7 +3,6 @@ import { createStyles, MantineTheme } from '@mantine/core';
 import React from 'react';
 
 export const getHeaderStyles = (theme: MantineTheme): React.CSSProperties => ({
-  marginBottom: theme.spacing.xs,
   marginRight: 0,
 });
 

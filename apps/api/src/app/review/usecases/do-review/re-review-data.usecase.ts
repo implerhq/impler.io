@@ -64,7 +64,7 @@ export class DoReReview extends BaseReview {
     const uniqueFields = (JSON.parse(uploadInfo.customSchema) as ITemplateSchemaItem[])
       .filter((column) => column.isUnique)
       .map((column) => column.key);
-    const uniqueFieldData = await this.dalService.getFieldData(_uploadId, uniqueFields);
+    const uniqueFieldData = uniqueFields.length ? await this.dalService.getFieldData(_uploadId, uniqueFields) : [];
 
     uniqueFieldData.forEach((item) => {
       uniqueFields.forEach((field) => {

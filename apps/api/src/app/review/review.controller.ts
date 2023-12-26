@@ -5,7 +5,7 @@ import { APIMessages } from '@shared/constants';
 import { RecordEntity, UploadEntity } from '@impler/dal';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { validateUploadStatus } from '@shared/helpers/upload.helpers';
-import { Defaults, ACCESS_KEY_NAME, UploadStatusEnum } from '@impler/shared';
+import { Defaults, ACCESS_KEY_NAME, UploadStatusEnum, ReviewDataTypesEnum } from '@impler/shared';
 
 import {
   DoReview,
@@ -53,6 +53,13 @@ export class ReviewController {
     type: Number,
     description: 'Size of data to return',
   })
+  @ApiQuery({
+    name: 'type',
+    required: false,
+    type: String,
+    enum: ReviewDataTypesEnum,
+    description: 'Type of data filter to apply',
+  })
   @ApiOkResponse({
     description: 'Paginated reviewed data',
     type: PaginationResponseDto,
@@ -60,14 +67,15 @@ export class ReviewController {
   async getReview(
     @Param('uploadId') _uploadId: string,
     @Query('page') page = Defaults.ONE,
-    @Query('limit') limit = Defaults.PAGE_LIMIT
+    @Query('limit') limit = Defaults.PAGE_LIMIT,
+    @Query('type') type = ReviewDataTypesEnum.ALL
   ) {
     const uploadData = await this.getUpload.execute({
       uploadId: _uploadId,
     });
     if (!uploadData) throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
 
-    return await this.getFileInvalidData.execute(_uploadId, page, limit, uploadData.totalRecords);
+    return await this.getFileInvalidData.execute(_uploadId, page, limit, uploadData.totalRecords, type);
   }
 
   @Post(':uploadId')

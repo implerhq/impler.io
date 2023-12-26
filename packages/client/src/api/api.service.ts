@@ -103,12 +103,18 @@ export class ApiService {
     return this.httpClient.post(`/review/${uploadId}`);
   }
 
-  async getReviewData(
-    uploadId: string,
-    page?: number,
-    limit?: number
-  ): Promise<IReviewData> {
-    const queryString = this.constructQueryString({ limit, page });
+  async getReviewData({
+    uploadId,
+    page,
+    limit,
+    type,
+  }: {
+    uploadId: string;
+    page?: number;
+    limit?: number;
+    type?: string;
+  }): Promise<IReviewData> {
+    const queryString = this.constructQueryString({ limit, page, type });
 
     return this.httpClient.get(
       `/review/${uploadId}${queryString}`

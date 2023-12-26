@@ -45,13 +45,19 @@ export class DalService {
 
     await model.collection.drop();
   }
-  async getRecords(_uploadId: string, page: number, limit: number): Promise<RecordEntity[]> {
+  async getRecords(
+    _uploadId: string,
+    page: number,
+    limit: number,
+    type: 'all' | 'valid' | 'invalid' = 'all'
+  ): Promise<RecordEntity[]> {
     const model = this.getRecordCollection(_uploadId);
 
     if (!model) return [];
+    const conditions = type === 'all' ? {} : type === 'invalid' ? { isValid: false } : { isValid: { $exists: false } };
 
     return model
-      .find({}, 'index isValid errors record updated')
+      .find(conditions, 'index isValid errors record updated')
       .skip((page - 1) * limit)
       .limit(limit)
       .exec();
