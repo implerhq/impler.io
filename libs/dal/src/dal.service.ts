@@ -54,7 +54,7 @@ export class DalService {
     const model = this.getRecordCollection(_uploadId);
 
     if (!model) return [];
-    const conditions = type === 'all' ? {} : type === 'invalid' ? { isValid: false } : { isValid: { $exists: false } };
+    const conditions = type === 'all' ? {} : { isValid: type === 'valid' };
 
     return model
       .find(conditions, 'index isValid errors record updated')
