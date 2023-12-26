@@ -30,6 +30,7 @@ export function Phase3(props: IPhase3Props) {
     columnDefs,
     totalPages,
     reviewData,
+    deleteRecord,
     onTypeChange,
     reReviewData,
     updateRecord,
@@ -76,9 +77,10 @@ export function Phase3(props: IPhase3Props) {
           validDataLength={numberFormatter(totalRecords - invalidRecords)}
         />
         <Table
+          ref={tableRef}
+          onRecordDelete={(index, isValid) => deleteRecord([index, isValid])}
           width={tableWrapperDimensions.width}
           height={tableWrapperDimensions.height}
-          ref={tableRef}
           onValueChange={(row, prop, oldVal, newVal) => {
             const name = String(prop).replace('record.', '');
             let formattedNewVal = newVal;

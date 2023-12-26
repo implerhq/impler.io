@@ -1,5 +1,5 @@
 import { ApiOperation, ApiTags, ApiSecurity, ApiQuery, ApiOkResponse } from '@nestjs/swagger';
-import { BadRequestException, Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 
 import { APIMessages } from '@shared/constants';
 import { RecordEntity, UploadEntity } from '@impler/dal';
@@ -13,6 +13,7 @@ import {
   DoReReview,
   UpdateRecord,
   StartProcess,
+  DeleteRecord,
   GetUploadData,
   UpdateImportCount,
   UpdateImportCountCommand,
@@ -31,6 +32,7 @@ export class ReviewController {
     private doReview: DoReview,
     private getUpload: GetUpload,
     private doReReview: DoReReview,
+    private deleteRecord: DeleteRecord,
     private startProcess: StartProcess,
     private updateRecord: UpdateRecord,
     private updateImportCount: UpdateImportCount,
@@ -128,9 +130,22 @@ export class ReviewController {
   @Put(':uploadId/record')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
-    summary: 'Update review data for ongoing import',
+    summary: 'Update review record for ongoing import',
   })
   async updateReviewData(@Param('uploadId', ValidateMongoId) _uploadId: string, @Body() body: RecordEntity) {
     await this.updateRecord.execute(_uploadId, body);
+  }
+
+  @Delete(':uploadId/record/:index')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Delete review record for ongoing import',
+  })
+  async deleteReviewRecord(
+    @Param('index') index: number,
+    @Query('isValid') isValid: boolean,
+    @Param('uploadId', ValidateMongoId) _uploadId: string
+  ) {
+    await this.deleteRecord.execute(_uploadId, index, isValid);
   }
 }

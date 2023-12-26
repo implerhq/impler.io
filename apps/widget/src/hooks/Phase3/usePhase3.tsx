@@ -89,6 +89,16 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
           }
           newColumnDefs.push(columnItem);
         });
+        newColumnDefs.push({
+          type: 'text',
+          data: 'record._id',
+          readOnly: true,
+          editor: false,
+          renderer: 'del',
+          className: 'del-cell',
+          disableVisualSelection: true,
+        });
+        newHeadings.push('X');
         setHeadings(newHeadings);
         setColumnDefs(newColumnDefs);
       },
@@ -173,6 +183,25 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
   const { mutate: updateRecord } = useMutation<unknown, IErrorObject, IRecord, [string]>([`update`], (record) =>
     api.updateRecord(uploadInfo._id, record)
   );
+  const { mutate: deleteRecord } = useMutation<unknown, IErrorObject, [number, boolean], [string]>(
+    [`delete`],
+    ([index, isValid]) => api.deleteRecord(uploadInfo._id, index, isValid),
+    {
+      onSuccess(data, vars) {
+        const newReviewData = reviewData.filter((record) => record.index !== vars[0]);
+        const newUploadInfo = { ...uploadInfo };
+        newUploadInfo.totalRecords = newUploadInfo.totalRecords - 1;
+        if (!vars[1]) {
+          newUploadInfo.invalidRecords = newUploadInfo.invalidRecords - 1;
+        }
+        setUploadInfo(newUploadInfo);
+        setReviewData(newReviewData);
+        if (newReviewData.length === 0) {
+          refetchReviewData([defaultPage, type]);
+        }
+      },
+    }
+  );
 
   const onTypeChange = (newType: ReviewDataTypesEnum) => {
     setType(newType);
@@ -192,6 +221,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     updateRecord,
     onPageChange,
     onTypeChange,
+    deleteRecord,
     setReviewData,
     isDoReviewLoading,
     isReviewDataLoading,
