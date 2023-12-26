@@ -1,20 +1,19 @@
-import { Group, Text } from '@mantine/core';
+import { Stack } from '@mantine/core';
 import { HotTable } from '@handsontable/react';
 import { useRef, useState, useEffect } from 'react';
 
 import { PhasesEum } from '@types';
-import { colors, TEXTS, variables } from '@config';
-import { IUpload, numberFormatter, replaceVariablesInString } from '@impler/shared';
-import { CheckIcon, Warning } from '@icons';
+import { IUpload, numberFormatter } from '@impler/shared';
+import { logAmplitudeEvent } from '@amplitude';
 import { usePhase3 } from '@hooks/Phase3/usePhase3';
 
-import useStyles from './Styles';
-import { Pagination } from '@ui/Pagination';
 import { ConfirmModal } from '../ConfirmModal';
 import { Table } from 'components/Common/Table';
 import { Footer } from 'components/Common/Footer';
+
+import { Pagination } from '@ui/Pagination';
 import { LoadingOverlay } from '@ui/LoadingOverlay';
-import { logAmplitudeEvent } from '@amplitude';
+import { SegmentedControl } from '@ui/SegmentedControl';
 
 interface IPhase3Props {
   onNextClick: (uploadData: IUpload) => void;
@@ -22,15 +21,16 @@ interface IPhase3Props {
 }
 
 export function Phase3(props: IPhase3Props) {
-  const { classes } = useStyles();
   const tableRef = useRef<HotTable>(null);
   const { onNextClick, onPrevClick } = props;
   const {
     page,
+    type,
     headings,
     columnDefs,
     totalPages,
     reviewData,
+    onTypeChange,
     reReviewData,
     updateRecord,
     onPageChange,
@@ -53,7 +53,7 @@ export function Phase3(props: IPhase3Props) {
   useEffect(() => {
     //  setting wrapper height
     setTableWrapperDimentions({
-      height: tableWrapperRef.current.getBoundingClientRect().height - 40,
+      height: tableWrapperRef.current.getBoundingClientRect().height - 50,
       width: tableWrapperRef.current.getBoundingClientRect().width,
     });
   }, []);
@@ -66,32 +66,15 @@ export function Phase3(props: IPhase3Props) {
   return (
     <>
       <LoadingOverlay visible={isReviewDataLoading || isDoReviewLoading || isConfirmReviewLoading} />
-      {typeof invalidRecords === 'undefined' || typeof totalRecords === 'undefined' ? null : (
-        <Group align="center" spacing="xs">
-          {invalidRecords === variables.baseIndex ? (
-            <>
-              <CheckIcon fill={colors.success} className={classes.successIcon} />
-              <Text size="xs" inline color={colors.success} style={{ flex: 1 }}>
-                {replaceVariablesInString(TEXTS.PHASE3.VALID_DATA_INFO, {
-                  total: numberFormatter(totalRecords),
-                })}
-              </Text>
-            </>
-          ) : (
-            <>
-              <Warning fill={colors.red} className={classes.warningIcon} />
-              <Text size="xs" inline color={colors.red} style={{ flex: 1 }}>
-                {replaceVariablesInString(TEXTS.PHASE3.INVALID_DATA_INFO, {
-                  total: numberFormatter(totalRecords),
-                  invalid: numberFormatter(invalidRecords),
-                })}
-              </Text>
-            </>
-          )}
-        </Group>
-      )}
 
-      <div ref={tableWrapperRef} style={{ flexGrow: 1 }}>
+      <Stack ref={tableWrapperRef} style={{ flexGrow: 1 }} spacing="xs" align="flex-start">
+        <SegmentedControl
+          value={type}
+          onChange={onTypeChange}
+          allDataLength={numberFormatter(totalRecords)}
+          invalidDataLength={numberFormatter(invalidRecords)}
+          validDataLength={numberFormatter(totalRecords - invalidRecords)}
+        />
         <Table
           width={tableWrapperDimensions.width}
           height={tableWrapperDimensions.height}
@@ -116,7 +99,7 @@ export function Phase3(props: IPhase3Props) {
           headings={headings}
           columnDefs={columnDefs}
         />
-      </div>
+      </Stack>
       <Pagination page={page} total={totalPages} onChange={onPageChange} />
 
       <Footer

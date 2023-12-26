@@ -7,7 +7,15 @@ import { HotItemSchema } from '@types';
 import { logAmplitudeEvent } from '@amplitude';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
-import { ColumnTypesEnum, ISchemaColumn, IErrorObject, IReviewData, IUpload, IRecord } from '@impler/shared';
+import {
+  ColumnTypesEnum,
+  ISchemaColumn,
+  IErrorObject,
+  IReviewData,
+  IUpload,
+  IRecord,
+  ReviewDataTypesEnum,
+} from '@impler/shared';
 
 interface IUsePhase3Props {
   onNext: (uploadData: IUpload) => void;
@@ -23,6 +31,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
   const [reviewData, setReviewData] = useState<IRecord[]>([]);
   const [columnDefs, setColumnDefs] = useState<HotItemSchema[]>([]);
   const [totalPages, setTotalPages] = useState<number>(defaultPage);
+  const [type, setType] = useState<ReviewDataTypesEnum>(ReviewDataTypesEnum.ALL);
   const [showAllDataValidModal, setShowAllDataValidModal] = useState<boolean | undefined>(undefined);
 
   useQuery<unknown, IErrorObject, ISchemaColumn[], [string, string]>(
@@ -101,21 +110,26 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
   const { mutate: refetchReviewData, isLoading: isReviewDataLoading } = useMutation<
     IReviewData,
     IErrorObject,
-    number,
+    [number, string],
     [string]
-  >(['review'], (reviewPageNumber) => api.getReviewData(uploadInfo._id, reviewPageNumber), {
-    onSuccess(data) {
-      setReviewData(data.data);
-      logAmplitudeEvent('VALIDATE', {
-        invalidRecords: data.totalRecords,
-      });
-      setPage(Number(data.page));
-      setTotalPages(data.totalPages);
-    },
-    onError(error: IErrorObject) {
-      notifier.showError({ message: error.message, title: error.error });
-    },
-  });
+  >(
+    ['review'],
+    ([reviewPageNumber, reviewDataType]) =>
+      api.getReviewData({ uploadId: uploadInfo._id, page: reviewPageNumber, type: reviewDataType }),
+    {
+      onSuccess(data) {
+        setReviewData(data.data);
+        logAmplitudeEvent('VALIDATE', {
+          invalidRecords: data.totalRecords,
+        });
+        setPage(Number(data.page));
+        setTotalPages(data.totalPages);
+      },
+      onError(error: IErrorObject) {
+        notifier.showError({ message: error.message, title: error.error });
+      },
+    }
+  );
   const { refetch: reReviewData, isFetching: isDoReviewLoading } = useQuery<
     unknown,
     IErrorObject,
@@ -126,7 +140,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     staleTime: 0,
     onSuccess() {
       fetchUploadInfo();
-      refetchReviewData(defaultPage);
+      refetchReviewData([defaultPage, type]);
     },
     onError(error: IErrorObject) {
       notifier.showError({ message: error.message, title: error.error });
@@ -160,18 +174,24 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     api.updateRecord(uploadInfo._id, record)
   );
 
+  const onTypeChange = (newType: ReviewDataTypesEnum) => {
+    setType(newType);
+    refetchReviewData([page, newType]);
+  };
   const onPageChange = (newPageNumber: number) => {
-    refetchReviewData(newPageNumber);
+    refetchReviewData([newPageNumber, type]);
   };
 
   return {
     page,
+    type,
     headings,
     totalPages,
     columnDefs,
     reReviewData,
     updateRecord,
     onPageChange,
+    onTypeChange,
     setReviewData,
     isDoReviewLoading,
     isReviewDataLoading,
