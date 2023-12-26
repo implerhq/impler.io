@@ -209,7 +209,6 @@ importers:
       '@mantine/core': ^5.9.5
       '@mantine/hooks': ^5.9.5
       '@mantine/next': ^5.9.5
-      '@next/font': 13.1.1
       '@types/file-saver': ^2.0.5
       '@types/node': 18.11.17
       '@types/react': ^18.0.21
@@ -232,7 +231,6 @@ importers:
       '@mantine/core': 5.9.5_cosf5ojprquexcjg7yuhranqz4
       '@mantine/hooks': 5.9.5_react@18.2.0
       '@mantine/next': 5.9.5_4i7zqxej2kqxsa4r24ahfse6oy
-      '@next/font': 13.1.1
       file-saver: 2.0.5
       next: 13.5.1_pjwopsidmaokadturxaafygjp4
       react: 18.2.0
@@ -289,7 +287,6 @@ importers:
       '@mantine/next': 6.0.21
       '@mantine/notifications': 6.0.21
       '@mantine/prism': 6.0.21
-      '@next/font': 13.1.1
       '@openreplay/tracker': ^9.0.9
       '@storybook/builder-webpack5': ^6.5.16
       '@storybook/manager-webpack5': ^6.5.16
@@ -330,7 +327,6 @@ importers:
       '@mantine/next': 6.0.21_4i7zqxej2kqxsa4r24ahfse6oy
       '@mantine/notifications': 6.0.21_hpnsvztc57wsdtanyivhwcmsrq
       '@mantine/prism': 6.0.21_hpnsvztc57wsdtanyivhwcmsrq
-      '@next/font': 13.1.1
       '@openreplay/tracker': 9.0.9
       '@tanstack/react-query': 4.14.5_biqbaboplfbrettd7655fr4n2y
       '@tawk.to/tawk-messenger-react': 2.0.1_lbqamd2wfmenkveygahn4wdfcq
@@ -7640,10 +7636,6 @@ packages:
     dependencies:
       glob: 7.1.7
     dev: true
-
-  /@next/font/13.1.1:
-    resolution: {integrity: sha512-amygRorS05hYK1/XQRZo5qBl7l2fpHnezeKU/cNveWU5QJg+sg8gMGkUXHtvesNKpiKIJshBRH1TzvO+2sKpvQ==}
-    dev: false
 
   /@next/swc-darwin-arm64/13.5.1:
     resolution: {integrity: sha512-Bcd0VFrLHZnMmJy6LqV1CydZ7lYaBao8YBEdQUVzV8Ypn/l5s//j5ffjfvMzpEQ4mzlAj3fIY+Bmd9NxpWhACw==}
