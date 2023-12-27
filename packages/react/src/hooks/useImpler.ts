@@ -12,8 +12,8 @@ interface ShowWidgetProps {
 }
 
 interface UseImplerProps {
-  projectId: string;
   title?: string;
+  projectId?: string;
   templateId?: string;
   accessToken?: string;
   primaryColor?: string;
