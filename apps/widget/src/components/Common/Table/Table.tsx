@@ -61,6 +61,15 @@ Handsontable.renderers.registerRenderer(
     const soureData = instance.getSourceDataAtRow(row) as IRecord;
     const fieldValue = typeof soureData.record[name] === 'undefined' ? '' : soureData.record[name];
 
+    if (soureData.errors && soureData.errors[name]) {
+      $(TD).tooltip({
+        container: 'body',
+        trigger: 'hover',
+        title: soureData.errors[name],
+        placement: 'auto',
+      });
+    }
+
     if (soureData.updated && soureData.updated[name]) {
       if (soureData.errors && soureData.errors[name]) {
         TD.innerHTML =
@@ -70,7 +79,6 @@ Handsontable.renderers.registerRenderer(
           </svg>`;
       } else {
         TD.innerText = fieldValue;
-        $(TD).tooltip('dispose');
       }
       TD.style.backgroundColor = '#ffda5b';
 
@@ -82,13 +90,6 @@ Handsontable.renderers.registerRenderer(
         `<svg xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle;float: right;cursor: pointer;color:#ff1111;" viewBox="-2 -2 24 24" width="20" fill="currentColor">
               <path d="M10 20C4.477 20 0 15.523 0 10S4.477 0 10 0s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-13a1 1 0 0 1 1 1v5a1 1 0 0 1-2 0V6a1 1 0 0 1 1-1zm0 10a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"></path>
             </svg>`;
-
-      $(TD).tooltip({
-        container: 'body',
-        trigger: 'hover',
-        title: soureData.errors[name],
-        placement: 'auto',
-      });
       TD.style.backgroundColor = '#fdebeb';
 
       return TD;
