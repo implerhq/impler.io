@@ -1,15 +1,17 @@
 import { Controller } from 'react-hook-form';
-import { Group, Title, Text, useMantineColorScheme, Flex, Alert, Code, Stack } from '@mantine/core';
+import { Group, Title, Text, useMantineColorScheme, Flex, Code, Stack } from '@mantine/core';
 
 import { colors } from '@config';
 import { Button } from '@ui/button';
 import { Editor } from '@ui/editor/Editor';
 import { useEditor } from '@hooks/useEditor';
 
+import { Alert } from '@ui/Alert';
 import { VarLabel } from './VarLabel';
 import { VarItemWrapper } from './VarItemWrapper';
-import { PossibleJSONErrors } from '@components/common/PossibleJsonErrors';
+import { WarningIcon } from '@assets/icons/Warning.icon';
 import { InformationIcon } from '@assets/icons/Information.icon';
+import { PossibleJSONErrors } from '@components/common/PossibleJsonErrors';
 
 interface OutputEditorProps {
   templateId: string;
@@ -17,7 +19,9 @@ interface OutputEditorProps {
 
 export function OutputEditor({ templateId }: OutputEditorProps) {
   const { colorScheme } = useMantineColorScheme();
-  const { customization, control, errors, onSaveClick } = useEditor({ templateId });
+  const { customization, control, errors, onSaveClick, syncCustomization, isSyncCustomizationLoading } = useEditor({
+    templateId,
+  });
 
   return (
     <Stack spacing="sm">
@@ -33,9 +37,19 @@ export function OutputEditor({ templateId }: OutputEditorProps) {
 
         <Button onClick={onSaveClick}>Save</Button>
       </Group>
-      <Alert icon={<InformationIcon />} p="xs">
+      <Alert icon={<InformationIcon size="sm" />} p="xs">
         <Code>{`%<var>%`}</Code> will be used to loop over data items.
       </Alert>
+      {customization?.isCombinedFormatUpdated && (
+        <Alert p="xs" color="red" icon={<WarningIcon size="sm" />}>
+          <Flex align="center" justify="space-between">
+            Format is updated manually. The update in schema will not reflact automatically in output.
+            <Button size="xs" onClick={syncCustomization} loading={isSyncCustomizationLoading}>
+              Sync Again
+            </Button>
+          </Flex>
+        </Alert>
+      )}
       <Flex gap="xs">
         <div style={{ width: '80%' }}>
           <Controller
@@ -43,8 +57,8 @@ export function OutputEditor({ templateId }: OutputEditorProps) {
             name="combinedFormat"
             render={({ field }) => (
               <Editor
-                name="recordItem"
-                id="record-item"
+                name="combinedFormat"
+                id="combined-format"
                 value={field.value}
                 onChange={field.onChange}
                 variables={[...(customization?.recordVariables || []), ...(customization?.chunkVariables || [])]}

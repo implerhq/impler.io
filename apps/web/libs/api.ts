@@ -80,6 +80,10 @@ const routes: Record<string, Route> = {
     url: (templateId) => `/v1/template/${templateId}/customizations`,
     method: 'PUT',
   },
+  [API_KEYS.TEMPLATE_CUSTOMIZATION_SYNC]: {
+    url: (templateId) => `/v1/template/${templateId}/customizations/sync`,
+    method: 'PUT',
+  },
   [API_KEYS.COLUMN_CREATE]: {
     url: (templateId) => `/v1/column/${templateId}`,
     method: 'POST',
