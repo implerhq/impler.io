@@ -43,12 +43,12 @@ export class UpdateTemplateColumns {
     customizationUpdate.recordVariables = this.listRecordVariables(data);
 
     if (!customization.isRecordFormatUpdated) {
-      customizationUpdate.recordFormat = createRecordFormat(customization.recordVariables);
+      customizationUpdate.recordFormat = createRecordFormat(customizationUpdate.recordVariables);
     }
     if (!customization.isCombinedFormatUpdated) {
       customizationUpdate.combinedFormat = updateCombinedFormat(
         CONSTANTS.COMBINED_FORMAT,
-        customization.recordVariables
+        customizationUpdate.recordVariables
       );
     }
 
