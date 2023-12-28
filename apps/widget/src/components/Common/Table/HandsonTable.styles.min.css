@@ -55,3 +55,19 @@
     color: #222 !important;
     padding: 5px !important;
 }
+.del-cell {
+    cursor: pointer;
+    text-align: center;
+    padding: 5px !important;
+    
+}
+.del-btn {
+    color: #fff;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    background-color: #f00;
+}
+.del-btn:hover {
+    background-color: #d00;
+}

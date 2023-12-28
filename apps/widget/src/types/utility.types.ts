@@ -18,6 +18,7 @@ export type HotItemSchema = {
   disableVisualSelection?: boolean;
   renderer?:
     | 'custom'
+    | 'del'
     | ((
         instance: Core,
         TD: HTMLTableCellElement,

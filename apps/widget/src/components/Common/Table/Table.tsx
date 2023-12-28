@@ -48,6 +48,7 @@ interface TableProps {
   afterRender?: () => void;
   data: Record<string, any>[];
   columnDefs: HotItemSchema[];
+  onRecordDelete?: (index: number, isValid: boolean) => void;
   onValueChange?: (row: number, prop: string, oldVal: any, newVal: any) => void;
 }
 
@@ -101,9 +102,30 @@ Handsontable.renderers.registerRenderer(
   }
 );
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+Handsontable.renderers.registerRenderer('del', function renderer(instance, TD, row, col, prop, value, cellProperties) {
+  TD.classList.add('del-cell');
+  const soureData = instance.getSourceDataAtRow(row) as IRecord;
+
+  TD.dataset.index = String(soureData.index);
+  TD.dataset.isValid = String(soureData.isValid);
+  TD.innerHTML = `<button class="del-btn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-6 -6 24 24" width="22" fill="currentColor"><path d="M7.314 5.9l3.535-3.536A1 1 0 1 0 9.435.95L5.899 4.485 2.364.95A1 1 0 1 0 .95 2.364l3.535 3.535L.95 9.435a1 1 0 1 0 1.414 1.414l3.535-3.535 3.536 3.535a1 1 0 1 0 1.414-1.414L7.314 5.899z"></path></svg></button>`;
+
+  return TD;
+});
+
 export const Table = forwardRef<HotTable, TableProps>(
   (
-    { afterRender, height = 'auto', width = 'auto', headings, columnDefs, data, onValueChange }: TableProps,
+    {
+      afterRender,
+      height = 'auto',
+      width = 'auto',
+      headings,
+      columnDefs,
+      data,
+      onValueChange,
+      onRecordDelete,
+    }: TableProps,
     gridRef
   ) => {
     return (
@@ -124,6 +146,13 @@ export const Table = forwardRef<HotTable, TableProps>(
         fillHandle={{
           autoInsertRow: false,
           direction: 'vertical',
+        }}
+        afterOnCellMouseDown={function (e, coords, TD) {
+          if (TD.classList.contains('del-cell')) {
+            const dataIndex = TD.dataset.index;
+            const isValid = TD.dataset.isValid === 'true';
+            if (onRecordDelete && Number(dataIndex)) onRecordDelete(Number(dataIndex), isValid);
+          }
         }}
         stretchH="all"
         columns={columnDefs}

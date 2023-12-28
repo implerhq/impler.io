@@ -178,4 +178,10 @@ export class ApiService {
   async updateRecord(uploadId: string, record: IRecord) {
     return this.httpClient.put(`/review/${uploadId}/record`, record);
   }
+
+  async deleteRecord(uploadId: string, index: number, isValid: boolean) {
+    return this.httpClient.delete(
+      `/review/${uploadId}/record/${index}?isValid=${isValid}`
+    );
+  }
 }

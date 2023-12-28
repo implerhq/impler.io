@@ -1,5 +1,6 @@
 import { UpdateRecord } from './update-cell';
 import { DoReview } from './do-review/do-review.usecase';
+import { DeleteRecord } from './delete-record/delete-record.usecase';
 import { DoReReview } from './do-review/re-review-data.usecase';
 import { StartProcess } from './start-process/start-process.usecase';
 import { ConfirmReview } from './confirm-review/confirm-review.usecase';
@@ -13,6 +14,7 @@ export const USE_CASES = [
   DoReview,
   GetUpload,
   DoReReview,
+  DeleteRecord,
   UpdateRecord,
   StartProcess,
   ConfirmReview,
@@ -21,5 +23,15 @@ export const USE_CASES = [
   //
 ];
 
-export { DoReview, DoReReview, GetUpload, UpdateRecord, StartProcess, ConfirmReview, GetUploadData, UpdateImportCount };
+export {
+  DoReview,
+  GetUpload,
+  DoReReview,
+  DeleteRecord,
+  UpdateRecord,
+  StartProcess,
+  ConfirmReview,
+  GetUploadData,
+  UpdateImportCount,
+};
 export { UpdateImportCountCommand };
