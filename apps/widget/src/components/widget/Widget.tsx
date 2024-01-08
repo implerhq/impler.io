@@ -4,6 +4,7 @@ import { Modal } from '@ui/Modal';
 import { variables } from '@config';
 import { ParentWindow } from '@util';
 import { IUpload } from '@impler/shared';
+import { Phase0 } from './Phases/Phase0';
 import { Phase1 } from './Phases/Phase1';
 import { Phase2 } from './Phases/Phase2';
 import { Phase3 } from './Phases/Phase3';
@@ -14,7 +15,6 @@ import { PromptModal } from './Phases/PromptModal';
 import { Layout } from 'components/Common/Layout';
 import { PhasesEum, PromptModalTypesEnum } from '@types';
 import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
-import { Phase0 } from './Phases/Phase0';
 
 export function Widget() {
   const defaultDataCount = 0;
