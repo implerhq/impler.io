@@ -1,24 +1,21 @@
-import { colors } from '@config';
-import { createStyles, MantineTheme } from '@mantine/core';
+import { createStyles } from '@mantine/core';
 
-const getInputStyles = (theme: MantineTheme): React.CSSProperties => ({
-  borderRadius: 0,
-  backgroundColor: theme.colorScheme === 'dark' ? colors.BGPrimaryDark : colors.BGPrimaryLight,
-});
-
-const getItemsWrapperStyles = (): React.CSSProperties => ({
-  padding: 0,
-});
-
-const getDropdownStyles = (): React.CSSProperties => ({
-  borderRadius: 0,
-});
-
-export default createStyles((theme: MantineTheme): Record<string, any> => {
+export default createStyles(() => {
   return {
-    input: getInputStyles(theme),
-    itemsWrapper: getItemsWrapperStyles(),
-    dropdown: getDropdownStyles(),
-    item: getDropdownStyles(),
+    input: {
+      borderRadius: 0,
+    },
+    itemsWrapper: {
+      padding: 0,
+    },
+    dropdown: {
+      borderRadius: 0,
+    },
+    item: {
+      borderRadius: 0,
+    },
+    wrapper: {
+      marginTop: 6,
+    },
   };
 });
