@@ -1,7 +1,8 @@
-import { IsArray, IsBoolean, IsDefined, IsMongoId, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsDefined, IsMongoId, IsNumber, IsOptional, IsString, Validate } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ColumnTypesEnum } from '@impler/shared';
 import { BaseCommand } from '@shared/commands/base.command';
+import { IsNumberOrString } from '@shared/framework/number-or-string.validator';
 
 export class AddColumnCommand extends BaseCommand {
   @IsString()
@@ -53,4 +54,8 @@ export class AddColumnCommand extends BaseCommand {
   @IsDefined()
   @IsMongoId()
   _templateId: string;
+
+  @IsOptional()
+  @Validate(IsNumberOrString)
+  defaultValue?: string | number;
 }

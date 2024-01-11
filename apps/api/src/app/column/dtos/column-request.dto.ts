@@ -13,6 +13,7 @@ import {
 import { Type } from 'class-transformer';
 import { ColumnTypesEnum, Defaults } from '@impler/shared';
 import { IsValidRegex } from '@shared/framework/is-valid-regex.validator';
+import { IsNumberOrString } from '@shared/framework/number-or-string.validator';
 
 export class ColumnRequestDto {
   @ApiProperty({
@@ -96,4 +97,11 @@ export class ColumnRequestDto {
   @IsNumber()
   @IsOptional()
   sequence: number;
+
+  @ApiProperty({
+    description: 'Default value for cell',
+  })
+  @IsOptional()
+  @Validate(IsNumberOrString)
+  defaultValue?: string | number;
 }
