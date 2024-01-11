@@ -110,7 +110,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                     backdropFilter: 'blur(5px)',
                   },
                   inner: {
-                    top: '25%',
+                    top: '10%',
                   },
                 },
               }}

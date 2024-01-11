@@ -1,20 +1,24 @@
 import { useRef, useState } from 'react';
 import { Controller } from 'react-hook-form';
-import { ActionIcon, Checkbox, Select, Flex, Input, Tooltip } from '@mantine/core';
+import { ActionIcon, Checkbox, Flex, Tooltip } from '@mantine/core';
 
 import { colors } from '@config';
 import { Table } from '@ui/table';
-import { IColumn } from '@impler/shared';
 import { useSchema } from '@hooks/useSchema';
-import { IconButton } from '@ui/icon-button';
-
 import { COLUMN_TYPES } from '@shared/constants';
+import { DEFAULT_VALUES, IColumn } from '@impler/shared';
+
+import { Input } from '@ui/input';
+import { Select } from '@ui/select';
+import { IconButton } from '@ui/icon-button';
+import { MultiSelect } from '@ui/multi-select';
+import { CustomSelect } from '@ui/custom-select';
+
 import { AddIcon } from '@assets/icons/Add.icon';
 import { EditIcon } from '@assets/icons/Edit.icon';
 import { CloseIcon } from '@assets/icons/Close.icon';
 import { CheckIcon } from '@assets/icons/Check.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
-import { MultiSelect } from '@mantine/core';
 
 interface ColumnsTableProps {
   templateId: string;
@@ -54,12 +58,12 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
           {
             title: 'Name',
             key: 'name',
-            width: '25%',
+            width: '50%',
           },
           {
             title: 'Type',
             key: 'type',
-            width: '25%',
+            width: '15%',
           },
           {
             title: 'Is required?',
@@ -86,6 +90,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                 </IconButton>
               </Flex>
             ),
+            width: '15%',
           },
         ]}
         extraContent={
@@ -94,8 +99,8 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
               <>
                 <td colSpan={4} style={{ borderRight: 'none' }}>
                   <Flex gap="xs" align={'center'}>
-                    <Input autoFocus required placeholder="Column Name" {...register('name')} />
-                    <Input required placeholder="Column Key" {...register('key')} />
+                    <Input autoFocus required placeholder="Column Name" register={register('name')} />
+                    <Input required placeholder="Column Key" register={register('key')} />
                     <Controller
                       control={control}
                       name="type"
@@ -104,7 +109,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                           data={COLUMN_TYPES}
                           placeholder="Select Type"
                           variant="default"
-                          {...field}
+                          register={field}
                           autoFocus={SelectRef.current}
                           onFocus={() => (SelectRef.current = true)}
                         />
@@ -113,10 +118,10 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                     {typeValue === 'Regex' && (
                       <>
                         <Input
-                          placeholder="Regular expression"
-                          {...register('regex')}
                           required
+                          register={register('regex')}
                           error={errors.regex?.message}
+                          placeholder="Regular expression"
                         />
                       </>
                     )}
@@ -139,7 +144,6 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                               return newItem;
                             }}
                             onChange={onChange}
-                            style={{ width: '100%' }}
                           />
                         )}
                       />
@@ -169,13 +173,24 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                               return newItem;
                             }}
                             onChange={onChange}
-                            style={{ width: '100%' }}
                           />
                         )}
                       />
                     ) : null}
-                    <Checkbox label="Is Required?" title="Is Required?" {...register('isRequired')} id="isRequired" />{' '}
-                    <Checkbox label="Is Unique?" title="Is Unique?" {...register('isUnique')} id="isUnique" />
+                    <Controller
+                      name="defaultValue"
+                      control={control}
+                      render={({ field: { value, onChange } }) => (
+                        <CustomSelect
+                          value={value}
+                          onChange={onChange}
+                          placeholder="Default Value"
+                          data={DEFAULT_VALUES}
+                        />
+                      )}
+                    />
+                    <Checkbox label="Required?" title="Required?" {...register('isRequired')} id="isRequired" />{' '}
+                    <Checkbox label="Unique?" title="Unique?" {...register('isUnique')} id="isUnique" />
                   </Flex>
                 </td>
                 <td style={{ borderLeft: 'none' }}>

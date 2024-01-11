@@ -9,3 +9,30 @@ export const Defaults = {
   DATE_FORMATS: ['DD/MM/YYYY'],
   DATE_FORMAT: 'DD/MM/YYYY',
 };
+
+export const DEFAULT_VALUES = [
+  {
+    label: 'null',
+    value: '<<null>>',
+  },
+  {
+    label: 'undefined',
+    value: '<<undefined>>',
+  },
+  {
+    label: 'Empty String',
+    value: '<<>>',
+  },
+  {
+    label: 'Empty Array ([])',
+    value: '<<[]>>',
+  },
+  {
+    label: 'Boolean true',
+    value: '<<true>>',
+  },
+  {
+    label: 'Boolean false',
+    value: '<<false>>',
+  },
+];
