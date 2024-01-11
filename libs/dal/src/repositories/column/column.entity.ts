@@ -24,4 +24,6 @@ export class ColumnEntity {
   sequence?: number;
 
   _templateId: string;
+
+  defaultValue?: string | number;
 }
