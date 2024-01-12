@@ -46,7 +46,7 @@ export default function SignupPage({}) {
           />
           <Input register={register('email')} size="md" placeholder="Email" required error={errors.email?.message} />
           <PasswordInput register={register('password')} size="md" placeholder="Password" required />
-          <Button loading={isSignupLoading} fullWidth type="submit" size="md">
+          <Button id="signup" loading={isSignupLoading} fullWidth type="submit" size="md">
             Create an account
           </Button>
           <Text size="md" align="center">
