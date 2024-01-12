@@ -74,7 +74,7 @@ export function CustomSelect({
   };
 
   return (
-    <Popover width="target" opened={popoverOpened} onClose={() => setPopoverOpened(false)}>
+    <Popover width="target" opened={popoverOpened} onClose={() => setPopoverOpened(false)} withinPortal>
       <Popover.Target>
         <div className={classes.root}>
           {label ? <label className={classes.label}>{label}</label> : null}
