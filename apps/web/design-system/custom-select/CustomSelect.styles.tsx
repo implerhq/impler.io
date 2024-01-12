@@ -6,13 +6,15 @@ const getInputWrapperStyles = (theme: MantineTheme): CSSObject => ({
   display: 'flex',
   borderRadius: 0,
   paddingLeft: 'calc(2.25rem / 3)',
-  backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : colors.white,
   border: `0.0625rem solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[4]}`,
 
   ':focus-within': {
     borderColor: colors.blue,
   },
-  marginTop: 6,
+  backgroundColor: theme.colorScheme === 'dark' ? colors.BGPrimaryDark : colors.BGPrimaryLight,
+  '&[data-haslabel="true"]': {
+    marginTop: 5,
+  },
 });
 const getRootStyles = (): CSSObject => ({
   width: '100%',

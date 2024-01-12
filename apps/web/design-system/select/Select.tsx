@@ -1,5 +1,4 @@
 import { NativeSelect as MantineSelect, SelectItem, Variants } from '@mantine/core';
-import useStyles from './Select.styles';
 
 interface SelectProps {
   placeholder?: string;
@@ -12,16 +11,14 @@ interface SelectProps {
 }
 
 export function Select({ placeholder, data, register, label, autoFocus, onFocus, variant }: SelectProps) {
-  const { classes } = useStyles();
-
   return (
     <MantineSelect
       data={data}
       label={label}
       variant={variant}
       onFocus={onFocus}
-      classNames={classes}
       autoFocus={autoFocus}
+      data-haslabel={!!label}
       placeholder={placeholder}
       {...(register || {})}
     />

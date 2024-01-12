@@ -1,6 +1,5 @@
 import { ReactNode } from 'react';
 import { MultiSelect as MantineMultiSelect, SelectItem } from '@mantine/core';
-import useStyles from './MultiSelect.styles';
 
 interface MultiSelectProps {
   placeholder?: string;
@@ -34,12 +33,9 @@ export function MultiSelect({
   getCreateLabel,
   maxSelectedValues,
 }: MultiSelectProps) {
-  const { classes } = useStyles();
-
   return (
     <MantineMultiSelect
       data={data}
-      classNames={classes}
       placeholder={placeholder}
       searchable={searchable}
       nothingFound={noFoundText}
@@ -51,6 +47,7 @@ export function MultiSelect({
       label={label}
       onCreate={onCreate}
       onChange={onChange}
+      data-haslabel={!!label}
       description={description}
       maxSelectedValues={maxSelectedValues}
     />

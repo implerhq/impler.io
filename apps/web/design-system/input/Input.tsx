@@ -1,5 +1,4 @@
 import { TextInput as MantineInput, MantineSize } from '@mantine/core';
-import useStyles from './Input.styles';
 
 interface InputProps {
   required?: boolean;
@@ -30,8 +29,6 @@ export function Input({
   rightSection,
   type = 'text',
 }: InputProps) {
-  const { classes } = useStyles();
-
   return (
     <MantineInput
       type={type}
@@ -42,8 +39,8 @@ export function Input({
       pattern={pattern}
       required={required}
       disabled={disabled}
-      classNames={classes}
       autoFocus={autoFocus}
+      data-haslabel={!!label}
       placeholder={placeholder}
       rightSection={rightSection}
       {...register}

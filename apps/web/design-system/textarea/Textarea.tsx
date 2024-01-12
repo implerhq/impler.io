@@ -1,5 +1,4 @@
 import { Textarea as MantineTextarea } from '@mantine/core';
-import useStyles from './Textarea.styles';
 
 interface TextareaProps {
   required?: boolean;
@@ -12,17 +11,15 @@ interface TextareaProps {
 }
 
 export function Textarea({ required, placeholder, register, autosize, minRows, maxRows, label }: TextareaProps) {
-  const { classes } = useStyles();
-
   return (
     <MantineTextarea
       label={label}
-      classNames={classes}
-      required={required}
-      placeholder={placeholder}
-      autosize={autosize}
       minRows={minRows}
       maxRows={maxRows}
+      autosize={autosize}
+      required={required}
+      data-haslabel={!!label}
+      placeholder={placeholder}
       {...(register || {})}
     />
   );
