@@ -154,6 +154,11 @@ export const Table = forwardRef<HotTable, TableProps>(
             if (onRecordDelete && Number(dataIndex)) onRecordDelete(Number(dataIndex), isValid);
           }
         }}
+        beforeChange={(changes) => {
+          for (let i = 0; i < changes.length; i++) {
+            if (changes[i] && changes[i]?.[3] === null) changes[i]![3] = undefined;
+          }
+        }}
         stretchH="all"
         columns={columnDefs}
         colHeaders={headings}
