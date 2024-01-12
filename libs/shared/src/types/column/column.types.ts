@@ -18,6 +18,7 @@ export interface ISchemaItem {
   dateFormats?: string[];
   type?: ColumnTypesEnum;
   regex?: string;
+  defaultValue?: string | number;
 }
 
 export interface ITemplateSchemaItem extends ISchemaItem {

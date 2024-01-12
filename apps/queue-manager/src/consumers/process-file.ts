@@ -8,6 +8,7 @@ import {
   QueuesEnum,
   replaceVariablesInObject,
   FileNameService,
+  ITemplateSchemaItem,
 } from '@impler/shared';
 import { StorageService } from '@impler/shared/dist/services/storage';
 import { FileEntity, UploadRepository, WebhookLogEntity, TemplateRepository, WebhookLogRepository } from '@impler/dal';
@@ -50,6 +51,7 @@ export class ProcessFileConsumer extends BaseConsumer {
         template: cachedData.name,
         fileName: cachedData.fileName,
         chunkSize: cachedData.chunkSize,
+        defaultValues: cachedData.defaultValues,
         page: cachedData.page || DEFAULT_PAGE,
         recordFormat: cachedData.recordFormat,
         chunkFormat: cachedData.chunkFormat,
@@ -145,6 +147,7 @@ export class ProcessFileConsumer extends BaseConsumer {
 
   private buildSendData({
     data,
+    defaultValues,
     page = DEFAULT_PAGE,
     chunkSize,
     template,
@@ -154,12 +157,15 @@ export class ProcessFileConsumer extends BaseConsumer {
     recordFormat,
     extra = '',
   }: IBuildSendDataParameters): { sendData: Record<string, unknown>; page: number } {
+    const defaultValuesObj = JSON.parse(defaultValues);
     let slicedData = data.slice(
       Math.max((page - DEFAULT_PAGE) * chunkSize, MIN_LIMIT),
       Math.min(page * chunkSize, data.length)
     );
     if (recordFormat)
-      slicedData = slicedData.map((obj) => replaceVariablesInObject(JSON.parse(recordFormat), obj.record));
+      slicedData = slicedData.map((obj) =>
+        replaceVariablesInObject(JSON.parse(recordFormat), obj.record, defaultValuesObj)
+      );
     else slicedData = slicedData.map((obj) => obj.record);
 
     const sendData = {
@@ -207,6 +213,14 @@ export class ProcessFileConsumer extends BaseConsumer {
       'name _projectId callbackUrl chunkSize code authHeaderName'
     );
 
+    const defaultValueObj = {};
+    const customSchema = JSON.parse(uploadata.customSchema) as ITemplateSchemaItem;
+    if (Array.isArray(customSchema)) {
+      customSchema.forEach((item) => {
+        if (item.defaultValue) defaultValueObj[item.key] = item.defaultValue;
+      });
+    }
+
     return {
       _templateId: uploadata._templateId,
       callbackUrl: templateData.callbackUrl,
@@ -218,6 +232,7 @@ export class ProcessFileConsumer extends BaseConsumer {
       allDataFilePath: this.fileNameService.getAllJsonDataFilePath(_uploadId),
       fileName: (uploadata._uploadedFileId as unknown as FileEntity)?.originalName,
       extra: uploadata.extra,
+      defaultValues: JSON.stringify(defaultValueObj),
       recordFormat: uploadata.customRecordFormat,
       chunkFormat: uploadata.customChunkFormat,
     };

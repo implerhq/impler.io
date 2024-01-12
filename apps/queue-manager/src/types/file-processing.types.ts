@@ -16,6 +16,7 @@ export interface IBuildSendDataParameters {
   uploadId: string;
   fileName: string;
   extra?: string;
+  defaultValues: string;
   recordFormat?: string;
   chunkFormat?: string;
 }

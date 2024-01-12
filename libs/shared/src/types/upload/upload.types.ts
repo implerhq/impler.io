@@ -48,6 +48,7 @@ export type ProcessFileCachedData = {
   fileName: string;
   recordFormat?: string;
   chunkFormat?: string;
+  defaultValues: string;
 };
 
 export type ProcessFileData = {

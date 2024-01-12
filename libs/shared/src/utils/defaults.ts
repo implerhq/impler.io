@@ -36,3 +36,18 @@ export const DEFAULT_VALUES = [
     value: '<<false>>',
   },
 ];
+
+export const DEFAULT_VALUES_ARR = DEFAULT_VALUES.reduce((acc: string[], item) => {
+  acc.push(item.value);
+
+  return acc;
+}, [] as string[]);
+
+export const DEFAULT_VALUES_OBJ = {
+  '<<null>>': null,
+  '<<undefined>>': undefined,
+  '<<>>': '',
+  '<<[]>>': [],
+  '<<true>>': true,
+  '<<false>>': false,
+};
