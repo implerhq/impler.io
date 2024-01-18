@@ -58,7 +58,7 @@ export class MakeUploadEntry {
       {
         _templateId: templateId,
       },
-      'name key isRequired isUnique selectValues dateFormats type regex sequence',
+      'name key isRequired isUnique selectValues dateFormats defaultValue type regex sequence',
       {
         sort: 'sequence',
       }
@@ -83,6 +83,7 @@ export class MakeUploadEntry {
               : [],
           dateFormats: Array.isArray(schemaItem.dateFormats) ? schemaItem.dateFormats : Defaults.DATE_FORMATS,
           isUnique: schemaItem.isUnique || false,
+          defaultValue: schemaItem.defaultValue,
 
           sequence: Object.keys(formattedColumns).length,
           columnHeading: '', // used later during mapping

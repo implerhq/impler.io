@@ -44,6 +44,7 @@ export function useColumnsEditor({ templateId }: UseSchemaProps) {
             regexDescription,
             selectValues,
             sequence,
+            defaultValue,
           }) => ({
             key,
             name,
@@ -53,6 +54,7 @@ export function useColumnsEditor({ templateId }: UseSchemaProps) {
             isUnique,
             regex,
             dateFormats,
+            defaultValue,
             regexDescription,
             selectValues,
             sequence,

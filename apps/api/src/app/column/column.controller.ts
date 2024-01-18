@@ -28,18 +28,8 @@ export class ColumnController {
   ): Promise<ColumnResponseDto> {
     return this.addColumn.execute(
       AddColumnCommand.create({
-        key: body.key,
-        alternateKeys: body.alternateKeys,
-        isRequired: body.isRequired,
-        isUnique: body.isUnique,
-        name: body.name,
-        regex: body.regex,
-        regexDescription: body.regexDescription,
-        selectValues: body.selectValues,
-        dateFormats: body.dateFormats,
-        sequence: body.sequence,
+        ...body,
         _templateId,
-        type: body.type,
       }),
       _templateId
     );

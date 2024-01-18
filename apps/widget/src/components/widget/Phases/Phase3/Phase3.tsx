@@ -86,15 +86,14 @@ export function Phase3(props: IPhase3Props) {
           height={tableWrapperDimensions.height}
           onValueChange={(row, prop, oldVal, newVal) => {
             const name = String(prop).replace('record.', '');
-            let formattedNewVal = newVal;
-            if (typeof newVal === 'object' || newVal === null) formattedNewVal = undefined;
 
             const currentData = [...reviewData];
-            if (currentData && oldVal != formattedNewVal) {
+
+            if (currentData && oldVal != newVal && !(oldVal === '' && newVal === undefined)) {
               if (!currentData[row].updated) {
                 currentData[row].updated = {};
               }
-              currentData[row].record[name] = formattedNewVal;
+              currentData[row].record[name] = newVal;
               currentData[row].updated[name] = true;
               setReviewData(currentData);
               updateRecord(currentData[row]);

@@ -1,4 +1,4 @@
-import { MantineThemeOverride } from '@mantine/core';
+import { MantineTheme, MantineThemeOverride } from '@mantine/core';
 
 export const colors = {
   danger: '#F64747',
@@ -80,6 +80,31 @@ export const mantineConfig: MantineThemeOverride = {
   headings: {
     sizes: {
       h1: { fontSize: '2rem', lineHeight: 1.2 },
+    },
+  },
+  components: {
+    Input: {
+      styles: (theme: MantineTheme) => ({
+        input: {
+          borderRadius: 0,
+          backgroundColor: theme.colorScheme === 'dark' ? colors.BGPrimaryDark : colors.BGPrimaryLight,
+        },
+      }),
+    },
+    InputWrapper: {
+      styles: () => ({
+        label: {
+          marginBottom: 5,
+        },
+      }),
+    },
+    Checkbox: {
+      styles: (theme: MantineTheme) => ({
+        input: {
+          borderRadius: 0,
+          backgroundColor: theme.colorScheme === 'dark' ? colors.BGPrimaryDark : colors.BGPrimaryLight,
+        },
+      }),
     },
   },
   globalStyles: (theme) => ({
