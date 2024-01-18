@@ -153,6 +153,7 @@ export class BaseReview {
 
     return errors.reduce((obj, error) => {
       [, field] = error.instancePath.split('/');
+      field = field.replace(/~1/g, '/');
       obj[field] = this.getMessage(error, field || error.schema[0], dateFormats);
 
       return obj;
@@ -231,11 +232,6 @@ export class BaseReview {
           ...batchItem,
           sandboxPath: sandboxPath,
           chunkSize: BATCH_LIMIT,
-          /*
-           * fileName: "asdf",
-           * extra: "",
-           * totalRecords: "",
-           */
         })
       );
       fs.writeFileSync(`${sandboxPath}/code.js`, onBatchInitialize);
