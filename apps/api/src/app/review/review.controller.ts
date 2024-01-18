@@ -77,7 +77,17 @@ export class ReviewController {
     });
     if (!uploadData) throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
 
-    return await this.getFileInvalidData.execute(_uploadId, page, limit, uploadData.totalRecords, type);
+    return await this.getFileInvalidData.execute(
+      _uploadId,
+      page,
+      limit,
+      type === ReviewDataTypesEnum.VALID
+        ? uploadData.validRecords
+        : type === ReviewDataTypesEnum.INVALID
+        ? uploadData.invalidRecords
+        : uploadData.totalRecords,
+      type
+    );
   }
 
   @Post(':uploadId')
