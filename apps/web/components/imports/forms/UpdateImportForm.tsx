@@ -32,7 +32,7 @@ export function UpdateImportForm({ onSubmit, data }: UpdateImportFormProps) {
       <Stack spacing="sm">
         <Input
           placeholder="I want to import..."
-          dataAutoFocus
+          autoFocus
           required
           register={register('name')}
           error={errors.name?.message}

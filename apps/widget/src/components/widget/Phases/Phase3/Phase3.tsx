@@ -42,6 +42,7 @@ export function Phase3(props: IPhase3Props) {
     isDoReviewLoading,
     isReviewDataLoading,
     showAllDataValidModal,
+    isDeleteRecordLoading,
     isConfirmReviewLoading,
     setShowAllDataValidModal,
   } = usePhase3({ onNext: onNextClick });
@@ -66,7 +67,9 @@ export function Phase3(props: IPhase3Props) {
 
   return (
     <>
-      <LoadingOverlay visible={isReviewDataLoading || isDoReviewLoading || isConfirmReviewLoading} />
+      <LoadingOverlay
+        visible={isReviewDataLoading || isDoReviewLoading || isConfirmReviewLoading || isDeleteRecordLoading}
+      />
 
       <Stack ref={tableWrapperRef} style={{ flexGrow: 1 }} spacing="xs" align="flex-start">
         <SegmentedControl
@@ -83,6 +86,7 @@ export function Phase3(props: IPhase3Props) {
           height={tableWrapperDimensions.height}
           onValueChange={(row, prop, oldVal, newVal) => {
             const name = String(prop).replace('record.', '');
+
             const currentData = [...reviewData];
 
             if (currentData && oldVal != newVal && !(oldVal === '' && newVal === undefined)) {

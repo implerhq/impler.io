@@ -23,6 +23,7 @@ import {
 import Handsontable from 'handsontable';
 import { HotItemSchema } from '@types';
 import { IRecord } from '@impler/shared';
+import { HANDSONTABLE_LICENSE_KEY } from '@config';
 import { registerValidator, dateValidator } from 'handsontable/validators';
 
 registerCellType(NumericCellType);
@@ -163,7 +164,7 @@ export const Table = forwardRef<HotTable, TableProps>(
         columns={columnDefs}
         colHeaders={headings}
         afterRender={afterRender}
-        licenseKey="non-commercial-and-evaluation" // for non-commercial use only
+        licenseKey={HANDSONTABLE_LICENSE_KEY}
       />
     );
   }

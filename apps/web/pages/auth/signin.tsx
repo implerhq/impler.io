@@ -27,6 +27,7 @@ export default function SigninPage() {
         },
       });
       if (query.showAddProject) {
+        (window as any).dataLayer?.push({ event: 'github_signup' });
         push(ROUTES.SIGNIN_ONBOARDING);
       } else push(ROUTES.HOME);
     }

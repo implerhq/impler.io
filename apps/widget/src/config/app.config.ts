@@ -12,4 +12,9 @@ export const AMPLITUDE_ID = window._env_?.REACT_APP_AMPLITUDE_ID || process.env.
 
 export const ENV: ENVTypesEnum = window._env_?.REACT_APP_ENVIRONMENT || process.env.REACT_APP_ENVIRONMENT || 'local';
 
+export const HANDSONTABLE_LICENSE_KEY =
+  window._env_?.REACT_APP_HANDSONTABLE_LICENSE_KEY ||
+  process.env.REACT_APP_HANDSONTABLE_LICENSE_KEY ||
+  'non-commercial-and-evaluation';
+
 export const CONTEXT_PATH = getContextPath(ImplerComponentEnum.WIDGET);

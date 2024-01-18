@@ -1,12 +1,16 @@
 import { PropsWithChildren } from 'react';
 import useStyles from './Button.styles';
-import { Button as MantineButton, ButtonProps as MantineButtonProps } from '@mantine/core';
+import { Button as MantineButton, MantineSize, ButtonProps as MantineButtonProps } from '@mantine/core';
 
 export type ButtonColors = 'blue' | 'invariant' | 'red' | 'green';
 export type ButtonVariants = 'filled' | 'outline';
 
 interface ButtonProps extends MantineButtonProps {
   color?: ButtonColors;
+  id?: string;
+  leftIcon?: any;
+  rightIcon?: any;
+  size?: MantineSize;
   component?: any;
   type?: 'button' | 'submit' | 'reset';
   variant?: ButtonVariants;
@@ -17,6 +21,7 @@ interface ButtonProps extends MantineButtonProps {
 
 export function Button({
   children,
+  id,
   leftIcon,
   rightIcon,
   href,
@@ -29,7 +34,6 @@ export function Button({
   size = 'sm',
   color = 'blue',
   variant = 'filled',
-  ...rest
 }: PropsWithChildren<ButtonProps>) {
   const { classes } = useStyles({ variant, color, fullWidth });
 
@@ -46,7 +50,7 @@ export function Button({
       onClick={onClick}
       loading={loading}
       disabled={disabled}
-      {...rest}
+      id={id}
     >
       {children}
     </MantineButton>
