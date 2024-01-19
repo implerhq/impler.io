@@ -157,6 +157,7 @@ export const Table = forwardRef<HotTable, TableProps>(
         }}
         beforeChange={(changes) => {
           for (let i = 0; i < changes.length; i++) {
+            // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
             if (changes[i] && changes[i]?.[3] === null) changes[i]![3] = undefined;
           }
         }}
