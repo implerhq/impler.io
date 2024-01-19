@@ -85,7 +85,7 @@ export function CustomSelect({
               spellCheck={false}
               onInput={onChangeValue}
               className={classes.input}
-              placeholder={placeholder}
+              data-placeholder={placeholder}
               contentEditable={content.length === 0}
               suppressContentEditableWarning={true}
             >
