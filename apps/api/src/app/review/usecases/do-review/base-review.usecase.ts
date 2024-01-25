@@ -82,7 +82,7 @@ export class BaseReview {
           Array.isArray(formattedColumns[column.key].dateFormats) &&
           formattedColumns[column.key].dateFormats.length > 0
         )
-          dateFormats[column.key] = formattedColumns[column.key].dateFormats;
+          dateFormats[column.key] = formattedColumns[column.key].dateFormats.map((format) => format.toUpperCase());
         else dateFormats[column.key] = Defaults.DATE_FORMATS;
       }
     });
@@ -154,66 +154,62 @@ export class BaseReview {
     return errors.reduce((obj, error) => {
       [, field] = error.instancePath.split('/');
       field = field.replace(/~1/g, '/');
-      obj[field] = this.getMessage(error, field || error.schema[0], dateFormats);
+      obj[field] = this.getMessage(error, field || error.schema[0], error.data, dateFormats);
 
       return obj;
     }, {});
   }
 
-  private getMessage(error: ErrorObject, field: string, dateFormats: Record<string, string[]>): string {
+  private getMessage(error: ErrorObject, field: string, data: unknown, dateFormats: Record<string, string[]>): string {
     let message = '';
     switch (true) {
       // empty string case
       case error.keyword === 'emptyCheck':
-        message = ` must not be empty`;
+      case error.keyword === 'required':
+        message = `This field is required`;
         break;
       // customDateChecker
       case error.keyword === 'customDateChecker':
-        message = ` must match format from [${dateFormats[field].toString()}]`;
+        message = `${String(data)} must match date format from [${dateFormats[field].toString()}]`;
         break;
       // uniqueCheck
       case error.keyword === 'uniqueCheck':
-        message = ` must be unique`;
+      case error.keyword === 'uniqueItemProperties':
+        message = `${String(data)} already exist in column, it must be unique`;
         break;
       // custom date format
       case error.keyword === 'format' && error.params.format === 'custom-date-time':
-        message = ` must be a valid date`;
+        message = `${String(data)} is not a valid date`;
         break;
       // common cases
       case error.keyword === 'type':
         if (error.params.type === 'integer') {
-          message = ` must be a number`;
+          message = `${String(data)} must be a number`;
         } else if (Array.isArray(error.params.type) && error.params.type.toString() === 'integer,null')
-          message = ` must be a number or empty`;
+          message = `${String(data)} must be a number or empty`;
         else message = ' ' + error.message;
         break;
       case error.keyword === 'enum':
-        message = ` must be from [${error.params.allowedValues}]`;
+        message = `${String(data)} must be from list [${error.params.allowedValues}]`;
         break;
       case error.keyword === 'regexp':
-        message = ` must match the pattern ${new RegExp(
+        message = `${String(data)} must match the pattern ${new RegExp(
           error.parentSchema?.regexp?.pattern,
           error.parentSchema?.regexp?.flags || ''
         ).toString()}`;
         break;
       case error.keyword === 'pattern':
-        message = ` must match the pattern ${error.params.pattern}`;
+        message = `${String(data)} must match the pattern of ${error.params.pattern}`;
         break;
       case error.keyword === 'format':
-        message = ` must be a valid ${error.params.format}`;
-        break;
-      case error.keyword === 'required':
-        message = ` is required`;
-        break;
-      case error.keyword === 'uniqueItemProperties':
-        message = ` must be unique`;
+        message = `${String(data)} must be a valid ${error.params.format}`;
         break;
       default:
         message = ` contains invalid data`;
         break;
     }
 
-    return '`' + field + '`' + message;
+    return message;
   }
 
   private async executeBatchInSandbox(batchItem: IBatchItem, sandboxManager: SManager, onBatchInitialize: string) {
