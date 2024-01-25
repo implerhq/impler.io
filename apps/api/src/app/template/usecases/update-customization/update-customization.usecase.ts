@@ -1,8 +1,9 @@
-import { HttpException, Injectable } from '@nestjs/common';
 import { CustomizationRepository } from '@impler/dal';
+import { getRecordFormat } from '@impler/shared';
+import { HttpException, Injectable } from '@nestjs/common';
+
 import { UpdateCustomizationCommand } from './update-customization.command';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
-import { createVariable, getRecordFormat } from '@impler/shared';
 
 @Injectable()
 export class UpdateCustomization {
@@ -24,7 +25,7 @@ export class UpdateCustomization {
       throw new DocumentNotFoundException('Customization', _templateId);
     }
 
-    this.customizationRepository.findOneAndUpdate(
+    return this.customizationRepository.findOneAndUpdate(
       {
         _templateId,
       },
@@ -35,11 +36,5 @@ export class UpdateCustomization {
         isChunkFormatUpdated: data.chunkFormat !== customization.chunkFormat,
       }
     );
-
-    return {
-      ...customization,
-      recordVariables: customization.recordVariables?.map((variable) => createVariable(variable)),
-      chunkVariables: customization.chunkVariables?.map((variable) => createVariable(variable)),
-    };
   }
 }

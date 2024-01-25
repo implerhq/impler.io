@@ -7,6 +7,7 @@ export enum UploadStatusEnum {
   'CONFIRMED' = 'Confirmed',
   'PROCESSING' = 'Processing',
   'COMPLETED' = 'Completed',
+  'TERMINATED' = 'Terminated',
 }
 
 export const SupportedFileMimeTypes = [
@@ -31,6 +32,7 @@ export enum FileEncodingsEnum {
 
 export enum QueuesEnum {
   'PROCESS_FILE' = 'PROCESS_FILE',
+  'END_IMPORT' = 'END_IMPORT',
 }
 
 export type ProcessFileCachedData = {
@@ -39,16 +41,14 @@ export type ProcessFileCachedData = {
   chunkSize: number;
   name: string; // template name
   extra?: string;
-  isInvalidRecords: boolean;
-  processInvalidRecords: boolean;
   authHeaderName: string;
   authHeaderValue: string;
   _templateId: string;
-  validDataFilePath?: string;
-  invalidDataFilePath?: string;
+  allDataFilePath?: string;
   fileName: string;
-  recordFormat: string;
-  chunkFormat: string;
+  recordFormat?: string;
+  chunkFormat?: string;
+  defaultValues: string;
 };
 
 export type ProcessFileData = {
@@ -57,8 +57,17 @@ export type ProcessFileData = {
 };
 export type PublishToQueueData = ProcessFileData;
 
+export type EndImportData = {
+  uploadId: string;
+  processFile: boolean;
+};
+
 export interface IFileInformation {
   headings: string[];
   data: Record<string, unknown>[];
   totalRecords: number;
+}
+
+export interface IImportConfig {
+  showBranding: boolean;
 }

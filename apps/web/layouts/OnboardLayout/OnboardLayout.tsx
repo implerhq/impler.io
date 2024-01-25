@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Head from 'next/head';
+import dynamic from 'next/dynamic';
 import { PropsWithChildren } from 'react';
 import { Carousel } from '@mantine/carousel';
 import { Grid, Title, Text } from '@mantine/core';
@@ -8,6 +9,10 @@ import useStyles from './OnboardLayout.styles';
 import WidgetSlideImage from '@assets/images/auth-carousel/widget.png';
 import ActionsSlideImage from '@assets/images/auth-carousel/actions.png';
 import WorkflowsSlideImage from '@assets/images/auth-carousel/workflows.png';
+
+const Support = dynamic(() => import('components/common/Support').then((mod) => mod.Support), {
+  ssr: false,
+});
 
 const slides: {
   image: any;
@@ -63,6 +68,7 @@ export function OnboardLayout({ children }: PropsWithChildren) {
           </Grid.Col>
         </Grid>
       </main>
+      <Support />
     </>
   );
 }

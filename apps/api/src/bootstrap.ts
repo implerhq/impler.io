@@ -1,33 +1,20 @@
 import './config';
 
-import * as Sentry from '@sentry/node';
-import { INestApplication, ValidationPipe, Logger } from '@nestjs/common';
 import * as compression from 'compression';
 import { NestFactory } from '@nestjs/core';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { INestApplication, ValidationPipe, Logger } from '@nestjs/common';
+
 import { AppModule } from './app.module';
-import { validateEnv } from './config/env-validator';
 import { ACCESS_KEY_NAME } from '@impler/shared';
-import { version } from '../package.json';
+import { validateEnv } from './config/env-validator';
 
-if (process.env.SENTRY_DSN) {
-  Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-    environment: process.env.NODE_ENV,
-    release: `v${version}`,
-    ignoreErrors: ['Non-Error exception captured'],
-    integrations: [
-      // enable HTTP calls tracing
-      new Sentry.Integrations.Http({ tracing: true }),
-    ],
-  });
-}
-
-// Validate the ENV variables after launching SENTRY, so missing variables will report to sentry
 validateEnv();
+
+const extendedBodySizeRoutes = ['/v1/template/:templateId/sample'];
 
 export async function bootstrap(expressApp?): Promise<INestApplication> {
   let app;
@@ -35,11 +22,6 @@ export async function bootstrap(expressApp?): Promise<INestApplication> {
     app = await NestFactory.create(AppModule, new ExpressAdapter(expressApp));
   } else {
     app = await NestFactory.create(AppModule);
-  }
-
-  if (process.env.SENTRY_DSN) {
-    app.use(Sentry.Handlers.requestHandler());
-    app.use(Sentry.Handlers.tracingHandler());
   }
 
   app.enableCors(corsOptionsDelegate);
@@ -53,6 +35,8 @@ export async function bootstrap(expressApp?): Promise<INestApplication> {
   );
 
   app.use(cookieParser());
+  app.use(extendedBodySizeRoutes, bodyParser.json({ limit: '20mb' }));
+  app.use(extendedBodySizeRoutes, bodyParser.urlencoded({ limit: '20mb', extended: true }));
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -92,7 +76,7 @@ const corsOptionsDelegate = function (req, callback) {
     credentials: true,
     origin: [process.env.WIDGET_BASE_URL, process.env.WEB_BASE_URL],
     preflightContinue: false,
-    allowedHeaders: ['Content-Type', ACCESS_KEY_NAME, 'sentry-trace', 'baggage'],
+    allowedHeaders: ['Content-Type', 'x-openreplay-session-token', ACCESS_KEY_NAME, 'sentry-trace', 'baggage'],
     methods: ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   };
 

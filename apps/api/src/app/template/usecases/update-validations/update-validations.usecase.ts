@@ -8,13 +8,13 @@ import { SManager, BATCH_LIMIT, MAIN_CODE, EngineResponseStatusEnum } from '@sha
 @Injectable()
 export class UpdateValidations {
   constructor(
+    private sandboxManager: SManager,
     private validatorRepository: ValidatorRepository,
-    private templateRepository: TemplateRepository,
-    private sandboxManager: SManager
+    private templateRepository: TemplateRepository
   ) {}
 
   async execute(_templateId: string, data: UpdateValidationsCommand) {
-    const template = await this.templateRepository.findOne({ id: _templateId });
+    const template = await this.templateRepository.findById(_templateId);
     if (!template) {
       throw new DocumentNotFoundException('Template', _templateId);
     }

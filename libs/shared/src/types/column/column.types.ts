@@ -10,9 +10,18 @@ export enum ColumnTypesEnum {
 
 export interface ISchemaItem {
   key: string;
+  name: string;
+  alternateKeys?: string[];
   isRequired?: boolean;
   isUnique?: boolean;
   selectValues?: string[];
+  dateFormats?: string[];
   type?: ColumnTypesEnum;
   regex?: string;
+  defaultValue?: string | number;
+}
+
+export interface ITemplateSchemaItem extends ISchemaItem {
+  sequence: number;
+  columnHeading: string;
 }

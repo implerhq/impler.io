@@ -72,7 +72,7 @@ export function useValidator({ templateId }: UseSchemaProps) {
     {
       onSuccess(output) {
         setTestCodeResult(output);
-        if (!output.passed) {
+        if (output && !output.passed) {
           modals.open({
             modalId: MODAL_KEYS.VALIDATIONS_OUTPUT,
             title: MODAL_TITLES.VALIDATIONS_OUTPUT,

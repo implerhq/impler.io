@@ -6,6 +6,9 @@ import {
   IReviewData,
   ITemplate,
   PaginationResult,
+  IImportConfig,
+  ISchemaColumn,
+  IRecord,
 } from '@impler/shared';
 
 export class ApiService {
@@ -40,8 +43,22 @@ export class ApiService {
     this.isAuthenticated = false;
   }
 
-  async checkIsRequestvalid(projectId: string, template?: string) {
-    return this.httpClient.post(`/common/valid`, { projectId, template });
+  async checkIsRequestvalid(
+    projectId: string,
+    templateId?: string,
+    schema?: string
+  ) {
+    return this.httpClient.post(`/common/valid`, {
+      projectId,
+      templateId,
+      schema,
+    });
+  }
+
+  async getImportConfig(projectId: string) {
+    return this.httpClient.get(
+      `/common/import-config?projectId=${projectId}`
+    ) as Promise<IImportConfig>;
   }
 
   async uploadFile(data: {
@@ -50,6 +67,7 @@ export class ApiService {
     authHeaderValue?: string;
     extra?: string;
     schema?: string;
+    output?: string;
   }) {
     const formData = new FormData();
     formData.append('file', data.file);
@@ -57,6 +75,7 @@ export class ApiService {
       formData.append('authHeaderValue', data.authHeaderValue);
     if (data.extra) formData.append('extra', data.extra);
     if (data.schema) formData.append('schema', data.schema);
+    if (data.output) formData.append('output', data.output);
 
     return this.httpClient.post(`/upload/${data.templateId}`, formData, {
       'Content-Type': 'multipart/form-data',
@@ -80,26 +99,46 @@ export class ApiService {
     ) as Promise<IUpload>;
   }
 
-  async getReviewData(
-    uploadId: string,
-    page?: number,
-    limit?: number
-  ): Promise<IReviewData> {
-    const queryString = this.constructQueryString({ limit, page });
+  async doReivewData(uploadId: string) {
+    return this.httpClient.post(`/review/${uploadId}`);
+  }
+
+  async getReviewData({
+    uploadId,
+    page,
+    limit,
+    type,
+  }: {
+    uploadId: string;
+    page?: number;
+    limit?: number;
+    type?: string;
+  }): Promise<IReviewData> {
+    const queryString = this.constructQueryString({ limit, page, type });
 
     return this.httpClient.get(
       `/review/${uploadId}${queryString}`
     ) as Promise<IReviewData>;
   }
 
-  async confirmReview(uploadId: string, processInvalidRecords?: boolean) {
-    return this.httpClient.post(`/review/${uploadId}/confirm`, {
-      processInvalidRecords,
-    }) as Promise<IUpload>;
+  async confirmReview(uploadId: string) {
+    return this.httpClient.post(
+      `/review/${uploadId}/confirm`
+    ) as Promise<IUpload>;
   }
 
   async getUpload(uploadId: string) {
     return this.httpClient.get(`/upload/${uploadId}`) as Promise<IUpload>;
+  }
+
+  async terminateUpload(uploadId: string) {
+    return this.httpClient.delete(`/upload/${uploadId}`) as Promise<IUpload>;
+  }
+
+  async getColumns(uploadId: string) {
+    return this.httpClient.get(`/upload/${uploadId}/columns`) as Promise<
+      ISchemaColumn[]
+    >;
   }
 
   async getValidUploadedRows(uploadId: string, page: number, limit: number) {
@@ -134,5 +173,15 @@ export class ApiService {
       {},
       'blob'
     ) as Promise<ArrayBuffer>;
+  }
+
+  async updateRecord(uploadId: string, record: IRecord) {
+    return this.httpClient.put(`/review/${uploadId}/record`, record);
+  }
+
+  async deleteRecord(uploadId: string, index: number, isValid: boolean) {
+    return this.httpClient.delete(
+      `/review/${uploadId}/record/${index}?isValid=${isValid}`
+    );
   }
 }

@@ -7,8 +7,14 @@ export interface IColumn {
   isRequired?: boolean;
   isUnique?: boolean;
   regex?: string;
+  defaultValue?: string | number;
   regexDescription?: string;
   selectValues?: string[];
+  dateFormats?: string[];
   sequence?: number;
   _templateId: string;
+}
+
+export interface ISchemaColumn extends IColumn {
+  columnHeading: string;
 }

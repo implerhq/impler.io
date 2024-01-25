@@ -93,15 +93,11 @@ export class Sandbox {
       const execOptions: ExecOptions = {
         cwd: directory,
       };
-      exec(fullCommand, execOptions, (error, stdoutput, stderr) => {
+      exec(fullCommand, execOptions, (error) => {
         if (error) {
           reject(error);
 
           return;
-        }
-
-        if (stderr) {
-          reject(error);
         }
 
         resolve({ verdict: EngineResponseStatusEnum.OK });
@@ -147,16 +143,17 @@ export class Sandbox {
     fs.writeFileSync(standardOutputPath, '');
     fs.writeFileSync(standardErrorPath, '');
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const process = exec(cmd, async (error, stdout: string | PromiseLike<string>, stderr) => {
-        if (error) {
-          reject(error);
-
-          return;
-        }
-
         if (stdout) {
           fs.appendFileSync(standardOutputPath, await stdout);
+        }
+
+        if (error) {
+          fs.appendFileSync(standardErrorPath, stderr);
+          resolve({ verdict: EngineResponseStatusEnum.ERROR });
+
+          return;
         }
 
         if (stderr) {

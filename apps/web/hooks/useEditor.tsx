@@ -21,6 +21,7 @@ export function useEditor({ templateId }: UseEditorProps) {
     reset,
     control,
     setError,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm<CustomizationDataFormat>();
@@ -63,6 +64,21 @@ export function useEditor({ templateId }: UseEditorProps) {
       },
     }
   );
+  const { mutate: syncCustomization, isLoading: isSyncCustomizationLoading } = useMutation<
+    ICustomization,
+    IErrorObject,
+    void,
+    string[]
+  >(
+    [API_KEYS.TEMPLATE_CUSTOMIZATION_UPDATE, templateId],
+    () => commonApi<ICustomization>(API_KEYS.TEMPLATE_CUSTOMIZATION_SYNC as any, { parameters: [templateId] }),
+    {
+      onSuccess(data) {
+        queryClient.setQueryData([API_KEYS.TEMPLATE_CUSTOMIZATION_GET, templateId], data);
+        setValue('combinedFormat', data.combinedFormat);
+      },
+    }
+  );
 
   const validateFormat = (data: string): boolean => {
     try {
@@ -100,8 +116,10 @@ export function useEditor({ templateId }: UseEditorProps) {
     onSaveClick,
     handleSubmit,
     customization,
+    syncCustomization,
     updateCustomization,
     isCustomizationLoading,
+    isSyncCustomizationLoading,
     isUpdateCustomizationLoading,
   };
 }

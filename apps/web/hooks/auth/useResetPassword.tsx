@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 
-import { API_KEYS, CONSTANTS, ROUTES } from '@config';
+import { API_KEYS, ROUTES } from '@config';
 import { commonApi } from '@libs/api';
 import { IErrorObject, ILoginResponse } from '@impler/shared';
 import { track } from '@libs/amplitude';
@@ -30,9 +30,7 @@ export function useResetPassword() {
     {
       onSuccess: (data) => {
         if (!data) return;
-        if (!data) return;
         const profileData = jwt<IProfileData>(data.token as string);
-        localStorage.setItem(CONSTANTS.PROFILE_STORAGE_NAME, JSON.stringify(profileData));
         track({
           name: 'SIGNIN',
           properties: {

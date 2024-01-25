@@ -1,18 +1,19 @@
-import { colors, TEXTS } from '@config';
-import { usePhase3 } from '@hooks/Phase3/usePhase3';
-import { Download, Warning } from '@icons';
-import { IUpload } from '@impler/shared';
-import { Group, Text } from '@mantine/core';
-import { PhasesEum } from '@types';
-import { Button } from '@ui/Button';
-import { LoadingOverlay } from '@ui/LoadingOverlay';
-import { Pagination } from '@ui/Pagination';
-import { Table } from '@ui/Table';
-import { Footer } from 'components/Common/Footer';
+import { Stack } from '@mantine/core';
+import { HotTable } from '@handsontable/react';
 import { useRef, useState, useEffect } from 'react';
+
+import { PhasesEum } from '@types';
+import { IUpload, numberFormatter } from '@impler/shared';
+import { logAmplitudeEvent } from '@amplitude';
+import { usePhase3 } from '@hooks/Phase3/usePhase3';
+
 import { ConfirmModal } from '../ConfirmModal';
-import useStyles from './Styles';
-import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
+import { Table } from 'components/Common/Table';
+import { Footer } from 'components/Common/Footer';
+
+import { Pagination } from '@ui/Pagination';
+import { LoadingOverlay } from '@ui/LoadingOverlay';
+import { SegmentedControl } from '@ui/SegmentedControl';
 
 interface IPhase3Props {
   onNextClick: (uploadData: IUpload) => void;
@@ -20,20 +21,30 @@ interface IPhase3Props {
 }
 
 export function Phase3(props: IPhase3Props) {
-  const { classes } = useStyles();
+  const tableRef = useRef<HotTable>(null);
   const { onNextClick, onPrevClick } = props;
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const {
-    onPageChange,
-    onExportData,
-    heaings,
-    isInitialDataLoaded,
-    reviewData,
     page,
+    type,
+    headings,
+    columnDefs,
     totalPages,
-    totalData,
+    reviewData,
+    deleteRecord,
+    onTypeChange,
+    reReviewData,
+    updateRecord,
+    onPageChange,
+    setReviewData,
+    totalRecords,
+    invalidRecords,
     onConfirmReview,
+    isDoReviewLoading,
+    isReviewDataLoading,
+    showAllDataValidModal,
+    isDeleteRecordLoading,
     isConfirmReviewLoading,
+    setShowAllDataValidModal,
   } = usePhase3({ onNext: onNextClick });
   const tableWrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
   const [tableWrapperDimensions, setTableWrapperDimentions] = useState({
@@ -44,61 +55,68 @@ export function Phase3(props: IPhase3Props) {
   useEffect(() => {
     //  setting wrapper height
     setTableWrapperDimentions({
-      height: tableWrapperRef.current.getBoundingClientRect().height,
+      height: tableWrapperRef.current.getBoundingClientRect().height - 50,
       width: tableWrapperRef.current.getBoundingClientRect().width,
     });
   }, []);
 
-  const onConfirmClick = () => {
-    setShowConfirmModal(true);
-  };
-
-  const onReviewConfirmed = (exempt: boolean) => {
-    logAmplitudeEvent('CONFIRM', { exempt });
-    resetAmplitude();
-    setShowConfirmModal(false);
-    onConfirmReview(exempt);
+  const onReviewConfirmed = () => {
+    logAmplitudeEvent('CONFIRM');
+    onConfirmReview();
   };
 
   return (
     <>
-      <LoadingOverlay visible={!isInitialDataLoaded || isConfirmReviewLoading} />
-      <Group className={classes.textContainer} align="center" spacing="xs">
-        <Group align="center" spacing="xs">
-          <Warning fill={colors.red} className={classes.warningIcon} />
-          <Text size="xs" inline color={colors.red} style={{ flex: 1 }}>
-            {TEXTS.PHASE3.INVALID_DATA_INFO}
-          </Text>
-        </Group>
-        <Button leftIcon={<Download />} onClick={onExportData}>
-          {TEXTS.PHASE3.EXPORT_DATA}
-        </Button>
-      </Group>
+      <LoadingOverlay
+        visible={isReviewDataLoading || isDoReviewLoading || isConfirmReviewLoading || isDeleteRecordLoading}
+      />
 
-      <div ref={tableWrapperRef} style={{ flexGrow: 1 }}>
-        <Table
-          style={{
-            height: tableWrapperDimensions.height,
-          }}
-          headings={heaings}
-          data={reviewData}
-          emptyDataText=""
+      <Stack ref={tableWrapperRef} style={{ flexGrow: 1 }} spacing="xs" align="flex-start">
+        <SegmentedControl
+          value={type}
+          onChange={onTypeChange}
+          allDataLength={numberFormatter(totalRecords)}
+          invalidDataLength={numberFormatter(invalidRecords)}
+          validDataLength={numberFormatter(totalRecords - invalidRecords)}
         />
-      </div>
+        <Table
+          ref={tableRef}
+          onRecordDelete={(index, isValid) => deleteRecord([index, isValid])}
+          width={tableWrapperDimensions.width}
+          height={tableWrapperDimensions.height}
+          onValueChange={(row, prop, oldVal, newVal) => {
+            const name = String(prop).replace('record.', '');
+
+            const currentData = [...reviewData];
+
+            if (currentData && oldVal != newVal && !(oldVal === '' && newVal === undefined)) {
+              if (!currentData[row].updated) {
+                currentData[row].updated = {};
+              }
+              currentData[row].record[name] = newVal;
+              currentData[row].updated[name] = true;
+              setReviewData(currentData);
+              updateRecord(currentData[row]);
+            }
+          }}
+          data={reviewData}
+          headings={headings}
+          columnDefs={columnDefs}
+        />
+      </Stack>
       <Pagination page={page} total={totalPages} onChange={onPageChange} />
 
       <Footer
         primaryButtonLoading={isConfirmReviewLoading}
         active={PhasesEum.REVIEW}
-        onNextClick={onConfirmClick}
+        onNextClick={reReviewData}
         onPrevClick={onPrevClick}
       />
-
       <ConfirmModal
+        opened={!!showAllDataValidModal}
+        onClose={() => setShowAllDataValidModal(false)}
         onConfirm={onReviewConfirmed}
-        onClose={() => setShowConfirmModal(false)}
-        opened={showConfirmModal}
-        wrongDataCount={totalData}
+        totalRecords={totalRecords}
       />
     </>
   );

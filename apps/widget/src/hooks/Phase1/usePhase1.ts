@@ -4,12 +4,13 @@ import { logAmplitudeEvent } from '@amplitude';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { variables } from '@config';
+import { IImportConfig, downloadFile } from '@impler/shared';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { IFormvalues, IUploadValues } from '@types';
 import { useImplerState } from '@store/impler.context';
 import { IErrorObject, IOption, ITemplate, IUpload } from '@impler/shared';
-import { downloadFile, downloadFileFromURL, getFileNameFromUrl, notifier, ParentWindow } from '@util';
+import { downloadFileFromURL, getFileNameFromUrl, notifier, ParentWindow } from '@util';
 
 interface IUsePhase1Props {
   goNext: () => void;
@@ -17,33 +18,43 @@ interface IUsePhase1Props {
 
 export function usePhase1({ goNext }: IUsePhase1Props) {
   const { api } = useAPIState();
-  const { setUploadInfo, setTemplateInfo, schema, data } = useAppState();
   const [templates, setTemplates] = useState<IOption[]>([]);
-  const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
+  const { setUploadInfo, setTemplateInfo, setImportConfig, output, schema, data } = useAppState();
   const { projectId, templateId, authHeaderValue, extra } = useImplerState();
-  const {
-    data: dataTemplates,
-    isFetched,
-    isLoading,
-  } = useQuery<ITemplate[], IErrorObject, ITemplate[], string[]>(['templates'], () => api.getTemplates(projectId), {
-    onSuccess(templatesResponse) {
-      setTemplates(
-        templatesResponse.map((item) => ({
-          label: item.name,
-          value: item._id,
-        }))
-      );
-      if (templateId) {
-        const foundTemplate = templatesResponse.find((templateItem) => templateItem._id === templateId);
-        if (foundTemplate) {
-          setTemplateInfo(foundTemplate);
-        }
-      }
+  const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
+  const { isFetched: isImportConfigLoaded, isLoading: isImportConfigLoading } = useQuery<
+    IImportConfig,
+    IErrorObject,
+    IImportConfig
+  >(['importConfig'], () => api.getImportConfig(projectId), {
+    onSuccess(importConfigResponse) {
+      setImportConfig(importConfigResponse);
     },
     onError(error: IErrorObject) {
       notifier.showError({ message: error.message, title: error.error });
     },
   });
+  const {
+    data: dataTemplates,
+    isFetched,
+    isLoading,
+  } = useQuery<ITemplate[], IErrorObject, ITemplate[], string[]>(
+    ['templates', projectId],
+    () => api.getTemplates(projectId),
+    {
+      onSuccess(templatesResponse) {
+        setTemplates(
+          templatesResponse.map((item) => ({
+            label: item.name,
+            value: item._id,
+          }))
+        );
+      },
+      onError(error: IErrorObject) {
+        notifier.showError({ message: error.message, title: error.error });
+      },
+    }
+  );
   const { isLoading: isUploadLoading, mutate: submitUpload } = useMutation<IUpload, IErrorObject, IUploadValues>(
     ['upload'],
     (values: any) => api.uploadFile(values),
@@ -96,8 +107,14 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
   } = useForm<IFormvalues>();
 
   useEffect(() => {
-    if (templateId) setValue('templateId', templateId);
-  }, [templateId]);
+    if (templateId) {
+      setValue('templateId', templateId);
+      const foundTemplate = dataTemplates?.find((templateItem) => templateItem._id === templateId);
+      if (foundTemplate) {
+        setTemplateInfo(foundTemplate);
+      }
+    }
+  }, [templateId, dataTemplates]);
 
   const findTemplate = (): ITemplate | undefined => {
     let foundTemplate: ITemplate | undefined;
@@ -147,6 +164,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
         authHeaderValue,
         extra,
         schema,
+        output,
       });
     }
   };
@@ -161,7 +179,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     isUploadLoading,
     onTemplateChange,
     isDownloadInProgress,
-    isInitialDataLoaded: isFetched && !isLoading,
+    isInitialDataLoaded: isFetched && !isLoading && isImportConfigLoaded && !isImportConfigLoading,
     showSelectTemplate: !templateId,
     onSubmit: handleSubmit(onSubmit),
   };

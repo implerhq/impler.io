@@ -6,7 +6,7 @@ import { useMutation } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
 import { track } from '@libs/amplitude';
-import { API_KEYS, CONSTANTS, ROUTES } from '@config';
+import { API_KEYS, ROUTES } from '@config';
 import { IErrorObject, ILoginResponse } from '@impler/shared';
 
 export function useSignin() {
@@ -22,7 +22,6 @@ export function useSignin() {
     onSuccess: (data) => {
       if (!data) return;
       const profileData = jwt<IProfileData>(data.token as string);
-      localStorage.setItem(CONSTANTS.PROFILE_STORAGE_NAME, JSON.stringify(profileData));
       track({
         name: 'SIGNIN',
         properties: {

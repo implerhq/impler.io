@@ -1,8 +1,8 @@
 import React from 'react';
 import Head from 'next/head';
 import getConfig from 'next/config';
+import { Poppins } from 'next/font/google';
 import App, { AppProps } from 'next/app';
-import { Poppins } from '@next/font/google';
 import { useLocalStorage } from '@mantine/hooks';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
@@ -10,8 +10,12 @@ import { init } from '@amplitude/analytics-browser';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ColorSchemeProvider, MantineProvider, ColorScheme } from '@mantine/core';
 
+import { commonApi } from '@libs/api';
+import { notify } from '@libs/notify';
+import { track } from '@libs/amplitude';
 import { addOpacityToHex } from 'shared/utils';
-import { mantineConfig, colors } from '@config';
+import { StoreWrapper } from 'store/StoreWrapper';
+import { mantineConfig, colors, API_KEYS, ROUTES, NOTIFICATION_KEYS } from '@config';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -28,6 +32,25 @@ const client = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       retry: false,
+      onError: async (err: any) => {
+        if (err && err.message === 'Failed to fetch') {
+          track({
+            name: 'ERROR',
+            properties: {
+              message: err.message,
+            },
+          });
+          notify(NOTIFICATION_KEYS.ERROR_OCCURED);
+          window.location.href = ROUTES.SIGNIN;
+        } else if (err && err.statusCode === 401) {
+          await commonApi(API_KEYS.LOGOUT as any, {});
+          track({
+            name: 'LOGOUT',
+            properties: {},
+          });
+          window.location.href = ROUTES.SIGNIN;
+        }
+      },
     },
   },
 });
@@ -87,16 +110,18 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                     backdropFilter: 'blur(5px)',
                   },
                   inner: {
-                    top: '25%',
+                    top: '10%',
                   },
                 },
               }}
             >
-              {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-              {/* @ts-ignore */}
-              <Layout {...(Component.Layout ? { pageProps } : {})}>
-                <Component {...pageProps} />
-              </Layout>
+              <StoreWrapper>
+                {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+                {/* @ts-ignore */}
+                <Layout {...(Component.Layout ? { pageProps } : {})}>
+                  <Component {...pageProps} />
+                </Layout>
+              </StoreWrapper>
             </ModalsProvider>
           </MantineProvider>
         </ColorSchemeProvider>

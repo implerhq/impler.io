@@ -9,6 +9,7 @@ namespace NodeJS {
     NEXT_PUBLIC_AMPLITUDE_ID: string;
     NEXT_PUBLIC_TAWK_PROPERTY_ID: string;
     NEXT_PUBLIC_TAWK_WIDGET_ID: string;
+    NEXT_PUBLIC_OPENREPLAY_KEY: string;
 
     NEXT_PUBLIC_GTM_ID: string;
     NEXT_PUBLIC_GOOGLE_ANALYTICS_ID: string;
@@ -21,8 +22,8 @@ interface IProfileData {
   lastName: string;
   email: string;
   profilePicture: string;
-  _projectId?: string;
-  accessToken?: string;
+  _projectId: string;
+  accessToken: string;
 }
 
 interface ICreateProjectData {

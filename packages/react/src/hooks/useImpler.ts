@@ -1,17 +1,19 @@
 import { useCallback, useEffect, useState } from 'react';
+import { EventTypesEnum, IShowPayload, IUpload } from '@impler/shared';
+
 import { logError } from '../utils/logger';
-import { EventTypesEnum, IShowPayload, IUpload, ISchemaItem } from '@impler/shared';
-import { EventCalls, UploadTemplateData, UploadData } from '../components/button/Button.types';
+import { EventCalls, UploadTemplateData, UploadData, ISchemaItem } from '../components/button/Button.types';
 
 interface ShowWidgetProps {
   colorScheme?: 'light' | 'dark';
   schema?: ISchemaItem[];
   data?: Record<string, string | any>[];
+  output?: Record<string, string | any>;
 }
 
 interface UseImplerProps {
-  projectId: string;
   title?: string;
+  projectId?: string;
   templateId?: string;
   accessToken?: string;
   primaryColor?: string;
@@ -36,14 +38,12 @@ export function useImpler({
   onUploadStart,
   onUploadTerminate,
 }: UseImplerProps) {
+  const [uuid] = useState(generateUuid());
   const [isImplerInitiated, setIsImplerInitiated] = useState(false);
 
   const onEventHappen = useCallback(
     (eventData: EventCalls) => {
       switch (eventData.type) {
-        case EventTypesEnum.WIDGET_READY:
-          setIsImplerInitiated(true);
-          break;
         case EventTypesEnum.UPLOAD_STARTED:
           if (onUploadStart) onUploadStart(eventData.value);
           break;
@@ -61,27 +61,46 @@ export function useImpler({
     [onUploadComplete, onUploadStart, onUploadTerminate, onWidgetClose]
   );
 
-  const initWidget = useCallback(() => {
-    if (window.impler) {
-      window.impler.init(projectId, { accessToken });
-      window.impler.on('message', onEventHappen);
-    }
-  }, [accessToken, onEventHappen, projectId]);
+  useEffect(() => {
+    const readyCheckInterval = setInterval(() => {
+      if (window.impler && window.impler.isReady()) {
+        setIsImplerInitiated(true);
+        clearInterval(readyCheckInterval);
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(readyCheckInterval);
+    };
+  }, []);
 
   useEffect(() => {
     if (!window.impler) logError('IMPLER_UNDEFINED_ERROR');
-    else if (!projectId) logError('PROJECTID_NOT_SPECIFIED');
-    else initWidget();
-  }, [accessToken, templateId, initWidget]);
+    else {
+      window.impler.init(uuid);
+      window.impler.on('message', onEventHappen, uuid);
+    }
+  }, []);
 
-  const showWidget = async ({ colorScheme, data, schema }: ShowWidgetProps) => {
-    if (isImplerInitiated) {
+  function generateUuid() {
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+  }
+
+  const showWidget = async ({ colorScheme, data, schema, output }: ShowWidgetProps) => {
+    if (window.impler && isImplerInitiated) {
       const payload: IShowPayload = {
+        uuid,
         templateId,
         data,
+        host: '',
+        projectId,
+        accessToken,
       };
       if (Array.isArray(schema) && schema.length > 0) {
         payload.schema = JSON.stringify(schema);
+      }
+      if (typeof output === 'object' && !Array.isArray(output) && output !== null) {
+        payload.output = JSON.stringify(output);
       }
       if (title) payload.title = title;
       if (colorScheme) payload.colorScheme = colorScheme;
@@ -105,9 +124,7 @@ export function useImpler({
           payload.authHeaderValue = authHeaderValue;
         }
       }
-      if (window.impler && isImplerInitiated) {
-        window.impler.show(payload);
-      }
+      window.impler.show(payload);
     }
   };
 

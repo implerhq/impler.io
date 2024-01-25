@@ -20,13 +20,7 @@ export function CreateImportForm({ onSubmit }: CreateImportFormProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} ref={focusTrapRef}>
       <Stack spacing="sm">
-        <Input
-          placeholder="Import title"
-          dataAutoFocus
-          required
-          register={register('name')}
-          error={errors.name?.message}
-        />
+        <Input placeholder="Import title" autoFocus required register={register('name')} error={errors.name?.message} />
         <Button type="submit" fullWidth>
           Create & Continue
         </Button>

@@ -2,7 +2,6 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { Title, Stack } from '@mantine/core';
-import { useLocalStorage } from '@mantine/hooks';
 import { useMutation } from '@tanstack/react-query';
 
 import { Input } from '@ui/input';
@@ -10,13 +9,14 @@ import { Button } from '@ui/button';
 
 import { commonApi } from '@libs/api';
 import { track } from '@libs/amplitude';
-import { API_KEYS, CONSTANTS, VARIABLES } from '@config';
+import { API_KEYS, VARIABLES } from '@config';
 import DarkLogo from '@assets/images/logo-dark.png';
 import { IProjectPayload, IErrorObject, IEnvironmentData } from '@impler/shared';
+import { useAppState } from 'store/app.context';
 
 export default function CreateProjectForm() {
   const { push } = useRouter();
-  const [, setProfile] = useLocalStorage<IProfileData>({ key: CONSTANTS.PROFILE_STORAGE_NAME });
+  const { profileInfo, setProfileInfo } = useAppState();
   const {
     register,
     handleSubmit,
@@ -29,11 +29,13 @@ export default function CreateProjectForm() {
     string[]
   >([API_KEYS.PROJECT_CREATE], (data) => commonApi(API_KEYS.PROJECT_CREATE as any, { body: data }), {
     onSuccess: (data) => {
-      setProfile((profileData) => ({
-        ...profileData,
-        _projectId: data.project._id,
-        accessToken: data.environment.apiKeys[VARIABLES.ZERO].key,
-      }));
+      if (profileInfo) {
+        setProfileInfo({
+          ...profileInfo,
+          _projectId: data.project._id,
+          accessToken: data.environment.apiKeys[VARIABLES.ZERO].key,
+        });
+      }
       track({
         name: 'PROJECT CREATE',
         properties: {

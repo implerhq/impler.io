@@ -4,7 +4,7 @@
 //
 
 import { EventTypesEnum } from './shared/eventTypes';
-import { UnmountedError, AuthenticationError } from './shared/errors';
+import { UnmountedError } from './shared/errors';
 import { IFRAME_URL } from './shared/resources';
 
 const WEASL_WRAPPER_ID = 'impler-container';
@@ -12,9 +12,7 @@ const IFRAME_ID = 'impler-iframe-element';
 const WRAPPER_CLASS_NAME = 'wrapper-impler-widget';
 
 class Impler {
-  public projectId: string | unknown;
-
-  private i18n?: Record<string, unknown>;
+  private projectId: string = '';
 
   private onloadFunc: (b: any) => void;
 
@@ -22,29 +20,32 @@ class Impler {
 
   private widgetVisible = false;
 
-  private listeners: { [key: string]: (data: any) => void } = {};
+  private listeners: {
+    [key: string]: { [key: string]: (data: any) => void };
+  } = {};
 
   private initPayload: any;
 
+  private activeWidgetId: string | undefined;
+
   private isWidgetReady: boolean = false;
-
-  private isAuthenticated: boolean = false;
-
-  private authenticationError?: string;
 
   constructor(onloadFunc = function () {}) {
     this.onloadFunc = onloadFunc;
     this.widgetVisible = false;
   }
 
-  on = (name: string, cb: (data: any) => void) => {
-    this.listeners[name] = cb;
+  on = (name: string, cb: (data: any) => void, id: string = '1') => {
+    if (!this.listeners[id]) this.listeners[id] = {};
+    this.listeners[id][name] = cb;
   };
 
-  init = (projectId: string, payload: any) => {
-    this.projectId = projectId;
-    this.initPayload = payload;
-    this.initializeIframe(projectId);
+  init = (widgetOrProjectId: string = '1', initPayload: { accessToken: string }) => {
+    if (initPayload) {
+      this.projectId = widgetOrProjectId;
+      this.initPayload = initPayload;
+    }
+    this.initializeIframe(widgetOrProjectId);
     this.mountIframe();
   };
 
@@ -62,7 +63,7 @@ class Impler {
     var elem = document.querySelector(`.${WRAPPER_CLASS_NAME}`) as HTMLBodyElement;
 
     if (elem) {
-      elem.style.display = 'none';
+      elem.style.visibility = 'hidden';
     }
   };
 
@@ -72,24 +73,34 @@ class Impler {
     var elem = document.querySelector(`.${WRAPPER_CLASS_NAME}`) as HTMLBodyElement;
 
     if (elem) {
-      elem.style.display = 'inline-block';
+      elem.style.visibility = 'visible';
+    }
+    if (payload.uuid) {
+      this.activeWidgetId = payload.uuid;
+    } else {
+      this.activeWidgetId = '1';
     }
 
     this.iframe?.contentWindow?.postMessage(
       {
         type: EventTypesEnum.SHOW_WIDGET,
-        value: payload,
+        value: {
+          projectId: this.projectId,
+          ...(this.initPayload || {}),
+          ...payload,
+          host: location.host,
+        },
       },
       '*'
     );
   };
 
+  isReady = () => this.isWidgetReady;
+
   // PRIVATE METHODS
   ensureMounted = () => {
     if (!document.getElementById(IFRAME_ID)) {
       throw new UnmountedError('impler.init needs to be called first');
-    } else if (!this.isAuthenticated) {
-      throw new AuthenticationError(this.authenticationError || `You're not authenticated to access the widget`);
     }
   };
 
@@ -99,46 +110,36 @@ class Impler {
       switch (event.data.type) {
         case EventTypesEnum.WIDGET_READY:
           this.isWidgetReady = true;
-          this.iframe?.contentWindow?.postMessage(
-            {
-              type: EventTypesEnum.INIT_IFRAME,
-              value: this.initPayload,
-            },
-            '*'
-          );
-          this.postMessageToContentWindow(EventTypesEnum.WIDGET_READY);
+          if (typeof this.listeners === 'object') {
+            Object.keys(this.listeners).forEach((id) => {
+              this.postMessageToContentWindow(EventTypesEnum.WIDGET_READY, id);
+            });
+          }
           break;
         case EventTypesEnum.CLOSE_WIDGET:
           this.hideWidget();
-          this.postMessageToContentWindow(event.data.type);
+          this.postMessageToContentWindow(event.data.type, this.activeWidgetId!);
           break;
-        case EventTypesEnum.AUTHENTICATION_VALID:
-          this.isAuthenticated = true;
-          this.authenticationError = undefined;
-          break;
-        case EventTypesEnum.AUTHENTICATION_ERROR:
-          this.isAuthenticated = false;
-          this.authenticationError = event.data.value?.message;
         default:
           this.postMessageToContentWindow(event.data.type, event.data.value);
       }
     }
   };
 
-  postMessageToContentWindow(type: EventTypesEnum, value?: any): void {
-    if (!this.listeners['message']) {
+  postMessageToContentWindow(type: EventTypesEnum, id: string, value?: any): void {
+    if (!this.listeners[id]?.['message']) {
       return;
     }
-    this.listeners['message']({ type, value });
+    this.listeners[id]['message']({ type, value });
   }
 
-  initializeIframe = (projectId: string) => {
+  initializeIframe = (id: string) => {
     let iframe: HTMLIFrameElement;
     if (!document.getElementById(IFRAME_ID)) {
       const iframe = document.createElement('iframe');
 
       iframe.style.backgroundColor = 'transparent';
-      iframe.src = `${IFRAME_URL}/${projectId}?`;
+      iframe.src = `${IFRAME_URL}/widget?id=${id}`;
       iframe.id = IFRAME_ID;
       iframe.style.border = 'none';
       iframe.style.position = 'fixed';
@@ -156,32 +157,6 @@ class Impler {
       iframe = document.getElementById(IFRAME_ID) as HTMLIFrameElement;
       this.iframe = iframe;
     }
-    if (this.isWidgetReady) {
-      this.iframe?.contentWindow?.postMessage(
-        {
-          type: EventTypesEnum.INIT_IFRAME,
-          value: this.initPayload,
-        },
-        '*'
-      );
-      this.postMessageToContentWindow(EventTypesEnum.WIDGET_READY);
-    }
-  };
-
-  runPriorCalls = () => {
-    const allowedCalls: string[] = [];
-    const priorCalls =
-      window.impler && window.impler._c && typeof window.impler._c === 'object' ? window.impler._c : [];
-    priorCalls.forEach((call: string[]) => {
-      const method: any = call[0];
-      const args = call[1];
-      if (allowedCalls.includes(method)) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        (this[method as any] as any).apply(this, args);
-      }
-    });
-    this.onloadFunc.call(window.impler, window.impler);
   };
 
   mountIframe = () => {
@@ -191,11 +166,12 @@ class Impler {
       const wrapper = document.createElement('div');
 
       wrapper.className = WRAPPER_CLASS_NAME;
-      wrapper.style.display = 'none';
+      wrapper.style.visibility = 'hidden';
       wrapper.id = WEASL_WRAPPER_ID;
-      (
-        wrapper as any
-      ).style = `z-index: ${Number.MAX_SAFE_INTEGER}; width: 0; height: 0; position: relative; display: none;`;
+      wrapper.style.zIndex = String(Number.MAX_SAFE_INTEGER);
+      wrapper.style.width = '0';
+      wrapper.style.height = '0';
+      wrapper.style.position = 'relative';
       wrapper.appendChild(this.iframe);
       document.body.appendChild(wrapper);
     }
@@ -214,4 +190,5 @@ export default ((window: any) => {
   (window as any).impler.init = impler.init;
   (window as any).impler.on = impler.on;
   (window as any).impler.show = impler.showWidget;
+  (window as any).impler.isReady = impler.isReady;
 })(window);

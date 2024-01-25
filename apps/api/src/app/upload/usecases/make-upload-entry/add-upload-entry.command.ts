@@ -16,4 +16,12 @@ export class AddUploadEntryCommand {
   totalRecords?: number;
 
   schema?: string;
+
+  originalFileName: string;
+
+  originalFileType: string;
+
+  customRecordFormat?: string;
+
+  customChunkFormat?: string;
 }

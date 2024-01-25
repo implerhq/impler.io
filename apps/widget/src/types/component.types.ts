@@ -1,10 +1,9 @@
-import { IInitPayload, IShowPayload } from '@impler/shared';
+import { IShowPayload } from '@impler/shared';
 import { EventTypesEnum } from '@impler/shared';
 
 export type MessageHandlerDataType =
   | {
       type: EventTypesEnum.INIT_IFRAME;
-      value: IInitPayload;
     }
   | {
       type: EventTypesEnum.SHOW_WIDGET;
@@ -17,6 +16,7 @@ export enum PromptModalTypesEnum {
 }
 
 export enum PhasesEum {
+  VALIDATE,
   UPLOAD,
   MAPPING,
   REVIEW,
@@ -33,4 +33,5 @@ export interface IUploadValues extends IFormvalues {
   authHeaderValue?: string;
   extra?: string;
   schema?: string;
+  output?: string;
 }

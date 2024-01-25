@@ -6,3 +6,4 @@ export * from './widget/widget.types';
 export * from './auth';
 export * from './project/project.types';
 export * from './environment/environment.types';
+export * from './review';

@@ -13,6 +13,10 @@ export class UploadEntity {
 
   invalidCSVDataFileUrl: string;
 
+  originalFileName: string;
+
+  originalFileType: string;
+
   headings: string[];
 
   uploadedDate: Date;
@@ -32,4 +36,8 @@ export class UploadEntity {
   processInvalidRecords: boolean;
 
   customSchema: string;
+
+  customRecordFormat: string;
+
+  customChunkFormat: string;
 }

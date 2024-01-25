@@ -1,3 +1,4 @@
+import * as XLSX from 'xlsx';
 import * as ExcelJS from 'exceljs';
 import { ParseConfig, parse } from 'papaparse';
 import { ColumnTypesEnum, Defaults, FileEncodingsEnum } from '@impler/shared';
@@ -7,29 +8,19 @@ import { IExcelFileHeading } from '@shared/types/file.types';
 
 export class ExcelFileService {
   async convertToCsv(file: Express.Multer.File): Promise<string> {
-    return new Promise(async (resolve) => {
-      const workbook = new ExcelJS.Workbook();
-      await workbook.xlsx.load(file.buffer);
-      workbook.csv
-        .writeBuffer({
-          map(value) {
-            if (typeof value === 'object' && value && value.text) {
-              return value.text;
-            }
-
-            return value;
-          },
-          includeEmptyRows: true,
-          formatterOptions: {
-            escape: '',
-            headers: true,
-          },
-        })
-        .then((buffer) => {
-          resolve(buffer.toString());
-
-          return '';
-        });
+    return new Promise(async (resolve, reject) => {
+      try {
+        const wb = XLSX.read(file.buffer);
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        resolve(
+          XLSX.utils.sheet_to_csv(ws, {
+            blankrows: false,
+            skipHidden: true,
+          })
+        );
+      } catch (error) {
+        reject(error);
+      }
     });
   }
   formatName(name: string): string {
@@ -66,22 +57,6 @@ export class ExcelFileService {
       error: 'Please select from the list',
     });
   }
-  addDateValidation({ ws, range, isRequired }: { ws: ExcelJS.Worksheet; range: string; isRequired: boolean }) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    ws.dataValidations.add(range, {
-      type: 'date',
-      allowBlank: !isRequired,
-      operator: 'greaterThan',
-      formulae: [''],
-      showErrorMessage: true,
-      error: 'Please select a date',
-      errorTitle: 'Invalid Date',
-      showInputMessage: true,
-      promptTitle: 'Date',
-      prompt: 'Select a date',
-    });
-  }
   getExcelColumnNameFromIndex(columnNumber: number) {
     // To store result (Excel column name)
     const columnName = [];
@@ -110,7 +85,16 @@ export class ExcelFileService {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Data');
     const headingNames = headings.map((heading) => heading.key);
-    worksheet.addRow(headingNames);
+    worksheet.columns = headings.map((heading) => {
+      if (heading.type === ColumnTypesEnum.DATE)
+        return {
+          header: heading.key,
+          key: heading.key,
+          style: { numFmt: heading.dateFormats?.[0] || Defaults.DATE_FORMAT },
+        };
+
+      return { header: heading.key, key: heading.key };
+    });
     headings.forEach((heading, index) => {
       if (heading.type === ColumnTypesEnum.SELECT) {
         const keyName = this.addSelectSheet(workbook, heading);
@@ -119,13 +103,6 @@ export class ExcelFileService {
           ws: worksheet,
           range: `${columnName}2:${columnName}9999`,
           keyName,
-          isRequired: heading.isRequired,
-        });
-      } else if (heading.type === ColumnTypesEnum.DATE) {
-        const columnName = this.getExcelColumnNameFromIndex(index + 1);
-        this.addDateValidation({
-          ws: worksheet,
-          range: `${columnName}2:${columnName}9999`,
           isRequired: heading.isRequired,
         });
       }
@@ -153,21 +130,28 @@ export class CSVFileService2 {
       } else {
         fileContent = file.buffer.toString(FileEncodingsEnum.CSV);
       }
+      let headings: string[];
+      let recordIndex = -1;
       parse(fileContent, {
         ...(options || {}),
-        preview: 1,
+        preview: 2,
         step: (results) => {
-          if (Object.keys(results.data).length > Defaults.ONE) {
-            resolve(results.data);
-          } else {
-            reject(new EmptyFileException());
-          }
+          recordIndex++;
+          if (recordIndex === Defaults.ZERO) {
+            if (Array.isArray(results.data) && results.data.length > Defaults.ZERO) headings = results.data as string[];
+            else reject(new EmptyFileException());
+          } else resolve(headings);
         },
         error: (error) => {
           if (error.message.includes('Parse Error')) {
             reject(new InvalidFileException());
           } else {
             reject(error);
+          }
+        },
+        complete: () => {
+          if (recordIndex !== Defaults.ONE) {
+            reject(new EmptyFileException());
           }
         },
       });

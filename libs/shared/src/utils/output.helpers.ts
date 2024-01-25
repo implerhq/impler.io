@@ -1,3 +1,5 @@
+import { DEFAULT_VALUES_ARR, DEFAULT_VALUES_OBJ } from './defaults';
+
 const tabWidth = 2;
 export function createRecordFormat(variables: string[]): string {
   const recordFormat = variables.reduce((acc, variable) => {
@@ -24,30 +26,30 @@ export function createVariable(name: string) {
   return `{{${name}}}`;
 }
 
-export function replaceVariableInStringWithKey(str: string, key: string, value: string) {
-  if (typeof value === 'string') return str.replace(createVariable(key), value);
-
-  return value;
+export function replaceVariableInStringWithKey(str: string, key: string, value: any) {
+  return str.replace(createVariable(key), value);
 }
 
-export function replaceVariableInString(str: string, record: Record<string, string>) {
+export function replaceVariableInString(str: string, record: Record<string, string | number>) {
   const regex = /{{.*?}}/g;
-  let found: RegExpExecArray;
-  let modifiedStr = str;
-  while ((found = regex.exec(str)) !== null) {
-    if (found.index === regex.lastIndex) {
-      regex.lastIndex++;
+  let modifiedStr: string | number = str;
+  const keys = Object.keys(record);
+  const matches = str.match(regex);
+  for (const match of matches) {
+    const key = match.replace(/{{|}}/g, '');
+    if (keys.includes(key)) {
+      if (str === match) {
+        modifiedStr = record[key];
+      } else if (typeof modifiedStr === 'string') {
+        modifiedStr = replaceVariableInStringWithKey(modifiedStr, key, record[key]);
+      }
     }
-
-    // eslint-disable-next-line no-magic-numbers
-    const key = found[0].replace(/{{|}}/g, '');
-    if (typeof record[key] !== 'undefined') modifiedStr = replaceVariableInStringWithKey(modifiedStr, key, record[key]);
   }
 
   return modifiedStr;
 }
 
-export function replaceVariable(formatKey: unknown, key: string, value: any, record: Record<string, string>) {
+export function replaceVariable(formatKey: unknown, key: string, value: any, record: Record<string, string | number>) {
   if (typeof formatKey == 'string' && /{{|}}/g.test(formatKey)) return replaceVariableInString(formatKey, record);
   else if (typeof formatKey === 'object' && !Array.isArray(formatKey) && formatKey !== null) {
     // handling objects
@@ -62,8 +64,25 @@ export function replaceVariable(formatKey: unknown, key: string, value: any, rec
 
 export function replaceVariablesInObject(
   format: Record<string, unknown>,
-  record: Record<string, string>
+  record: Record<string, string | number>,
+  defaultValues?: Record<string, string | number>
 ): Record<string, string> {
+  if (defaultValues) {
+    Object.keys(defaultValues).forEach((key) => {
+      if (typeof record[key] === 'undefined') {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        if (typeof defaultValues[key] === 'string' && DEFAULT_VALUES_ARR.includes(defaultValues[key])) {
+          // checking for specifc value
+          record[key] = DEFAULT_VALUES_OBJ[defaultValues[key]];
+        } else {
+          // applying default value
+          record[key] = defaultValues[key];
+        }
+      }
+    });
+  }
+
   return Object.keys(format).reduce((acc, key) => {
     acc[key] = replaceVariable(format[key], key, format[key], record);
 

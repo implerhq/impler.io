@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { ColumnTypesEnum, FileMimeTypesEnum } from '@impler/shared';
+import { ColumnTypesEnum, FileNameService, FileMimeTypesEnum } from '@impler/shared';
 import { StorageService } from '@impler/shared/dist/services/storage';
 import { ColumnEntity, TemplateRepository } from '@impler/dal';
 import { IExcelFileHeading } from '@shared/types/file.types';
-import { ExcelFileService, FileNameService } from '@shared/services/file';
+import { ExcelFileService } from '@shared/services/file';
 
 @Injectable()
 export class SaveSampleFile {
@@ -20,6 +20,7 @@ export class SaveSampleFile {
       type: columnItem.type as ColumnTypesEnum,
       selectValues: columnItem.selectValues,
       isRequired: columnItem.isRequired,
+      dateFormats: columnItem.dateFormats,
     }));
     const fileName = this.fileNameService.getSampleFileName(templateId);
     const sampleFileUrl = this.fileNameService.getSampleFileUrl(templateId);

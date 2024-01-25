@@ -23,6 +23,7 @@ export class UpdateColumn {
     const isTypeUpdated = command.type !== column.type;
     const isFieldConditionUpdated =
       JSON.stringify(column.selectValues) !== JSON.stringify(command.selectValues) ||
+      JSON.stringify(column.dateFormats) !== JSON.stringify(command.dateFormats) ||
       column.isRequired !== command.isRequired;
 
     column = await this.columnRepository.findOneAndUpdate({ _id }, command);

@@ -15,6 +15,7 @@ import {
   CreateTemplate,
   DeleteTemplate,
   UpdateTemplate,
+  SyncCustomization,
   GetTemplateDetails,
   GetUploadsCommand,
   CreateTemplateCommand,
@@ -47,17 +48,18 @@ import { UpdateCustomizationRequestDto } from './dtos/update-customization-reque
 @UseGuards(JwtAuthGuard)
 export class TemplateController {
   constructor(
-    private getTemplateColumns: GetTemplateColumns,
     private getUploads: GetUploads,
     private getValidations: GetValidations,
     private downloadSample: DownloadSample,
     private getCustomization: GetCustomization,
     private updateValidations: UpdateValidations,
-    private updateCustomization: UpdateCustomization,
+    private syncCustomization: SyncCustomization,
     private createTemplateUsecase: CreateTemplate,
     private updateTemplateUsecase: UpdateTemplate,
     private deleteTemplateUsecase: DeleteTemplate,
+    private getTemplateColumns: GetTemplateColumns,
     private getTemplateDetails: GetTemplateDetails,
+    private updateCustomization: UpdateCustomization,
     private updateTemplateColumns: UpdateTemplateColumns
   ) {}
 
@@ -95,7 +97,7 @@ export class TemplateController {
     summary: 'Get template columns',
   })
   @ApiOkResponse({
-    type: [TemplateResponseDto],
+    type: [ColumnResponseDto],
   })
   async getColumns(@Param('templateId') _templateId: string): Promise<ColumnResponseDto[]> {
     return this.getTemplateColumns.execute(_templateId);
@@ -167,6 +169,7 @@ export class TemplateController {
           regex: columnData.regex,
           regexDescription: columnData.regexDescription,
           selectValues: columnData.selectValues,
+          dateFormats: columnData.dateFormats,
           sequence: columnData.sequence,
           _templateId,
           type: columnData.type,
@@ -204,6 +207,7 @@ export class TemplateController {
     );
   }
 
+  // Customization
   @Get(':templateId/customizations')
   @ApiOperation({
     summary: 'Get template customizations',
@@ -229,6 +233,20 @@ export class TemplateController {
     return this.updateCustomization.execute(templateId, UpdateCustomizationCommand.create(body));
   }
 
+  @Put(':templateId/customizations/sync')
+  @ApiOperation({
+    summary: 'Sync template customizations',
+  })
+  @ApiOkResponse({
+    type: CustomizationResponseDto,
+  })
+  async syncCustomizationRoute(
+    @Param('templateId', ValidateMongoId) templateId: string
+  ): Promise<CustomizationResponseDto> {
+    return this.syncCustomization.execute(templateId);
+  }
+
+  // Validations
   @Get(':templateId/validations')
   @ApiOperation({
     summary: 'Get template validations',

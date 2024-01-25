@@ -1,11 +1,13 @@
 export const TEXTS = {
   TITLES: {
+    VALIDATE: 'Validate',
     UPLOAD: 'Upload',
     MAPPING: 'Mapping',
     REVIEW: 'Review',
     COMPLETE: 'Complete',
   },
   STEPS: {
+    VALIDATE: 'Validate',
     UPLOAD: 'Upload',
     MAPPING: 'Mapping',
     REVIEW: 'Review',
@@ -32,9 +34,10 @@ export const TEXTS = {
     NAME_IN_SHEET_TITLE: 'Column in your sheet',
   },
   PHASE3: {
-    INVALID_DATA_INFO: 'Sheet contains invalid data, hover over columns to see error',
     EXPORT_DATA: 'Export Data',
-    CONFIRM_UPLOAD: 'Complete Upload',
+    RE_REVIEW_DATA: 'Re-Review Data',
+    COMPLETE: 'Complete',
+    ALL_VALID_CONFIRMATION: 'All {total} row(s) found valid! Would you like to complete the Import?',
   },
   PHASE4: {
     CLOSE: 'Close',
