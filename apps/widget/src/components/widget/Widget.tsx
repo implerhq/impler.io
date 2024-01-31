@@ -18,8 +18,7 @@ import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
 
 export function Widget() {
   const defaultDataCount = 0;
-  const [phase, setPhase] = useState<PhasesEum>(PhasesEum.VALIDATE);
-  const { terminateUpload } = useWidget();
+  const { terminateUpload, phase, setPhase } = useWidget();
   const [dataCount, setDataCount] = useState<number>(defaultDataCount);
   const [promptContinueAction, setPromptContinueAction] = useState<PromptModalTypesEnum>();
   const { showWidget, setShowWidget, reset: resetAppState, uploadInfo, templateInfo, title } = useAppState();
@@ -33,7 +32,6 @@ export function Widget() {
     setPromptContinueAction(undefined);
     ParentWindow.UploadTerminated({ uploadId: uploadInfo._id });
     if (promptContinueAction === PromptModalTypesEnum.CLOSE) closeWidget();
-    resetProgress();
   };
   const onPromptCancel = () => {
     setPromptContinueAction(undefined);
@@ -45,7 +43,6 @@ export function Widget() {
   const closeWidget = () => {
     setShowWidget(false);
     resetAmplitude();
-    resetProgress();
     setTimeout(() => {
       ParentWindow.Close();
     }, variables.closeDelayInMS);
