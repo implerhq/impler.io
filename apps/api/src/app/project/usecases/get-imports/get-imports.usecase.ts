@@ -8,10 +8,19 @@ import { PaginationResult } from '@impler/shared';
 export class GetImports {
   constructor(private templateRepository: TemplateRepository, private commonRepository: CommonRepository) {}
 
-  async execute({ _projectId, limit, page }: GetImportsCommand): Promise<PaginationResult<ImportListResponseDto>> {
+  async execute({
+    _projectId,
+    limit,
+    page,
+    search,
+  }: GetImportsCommand): Promise<PaginationResult<ImportListResponseDto>> {
     const imports = await this.templateRepository.paginate(
       {
         _projectId: this.commonRepository.generateMongoId(_projectId),
+        name: {
+          $regex: search || '',
+          $options: 'i',
+        },
       },
       'name totalUploads totalRecords totalInvalidRecords',
       {

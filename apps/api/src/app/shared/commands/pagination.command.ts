@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { BaseCommand } from './base.command';
 
 export class PaginationCommand extends BaseCommand {
@@ -9,4 +9,8 @@ export class PaginationCommand extends BaseCommand {
   @IsOptional()
   @IsNumber()
   limit?: number;
+
+  @IsOptional()
+  @IsString()
+  search?: string;
 }

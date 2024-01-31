@@ -76,7 +76,8 @@ export class ProjectController {
   getImportsRoute(
     @Param('projectId', ValidateMongoId) _projectId: string,
     @Query('page') page = Defaults.ONE,
-    @Query('limit') limit = Defaults.PAGE_LIMIT
+    @Query('limit') limit = Defaults.PAGE_LIMIT,
+    @Query('search') search: string
   ): Promise<PaginationResult<ImportListResponseDto>> {
     if (isNaN(page)) page = Defaults.ONE;
     else page = Number(page);
@@ -87,6 +88,7 @@ export class ProjectController {
       _projectId,
       limit,
       page,
+      search,
     });
   }
 
