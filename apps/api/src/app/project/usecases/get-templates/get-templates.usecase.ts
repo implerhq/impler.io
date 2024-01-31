@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { TemplateRepository, CommonRepository } from '@impler/dal';
-import { WidgetTemplateResponseDto } from 'app/template/dtos/widget-templates-response.dto';
+import { TemplateListResponseDto } from 'app/project/dtos/template-list-response.dto';
 
 @Injectable()
 export class GetTemplates {
   constructor(private templateRepository: TemplateRepository, private commonRepository: CommonRepository) {}
 
-  async execute(_projectId: string): Promise<WidgetTemplateResponseDto[]> {
+  async execute(_projectId: string): Promise<TemplateListResponseDto[]> {
     const templates = await this.templateRepository.aggregate([
       {
         $match: {
@@ -32,16 +32,9 @@ export class GetTemplates {
     ]);
 
     return templates.map((template) => ({
-      _projectId: template._projectId,
-      callbackUrl: template.callbackUrl,
-      chunkSize: template.chunkSize,
+      _id: template._id,
       name: template.name,
       sampleFileUrl: template.sampleFileUrl,
-      _id: template._id,
-      totalUploads: template.totalUploads,
-      totalInvalidRecords: template.totalInvalidRecords,
-      totalRecords: template.totalRecords,
-      authHeaderName: template.authHeaderName,
       totalColumns: template.columns?.length,
     }));
   }
