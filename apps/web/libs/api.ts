@@ -44,6 +44,10 @@ const routes: Record<string, Route> = {
     method: 'POST',
   },
 
+  [API_KEYS.IMPORTS_LIST]: {
+    url: (projectId) => `/v1/project/${projectId}/imports`,
+    method: 'GET',
+  },
   [API_KEYS.TEMPLATES_LIST]: {
     url: (projectId) => `/v1/project/${projectId}/templates`,
     method: 'GET',
@@ -96,11 +100,11 @@ const routes: Record<string, Route> = {
     url: (columnId) => `/v1/column/${columnId}`,
     method: 'DELETE',
   },
-  [API_KEYS.IMPORTS_LIST]: {
+  [API_KEYS.ACTIVITY_HISTORY]: {
     url: (projectId) => `/v1/activity/${projectId}/history`,
     method: 'GET',
   },
-  [API_KEYS.IMPORT_SUMMARY]: {
+  [API_KEYS.ACTIVITY_SUMMARY]: {
     url: (projectId) => `/v1/activity/${projectId}/summary`,
     method: 'GET',
   },

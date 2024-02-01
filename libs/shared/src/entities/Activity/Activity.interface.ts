@@ -8,8 +8,8 @@ export interface IHistoryRecord {
   name: string;
 }
 
-export interface IHistoryData {
-  data: IHistoryRecord[];
+export interface IPaginationData<T = any> {
+  data: T[];
   limit: number;
   page: number;
   totalPages: number;
