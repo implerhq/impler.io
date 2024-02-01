@@ -11,6 +11,7 @@ import { DocumentNotFoundException } from '@shared/exceptions/document-not-found
 
 import {
   GetUploads,
+  DuplicateTemplate,
   GetTemplateColumns,
   CreateTemplate,
   DeleteTemplate,
@@ -27,6 +28,7 @@ import {
   GetValidations,
   DownloadSample,
   UpdateValidations,
+  DuplicateTemplateCommand,
   UpdateValidationsCommand,
 } from './usecases';
 
@@ -38,6 +40,7 @@ import { ValidationsResponseDto } from './dtos/validations-response.dto';
 import { CustomizationResponseDto } from './dtos/customization-response.dto';
 import { CreateTemplateRequestDto } from './dtos/create-template-request.dto';
 import { UpdateTemplateRequestDto } from './dtos/update-template-request.dto';
+import { DuplicateTemplateRequestDto } from './dtos/duplicate-template-request.dto';
 import { UpdateValidationResponseDto } from './dtos/update-validation-response.dto';
 import { UpdateValidationsRequestDto } from './dtos/update-validations-request.dto';
 import { UpdateCustomizationRequestDto } from './dtos/update-customization-request.dto';
@@ -54,6 +57,7 @@ export class TemplateController {
     private getCustomization: GetCustomization,
     private updateValidations: UpdateValidations,
     private syncCustomization: SyncCustomization,
+    private duplicateTemplate: DuplicateTemplate,
     private createTemplateUsecase: CreateTemplate,
     private updateTemplateUsecase: UpdateTemplate,
     private deleteTemplateUsecase: DeleteTemplate,
@@ -119,6 +123,20 @@ export class TemplateController {
         name: body.name,
       })
     );
+  }
+
+  @Post(':templateId/duplicate')
+  @ApiOperation({
+    summary: 'Duplicate template',
+  })
+  @ApiOkResponse({
+    type: TemplateResponseDto,
+  })
+  async duplicateTemplateRoute(
+    @Param('templateId', ValidateMongoId) templateId: string,
+    @Body() body: DuplicateTemplateRequestDto
+  ): Promise<TemplateResponseDto> {
+    return this.duplicateTemplate.execute(templateId, DuplicateTemplateCommand.create(body));
   }
 
   @Put(':templateId')

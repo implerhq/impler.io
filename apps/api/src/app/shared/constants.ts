@@ -9,6 +9,7 @@ export const APIMessages = {
   INVALID_TEMPLATE_ID_CODE_SUFFIX: 'is not valid TemplateId or CODE.',
   FILE_MAPPING_REMAINING: 'File mapping is not yet done, please finalize mapping before.',
   UPLOAD_NOT_FOUND: 'Upload information not found with specified uploadId.',
+  TEMPLATE_NOT_FOUND: 'Template not found with specified templateId.',
   FILE_NOT_FOUND_IN_STORAGE:
     "File not found, make sure you're using the same storage provider, that you were using before.",
   DO_MAPPING_FIRST: 'You may landed to wrong place, Please finalize mapping and proceed ahead.',
