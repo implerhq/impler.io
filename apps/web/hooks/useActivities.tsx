@@ -14,9 +14,9 @@ export function useSummary() {
     ISummaryData,
     (string | undefined)[]
   >(
-    [API_KEYS.IMPORT_SUMMARY, profileInfo?._projectId],
+    [API_KEYS.ACTIVITY_SUMMARY, profileInfo?._projectId],
     () =>
-      commonApi<ISummaryData>(API_KEYS.IMPORT_SUMMARY as any, {
+      commonApi<ISummaryData>(API_KEYS.ACTIVITY_SUMMARY as any, {
         parameters: [profileInfo!._projectId],
       }),
     {

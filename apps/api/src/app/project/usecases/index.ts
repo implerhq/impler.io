@@ -1,5 +1,6 @@
 import { CreateProject } from './create-project/create-project.usecase';
 import { CreateProjectCommand } from './create-project/create-project.command';
+import { GetImports } from './get-imports/get-imports.usecase';
 import { GetProjects } from './get-projects/get-projects.usecase';
 import { UpdateProject } from './update-project/update-project.usecase';
 import { UpdateProjectCommand } from './update-project/update-project.command';
@@ -13,9 +14,10 @@ export const USE_CASES = [
   UpdateProject,
   DeleteProject,
   GetTemplates,
+  GetImports,
   GetEnvironment,
   //
 ];
 
-export { CreateProject, GetProjects, UpdateProject, DeleteProject, GetTemplates, GetEnvironment };
+export { CreateProject, GetProjects, UpdateProject, DeleteProject, GetTemplates, GetEnvironment, GetImports };
 export { CreateProjectCommand, UpdateProjectCommand };

@@ -2,6 +2,7 @@ import { colors } from '@config';
 import { createStyles, MantineTheme } from '@mantine/core';
 
 const getRootStyles = (theme: MantineTheme) => ({
+  height: '100%',
   padding: theme.spacing.md,
   display: 'flex',
   flexDirection: 'column',

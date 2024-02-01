@@ -1,13 +1,13 @@
 import { VARIABLES } from '@config';
 import useStyles from './Pagination.styles';
 import { numberFormatter } from '@impler/shared';
-import { Flex, Text, NativeSelect, Pagination as MantinePagination } from '@mantine/core';
+import { Flex, Text, Select, Pagination as MantinePagination, MantineSize } from '@mantine/core';
 
 const limits = [
-  { value: '10', label: '10' },
-  { value: '50', label: '50' },
-  { value: '100', label: '100' },
-  { value: '200', label: '200' },
+  { value: '10', label: 'Show 10' },
+  { value: '50', label: 'Show 50' },
+  { value: '100', label: 'Show 100' },
+  { value: '200', label: 'Show 200' },
 ];
 
 interface PaginationProps {
@@ -15,6 +15,7 @@ interface PaginationProps {
   onLimitChange: (value: number) => void;
   dataLength: number;
   page: number;
+  size?: MantineSize;
   setPage: (value: number) => void;
   totalPages: number;
   totalRecords: number;
@@ -25,6 +26,7 @@ export function Pagination({
   onLimitChange,
   dataLength,
   page,
+  size = 'sm',
   setPage,
   totalPages,
   totalRecords,
@@ -40,23 +42,24 @@ export function Pagination({
 
   return (
     <div className={classes.root}>
-      <Flex align="center" gap="sm">
-        <Text>Results per page</Text>
-        <NativeSelect
-          data={limits}
-          size="xs"
+      <Flex align="center" gap="xs">
+        <Select
+          size={size}
           radius={0}
-          value={limit}
-          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onLimitChange(Number(e.target.value))}
+          data={limits}
+          value={String(limit)}
+          onChange={(value: string) => onLimitChange(Number(value))}
           disabled={dataLength === VARIABLES.ZERO}
           classNames={{ input: classes.selectInput }}
         />
+        <Text size={size}>Records per page</Text>
       </Flex>
       <MantinePagination
         siblings={1}
         boundaries={0}
         noWrap={false}
         value={page}
+        size={size}
         onChange={setPage}
         total={totalPages}
         classNames={{
@@ -64,7 +67,7 @@ export function Pagination({
         }}
         disabled={dataLength === VARIABLES.ZERO}
       />
-      <Text>
+      <Text size={size}>
         Showing {paginationFrom()}-{paginationTo()} of {numberFormatter(totalRecords)} records
       </Text>
     </div>

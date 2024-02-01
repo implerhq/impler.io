@@ -67,6 +67,31 @@ export class BaseRepository<T> {
     return this.mapEntities(data);
   }
 
+  async paginate(
+    query: FilterQuery<T & Document>,
+    select = '',
+    options: { limit?: number; sort?: any; skip?: number } = {}
+  ): Promise<{
+    data: T[];
+    total: number;
+  } | null> {
+    const data = await this.MongooseModel.find(query, select, {
+      sort: options.sort || null,
+    })
+      .skip(options.skip)
+      .limit(options.limit)
+      .lean()
+      .exec();
+
+    const count = await this.count(query);
+    if (!data) return null;
+
+    return {
+      data: data ? this.mapEntities(data) : [],
+      total: count,
+    };
+  }
+
   async *findBatch(
     query: FilterQuery<T & Document>,
     select = '',

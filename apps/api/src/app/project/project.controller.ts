@@ -1,17 +1,19 @@
 import { Response } from 'express';
 import { ApiOperation, ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
-import { Body, Controller, Delete, Get, Param, Post, Put, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res, UseGuards } from '@nestjs/common';
 
-import { ACCESS_KEY_NAME, IJwtPayload } from '@impler/shared';
+import { ACCESS_KEY_NAME, Defaults, IJwtPayload, PaginationResult } from '@impler/shared';
 import { UserSession } from '@shared/framework/user.decorator';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 
 import { ProjectResponseDto } from './dtos/project-response.dto';
 import { CreateProjectRequestDto } from './dtos/create-project-request.dto';
 import { UpdateProjectRequestDto } from './dtos/update-project-request.dto';
-import { TemplateResponseDto } from 'app/template/dtos/template-response.dto';
+import { TemplateListResponseDto } from './dtos/template-list-response.dto';
+import { ImportListResponseDto } from './dtos/import-list-response.dto';
 
 import {
+  GetImports,
   GetProjects,
   GetTemplates,
   CreateProject,
@@ -32,6 +34,7 @@ import { EnvironmentResponseDto } from 'app/environment/dtos/environment-respons
 @UseGuards(JwtAuthGuard)
 export class ProjectController {
   constructor(
+    private getImports: GetImports,
     private getProjectsUsecase: GetProjects,
     private createProjectUsecase: CreateProject,
     private updateProjectUsecase: UpdateProject,
@@ -41,7 +44,7 @@ export class ProjectController {
     private getEnvironment: GetEnvironment
   ) {}
 
-  @Get('')
+  @Get()
   @ApiOperation({
     summary: 'Get projects',
   })
@@ -57,10 +60,36 @@ export class ProjectController {
     summary: 'Get all templates for project',
   })
   @ApiOkResponse({
-    type: [TemplateResponseDto],
+    type: [TemplateListResponseDto],
   })
-  getTemplatesRoute(@Param('projectId', ValidateMongoId) projectId: string): Promise<TemplateResponseDto[]> {
+  getTemplatesRoute(@Param('projectId', ValidateMongoId) projectId: string): Promise<TemplateListResponseDto[]> {
     return this.getTemplates.execute(projectId);
+  }
+
+  @Get(':projectId/imports')
+  @ApiOperation({
+    summary: 'Get all imports for project',
+  })
+  @ApiOkResponse({
+    type: [ImportListResponseDto],
+  })
+  getImportsRoute(
+    @Param('projectId', ValidateMongoId) _projectId: string,
+    @Query('page') page = Defaults.ONE,
+    @Query('limit') limit = Defaults.PAGE_LIMIT,
+    @Query('search') search: string
+  ): Promise<PaginationResult<ImportListResponseDto>> {
+    if (isNaN(page)) page = Defaults.ONE;
+    else page = Number(page);
+    if (isNaN(limit)) limit = Defaults.PAGE_LIMIT;
+    else limit = Number(limit);
+
+    return this.getImports.execute({
+      _projectId,
+      limit,
+      page,
+      search,
+    });
   }
 
   @Get(':projectId/environment')
@@ -74,7 +103,7 @@ export class ProjectController {
     return this.getEnvironment.execute(projectId);
   }
 
-  @Post('')
+  @Post()
   @ApiOperation({
     summary: 'Create project',
   })

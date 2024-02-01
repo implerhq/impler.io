@@ -20,6 +20,7 @@ export function DateInput({ onChange, value, placeholder, maw, valueFormat, allo
 
   return (
     <MantineDateInput
+      clearable
       rightSection={<CalendarIcon color={colorScheme === 'dark' ? colors.white : colors.black} />}
       classNames={classes}
       onChange={onChange}

@@ -107,6 +107,13 @@ type TrackData =
       properties: {
         message: string;
       };
+    }
+  | {
+      name: 'IMPORTS PAGINATION';
+      properties: {
+        limit?: number;
+        text?: string;
+      };
     };
 
 export function track({ name, properties }: TrackData) {

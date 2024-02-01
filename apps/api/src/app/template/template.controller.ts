@@ -103,7 +103,7 @@ export class TemplateController {
     return this.getTemplateColumns.execute(_templateId);
   }
 
-  @Post('')
+  @Post()
   @ApiOperation({
     summary: 'Create new template',
   })

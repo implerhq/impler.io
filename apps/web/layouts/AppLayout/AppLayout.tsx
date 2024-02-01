@@ -92,7 +92,7 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
           </Stack>
         </aside>
         <main className={classes.main}>
-          <nav className={classes.nav} ref={navRef}>
+          <nav ref={navRef}>
             {profile && (
               <Flex justify="space-between">
                 <Title order={2}>
