@@ -32,7 +32,14 @@ interface ICreateProjectData {
 
 interface ICreateTemplateData {
   name: string;
-  code: string;
+}
+interface IDuplicateTemplateData {
+  name: string;
+  _projectId: string;
+  duplicateColumns?: boolean;
+  duplicateOutput?: boolean;
+  duplicateWebhook?: boolean;
+  duplicateValidator?: boolean;
 }
 interface IUpdateTemplateData {
   name: string;

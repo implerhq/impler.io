@@ -8,9 +8,11 @@ import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
 import { track } from '@libs/amplitude';
 import { useAppState } from 'store/app.context';
-import { CreateImportForm } from '@components/imports/forms/CreateImportForm';
-import { IErrorObject, ITemplate, IImport, IPaginationData } from '@impler/shared';
 import { API_KEYS, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS, VARIABLES } from '@config';
+import { IErrorObject, ITemplate, IImport, IPaginationData, IProjectPayload } from '@impler/shared';
+
+import { CreateImportForm } from '@components/imports/forms/CreateImportForm';
+import { DuplicateImportForm } from '@components/imports/forms/DuplicateImportForm';
 
 export function useImports() {
   const { push } = useRouter();
@@ -19,6 +21,10 @@ export function useImports() {
   const [page, setPage] = useState<number>();
   const [limit, setLimit] = useState<number>(VARIABLES.TEN);
   const [search, setSearch] = useDebouncedState('', 500);
+  const { data: projects } = useQuery<unknown, IErrorObject, IProjectPayload[], string[]>(
+    [API_KEYS.PROJECTS_LIST],
+    () => commonApi(API_KEYS.PROJECTS_LIST as any, {})
+  );
   const { mutate: createImport, isLoading: isCreateImportLoading } = useMutation<
     ITemplate,
     IErrorObject,
@@ -27,7 +33,6 @@ export function useImports() {
   >(
     [API_KEYS.TEMPLATES_CREATE, profileInfo?._projectId],
     (data) =>
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       commonApi<ITemplate>(API_KEYS.TEMPLATES_CREATE as any, {
         body: { ...data, _projectId: profileInfo!._projectId! },
       }),
@@ -44,6 +49,34 @@ export function useImports() {
         });
         push(`/imports/${data._id}`);
         notify(NOTIFICATION_KEYS.IMPORT_CREATED);
+      },
+    }
+  );
+  const { mutate: duplicateImport } = useMutation<
+    ITemplate,
+    IErrorObject,
+    [string, IDuplicateTemplateData],
+    (string | undefined)[]
+  >(
+    [API_KEYS.TEMPLATES_DUPLICATE, profileInfo?._projectId],
+    ([templateId, data]) =>
+      commonApi<ITemplate>(API_KEYS.TEMPLATES_DUPLICATE as any, {
+        body: { ...data },
+        parameters: [templateId],
+      }),
+    {
+      onSuccess: (data) => {
+        modals.close(MODAL_KEYS.IMPORT_DUPLICATE);
+        queryClient.setQueryData<ITemplate[]>([API_KEYS.TEMPLATES_LIST, data._projectId], (oldData) => [
+          ...(oldData || []),
+          data,
+        ]);
+        track({
+          name: 'IMPORT DUPLICATE',
+          properties: {},
+        });
+        push(`/imports/${data._id}`);
+        notify(NOTIFICATION_KEYS.IMPORT_DUPLICATED);
       },
     }
   );
@@ -96,6 +129,19 @@ export function useImports() {
       children: <CreateImportForm onSubmit={createImport} />,
     });
   }
+  function onDuplicateClick(importId: string) {
+    modals.open({
+      modalId: MODAL_KEYS.IMPORT_DUPLICATE,
+      title: MODAL_TITLES.IMPORT_DUPLICATE,
+      children: (
+        <DuplicateImportForm
+          profile={profileInfo}
+          projects={projects}
+          onSubmit={(data) => duplicateImport([importId, data])}
+        />
+      ),
+    });
+  }
 
   return {
     page,
@@ -105,6 +151,7 @@ export function useImports() {
     onSearchChange,
     onCreateClick,
     onLimitChange,
+    onDuplicateClick,
     isImportsLoading,
     onPageChange: setPage,
     isCreateImportLoading,
