@@ -23,8 +23,8 @@ export class DuplicateTemplate {
     validateNotFound(templateData, 'template');
 
     const newTemplate = await this.templateRepository.create({
-      _projectId: templateData._projectId,
       name: command.name,
+      _projectId: command._projectId,
       chunkSize: templateData.chunkSize,
       ...(command.duplicateWebhook && {
         callbackUrl: templateData.callbackUrl,
@@ -37,7 +37,7 @@ export class DuplicateTemplate {
         {
           _templateId,
         },
-        'name key alternateKeys isRequired isUnique type regex regexDescription selectValues dateFormats sequence defaultValue'
+        '-_id name key alternateKeys isRequired isUnique type regex regexDescription selectValues dateFormats sequence defaultValue'
       );
 
       await this.columnRepository.createMany(
@@ -49,15 +49,15 @@ export class DuplicateTemplate {
         })
       );
 
-      await this.saveSampleFile.execute(columns, _templateId);
+      await this.saveSampleFile.execute(columns, newTemplate._id);
     }
 
     if (command.duplicateOutput) {
-      const validation = await this.customizationRepository.find(
+      const validation = await this.customizationRepository.findOne(
         {
           _templateId,
         },
-        'recordVariables chunkVariables recordFormat chunkFormat combinedFormat isRecordFormatUpdated isChunkFormatUpdated isCombinedFormatUpdated'
+        '-_id recordVariables chunkVariables recordFormat chunkFormat combinedFormat isRecordFormatUpdated isChunkFormatUpdated isCombinedFormatUpdated'
       );
 
       await this.customizationRepository.create({
@@ -67,7 +67,7 @@ export class DuplicateTemplate {
     }
 
     if (command.duplicateValidator) {
-      const validator = await this.validatorRepository.find({ _templateId }, 'onBatchInitialize');
+      const validator = await this.validatorRepository.findOne({ _templateId }, '-_id onBatchInitialize');
       await this.validatorRepository.create({
         _templateId: newTemplate._id,
         ...validator,
