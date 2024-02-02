@@ -1,15 +1,23 @@
-import { Tooltip, UnstyledButton } from '@mantine/core';
-import { PropsWithChildren } from 'react';
+import { MouseEvent, PropsWithChildren } from 'react';
+import { Tooltip, UnstyledButton, UnstyledButtonProps } from '@mantine/core';
 
-interface IconButtonProps {
+interface IconButtonProps extends UnstyledButtonProps {
   label: string;
   withArrow?: boolean;
-  onClick?: () => void;
+  onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
 }
-export function IconButton({ label, onClick, withArrow = true, children }: PropsWithChildren<IconButtonProps>) {
+export function IconButton({
+  label,
+  onClick,
+  withArrow = true,
+  children,
+  ...buttonProps
+}: PropsWithChildren<IconButtonProps>) {
   return (
     <Tooltip label={label} withArrow={withArrow}>
-      <UnstyledButton onClick={onClick}>{children}</UnstyledButton>
+      <UnstyledButton onClick={onClick} {...buttonProps}>
+        {children}
+      </UnstyledButton>
     </Tooltip>
   );
 }

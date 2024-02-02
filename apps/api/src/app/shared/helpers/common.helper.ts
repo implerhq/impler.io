@@ -2,12 +2,14 @@ import { BadRequestException } from '@nestjs/common';
 import { APIMessages } from '../constants';
 import { PaginationResult, Defaults } from '@impler/shared';
 
-export function validateNotFound(data: any, entityName: 'upload'): boolean {
+export function validateNotFound(data: any, entityName: 'upload' | 'template'): boolean {
   if (data) return true;
   else {
     switch (entityName) {
       case 'upload':
         throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
+      case 'template':
+        throw new BadRequestException(APIMessages.TEMPLATE_NOT_FOUND);
       default:
         throw new BadRequestException();
     }

@@ -16,12 +16,13 @@ export default function Imports() {
   const {
     search,
     importsData,
-    onCreateClick,
-    isCreateImportLoading,
-    isImportsLoading,
-    onLimitChange,
     onPageChange,
+    onCreateClick,
+    onLimitChange,
     onSearchChange,
+    onDuplicateClick,
+    isImportsLoading,
+    isCreateImportLoading,
   } = useImports();
 
   return (
@@ -67,9 +68,13 @@ export default function Imports() {
                   <ImportCard
                     title={importItem.name}
                     imports={importItem.totalUploads}
+                    href={`/imports/${importItem._id}`}
+                    onDuplicateClick={(e) => {
+                      e.preventDefault();
+                      onDuplicateClick(importItem._id);
+                    }}
                     totalRecords={importItem.totalRecords}
                     errorRecords={importItem.totalInvalidRecords}
-                    href={`/imports/${importItem._id}`}
                   />
                 </Grid.Col>
               ))}

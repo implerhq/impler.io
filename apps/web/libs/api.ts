@@ -60,6 +60,10 @@ const routes: Record<string, Route> = {
     url: (templateId) => `/v1/template/${templateId}`,
     method: 'PUT',
   },
+  [API_KEYS.TEMPLATES_DUPLICATE]: {
+    url: (templateId) => `/v1/template/${templateId}/duplicate`,
+    method: 'POST',
+  },
   [API_KEYS.TEMPLATE_COLUMNS_UPDATE]: {
     url: (templateId) => `/v1/template/${templateId}/columns`,
     method: 'PUT',

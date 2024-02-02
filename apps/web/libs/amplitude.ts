@@ -114,6 +114,10 @@ type TrackData =
         limit?: number;
         text?: string;
       };
+    }
+  | {
+      name: 'IMPORT DUPLICATE';
+      properties: Record<string, never>;
     };
 
 export function track({ name, properties }: TrackData) {

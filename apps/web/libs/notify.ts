@@ -10,6 +10,10 @@ const Messages: Record<string, NotifyProps> = {
     title: 'Import created',
     message: 'Import has been created successfully',
   },
+  [NOTIFICATION_KEYS.IMPORT_DUPLICATED]: {
+    title: 'Import duplicated',
+    message: 'Import has been duplicated successfully',
+  },
   [NOTIFICATION_KEYS.IMPORT_DELETED]: {
     title: 'Import deleted',
     message: 'Import has been deleted successfully',

@@ -5,18 +5,20 @@ interface SelectProps {
   data: SelectItem[];
   register?: any;
   label?: string;
+  required?: boolean;
   autoFocus?: boolean;
   onFocus?: () => void;
   variant?: Variants<'default' | 'filled' | 'unstyled'>;
 }
 
-export function Select({ placeholder, data, register, label, autoFocus, onFocus, variant }: SelectProps) {
+export function Select({ required, placeholder, data, register, label, autoFocus, onFocus, variant }: SelectProps) {
   return (
     <MantineSelect
       data={data}
       label={label}
       variant={variant}
       onFocus={onFocus}
+      required={required}
       autoFocus={autoFocus}
       data-haslabel={!!label}
       placeholder={placeholder}
