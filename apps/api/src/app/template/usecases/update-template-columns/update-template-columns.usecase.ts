@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { CONSTANTS } from '@shared/constants';
 import { AddColumnCommand } from 'app/column/commands/add-column.command';
-import { ColumnRepository, CustomizationEntity, CustomizationRepository } from '@impler/dal';
 import { createRecordFormat, updateCombinedFormat } from '@impler/shared';
+import { ColumnRepository, CustomizationEntity, CustomizationRepository } from '@impler/dal';
 import { SaveSampleFile } from '@shared/usecases/save-sample-file/save-sample-file.usecase';
 
 @Injectable()
@@ -16,6 +16,10 @@ export class UpdateTemplateColumns {
 
   async execute(command: AddColumnCommand[], _templateId: string) {
     await this.columnRepository.deleteMany({ _templateId });
+    command.forEach((column, index) => {
+      column.sequence = index;
+      column.dateFormats = column.dateFormats?.map((format) => format.toUpperCase()) || [];
+    });
     await this.updateCustomizationData(command, _templateId);
     const columns = await this.columnRepository.createMany(command);
     await this.saveSampleFile.execute(columns, _templateId);

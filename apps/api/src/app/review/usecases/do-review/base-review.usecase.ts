@@ -82,7 +82,7 @@ export class BaseReview {
           Array.isArray(formattedColumns[column.key].dateFormats) &&
           formattedColumns[column.key].dateFormats.length > 0
         )
-          dateFormats[column.key] = formattedColumns[column.key].dateFormats.map((format) => format.toUpperCase());
+          dateFormats[column.key] = formattedColumns[column.key].dateFormats;
         else dateFormats[column.key] = Defaults.DATE_FORMATS;
       }
     });

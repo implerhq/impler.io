@@ -17,6 +17,7 @@ export class AddColumn {
     const column = await this.columnRepository.create({
       ...command,
       sequence: columns.length,
+      dateFormats: command.dateFormats?.map((format) => format.toUpperCase()) || [],
     });
     const variables = columns.map((columnItem) => columnItem.key);
     variables.push(column.key);
