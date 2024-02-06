@@ -81,7 +81,9 @@ export class MakeUploadEntry {
             schemaItem.type == ColumnTypesEnum.SELECT && Array.isArray(schemaItem.selectValues)
               ? schemaItem.selectValues
               : [],
-          dateFormats: Array.isArray(schemaItem.dateFormats) ? schemaItem.dateFormats : Defaults.DATE_FORMATS,
+          dateFormats: Array.isArray(schemaItem.dateFormats)
+            ? schemaItem.dateFormats.map((format) => format.toUpperCase())
+            : Defaults.DATE_FORMATS,
           isUnique: schemaItem.isUnique || false,
           defaultValue: schemaItem.defaultValue,
 
