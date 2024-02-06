@@ -90,7 +90,7 @@ export class ExcelFileService {
         return {
           header: heading.key,
           key: heading.key,
-          style: { numFmt: heading.dateFormats?.[0] || Defaults.DATE_FORMAT },
+          style: { numFmt: '@' },
         };
 
       return { header: heading.key, key: heading.key };
