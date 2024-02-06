@@ -3,7 +3,7 @@ import { TEXTS } from '@config';
 import { CheckIcon } from '@icons';
 import { Footer } from 'components/Common/Footer';
 import useStyles from './Styles';
-import { PhasesEum } from '@types';
+import { PhasesEnum } from '@types';
 import { numberFormatter, replaceVariablesInString } from '@impler/shared';
 import { useAppState } from '@store/app.context';
 
@@ -30,7 +30,7 @@ export function Phase4(props: IPhase4Props) {
         </Text>
       </Group>
 
-      <Footer active={PhasesEum.COMPLETE} onNextClick={onUploadAgainClick} onPrevClick={onCloseClick} />
+      <Footer active={PhasesEnum.COMPLETE} onNextClick={onUploadAgainClick} onPrevClick={onCloseClick} />
     </>
   );
 }

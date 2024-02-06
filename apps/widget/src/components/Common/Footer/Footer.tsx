@@ -1,12 +1,12 @@
 import { Group, Text } from '@mantine/core';
 import { Button } from '@ui/Button';
 import { TEXTS, variables } from '@config';
-import { PhasesEum } from '@types';
+import { PhasesEnum } from '@types';
 import useStyles from './Styles';
 import { useAppState } from '@store/app.context';
 
 interface IFooterProps {
-  active: PhasesEum;
+  active: PhasesEnum;
   primaryButtonDisabled?: boolean;
   secondaryButtonDisabled?: boolean;
   primaryButtonLoading?: boolean;
@@ -28,12 +28,12 @@ export function Footer({
   const { classes } = useStyles();
 
   const FooterActions = {
-    [PhasesEum.UPLOAD]: (
+    [PhasesEnum.UPLOAD]: (
       <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
         {TEXTS.PHASE1.SEE_MAPPING}
       </Button>
     ),
-    [PhasesEum.MAPPING]: (
+    [PhasesEnum.MAPPING]: (
       <>
         <Button
           loading={secondaryButtonLoading}
@@ -48,7 +48,7 @@ export function Footer({
         </Button>
       </>
     ),
-    [PhasesEum.REVIEW]: (
+    [PhasesEnum.REVIEW]: (
       <>
         <Button
           loading={secondaryButtonLoading}
@@ -63,7 +63,7 @@ export function Footer({
         </Button>
       </>
     ),
-    [PhasesEum.COMPLETE]: (
+    [PhasesEnum.COMPLETE]: (
       <>
         <Button
           loading={secondaryButtonLoading}

@@ -1,10 +1,10 @@
 import { PropsWithChildren } from 'react';
 import { Heading } from 'components/Common/Heading';
 import useStyles from './Styles';
-import { PhasesEum } from '@types';
+import { PhasesEnum } from '@types';
 
 interface ILayoutProps {
-  active: PhasesEum;
+  active: PhasesEnum;
   title?: string;
 }
 
