@@ -15,6 +15,7 @@
     "start:prod": "TZ=UTC node dist/main.js",
     "lint": "eslint src",
     "lint:fix": "pnpm lint -- --fix",
+    "migration": "cross-env NODE_ENV=local MIGRATION=true ts-node --require tsconfig-paths/register --transpileOnly",
     "test": "cross-env TZ=UTC NODE_ENV=test E2E_RUNNER=true mocha --timeout 10000 --require ts-node/register --exit src/**/**/*.spec.ts"
   },
   "dependencies": {

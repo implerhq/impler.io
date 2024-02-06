@@ -19,6 +19,7 @@ export class UpdateColumn {
       throw new DocumentNotFoundException('Column', _id);
     }
 
+    command.dateFormats = command.dateFormats?.map((format) => format.toUpperCase()) || [];
     const isKeyUpdated = command.key !== column.key;
     const isTypeUpdated = command.type !== column.type;
     const isFieldConditionUpdated =
