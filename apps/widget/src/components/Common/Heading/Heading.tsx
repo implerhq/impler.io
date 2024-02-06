@@ -1,10 +1,10 @@
 import { Group, MediaQuery, Title, useMantineTheme } from '@mantine/core';
 import { Stepper } from '@ui/Stepper';
 import { TEXTS, variables } from '@config';
-import { PhasesEum } from '@types';
+import { PhasesEnum } from '@types';
 
 interface IHeadingProps {
-  active: PhasesEum;
+  active: PhasesEnum;
   title?: string;
 }
 

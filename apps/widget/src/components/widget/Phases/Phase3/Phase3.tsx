@@ -2,7 +2,7 @@ import { Stack } from '@mantine/core';
 import { HotTable } from '@handsontable/react';
 import { useRef, useState, useEffect } from 'react';
 
-import { PhasesEum } from '@types';
+import { PhasesEnum } from '@types';
 import { IUpload, numberFormatter } from '@impler/shared';
 import { logAmplitudeEvent } from '@amplitude';
 import { usePhase3 } from '@hooks/Phase3/usePhase3';
@@ -108,7 +108,7 @@ export function Phase3(props: IPhase3Props) {
 
       <Footer
         primaryButtonLoading={isConfirmReviewLoading}
-        active={PhasesEum.REVIEW}
+        active={PhasesEnum.REVIEW}
         onNextClick={reReviewData}
         onPrevClick={onPrevClick}
       />

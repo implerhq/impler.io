@@ -13,7 +13,7 @@ import { useWidget } from '@hooks/useWidget';
 import { useAppState } from '@store/app.context';
 import { PromptModal } from './Phases/PromptModal';
 import { Layout } from 'components/Common/Layout';
-import { PhasesEum, PromptModalTypesEnum } from '@types';
+import { PhasesEnum, PromptModalTypesEnum } from '@types';
 import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
 
 export function Widget() {
@@ -37,32 +37,33 @@ export function Widget() {
     setPromptContinueAction(undefined);
   };
   const onClose = () => {
-    if ([PhasesEum.VALIDATE, PhasesEum.UPLOAD, PhasesEum.COMPLETE].includes(phase)) closeWidget();
+    if ([PhasesEnum.VALIDATE, PhasesEnum.UPLOAD, PhasesEnum.COMPLETE].includes(phase)) closeWidget(true);
     else setPromptContinueAction(PromptModalTypesEnum.CLOSE);
   };
-  const closeWidget = () => {
+  const closeWidget = (resetPhase?: boolean) => {
     setShowWidget(false);
     resetAmplitude();
+    if (resetPhase) setPhase(PhasesEnum.VALIDATE);
     setTimeout(() => {
       ParentWindow.Close();
     }, variables.closeDelayInMS);
   };
   const resetProgress = () => {
     resetAppState();
-    setPhase(PhasesEum.VALIDATE);
+    setPhase(PhasesEnum.VALIDATE);
   };
   const onComplete = (uploadData: IUpload) => {
     setDataCount(uploadData.totalRecords);
-    setPhase(PhasesEum.COMPLETE);
+    setPhase(PhasesEnum.COMPLETE);
     ParentWindow.UploadCompleted(uploadData);
   };
 
   const PhaseView = {
-    [PhasesEum.VALIDATE]: <Phase0 onValidationSuccess={() => setPhase(PhasesEum.UPLOAD)} />,
-    [PhasesEum.UPLOAD]: <Phase1 onNextClick={() => setPhase(PhasesEum.MAPPING)} />,
-    [PhasesEum.MAPPING]: <Phase2 onNextClick={() => setPhase(PhasesEum.REVIEW)} onPrevClick={onUploadResetClick} />,
-    [PhasesEum.REVIEW]: <Phase3 onNextClick={onComplete} onPrevClick={onUploadResetClick} />,
-    [PhasesEum.COMPLETE]: <Phase4 rowsCount={dataCount} onUploadAgainClick={resetProgress} onCloseClick={onClose} />,
+    [PhasesEnum.VALIDATE]: <Phase0 onValidationSuccess={() => setPhase(PhasesEnum.UPLOAD)} />,
+    [PhasesEnum.UPLOAD]: <Phase1 onNextClick={() => setPhase(PhasesEnum.MAPPING)} />,
+    [PhasesEnum.MAPPING]: <Phase2 onNextClick={() => setPhase(PhasesEnum.REVIEW)} onPrevClick={onUploadResetClick} />,
+    [PhasesEnum.REVIEW]: <Phase3 onNextClick={onComplete} onPrevClick={onUploadResetClick} />,
+    [PhasesEnum.COMPLETE]: <Phase4 rowsCount={dataCount} onUploadAgainClick={resetProgress} onCloseClick={onClose} />,
   };
 
   return (

@@ -15,7 +15,7 @@ export enum PromptModalTypesEnum {
   'UPLOAD_AGAIN' = 'UPLOAD_AGAIN',
 }
 
-export enum PhasesEum {
+export enum PhasesEnum {
   VALIDATE,
   UPLOAD,
   MAPPING,
