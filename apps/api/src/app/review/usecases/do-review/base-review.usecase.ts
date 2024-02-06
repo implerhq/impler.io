@@ -352,10 +352,11 @@ export class BaseReview {
       },
     });
 
-    // const dateFormats: Record<string, string[]> = {};
     ajv.addKeyword('customDateChecker', {
       keyword: 'customDateChecker',
       validate: function (_valid, date, _schema, dataPath) {
+        if (date === null) return true;
+
         return dayjs(date, [...dateFormats[dataPath.parentDataProperty]], true).isValid();
       },
     });
