@@ -264,7 +264,7 @@ export class BaseReview {
 
           if (totalRecords >= 1) {
             const recordObj: Record<string, unknown> = headings.reduce((acc, heading, index) => {
-              acc[heading] = record[index];
+              acc[heading] = typeof record[index] === 'string' ? record[index].trim() : record[index];
 
               return acc;
             }, {});
@@ -402,7 +402,7 @@ export class BaseReview {
             recordsCount++;
             const record = results.data;
             const recordObj = headings.reduce((acc, heading, index) => {
-              acc[heading] = record[index];
+              acc[heading] = typeof record[index] === 'string' ? record[index].trim() : record[index];
 
               return acc;
             }, {});
