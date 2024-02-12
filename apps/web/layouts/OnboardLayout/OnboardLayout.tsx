@@ -1,14 +1,14 @@
-import Image from 'next/image';
 import Head from 'next/head';
+import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { PropsWithChildren } from 'react';
 import { Carousel } from '@mantine/carousel';
-import { Grid, Title, Text } from '@mantine/core';
+import { Grid, Title, Text, Stack } from '@mantine/core';
 
 import useStyles from './OnboardLayout.styles';
 import WidgetSlideImage from '@assets/images/auth-carousel/widget.png';
-import ActionsSlideImage from '@assets/images/auth-carousel/actions.png';
-import WorkflowsSlideImage from '@assets/images/auth-carousel/workflows.png';
+import PowerfullSlideImage from '@assets/images/auth-carousel/powerfull.png';
+import UncertainitySlideImage from '@assets/images/auth-carousel/uncertainity.png';
 
 const Support = dynamic(() => import('components/common/Support').then((mod) => mod.Support), {
   ssr: false,
@@ -20,20 +20,19 @@ const slides: {
   subtitle: string;
 }[] = [
   {
-    image: ActionsSlideImage,
-    title: 'Feature rich actions',
-    subtitle: 'Our library of actions offers a range of options to meet your needs.',
-  },
-  {
     image: WidgetSlideImage,
-    title: 'Easy Widget Embbed',
-    subtitle:
-      'Utilize the widget embed facility to quickly and effortlessly import spreadsheets from your application.',
+    title: 'Guided Import Widget',
+    subtitle: 'Within few minutes add scalable and production ready import widget to your application.',
   },
   {
-    image: WorkflowsSlideImage,
-    title: 'Build Dynamic Workflows',
-    subtitle: 'Create workflows that are dynamic and can be customized to meet your needs.',
+    image: PowerfullSlideImage,
+    title: 'Stay Powerful',
+    subtitle: `Don't let old and buggy data import cross your way to scale and making your users happy.`,
+  },
+  {
+    image: UncertainitySlideImage,
+    title: 'Remove Uncertainity from Data',
+    subtitle: 'Missing values, invalid format, empty rows and unknown column names gets handled automatically.',
   },
 ];
 
@@ -56,12 +55,16 @@ export function OnboardLayout({ children }: PropsWithChildren) {
           <Grid.Col md={6} className={classes.carouselCol}>
             <Carousel loop slideGap="md" withIndicators classNames={classes}>
               {slides.map((slide, index) => (
-                <Carousel.Slide key={index}>
-                  <Image src={slide.image} height={450} alt="Feature rich actions" />
-                  <Title order={1} color="white">
-                    {slide.title}
-                  </Title>
-                  <Text color="white">{slide.subtitle}</Text>
+                <Carousel.Slide key={index} className={classes.slide} h="100%">
+                  <Image src={slide.image} height={650} alt="Feature rich actions" className={classes.image} />
+                  <Stack className="content" spacing={10} px="lg">
+                    <Title order={1} align="center" color="white" className="title">
+                      {slide.title}
+                    </Title>
+                    <Text size="lg" fw={500} align="center" color="white" className="subtitle">
+                      {slide.subtitle}
+                    </Text>
+                  </Stack>
                 </Carousel.Slide>
               ))}
             </Carousel>

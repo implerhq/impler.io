@@ -1,5 +1,5 @@
 import { colors } from '@config';
-import { createStyles, MantineTheme } from '@mantine/core';
+import { createStyles, CSSObject, MantineTheme } from '@mantine/core';
 
 const getRootStyles = (): React.CSSProperties => ({
   height: '100%',
@@ -32,12 +32,10 @@ const getContentContainerStyles = (theme: MantineTheme): Record<string, any> => 
     width: '60%',
   },
 });
-
-const getSlideStyles = (): Record<string, any> => ({
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'center',
+const getSlideImageStyles = (): CSSObject => ({
+  width: '100%',
+  height: '100%',
+  objectFit: 'contain',
 });
 
 const getCarouselColStyles = (theme: MantineTheme): Record<string, any> => ({
@@ -57,11 +55,18 @@ const getGridStyles = (): Record<string, any> => ({
   backgroundColor: colors.black,
 });
 
+const getViewportStyles = (): CSSObject => ({
+  height: '100%',
+  display: 'flex',
+  alignItems: 'center',
+});
+
 export default createStyles((theme): Record<string, any> => {
   return {
     root: getRootStyles(),
     grid: getGridStyles(),
-    slide: getSlideStyles(),
+    image: getSlideImageStyles(),
+    viewport: getViewportStyles(),
     contentCol: getContentColStyles(),
     carouselCol: getCarouselColStyles(theme),
     contentContainer: getContentContainerStyles(theme),
