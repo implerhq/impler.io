@@ -175,7 +175,7 @@ export class BaseReview {
       // uniqueCheck
       case error.keyword === 'uniqueCheck':
       case error.keyword === 'uniqueItemProperties':
-        message = `${String(data)} already exist in column, it must be unique`;
+        message = `${String(data)} already taken! Please enter unique value`;
         break;
       // custom date format
       case error.keyword === 'format' && error.params.format === 'custom-date-time':
@@ -365,9 +365,7 @@ export class BaseReview {
       keyword: 'uniqueCheck',
       schema: false, // keyword value is not used, can be true
       validate: function (data: any, dataPath: AnySchemaObject) {
-        if (!String(data)) {
-          return true;
-        }
+        if (!data) return true;
         if (uniqueItems[dataPath.parentDataProperty].has(data)) {
           return false;
         }

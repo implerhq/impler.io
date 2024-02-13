@@ -90,10 +90,8 @@ interface Params {
   size: MantineSize;
 }
 
-export default createStyles((theme: MantineTheme, params: Params): Record<string, any> => {
-  console.log(theme.colors);
-
-  return {
+export default createStyles(
+  (theme: MantineTheme, params: Params): Record<string, any> => ({
     root: getRootStyles(),
     label: getLabelStyles(theme),
     description: getDescriptionStyles(theme),
@@ -102,5 +100,5 @@ export default createStyles((theme: MantineTheme, params: Params): Record<string
     input: getInputStyles(theme, params.size),
     itemsWrapper: getSelectItemsWrapper(theme),
     item: getSelectItemStyles(theme, params.size),
-  };
-});
+  })
+);
