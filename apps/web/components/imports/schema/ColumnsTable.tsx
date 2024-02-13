@@ -3,7 +3,7 @@ import { Controller } from 'react-hook-form';
 import { ActionIcon, Checkbox, Flex, Tooltip } from '@mantine/core';
 
 import { colors } from '@config';
-import { Table } from '@ui/table';
+import { DraggableTable } from '@ui/table';
 import { useSchema } from '@hooks/useSchema';
 import { COLUMN_TYPES } from '@shared/constants';
 import { DEFAULT_VALUES, IColumn } from '@impler/shared';
@@ -16,6 +16,7 @@ import { CustomSelect } from '@ui/custom-select';
 
 import { AddIcon } from '@assets/icons/Add.icon';
 import { EditIcon } from '@assets/icons/Edit.icon';
+import { GripIcon } from '@assets/icons/Grip.icon';
 import { CloseIcon } from '@assets/icons/Close.icon';
 import { CheckIcon } from '@assets/icons/Check.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
@@ -34,6 +35,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
     columns,
     control,
     handleSubmit,
+    onMoveColumns,
     onEditColumnClick,
     onDeleteColumnClick,
     isColumnCreateLoading,
@@ -52,7 +54,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
         SelectRef.current = false;
       }}
     >
-      <Table<IColumn>
+      <DraggableTable<IColumn>
         emptyDataText='No columns found click on "+" to add new column'
         headings={[
           {
@@ -88,6 +90,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                 <IconButton label="Delete" onClick={() => onDeleteColumnClick(item._id)}>
                   <DeleteIcon color={colors.danger} />
                 </IconButton>
+                <GripIcon color={colors.yellow} style={{ cursor: 'grab' }} />
               </Flex>
             ),
             width: '15%',
@@ -216,6 +219,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
           </tr>
         }
         data={columns}
+        moveItem={onMoveColumns}
       />
     </form>
   );
