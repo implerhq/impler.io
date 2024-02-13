@@ -7,6 +7,7 @@ import { track } from '@libs/amplitude';
 import { IColumn, IErrorObject } from '@impler/shared';
 import { API_KEYS, MODAL_KEYS, MODAL_TITLES } from '@config';
 
+import { useUpdateBulkColumns } from './useUpdateBulkColumns';
 import { ConfirmDelete } from '@components/imports/forms/ConfirmDelete';
 import { UpdateColumnForm } from '@components/imports/forms/UpdateColumnForm';
 
@@ -64,6 +65,7 @@ export function useSchema({ templateId }: UseSchemaProps) {
       },
     }
   );
+  const { updateColumns } = useUpdateBulkColumns({ templateId });
 
   function onEditColumnClick(columnId: string) {
     const columnData = columns?.find((item) => item._id === columnId);
@@ -85,7 +87,13 @@ export function useSchema({ templateId }: UseSchemaProps) {
     modals.close(MODAL_KEYS.COLUMN_DELETE);
     onDelete(columnId);
   }
-
+  function onMoveColumns(itemIndex: number, dropIndex: number) {
+    if (columns) {
+      const newColumns = [...columns];
+      [newColumns[itemIndex], newColumns[dropIndex]] = [newColumns[dropIndex], newColumns[itemIndex]];
+      updateColumns(newColumns);
+    }
+  }
   function onDeleteColumnClick(columnId: string) {
     modals.open({
       modalId: MODAL_KEYS.COLUMN_DELETE,
@@ -103,6 +111,7 @@ export function useSchema({ templateId }: UseSchemaProps) {
     register,
     watch,
     formState,
+    onMoveColumns,
     onEditColumnClick,
     onDeleteColumnClick,
     isColumnCreateLoading,
