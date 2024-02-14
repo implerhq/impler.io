@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { modals } from '@mantine/modals';
-import { useDebouncedState } from '@mantine/hooks';
+import { useDebouncedState, useLocalStorage } from '@mantine/hooks';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
@@ -19,8 +19,8 @@ export function useImports() {
   const queryClient = useQueryClient();
   const { profileInfo } = useAppState();
   const [page, setPage] = useState<number>();
-  const [limit, setLimit] = useState<number>(VARIABLES.TEN);
   const [search, setSearch] = useDebouncedState('', 500);
+  const [limit, setLimit] = useLocalStorage<number>({ key: 'limit', defaultValue: VARIABLES.TEN });
   const { data: projects } = useQuery<unknown, IErrorObject, IProjectPayload[], string[]>(
     [API_KEYS.PROJECTS_LIST],
     () => commonApi(API_KEYS.PROJECTS_LIST as any, {})
@@ -142,6 +142,12 @@ export function useImports() {
       ),
     });
   }
+
+  useEffect(() => {
+    if (importsData && page && importsData.data.length < page) {
+      setPage(importsData.totalPages);
+    }
+  }, [importsData, page]);
 
   return {
     page,

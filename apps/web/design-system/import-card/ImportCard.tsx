@@ -29,7 +29,7 @@ export function ImportCard({ title, imports, totalRecords, errorRecords, onDupli
         </IconButton>
       </Flex>
       <Divider />
-      <Flex justify="space-between">
+      <Flex justify="space-between" align="center">
         <Stack spacing={0} align="center">
           <Text className={classes.value}>{imports}</Text>
           <Text className={classes.key}>Imports</Text>
