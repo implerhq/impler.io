@@ -25,11 +25,13 @@ const getNameStyles = (theme: MantineTheme): CSSObject => ({
   color: theme.colorScheme === 'dark' ? colors.white : colors.black,
   fontWeight: 600,
   fontSize: theme.fontSizes.xl,
+  textAlign: 'center',
 });
 
 const getKeyStyles = (theme: MantineTheme): CSSObject => ({
   color: colors.TXTSecondaryDark,
   fontSize: theme.fontSizes.sm,
+  textAlign: 'center',
 });
 
 const getDuplicateButtonStyles = (theme: MantineTheme): CSSObject => ({
