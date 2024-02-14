@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { useFocusTrap } from '@mantine/hooks';
-import { SimpleGrid, Stack } from '@mantine/core';
+import { FocusTrap, SimpleGrid, Stack } from '@mantine/core';
 
 import { Input } from '@ui/input';
 import { Button } from '@ui/button';
@@ -10,12 +10,13 @@ import { Checkbox } from '@ui/checkbox';
 import { IProjectPayload } from '@impler/shared';
 
 interface DuplicateImportFormProps {
+  originalName?: string;
   profile?: IProfileData;
   projects?: IProjectPayload[];
   onSubmit: (data: IDuplicateTemplateData) => void;
 }
 
-export function DuplicateImportForm({ onSubmit, profile, projects }: DuplicateImportFormProps) {
+export function DuplicateImportForm({ onSubmit, profile, projects, originalName }: DuplicateImportFormProps) {
   const focusTrapRef = useFocusTrap();
   const {
     register,
@@ -28,37 +29,40 @@ export function DuplicateImportForm({ onSubmit, profile, projects }: DuplicateIm
       duplicateOutput: true,
       duplicateWebhook: true,
       duplicateValidator: true,
+      name: originalName,
     },
   });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} ref={focusTrapRef}>
-      <Stack spacing="sm">
-        <Input
-          autoFocus
-          required
-          label="Import Title"
-          placeholder="Import title"
-          register={register('name')}
-          error={errors.name?.message}
-        />
-        <Select
-          required
-          placeholder="Project"
-          label="Project"
-          register={register('_projectId')}
-          data={projects?.map((project) => ({ label: project.name, value: project._id })) || []}
-        />
-        <SimpleGrid cols={3}>
-          <Checkbox label="Copy Columns?" register={register('duplicateColumns')} />
-          <Checkbox label="Copy Output?" register={register('duplicateOutput')} />
-          <Checkbox label="Copy Webhook?" register={register('duplicateWebhook')} />
-          <Checkbox label="Copy Validator?" register={register('duplicateValidator')} />
-        </SimpleGrid>
-        <Button type="submit" fullWidth>
-          Duplicate & Continue
-        </Button>
-      </Stack>
-    </form>
+    <FocusTrap>
+      <form onSubmit={handleSubmit(onSubmit)} ref={focusTrapRef}>
+        <Stack spacing="sm">
+          <Input
+            autoFocus
+            required
+            label="Import Title"
+            placeholder="Import title"
+            register={register('name')}
+            error={errors.name?.message}
+          />
+          <Select
+            required
+            placeholder="Project"
+            label="Project"
+            register={register('_projectId')}
+            data={projects?.map((project) => ({ label: project.name, value: project._id })) || []}
+          />
+          <SimpleGrid cols={3}>
+            <Checkbox label="Copy Columns?" register={register('duplicateColumns')} />
+            <Checkbox label="Copy Output?" register={register('duplicateOutput')} />
+            <Checkbox label="Copy Webhook?" register={register('duplicateWebhook')} />
+            <Checkbox label="Copy Validator?" register={register('duplicateValidator')} />
+          </SimpleGrid>
+          <Button type="submit" fullWidth>
+            Duplicate & Continue
+          </Button>
+        </Stack>
+      </form>
+    </FocusTrap>
   );
 }
