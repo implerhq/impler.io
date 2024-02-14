@@ -130,6 +130,7 @@ export function useImports() {
     });
   }
   function onDuplicateClick(importId: string) {
+    const itemToDuplicate = importsData?.data.find((importItem) => importItem._id === importId);
     modals.open({
       modalId: MODAL_KEYS.IMPORT_DUPLICATE,
       title: MODAL_TITLES.IMPORT_DUPLICATE,
@@ -137,6 +138,7 @@ export function useImports() {
         <DuplicateImportForm
           profile={profileInfo}
           projects={projects}
+          originalName={itemToDuplicate?.name}
           onSubmit={(data) => duplicateImport([importId, data])}
         />
       ),

@@ -39,7 +39,7 @@ export function Input({
       pattern={pattern}
       required={required}
       disabled={disabled}
-      autoFocus={autoFocus}
+      data-autofocus={autoFocus}
       data-haslabel={!!label}
       placeholder={placeholder}
       rightSection={rightSection}
