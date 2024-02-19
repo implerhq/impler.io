@@ -40,8 +40,8 @@ import {
   GetOriginalFileContent,
 } from './usecases';
 
-@Controller('/upload')
 @ApiTags('Uploads')
+@Controller('/upload')
 @ApiSecurity(ACCESS_KEY_NAME)
 @UseGuards(JwtAuthGuard)
 export class UploadController {
@@ -68,18 +68,19 @@ export class UploadController {
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(
-    @UploadedFile('file', ValidImportFile) file: Express.Multer.File,
     @Body() body: UploadRequestDto,
-    @Param('templateId', ValidateTemplate) templateId: string
+    @Param('templateId', ValidateTemplate) templateId: string,
+    @UploadedFile('file', ValidImportFile) file: Express.Multer.File
   ) {
     return this.makeUploadEntry.execute(
       MakeUploadEntryCommand.create({
         file: file,
         templateId,
         extra: body.extra,
-        authHeaderValue: body.authHeaderValue,
         schema: body.schema,
         output: body.output,
+        authHeaderValue: body.authHeaderValue,
+        selectedSheetName: body.selectedSheetName,
       })
     );
   }

@@ -24,4 +24,8 @@ export class MakeUploadEntryCommand extends BaseCommand {
   @IsOptional()
   @IsString()
   authHeaderValue?: string;
+
+  @IsString()
+  @IsOptional()
+  selectedSheetName?: string;
 }

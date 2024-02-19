@@ -18,8 +18,8 @@ export const USE_CASES = [
 ];
 
 export {
-  MakeUploadEntry,
   GetUpload,
+  MakeUploadEntry,
   TerminateUpload,
   GetUploadColumns,
   GetOriginalFileContent,
