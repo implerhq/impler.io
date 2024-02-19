@@ -4,12 +4,12 @@ import { logAmplitudeEvent } from '@amplitude';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { variables } from '@config';
-import { IImportConfig, downloadFile } from '@impler/shared';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { IFormvalues, IUploadValues } from '@types';
 import { useImplerState } from '@store/impler.context';
 import { IErrorObject, IOption, ITemplate, IUpload } from '@impler/shared';
+import { FileMimeTypesEnum, IImportConfig, downloadFile } from '@impler/shared';
 import { downloadFileFromURL, getFileNameFromUrl, notifier, ParentWindow } from '@util';
 
 interface IUsePhase1Props {
@@ -19,9 +19,11 @@ interface IUsePhase1Props {
 export function usePhase1({ goNext }: IUsePhase1Props) {
   const { api } = useAPIState();
   const [templates, setTemplates] = useState<IOption[]>([]);
-  const { setUploadInfo, setTemplateInfo, setImportConfig, output, schema, data } = useAppState();
+  const [excelSheetNames, setExcelSheetNames] = useState<string[]>([]);
   const { projectId, templateId, authHeaderValue, extra } = useImplerState();
   const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
+  const { setUploadInfo, setTemplateInfo, setImportConfig, output, schema, data } = useAppState();
+
   const { isFetched: isImportConfigLoaded, isLoading: isImportConfigLoading } = useQuery<
     IImportConfig,
     IErrorObject,
@@ -96,13 +98,25 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
       },
     }
   );
+  const { mutate: getExcelSheetNames } = useMutation<string[], IErrorObject, { file: File }>(
+    ['getExcelSheetNames'],
+    (file) => api.getExcelSheetNames(file),
+    {
+      onSuccess(sheetNames) {
+        setExcelSheetNames(sheetNames);
+      },
+      onError(error: IErrorObject) {
+        notifier.showError({ title: error.error, message: error.message });
+      },
+    }
+  );
   const {
     control,
     register,
     trigger,
-    getValues,
     setValue,
     setError,
+    getValues,
     handleSubmit,
     formState: { errors },
   } = useForm<IFormvalues>();
@@ -154,8 +168,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     }
     setIsDownloadInProgress(false);
   };
-
-  const onSubmit = (submitData: IFormvalues) => {
+  const uploadFile = async (submitData: IFormvalues) => {
     const foundTemplate = findTemplate();
     if (foundTemplate) {
       submitData.templateId = foundTemplate._id;
@@ -169,19 +182,34 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
       });
     }
   };
+  const onSubmit = async () => {
+    await trigger();
+    const file = getValues('file');
+    if ([FileMimeTypesEnum.EXCEL, FileMimeTypesEnum.EXCELX].includes(file.type as FileMimeTypesEnum)) {
+      getExcelSheetNames({ file: file });
+    } else {
+      handleSubmit(uploadFile)();
+    }
+  };
+  const onSelectSheetModalReset = () => {
+    setExcelSheetNames([]);
+  };
 
   return {
     control,
     errors,
     setError,
     register,
+    onSubmit,
     templates,
     onDownload,
+    excelSheetNames,
     isUploadLoading,
     onTemplateChange,
     isDownloadInProgress,
-    isInitialDataLoaded: isFetched && !isLoading && isImportConfigLoaded && !isImportConfigLoading,
+    onSelectSheetModalReset,
     showSelectTemplate: !templateId,
-    onSubmit: handleSubmit(onSubmit),
+    onSelectExcelSheet: handleSubmit(uploadFile),
+    isInitialDataLoaded: isFetched && !isLoading && isImportConfigLoaded && !isImportConfigLoading,
   };
 }

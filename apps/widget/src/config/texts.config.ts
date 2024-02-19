@@ -21,6 +21,8 @@ export const TEXTS = {
   },
   PHASE1: {
     SELECT_TITLE: 'Template',
+    SELECT_EXCEL_SHEET: 'Excel sheet to import',
+    SELECT_EXCEL_SHEET_PLACEHOLDER: 'Select Excel sheet',
     SELECT_PLACEHOLDER: 'Select Template',
     DOWNLOAD_SAMPLE_TITLE: 'Download sample csv file',
     DOWNLOAD_SAMPLE: 'Download sample',
@@ -53,6 +55,10 @@ export const TEXTS = {
     subTitle: '{count} rows have been uploaded successfully, and currently is in process, it will be ready shortly.',
     UPLOAD_AGAIN: 'Upload new File',
   },
+  SELECT_SHEET_MODAL: {
+    title: 'Select sheet',
+    SELECT: 'Select',
+  },
   PROMPT: {
     title: `Are you sure? You will lose your work in progress.`,
     SUBTITLE_CLOSE: 'Your import is in progress, clicking <b>Yes</b> will reset it.',
@@ -61,6 +67,7 @@ export const TEXTS = {
     NO: 'No',
   },
   VALIDATION: {
+    REQUIRED_SELECT: 'Please select value from the list',
     TEMPLATE_REQUIRED: 'Template is required',
     FILE_REQUIRED: 'File is required',
   },

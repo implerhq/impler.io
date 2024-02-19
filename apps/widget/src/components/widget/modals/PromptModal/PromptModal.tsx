@@ -1,7 +1,8 @@
-import { Warning } from '@icons';
-import { colors, TEXTS } from '@config';
-import { Button } from '@ui/Button';
 import { Group, Modal as MantineModal, Text, Title } from '@mantine/core';
+
+import { Warning } from '@icons';
+import { Button } from '@ui/Button';
+import { colors, TEXTS } from '@config';
 import { PromptModalTypesEnum } from '@types';
 
 interface IPromptModalProps {
@@ -16,7 +17,6 @@ export function PromptModal(props: IPromptModalProps) {
   const subTitle = {
     [PromptModalTypesEnum.CLOSE]: TEXTS.PROMPT.SUBTITLE_CLOSE,
     [PromptModalTypesEnum.UPLOAD_AGAIN]: TEXTS.PROMPT.SUBTITLE_RESET,
-    '': '',
   };
 
   return (

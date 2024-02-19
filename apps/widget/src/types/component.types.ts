@@ -25,8 +25,9 @@ export enum PhasesEnum {
 }
 
 export interface IFormvalues {
-  templateId: string;
   file: File;
+  templateId: string;
+  selectedSheetName?: string;
 }
 
 export interface IUploadValues extends IFormvalues {
