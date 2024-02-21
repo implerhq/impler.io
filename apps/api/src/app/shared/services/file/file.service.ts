@@ -16,6 +16,7 @@ export class ExcelFileService {
           XLSX.utils.sheet_to_csv(ws, {
             blankrows: false,
             skipHidden: true,
+            strip: true,
           })
         );
       } catch (error) {
