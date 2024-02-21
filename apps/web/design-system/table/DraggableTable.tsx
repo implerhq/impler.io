@@ -127,8 +127,8 @@ export function DraggableTable<T extends { _id?: string }>(props: ITableProps<T>
               key={item._id || rowIndex}
             />
           ))}
-          {extraContent}
         </DndProvider>
+        {extraContent}
       </tbody>
     );
   };

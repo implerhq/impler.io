@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { modals } from '@mantine/modals';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -17,6 +18,7 @@ interface UseSchemaProps {
 
 export function useSchema({ templateId }: UseSchemaProps) {
   const queryClient = useQueryClient();
+  const [showAddRow, setShowAddRow] = useState(false);
   const { register, control, watch, reset, setFocus, handleSubmit, formState } = useForm<IColumn>({
     defaultValues: {
       type: 'String',
@@ -36,7 +38,7 @@ export function useSchema({ templateId }: UseSchemaProps) {
     (data) => commonApi(API_KEYS.COLUMN_CREATE as any, { parameters: [templateId], body: data }),
     {
       onSuccess: (data) => {
-        queryClient.invalidateQueries([API_KEYS.TEMPLATE_COLUMNS_LIST, templateId]);
+        queryClient.refetchQueries([API_KEYS.TEMPLATE_COLUMNS_LIST, templateId]);
         track({
           name: 'COLUMN CREATE',
           properties: {
@@ -90,7 +92,8 @@ export function useSchema({ templateId }: UseSchemaProps) {
   function onMoveColumns(itemIndex: number, dropIndex: number) {
     if (columns) {
       const newColumns = [...columns];
-      [newColumns[itemIndex], newColumns[dropIndex]] = [newColumns[dropIndex], newColumns[itemIndex]];
+      const moveItem = newColumns.splice(itemIndex, 1)[0];
+      newColumns.splice(dropIndex, 0, moveItem);
       updateColumns(newColumns);
     }
   }
@@ -105,13 +108,19 @@ export function useSchema({ templateId }: UseSchemaProps) {
     createColumn(data);
   }
 
+  useEffect(() => {
+    if (showAddRow) setFocus('name');
+  }, [setFocus, showAddRow]);
+
   return {
+    watch,
     control,
     columns,
     register,
-    watch,
     formState,
+    showAddRow,
     onMoveColumns,
+    setShowAddRow,
     onEditColumnClick,
     onDeleteColumnClick,
     isColumnCreateLoading,
