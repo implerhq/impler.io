@@ -1,11 +1,10 @@
 import Link from 'next/link';
-import { Group, Stack } from '@mantine/core';
+import { Group, Stack, TextInput as Input } from '@mantine/core';
 import { Controller, useForm } from 'react-hook-form';
 
 import { COLUMN_TYPES } from '@shared/constants';
 import { DEFAULT_VALUES, IColumn } from '@impler/shared';
 
-import { Input } from '@ui/input';
 import { Button } from '@ui/button';
 import { Select } from '@ui/select';
 import { Textarea } from '@ui/textarea';
@@ -38,15 +37,15 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
           <Input
             required
             label="Column Name"
-            register={register('name')}
+            {...register('name')}
             error={errors.name?.message}
             placeholder="Name of the column*"
           />
           <Input
             required
             label="Column Key"
+            {...register('key')}
             placeholder="Column Key"
-            register={register('key')}
             error={errors.key?.message}
           />
         </Group>
@@ -77,8 +76,8 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
           <>
             <Input
               required
+              {...register('regex')}
               label="Regular expression"
-              register={register('regex')}
               error={errors.regex?.message}
               placeholder="Regular expression"
             />
