@@ -1,6 +1,7 @@
 import * as XLSX from 'xlsx';
 import * as ExcelJS from 'exceljs';
 import { ParseConfig, parse } from 'papaparse';
+import { CONSTANTS } from '@shared/constants';
 import { ColumnTypesEnum, Defaults, FileEncodingsEnum } from '@impler/shared';
 import { EmptyFileException } from '@shared/exceptions/empty-file.exception';
 import { InvalidFileException } from '@shared/exceptions/invalid-file.exception';
@@ -25,12 +26,12 @@ export class ExcelFileService {
     });
   }
   formatName(name: string): string {
-    return name.replace(/[^a-zA-Z0-9]/g, '');
+    return CONSTANTS.EXCEL_DATA_SHEET_STARTER + name.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
   }
   addSelectSheet(wb: ExcelJS.Workbook, heading: IExcelFileHeading): string {
     const name = this.formatName(heading.key);
     const companies = wb.addWorksheet(name);
-    const companyHeadings = [name];
+    const companyHeadings = [heading.key];
     companies.addRow(companyHeadings);
     heading.selectValues.forEach((value) => companies.addRow([value]));
 
