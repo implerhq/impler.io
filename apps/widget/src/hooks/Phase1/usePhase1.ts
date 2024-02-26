@@ -103,7 +103,10 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     (file) => api.getExcelSheetNames(file),
     {
       onSuccess(sheetNames) {
-        setExcelSheetNames(sheetNames);
+        if (sheetNames.length <= 1) {
+          setValue('selectedSheetName', sheetNames[0]);
+          handleSubmit(uploadFile)();
+        } else setExcelSheetNames(sheetNames);
       },
       onError(error: IErrorObject) {
         notifier.showError({ title: error.error, message: error.message });
