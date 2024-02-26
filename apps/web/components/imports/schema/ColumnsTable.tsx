@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { Controller } from 'react-hook-form';
 import { ActionIcon, Checkbox, Flex, Tooltip, TextInput as Input } from '@mantine/core';
 
@@ -25,7 +25,6 @@ interface ColumnsTableProps {
 }
 
 export function ColumnsTable({ templateId }: ColumnsTableProps) {
-  const [showAddRow, setShowAddRow] = useState(false);
   const SelectRef = useRef(false);
 
   const {
@@ -33,8 +32,10 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
     watch,
     columns,
     control,
+    showAddRow,
     handleSubmit,
     onMoveColumns,
+    setShowAddRow,
     onEditColumnClick,
     onDeleteColumnClick,
     isColumnCreateLoading,
@@ -189,7 +190,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                         />
                       )}
                     />
-                    <Checkbox label="Required?" title="Required?" {...register('isRequired')} id="isRequired" />{' '}
+                    <Checkbox label="Required?" title="Required?" {...register('isRequired')} id="isRequired" />
                     <Checkbox label="Unique?" title="Unique?" {...register('isUnique')} id="isUnique" />
                   </Flex>
                 </td>
