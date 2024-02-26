@@ -1,7 +1,6 @@
 import { ChangeEvent } from 'react';
-import { ActionIcon, Badge, Group, LoadingOverlay, Stack, Title, Tooltip } from '@mantine/core';
+import { ActionIcon, Badge, Group, LoadingOverlay, Stack, Title, Tooltip, TextInput as Input } from '@mantine/core';
 
-import { Input } from '@ui/input';
 import { Table } from '@ui/table';
 import { VARIABLES, colors } from '@config';
 import { Pagination } from '@ui/pagination';
@@ -29,13 +28,11 @@ export function History() {
       <Title order={3}>History</Title>
       <Group spacing="xs" style={{ position: 'relative' }}>
         <Input
+          type="search"
+          defaultValue={name}
           icon={<SearchIcon />}
           placeholder="Search imports by name..."
-          register={{
-            defaultValue: name,
-            onChange: (e: ChangeEvent<HTMLInputElement>) => onNameChange(e.currentTarget.value),
-          }}
-          type="search"
+          onChange={(e: ChangeEvent<HTMLInputElement>) => onNameChange(e.currentTarget.value)}
         />
         <DateInput
           allowDeselect
