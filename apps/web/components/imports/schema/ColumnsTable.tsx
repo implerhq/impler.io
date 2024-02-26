@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { Controller } from 'react-hook-form';
-import { ActionIcon, Checkbox, Flex, Tooltip } from '@mantine/core';
+import { ActionIcon, Checkbox, Flex, Tooltip, TextInput as Input } from '@mantine/core';
 
 import { colors } from '@config';
 import { DraggableTable } from '@ui/table';
@@ -8,7 +8,6 @@ import { useSchema } from '@hooks/useSchema';
 import { COLUMN_TYPES } from '@shared/constants';
 import { DEFAULT_VALUES, IColumn } from '@impler/shared';
 
-import { Input } from '@ui/input';
 import { Select } from '@ui/select';
 import { IconButton } from '@ui/icon-button';
 import { MultiSelect } from '@ui/multi-select';
@@ -26,7 +25,6 @@ interface ColumnsTableProps {
 }
 
 export function ColumnsTable({ templateId }: ColumnsTableProps) {
-  const [showAddRow, setShowAddRow] = useState(false);
   const SelectRef = useRef(false);
 
   const {
@@ -34,8 +32,10 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
     watch,
     columns,
     control,
+    showAddRow,
     handleSubmit,
     onMoveColumns,
+    setShowAddRow,
     onEditColumnClick,
     onDeleteColumnClick,
     isColumnCreateLoading,
@@ -102,8 +102,8 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
               <>
                 <td colSpan={4} style={{ borderRight: 'none' }}>
                   <Flex gap="xs" align={'center'}>
-                    <Input autoFocus required placeholder="Column Name" register={register('name')} />
-                    <Input required placeholder="Column Key" register={register('key')} />
+                    <Input autoFocus required placeholder="Column Name" {...register('name')} />
+                    <Input required placeholder="Column Key" {...register('key')} />
                     <Controller
                       control={control}
                       name="type"
@@ -119,14 +119,12 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                       )}
                     />
                     {typeValue === 'Regex' && (
-                      <>
-                        <Input
-                          required
-                          register={register('regex')}
-                          error={errors.regex?.message}
-                          placeholder="Regular expression"
-                        />
-                      </>
+                      <Input
+                        required
+                        error={errors.regex?.message}
+                        placeholder="Regular expression"
+                        {...register('regex')}
+                      />
                     )}
                     {typeValue === 'Select' ? (
                       <Controller
@@ -192,7 +190,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                         />
                       )}
                     />
-                    <Checkbox label="Required?" title="Required?" {...register('isRequired')} id="isRequired" />{' '}
+                    <Checkbox label="Required?" title="Required?" {...register('isRequired')} id="isRequired" />
                     <Checkbox label="Unique?" title="Unique?" {...register('isUnique')} id="isUnique" />
                   </Flex>
                 </td>

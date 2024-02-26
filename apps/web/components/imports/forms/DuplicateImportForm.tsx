@@ -1,8 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { useFocusTrap } from '@mantine/hooks';
-import { FocusTrap, SimpleGrid, Stack } from '@mantine/core';
+import { FocusTrap, SimpleGrid, Stack, TextInput as Input } from '@mantine/core';
 
-import { Input } from '@ui/input';
 import { Button } from '@ui/button';
 import { Select } from '@ui/select';
 import { Checkbox } from '@ui/checkbox';
@@ -41,8 +40,8 @@ export function DuplicateImportForm({ onSubmit, profile, projects, originalName 
             autoFocus
             required
             label="Import Title"
+            {...register('name')}
             placeholder="Import title"
-            register={register('name')}
             error={errors.name?.message}
           />
           <Select
