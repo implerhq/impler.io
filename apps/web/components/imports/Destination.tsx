@@ -1,9 +1,8 @@
 import { Prism } from '@mantine/prism';
 import { ITemplate } from '@impler/shared';
 import { Controller } from 'react-hook-form';
-import { Code, Stack, Accordion, Title, useMantineColorScheme } from '@mantine/core';
+import { Code, Stack, Accordion, Title, useMantineColorScheme, TextInput as Input } from '@mantine/core';
 
-import { Input } from '@ui/input';
 import { Button } from '@ui/button';
 import { APIBlock } from '@ui/api-block';
 import { NumberInput } from '@ui/number-input';
@@ -36,12 +35,12 @@ export function Destination({ template, accessToken }: DestinationProps) {
               <Stack spacing="xs">
                 <Input
                   placeholder="Callback URL"
-                  register={register('callbackUrl', {
+                  error={errors.callbackUrl ? 'Please enter valid URL' : undefined}
+                  {...register('callbackUrl', {
                     pattern: REGULAR_EXPRESSIONS.URL,
                   })}
-                  error={errors.callbackUrl ? 'Please enter valid URL' : undefined}
                 />
-                <Input placeholder="Auth Header Name" register={register('authHeaderName')} />
+                <Input placeholder="Auth Header Name" {...register('authHeaderName')} />
                 <Controller
                   control={control}
                   name="chunkSize"

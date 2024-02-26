@@ -1,7 +1,6 @@
 import { ChangeEvent } from 'react';
-import { Flex, SimpleGrid, Group, LoadingOverlay, Text, Title } from '@mantine/core';
+import { Flex, SimpleGrid, Group, LoadingOverlay, Text, Title, TextInput as Input } from '@mantine/core';
 
-import { Input } from '@ui/input';
 import { Button } from '@ui/button';
 import { VARIABLES } from '@config';
 import { Pagination } from '@ui/pagination';
@@ -35,10 +34,8 @@ export default function Imports() {
             <Input
               icon={<SearchIcon />}
               placeholder="Search imports by name..."
-              register={{
-                defaultValue: search,
-                onChange: (e: ChangeEvent<HTMLInputElement>) => onSearchChange(e.currentTarget.value),
-              }}
+              defaultValue={search}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => onSearchChange(e.currentTarget.value)}
               type="search"
             />
             <Button color="invariant" onClick={onCreateClick}>
