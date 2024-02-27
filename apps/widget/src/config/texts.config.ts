@@ -19,7 +19,7 @@ export const TEXTS = {
   },
   PHASE1: {
     SELECT_TITLE: 'Template',
-    SELECT_EXCEL_SHEET: 'Excel sheet to import',
+    SELECT_EXCEL_SHEET: 'Select sheet to Import',
     SELECT_EXCEL_SHEET_PLACEHOLDER: 'Select Excel sheet',
     SELECT_PLACEHOLDER: 'Select Template',
     DOWNLOAD_SAMPLE_TITLE: 'Download sample csv file',
@@ -54,7 +54,6 @@ export const TEXTS = {
     UPLOAD_AGAIN: 'Upload new File',
   },
   SELECT_SHEET_MODAL: {
-    title: 'Select sheet',
     SELECT: 'Select',
   },
   PROMPT: {

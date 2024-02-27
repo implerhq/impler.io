@@ -1,6 +1,6 @@
 {
   "name": "@impler/shared",
-  "version": "0.16.1",
+  "version": "0.17.0",
   "description": "Reusable types and classes to shared between apps and libraries",
   "license": "MIT",
   "author": "implerhq",
