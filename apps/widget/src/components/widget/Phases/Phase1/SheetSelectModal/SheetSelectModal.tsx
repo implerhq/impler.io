@@ -16,14 +16,7 @@ interface IConfirmModalProps {
 
 export function SheetSelectModal({ opened, onClose, onSubmit, excelSheetNames, control }: IConfirmModalProps) {
   return (
-    <MantineModal
-      centered
-      size="lg"
-      padding="xl"
-      opened={opened}
-      onClose={onClose}
-      title={TEXTS.SELECT_SHEET_MODAL.title}
-    >
+    <MantineModal withCloseButton={false} centered size="lg" padding="xl" opened={opened} onClose={onClose}>
       <Group spacing="sm">
         <Controller
           control={control}
