@@ -11,16 +11,28 @@ interface IOption {
 export interface ISelectProps {
   title?: string;
   placeholder?: string;
-  data: IOption[];
+  data: string[] | IOption[];
   error?: string;
   required?: boolean;
   width?: string | number;
   value?: string;
+  withinPortal?: boolean;
   onChange?: (value: any) => void;
 }
 
 export const Select = React.forwardRef<HTMLInputElement, ISelectProps>((props: ISelectProps, ref) => {
-  const { title, placeholder, data, error, required = true, width = '100%', onChange, value, ...extraProps } = props;
+  const {
+    title,
+    placeholder,
+    data,
+    error,
+    required = true,
+    width = '100%',
+    onChange,
+    value,
+    withinPortal,
+    ...extraProps
+  } = props;
   const { classes } = useStyles({ width });
 
   return (
@@ -38,6 +50,7 @@ export const Select = React.forwardRef<HTMLInputElement, ISelectProps>((props: I
         root: classes.root,
       }}
       value={value}
+      withinPortal={withinPortal}
       onChange={(selectedValue) => onChange && onChange(selectedValue)}
       required={required}
       {...extraProps}

@@ -1,15 +1,18 @@
-import { TEXTS, variables } from '@config';
+import { Group } from '@mantine/core';
+import { Controller } from 'react-hook-form';
+
+import { Download } from '@icons';
+import { PhasesEnum } from '@types';
 import { Select } from '@ui/Select';
 import { Button } from '@ui/Button';
 import { Dropzone } from '@ui/Dropzone';
+import { TEXTS, variables } from '@config';
 import { LoadingOverlay } from '@ui/LoadingOverlay';
-import { Group } from '@mantine/core';
-import { Download } from '@icons';
+import { usePhase1 } from '@hooks/Phase1/usePhase1';
+
 import useStyles from './Styles';
 import { Footer } from 'components/Common/Footer';
-import { usePhase1 } from '@hooks/Phase1/usePhase1';
-import { Controller } from 'react-hook-form';
-import { PhasesEnum } from '@types';
+import { SheetSelectModal } from './SheetSelectModal';
 
 interface IPhase1Props {
   onNextClick: () => void;
@@ -21,14 +24,17 @@ export function Phase1(props: IPhase1Props) {
   const {
     onSubmit,
     control,
+    setError,
     templates,
     onDownload,
-    setError,
+    excelSheetNames,
     isUploadLoading,
     onTemplateChange,
+    onSelectExcelSheet,
     showSelectTemplate,
     isInitialDataLoaded,
     isDownloadInProgress,
+    onSelectSheetModalReset,
   } = usePhase1({
     goNext,
   });
@@ -91,6 +97,14 @@ export function Phase1(props: IPhase1Props) {
             error={fieldState.error?.message}
           />
         )}
+      />
+
+      <SheetSelectModal
+        control={control}
+        onSubmit={onSelectExcelSheet}
+        excelSheetNames={excelSheetNames}
+        opened={!!excelSheetNames.length}
+        onClose={onSelectSheetModalReset}
       />
 
       <Footer

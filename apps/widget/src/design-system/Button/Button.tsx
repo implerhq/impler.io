@@ -10,11 +10,21 @@ interface IButtonProps {
   size?: MantineSize;
   color?: 'blue' | 'red' | 'gray' | string;
   leftIcon?: ReactNode;
+  fullWidth?: boolean;
 }
 
-export function Button(props: PropsWithChildren<IButtonProps>) {
+export function Button({
+  variant,
+  disabled,
+  children,
+  loading,
+  onClick,
+  size = 'md',
+  color,
+  leftIcon,
+  fullWidth,
+}: PropsWithChildren<IButtonProps>) {
   const { classes } = useStyles();
-  const { variant, disabled, children, loading, onClick, size = 'md', color, leftIcon } = props;
 
   return (
     <MantineButton
@@ -26,6 +36,7 @@ export function Button(props: PropsWithChildren<IButtonProps>) {
       size={size}
       color={color}
       classNames={classes}
+      fullWidth={fullWidth}
     >
       {children}
     </MantineButton>

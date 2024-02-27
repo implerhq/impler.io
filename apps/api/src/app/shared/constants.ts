@@ -31,6 +31,7 @@ export const APIMessages = {
 
 export const CONSTANTS = {
   PASSWORD_SALT: 10,
+  EXCEL_DATA_SHEET_STARTER: 'imp_',
   AUTH_COOKIE_NAME: 'authentication',
   // eslint-disable-next-line no-magic-numbers
   maxAge: 1000 * 60 * 60 * 24 * 1, // 1 day

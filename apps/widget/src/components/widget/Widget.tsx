@@ -11,7 +11,7 @@ import { Phase3 } from './Phases/Phase3';
 import { Phase4 } from './Phases/Phase4';
 import { useWidget } from '@hooks/useWidget';
 import { useAppState } from '@store/app.context';
-import { PromptModal } from './Phases/PromptModal';
+import { PromptModal } from './modals/PromptModal';
 import { Layout } from 'components/Common/Layout';
 import { PhasesEnum, PromptModalTypesEnum } from '@types';
 import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
