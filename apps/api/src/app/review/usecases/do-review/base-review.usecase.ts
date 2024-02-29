@@ -270,7 +270,6 @@ export class BaseReview {
 
               return acc;
             }, {});
-            console.log(recordObj);
             const validationResultItem = this.validateRecord({
               index: totalRecords,
               record: recordObj,
