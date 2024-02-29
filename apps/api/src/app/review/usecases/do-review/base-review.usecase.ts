@@ -152,7 +152,9 @@ export class BaseReview {
     let field: string;
 
     return errors.reduce((obj, error) => {
-      [, field] = error.instancePath.split('/');
+      if (error.keyword === 'required') field = error.params.missingProperty;
+      else [, field] = error.instancePath.split('/');
+
       field = field.replace(/~1/g, '/');
       obj[field] = this.getMessage(error, field || error.schema[0], error.data, dateFormats);
 
@@ -268,6 +270,7 @@ export class BaseReview {
 
               return acc;
             }, {});
+            console.log(recordObj);
             const validationResultItem = this.validateRecord({
               index: totalRecords,
               record: recordObj,
