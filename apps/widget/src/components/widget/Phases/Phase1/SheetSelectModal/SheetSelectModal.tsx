@@ -11,7 +11,7 @@ interface IConfirmModalProps {
   onClose: () => void;
   onSubmit: () => void;
   excelSheetNames: string[];
-  control: Control<IFormvalues, any, IFormvalues>;
+  control: Control<IFormvalues>;
 }
 
 export function SheetSelectModal({ opened, onClose, onSubmit, excelSheetNames, control }: IConfirmModalProps) {
