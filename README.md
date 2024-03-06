@@ -4,6 +4,7 @@
   <a href="https://impler.io?utm_source=github" target="_blank">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://github.com/implerhq/impler.io/assets/50201755/7695ab1a-29f2-475c-976a-a74c9dfd60cc">
+    <source media="(prefers-color-scheme: light)" srcset="https://github.com/implerhq/impler.io/assets/50201755/8ac1e6f3-37a1-40ac-bdb9-53e1a0702bbc">
     <img alt="Impler Logo" src="https://github.com/implerhq/impler.io/assets/50201755/7695ab1a-29f2-475c-976a-a74c9dfd60cc" width="280"/>
   </picture>
   </a>
