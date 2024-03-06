@@ -9,7 +9,7 @@ const getInputWrapperStyles = (theme: MantineTheme): CSSObject => ({
   border: `0.0625rem solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[4]}`,
 
   ':focus-within': {
-    borderColor: colors.blue,
+    borderColor: theme.colorScheme === 'dark' ? theme.colors.blue[8] : theme.colors.blue[6],
   },
   backgroundColor: theme.colorScheme === 'dark' ? colors.BGPrimaryDark : colors.BGPrimaryLight,
   '&[data-haslabel="true"]': {
