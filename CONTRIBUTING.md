@@ -18,23 +18,33 @@ You can open a new issue from [here](https://github.com/implerhq/impler.io/issue
 
 ### Requirements
 
-- Node.js version v14.19.3
+- Node.js version v18.13.0
+  - pnpm version 7.9.4
 - MongoDB
-- localstack or AWS S3 credentials (for storing files)
-- **(Optional)** pnpm - Needed if you want to install new packages
+- Localstack or AWS S3 credentials (for storing files)
+- RabbitMQ for microservices to interact with each other
+
+> Using docker is the easiest way to set up MongoDB, LocalStack, and RabbitMQ services.
+
+#### Developers are following this way to setup 
 
 ### Setup the project
 
 The project is a monorepo, meaning that it is a collection of multiple packages managed in the same repository.
 
-Follow these steps to set up the project locally,
+Fork the repository and clone the repo. Example cloning the Impler repo `git clone git@github.com:implerhq/impler.io.git`.
 
-1. Clone the repo, git clone [https://github.com/implerhq/impler.io.git](https://github.com/implerhq/impler.io.git).
-2. After cloning your fork,
-   1. Install the dependencies by running, `pnpm install`.
-   2. Do setup for projects by running, `pnpm setup:project`.
-   3. Start the application, `pnpm start:dev`.
-   4. Start interacting with web UI by visiting `http://localhost:4200`.
+After cloning your fork, follow these steps to set up the project locally,
+
+1. Install the dependencies by running, `pnpm install`.
+2. Do setup for projects by running, `pnpm setup:project`.
+3. Start the application by running the following commands.
+    1. Start backend API `pnpm start:api`.
+    2. Start web portal `pnpm start:web`.
+    3. Start embed script `pnpm start:embed`.
+    4. Start import widget `pnpm start:widget`.
+    5. Start queue-manager `pnpm start:queue-manager`.
+5. Start interacting with web UI by visiting `http://localhost:4200`.
 
 ## Missing a Feature or Facing an Issue?
 
