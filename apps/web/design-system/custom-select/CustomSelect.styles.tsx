@@ -68,7 +68,7 @@ const getLabelStyles = (theme: MantineTheme): CSSObject => ({
   ...theme.fn.fontStyles(),
   fontWeight: 500,
   fontSize: getSize({ size: 'sm', sizes: theme.fontSizes }),
-  color: theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[9],
+  color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.colors.gray[9],
 });
 const getSelectItemsWrapper = (theme: MantineTheme): CSSObject => ({
   padding: 0,
