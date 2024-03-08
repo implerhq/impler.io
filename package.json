@@ -9,7 +9,7 @@
     "lint": "npx nx run-many --target=lint --all",
     "kill-ports": "npx kill-port 4701 3000 3500 4200",
     "setup:project": "npx pnpm@7.9.4 i && node scripts/setup-env-files.js",
-    "start:dev": "nx run-many --target=start -p @impler/api @impler/web @impler/widget @impler/embed @impler/queue-manager --parallel=5",
+    "start:dev": "npx nx run-many --target=start -p @impler/api @impler/web @impler/widget @impler/embed @impler/queue-manager --parallel=5",
     "start:demo": "cross-env npx nx run @impler/demo:start",
     "start:dal": "cross-env npx nx run @impler/dal:start",
     "start:api": "cross-env npx nx run @impler/api:start",
