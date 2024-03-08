@@ -18,6 +18,7 @@ export class ExcelFileService {
             blankrows: false,
             skipHidden: true,
             strip: true,
+            rawNumbers: true,
           })
         );
       } catch (error) {
