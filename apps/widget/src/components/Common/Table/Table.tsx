@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import { forwardRef } from 'react';
-import { HotTable } from '@handsontable/react';
+import { HotTable, HotTableClass } from '@handsontable/react';
 // eslint-disable-next-line id-length
 import $ from 'jquery';
 
@@ -40,6 +40,7 @@ registerEditor(BaseEditor);
 
 registerValidator(dateValidator);
 
+import 'handsontable/dist/handsontable.full.min.css';
 import './HandsonTable.styles.min.css';
 
 interface TableProps {
@@ -115,7 +116,7 @@ Handsontable.renderers.registerRenderer('del', function renderer(instance, TD, r
   return TD;
 });
 
-export const Table = forwardRef<HotTable, TableProps>(
+export const Table = forwardRef<HotTableClass, TableProps>(
   (
     {
       afterRender,

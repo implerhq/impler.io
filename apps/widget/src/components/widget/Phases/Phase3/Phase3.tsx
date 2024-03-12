@@ -1,5 +1,5 @@
 import { Stack } from '@mantine/core';
-import { HotTable } from '@handsontable/react';
+import { HotTableClass } from '@handsontable/react';
 import { useRef, useState, useEffect } from 'react';
 
 import { PhasesEnum } from '@types';
@@ -21,7 +21,7 @@ interface IPhase3Props {
 }
 
 export function Phase3(props: IPhase3Props) {
-  const tableRef = useRef<HotTable>(null);
+  const tableRef = useRef<HotTableClass>(null);
   const { onNextClick, onPrevClick } = props;
   const {
     page,
