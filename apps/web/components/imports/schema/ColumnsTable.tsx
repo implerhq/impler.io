@@ -53,6 +53,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
         handleSubmit();
         SelectRef.current = false;
       }}
+      id="columns"
     >
       <DraggableTable<IColumn>
         emptyDataText='No columns found click on "+" to add new column'
@@ -208,7 +209,12 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
             ) : (
               <td colSpan={5}>
                 <Tooltip label="Add new column" withArrow position="top-start">
-                  <ActionIcon bg={colors.yellow} variant="transparent" onClick={() => setShowAddRow(true)}>
+                  <ActionIcon
+                    id="add-column"
+                    bg={colors.yellow}
+                    variant="transparent"
+                    onClick={() => setShowAddRow(true)}
+                  >
                     <AddIcon color={colors.white} />
                   </ActionIcon>
                 </Tooltip>

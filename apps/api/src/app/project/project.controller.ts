@@ -117,7 +117,7 @@ export class ProjectController {
   ): Promise<{ project: ProjectResponseDto; environment: EnvironmentResponseDto }> {
     const projectWithEnvironment = await this.createProjectUsecase.execute(
       CreateProjectCommand.create({
-        name: body.name,
+        ...body,
         _userId: user._id,
       })
     );

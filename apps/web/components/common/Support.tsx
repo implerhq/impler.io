@@ -16,8 +16,9 @@ if (publicRuntimeConfig.NEXT_PUBLIC_OPENREPLAY_KEY) {
   tracker = new Tracker({
     __DISABLE_SECURE_MODE: true,
     projectKey: publicRuntimeConfig.NEXT_PUBLIC_OPENREPLAY_KEY,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     network: {
-      sessionTokenHeader: 'X-OpenReplay-Session-Token',
       failuresOnly: true,
       ignoreHeaders: ['Cookie'],
       captureInIframes: true,
@@ -39,11 +40,13 @@ export function Support({ profile }: SupportProps) {
         tracker.setMetadata('lastname', profile.lastName);
         tracker.setMetadata('firstname', profile.firstName);
       }
-      twakRef.current?.setAttributes({
-        id: profile._id,
-        name: profile.firstName,
-        email: profile.email,
-      });
+      /*
+       * twakRef.current?.setAttributes({
+       *   id: profile._id,
+       *   name: profile.firstName,
+       *   email: profile.email,
+       * });
+       */
     }
   }, [profile]);
 
