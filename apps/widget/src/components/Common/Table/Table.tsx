@@ -62,7 +62,9 @@ Handsontable.renderers.registerRenderer(
     TD.classList.add('custom-cell');
     $(TD).tooltip('dispose');
     const soureData = instance.getSourceDataAtRow(row) as IRecord;
-    const fieldValue = typeof soureData.record[name] === 'undefined' ? '' : soureData.record[name];
+    let fieldValue = typeof soureData.record[name] === 'undefined' ? '' : soureData.record[name];
+    if (typeof fieldValue === 'string' && fieldValue.length > name.length + 20)
+      fieldValue = value.substring(0, name.length + 20) + '...';
 
     if (soureData.errors && soureData.errors[name]) {
       $(TD).tooltip({
