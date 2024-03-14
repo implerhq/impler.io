@@ -162,7 +162,7 @@ export const Table = forwardRef<HotTableClass, TableProps>(
             if (changes[i] && changes[i]?.[3] === null) changes[i]![3] = undefined;
           }
         }}
-        stretchH="all"
+        // stretchH="all"
         columns={columnDefs}
         colHeaders={headings}
         afterRender={afterRender}
