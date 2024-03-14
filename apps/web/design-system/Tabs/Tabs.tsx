@@ -2,6 +2,7 @@ import { Tabs as MantineTabs } from '@mantine/core';
 import useStyles from './Tabs.styles';
 
 interface TabItem {
+  id?: string;
   value: string;
   title: string;
   icon?: React.ReactNode;
@@ -28,7 +29,7 @@ export function Tabs({ items, keepMounted, allowTabDeactivation, defaultValue }:
     >
       <MantineTabs.List>
         {items.map((item) => (
-          <MantineTabs.Tab key={item.value} value={item.value} icon={item.icon}>
+          <MantineTabs.Tab data-id={item.id} key={item.value} value={item.value} icon={item.icon}>
             {item.title}
           </MantineTabs.Tab>
         ))}

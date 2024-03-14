@@ -17,6 +17,9 @@ export function useApp() {
     () => commonApi<IProfileData>(API_KEYS.ME as any, {}),
     {
       onSuccess(profileData) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        window.usetifulTags = { userId: profileData?._id };
         setProfileInfo(profileData);
       },
     }

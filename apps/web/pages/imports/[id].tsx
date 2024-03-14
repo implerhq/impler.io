@@ -69,10 +69,11 @@ export default function ImportDetails({}) {
         </Group>
         <Group spacing="xs">
           <Button
+            color="green"
+            id="import"
+            onClick={() => showWidget({ colorScheme })}
             // eslint-disable-next-line no-magic-numbers
             disabled={!isImplerInitiated || columns?.length === 0 || isTemplateDataLoading}
-            color="green"
-            onClick={() => showWidget({ colorScheme })}
           >
             Import
           </Button>
@@ -86,18 +87,21 @@ export default function ImportDetails({}) {
           keepMounted={false}
           items={[
             {
+              id: 'schema',
               value: 'schema',
               title: 'Schema',
               icon: <OneIcon size="xs" />,
               content: <Schema templateId={templateData._id} />,
             },
             {
+              id: 'destination',
               value: 'destination',
               title: 'Destination',
               icon: <TwoIcon size="xs" />,
               content: <Destination template={templateData} accessToken={profileInfo?.accessToken} />,
             },
             {
+              id: 'snippet',
               value: 'snippet',
               title: 'Snippet',
               icon: <ThreeIcon size="xs" />,
@@ -110,12 +114,14 @@ export default function ImportDetails({}) {
               ),
             },
             {
+              id: 'validator',
               value: 'validator',
               title: 'Validator',
               icon: <FourIcon size="xs" />,
               content: <Validator templateId={templateData._id} />,
             },
             {
+              id: 'output',
               value: 'output',
               title: 'Output',
               icon: <FiveIcon size="xs" />,
