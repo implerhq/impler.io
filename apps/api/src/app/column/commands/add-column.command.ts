@@ -16,7 +16,7 @@ export class AddColumnCommand extends BaseCommand {
   @IsArray()
   @IsOptional()
   @Type(() => Array<string>)
-  alternateKeys: string[];
+  alternateKeys? = [];
 
   @IsBoolean()
   @IsOptional()
@@ -31,25 +31,25 @@ export class AddColumnCommand extends BaseCommand {
 
   @IsString()
   @IsOptional()
-  regex: string;
+  regex?: string;
 
   @IsString()
   @IsOptional()
-  regexDescription: string;
+  regexDescription?: string;
 
   @IsArray()
   @IsOptional()
   @Type(() => Array<string>)
-  selectValues: string[];
+  selectValues?: string[];
 
   @IsArray()
   @IsOptional()
   @Type(() => Array<string>)
-  dateFormats: string[];
+  dateFormats?: string[];
 
   @IsNumber()
   @IsOptional()
-  sequence: number;
+  sequence?: number;
 
   @IsDefined()
   @IsMongoId()
