@@ -4,5 +4,5 @@
   "useNx": true,
   "useWorkspaces": true,
   "packages": ["apps/*", "libs/*", "packages/*"],
-  "version": "0.17.0"
+  "version": "0.17.1"
 }
