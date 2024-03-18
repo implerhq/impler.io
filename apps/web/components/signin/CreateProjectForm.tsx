@@ -26,24 +26,28 @@ export default function CreateProjectForm() {
     IErrorObject,
     ICreateProjectData,
     string[]
-  >([API_KEYS.PROJECT_CREATE], (data) => commonApi(API_KEYS.PROJECT_CREATE as any, { body: data }), {
-    onSuccess: (data) => {
-      if (profileInfo) {
-        setProfileInfo({
-          ...profileInfo,
-          _projectId: data.project._id,
-          accessToken: data.environment.apiKeys[VARIABLES.ZERO].key,
+  >(
+    [API_KEYS.PROJECT_CREATE],
+    (data) => commonApi(API_KEYS.PROJECT_CREATE as any, { body: { ...data, onboarding: true } }),
+    {
+      onSuccess: (data) => {
+        if (profileInfo) {
+          setProfileInfo({
+            ...profileInfo,
+            _projectId: data.project._id,
+            accessToken: data.environment.apiKeys[VARIABLES.ZERO].key,
+          });
+        }
+        track({
+          name: 'PROJECT CREATE',
+          properties: {
+            duringOnboard: true,
+          },
         });
-      }
-      track({
-        name: 'PROJECT CREATE',
-        properties: {
-          duringOnboard: true,
-        },
-      });
-      push('/');
-    },
-  });
+        push('/');
+      },
+    }
+  );
 
   const onProjectFormSubmit = (data: ICreateProjectData) => {
     createProject(data);

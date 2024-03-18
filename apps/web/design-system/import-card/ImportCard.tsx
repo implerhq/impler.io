@@ -7,6 +7,7 @@ import { IconButton } from '@ui/icon-button';
 import { CopyIcon } from '@assets/icons/Copy.icon';
 
 interface ImportCardProps {
+  id?: string;
   href: string;
   title: string;
   imports: number;
@@ -15,11 +16,19 @@ interface ImportCardProps {
   onDuplicateClick?: (e: MouseEvent<HTMLButtonElement>) => void;
 }
 
-export function ImportCard({ title, imports, totalRecords, errorRecords, onDuplicateClick, href }: ImportCardProps) {
+export function ImportCard({
+  id,
+  title,
+  imports,
+  totalRecords,
+  errorRecords,
+  onDuplicateClick,
+  href,
+}: ImportCardProps) {
   const { classes } = useStyles();
 
   return (
-    <Link href={href} className={classes.root}>
+    <Link id={id} href={href} className={classes.root}>
       <Flex justify="space-between">
         <Text size="xl" className={`title ${classes.name}`}>
           {title}
