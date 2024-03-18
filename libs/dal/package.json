@@ -1,6 +1,6 @@
 {
   "name": "@impler/dal",
-  "version": "0.17.0",
+  "version": "0.17.1",
   "author": "implerhq",
   "license": "MIT",
   "private": true,
@@ -16,7 +16,7 @@
     "lint:fix": "eslint src --fix"
   },
   "dependencies": {
-    "@impler/shared": "^0.17.0",
+    "@impler/shared": "^0.17.1",
     "class-transformer": "^0.5.1",
     "date-fns": "^2.30.0",
     "mongoose": "8.0.1",
