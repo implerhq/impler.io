@@ -26,25 +26,49 @@ You can open a new issue from [here](https://github.com/implerhq/impler.io/issue
 
 > Using docker is the easiest way to set up MongoDB, LocalStack, and RabbitMQ services.
 
-#### Developers are following this way to setup 
 
-### Setup the project
+## Setting Up the Project Locally
 
-The project is a monorepo, meaning that it is a collection of multiple packages managed in the same repository.
+### To set up the project locally, follow these steps:
 
-Fork the repository and clone the repo. Example cloning the Impler repo `git clone git@github.com:implerhq/impler.io.git`.
+1. **Fork the Repository:**  
+   Start by forking the repository to your own GitHub account. This creates a copy of the repository under your account, allowing you to freely make changes without affecting the original project.
+
+2. **Clone the Repository:**  
+   Once forked, clone the repository to your local machine using the following command:
+
+   ```bash
+   git clone git@github.com:your-username/repository-name.git
+   
+Replace your-username with your GitHub username and repository-name with the name of the repository you forked. This command will create a local copy of the project on your machine, enabling you to work on it offline.
 
 After cloning your fork, follow these steps to set up the project locally,
 
-1. Install the dependencies by running, `pnpm install`.
-2. Do setup for projects by running, `pnpm setup:project`.
-3. Start the application by running the following commands.
-    1. Start backend API `pnpm start:api`.
-    2. Start web portal `pnpm start:web`.
-    3. Start embed script `pnpm start:embed`.
-    4. Start import widget `pnpm start:widget`.
-    5. Start queue-manager `pnpm start:queue-manager`.
-5. Start interacting with web UI by visiting `http://localhost:4200`.
+3. **Install the dependencies by running:**
+      ```bash
+      pnpm install
+4. **Do setup for projects by running:** 
+      ```bash
+      pnpm setup:project
+### Start the application by running the following commands.
+5. **Start backend API:**
+      ```bash
+      pnpm start:api
+6. **Start web portal:**
+      ```bash
+      pnpm start:web
+7. **Start embed script:**
+      ```bash
+      pnpm start:embed
+8. **Start import widget:**
+      ```bash
+      pnpm start:widget
+9. **Start queue-manager:**
+      ```bash
+      pnpm start:queue-manager
+10. **Start interacting with web UI by visiting:**
+      ```bash
+      http://localhost:4200
 
 ## Missing a Feature or Facing an Issue?
 
