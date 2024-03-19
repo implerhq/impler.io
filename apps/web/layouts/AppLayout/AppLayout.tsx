@@ -1,6 +1,5 @@
 import Head from 'next/head';
 import Image from 'next/image';
-import Script from 'next/script';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 
@@ -132,14 +131,6 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
         </main>
       </div>
       <Support profile={profile} />
-      {process.env.NEXT_PUBLIC_ONBOARDING_TOKEN && (
-        <Script
-          id="usetifulScript"
-          src="https://www.usetiful.com/dist/usetiful.js"
-          data-token={process.env.NEXT_PUBLIC_ONBOARDING_TOKEN}
-          async
-        />
-      )}
     </>
   );
 }
