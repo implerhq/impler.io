@@ -1,3 +1,4 @@
+import Script from 'next/script';
 import getConfig from 'next/config';
 import Tracker from '@openreplay/tracker';
 import { useEffect, useRef } from 'react';
@@ -59,6 +60,14 @@ export function Support({ profile }: SupportProps) {
           ref={twakRef}
         />
       ) : null}
+      {publicRuntimeConfig.NEXT_PUBLIC_ONBOARDING_TOKEN && (
+        <Script
+          id="usetifulScript"
+          src="https://www.usetiful.com/dist/usetiful.js"
+          data-token={publicRuntimeConfig.NEXT_PUBLIC_ONBOARDING_TOKEN}
+          async
+        />
+      )}
     </>
   );
 }
