@@ -12,3 +12,4 @@ export * from './repositories/record';
 export * from './repositories/environment';
 export * from './repositories/customization';
 export * from './repositories/validator';
+export * from './repositories/webhook-destination';

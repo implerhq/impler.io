@@ -3,11 +3,7 @@ export class TemplateEntity {
 
   name: string;
 
-  callbackUrl: string;
-
-  authHeaderName: string;
-
-  chunkSize: number;
+  destination: string;
 
   sampleFileUrl: string;
 
