@@ -171,7 +171,7 @@ export function Destination({ template }: DestinationProps) {
                   error={errors?.bubbleIo?.datatype?.message}
                 />
                 <Button loading={isUpdateImportLoading} type="submit">
-                  Save
+                  Test and Save
                 </Button>
               </Stack>
             </form>
