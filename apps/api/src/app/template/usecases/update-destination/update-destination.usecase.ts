@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { UpdateDestinationCommand } from './update-destination.command';
+import { UpdateDestinationCommand, BubbleIoDestinationObject } from './update-destination.command';
 import { TemplateRepository, BubbleDestinationRepository, WebhookDestinationRepository } from '@impler/dal';
 import { DestinationsEnum } from '@impler/shared';
+import { BubbleIoService } from '@shared/services/bubble-io.service';
 
 @Injectable()
 export class UpdateDestination {
   constructor(
+    private bubbleIoService: BubbleIoService,
     private templateRepository: TemplateRepository,
     private bubbleDestinationRepo: BubbleDestinationRepository,
     private webhookDestinationRepo: WebhookDestinationRepository
@@ -36,6 +38,7 @@ export class UpdateDestination {
           { upsert: true }
         );
       } else if (data.destination === DestinationsEnum.BUBBLEIO) {
+        await this.testBubbleIoConnection(data.bubbleIo);
         await this.bubbleDestinationRepo.findOneAndUpdate(
           { _templateId },
           {
@@ -68,5 +71,9 @@ export class UpdateDestination {
           }
         : {}),
     };
+  }
+
+  async testBubbleIoConnection(data: BubbleIoDestinationObject) {
+    await this.bubbleIoService.testConnection(data);
   }
 }

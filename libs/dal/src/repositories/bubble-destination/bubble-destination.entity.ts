@@ -1,3 +1,5 @@
+import { BubbleDestinationEnvironmentEnum } from '@impler/shared';
+
 export class BubbleDestinationEntity {
   _id?: string;
 
@@ -5,7 +7,7 @@ export class BubbleDestinationEntity {
 
   customDomainName?: string;
 
-  environment: string;
+  environment: BubbleDestinationEnvironmentEnum;
 
   apiPrivateKey: string;
 

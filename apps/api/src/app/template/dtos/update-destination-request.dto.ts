@@ -48,7 +48,7 @@ class BubbleIoDestinationObject {
   @IsEnum(BubbleDestinationEnvironmentEnum)
   @IsDefined()
   @ValidateIf((obj) => obj.destination === DestinationsEnum.BUBBLEIO)
-  environment: string;
+  environment: BubbleDestinationEnvironmentEnum;
 
   @IsString()
   @IsOptional()

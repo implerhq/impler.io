@@ -14,7 +14,7 @@ import { Type } from 'class-transformer';
 import { BaseCommand } from '@shared/commands/base.command';
 import { BubbleDestinationEnvironmentEnum, DestinationsEnum } from '@impler/shared';
 
-class WebhookDestinationObject {
+export class WebhookDestinationObject {
   @IsUrl()
   @IsDefined()
   callbackUrl?: string;
@@ -30,7 +30,7 @@ class WebhookDestinationObject {
   chunkSize?: number;
 }
 
-class BubbleIoDestinationObject {
+export class BubbleIoDestinationObject {
   @IsString()
   @IsDefined()
   @ValidateIf((obj) => obj.destination === DestinationsEnum.BUBBLEIO)
@@ -49,7 +49,7 @@ class BubbleIoDestinationObject {
   @IsEnum(BubbleDestinationEnvironmentEnum)
   @IsDefined()
   @ValidateIf((obj) => obj.destination === DestinationsEnum.BUBBLEIO)
-  environment: string;
+  environment: BubbleDestinationEnvironmentEnum;
 
   @IsString()
   @IsOptional()
