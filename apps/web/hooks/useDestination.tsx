@@ -6,7 +6,7 @@ import { notify } from '@libs/notify';
 import { track } from '@libs/amplitude';
 import { modals } from '@mantine/modals';
 import { API_KEYS, NOTIFICATION_KEYS } from '@config';
-import { IErrorObject, ITemplate } from '@impler/shared';
+import { DestinationsEnum, IErrorObject, ITemplate } from '@impler/shared';
 
 interface UseDestinationProps {
   template: ITemplate;
@@ -36,9 +36,16 @@ export function useDestination({ template }: UseDestinationProps) {
     control,
     setValue,
     register,
+    setError,
     handleSubmit,
     formState: { errors },
-  } = useForm<DestinationData>();
+  } = useForm<DestinationData>({
+    defaultValues: {
+      bubbleIo: {
+        environment: 'development',
+      },
+    },
+  });
   useQuery<unknown, IErrorObject, DestinationData, [string, string | undefined]>(
     [API_KEYS.DESTINATION_FETCH, template._id],
     () => commonApi<DestinationData>(API_KEYS.DESTINATION_FETCH as any, { parameters: [template._id] }),
@@ -64,6 +71,13 @@ export function useDestination({ template }: UseDestinationProps) {
         reset(data);
         notify(NOTIFICATION_KEYS.DESTINATION_UPDATED);
       },
+      onError(error) {
+        notify(NOTIFICATION_KEYS.ERROR_OCCURED, {
+          title: 'Destination data could not be updated',
+          message: error?.message,
+          color: 'red',
+        });
+      },
     }
   );
 
@@ -79,6 +93,24 @@ export function useDestination({ template }: UseDestinationProps) {
     });
   };
   const onSubmit = (data: DestinationData) => {
+    if (data.destination === DestinationsEnum.BUBBLEIO && !data.bubbleIo?.appName && !data.bubbleIo?.customDomainName) {
+      setError(
+        'bubbleIo.appName',
+        {
+          type: 'manual',
+          message: 'Either App Name or Custom Domain Name is required',
+        },
+        {
+          shouldFocus: true,
+        }
+      );
+      setError('bubbleIo.customDomainName', {
+        type: 'manual',
+        message: 'Either App Name or Custom Domain Name is required',
+      });
+
+      return;
+    }
     updateDestination(data);
     track({
       name: 'DESTINATION UPDATED',

@@ -5,6 +5,7 @@ import { Stack, Accordion, Title, Switch, useMantineColorScheme, TextInput as In
 import { Button } from '@ui/button';
 import { Select } from '@ui/select';
 import { NumberInput } from '@ui/number-input';
+import { DoaminInput } from '@ui/domain-input';
 import { REGULAR_EXPRESSIONS, colors } from '@config';
 import { useDestination } from '@hooks/useDestination';
 
@@ -19,7 +20,7 @@ export function Destination({ template }: DestinationProps) {
   const destination = watch('destination');
 
   return (
-    <>
+    <Stack>
       <Accordion
         radius={0}
         variant="contained"
@@ -49,18 +50,26 @@ export function Destination({ template }: DestinationProps) {
             <form onSubmit={onSubmit}>
               <Stack spacing="xs">
                 <Input
+                  required
+                  label="Callback URL"
                   placeholder="Callback URL"
                   error={errors.webhook?.callbackUrl ? 'Please enter valid URL' : undefined}
                   {...register('webhook.callbackUrl', {
                     pattern: REGULAR_EXPRESSIONS.URL,
                   })}
                 />
-                <Input placeholder="Auth Header Name" {...register('webhook.authHeaderName')} />
+                <Input
+                  label="Auth Header Name"
+                  placeholder="Auth Header Name"
+                  {...register('webhook.authHeaderName')}
+                />
                 <Controller
                   control={control}
                   name="webhook.chunkSize"
                   render={({ field }) => (
                     <NumberInput
+                      required
+                      label="Chunk Size"
                       placeholder="100"
                       register={{
                         value: field.value,
@@ -107,15 +116,29 @@ export function Destination({ template }: DestinationProps) {
           <Accordion.Panel>
             <form onSubmit={onSubmit}>
               <Stack spacing="xs">
-                <Input
-                  {...register('bubbleIo.appName')}
-                  placeholder="Bubble Application Name"
-                  error={errors.bubbleIo?.appName?.message}
+                <Controller
+                  name="bubbleIo.appName"
+                  control={control}
+                  render={({ field }) => (
+                    <DoaminInput
+                      value={field.value}
+                      label="Bubble App Name"
+                      onChange={field.onChange}
+                      rightSection=".bubbleapps.io"
+                      placeholder="Bubble Application Name"
+                      error={errors.bubbleIo?.appName?.message}
+                    />
+                  )}
                 />
+
                 <Input
+                  label="Custom Domain Name"
                   placeholder="Custom Domain Name"
-                  {...register('bubbleIo.customDomainName')}
-                  error={errors?.bubbleIo?.customDomainName?.message}
+                  {...register('bubbleIo.customDomainName', {
+                    pattern: /^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+[a-zA-Z]{2,63}$/,
+                  })}
+                  description="Required, if application is hosted on custom domain. Ex. myapp.io"
+                  error={errors?.bubbleIo?.customDomainName ? 'Please enter valid domain name' : undefined}
                 />
                 <Controller
                   control={control}
@@ -126,17 +149,23 @@ export function Destination({ template }: DestinationProps) {
                         value: field.value,
                         onChange: field.onChange,
                       }}
+                      required
+                      label="Environment"
                       data={['development', 'production']}
                       error={errors.bubbleIo?.environment?.message}
                     />
                   )}
                 />
                 <Input
+                  required
+                  label="API Private Key"
                   placeholder="API Private Key"
                   {...register('bubbleIo.apiPrivateKey')}
                   error={errors?.bubbleIo?.apiPrivateKey?.message}
                 />
                 <Input
+                  required
+                  label="Datatype Name"
                   placeholder="Datatype"
                   {...register('bubbleIo.datatype')}
                   error={errors?.bubbleIo?.datatype?.message}
@@ -149,6 +178,6 @@ export function Destination({ template }: DestinationProps) {
           </Accordion.Panel>
         </Accordion.Item>
       </Accordion>
-    </>
+    </Stack>
   );
 }
