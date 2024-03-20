@@ -1,9 +1,11 @@
+import { DestinationsEnum } from '@impler/shared';
+
 export class TemplateEntity {
   _id?: string;
 
   name: string;
 
-  destination: string;
+  destination: DestinationsEnum;
 
   sampleFileUrl: string;
 
