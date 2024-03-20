@@ -13,6 +13,8 @@ import {
   EnvironmentRepository,
   CustomizationRepository,
   ValidatorRepository,
+  WebhookDestinationRepository,
+  BubbleDestinationRepository,
 } from '@impler/dal';
 import { FileNameService } from '@impler/shared';
 import { S3StorageService, StorageService } from '@impler/shared/dist/services/storage';
@@ -31,6 +33,8 @@ const DAL_MODELS = [
   EnvironmentRepository,
   CustomizationRepository,
   ValidatorRepository,
+  WebhookDestinationRepository,
+  BubbleDestinationRepository,
 ];
 const FILE_SERVICES = [CSVFileService2, FileNameService, ExcelFileService];
 
