@@ -43,6 +43,10 @@ const routes: Record<string, Route> = {
     url: () => `/v1/auth/forgot-password/reset`,
     method: 'POST',
   },
+  [API_KEYS.ME]: {
+    url: () => `/v1/auth/me`,
+    method: 'GET',
+  },
 
   [API_KEYS.IMPORTS_LIST]: {
     url: (projectId) => `/v1/project/${projectId}/imports`,
@@ -92,6 +96,18 @@ const routes: Record<string, Route> = {
     url: (templateId) => `/v1/template/${templateId}/customizations/sync`,
     method: 'PUT',
   },
+
+  // Destination
+  [API_KEYS.DESTINATION_FETCH]: {
+    url: (templateId) => `/v1/template/${templateId}/destination`,
+    method: 'GET',
+  },
+  [API_KEYS.DESTINATION_UPDATE]: {
+    url: (templateId) => `/v1/template/${templateId}/destination`,
+    method: 'PUT',
+  },
+
+  // Column
   [API_KEYS.COLUMN_CREATE]: {
     url: (templateId) => `/v1/column/${templateId}`,
     method: 'POST',
@@ -104,6 +120,8 @@ const routes: Record<string, Route> = {
     url: (columnId) => `/v1/column/${columnId}`,
     method: 'DELETE',
   },
+
+  // Activity
   [API_KEYS.ACTIVITY_HISTORY]: {
     url: (projectId) => `/v1/activity/${projectId}/history`,
     method: 'GET',
@@ -112,10 +130,14 @@ const routes: Record<string, Route> = {
     url: (projectId) => `/v1/activity/${projectId}/summary`,
     method: 'GET',
   },
+
+  // Security
   [API_KEYS.REGENERATE]: {
     url: () => `/v1/environment/api-keys/regenerate`,
     method: 'GET',
   },
+
+  // Validations
   [API_KEYS.VALIDATIONS]: {
     url: (templateId) => `/v1/template/${templateId}/validations`,
     method: 'GET',
@@ -124,12 +146,10 @@ const routes: Record<string, Route> = {
     url: (templateId) => `/v1/template/${templateId}/validations`,
     method: 'PUT',
   },
+
+  // Activity
   [API_KEYS.DONWLOAD_ORIGINAL_FILE]: {
     url: (uploadId) => `/v1/upload/${uploadId}/files/original`,
-    method: 'GET',
-  },
-  [API_KEYS.ME]: {
-    url: () => `/v1/auth/me`,
     method: 'GET',
   },
 };

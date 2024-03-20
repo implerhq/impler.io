@@ -1,26 +1,41 @@
-import { Prism } from '@mantine/prism';
 import { ITemplate } from '@impler/shared';
 import { Controller } from 'react-hook-form';
-import { Code, Stack, Accordion, Title, useMantineColorScheme, TextInput as Input } from '@mantine/core';
+import { Stack, Accordion, Title, Switch, useMantineColorScheme, TextInput as Input } from '@mantine/core';
 
 import { Button } from '@ui/button';
-import { APIBlock } from '@ui/api-block';
+import { Select } from '@ui/select';
 import { NumberInput } from '@ui/number-input';
 import { REGULAR_EXPRESSIONS, colors } from '@config';
 import { useDestination } from '@hooks/useDestination';
 
 interface DestinationProps {
   template: ITemplate;
-  accessToken?: string;
 }
 
-export function Destination({ template, accessToken }: DestinationProps) {
+export function Destination({ template }: DestinationProps) {
   const { colorScheme } = useMantineColorScheme();
-  const { register, control, errors, onSubmit, isUpdateImportLoading } = useDestination({ template });
+  const { watch, setValue, register, control, errors, onSubmit, resetDestination, isUpdateImportLoading } =
+    useDestination({ template });
+  const destination = watch('destination');
 
   return (
     <>
-      <Accordion variant="contained" radius={0} defaultValue="webhook">
+      <Accordion
+        radius={0}
+        variant="contained"
+        value={String(destination)}
+        disableChevronRotation
+        chevron={
+          <Switch
+            color={colors.blue}
+            checked={destination === 'webhook'}
+            onChange={() => {
+              if (destination === 'webhook') resetDestination({ destination: undefined, webhook: undefined });
+              else setValue('destination', 'webhook');
+            }}
+          />
+        }
+      >
         <Accordion.Item value="webhook">
           <Accordion.Control>
             <Title color={colorScheme === 'dark' ? colors.white : colors.black} order={4}>
@@ -35,15 +50,15 @@ export function Destination({ template, accessToken }: DestinationProps) {
               <Stack spacing="xs">
                 <Input
                   placeholder="Callback URL"
-                  error={errors.callbackUrl ? 'Please enter valid URL' : undefined}
-                  {...register('callbackUrl', {
+                  error={errors.webhook?.callbackUrl ? 'Please enter valid URL' : undefined}
+                  {...register('webhook.callbackUrl', {
                     pattern: REGULAR_EXPRESSIONS.URL,
                   })}
                 />
-                <Input placeholder="Auth Header Name" {...register('authHeaderName')} />
+                <Input placeholder="Auth Header Name" {...register('webhook.authHeaderName')} />
                 <Controller
                   control={control}
-                  name="chunkSize"
+                  name="webhook.chunkSize"
                   render={({ field }) => (
                     <NumberInput
                       placeholder="100"
@@ -51,7 +66,7 @@ export function Destination({ template, accessToken }: DestinationProps) {
                         value: field.value,
                         onChange: field.onChange,
                       }}
-                      error={errors.chunkSize?.message}
+                      error={errors.webhook?.chunkSize?.message}
                     />
                   )}
                 />
@@ -62,52 +77,75 @@ export function Destination({ template, accessToken }: DestinationProps) {
             </form>
           </Accordion.Panel>
         </Accordion.Item>
+      </Accordion>
 
-        <Accordion.Item value="api">
+      <Accordion
+        radius={0}
+        variant="contained"
+        value={String(destination)}
+        disableChevronRotation
+        chevron={
+          <Switch
+            color={colors.blue}
+            checked={destination === 'bubbleIo'}
+            onChange={() => {
+              if (destination === 'bubbleIo') resetDestination({ destination: undefined, bubbleIo: undefined });
+              else setValue('destination', 'bubbleIo');
+            }}
+          />
+        }
+      >
+        <Accordion.Item value="bubbleIo">
           <Accordion.Control>
             <Title color={colorScheme === 'dark' ? colors.white : colors.black} order={4}>
-              API
+              Bubble.io
             </Title>
             <Title order={5} fw="normal" color={colors.TXTSecondaryDark}>
-              Use API to get data
+              Send Imported data to bubble.io
             </Title>
           </Accordion.Control>
           <Accordion.Panel>
-            <Stack spacing="sm">
-              <APIBlock
-                method="GET"
-                title="GET valid data of imported file"
-                url="https://api.impler.io/v1/upload/{uploadId}/rows/valid"
-              />
-              <APIBlock
-                method="GET"
-                title="Get Invalid data of imported file"
-                url="https://api.impler.io/v1/upload/{uploadId}/rows/invalid"
-              />
+            <form onSubmit={onSubmit}>
               <Stack spacing="xs">
-                <div>
-                  <Title order={4}>How to get uploadId?</Title>
-                  <Title order={5} fw="normal" color={colorScheme === 'dark' ? colors.TXTGray : colors.TXTLight}>
-                    You will get uploadId in <Code>onUploadComplete</Code> callback of <Code>@impler/react</Code>{' '}
-                    package, when import is completed.
-                  </Title>
-                </div>
-                <Prism language="tsx">{`import { useImpler } from '@impler/react';
-        
-const { showWidget, isImplerInitiated } = useImpler({
-  templateId: "${template._id}",
-  projectId: "${template._projectId}",
-  accessToken: "${accessToken}",
-  onUploadComplete: ({ _id }) => {
-    console.log(_id); // uploadId
-  }
-});
-
-<button disabled={!isImplerInitiated} onClick={showWidget}>
-    Import
-</button>`}</Prism>
+                <Input
+                  {...register('bubbleIo.appName')}
+                  placeholder="Bubble Application Name"
+                  error={errors.bubbleIo?.appName?.message}
+                />
+                <Input
+                  placeholder="Custom Domain Name"
+                  {...register('bubbleIo.customDomainName')}
+                  error={errors?.bubbleIo?.customDomainName?.message}
+                />
+                <Controller
+                  control={control}
+                  name="bubbleIo.environment"
+                  render={({ field }) => (
+                    <Select
+                      register={{
+                        value: field.value,
+                        onChange: field.onChange,
+                      }}
+                      data={['development', 'production']}
+                      error={errors.bubbleIo?.environment?.message}
+                    />
+                  )}
+                />
+                <Input
+                  placeholder="API Private Key"
+                  {...register('bubbleIo.apiPrivateKey')}
+                  error={errors?.bubbleIo?.apiPrivateKey?.message}
+                />
+                <Input
+                  placeholder="Datatype"
+                  {...register('bubbleIo.datatype')}
+                  error={errors?.bubbleIo?.datatype?.message}
+                />
+                <Button loading={isUpdateImportLoading} type="submit">
+                  Save
+                </Button>
               </Stack>
-            </Stack>
+            </form>
           </Accordion.Panel>
         </Accordion.Item>
       </Accordion>

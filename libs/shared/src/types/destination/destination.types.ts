@@ -1,6 +1,6 @@
 export enum DestinationsEnum {
   'WEBHOOK' = 'webhook',
-  'BUBBLEIO' = 'bubble.io',
+  'BUBBLEIO' = 'bubbleIo',
 }
 
 export enum BubbleDestinationEnvironmentEnum {

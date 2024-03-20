@@ -94,8 +94,7 @@ type TrackData =
   | {
       name: 'DESTINATION UPDATED';
       properties: {
-        hasAuthHeaderName?: boolean;
-        hasCallbackUrl?: boolean;
+        destination: string;
       };
     }
   | {

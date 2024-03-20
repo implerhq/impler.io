@@ -98,7 +98,7 @@ export default function ImportDetails({}) {
               value: 'destination',
               title: 'Destination',
               icon: <TwoIcon size="xs" />,
-              content: <Destination template={templateData} accessToken={profileInfo?.accessToken} />,
+              content: <Destination template={templateData} />,
             },
             {
               id: 'snippet',
