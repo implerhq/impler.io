@@ -15,16 +15,25 @@ interface DestinationProps {
 
 export function Destination({ template }: DestinationProps) {
   const { colorScheme } = useMantineColorScheme();
-  const { watch, setValue, register, control, errors, onSubmit, resetDestination, isUpdateImportLoading } =
-    useDestination({ template });
-  const destination = watch('destination');
+  const {
+    destination,
+    updateDestinationLocally,
+    register,
+    control,
+    errors,
+    onSubmit,
+    resetDestination,
+    isUpdateImportLoading,
+  } = useDestination({
+    template,
+  });
 
   return (
     <Stack>
       <Accordion
         radius={0}
         variant="contained"
-        value={String(destination)}
+        value={destination}
         disableChevronRotation
         chevron={
           <Switch
@@ -32,7 +41,7 @@ export function Destination({ template }: DestinationProps) {
             checked={destination === 'webhook'}
             onChange={() => {
               if (destination === 'webhook') resetDestination({ destination: undefined, webhook: undefined });
-              else setValue('destination', 'webhook');
+              else updateDestinationLocally('webhook');
             }}
           />
         }
@@ -92,7 +101,7 @@ export function Destination({ template }: DestinationProps) {
       <Accordion
         radius={0}
         variant="contained"
-        value={String(destination)}
+        value={destination}
         disableChevronRotation
         chevron={
           <Switch
@@ -100,7 +109,7 @@ export function Destination({ template }: DestinationProps) {
             checked={destination === 'bubbleIo'}
             onChange={() => {
               if (destination === 'bubbleIo') resetDestination({ destination: undefined, bubbleIo: undefined });
-              else setValue('destination', 'bubbleIo');
+              else updateDestinationLocally('bubbleIo');
             }}
           />
         }

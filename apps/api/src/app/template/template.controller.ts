@@ -224,13 +224,7 @@ export class TemplateController {
     @Param('templateId', ValidateMongoId) templateId: string,
     @Body() body: UpdateDestinationDto
   ): Promise<DestinationResponseDto> {
-    const document = await this.updateDestination.execute(templateId, UpdateDestinationCommand.create(body));
-
-    if (!document) {
-      throw new DocumentNotFoundException('Template', templateId);
-    }
-
-    return document;
+    return this.updateDestination.execute(templateId, UpdateDestinationCommand.create(body));
   }
 
   @Delete(':templateId')

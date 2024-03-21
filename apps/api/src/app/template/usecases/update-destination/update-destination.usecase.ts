@@ -3,6 +3,7 @@ import { UpdateDestinationCommand, BubbleIoDestinationObject } from './update-de
 import { TemplateRepository, BubbleDestinationRepository, WebhookDestinationRepository } from '@impler/dal';
 import { DestinationsEnum } from '@impler/shared';
 import { BubbleIoService } from '@shared/services/bubble-io.service';
+import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
 
 @Injectable()
 export class UpdateDestination {
@@ -15,6 +16,11 @@ export class UpdateDestination {
 
   async execute(_templateId: string, data: UpdateDestinationCommand) {
     const template = await this.templateRepository.findById(_templateId);
+
+    if (!template) {
+      throw new DocumentNotFoundException('Template', _templateId);
+    }
+
     if (!data.destination) {
       if (template.destination === DestinationsEnum.WEBHOOK) this.webhookDestinationRepo.delete({ _templateId });
       else if (template.destination === DestinationsEnum.BUBBLEIO) this.bubbleDestinationRepo.delete({ _templateId });
@@ -27,34 +33,36 @@ export class UpdateDestination {
           },
         }
       );
-    } else {
-      if (data.destination === DestinationsEnum.WEBHOOK) {
-        await this.webhookDestinationRepo.findOneAndUpdate(
-          { _templateId },
-          {
-            ...data.webhook,
-            _templateId,
-          },
-          { upsert: true }
-        );
-      } else if (data.destination === DestinationsEnum.BUBBLEIO) {
-        try {
-          await this.testBubbleIoConnection(data.bubbleIo);
-        } catch (error) {
-          throw new BadRequestException(error.message);
-        }
-        await this.bubbleDestinationRepo.findOneAndUpdate(
-          { _templateId },
-          {
-            ...data.bubbleIo,
-            _templateId,
-          },
-          { upsert: true }
-        );
-      }
 
-      await this.templateRepository.update({ _id: _templateId }, { destination: data.destination });
+      return null;
     }
+
+    if (data.destination === DestinationsEnum.WEBHOOK) {
+      await this.webhookDestinationRepo.findOneAndUpdate(
+        { _templateId },
+        {
+          ...data.webhook,
+          _templateId,
+        },
+        { upsert: true }
+      );
+    } else if (data.destination === DestinationsEnum.BUBBLEIO) {
+      try {
+        await this.testBubbleIoConnection(data.bubbleIo);
+      } catch (error) {
+        throw new BadRequestException(error.message);
+      }
+      await this.bubbleDestinationRepo.findOneAndUpdate(
+        { _templateId },
+        {
+          ...data.bubbleIo,
+          _templateId,
+        },
+        { upsert: true }
+      );
+    }
+
+    await this.templateRepository.update({ _id: _templateId }, { destination: data.destination });
 
     return {
       destination: data.destination,
