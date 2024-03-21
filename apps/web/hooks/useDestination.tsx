@@ -6,7 +6,7 @@ import { notify } from '@libs/notify';
 import { track } from '@libs/amplitude';
 import { modals } from '@mantine/modals';
 import { API_KEYS, NOTIFICATION_KEYS } from '@config';
-import { DestinationsEnum, IErrorObject, ITemplate } from '@impler/shared';
+import { DestinationsEnum, IBubbleData, IErrorObject, ITemplate, IWebhookData } from '@impler/shared';
 
 interface UseDestinationProps {
   template: ITemplate;
@@ -14,18 +14,8 @@ interface UseDestinationProps {
 
 interface DestinationData {
   destination?: 'webhook' | 'bubbleIo';
-  webhook?: {
-    callbackUrl: string;
-    authHeaderName: string;
-    chunkSize: number;
-  };
-  bubbleIo?: {
-    appName: string;
-    customDomainName: string;
-    environment: string;
-    apiPrivateKey: string;
-    datatype: string;
-  };
+  webhook?: IWebhookData;
+  bubbleIo?: IBubbleData;
 }
 
 export function useDestination({ template }: UseDestinationProps) {

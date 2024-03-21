@@ -1,17 +1,18 @@
-import { SendWebhookCachedData } from '@impler/shared';
-
 export interface ISendDataParameters {
-  data: Record<string, unknown>;
+  data: string | Record<string, unknown>;
   url: string;
   page: number;
   method: 'POST';
   uploadId: string;
   headers?: Record<string, string>;
 }
-export interface IBuildSendDataParameters {
+export interface IBaseSendDataParameters {
   data: any[];
   page: number;
   chunkSize: number;
+  totalRecords: number;
+}
+export interface IBuildSendDataParameters extends IBaseSendDataParameters {
   template: string;
   uploadId: string;
   fileName: string;
@@ -20,10 +21,6 @@ export interface IBuildSendDataParameters {
   recordFormat?: string;
   chunkFormat?: string;
 }
-export interface IGetNextDataParameters extends SendWebhookCachedData {
-  allData: any[];
-}
-
 export interface ISendDataResponse {
   statusCode: number;
   status: 'FAILED' | 'SUCCEED';

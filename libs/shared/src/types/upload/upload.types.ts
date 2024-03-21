@@ -54,6 +54,20 @@ export type SendWebhookCachedData = {
   defaultValues: string;
 };
 
+export type SendBubbleCachedData = {
+  page: number;
+  chunkSize: number;
+  bubbleUrl: string;
+  apiPrivateKey: string;
+  _templateId: string;
+  allDataFilePath?: string;
+};
+
+export type SendBubbleData = {
+  uploadId: string;
+  cache: SendBubbleCachedData;
+};
+
 export type SendWebhookData = {
   uploadId: string;
   cache?: SendWebhookCachedData;

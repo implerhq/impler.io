@@ -61,6 +61,7 @@ export class SendWebhookDataConsumer extends BaseConsumer {
         page: cachedData.page || DEFAULT_PAGE,
         recordFormat: cachedData.recordFormat,
         chunkFormat: cachedData.chunkFormat,
+        totalRecords: allDataJson.length,
       });
 
       const headers =
@@ -79,16 +80,20 @@ export class SendWebhookDataConsumer extends BaseConsumer {
 
       this.makeResponseEntry(response);
 
-      const nextCachedData = this.getNextData({
-        allData: allDataJson,
-        ...cachedData,
+      const nextPageNumber = this.getNextPageNumber({
+        totalRecords: allDataJson.length,
+        currentPage: page,
+        chunkSize: cachedData.chunkSize,
       });
 
-      if (nextCachedData) {
+      if (nextPageNumber) {
         // Make next call
         publishToQueue(QueuesEnum.SEND_WEBHOOK_DATA, {
           uploadId,
-          cache: nextCachedData,
+          cache: {
+            ...cachedData,
+            page: nextPageNumber,
+          },
         });
       } else {
         // Processing is done

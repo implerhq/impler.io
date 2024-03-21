@@ -1,6 +1,6 @@
 import { DalService } from '@impler/dal';
 import { StorageService } from '@impler/shared/dist/services/storage';
-import { EndImportData, FileNameService, FileMimeTypesEnum, QueuesEnum } from '@impler/shared';
+import { EndImportData, FileNameService, FileMimeTypesEnum, QueuesEnum, DestinationsEnum } from '@impler/shared';
 
 import { BaseConsumer } from './base.consumer';
 import { publishToQueue } from '../bootstrap';
@@ -15,9 +15,15 @@ export class EndImportConsumer extends BaseConsumer {
     const data = JSON.parse(message.content) as EndImportData;
     await this.convertRecordsToJsonFile(data.uploadId);
 
-    publishToQueue(QueuesEnum.SEND_WEBHOOK_DATA, {
-      uploadId: data.uploadId,
-    });
+    if (data.destination === DestinationsEnum.WEBHOOK) {
+      publishToQueue(QueuesEnum.SEND_WEBHOOK_DATA, {
+        uploadId: data.uploadId,
+      });
+    } else if (data.destination === DestinationsEnum.BUBBLEIO) {
+      publishToQueue(QueuesEnum.SEND_BUBBLE_DATA, {
+        uploadId: data.uploadId,
+      });
+    }
   }
 
   private async convertRecordsToJsonFile(uploadId: string) {

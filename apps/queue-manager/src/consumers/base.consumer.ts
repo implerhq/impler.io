@@ -1,19 +1,23 @@
 import axios from 'axios';
 import { WebhookLogEntity } from '@impler/dal';
-import { SendWebhookCachedData, StatusEnum } from '@impler/shared';
-import { IGetNextDataParameters, ISendDataParameters } from '../types/file-processing.types';
+import { StatusEnum } from '@impler/shared';
+import { ISendDataParameters } from '../types/file-processing.types';
 
 export abstract class BaseConsumer {
   protected DEFAULT_PAGE = 1;
   abstract message(data: any): void;
 
-  protected getNextData({ allData, page, chunkSize, ...rest }: IGetNextDataParameters): SendWebhookCachedData | null {
-    if (Array.isArray(allData) && allData.length >= page * chunkSize) {
-      return {
-        chunkSize,
-        page: page + this.DEFAULT_PAGE,
-        ...rest,
-      };
+  protected getNextPageNumber({
+    currentPage,
+    chunkSize,
+    totalRecords,
+  }: {
+    currentPage: number;
+    totalRecords: number;
+    chunkSize;
+  }): number | null {
+    if (totalRecords >= currentPage * chunkSize) {
+      return currentPage + this.DEFAULT_PAGE;
     }
 
     return null;

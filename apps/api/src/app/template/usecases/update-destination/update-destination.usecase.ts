@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UpdateDestinationCommand, BubbleIoDestinationObject } from './update-destination.command';
 import { TemplateRepository, BubbleDestinationRepository, WebhookDestinationRepository } from '@impler/dal';
 import { DestinationsEnum } from '@impler/shared';
@@ -38,7 +38,11 @@ export class UpdateDestination {
           { upsert: true }
         );
       } else if (data.destination === DestinationsEnum.BUBBLEIO) {
-        await this.testBubbleIoConnection(data.bubbleIo);
+        try {
+          await this.testBubbleIoConnection(data.bubbleIo);
+        } catch (error) {
+          throw new BadRequestException(error.message);
+        }
         await this.bubbleDestinationRepo.findOneAndUpdate(
           { _templateId },
           {
