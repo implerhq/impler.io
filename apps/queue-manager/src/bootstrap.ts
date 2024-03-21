@@ -1,6 +1,6 @@
 import './config/env-config';
 import amqp, { ChannelWrapper } from 'amqp-connection-manager';
-import { ProcessFileConsumer, EndImportConsumer } from './consumers';
+import { SendWebhookDataConsumer, EndImportConsumer } from './consumers';
 import { QueuesEnum } from '@impler/shared';
 import { DalService } from '@impler/dal';
 import { IAmqpConnectionManager } from 'amqp-connection-manager/dist/esm/AmqpConnectionManager';
@@ -26,7 +26,7 @@ export async function bootstrap() {
   });
 
   // initialize consumers
-  const processFileConsumer = new ProcessFileConsumer();
+  const sendWebhookdataConsumer = new SendWebhookDataConsumer();
   const endImportConsumer = new EndImportConsumer();
 
   // add queues to channel
@@ -36,10 +36,12 @@ export async function bootstrap() {
         durable: false,
       }),
       channel.consume(QueuesEnum.END_IMPORT, endImportConsumer.message.bind(endImportConsumer), { noAck: true }),
-      channel.assertQueue(QueuesEnum.PROCESS_FILE, {
+      channel.assertQueue(QueuesEnum.SEND_WEBHOOK_DATA, {
         durable: false,
       }),
-      channel.consume(QueuesEnum.PROCESS_FILE, processFileConsumer.message.bind(processFileConsumer), { noAck: true }),
+      channel.consume(QueuesEnum.SEND_WEBHOOK_DATA, sendWebhookdataConsumer.message.bind(sendWebhookdataConsumer), {
+        noAck: true,
+      }),
     ]);
   });
 }

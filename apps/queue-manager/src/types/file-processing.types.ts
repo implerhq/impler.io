@@ -1,4 +1,4 @@
-import { ProcessFileCachedData } from '@impler/shared';
+import { SendWebhookCachedData } from '@impler/shared';
 
 export interface ISendDataParameters {
   data: Record<string, unknown>;
@@ -20,7 +20,7 @@ export interface IBuildSendDataParameters {
   recordFormat?: string;
   chunkFormat?: string;
 }
-export interface IGetNextDataParameters extends ProcessFileCachedData {
+export interface IGetNextDataParameters extends SendWebhookCachedData {
   allData: any[];
 }
 

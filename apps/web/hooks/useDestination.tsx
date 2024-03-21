@@ -41,6 +41,9 @@ export function useDestination({ template }: UseDestinationProps) {
     formState: { errors },
   } = useForm<DestinationData>({
     defaultValues: {
+      webhook: {
+        chunkSize: 100,
+      },
       bubbleIo: {
         environment: 'development',
       },

@@ -1,9 +1,7 @@
-import axios from 'axios';
 import {
   FileEncodingsEnum,
-  ProcessFileCachedData,
-  ProcessFileData,
-  StatusEnum,
+  SendWebhookCachedData,
+  SendWebhookData,
   UploadStatusEnum,
   QueuesEnum,
   replaceVariablesInObject,
@@ -11,29 +9,37 @@ import {
   ITemplateSchemaItem,
 } from '@impler/shared';
 import { StorageService } from '@impler/shared/dist/services/storage';
-import { FileEntity, UploadRepository, WebhookLogEntity, TemplateRepository, WebhookLogRepository } from '@impler/dal';
+import {
+  FileEntity,
+  UploadRepository,
+  WebhookLogEntity,
+  TemplateRepository,
+  WebhookLogRepository,
+  WebhookDestinationRepository,
+} from '@impler/dal';
 
 import { BaseConsumer } from './base.consumer';
 import { publishToQueue } from '../bootstrap';
 import { getStorageServiceClass } from '../helpers/storage.helper';
-import { ISendDataParameters, IBuildSendDataParameters, IGetNextDataParameters } from '../types/file-processing.types';
+import { IBuildSendDataParameters } from '../types/file-processing.types';
 
 const MIN_LIMIT = 0;
 const DEFAULT_PAGE = 1;
 
-export class ProcessFileConsumer extends BaseConsumer {
+export class SendWebhookDataConsumer extends BaseConsumer {
   private fileNameService: FileNameService = new FileNameService();
   private templateRepository: TemplateRepository = new TemplateRepository();
   private uploadRepository: UploadRepository = new UploadRepository();
   private webhookLogRepository: WebhookLogRepository = new WebhookLogRepository();
+  private webhookDestinationRepository: WebhookDestinationRepository = new WebhookDestinationRepository();
   private storageService: StorageService = getStorageServiceClass();
 
   async message(message: { content: string }) {
-    const data = JSON.parse(message.content) as ProcessFileData;
+    const data = JSON.parse(message.content) as SendWebhookData;
     const uploadId = data.uploadId;
     const cachedData = data.cache || (await this.getInitialCachedData(uploadId));
 
-    if (cachedData) {
+    if (cachedData && cachedData.callbackUrl) {
       // Get valid data information
       let allDataJson: null | any[] = null;
       if (cachedData.allDataFilePath) {
@@ -80,7 +86,7 @@ export class ProcessFileConsumer extends BaseConsumer {
 
       if (nextCachedData) {
         // Make next call
-        publishToQueue(QueuesEnum.PROCESS_FILE, {
+        publishToQueue(QueuesEnum.SEND_WEBHOOK_DATA, {
           uploadId,
           cache: nextCachedData,
         });
@@ -88,60 +94,6 @@ export class ProcessFileConsumer extends BaseConsumer {
         // Processing is done
         this.finalizeUpload(uploadId);
       }
-    }
-  }
-
-  private async makeApiCall({
-    data,
-    uploadId,
-    page,
-    method,
-    url,
-    headers,
-  }: ISendDataParameters): Promise<Partial<WebhookLogEntity>> {
-    const baseResponse: Partial<WebhookLogEntity> = {
-      _uploadId: uploadId,
-      callDate: new Date(),
-      pageNumber: page,
-      dataContent: data as any,
-      headersContent: headers,
-    };
-    try {
-      const response = await axios({
-        method,
-        url,
-        data,
-        headers: headers || {},
-      });
-
-      baseResponse.responseStatusCode = response.status;
-      baseResponse.status = StatusEnum.SUCCEED;
-
-      return baseResponse;
-    } catch (error) {
-      baseResponse.status = StatusEnum.FAILED;
-      if (axios.isAxiosError(error)) {
-        if (error.response) {
-          baseResponse.error = {
-            error: error.toJSON(),
-            data: error.response.data,
-          };
-          baseResponse.failedReason = 'Application Error';
-          baseResponse.responseStatusCode = error.response.status;
-        } else if (error.request) {
-          baseResponse.error = error.toJSON();
-          baseResponse.failedReason = 'Network Error';
-          baseResponse.responseStatusCode = error.request.status;
-        } else {
-          baseResponse.failedReason = error.message;
-          baseResponse.responseStatusCode = 400;
-        }
-      } else {
-        baseResponse.failedReason = error.message;
-        baseResponse.responseStatusCode = 400;
-      }
-
-      return baseResponse;
     }
   }
 
@@ -186,32 +138,15 @@ export class ProcessFileConsumer extends BaseConsumer {
     };
   }
 
-  private getNextData({ allData, page, chunkSize, ...rest }: IGetNextDataParameters): ProcessFileCachedData | null {
-    if (Array.isArray(allData) && allData.length >= page * chunkSize) {
-      return {
-        chunkSize,
-        page: page + DEFAULT_PAGE,
-        ...rest,
-      };
-    }
-
-    return null;
-  }
-
-  private getTotalPages(totalRecords: number, pageSize: number): number {
-    return Math.ceil(totalRecords / pageSize);
-  }
-
-  private async getInitialCachedData(_uploadId: string): Promise<ProcessFileCachedData> {
+  private async getInitialCachedData(_uploadId: string): Promise<SendWebhookCachedData> {
     // Get Upload Information
     const uploadata = await this.uploadRepository.getUploadProcessInformation(_uploadId);
     if (uploadata._allDataFileId) return null;
 
     // Get template information
-    const templateData = await this.templateRepository.findById(
-      uploadata._templateId,
-      'name _projectId callbackUrl chunkSize code authHeaderName'
-    );
+    const templateData = await this.templateRepository.findById(uploadata._templateId, 'name _projectId code');
+
+    const webhookDestination = await this.webhookDestinationRepository.findOne({ _templateId: uploadata._templateId });
 
     const defaultValueObj = {};
     const customSchema = JSON.parse(uploadata.customSchema) as ITemplateSchemaItem;
@@ -223,11 +158,11 @@ export class ProcessFileConsumer extends BaseConsumer {
 
     return {
       _templateId: uploadata._templateId,
-      callbackUrl: templateData.callbackUrl,
-      chunkSize: templateData.chunkSize,
+      callbackUrl: webhookDestination?.callbackUrl,
+      chunkSize: webhookDestination?.chunkSize,
       name: templateData.name,
       page: 1,
-      authHeaderName: templateData.authHeaderName,
+      authHeaderName: webhookDestination?.authHeaderName,
       authHeaderValue: uploadata.authHeaderValue,
       allDataFilePath: this.fileNameService.getAllJsonDataFilePath(_uploadId),
       fileName: (uploadata._uploadedFileId as unknown as FileEntity)?.originalName,

@@ -53,6 +53,7 @@ export function Destination({ template }: DestinationProps) {
                   required
                   label="Callback URL"
                   placeholder="Callback URL"
+                  description="REST endpoint where data will be sent. Ex. https://acme.inc/api/data"
                   error={errors.webhook?.callbackUrl ? 'Please enter valid URL' : undefined}
                   {...register('webhook.callbackUrl', {
                     pattern: REGULAR_EXPRESSIONS.URL,
