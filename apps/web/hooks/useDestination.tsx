@@ -77,11 +77,45 @@ export function useDestination({ template }: UseDestinationProps) {
       },
     }
   );
+  const { mutate: mapBubbleIoColumns, isLoading: isMapBubbleIoColumnsLoading } = useMutation<
+    DestinationData,
+    IErrorObject,
+    DestinationData,
+    (string | undefined)[]
+  >(
+    [API_KEYS.BUBBLEIO_MAP_COLUMNS, template._id],
+    (body) =>
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      commonApi<DestinationData>(API_KEYS.BUBBLEIO_MAP_COLUMNS as any, { parameters: [template._id], body }),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [API_KEYS.TEMPLATE_CUSTOMIZATION_GET, template._id] });
+        track({ name: 'BULK COLUMN UPDATE', properties: {} });
+        notify('COLUMNS_UPDATED');
+      },
+      onError(error) {
+        notify(NOTIFICATION_KEYS.ERROR_OCCURED, {
+          title: 'Error mapping columns with Bubble.io',
+          message: error?.message,
+          color: 'red',
+        });
+      },
+    }
+  );
   const updateDestinationLocally = (value: 'webhook' | 'bubbleIo') => {
     setDestination(value);
     setValue('destination', value);
   };
-
+  const mapBubbleIoColumnsClick = () => {
+    modals.openConfirmModal({
+      centered: true,
+      title: 'Existing columns will be reset',
+      children: 'Are you sure you want to map colums with Bubble.io? This action cannot be undone.',
+      labels: { confirm: 'Confirm', cancel: 'Cancel' },
+      confirmProps: { color: 'red' },
+      onConfirm: handleSubmit((data) => mapBubbleIoColumns(data)),
+    });
+  };
   const resetDestination = (data: DestinationData) => {
     modals.openConfirmModal({
       centered: true,
@@ -131,7 +165,10 @@ export function useDestination({ template }: UseDestinationProps) {
     setValue,
     destination,
     resetDestination,
+    mapBubbleIoColumns,
+    mapBubbleIoColumnsClick,
     updateDestinationLocally,
+    isMapBubbleIoColumnsLoading,
     onSubmit: handleSubmit(onSubmit),
     isUpdateImportLoading: isUpdateDestinationLoading,
   };

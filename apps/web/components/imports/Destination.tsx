@@ -1,6 +1,6 @@
 import { ITemplate } from '@impler/shared';
 import { Controller } from 'react-hook-form';
-import { Stack, Accordion, Title, Switch, useMantineColorScheme, TextInput as Input } from '@mantine/core';
+import { Stack, Accordion, Title, Switch, useMantineColorScheme, TextInput as Input, Group } from '@mantine/core';
 
 import { Button } from '@ui/button';
 import { Select } from '@ui/select';
@@ -23,7 +23,9 @@ export function Destination({ template }: DestinationProps) {
     errors,
     onSubmit,
     resetDestination,
+    mapBubbleIoColumnsClick,
     isUpdateImportLoading,
+    isMapBubbleIoColumnsLoading,
   } = useDestination({
     template,
   });
@@ -180,9 +182,19 @@ export function Destination({ template }: DestinationProps) {
                   {...register('bubbleIo.datatype')}
                   error={errors?.bubbleIo?.datatype?.message}
                 />
-                <Button loading={isUpdateImportLoading} type="submit">
-                  Test and Save
-                </Button>
+                <Group>
+                  <Button loading={isUpdateImportLoading} type="submit">
+                    Test and Save
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={mapBubbleIoColumnsClick}
+                    loading={isMapBubbleIoColumnsLoading}
+                  >
+                    Map Columns
+                  </Button>
+                </Group>
               </Stack>
             </form>
           </Accordion.Panel>

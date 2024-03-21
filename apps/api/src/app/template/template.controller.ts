@@ -30,6 +30,7 @@ import {
   GetDestination,
   UpdateValidations,
   UpdateDestination,
+  MapBubbleIoColumns,
   UpdateDestinationCommand,
   DuplicateTemplateCommand,
   UpdateValidationsCommand,
@@ -70,6 +71,7 @@ export class TemplateController {
     private deleteTemplateUsecase: DeleteTemplate,
     private getTemplateColumns: GetTemplateColumns,
     private getTemplateDetails: GetTemplateDetails,
+    private mapBubbleIoColumns: MapBubbleIoColumns,
     private updateCustomization: UpdateCustomization,
     private updateTemplateColumns: UpdateTemplateColumns
   ) {}
@@ -198,6 +200,17 @@ export class TemplateController {
       ),
       _templateId
     );
+  }
+
+  @Put(':templateId/map-bubble-io-columns')
+  @ApiOperation({
+    summary: 'Update columns for Template from BubbleIo',
+  })
+  async mapBubbleIoColumnsRoute(
+    @Param('templateId', ValidateMongoId) templateId: string,
+    @Body() body: UpdateDestinationDto
+  ): Promise<DestinationResponseDto> {
+    return this.mapBubbleIoColumns.execute(templateId, UpdateDestinationCommand.create(body));
   }
 
   @Get(':templateId/destination')

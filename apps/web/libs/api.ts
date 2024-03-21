@@ -106,6 +106,10 @@ const routes: Record<string, Route> = {
     url: (templateId) => `/v1/template/${templateId}/destination`,
     method: 'PUT',
   },
+  [API_KEYS.BUBBLEIO_MAP_COLUMNS]: {
+    url: (templateId) => `/v1/template/${templateId}/map-bubble-io-columns`,
+    method: 'PUT',
+  },
 
   // Column
   [API_KEYS.COLUMN_CREATE]: {

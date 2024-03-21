@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { UpdateDestinationCommand, BubbleIoDestinationObject } from './update-destination.command';
+import { UpdateDestinationCommand, BubbleIoDestinationObject } from '../../commands/update-destination.command';
 import { TemplateRepository, BubbleDestinationRepository, WebhookDestinationRepository } from '@impler/dal';
 import { DestinationsEnum } from '@impler/shared';
 import { BubbleIoService } from '@shared/services/bubble-io.service';
@@ -86,6 +86,6 @@ export class UpdateDestination {
   }
 
   async testBubbleIoConnection(data: BubbleIoDestinationObject) {
-    await this.bubbleIoService.testConnection(data);
+    await this.bubbleIoService.getDatatypeData(data);
   }
 }
