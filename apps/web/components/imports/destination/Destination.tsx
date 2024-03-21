@@ -19,10 +19,10 @@ export function Destination({ template }: DestinationProps) {
   const { classes } = useStyles();
   const {
     destination,
-    updateDestinationLocally,
     register,
     control,
     errors,
+    setValue,
     onSubmit,
     resetDestination,
     mapBubbleIoColumnsClick,
@@ -35,7 +35,7 @@ export function Destination({ template }: DestinationProps) {
   const swithDestination = (newDestination: 'webhook' | 'bubbleIo') => {
     if (destination === newDestination)
       resetDestination({ destination: undefined, webhook: undefined, bubbleIo: undefined });
-    else updateDestinationLocally(newDestination);
+    else setValue('destination', newDestination);
   };
 
   return (
@@ -122,7 +122,7 @@ export function Destination({ template }: DestinationProps) {
         }
       >
         <Accordion.Item value="bubbleIo">
-          <Accordion.Control>
+          <Accordion.Control disabled>
             <Title color={colorScheme === 'dark' ? colors.white : colors.black} order={4}>
               Bubble.io
             </Title>

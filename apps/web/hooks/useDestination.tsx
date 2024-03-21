@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -40,14 +39,13 @@ export function useDestination({ template }: UseDestinationProps) {
       },
     },
   });
-  const [destination, setDestination] = useState<'webhook' | 'bubbleIo'>();
+  const destination = watch('destination');
   useQuery<unknown, IErrorObject, DestinationData, [string, string | undefined]>(
     [API_KEYS.DESTINATION_FETCH, template._id],
     () => commonApi<DestinationData>(API_KEYS.DESTINATION_FETCH as any, { parameters: [template._id] }),
     {
       onSuccess(data) {
         reset(data);
-        setDestination(data.destination);
       },
     }
   );
@@ -65,7 +63,6 @@ export function useDestination({ template }: UseDestinationProps) {
       onSuccess: (data) => {
         queryClient.setQueryData<DestinationData>([API_KEYS.DESTINATION_FETCH, template._id], data);
         reset(data);
-        setDestination(data?.destination);
         notify(NOTIFICATION_KEYS.DESTINATION_UPDATED);
       },
       onError(error) {
@@ -102,10 +99,6 @@ export function useDestination({ template }: UseDestinationProps) {
       },
     }
   );
-  const updateDestinationLocally = (value: 'webhook' | 'bubbleIo') => {
-    setDestination(value);
-    setValue('destination', value);
-  };
   const mapBubbleIoColumnsClick = () => {
     modals.openConfirmModal({
       centered: true,
@@ -167,7 +160,6 @@ export function useDestination({ template }: UseDestinationProps) {
     resetDestination,
     mapBubbleIoColumns,
     mapBubbleIoColumnsClick,
-    updateDestinationLocally,
     isMapBubbleIoColumnsLoading,
     onSubmit: handleSubmit(onSubmit),
     isUpdateImportLoading: isUpdateDestinationLoading,
