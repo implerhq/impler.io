@@ -4,6 +4,7 @@ import { Stack, Accordion, Title, Switch, useMantineColorScheme, TextInput as In
 
 import { Button } from '@ui/button';
 import { Select } from '@ui/select';
+import useStyles from './Destination.styles';
 import { NumberInput } from '@ui/number-input';
 import { DoaminInput } from '@ui/domain-input';
 import { REGULAR_EXPRESSIONS, colors } from '@config';
@@ -15,6 +16,7 @@ interface DestinationProps {
 
 export function Destination({ template }: DestinationProps) {
   const { colorScheme } = useMantineColorScheme();
+  const { classes } = useStyles();
   const {
     destination,
     updateDestinationLocally,
@@ -30,26 +32,30 @@ export function Destination({ template }: DestinationProps) {
     template,
   });
 
+  const swithDestination = (newDestination: 'webhook' | 'bubbleIo') => {
+    if (destination === newDestination)
+      resetDestination({ destination: undefined, webhook: undefined, bubbleIo: undefined });
+    else updateDestinationLocally(newDestination);
+  };
+
   return (
     <Stack>
       <Accordion
         radius={0}
         variant="contained"
         value={destination}
+        classNames={classes}
         disableChevronRotation
         chevron={
           <Switch
             color={colors.blue}
             checked={destination === 'webhook'}
-            onChange={() => {
-              if (destination === 'webhook') resetDestination({ destination: undefined, webhook: undefined });
-              else updateDestinationLocally('webhook');
-            }}
+            onChange={() => swithDestination('webhook')}
           />
         }
       >
         <Accordion.Item value="webhook">
-          <Accordion.Control>
+          <Accordion.Control disabled>
             <Title color={colorScheme === 'dark' ? colors.white : colors.black} order={4}>
               Webhook
             </Title>
@@ -104,15 +110,14 @@ export function Destination({ template }: DestinationProps) {
         radius={0}
         variant="contained"
         value={destination}
+        classNames={classes}
         disableChevronRotation
+        onChange={() => swithDestination('bubbleIo')}
         chevron={
           <Switch
             color={colors.blue}
             checked={destination === 'bubbleIo'}
-            onChange={() => {
-              if (destination === 'bubbleIo') resetDestination({ destination: undefined, bubbleIo: undefined });
-              else updateDestinationLocally('bubbleIo');
-            }}
+            onChange={() => swithDestination('bubbleIo')}
           />
         }
       >

@@ -11,7 +11,7 @@ import { Tabs } from '@ui/Tabs';
 import { Button } from '@ui/button';
 import { Schema } from '@components/imports/schema';
 import { Snippet } from '@components/imports/Snippet';
-import { Destination } from '@components/imports/Destination';
+import { Destination } from '@components/imports/destination';
 
 import { AppLayout } from '@layouts/AppLayout';
 import { OneIcon } from '@assets/icons/One.icon';
