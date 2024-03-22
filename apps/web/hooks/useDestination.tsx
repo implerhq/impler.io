@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -13,13 +14,14 @@ interface UseDestinationProps {
 }
 
 interface DestinationData {
-  destination?: 'webhook' | 'bubbleIo';
+  destination?: DestinationsEnum;
   webhook?: IWebhookData;
   bubbleIo?: IBubbleData;
 }
 
 export function useDestination({ template }: UseDestinationProps) {
   const queryClient = useQueryClient();
+  const [destination, setDestination] = useState<DestinationsEnum | undefined>(DestinationsEnum.WEBHOOK);
   const {
     watch,
     reset,
@@ -39,13 +41,13 @@ export function useDestination({ template }: UseDestinationProps) {
       },
     },
   });
-  const destination = watch('destination');
   useQuery<unknown, IErrorObject, DestinationData, [string, string | undefined]>(
     [API_KEYS.DESTINATION_FETCH, template._id],
     () => commonApi<DestinationData>(API_KEYS.DESTINATION_FETCH as any, { parameters: [template._id] }),
     {
       onSuccess(data) {
         reset(data);
+        setDestination(data?.destination);
       },
     }
   );
@@ -63,6 +65,7 @@ export function useDestination({ template }: UseDestinationProps) {
       onSuccess: (data) => {
         queryClient.setQueryData<DestinationData>([API_KEYS.DESTINATION_FETCH, template._id], data);
         reset(data);
+        setDestination(data?.destination);
         notify(NOTIFICATION_KEYS.DESTINATION_UPDATED);
       },
       onError(error) {
@@ -117,7 +120,10 @@ export function useDestination({ template }: UseDestinationProps) {
         'Are you sure you want to reset destination? All the destination data will be deleted. This action cannot be undone.',
       labels: { confirm: 'Confirm', cancel: 'Cancel' },
       confirmProps: { color: 'red' },
-      onConfirm: () => updateDestination(data),
+      onConfirm: () => {
+        setDestination(undefined);
+        updateDestination(data);
+      },
     });
   };
   const onSubmit = (data: DestinationData) => {
@@ -157,6 +163,7 @@ export function useDestination({ template }: UseDestinationProps) {
     register,
     setValue,
     destination,
+    setDestination,
     resetDestination,
     mapBubbleIoColumns,
     mapBubbleIoColumnsClick,

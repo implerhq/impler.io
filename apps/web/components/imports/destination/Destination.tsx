@@ -1,5 +1,5 @@
-import { ITemplate } from '@impler/shared';
 import { Controller } from 'react-hook-form';
+import { DestinationsEnum, ITemplate } from '@impler/shared';
 import { Stack, Accordion, Title, Switch, useMantineColorScheme, TextInput as Input, Group } from '@mantine/core';
 
 import { Button } from '@ui/button';
@@ -24,6 +24,7 @@ export function Destination({ template }: DestinationProps) {
     errors,
     setValue,
     onSubmit,
+    setDestination,
     resetDestination,
     mapBubbleIoColumnsClick,
     isUpdateImportLoading,
@@ -32,10 +33,13 @@ export function Destination({ template }: DestinationProps) {
     template,
   });
 
-  const swithDestination = (newDestination: 'webhook' | 'bubbleIo') => {
+  const swithDestination = (newDestination: DestinationsEnum) => {
     if (destination === newDestination)
       resetDestination({ destination: undefined, webhook: undefined, bubbleIo: undefined });
-    else setValue('destination', newDestination);
+    else {
+      setDestination(newDestination);
+      setValue('destination', newDestination);
+    }
   };
 
   return (
@@ -49,12 +53,12 @@ export function Destination({ template }: DestinationProps) {
         chevron={
           <Switch
             color={colors.blue}
-            checked={destination === 'webhook'}
-            onChange={() => swithDestination('webhook')}
+            checked={destination === DestinationsEnum.WEBHOOK}
+            onChange={() => swithDestination(DestinationsEnum.WEBHOOK)}
           />
         }
       >
-        <Accordion.Item value="webhook">
+        <Accordion.Item value={DestinationsEnum.WEBHOOK}>
           <Accordion.Control disabled>
             <Title color={colorScheme === 'dark' ? colors.white : colors.black} order={4}>
               Webhook
@@ -112,16 +116,16 @@ export function Destination({ template }: DestinationProps) {
         value={destination}
         classNames={classes}
         disableChevronRotation
-        onChange={() => swithDestination('bubbleIo')}
+        onChange={() => swithDestination(DestinationsEnum.BUBBLEIO)}
         chevron={
           <Switch
             color={colors.blue}
-            checked={destination === 'bubbleIo'}
-            onChange={() => swithDestination('bubbleIo')}
+            checked={destination === DestinationsEnum.BUBBLEIO}
+            onChange={() => swithDestination(DestinationsEnum.BUBBLEIO)}
           />
         }
       >
-        <Accordion.Item value="bubbleIo">
+        <Accordion.Item value={DestinationsEnum.BUBBLEIO}>
           <Accordion.Control disabled>
             <Title color={colorScheme === 'dark' ? colors.white : colors.black} order={4}>
               Bubble.io
