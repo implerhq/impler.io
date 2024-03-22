@@ -60,7 +60,7 @@ export abstract class BaseConsumer {
         if (error.response) {
           baseResponse.error = {
             error: error.toJSON(),
-            data: error.response.data,
+            data: JSON.stringify(error.response.data),
           };
           baseResponse.failedReason = 'Application Error';
           baseResponse.responseStatusCode = error.response.status;

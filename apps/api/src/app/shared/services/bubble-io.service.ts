@@ -60,7 +60,7 @@ export class BubbleIoService extends BubbleBaseService {
   assumeValueType(value: any) {
     const obj = {
       selectValues: [],
-      dateFormats: ['DD/MM/YYYY', 'DD/MM/YY'],
+      dateFormats: ['MM/DD/YYYY', 'MM/DD/YY', 'M/D/YY', 'MM/D/YY', 'M/DD/YY', 'M/D/YYYY', 'MM/D/YYYY', 'M/DD/YYYY'],
       type: ColumnTypesEnum.STRING,
     };
     // Check if the value is an email

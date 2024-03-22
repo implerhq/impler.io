@@ -58,6 +58,10 @@ export class SendBubbleDataConsumer extends BaseConsumer {
         page,
         method: 'POST',
         url: cachedData.bubbleUrl,
+        headers: {
+          Authorization: `Bearer ${cachedData.apiPrivateKey}`,
+          'Content-Type': 'text/plain',
+        },
       });
 
       this.makeResponseEntry(response);
@@ -107,7 +111,7 @@ export class SendBubbleDataConsumer extends BaseConsumer {
     if (uploadata._allDataFileId) return null;
 
     const bubbleDestination = await this.bubbleDestinationRepository.findOne({ _templateId: uploadata._templateId });
-    const bubbleUrl = this.bubbleBaseService.createBubbleIoUrl(bubbleDestination);
+    const bubbleUrl = this.bubbleBaseService.createBubbleIoUrl(bubbleDestination, 'bulk');
 
     const defaultValueObj = {};
     const customSchema = JSON.parse(uploadata.customSchema) as ITemplateSchemaItem;

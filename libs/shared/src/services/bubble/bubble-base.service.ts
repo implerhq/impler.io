@@ -2,11 +2,11 @@ import { AxiosError } from 'axios';
 import { BubbleDestinationEnvironmentEnum, IBubbleData } from '../../types/destination/destination.types';
 
 export class BubbleBaseService {
-  createBubbleIoUrl(data: IBubbleData): string {
+  createBubbleIoUrl(data: IBubbleData, type: 'single' | 'bulk' = 'single'): string {
     let url = data.customDomainName ? `https://${data.customDomainName}` : `https://${data.appName}.bubbleapps.io`;
     if (data.environment === BubbleDestinationEnvironmentEnum.DEVELOPMENT) url += '/version-test';
 
-    return `${url}/api/1.1/obj/${data.datatype}`;
+    return `${url}/api/1.1/obj/${data.datatype}${type === 'bulk' ? '/bulk' : ''}`;
   }
   throwRequestError(errorWithType: AxiosError) {
     if ((errorWithType as AxiosError).response) {
