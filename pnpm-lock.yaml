@@ -753,10 +753,16 @@ importers:
       axios:
         specifier: 1.6.2
         version: 1.6.2
+      uuid:
+        specifier: ^9.0.0
+        version: 9.0.1
     devDependencies:
       '@types/node':
         specifier: ^18.7.18
         version: 18.19.21
+      '@types/uuid':
+        specifier: ^9.0.2
+        version: 9.0.8
       rimraf:
         specifier: ^3.0.2
         version: 3.0.2

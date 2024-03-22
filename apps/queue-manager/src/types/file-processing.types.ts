@@ -10,6 +10,7 @@ export interface IBaseSendDataParameters {
   data: any[];
   page: number;
   chunkSize: number;
+  defaultValues: string;
   totalRecords: number;
 }
 export interface IBuildSendDataParameters extends IBaseSendDataParameters {

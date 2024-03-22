@@ -60,6 +60,7 @@ export type SendBubbleCachedData = {
   bubbleUrl: string;
   apiPrivateKey: string;
   _templateId: string;
+  defaultValues: string;
   allDataFilePath?: string;
 };
 

@@ -6,6 +6,8 @@ import {
   QueuesEnum,
   FileNameService,
   SendBubbleCachedData,
+  ITemplateSchemaItem,
+  updateDefaultValues,
 } from '@impler/shared';
 import { StorageService } from '@impler/shared/dist/services/storage';
 import { UploadRepository, WebhookLogEntity, WebhookLogRepository, BubbleDestinationRepository } from '@impler/dal';
@@ -47,6 +49,7 @@ export class SendBubbleDataConsumer extends BaseConsumer {
         page: cachedData.page || DEFAULT_PAGE,
         chunkSize: cachedData.chunkSize,
         totalRecords: allDataJson.length,
+        defaultValues: cachedData.defaultValues,
       });
 
       const response = await this.makeApiCall({
@@ -81,15 +84,16 @@ export class SendBubbleDataConsumer extends BaseConsumer {
     }
   }
 
-  private buildSendData({ data, page = DEFAULT_PAGE, chunkSize }: IBaseSendDataParameters): {
+  private buildSendData({ data, page = DEFAULT_PAGE, chunkSize, defaultValues }: IBaseSendDataParameters): {
     sendData: string;
     page: number;
   } {
+    const defaultValuesObj = JSON.parse(defaultValues);
     let slicedData = data.slice(
       Math.max((page - DEFAULT_PAGE) * chunkSize, MIN_LIMIT),
       Math.min(page * chunkSize, data.length)
     );
-    slicedData = slicedData.map((obj) => JSON.stringify(obj.record));
+    slicedData = slicedData.map((obj) => JSON.stringify(updateDefaultValues(obj.record, defaultValuesObj)));
 
     return {
       sendData: slicedData.join('\n'),
@@ -105,11 +109,20 @@ export class SendBubbleDataConsumer extends BaseConsumer {
     const bubbleDestination = await this.bubbleDestinationRepository.findOne({ _templateId: uploadata._templateId });
     const bubbleUrl = this.bubbleBaseService.createBubbleIoUrl(bubbleDestination);
 
+    const defaultValueObj = {};
+    const customSchema = JSON.parse(uploadata.customSchema) as ITemplateSchemaItem;
+    if (Array.isArray(customSchema)) {
+      customSchema.forEach((item) => {
+        if (item.defaultValue) defaultValueObj[item.key] = item.defaultValue;
+      });
+    }
+
     return {
       page: 1,
       bubbleUrl,
       chunkSize: 500,
       _templateId: uploadata._templateId,
+      defaultValues: JSON.stringify(defaultValueObj),
       apiPrivateKey: bubbleDestination.apiPrivateKey,
       allDataFilePath: this.fileNameService.getAllJsonDataFilePath(_uploadId),
     };
