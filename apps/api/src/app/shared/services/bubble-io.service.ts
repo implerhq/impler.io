@@ -32,7 +32,7 @@ export class BubbleIoService extends BubbleBaseService {
   }
 
   createColumns(data: Record<string, string | number>[], _templateId: string) {
-    const bubbleIoDefaultColumns = ['Modified Date', 'Created Date', 'Created By', '_id'];
+    const bubbleIoDefaultColumns = ['Modified Date', 'Created Date', 'Created By', '_id', 'Slug'];
     const columns: Partial<IColumn>[] = [];
     const takenCols = new Set();
     for (const record of data) {
