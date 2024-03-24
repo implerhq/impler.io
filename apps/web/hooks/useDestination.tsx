@@ -7,21 +7,15 @@ import { notify } from '@libs/notify';
 import { track } from '@libs/amplitude';
 import { modals } from '@mantine/modals';
 import { API_KEYS, NOTIFICATION_KEYS } from '@config';
-import { DestinationsEnum, IBubbleData, IErrorObject, ITemplate, IWebhookData } from '@impler/shared';
+import { DestinationsEnum, IErrorObject, IDestinationData, ITemplate } from '@impler/shared';
 
 interface UseDestinationProps {
   template: ITemplate;
 }
 
-interface DestinationData {
-  destination?: DestinationsEnum;
-  webhook?: IWebhookData;
-  bubbleIo?: IBubbleData;
-}
-
 export function useDestination({ template }: UseDestinationProps) {
   const queryClient = useQueryClient();
-  const [destination, setDestination] = useState<DestinationsEnum | undefined>(DestinationsEnum.WEBHOOK);
+  const [destination, setDestination] = useState<DestinationsEnum | undefined>();
   const {
     watch,
     reset,
@@ -31,7 +25,7 @@ export function useDestination({ template }: UseDestinationProps) {
     setError,
     handleSubmit,
     formState: { errors },
-  } = useForm<DestinationData>({
+  } = useForm<IDestinationData>({
     defaultValues: {
       webhook: {
         chunkSize: 100,
@@ -41,9 +35,9 @@ export function useDestination({ template }: UseDestinationProps) {
       },
     },
   });
-  useQuery<unknown, IErrorObject, DestinationData, [string, string | undefined]>(
+  useQuery<unknown, IErrorObject, IDestinationData, [string, string | undefined]>(
     [API_KEYS.DESTINATION_FETCH, template._id],
-    () => commonApi<DestinationData>(API_KEYS.DESTINATION_FETCH as any, { parameters: [template._id] }),
+    () => commonApi<IDestinationData>(API_KEYS.DESTINATION_FETCH as any, { parameters: [template._id] }),
     {
       onSuccess(data) {
         reset(data);
@@ -52,18 +46,18 @@ export function useDestination({ template }: UseDestinationProps) {
     }
   );
   const { mutate: updateDestination, isLoading: isUpdateDestinationLoading } = useMutation<
-    DestinationData,
+    IDestinationData,
     IErrorObject,
-    DestinationData,
+    IDestinationData,
     (string | undefined)[]
   >(
     [API_KEYS.TEMPLATE_UPDATE, template._id],
     (body) =>
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      commonApi<DestinationData>(API_KEYS.DESTINATION_UPDATE as any, { parameters: [template._id], body }),
+      commonApi<IDestinationData>(API_KEYS.DESTINATION_UPDATE as any, { parameters: [template._id], body }),
     {
       onSuccess: (data) => {
-        queryClient.setQueryData<DestinationData>([API_KEYS.DESTINATION_FETCH, template._id], data);
+        queryClient.setQueryData<IDestinationData>([API_KEYS.DESTINATION_FETCH, template._id], data);
         reset(data);
         setDestination(data?.destination);
         notify(NOTIFICATION_KEYS.DESTINATION_UPDATED);
@@ -78,15 +72,15 @@ export function useDestination({ template }: UseDestinationProps) {
     }
   );
   const { mutate: mapBubbleIoColumns, isLoading: isMapBubbleIoColumnsLoading } = useMutation<
-    DestinationData,
+    IDestinationData,
     IErrorObject,
-    DestinationData,
+    IDestinationData,
     (string | undefined)[]
   >(
     [API_KEYS.BUBBLEIO_MAP_COLUMNS, template._id],
     (body) =>
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      commonApi<DestinationData>(API_KEYS.BUBBLEIO_MAP_COLUMNS as any, { parameters: [template._id], body }),
+      commonApi<IDestinationData>(API_KEYS.BUBBLEIO_MAP_COLUMNS as any, { parameters: [template._id], body }),
     {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [API_KEYS.TEMPLATE_CUSTOMIZATION_GET, template._id] });
@@ -112,7 +106,7 @@ export function useDestination({ template }: UseDestinationProps) {
       onConfirm: handleSubmit((data) => mapBubbleIoColumns(data)),
     });
   };
-  const resetDestination = (data: DestinationData) => {
+  const resetDestination = (data: IDestinationData) => {
     modals.openConfirmModal({
       centered: true,
       title: 'Destination will be reset',
@@ -126,7 +120,7 @@ export function useDestination({ template }: UseDestinationProps) {
       },
     });
   };
-  const onSubmit = (data: DestinationData) => {
+  const onSubmit = (data: IDestinationData) => {
     if (data.destination === DestinationsEnum.BUBBLEIO && !data.bubbleIo?.appName && !data.bubbleIo?.customDomainName) {
       setError(
         'bubbleIo.appName',

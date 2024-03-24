@@ -21,3 +21,9 @@ export interface IBubbleData {
   apiPrivateKey: string;
   datatype: string;
 }
+
+export interface IDestinationData {
+  destination?: DestinationsEnum;
+  webhook?: IWebhookData;
+  bubbleIo?: IBubbleData;
+}
