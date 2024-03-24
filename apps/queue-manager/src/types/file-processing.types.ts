@@ -12,6 +12,7 @@ export interface IBaseSendDataParameters {
   chunkSize: number;
   defaultValues: string;
   totalRecords: number;
+  recordFormat?: string;
 }
 export interface IBuildSendDataParameters extends IBaseSendDataParameters {
   template: string;

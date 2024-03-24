@@ -7,7 +7,7 @@ import {
   FileNameService,
   SendBubbleCachedData,
   ITemplateSchemaItem,
-  updateDefaultValues,
+  replaceVariablesInObject,
 } from '@impler/shared';
 import { StorageService } from '@impler/shared/dist/services/storage';
 import { UploadRepository, WebhookLogEntity, WebhookLogRepository, BubbleDestinationRepository } from '@impler/dal';
@@ -46,6 +46,7 @@ export class SendBubbleDataConsumer extends BaseConsumer {
       if (!(Array.isArray(allDataJson) && allDataJson.length > 0)) return;
       const { sendData, page } = this.buildSendData({
         data: allDataJson,
+        recordFormat: cachedData.recordFormat,
         page: cachedData.page || DEFAULT_PAGE,
         chunkSize: cachedData.chunkSize,
         totalRecords: allDataJson.length,
@@ -88,7 +89,13 @@ export class SendBubbleDataConsumer extends BaseConsumer {
     }
   }
 
-  private buildSendData({ data, page = DEFAULT_PAGE, chunkSize, defaultValues }: IBaseSendDataParameters): {
+  private buildSendData({
+    data,
+    page = DEFAULT_PAGE,
+    chunkSize,
+    defaultValues,
+    recordFormat,
+  }: IBaseSendDataParameters): {
     sendData: string;
     page: number;
   } {
@@ -97,7 +104,12 @@ export class SendBubbleDataConsumer extends BaseConsumer {
       Math.max((page - DEFAULT_PAGE) * chunkSize, MIN_LIMIT),
       Math.min(page * chunkSize, data.length)
     );
-    slicedData = slicedData.map((obj) => JSON.stringify(updateDefaultValues(obj.record, defaultValuesObj)));
+    if (recordFormat)
+      slicedData = slicedData.map((obj) =>
+        replaceVariablesInObject(JSON.parse(recordFormat), obj.record, defaultValuesObj)
+      );
+    else slicedData = slicedData.map((obj) => obj.record);
+    slicedData = slicedData.map((obj) => JSON.stringify(obj));
 
     return {
       sendData: slicedData.join('\n'),
@@ -120,12 +132,22 @@ export class SendBubbleDataConsumer extends BaseConsumer {
         if (item.defaultValue) defaultValueObj[item.key] = item.defaultValue;
       });
     }
+    if (uploadata.extra) {
+      try {
+        // precaution to only proceed if "extra" is object
+        const extra = JSON.parse(uploadata.extra);
+        Object.keys(extra).forEach((extraObjKey) => {
+          defaultValueObj[`extra.${extraObjKey}`] = extra[extraObjKey];
+        });
+      } catch (error) {}
+    }
 
     return {
       page: 1,
       bubbleUrl,
       chunkSize: 500,
       _templateId: uploadata._templateId,
+      recordFormat: uploadata.customRecordFormat,
       defaultValues: JSON.stringify(defaultValueObj),
       apiPrivateKey: bubbleDestination.apiPrivateKey,
       allDataFilePath: this.fileNameService.getAllJsonDataFilePath(_uploadId),

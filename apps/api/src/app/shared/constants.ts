@@ -56,7 +56,7 @@ export const CONSTANTS = {
   "extra": "{{extra}}"
 }`,
   BUBBLEIO_PROPS: {
-    userId: '{{extra.userId}}',
+    user: '{{extra.userId}}',
   },
 };
 
