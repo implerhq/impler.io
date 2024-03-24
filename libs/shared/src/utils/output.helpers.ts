@@ -1,10 +1,10 @@
 import { DEFAULT_VALUES_ARR, DEFAULT_VALUES_OBJ } from './defaults';
 
 const tabWidth = 2;
-export function createRecordFormat(variables: string[]): string {
+export function createRecordFormat(variables: string[], extraParams: Record<string, string | number> = {}): string {
   const recordFormat = variables.reduce((acc, variable) => {
     return { ...acc, [variable]: createVariable(variable) };
-  }, {});
+  }, extraParams);
 
   return JSON.stringify(recordFormat, null, tabWidth);
 }

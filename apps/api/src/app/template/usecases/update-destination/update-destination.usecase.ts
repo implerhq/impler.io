@@ -1,15 +1,17 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { UpdateDestinationCommand, BubbleIoDestinationObject } from '../../commands/update-destination.command';
-import { TemplateRepository, BubbleDestinationRepository, WebhookDestinationRepository } from '@impler/dal';
 import { DestinationsEnum } from '@impler/shared';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { TemplateRepository, BubbleDestinationRepository, WebhookDestinationRepository } from '@impler/dal';
 import { BubbleIoService } from '@shared/services/bubble-io.service';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
+import { UpdateCustomization } from '../update-customization/update-customization.usecase';
+import { UpdateDestinationCommand, BubbleIoDestinationObject } from '../../commands/update-destination.command';
 
 @Injectable()
 export class UpdateDestination {
   constructor(
     private bubbleIoService: BubbleIoService,
     private templateRepository: TemplateRepository,
+    private updateCustomization: UpdateCustomization,
     private bubbleDestinationRepo: BubbleDestinationRepository,
     private webhookDestinationRepo: WebhookDestinationRepository
   ) {}
@@ -35,9 +37,7 @@ export class UpdateDestination {
       );
 
       return null;
-    }
-
-    if (data.destination === DestinationsEnum.WEBHOOK) {
+    } else if (data.destination === DestinationsEnum.WEBHOOK) {
       await this.webhookDestinationRepo.findOneAndUpdate(
         { _templateId },
         {
@@ -63,6 +63,7 @@ export class UpdateDestination {
     }
 
     await this.templateRepository.update({ _id: _templateId }, { destination: data.destination });
+    await this.updateCustomization.createOrReset(_templateId, { destination: data.destination });
 
     return {
       destination: data.destination,

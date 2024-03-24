@@ -24,7 +24,6 @@ import {
   UpdateTemplateColumns,
   GetCustomization,
   UpdateCustomization,
-  UpdateCustomizationCommand,
   GetValidations,
   DownloadSample,
   GetDestination,
@@ -291,7 +290,7 @@ export class TemplateController {
     @Param('templateId', ValidateMongoId) templateId: string,
     @Body() body: UpdateCustomizationRequestDto
   ): Promise<CustomizationResponseDto> {
-    return this.updateCustomization.execute(templateId, UpdateCustomizationCommand.create(body));
+    return this.updateCustomization.execute(templateId, body);
   }
 
   @Put(':templateId/customizations/sync')
