@@ -1,26 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-import { CONSTANTS } from '@shared/constants';
-import { createRecordFormat, updateCombinedFormat } from '@impler/shared';
-import { CustomizationRepository } from '@impler/dal';
+import { TemplateRepository } from '@impler/dal';
+import { UpdateCustomization } from '../update-customization/update-customization.usecase';
 
 @Injectable()
 export class SyncCustomization {
-  constructor(private customizationRepository: CustomizationRepository) {}
+  constructor(private templateRepository: TemplateRepository, private updateCustomization: UpdateCustomization) {}
 
   async execute(_templateId: string) {
-    const customization = await this.customizationRepository.findOne({
-      _templateId,
-    });
-    customization.isChunkFormatUpdated = false;
-    customization.isRecordFormatUpdated = false;
-    customization.isCombinedFormatUpdated = false;
+    const template = await this.templateRepository.findById(_templateId, 'destination');
 
-    customization.recordFormat = createRecordFormat(customization.recordVariables);
-    customization.combinedFormat = updateCombinedFormat(CONSTANTS.COMBINED_FORMAT, customization.recordVariables);
-
-    await this.customizationRepository.update({ _templateId }, customization);
-
-    return customization;
+    return this.updateCustomization.createOrReset(_templateId, { destination: template.destination });
   }
 }

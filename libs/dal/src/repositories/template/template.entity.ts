@@ -1,13 +1,11 @@
+import { DestinationsEnum } from '@impler/shared';
+
 export class TemplateEntity {
   _id?: string;
 
   name: string;
 
-  callbackUrl: string;
-
-  authHeaderName: string;
-
-  chunkSize: number;
+  destination: DestinationsEnum;
 
   sampleFileUrl: string;
 

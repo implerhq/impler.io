@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { createRecordFormat, updateCombinedFormat } from '@impler/shared';
-import { UpdateColumnCommand } from '../../commands/update-column.command';
+import { ColumnRepository } from '@impler/dal';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
-import { ColumnRepository, CustomizationRepository } from '@impler/dal';
 import { SaveSampleFile } from '@shared/usecases/save-sample-file/save-sample-file.usecase';
+import { UpdateCustomization } from 'app/template/usecases';
+import { UpdateColumnCommand } from '../../commands/update-column.command';
 
 @Injectable()
 export class UpdateColumn {
   constructor(
     private saveSampleFile: SaveSampleFile,
     private columnRepository: ColumnRepository,
-    private customizationRepository: CustomizationRepository
+    private updateCustomization: UpdateCustomization
   ) {}
 
   async execute(command: UpdateColumnCommand, _id: string) {
@@ -36,23 +36,12 @@ export class UpdateColumn {
 
     if (isKeyUpdated) {
       const variables = columns.map((columnItem) => columnItem.key);
-      await this.updateCustomization(column._templateId, variables);
+      await this.updateCustomization.execute(column._templateId, {
+        recordVariables: variables,
+        internal: true,
+      });
     }
 
     return column;
-  }
-
-  async updateCustomization(_templateId: string, variables: string[]) {
-    const customization = await this.customizationRepository.findOne({
-      _templateId,
-    });
-    customization.recordVariables = variables;
-    if (!customization.isRecordFormatUpdated) {
-      customization.recordFormat = createRecordFormat(variables);
-    }
-    if (!customization.isCombinedFormatUpdated) {
-      customization.combinedFormat = updateCombinedFormat(customization.combinedFormat, variables);
-    }
-    await this.customizationRepository.update({ _templateId }, customization);
   }
 }

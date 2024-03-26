@@ -20,6 +20,7 @@ const getTabStyles = (theme: MantineTheme) => ({
 
 const getPanelStyles = (theme: MantineTheme): React.CSSProperties => ({
   paddingTop: theme.spacing.xs,
+  position: 'relative',
 });
 
 const getTabIconStyles = (theme: MantineTheme) => ({

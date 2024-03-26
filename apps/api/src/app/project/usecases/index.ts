@@ -8,7 +8,7 @@ import { DeleteProject } from './delete-project/delete-project.usecase';
 import { GetTemplates } from './get-templates/get-templates.usecase';
 import { GetEnvironment } from './get-environment/get-environment.usecase';
 
-import { CreateTemplate, UpdateTemplateColumns } from 'app/template/usecases';
+import { CreateTemplate, UpdateTemplateColumns, UpdateCustomization } from 'app/template/usecases';
 import { SaveSampleFile } from '@shared/usecases/save-sample-file/save-sample-file.usecase';
 
 export const USE_CASES = [
@@ -21,6 +21,7 @@ export const USE_CASES = [
   GetEnvironment,
   CreateTemplate,
   SaveSampleFile,
+  UpdateCustomization,
   UpdateTemplateColumns,
   //
 ];

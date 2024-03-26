@@ -20,7 +20,7 @@ export class DuplicateTemplateCommand extends BaseCommand {
 
   @IsBoolean()
   @IsOptional()
-  duplicateWebhook?: boolean;
+  duplicateDestination?: boolean;
 
   @IsBoolean()
   @IsOptional()

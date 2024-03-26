@@ -31,11 +31,11 @@ export class DuplicateTemplateRequestDto {
   duplicateOutput?: boolean;
 
   @ApiProperty({
-    description: 'Whether to duplicate webhook?',
+    description: 'Whether to duplicate destination details?',
   })
   @IsBoolean()
   @IsOptional()
-  duplicateWebhook?: boolean;
+  duplicateDestination?: boolean;
 
   @ApiProperty({
     description: 'Whether to duplicate validation code?',

@@ -11,16 +11,20 @@ interface TabItem {
 
 interface TabsProps {
   items: TabItem[];
+  value?: string;
   keepMounted?: boolean;
   defaultValue?: string;
   allowTabDeactivation?: boolean;
+  onTabChange?: (value: string) => void;
 }
 
-export function Tabs({ items, keepMounted, allowTabDeactivation, defaultValue }: TabsProps) {
+export function Tabs({ items, value, onTabChange, keepMounted, allowTabDeactivation, defaultValue }: TabsProps) {
   const { classes } = useStyles();
 
   return (
     <MantineTabs
+      value={value}
+      onTabChange={onTabChange}
       allowTabDeactivation={allowTabDeactivation}
       keepMounted={keepMounted}
       defaultValue={defaultValue}

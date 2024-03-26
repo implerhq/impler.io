@@ -15,15 +15,12 @@ export class GetTemplateDetails {
 
     return {
       _projectId: template._projectId,
-      callbackUrl: template.callbackUrl,
-      chunkSize: template.chunkSize,
       name: template.name,
       sampleFileUrl: template.sampleFileUrl,
       _id: template._id,
       totalUploads: template.totalUploads,
       totalInvalidRecords: template.totalInvalidRecords,
       totalRecords: template.totalRecords,
-      authHeaderName: template.authHeaderName,
     };
   }
 }
