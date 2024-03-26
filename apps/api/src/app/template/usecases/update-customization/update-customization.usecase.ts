@@ -52,13 +52,15 @@ export class UpdateCustomization {
       }
     }
 
-    const customizationResult = await this.customizationRepository.findOneAndUpdate(
+    let customizationResult = await this.customizationRepository.findOneAndUpdate(
       {
         _templateId,
       },
       customizationUpdateData,
       { upsert: true }
     );
+
+    if (!customizationResult) customizationResult = await this.customizationRepository.findOne({ _templateId });
 
     return Object.assign(customizationResult, customizationUpdateData);
   }

@@ -289,7 +289,7 @@ export class TemplateController {
   async updateCustomizationRequest(
     @Param('templateId', ValidateMongoId) templateId: string,
     @Body() body: UpdateCustomizationRequestDto
-  ): Promise<CustomizationResponseDto> {
+  ) {
     return this.updateCustomization.execute(templateId, body);
   }
 
