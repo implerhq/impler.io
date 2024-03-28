@@ -33,6 +33,16 @@
     position: absolute;
 }
 
+.list-wrapper ul {
+    position: fixed;
+    height: 180px;
+    width: 191px;
+    background: white;
+    overflow: auto;
+    margin-bottom: -20px;
+    border: 1px solid #ddd;
+}
+
 .list-wrapper:hover .option:not(:hover) {
     background-color: transparent !important;
 }
@@ -43,6 +53,7 @@
     top: 100%;
     left: 0;
     border: 1px solid #ddd;
+    
 }
 
 .dd-searchbox {
@@ -76,4 +87,9 @@
 .option.selected {
     font-weight: 600;
     background-color: #f6f6f6 !important;
+}
+
+
+.handsontable .htColumnHeaders {
+overflow: none !important;
 }
