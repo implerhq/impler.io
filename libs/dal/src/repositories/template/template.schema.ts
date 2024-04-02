@@ -7,14 +7,8 @@ const templateSchema = new Schema(
     name: {
       type: Schema.Types.String,
     },
-    callbackUrl: {
+    destination: {
       type: Schema.Types.String,
-    },
-    authHeaderName: {
-      type: Schema.Types.String,
-    },
-    chunkSize: {
-      type: Schema.Types.Number,
     },
     sampleFileUrl: {
       type: Schema.Types.String,

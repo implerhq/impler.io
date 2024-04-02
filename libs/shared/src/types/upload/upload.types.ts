@@ -1,3 +1,5 @@
+import { DestinationsEnum } from '../destination/destination.types';
+
 export enum UploadStatusEnum {
   'UPLOADED' = 'Uploaded',
   'MAPPING' = 'Mapping',
@@ -31,11 +33,12 @@ export enum FileEncodingsEnum {
 }
 
 export enum QueuesEnum {
-  'PROCESS_FILE' = 'PROCESS_FILE',
+  'SEND_WEBHOOK_DATA' = 'SEND_WEBHOOK_DATA',
+  'SEND_BUBBLE_DATA' = 'SEND_BUBBLE_DATA',
   'END_IMPORT' = 'END_IMPORT',
 }
 
-export type ProcessFileCachedData = {
+export type SendWebhookCachedData = {
   page: number;
   callbackUrl: string;
   chunkSize: number;
@@ -51,15 +54,31 @@ export type ProcessFileCachedData = {
   defaultValues: string;
 };
 
-export type ProcessFileData = {
-  uploadId: string;
-  cache?: ProcessFileCachedData;
+export type SendBubbleCachedData = {
+  page: number;
+  chunkSize: number;
+  bubbleUrl: string;
+  apiPrivateKey: string;
+  _templateId: string;
+  recordFormat: string;
+  defaultValues: string;
+  allDataFilePath?: string;
 };
-export type PublishToQueueData = ProcessFileData;
+
+export type SendBubbleData = {
+  uploadId: string;
+  cache: SendBubbleCachedData;
+};
+
+export type SendWebhookData = {
+  uploadId: string;
+  cache?: SendWebhookCachedData;
+};
+export type PublishToQueueData = SendWebhookData;
 
 export type EndImportData = {
   uploadId: string;
-  processFile: boolean;
+  destination: DestinationsEnum;
 };
 
 export interface IFileInformation {

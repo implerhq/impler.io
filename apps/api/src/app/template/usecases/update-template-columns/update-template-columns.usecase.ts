@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
-import { CONSTANTS } from '@shared/constants';
+import { ColumnRepository, TemplateRepository } from '@impler/dal';
 import { AddColumnCommand } from 'app/column/commands/add-column.command';
-import { createRecordFormat, updateCombinedFormat } from '@impler/shared';
-import { ColumnRepository, CustomizationEntity, CustomizationRepository } from '@impler/dal';
 import { SaveSampleFile } from '@shared/usecases/save-sample-file/save-sample-file.usecase';
+import { UpdateCustomization } from '../update-customization/update-customization.usecase';
 
 @Injectable()
 export class UpdateTemplateColumns {
   constructor(
     private saveSampleFile: SaveSampleFile,
     private columnRepository: ColumnRepository,
-    private customizationRepository: CustomizationRepository
+    private templateRepository: TemplateRepository,
+    private updateCustomization: UpdateCustomization
   ) {}
 
   async execute(command: AddColumnCommand[], _templateId: string) {
@@ -20,42 +20,19 @@ export class UpdateTemplateColumns {
       column.sequence = index;
       column.dateFormats = column.dateFormats?.map((format) => format.toUpperCase()) || [];
     });
-    await this.updateCustomizationData(command, _templateId);
     const columns = await this.columnRepository.createMany(command);
     await this.saveSampleFile.execute(columns, _templateId);
+
+    const template = await this.templateRepository.findById(_templateId, 'destination');
+    await this.updateCustomization.createOrReset(_templateId, {
+      recordVariables: this.listRecordVariables(command),
+      destination: template.destination,
+    });
 
     return columns;
   }
 
   listRecordVariables(data: AddColumnCommand[]): string[] {
     return data.map((column) => column.key);
-  }
-
-  async updateCustomizationData(data: AddColumnCommand[], _templateId: string) {
-    let customization = await this.customizationRepository.findOne({
-      _templateId,
-    });
-    const customizationUpdate: Partial<CustomizationEntity> = {};
-    if (!customization) {
-      customization = await this.customizationRepository.create({
-        _templateId,
-        chunkFormat: CONSTANTS.CHUNK_FORMAT,
-        recordFormat: '{}',
-        chunkVariables: CONSTANTS.CHUNK_VARIABLES,
-      });
-    }
-    customizationUpdate.recordVariables = this.listRecordVariables(data);
-
-    if (!customization.isRecordFormatUpdated) {
-      customizationUpdate.recordFormat = createRecordFormat(customizationUpdate.recordVariables);
-    }
-    if (!customization.isCombinedFormatUpdated) {
-      customizationUpdate.combinedFormat = updateCombinedFormat(
-        CONSTANTS.COMBINED_FORMAT,
-        customizationUpdate.recordVariables
-      );
-    }
-
-    await this.customizationRepository.update({ _templateId }, customizationUpdate);
   }
 }

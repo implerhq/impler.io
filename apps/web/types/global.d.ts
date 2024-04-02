@@ -37,7 +37,7 @@ interface IDuplicateTemplateData {
   name: string;
   _projectId: string;
   duplicateColumns?: boolean;
-  duplicateOutput?: boolean;
+  duplicateDestination?: boolean;
   duplicateWebhook?: boolean;
   duplicateValidator?: boolean;
 }

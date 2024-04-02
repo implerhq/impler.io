@@ -1,10 +1,11 @@
 import './config/env-config';
+import { validateEnv } from './config/env-validator';
 import amqp, { ChannelWrapper } from 'amqp-connection-manager';
-import { ProcessFileConsumer, EndImportConsumer } from './consumers';
+import { IAmqpConnectionManager } from 'amqp-connection-manager/dist/esm/AmqpConnectionManager';
+
 import { QueuesEnum } from '@impler/shared';
 import { DalService } from '@impler/dal';
-import { IAmqpConnectionManager } from 'amqp-connection-manager/dist/esm/AmqpConnectionManager';
-import { validateEnv } from './config/env-validator';
+import { SendWebhookDataConsumer, EndImportConsumer, SendBubbleDataConsumer } from './consumers';
 
 let connection: IAmqpConnectionManager, chanelWrapper: ChannelWrapper;
 
@@ -26,8 +27,9 @@ export async function bootstrap() {
   });
 
   // initialize consumers
-  const processFileConsumer = new ProcessFileConsumer();
   const endImportConsumer = new EndImportConsumer();
+  const sendBubbleDataConsumer = new SendBubbleDataConsumer();
+  const sendWebhookdataConsumer = new SendWebhookDataConsumer();
 
   // add queues to channel
   chanelWrapper.addSetup((channel) => {
@@ -36,10 +38,18 @@ export async function bootstrap() {
         durable: false,
       }),
       channel.consume(QueuesEnum.END_IMPORT, endImportConsumer.message.bind(endImportConsumer), { noAck: true }),
-      channel.assertQueue(QueuesEnum.PROCESS_FILE, {
+      channel.assertQueue(QueuesEnum.SEND_WEBHOOK_DATA, {
         durable: false,
       }),
-      channel.consume(QueuesEnum.PROCESS_FILE, processFileConsumer.message.bind(processFileConsumer), { noAck: true }),
+      channel.consume(QueuesEnum.SEND_WEBHOOK_DATA, sendWebhookdataConsumer.message.bind(sendWebhookdataConsumer), {
+        noAck: true,
+      }),
+      channel.assertQueue(QueuesEnum.SEND_BUBBLE_DATA, {
+        durable: false,
+      }),
+      channel.consume(QueuesEnum.SEND_BUBBLE_DATA, sendBubbleDataConsumer.message.bind(sendBubbleDataConsumer), {
+        noAck: true,
+      }),
     ]);
   });
 }
