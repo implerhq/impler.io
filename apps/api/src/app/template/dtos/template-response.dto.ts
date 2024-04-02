@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDefined, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsDefined, IsNumber, IsString } from 'class-validator';
 
 export class TemplateResponseDto {
   @ApiPropertyOptional({
@@ -15,27 +15,6 @@ export class TemplateResponseDto {
   @IsString()
   @IsDefined()
   name: string;
-
-  @ApiProperty({
-    description: 'Callback URL of the template, gets called when sending data to the application',
-  })
-  @IsString()
-  @IsOptional()
-  callbackUrl: string;
-
-  @ApiProperty({
-    description: 'Name of the header that gets sent to the application',
-  })
-  @IsString()
-  @IsOptional()
-  authHeaderName: string;
-
-  @ApiProperty({
-    description: 'Size of data in rows that gets sent to the application',
-  })
-  @IsNumber()
-  @IsDefined()
-  chunkSize: number;
 
   @ApiProperty({
     description: 'URL to download samle csv file',

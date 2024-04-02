@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 export const Defaults = {
   ONE: 1,
   PAGE_LIMIT: 100,
@@ -35,6 +37,10 @@ export const DEFAULT_VALUES = [
     label: 'Boolean false',
     value: '<<false>>',
   },
+  {
+    label: 'UUID v4',
+    value: '<<uuid>>',
+  },
 ];
 
 export const DEFAULT_VALUES_ARR = DEFAULT_VALUES.reduce((acc: string[], item) => {
@@ -50,4 +56,5 @@ export const DEFAULT_VALUES_OBJ = {
   '<<[]>>': [],
   '<<true>>': true,
   '<<false>>': false,
+  '<<uuid>>': uuidv4,
 };

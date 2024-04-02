@@ -1,10 +1,10 @@
 import { DEFAULT_VALUES_ARR, DEFAULT_VALUES_OBJ } from './defaults';
 
 const tabWidth = 2;
-export function createRecordFormat(variables: string[]): string {
+export function createRecordFormat(variables: string[], extraParams: Record<string, string | number> = {}): string {
   const recordFormat = variables.reduce((acc, variable) => {
     return { ...acc, [variable]: createVariable(variable) };
-  }, {});
+  }, extraParams);
 
   return JSON.stringify(recordFormat, null, tabWidth);
 }
@@ -67,14 +67,28 @@ export function replaceVariablesInObject(
   record: Record<string, string | number>,
   defaultValues?: Record<string, string | number>
 ): Record<string, string> {
+  record = updateDefaultValues(record, defaultValues);
+
+  return Object.keys(format).reduce((acc, key) => {
+    acc[key] = replaceVariable(format[key], key, format[key], record);
+
+    return acc;
+  }, {});
+}
+
+export function updateDefaultValues(
+  record: Record<string, string | number>,
+  defaultValues?: Record<string, string | number>
+) {
   if (defaultValues) {
     Object.keys(defaultValues).forEach((key) => {
       if (typeof record[key] === 'undefined') {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        if (typeof defaultValues[key] === 'string' && DEFAULT_VALUES_ARR.includes(defaultValues[key])) {
+        if (typeof defaultValues[key] === 'string' && DEFAULT_VALUES_ARR.includes(defaultValues[key] as string)) {
           // checking for specifc value
-          record[key] = DEFAULT_VALUES_OBJ[defaultValues[key]];
+          record[key] =
+            typeof DEFAULT_VALUES_OBJ[defaultValues[key]] === 'function'
+              ? DEFAULT_VALUES_OBJ[defaultValues[key]]()
+              : DEFAULT_VALUES_OBJ[defaultValues[key]];
         } else {
           // applying default value
           record[key] = defaultValues[key];
@@ -83,11 +97,7 @@ export function replaceVariablesInObject(
     });
   }
 
-  return Object.keys(format).reduce((acc, key) => {
-    acc[key] = replaceVariable(format[key], key, format[key], record);
-
-    return acc;
-  }, {});
+  return record;
 }
 
 export function validateVariable(name: string) {
