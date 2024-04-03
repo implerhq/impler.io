@@ -115,8 +115,8 @@ export class MakeUploadEntry {
         },
         'chunkFormat recordFormat'
       );
-      customChunkFormat = defaultCustomization.chunkFormat;
-      customRecordFormat = defaultCustomization.recordFormat;
+      customChunkFormat = defaultCustomization?.chunkFormat;
+      customRecordFormat = defaultCustomization?.recordFormat;
     }
 
     const fileService = new CSVFileService2();
