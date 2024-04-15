@@ -26,7 +26,13 @@ export class ExcelFileService {
     });
   }
   formatName(name: string): string {
-    return CONSTANTS.EXCEL_DATA_SHEET_STARTER + name.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+    return (
+      CONSTANTS.EXCEL_DATA_SHEET_STARTER +
+      name
+        .replace(/[^a-zA-Z0-9]/g, '')
+        .toLowerCase()
+        .slice(0, 25) // exceljs don't allow heading more than 30 characters
+    );
   }
   addSelectSheet(wb: ExcelJS.Workbook, heading: IExcelFileHeading): string {
     const name = this.formatName(heading.key);
