@@ -14,7 +14,12 @@ import { validateEnv } from './config/env-validator';
 
 validateEnv();
 
-const extendedBodySizeRoutes = ['/v1/template/:templateId/sample', '/v1/upload/:templateId', '/v1/common/valid'];
+const extendedBodySizeRoutes = [
+  '/v1/template/:templateId/sample',
+  '/v1/upload/:templateId',
+  '/v1/common/valid',
+  '/v1/template/:templateId/columns',
+];
 
 export async function bootstrap(expressApp?): Promise<INestApplication> {
   let app;
