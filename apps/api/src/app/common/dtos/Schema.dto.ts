@@ -85,11 +85,6 @@ export class SchemaDto {
   @ApiPropertyOptional({
     description: 'List of possible values for column if type is Select',
   })
-  @ValidateIf((object) => object.type === ColumnTypesEnum.SELECT, {
-    message: "'selectValues' should not empty, when type is Select",
-  })
-  @IsArray({ message: "'selectValues' must be an array, when type is Select" })
-  @ArrayMinSize(1, { message: "'selectValues' should not empty, when type is Select" })
   @Type(() => Array)
   @IsOptional()
   selectValues: string[] = [];
