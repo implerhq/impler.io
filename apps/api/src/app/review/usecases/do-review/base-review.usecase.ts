@@ -114,7 +114,7 @@ export class BaseReview {
         const selectValues =
           Array.isArray(column.selectValues) && column.selectValues.length > 0
             ? [...column.selectValues, ...(column.isRequired ? [] : [''])]
-            : [];
+            : [''];
         property = {
           type: 'string',
           enum: Array.from(new Set(selectValues)), // handle duplicate
