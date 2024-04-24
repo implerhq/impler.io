@@ -8,6 +8,7 @@ import { BaseReview } from './base-review.usecase';
 import { BATCH_LIMIT } from '@shared/services/sandbox';
 import { StorageService } from '@impler/shared/dist/services/storage';
 import { UploadRepository, ValidatorRepository, FileRepository, DalService } from '@impler/dal';
+import { PaymentAPIService } from '../../../shared/services/payment.api.service';
 
 interface ISaveResults {
   uploadId: string;
@@ -18,14 +19,15 @@ interface ISaveResults {
 
 @Injectable()
 export class DoReview extends BaseReview {
-  private _modal: Model<any>;
+  private _modal: Model<unknown>;
 
   constructor(
     private storageService: StorageService,
     private uploadRepository: UploadRepository,
     private validatorRepository: ValidatorRepository,
     private fileRepository: FileRepository,
-    private dalService: DalService
+    private dalService: DalService,
+    private paymentAPIService: PaymentAPIService
   ) {
     super();
   }
@@ -139,6 +141,12 @@ export class DoReview extends BaseReview {
         validRecords,
         invalidRecords,
       }
+    );
+    const userExternalIdOrEmail = await this.uploadRepository.getUserEmailFromUploadId(uploadId);
+
+    await this.paymentAPIService.createEvent(
+      { uploadId, totalRecords, validRecords, invalidRecords },
+      userExternalIdOrEmail
     );
   }
 }
