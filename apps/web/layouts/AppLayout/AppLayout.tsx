@@ -2,7 +2,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-
+import { modals } from '@mantine/modals';
 import { PropsWithChildren, useRef } from 'react';
 import { Flex, Group, LoadingOverlay, Select, Stack, Title, useMantineColorScheme } from '@mantine/core';
 
@@ -19,6 +19,8 @@ import { UserMenu } from '@ui/user-menu';
 import { track } from '@libs/amplitude';
 import { ColorSchemeToggle } from '@ui/toggle-color-scheme';
 import { SettingsIcon } from '@assets/icons/Settings.icon';
+import { UpgradeIcon } from '@assets/icons/Upgrade.icon';
+import PlansModal from '@components/plans-modal/PlansModal';
 
 const Support = dynamic(() => import('components/common/Support').then((mod) => mod.Support), {
   ssr: false,
@@ -35,6 +37,7 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
   const navRef = useRef<HTMLElement>(null);
   const { colorScheme } = useMantineColorScheme();
   const { profile, projects, createProject, logout, setProjectId, isProjectsLoading, isProfileLoading } = useApp();
+  const isPaymentGatewayUrlFromEnv = process.env.NEXT_PUBLIC_PAYMENT_GATEWAY_URL;
 
   return (
     <>
@@ -119,6 +122,20 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
                         icon: <LogoutIcon />,
                         onClick: logout,
                       },
+
+                      ...(isPaymentGatewayUrlFromEnv
+                        ? [
+                            {
+                              title: 'Upgrade',
+                              icon: <UpgradeIcon />,
+                              onClick: () => {
+                                modals.open({
+                                  children: <PlansModal title={'Choose Your Plan'} profile={profile} />,
+                                });
+                              },
+                            },
+                          ]
+                        : []),
                     ]}
                   />
                 </Group>
