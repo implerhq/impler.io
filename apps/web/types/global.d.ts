@@ -26,6 +26,12 @@ interface IProfileData {
   accessToken: string;
 }
 
+interface ISubscriptionData {
+  plan: {
+    code: string;
+  };
+}
+
 interface ICreateProjectData {
   name: string;
 }
