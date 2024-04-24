@@ -8,6 +8,7 @@ import { UserNotFoundException } from '@shared/exceptions/user-not-found.excepti
 import { IAuthenticationData, IStrategyResponse } from '@shared/types/auth.types';
 import { IncorrectLoginCredentials } from '@shared/exceptions/incorrect-login-credentials.exception';
 import { LeadService } from '@shared/services/lead.service';
+import { PaymentAPIService } from 'app/review/usecases';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +16,8 @@ export class AuthService {
     private jwtService: JwtService,
     private leadService: LeadService,
     private userRepository: UserRepository,
-    private environmentRepository: EnvironmentRepository
+    private environmentRepository: EnvironmentRepository,
+    private paymentAPIService: PaymentAPIService
   ) {}
 
   async authenticate({ profile, provider }: IAuthenticationData): Promise<IStrategyResponse> {
@@ -39,6 +41,13 @@ export class AuthService {
         'Lead Email': user.email,
       });
       userCreated = true;
+
+      const userData = {
+        name: user.firstName + ' ' + user.lastName,
+        email: user.email,
+        externalId: user.email,
+      };
+      this.paymentAPIService.createUser(userData);
     }
     if (!user) {
       throw new UserNotFoundException();
