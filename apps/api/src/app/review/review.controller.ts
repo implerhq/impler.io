@@ -79,7 +79,7 @@ export class ReviewController {
 
     return await this.getFileInvalidData.execute(
       _uploadId,
-      page,
+      Number(page),
       limit,
       type === ReviewDataTypesEnum.VALID
         ? uploadData.validRecords
