@@ -228,29 +228,40 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     [number, string],
     [string]
   >(
-    ['review'],
+    ['review', page, type],
     ([reviewPageNumber, reviewDataType]) =>
       api.getReviewData({ uploadId: uploadInfo._id, page: reviewPageNumber, type: reviewDataType }),
     {
-      onSuccess(data) {
-        if (!data.data.length && page > 1) {
-          setTotalPages(totalPages - 1);
-          setPage(page - 1);
+      cacheTime: 0,
+      onSuccess(reviewDataResponse) {
+        if (!reviewDataResponse.data.length) {
+          let newPage = page;
+          if (reviewDataResponse.page > 1 && reviewDataResponse.totalPages < reviewDataResponse.page) {
+            newPage = Math.max(1, Math.min(reviewDataResponse.page, reviewDataResponse.totalPages));
+            setPage(newPage);
+          } else {
+            newPage = reviewDataResponse.page;
+            setPage(newPage);
+          }
+          setReviewData(reviewDataResponse.data);
+          setTotalPages(Math.max(1, reviewDataResponse.totalPages));
+          refetchReviewData([newPage, type]);
 
           return;
         }
-        setReviewData(data.data);
+        setReviewData(reviewDataResponse.data);
         logAmplitudeEvent('VALIDATE', {
-          invalidRecords: data.totalRecords,
+          invalidRecords: reviewDataResponse.totalRecords,
         });
-        setPage(Number(data.page));
-        setTotalPages(data.totalPages);
+        setPage(reviewDataResponse.page);
+        setTotalPages(reviewDataResponse.totalPages);
       },
       onError(error: IErrorObject) {
         notifier.showError({ message: error.message, title: error.error });
       },
     }
   );
+
   const { refetch: reReviewData, isFetching: isDoReviewLoading } = useQuery<
     unknown,
     IErrorObject,

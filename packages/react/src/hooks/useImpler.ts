@@ -83,9 +83,14 @@ export function useImpler({
   }, []);
 
   function generateUuid() {
-    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-  }
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (cv) {
+      const cr = crypto.getRandomValues(new Uint8Array(1))[0] % 16 | 0;
+      const vv = cv === 'x' ? cr : (cr & 0x3) | 0x8;
 
+      return vv.toString(16);
+    });
+  }
+  
   const showWidget = async ({ colorScheme, data, schema, output }: ShowWidgetProps) => {
     if (window.impler && isImplerInitiated) {
       const payload: IShowPayload = {
