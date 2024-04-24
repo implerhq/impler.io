@@ -30,6 +30,7 @@ interface ISubscriptionData {
   plan: {
     code: string;
   };
+  isActive: boolean;
 }
 
 interface ICreateProjectData {
