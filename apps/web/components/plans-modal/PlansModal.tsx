@@ -104,7 +104,7 @@ const PlansModal = ({ title, profile }: PlansModalProps) => {
                   <Button
                     component="a"
                     variant="filled"
-                    color={data && data.plan.code === plan.code && data.isActive === true ? 'red' : 'primary'}
+                    color={data && data.plan.code === plan.code && data.isActive === true ? 'red' : 'blue'}
                     href={`${PAYMENT_GATEWAY_URL}/api/v1/plans/${plan.code}/buy/${profile.email}/redirect`}
                     fullWidth
                   >
