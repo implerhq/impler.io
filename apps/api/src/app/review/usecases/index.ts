@@ -7,8 +7,8 @@ import { ConfirmReview } from './confirm-review/confirm-review.usecase';
 import { GetUpload } from '@shared/usecases/get-upload/get-upload.usecase';
 import { UpdateImportCount } from './update-import-count/update-import-count.usecase';
 import { GetUploadData } from './get-upload-data/get-upload-data.usecase';
-
 import { UpdateImportCountCommand } from './update-import-count/update-import-count.command';
+import { PaymentAPIService } from '../../shared/services/payment.api.service';
 
 export const USE_CASES = [
   DoReview,
@@ -20,7 +20,7 @@ export const USE_CASES = [
   ConfirmReview,
   GetUploadData,
   UpdateImportCount,
-  //
+  PaymentAPIService,
 ];
 
 export {
@@ -33,5 +33,6 @@ export {
   ConfirmReview,
   GetUploadData,
   UpdateImportCount,
+  PaymentAPIService,
 };
 export { UpdateImportCountCommand };
