@@ -9,6 +9,7 @@ import { UploadRepository, ValidatorRepository, DalService } from '@impler/dal';
 import { APIMessages } from '@shared/constants';
 import { BATCH_LIMIT } from '@shared/services/sandbox';
 import { BaseReview } from './base-review.usecase';
+import { PaymentAPIService } from '../../../shared/services/payment.api.service';
 
 interface ISaveResults {
   uploadId: string;
@@ -38,7 +39,8 @@ export class DoReReview extends BaseReview {
   constructor(
     private dalService: DalService,
     private uploadRepository: UploadRepository,
-    private validatorRepository: ValidatorRepository
+    private validatorRepository: ValidatorRepository,
+    private paymentAPIService: PaymentAPIService
   ) {
     super();
   }
@@ -96,6 +98,11 @@ export class DoReReview extends BaseReview {
         dateFormats,
         result,
       });
+    }
+
+    if (result.totalRecords > 0) {
+      const userExternalIdOrEmail = await this.uploadRepository.getUserEmailFromUploadId(result.uploadId);
+      await this.paymentAPIService.createEvent(result, userExternalIdOrEmail);
     }
 
     await this.saveResults(result);
