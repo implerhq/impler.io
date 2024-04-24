@@ -1,10 +1,11 @@
 /* eslint-disable no-magic-numbers */
 import { subMonths, subWeeks, subYears, format, subDays } from 'date-fns';
 
-import { TemplateRepository } from '../template';
+import { TemplateEntity, TemplateRepository } from '../template';
 import { BaseRepository } from '../base-repository';
 import { UploadEntity } from './upload.entity';
 import { Upload } from './upload.schema';
+import { Environment } from '../environment';
 
 export class UploadRepository extends BaseRepository<UploadEntity> {
   private templateRepository: TemplateRepository;
@@ -213,5 +214,22 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
     }
 
     return formattedResults;
+  }
+
+  async getUserEmailFromUploadId(uploadId: string): Promise<string> {
+    const uploadInfoWithTemplate = await Upload.findById(uploadId).populate([
+      {
+        path: '_templateId',
+      },
+    ]);
+    const environment = await Environment.find({
+      _projectId: (uploadInfoWithTemplate._templateId as unknown as TemplateEntity)._projectId,
+    }).populate([
+      {
+        path: 'apiKeys._userId',
+      },
+    ]);
+
+    return environment[0].apiKeys[0]._userId.email;
   }
 }
