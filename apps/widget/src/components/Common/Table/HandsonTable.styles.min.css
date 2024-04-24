@@ -1,3 +1,6 @@
+.handsontable td {
+    overflow: unset !important;
+}
 .custom-cell {
     text-align: center;
     padding: 5px !important;
@@ -12,7 +15,6 @@
     cursor: pointer;
     text-align: center;
     padding: 5px !important;
-    
 }
 .del-btn {
     color: #fff;
@@ -23,6 +25,10 @@
 }
 .del-btn:hover {
     background-color: #d00;
+}
+.del-btn svg:hover {
+    fill: #fff;
+    cursor: pointer
 }
 
 .list-wrapper {
