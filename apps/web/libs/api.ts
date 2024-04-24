@@ -7,6 +7,11 @@ interface Route {
 }
 
 const routes: Record<string, Route> = {
+  [API_KEYS.FETCH_ACTIVE_SUBSCRIPTION]: {
+    url: (email: string) => `/api/v1/subscription/${email}`,
+    method: 'GET',
+  },
+
   [API_KEYS.PROJECTS_LIST]: {
     url: () => '/v1/project',
     method: 'GET',
@@ -190,17 +195,19 @@ export async function commonApi<T>(
     cookie,
     headers,
     query,
+    baseUrl,
   }: {
     parameters?: string[];
     body?: any;
     headers?: Record<string, string>;
     cookie?: string;
     query?: Record<string, string | number | undefined>;
+    baseUrl?: string;
   }
 ) {
   try {
     const route = routes[key];
-    let url = publicRuntimeConfig.NEXT_PUBLIC_API_BASE_URL + route.url(parameters);
+    let url = (baseUrl || publicRuntimeConfig.NEXT_PUBLIC_API_BASE_URL) + route.url(parameters);
     url = url + '?' + queryObjToString(query);
     const method = route.method;
 
