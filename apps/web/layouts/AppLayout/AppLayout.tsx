@@ -20,7 +20,7 @@ import { track } from '@libs/amplitude';
 import { ColorSchemeToggle } from '@ui/toggle-color-scheme';
 import { SettingsIcon } from '@assets/icons/Settings.icon';
 import { UpgradeIcon } from '@assets/icons/Upgrade.icon';
-import PlansModal from '@components/plans-modal/PlansModal';
+import { PlansModal } from '@components/plans-modal/PlansModal';
 
 const Support = dynamic(() => import('components/common/Support').then((mod) => mod.Support), {
   ssr: false,
@@ -130,7 +130,8 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
                               icon: <UpgradeIcon />,
                               onClick: () => {
                                 modals.open({
-                                  children: <PlansModal title={'Choose Your Plan'} profile={profile} />,
+                                  children: <PlansModal modalTitle={'Choose Your Plan'} userProfile={profile} />,
+                                  size: 'xl',
                                 });
                               },
                             },

@@ -31,13 +31,11 @@ export class PaymentAPIService {
     };
 
     const url = `${this.PAYMENT_API_BASE_URL}/events`;
-    try {
-      await axios.post(url, createEventAPIBody, {
-        headers: {
-          auth: 'auth',
-        },
-      });
-    } catch (error) {}
+    await axios.post(url, createEventAPIBody, {
+      headers: {
+        auth: 'auth',
+      },
+    });
   }
 
   async checkEvent(resultData?: ISaveResults) {
@@ -47,8 +45,6 @@ export class PaymentAPIService {
     };
 
     const url = `${this.PAYMENT_API_BASE_URL}/check?externalId=${queryParams.externalId}&billableMetricCode=${queryParams.billableMetricCode}`;
-    console.log(url);
-
     try {
       const response = await axios.get(url, {
         headers: {
@@ -70,15 +66,12 @@ export class PaymentAPIService {
     };
 
     const url = `${this.PAYMENT_API_BASE_URL}/customer`;
+    const response = await axios.post(url, createUserAPIBodyData, {
+      headers: {
+        auth: 'auth',
+      },
+    });
 
-    try {
-      const response = await axios.post(url, createUserAPIBodyData, {
-        headers: {
-          auth: 'auth',
-        },
-      });
-
-      return response.data;
-    } catch (error) {}
+    return response.data;
   }
 }
