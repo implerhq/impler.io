@@ -67,3 +67,13 @@ interface ISignupData {
   email: string;
   password: string;
 }
+
+interface IImportCountData {
+  date: string;
+  records: {
+    Completed: number;
+    Terminated: number;
+    Mapping: number;
+    Reviewing: number;
+  };
+}

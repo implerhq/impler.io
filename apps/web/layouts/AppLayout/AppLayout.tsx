@@ -7,6 +7,7 @@ import { PropsWithChildren, useRef } from 'react';
 import { Flex, Group, LoadingOverlay, Select, Stack, Title, useMantineColorScheme } from '@mantine/core';
 
 import useStyles from './AppLayout.styles';
+import { HomeIcon } from '@assets/icons/Home.icon';
 import { LogoutIcon } from '@assets/icons/Logout.icon';
 import { ImportIcon } from '@assets/icons/Import.icon';
 import { ActivitiesIcon } from '@assets/icons/Activities.icon';
@@ -81,6 +82,7 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
             }}
           />
           <Stack spacing="sm" py="xs">
+            <NavItem active={router.pathname === '/'} href="/" icon={<HomeIcon size="lg" />} title="Home" />
             <NavItem
               active={router.pathname.includes('/imports')}
               href="/imports"

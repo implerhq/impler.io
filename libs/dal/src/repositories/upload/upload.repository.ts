@@ -19,6 +19,65 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
   async getUploadWithTemplate(uploadId: string, fields: string[]): Promise<UploadEntity> {
     return await Upload.findById(uploadId).populate('_templateId', fields.join(' '));
   }
+  async getImportCount(_userId: string, startDate: Date, endDate: Date) {
+    const userProjects = await Environment.find({
+      where: {
+        'apiKeys._userId': _userId,
+      },
+      select: ['_projectId'],
+    });
+
+    const result = await this.aggregate([
+      {
+        $lookup: {
+          from: 'Template',
+          pipeline: [
+            {
+              $match: {
+                _projectId: {
+                  $in: userProjects,
+                },
+              },
+            },
+          ],
+          as: 'templates',
+        },
+      },
+      {
+        $match: {
+          uploadedDate: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+        },
+      },
+      {
+        $addFields: {
+          statusCount: {
+            totalRecords: '$totalRecords',
+            status: '$status',
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { date: '$uploadedDate', format: '%Y-%m-%d' },
+          },
+          records: {
+            $addToSet: '$statusCount',
+          },
+        },
+      },
+      {
+        $sort: {
+          _id: 1,
+        },
+      },
+    ]);
+
+    return result;
+  }
   async getStats(_projectId: string) {
     const now: number = Date.now();
     const yearBefore = subYears(now, 1);

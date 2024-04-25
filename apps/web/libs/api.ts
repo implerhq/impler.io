@@ -52,6 +52,10 @@ const routes: Record<string, Route> = {
     url: () => `/v1/auth/me`,
     method: 'GET',
   },
+  [API_KEYS.IMPORT_COUNT]: {
+    url: () => `/v1/user/import-count`,
+    method: 'GET',
+  },
 
   [API_KEYS.IMPORTS_LIST]: {
     url: (projectId) => `/v1/project/${projectId}/imports`,
