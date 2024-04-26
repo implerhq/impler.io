@@ -3,13 +3,12 @@ import { Writable } from 'stream';
 import { ValidateFunction } from 'ajv';
 import { Injectable, BadRequestException } from '@nestjs/common';
 
-import { ITemplateSchemaItem, UploadStatusEnum } from '@impler/shared';
+import { ITemplateSchemaItem, PaymentAPIService, UploadStatusEnum } from '@impler/shared';
 import { UploadRepository, ValidatorRepository, DalService } from '@impler/dal';
 
 import { APIMessages } from '@shared/constants';
 import { BATCH_LIMIT } from '@shared/services/sandbox';
 import { BaseReview } from './base-review.usecase';
-import { PaymentAPIService } from '../../../shared/services/payment.api.service';
 
 interface ISaveResults {
   uploadId: string;
