@@ -10,6 +10,7 @@ namespace NodeJS {
     NEXT_PUBLIC_TAWK_PROPERTY_ID: string;
     NEXT_PUBLIC_TAWK_WIDGET_ID: string;
     NEXT_PUBLIC_OPENREPLAY_KEY: string;
+    NEXT_PUBLIC_PAYMENT_GATEWAY_URL: string;
 
     NEXT_PUBLIC_GTM_ID: string;
     NEXT_PUBLIC_GOOGLE_ANALYTICS_ID: string;
@@ -29,8 +30,13 @@ interface IProfileData {
 interface ISubscriptionData {
   plan: {
     code: string;
+    name: string;
   };
   isActive: boolean;
+  usage: {
+    IMPORTED_ROWS: number;
+  };
+  expiryDate: Date;
 }
 
 interface ICreateProjectData {
