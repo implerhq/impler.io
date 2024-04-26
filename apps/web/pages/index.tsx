@@ -1,8 +1,11 @@
+import Head from 'next/head';
+import getConfig from 'next/config';
+import { Divider, Stack, Title } from '@mantine/core';
 import { ImportCount } from '@components/home/ImportCount/ImportCount';
 import { PlanDetails } from '@components/home/PlanDetails';
 import { AppLayout } from '@layouts/AppLayout';
-import { Divider, Stack, Title } from '@mantine/core';
-import Head from 'next/head';
+
+const { publicRuntimeConfig } = getConfig();
 
 export default function Home() {
   return (
@@ -15,8 +18,12 @@ export default function Home() {
       </Head>
       <Stack>
         <Title order={2}>Home</Title>
-        <PlanDetails />
-        <Divider />
+        {publicRuntimeConfig.NEXT_PUBLIC_PAYMENT_GATEWAY_URL && (
+          <>
+            <PlanDetails />
+            <Divider />
+          </>
+        )}
         <ImportCount />
       </Stack>
     </>
