@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
-import { IJwtPayload } from '@impler/shared';
+import { IJwtPayload, PaymentAPIService } from '@impler/shared';
 import { CONSTANTS } from '@shared/constants';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserEntity, UserRepository, EnvironmentRepository } from '@impler/dal';
@@ -8,7 +8,6 @@ import { UserNotFoundException } from '@shared/exceptions/user-not-found.excepti
 import { IAuthenticationData, IStrategyResponse } from '@shared/types/auth.types';
 import { IncorrectLoginCredentials } from '@shared/exceptions/incorrect-login-credentials.exception';
 import { LeadService } from '@shared/services/lead.service';
-import { PaymentAPIService } from 'app/review/usecases';
 
 @Injectable()
 export class AuthService {
