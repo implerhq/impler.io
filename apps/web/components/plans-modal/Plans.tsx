@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { Flex, Switch, Stack, Container } from '@mantine/core';
-
-import { commonApi } from '@libs/api';
-import { API_KEYS } from '@config';
-import { IErrorObject } from '@impler/shared';
 import { Plan } from './Plan';
+import { usePlanDetails } from '@hooks/usePlanDetails';
 
 interface PlansProps {
   profile: IProfileData;
@@ -101,17 +97,7 @@ export const Plans = ({ profile }: PlansProps) => {
 
   const [switchPlans, setSwitchPlans] = useState<boolean>(false);
 
-  const { data } = useQuery<unknown, IErrorObject, ISubscriptionData, [string]>(
-    [API_KEYS.FETCH_ACTIVE_SUBSCRIPTION],
-    () =>
-      commonApi<unknown>(API_KEYS.FETCH_ACTIVE_SUBSCRIPTION as any, {
-        baseUrl: process.env.NEXT_PUBLIC_PAYMENT_GATEWAY_URL,
-        headers: {
-          auth: 'auth',
-        },
-        parameters: [profile.email],
-      })
-  );
+  const data = usePlanDetails(profile);
 
   return (
     <Container size="xl" fluid={true}>
