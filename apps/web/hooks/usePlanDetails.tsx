@@ -29,6 +29,7 @@ export function usePlanDetails({ email }: UsePlanDetailProps) {
         parameters: [email],
         credentials: 'omit',
       }),
+
     {
       enabled: !!email,
     }
