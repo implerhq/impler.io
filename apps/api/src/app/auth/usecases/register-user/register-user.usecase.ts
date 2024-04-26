@@ -6,7 +6,7 @@ import { AuthService } from '../../services/auth.service';
 import { RegisterUserCommand } from './register-user.command';
 import { UniqueEmailException } from '@shared/exceptions/unique-email.exception';
 import { LeadService } from '@shared/services/lead.service';
-import { PaymentAPIService } from 'app/review/usecases';
+import { PaymentAPIService } from '@impler/shared';
 
 @Injectable()
 export class RegisterUser {
