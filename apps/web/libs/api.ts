@@ -200,9 +200,11 @@ export async function commonApi<T>(
     headers,
     query,
     baseUrl,
+    credentials = 'include',
   }: {
     parameters?: string[];
     body?: any;
+    credentials?: 'include' | 'omit' | 'same-origin' | undefined;
     headers?: Record<string, string>;
     cookie?: string;
     query?: Record<string, string | number | undefined>;
@@ -218,7 +220,7 @@ export async function commonApi<T>(
     const response = await fetch(url, {
       method,
       body: JSON.stringify(body),
-      credentials: 'include',
+      ...(credentials ? { credentials: credentials } : {}),
       headers: {
         'Content-Type': 'application/json',
         ...(headers ? headers : {}),
