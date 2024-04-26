@@ -21,6 +21,7 @@ export class PaymentAPIService {
   private PAYMENT_API_BASE_URL: string = process.env.PAYMENT_GATEWAY_URL;
 
   async createEvent(resultData: ISaveResults, userExternalIdOrEmail: string) {
+    if (!this.PAYMENT_API_BASE_URL) return;
     const createEventAPIBody = {
       customerId: userExternalIdOrEmail,
       billableMetricCode: 'IMPORTED_ROWS',
@@ -39,6 +40,7 @@ export class PaymentAPIService {
   }
 
   async checkEvent(resultData?: ISaveResults) {
+    if (!this.PAYMENT_API_BASE_URL) return;
     const queryParams = {
       externalId: await this.uploadRepository.getUserEmailFromUploadId(resultData.uploadId),
       billableMetricCode: 'IMPORTED_ROWS',
