@@ -27,6 +27,12 @@ interface IProfileData {
   accessToken: string;
 }
 
+interface ChargeItem {
+  first_unit: number;
+  last_unit: number;
+  per_unit: number;
+}
+
 interface ISubscriptionData {
   plan: {
     code: string;
@@ -34,9 +40,12 @@ interface ISubscriptionData {
   };
   isActive: boolean;
   usage: {
-    IMPORTED_ROWS: number;
+    IMPORTED_ROWS: number | ChargeItem[];
   };
   expiryDate: Date;
+  meta: {
+    IMPORTED_ROWS: number;
+  };
 }
 
 interface ICreateProjectData {
