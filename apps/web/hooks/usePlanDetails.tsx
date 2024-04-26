@@ -22,7 +22,11 @@ export function usePlanDetails({ email }: UsePlanDetailProps) {
           [authKey]: authValue,
         },
         parameters: [email],
-      })
+        // credentials: 'omit',
+      }),
+    {
+      enabled: !!email,
+    }
   );
 
   return data;
