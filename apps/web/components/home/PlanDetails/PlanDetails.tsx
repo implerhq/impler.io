@@ -8,9 +8,20 @@ import { usePlanDetails } from '@hooks/usePlanDetails';
 export function PlanDetails() {
   const { profile, isProfileLoading } = useApp();
 
-  const data = usePlanDetails(profile);
+  const data = usePlanDetails({
+    email: profile?.email ?? '',
+  });
 
   if (isProfileLoading) return <Skeleton width="100%" height="200" />;
+
+  let numberOfRecords;
+  if (typeof data?.meta.IMPORTED_ROWS === 'number') {
+    numberOfRecords = data?.meta.IMPORTED_ROWS;
+  } else if (Array.isArray(data?.meta.IMPORTED_ROWS) && (data.meta.IMPORTED_ROWS as ChargeItem[]).length > 0) {
+    numberOfRecords = (data.meta.IMPORTED_ROWS[0] as ChargeItem).last_unit;
+  } else {
+    numberOfRecords = 0;
+  }
 
   return (
     <Flex
@@ -23,8 +34,8 @@ export function PlanDetails() {
       <Stack spacing="xs" style={{ flexGrow: 1 }}>
         <Title order={4}>Usage</Title>
         <Text>
-          You have imported {data?.usage.IMPORTED_ROWS} of {1000} records this month on the {data?.plan.name} plan
-          resets on {data?.expiryDate}
+          You have imported {data?.usage.IMPORTED_ROWS} of {numberOfRecords} records this month on the {data?.plan.name}{' '}
+          plan (resets on {data?.expiryDate})
         </Text>
       </Stack>
       <Button
