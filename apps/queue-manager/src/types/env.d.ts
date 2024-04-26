@@ -6,5 +6,9 @@ declare namespace NodeJS {
     S3_LOCAL_STACK: string;
     S3_REGION: string;
     S3_BUCKET_NAME: string;
+
+    PAYMENT_API_BASE_URL: string;
+    PAYMENT_AUTH_KEY: string;
+    PAYMENT_AUTH_VALUE: string;
   }
 }

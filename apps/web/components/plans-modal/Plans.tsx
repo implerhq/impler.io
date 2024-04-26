@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Flex, Switch, Stack, Container } from '@mantine/core';
+import { Flex, Switch, Stack, Container, Skeleton } from '@mantine/core';
 import { Plan } from './Plan';
 import { usePlanDetails } from '@hooks/usePlanDetails';
 
@@ -94,10 +94,10 @@ export const Plans = ({ profile }: PlansProps) => {
       },
     ],
   };
-
   const [switchPlans, setSwitchPlans] = useState<boolean>(false);
-
-  const data = usePlanDetails(profile);
+  const { activePlanDetails, isActivePlanLoading } = usePlanDetails({
+    email: profile.email,
+  });
 
   return (
     <Container size="xl" fluid={true}>
@@ -109,22 +109,26 @@ export const Plans = ({ profile }: PlansProps) => {
           onChange={(event) => setSwitchPlans(event.currentTarget.checked)}
         />
         <Flex w="100%" gap="sm" direction="row" align="stretch" maw="100%">
-          {plans[switchPlans ? 'yearly' : 'monthly'].map((plan, index) => (
-            <Plan
-              key={index}
-              name={plan.name}
-              rowsIncluded={plan.rowsIncluded}
-              price={plan.price}
-              planCode={data?.plan.code}
-              isActive={data?.isActive && data.plan.code === plan.code}
-              userProfile={profile}
-              showButton={plan.code !== 'SANDBOX'}
-              removeBranding={plan.removeBranding}
-              customValidation={plan.customValidation}
-              outputCustomization={plan.outputCustomization}
-              extraCharge={plan.extraChargeOverheadTenThusandRecords}
-            />
-          ))}
+          {plans[switchPlans ? 'yearly' : 'monthly'].map((plan, index) =>
+            isActivePlanLoading ? (
+              <Skeleton key={index} height={500} width={250} />
+            ) : (
+              <Plan
+                key={index}
+                name={plan.name}
+                rowsIncluded={plan.rowsIncluded}
+                price={plan.price}
+                planCode={activePlanDetails?.plan.code}
+                isActive={activePlanDetails?.isActive && activePlanDetails.plan.code === plan.code}
+                userProfile={profile}
+                showButton={plan.code !== 'SANDBOX'}
+                removeBranding={plan.removeBranding}
+                customValidation={plan.customValidation}
+                outputCustomization={plan.outputCustomization}
+                extraCharge={plan.extraChargeOverheadTenThusandRecords}
+              />
+            )
+          )}
         </Flex>
       </Stack>
     </Container>

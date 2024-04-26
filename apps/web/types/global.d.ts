@@ -10,7 +10,10 @@ namespace NodeJS {
     NEXT_PUBLIC_TAWK_PROPERTY_ID: string;
     NEXT_PUBLIC_TAWK_WIDGET_ID: string;
     NEXT_PUBLIC_OPENREPLAY_KEY: string;
+
     NEXT_PUBLIC_PAYMENT_GATEWAY_URL: string;
+    NEXT_PUBLIC_PAYMENT_GATEWAY_AUTH_HEADER_KEY: string;
+    NEXT_PUBLIC_PAYMENT_GATEWAY_AUTH_HEADER_VALUE: string;
 
     NEXT_PUBLIC_GTM_ID: string;
     NEXT_PUBLIC_GOOGLE_ANALYTICS_ID: string;
@@ -42,7 +45,7 @@ interface ISubscriptionData {
   usage: {
     IMPORTED_ROWS: number | ChargeItem[];
   };
-  expiryDate: Date;
+  expiryDate: string;
   meta: {
     IMPORTED_ROWS: number;
   };

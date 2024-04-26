@@ -1,9 +1,12 @@
 import React from 'react';
+import getConfig from 'next/config';
 import { Text, Button, Stack } from '@mantine/core';
 import { numberFormatter } from '@impler/shared';
 import CrossIcon from '@assets/icons/Cross-filled.Icon';
 import { TickIcon } from '@assets/icons/Tick.icon';
 import { colors } from '@config';
+
+const { publicRuntimeConfig } = getConfig();
 
 interface PlanProps {
   name: string;
@@ -32,8 +35,6 @@ export const Plan = ({
   customValidation,
   outputCustomization,
 }: PlanProps) => {
-  const PAYMENT_GATEWAY_URL = process.env.PAYMENT_GATEWAY_URL;
-
   return (
     <Stack m="0" w={500} h="100%" p={20} style={{ backgroundColor: colors.BGPrimaryDark }}>
       <Stack spacing="xs" style={{ flexGrow: 1 }} h="100%">
@@ -69,7 +70,7 @@ export const Plan = ({
           component="a"
           variant="filled"
           color={isActive ? 'red' : 'blue'}
-          href={`${PAYMENT_GATEWAY_URL}/api/v1/plans/${planCode}/buy/${userProfile.email}/redirect`}
+          href={`${publicRuntimeConfig.NEXT_PUBLIC_PAYMENT_GATEWAY_URL}/api/v1/plans/${planCode}/buy/${userProfile.email}/redirect`}
           fullWidth
         >
           {isActive ? 'Cancel Plan' : 'Activate Plan'}

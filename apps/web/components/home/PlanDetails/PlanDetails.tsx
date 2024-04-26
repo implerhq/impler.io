@@ -6,19 +6,22 @@ import { useApp } from '@hooks/useApp';
 import { usePlanDetails } from '@hooks/usePlanDetails';
 
 export function PlanDetails() {
-  const { profile, isProfileLoading } = useApp();
+  const { profile } = useApp();
 
-  const data = usePlanDetails({
+  const { activePlanDetails, isActivePlanLoading } = usePlanDetails({
     email: profile?.email ?? '',
   });
 
-  if (isProfileLoading) return <Skeleton width="100%" height="200" />;
+  if (isActivePlanLoading) return <Skeleton width="100%" height="200" />;
 
   let numberOfRecords;
-  if (typeof data?.meta.IMPORTED_ROWS === 'number') {
-    numberOfRecords = data?.meta.IMPORTED_ROWS;
-  } else if (Array.isArray(data?.meta.IMPORTED_ROWS) && (data?.meta.IMPORTED_ROWS as ChargeItem[]).length > 0) {
-    numberOfRecords = (data?.meta.IMPORTED_ROWS[0] as ChargeItem).last_unit;
+  if (typeof activePlanDetails?.meta.IMPORTED_ROWS === 'number') {
+    numberOfRecords = activePlanDetails?.meta.IMPORTED_ROWS;
+  } else if (
+    Array.isArray(activePlanDetails?.meta.IMPORTED_ROWS) &&
+    (activePlanDetails?.meta.IMPORTED_ROWS as unknown as ChargeItem[]).length > 0
+  ) {
+    numberOfRecords = (activePlanDetails?.meta.IMPORTED_ROWS[0] as unknown as ChargeItem).last_unit;
   } else {
     numberOfRecords = 0;
   }
@@ -33,10 +36,17 @@ export function PlanDetails() {
     >
       <Stack spacing="xs" style={{ flexGrow: 1 }}>
         <Title order={4}>Usage</Title>
-        <Text>
-          You have imported {data?.usage.IMPORTED_ROWS} of {numberOfRecords} records this month on the {data?.plan.name}{' '}
-          Plan (Resets on {data?.expiryDate})
-        </Text>
+        {typeof activePlanDetails!.usage.IMPORTED_ROWS === 'number' ? (
+          <Text>
+            You have imported {activePlanDetails!.usage.IMPORTED_ROWS} of {numberOfRecords} records this month on the{' '}
+            {activePlanDetails?.plan.name} Plan (Resets on {activePlanDetails!.expiryDate})
+          </Text>
+        ) : (
+          <Text>
+            You have imported {activePlanDetails!.meta.IMPORTED_ROWS} of {numberOfRecords} records this month on the{' '}
+            {activePlanDetails?.plan.name} Plan (Resets on {activePlanDetails!.expiryDate})
+          </Text>
+        )}
       </Stack>
       <Button
         onClick={() => {

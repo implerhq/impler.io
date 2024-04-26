@@ -1,1 +1,1 @@
-export * from './payment.api.servive';
+export * from './payment.api.service';
