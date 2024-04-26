@@ -3,8 +3,11 @@ import { commonApi } from '@libs/api';
 import { API_KEYS } from '@config';
 import { IErrorObject } from '@impler/shared';
 
-export function usePlanDetails(profile: IProfileData) {
-  console.log(profile);
+interface UsePlanDetailProps {
+  email: string;
+}
+
+export function usePlanDetails({ email }: UsePlanDetailProps) {
   const { data } = useQuery<unknown, IErrorObject, ISubscriptionData, [string]>(
     [API_KEYS.FETCH_ACTIVE_SUBSCRIPTION],
     () =>
@@ -13,11 +16,9 @@ export function usePlanDetails(profile: IProfileData) {
         headers: {
           auth: 'auth',
         },
-        parameters: [profile.email],
+        parameters: [email],
       })
   );
-
-  console.log('data from the hook yeah', data);
 
   return data;
 }
