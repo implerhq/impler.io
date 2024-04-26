@@ -9,7 +9,10 @@ import { SchemaDto } from 'app/common/dtos/Schema.dto';
 
 @Injectable()
 export class ValidRequest {
-  constructor(private projectRepository: ProjectRepository, private templateRepository: TemplateRepository) {}
+  constructor(
+    private projectRepository: ProjectRepository,
+    private templateRepository: TemplateRepository
+  ) {}
 
   async execute(command: ValidRequestCommand): Promise<{ success: boolean }> {
     try {
@@ -35,14 +38,15 @@ export class ValidRequest {
       }
 
       if (command.schema) {
-        const parsedSchema: SchemaDto = JSON.parse(command.schema);
+        const parsedSchema: SchemaDto[] =
+          typeof command.schema === 'string' ? JSON.parse(command.schema) : command.schema;
 
         const errors: string[] = [];
         if (!Array.isArray(parsedSchema)) {
           throw new DocumentNotFoundException(
             'Schema',
             command.schema,
-            'Invalid schema input. An array of objects is expected.'
+            'Invalid schema input. An array of schema object columns is expected.'
           );
         }
 
