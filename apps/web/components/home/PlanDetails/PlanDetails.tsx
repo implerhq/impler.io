@@ -17,8 +17,8 @@ export function PlanDetails() {
   let numberOfRecords;
   if (typeof data?.meta.IMPORTED_ROWS === 'number') {
     numberOfRecords = data?.meta.IMPORTED_ROWS;
-  } else if (Array.isArray(data?.meta.IMPORTED_ROWS) && (data.meta.IMPORTED_ROWS as ChargeItem[]).length > 0) {
-    numberOfRecords = (data.meta.IMPORTED_ROWS[0] as ChargeItem).last_unit;
+  } else if (Array.isArray(data?.meta.IMPORTED_ROWS) && (data?.meta.IMPORTED_ROWS as ChargeItem[]).length > 0) {
+    numberOfRecords = (data?.meta.IMPORTED_ROWS[0] as ChargeItem).last_unit;
   } else {
     numberOfRecords = 0;
   }
