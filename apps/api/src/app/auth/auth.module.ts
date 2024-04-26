@@ -10,7 +10,7 @@ import { SharedModule } from '../shared/shared.module';
 import { GitHubStrategy } from './services/passport/github.strategy';
 import { JwtStrategy } from './services/passport/jwt.strategy';
 import { LeadService } from '@shared/services/lead.service';
-import { PaymentAPIService } from '@shared/services/payment.api.service';
+import { PaymentAPIService } from '@impler/shared';
 
 const AUTH_STRATEGIES: Provider[] = [JwtStrategy];
 
