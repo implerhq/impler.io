@@ -35,7 +35,7 @@ export function PlanDetails() {
         <Title order={4}>Usage</Title>
         <Text>
           You have imported {data?.usage.IMPORTED_ROWS} of {numberOfRecords} records this month on the {data?.plan.name}{' '}
-          plan (resets on {data?.expiryDate})
+          Plan (Resets on {data?.expiryDate})
         </Text>
       </Stack>
       <Button
