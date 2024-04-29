@@ -85,7 +85,7 @@ export const Plans = ({ profile }: PlansProps) => {
       },
       {
         name: 'Scale',
-        description: 'SCALE_YEARLY',
+        code: 'SCALE-YEARLY',
         yearlyPrice: 900,
         price: 75,
         rowsIncluded: 1500000,
@@ -129,6 +129,7 @@ export const Plans = ({ profile }: PlansProps) => {
                 customValidation={plan.customValidation}
                 outputCustomization={plan.outputCustomization}
                 extraCharge={plan.extraChargeOverheadTenThusandRecords}
+                yearlyPrice={plan.yearlyPrice}
               />
             )
           )}
