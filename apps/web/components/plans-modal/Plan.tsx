@@ -39,6 +39,8 @@ export const Plan = ({
   outputCustomization,
   switchPlans,
 }: PlanProps) => {
+  console.log('yearly price', yearlyPrice);
+
   return (
     <Stack m="0" w={500} h="100%" p={20} style={{ backgroundColor: colors.BGPrimaryDark }}>
       <Stack spacing="xs" style={{ flexGrow: 1 }} h="100%">
@@ -51,7 +53,7 @@ export const Plan = ({
 
         {switchPlans ? (
           <Text weight={700} size="xl" align="center" mb="xs">
-            Billed at: $${yearlyPrice} per year`
+            {yearlyPrice ? `Billed at: $${yearlyPrice} per year` : ''}
           </Text>
         ) : null}
 
