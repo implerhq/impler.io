@@ -3,7 +3,7 @@ import { Writable } from 'stream';
 import { ValidateFunction } from 'ajv';
 import { Injectable, BadRequestException } from '@nestjs/common';
 
-import { ITemplateSchemaItem, PaymentAPIService, UploadStatusEnum } from '@impler/shared';
+import { ITemplateSchemaItem, UploadStatusEnum } from '@impler/shared';
 import { UploadRepository, ValidatorRepository, DalService } from '@impler/dal';
 
 import { APIMessages } from '@shared/constants';
@@ -38,8 +38,7 @@ export class DoReReview extends BaseReview {
   constructor(
     private dalService: DalService,
     private uploadRepository: UploadRepository,
-    private validatorRepository: ValidatorRepository,
-    private paymentAPIService: PaymentAPIService
+    private validatorRepository: ValidatorRepository
   ) {
     super();
   }
@@ -97,11 +96,6 @@ export class DoReReview extends BaseReview {
         dateFormats,
         result,
       });
-    }
-
-    if (result.totalRecords > 0) {
-      const userExternalIdOrEmail = await this.uploadRepository.getUserEmailFromUploadId(result.uploadId);
-      await this.paymentAPIService.createEvent(result, userExternalIdOrEmail);
     }
 
     await this.saveResults(result);
