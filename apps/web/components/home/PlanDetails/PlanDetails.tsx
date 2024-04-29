@@ -44,7 +44,7 @@ export function PlanDetails() {
       }}
     >
       <Stack spacing="xs" style={{ flexGrow: 1 }}>
-        <Title order={4}>Usage</Title>
+        <Title order={4}>Overall Usage</Title>
         {typeof activePlanDetails!.usage.IMPORTED_ROWS === 'number' ? (
           <Text>
             You have imported {activePlanDetails!.usage.IMPORTED_ROWS} of {numberOfRecords} records this month on the{' '}
@@ -52,7 +52,7 @@ export function PlanDetails() {
           </Text>
         ) : (
           <Text>
-            You have left {activePlanDetails!.meta.IMPORTED_ROWS} of{' '}
+            Overall You have left {activePlanDetails!.meta.IMPORTED_ROWS} of{' '}
             {activePlanDetails?.plan.charges[0].properties.units} records in {activePlanDetails?.plan.name} Plan (Resets
             on {activePlanDetails!.expiryDate})
           </Text>
