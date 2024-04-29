@@ -12,6 +12,7 @@ interface PlanProps {
   name: string;
   rowsIncluded: number;
   price?: number;
+  yearlyPrice?: number;
   planCode?: string;
   isActive?: boolean;
   userProfile: IProfileData;
@@ -20,6 +21,7 @@ interface PlanProps {
   removeBranding: boolean;
   customValidation: boolean;
   outputCustomization: boolean;
+  switchPlans?: boolean;
 }
 
 export const Plan = ({
@@ -27,6 +29,7 @@ export const Plan = ({
   planCode,
   rowsIncluded,
   price,
+  yearlyPrice,
   isActive,
   userProfile,
   showButton,
@@ -34,6 +37,7 @@ export const Plan = ({
   removeBranding,
   customValidation,
   outputCustomization,
+  switchPlans,
 }: PlanProps) => {
   return (
     <Stack m="0" w={500} h="100%" p={20} style={{ backgroundColor: colors.BGPrimaryDark }}>
@@ -45,9 +49,17 @@ export const Plan = ({
           {'At :$' + price}
         </Text>
 
-        <Text align="center" weight={700}>
-          {extraCharge} Per Extra 10K Records (Billed monthly)
-        </Text>
+        {switchPlans ? (
+          <Text weight={700} size="xl" align="center" mb="xs">
+            Billed at: $${yearlyPrice} per year`
+          </Text>
+        ) : null}
+
+        {extraCharge ? (
+          <Text align="center" weight={700}>
+            ${extraCharge} Per Extra 10K Records (Billed monthly)
+          </Text>
+        ) : null}
 
         <Text align="center" weight={700} style={{ flexGrow: 1 }}>
           No of Rows, {numberFormatter(rowsIncluded)}
