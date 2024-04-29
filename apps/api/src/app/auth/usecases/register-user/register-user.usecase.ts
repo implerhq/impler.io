@@ -45,7 +45,7 @@ export class RegisterUser {
       externalId: user.email,
     };
 
-    this.paymentAPIService.createUser(userData);
+    await this.paymentAPIService.createUser(userData);
 
     const token = this.authService.getSignedToken({
       _id: user._id,

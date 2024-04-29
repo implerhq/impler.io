@@ -23,9 +23,15 @@ interface ICustomer {
 
 export class PaymentAPIService {
   private CODE = 'IMPORTED_ROWS';
-  private AUTH_KEY = process.env.PAYMENT_API_AUTH_KEY;
-  private AUTH_VALUE = process.env.PAYMENT_API_AUTH_VALUE;
-  private PAYMENT_API_BASE_URL: string = process.env.PAYMENT_GATEWAY_URL;
+  private AUTH_KEY: string;
+  private AUTH_VALUE: string;
+  private PAYMENT_API_BASE_URL: string;
+
+  constructor() {
+    this.AUTH_KEY = process.env.PAYMENT_API_AUTH_KEY;
+    this.AUTH_VALUE = process.env.PAYMENT_API_AUTH_VALUE;
+    this.PAYMENT_API_BASE_URL = process.env.PAYMENT_API_BASE_URL;
+  }
 
   async createEvent(resultData: ICheckData, userExternalIdOrEmail: string) {
     if (!this.PAYMENT_API_BASE_URL) return;
@@ -75,6 +81,8 @@ export class PaymentAPIService {
         [this.AUTH_KEY]: this.AUTH_VALUE,
       },
     });
+
+    console.log(response.data);
 
     return response.data;
   }
