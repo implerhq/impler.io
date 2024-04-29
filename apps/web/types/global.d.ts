@@ -40,6 +40,14 @@ interface ISubscriptionData {
   plan: {
     code: string;
     name: string;
+    charges: {
+      billableMetric: {
+        code: string;
+        name: string;
+      };
+      chargeModal: 'FIXED' | 'VOLUME_BASED';
+      properties: Record<string, string | number>;
+    }[];
   };
   isActive: boolean;
   usage: {
