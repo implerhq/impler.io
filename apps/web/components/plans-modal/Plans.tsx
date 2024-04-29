@@ -22,7 +22,7 @@ export const Plans = ({ profile }: PlansProps) => {
       },
       {
         name: 'Starter',
-        code: 'starter-monthly',
+        code: 'STARTER-MONTHLY',
         rowsIncluded: 5000,
         price: 0,
         extraChargeOverheadTenThusandRecords: 1,
@@ -32,7 +32,7 @@ export const Plans = ({ profile }: PlansProps) => {
       },
       {
         name: 'Growth',
-        code: 'growth-monthly',
+        code: 'GROWTH-MONTHLY',
         price: 42,
         rowsIncluded: 500000,
         extraChargeOverheadTenThusandRecords: 0.7,
@@ -42,7 +42,7 @@ export const Plans = ({ profile }: PlansProps) => {
       },
       {
         name: 'Scale',
-        code: 'scale-monthly',
+        code: 'SCALE-MONTHLY',
         price: 90,
         rowsIncluded: 1500000,
         extraChargeOverheadTenThusandRecords: 0.5,
@@ -64,7 +64,7 @@ export const Plans = ({ profile }: PlansProps) => {
       },
       {
         name: 'Starter',
-        code: 'starter-yearly',
+        code: 'STARTER-YEARLY',
         price: 0,
         rowsIncluded: 5000,
         extraChargeOverheadTenThusandRecords: 1,
@@ -74,7 +74,8 @@ export const Plans = ({ profile }: PlansProps) => {
       },
       {
         name: 'Growth',
-        code: 'growth-yearly',
+        code: 'GROWTH-YEARLY',
+        yearlyPrice: 420,
         price: 35,
         rowsIncluded: 500000,
         extraChargeOverheadTenThusandRecords: 0.7,
@@ -84,7 +85,8 @@ export const Plans = ({ profile }: PlansProps) => {
       },
       {
         name: 'Scale',
-        description: 'scale-yearly',
+        description: 'SCALE_YEARLY',
+        yearlyPrice: 900,
         price: 75,
         rowsIncluded: 1500000,
         extraChargeOverheadTenThusandRecords: 0.5,
@@ -118,9 +120,10 @@ export const Plans = ({ profile }: PlansProps) => {
                 name={plan.name}
                 rowsIncluded={plan.rowsIncluded}
                 price={plan.price}
-                planCode={activePlanDetails?.plan.code}
+                planCode={plan?.code}
                 isActive={activePlanDetails?.isActive && activePlanDetails.plan.code === plan.code}
                 userProfile={profile}
+                switchPlans={switchPlans}
                 showButton={plan.code !== 'SANDBOX'}
                 removeBranding={plan.removeBranding}
                 customValidation={plan.customValidation}
