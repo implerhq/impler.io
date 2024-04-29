@@ -12,6 +12,8 @@ export function PlanDetails() {
     email: profile?.email ?? '',
   });
 
+  console.log('active plan details PlanDetails', activePlanDetails);
+
   if (isActivePlanLoading) return <Skeleton width="100%" height="200" />;
 
   let numberOfRecords;
@@ -43,8 +45,9 @@ export function PlanDetails() {
           </Text>
         ) : (
           <Text>
-            You have imported {activePlanDetails!.meta.IMPORTED_ROWS} of {numberOfRecords} records this month on the{' '}
-            {activePlanDetails?.plan.name} Plan (Resets on {activePlanDetails!.expiryDate})
+            You have left {activePlanDetails!.meta.IMPORTED_ROWS} of{' '}
+            {activePlanDetails?.plan.charges[0].properties.units} records in {activePlanDetails?.plan.name} Plan (Resets
+            on {activePlanDetails!.expiryDate})
           </Text>
         )}
       </Stack>
