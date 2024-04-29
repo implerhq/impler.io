@@ -26,11 +26,11 @@ export function PlanDetails() {
     numberOfRecords = 0;
   }
 
-  const isSandBoxPlan = activePlanDetails?.plan.code === 'SANDBOX';
-  const isLessThanZero = activePlanDetails?.meta.IMPORTED_ROWS < 0;
+  const isLessThanZero =
+    typeof activePlanDetails?.meta.IMPORTED_ROWS === 'number' && activePlanDetails?.meta.IMPORTED_ROWS < 0;
 
   // Define background color based on conditions
-  const backgroundColor = isSandBoxPlan && isLessThanZero ? colors.danger : colors.yellow;
+  const backgroundColor = isLessThanZero ? colors.danger : colors.yellow;
 
   return (
     <Flex
@@ -39,7 +39,7 @@ export function PlanDetails() {
       direction="row"
       align="center"
       style={{
-        border: `1px solid ${isSandBoxPlan && isLessThanZero ? colors.danger : colors.yellow}`,
+        border: `1px solid ${isLessThanZero ? colors.danger : colors.yellow}`,
         backgroundColor: backgroundColor + '20',
       }}
     >
@@ -65,7 +65,7 @@ export function PlanDetails() {
             size: 'xl',
           });
         }}
-        color={isSandBoxPlan && isLessThanZero ? 'red' : 'yellow'}
+        color={isLessThanZero ? 'red' : 'yellow'}
       >
         Upgrade Plan
       </Button>
