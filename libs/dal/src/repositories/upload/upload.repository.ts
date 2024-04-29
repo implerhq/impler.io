@@ -6,6 +6,7 @@ import { BaseRepository } from '../base-repository';
 import { UploadEntity } from './upload.entity';
 import { Upload } from './upload.schema';
 import { Environment } from '../environment';
+import { Types } from 'mongoose';
 
 export class UploadRepository extends BaseRepository<UploadEntity> {
   private templateRepository: TemplateRepository;
@@ -22,7 +23,7 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
   async getImportCount(_userId: string, startDate: Date, endDate: Date) {
     const userProjects = await Environment.find({
       where: {
-        'apiKeys._userId': _userId,
+        'apiKeys._userId': new Types.ObjectId(_userId),
       },
       select: ['_projectId'],
     });
