@@ -12,8 +12,6 @@ export function PlanDetails() {
     email: profile?.email ?? '',
   });
 
-  console.log('active plan details PlanDetails', activePlanDetails);
-
   if (isActivePlanLoading) return <Skeleton width="100%" height="200" />;
 
   let numberOfRecords;
@@ -28,13 +26,22 @@ export function PlanDetails() {
     numberOfRecords = 0;
   }
 
+  const isSandBoxPlan = activePlanDetails?.plan.code === 'SANDBOX';
+  const isLessThanZero = activePlanDetails?.meta.IMPORTED_ROWS < 0;
+
+  // Define background color based on conditions
+  const backgroundColor = isSandBoxPlan && isLessThanZero ? colors.danger : colors.yellow;
+
   return (
     <Flex
       p="sm"
       gap="sm"
       direction="row"
       align="center"
-      style={{ border: `1px solid ${colors.yellow}`, backgroundColor: colors.yellow + '20' }}
+      style={{
+        border: `1px solid ${isSandBoxPlan && isLessThanZero ? colors.danger : colors.yellow}`,
+        backgroundColor: backgroundColor + '20',
+      }}
     >
       <Stack spacing="xs" style={{ flexGrow: 1 }}>
         <Title order={4}>Usage</Title>
@@ -58,7 +65,7 @@ export function PlanDetails() {
             size: 'xl',
           });
         }}
-        color="yellow"
+        color={isSandBoxPlan && isLessThanZero ? 'red' : 'yellow'}
       >
         Upgrade Plan
       </Button>
