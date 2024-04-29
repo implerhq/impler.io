@@ -39,8 +39,6 @@ export const Plan = ({
   outputCustomization,
   switchPlans,
 }: PlanProps) => {
-  console.log('yearly price', yearlyPrice);
-
   return (
     <Stack m="0" w={500} h="100%" p={20} style={{ backgroundColor: colors.BGPrimaryDark }}>
       <Stack spacing="xs" style={{ flexGrow: 1 }} h="100%">
