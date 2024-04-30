@@ -34,7 +34,6 @@
     "@nestjs/terminus": "^9.1.3",
     "@nestjs/websockets": "9.4.3",
     "@sentry/node": "^7.112.2",
-    "@sentry/tracing": "^7.112.2",
     "ajv": "^8.12.0",
     "ajv-formats": "^2.1.1",
     "ajv-keywords": "^5.1.0",
