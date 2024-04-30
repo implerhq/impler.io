@@ -55,9 +55,7 @@ export const CONSTANTS = {
   "fileName": "{{fileName}}",
   "extra": "{{extra}}"
 }`,
-  BUBBLEIO_PROPS: {
-    user: '{{extra.userId}}',
-  },
+  BUBBLEIO_PROPS: {},
 };
 
 export const COOKIE_CONFIG: CookieOptions = {

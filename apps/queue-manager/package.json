@@ -18,6 +18,7 @@
   "dependencies": {
     "@impler/dal": "^0.18.1",
     "@impler/shared": "^0.18.1",
+    "@sentry/node": "^7.112.2",
     "axios": "1.6.2",
     "dotenv": "^16.0.2",
     "envalid": "^7.3.1"
