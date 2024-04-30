@@ -24,7 +24,7 @@ export function ImportCount() {
   return (
     <Stack>
       <Flex direction="row" justify="space-between">
-        <Title order={3}>Imported Records</Title>
+        <Title order={3}>Overall Imported Records</Title>
         {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
         {/* @ts-ignore */}
         <DatePickerInput placeholder="Pick dates range" type="range" value={dates} onChange={setDates} w={300} />

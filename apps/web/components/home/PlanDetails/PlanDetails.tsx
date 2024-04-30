@@ -1,6 +1,6 @@
 import { colors } from '@config';
 import { Title, Text, Stack, Flex, Button, Skeleton } from '@mantine/core';
-import { PlansModal } from '@components/plans-modal/PlansModal';
+import { PlansModal } from '@components/UpgradePlan/PlansModal';
 import { modals } from '@mantine/modals';
 import { useApp } from '@hooks/useApp';
 import { usePlanDetails } from '@hooks/usePlanDetails';
@@ -61,8 +61,9 @@ export function PlanDetails() {
       <Button
         onClick={() => {
           modals.open({
-            children: <PlansModal modalTitle={'Choose Your Plan'} userProfile={profile!} />,
-            size: 'xl',
+            children: <PlansModal userProfile={profile!} activePlanCode={activePlanDetails?.plan?.code} />,
+            size: '2xl',
+            withCloseButton: false,
           });
         }}
         color={isLessThanZero ? 'red' : 'yellow'}
