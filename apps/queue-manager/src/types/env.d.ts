@@ -6,5 +6,6 @@ declare namespace NodeJS {
     S3_LOCAL_STACK: string;
     S3_REGION: string;
     S3_BUCKET_NAME: string;
+    SENTRY_DSN: string;
   }
 }

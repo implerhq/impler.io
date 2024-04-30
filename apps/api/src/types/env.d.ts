@@ -4,6 +4,7 @@ declare namespace NodeJS {
     PORT: number;
     JWT_SECRET: string;
     NODE_ENV: 'test' | 'prod' | 'dev' | 'ci' | 'local';
+    SENTRY_DSN: string;
 
     MONGO_URL: string;
     RABBITMQ_CONN_URL: string;
