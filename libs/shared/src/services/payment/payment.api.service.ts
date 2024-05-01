@@ -20,9 +20,34 @@ interface ICustomer {
   id: string;
   currency: 'USD' | 'INR';
 }
+interface ISubscriptionData {
+  usage: {
+    IMPORTED_ROWS: number;
+  };
+  plan: {
+    charges: {
+      billableMetric: {
+        code: string;
+        name: string;
+      };
+      chargeModel: string;
+      properties?:
+      | {
+        available: boolean;
+      }
+      | {
+        per_unit: number;
+        last_unit: number | string;
+        first_unit: number;
+      }[];
+    }[];
+  };
+}
+
+type AVAILABLE_CODES = 'IMPORTED_ROWS' | 'REMOVE_BRANDING';
 
 export class PaymentAPIService {
-  private CODE = 'IMPORTED_ROWS';
+  private CODE: AVAILABLE_CODES = 'IMPORTED_ROWS';
   private AUTH_KEY: string;
   private AUTH_VALUE: string;
   private PAYMENT_API_BASE_URL: string;
@@ -53,10 +78,10 @@ export class PaymentAPIService {
     });
   }
 
-  async checkEvent(email: string): Promise<boolean> {
+  async checkEvent(email: string, type: AVAILABLE_CODES = 'IMPORTED_ROWS'): Promise<boolean> {
     if (!this.PAYMENT_API_BASE_URL) return true;
 
-    const url = `${this.PAYMENT_API_BASE_URL}/api/v1/check?externalId=${email}&billableMetricCode=${this.CODE}`;
+    const url = `${this.PAYMENT_API_BASE_URL}/api/v1/check?externalId=${email}&billableMetricCode=${type}`;
     const response = await axios.get(url, {
       headers: {
         [this.AUTH_KEY]: this.AUTH_VALUE,
@@ -82,7 +107,31 @@ export class PaymentAPIService {
       },
     });
 
-    console.log(response.data);
+    return response.data;
+  }
+
+  async fetchActiveSubscription(email: string): Promise<ISubscriptionData> {
+    if (!this.PAYMENT_API_BASE_URL) return;
+
+    const url = `${this.PAYMENT_API_BASE_URL}/api/v1/subscription/${email}`;
+    const response = await axios.get(url, {
+      headers: {
+        [this.AUTH_KEY]: this.AUTH_VALUE,
+      },
+    });
+
+    return response.data;
+  }
+
+  async cancelSubscription(email: string): Promise<ISubscriptionData> {
+    if (!this.PAYMENT_API_BASE_URL) return;
+
+    const url = `${this.PAYMENT_API_BASE_URL}/api/v1/subscription/${email}`;
+    const response = await axios.delete(url, {
+      headers: {
+        [this.AUTH_KEY]: this.AUTH_VALUE,
+      },
+    });
 
     return response.data;
   }

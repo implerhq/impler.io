@@ -3,6 +3,7 @@ import { AuthProviderEnum } from '@impler/shared';
 import { BaseRepository } from '../base-repository';
 import { UserEntity, IUserResetTokenCount } from './user.entity';
 import { User } from './user.schema';
+import { Environment } from '../environment';
 
 export class UserRepository extends BaseRepository<UserEntity> {
   constructor() {
@@ -17,6 +18,18 @@ export class UserRepository extends BaseRepository<UserEntity> {
     return this.findOne({
       email,
     });
+  }
+
+  async findUserEmailFromProjectId(_projectId: string): Promise<string> {
+    const environment = await Environment.find({
+      _projectId,
+    }).populate([
+      {
+        path: 'apiKeys._userId',
+      },
+    ]);
+
+    return environment?.[0]?.apiKeys[0]?._userId?.email;
   }
 
   async findUserByToken(token: string) {

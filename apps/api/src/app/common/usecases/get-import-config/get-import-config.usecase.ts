@@ -1,14 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { ProjectRepository } from '@impler/dal';
-import { IImportConfig } from '@impler/shared';
+import { UserRepository } from '@impler/dal';
+import { IImportConfig, PaymentAPIService } from '@impler/shared';
 
 @Injectable()
 export class GetImportConfig {
-  constructor(private projectRepository: ProjectRepository) {}
+  constructor(
+    private userRepository: UserRepository,
+    private paymentAPIService: PaymentAPIService
+  ) {}
 
   async execute(projectId: string): Promise<IImportConfig> {
-    const projectInfo = await this.projectRepository.findById(projectId, 'showBranding');
+    const userEmail = await this.userRepository.findUserEmailFromProjectId(projectId);
 
-    return { showBranding: projectInfo.showBranding };
+    const removeBrandingAvailable = await this.paymentAPIService.checkEvent(userEmail, 'REMOVE_BRANDING');
+
+    return { showBranding: !removeBrandingAvailable };
   }
 }
