@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { commonApi } from '@libs/api';
-import { API_KEYS, MODAL_KEYS } from '@config';
+import { API_KEYS, MODAL_KEYS, NOTIFICATION_KEYS } from '@config';
 import { IErrorObject } from '@impler/shared';
 import { modals } from '@mantine/modals';
+import { notify } from '@libs/notify';
 
 interface UseCancelPlanProps {
   email: string;
@@ -19,6 +20,7 @@ export function useCancelPlan({ email }: UseCancelPlanProps) {
     onSuccess() {
       queryClient.invalidateQueries([API_KEYS.FETCH_ACTIVE_SUBSCRIPTION, email]);
       modals.close(MODAL_KEYS.PAYMENT_PLANS);
+      notify(NOTIFICATION_KEYS.MEMBERSHIP_CANCELLED);
     },
   });
 
