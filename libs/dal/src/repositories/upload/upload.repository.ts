@@ -21,35 +21,46 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
     return await Upload.findById(uploadId).populate('_templateId', fields.join(' '));
   }
   async getImportCount(_userId: string, startDate: Date, endDate: Date) {
-    const userProjects = await Environment.find({
-      where: {
+    const userProjects = await Environment.find(
+      {
         'apiKeys._userId': new Types.ObjectId(_userId),
       },
-      select: ['_projectId'],
-    });
+      '_projectId'
+    );
 
     const result = await this.aggregate([
       {
-        $lookup: {
-          from: 'Template',
-          pipeline: [
-            {
-              $match: {
-                _projectId: {
-                  $in: userProjects,
-                },
-              },
-            },
-          ],
-          as: 'templates',
+        $addFields: {
+          _templateId: { $toObjectId: '$_templateId' },
         },
       },
       {
+        $lookup: {
+          from: 'templates',
+          localField: '_templateId',
+          foreignField: '_id',
+          as: 'template',
+        },
+      },
+      { $unwind: '$template' },
+      {
         $match: {
-          uploadedDate: {
-            $gte: startDate,
-            $lte: endDate,
-          },
+          $and: [
+            {
+              'template._projectId': {
+                $in:
+                  Array.isArray(userProjects) && userProjects.length > 0
+                    ? userProjects.map((project) => new Types.ObjectId(project._projectId))
+                    : [],
+              },
+            },
+            {
+              uploadedDate: {
+                $gte: startDate,
+                $lte: endDate,
+              },
+            },
+          ],
         },
       },
       {
@@ -57,6 +68,7 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
           statusCount: {
             totalRecords: '$totalRecords',
             status: '$status',
+            uploadDate: '$uploadedDate',
           },
         },
       },
