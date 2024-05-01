@@ -1,9 +1,11 @@
 import './config';
 
-import * as compression from 'compression';
-import { NestFactory } from '@nestjs/core';
+import * as Sentry from '@sentry/node';
 import * as bodyParser from 'body-parser';
+import * as compression from 'compression';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import * as cookieParser from 'cookie-parser';
+import { SentryFilter } from './app/shared/filters/exception.filter';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { INestApplication, ValidationPipe, Logger } from '@nestjs/common';
@@ -30,9 +32,7 @@ export async function bootstrap(expressApp?): Promise<INestApplication> {
   }
 
   app.enableCors(corsOptionsDelegate);
-
   app.setGlobalPrefix('v1');
-
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -64,6 +64,17 @@ export async function bootstrap(expressApp?): Promise<INestApplication> {
   const document = SwaggerModule.createDocument(app, options);
 
   SwaggerModule.setup('api', app, document);
+
+  if (process.env.SENTRY_DSN) {
+    Sentry.init({
+      tracesSampleRate: 1.0,
+      dsn: process.env.SENTRY_DSN,
+      integrations: [new Sentry.Integrations.Console({ tracing: true })],
+    });
+
+    const { httpAdapter } = app.get(HttpAdapterHost);
+    app.useGlobalFilters(new SentryFilter(httpAdapter));
+  }
 
   if (expressApp) {
     await app.init();

@@ -234,6 +234,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     {
       cacheTime: 0,
       onSuccess(reviewDataResponse) {
+        setReviewData(reviewDataResponse.data);
         if (!reviewDataResponse.data.length) {
           let newPage = page;
           if (reviewDataResponse.page > 1 && reviewDataResponse.totalPages < reviewDataResponse.page) {
@@ -243,13 +244,11 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
             newPage = reviewDataResponse.page;
             setPage(newPage);
           }
-          setReviewData(reviewDataResponse.data);
           setTotalPages(Math.max(1, reviewDataResponse.totalPages));
-          refetchReviewData([newPage, type]);
+          if (newPage !== page) refetchReviewData([newPage, type]);
 
           return;
         }
-        setReviewData(reviewDataResponse.data);
         logAmplitudeEvent('VALIDATE', {
           invalidRecords: reviewDataResponse.totalRecords,
         });

@@ -3,10 +3,10 @@ import Head from 'next/head';
 import getConfig from 'next/config';
 import { Poppins } from 'next/font/google';
 import App, { AppProps } from 'next/app';
-import { useLocalStorage } from '@mantine/hooks';
 import { ModalsProvider } from '@mantine/modals';
-import { Notifications } from '@mantine/notifications';
+import { useLocalStorage } from '@mantine/hooks';
 import { init } from '@amplitude/analytics-browser';
+import { Notifications } from '@mantine/notifications';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ColorSchemeProvider, MantineProvider, ColorScheme } from '@mantine/core';
 

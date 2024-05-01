@@ -10,5 +10,7 @@ declare namespace NodeJS {
     PAYMENT_API_BASE_URL: string;
     PAYMENT_AUTH_KEY: string;
     PAYMENT_AUTH_VALUE: string;
+    
+    SENTRY_DSN: string;
   }
 }

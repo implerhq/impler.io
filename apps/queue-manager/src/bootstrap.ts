@@ -1,4 +1,5 @@
 import './config/env-config';
+import * as Sentry from '@sentry/node';
 import { validateEnv } from './config/env-validator';
 import amqp, { ChannelWrapper } from 'amqp-connection-manager';
 import { IAmqpConnectionManager } from 'amqp-connection-manager/dist/esm/AmqpConnectionManager';
@@ -10,6 +11,14 @@ import { SendWebhookDataConsumer, EndImportConsumer, SendBubbleDataConsumer } fr
 let connection: IAmqpConnectionManager, chanelWrapper: ChannelWrapper;
 
 validateEnv();
+
+if (process.env.SENTRY_DSN) {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    integrations: [new Sentry.Integrations.Console({ tracing: true })],
+    tracesSampleRate: 1.0,
+  });
+}
 
 export async function bootstrap() {
   // conenct dal service
