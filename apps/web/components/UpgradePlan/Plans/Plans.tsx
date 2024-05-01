@@ -1,12 +1,14 @@
 import getConfig from 'next/config';
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 import { Switch, Stack, Table, Button, Text } from '@mantine/core';
 
-import { CrossIcon } from '@assets/icons/Cross.icon';
-import { numberFormatter } from '@impler/shared';
 import { TickIcon } from '@assets/icons/Tick.icon';
+import { CrossIcon } from '@assets/icons/Cross.icon';
 
 import useStyles from './Plans.styles';
+import { numberFormatter } from '@impler/shared';
+import { useCancelPlan } from '@hooks/useCancelPlan';
 
 interface PlansProps {
   profile: IProfileData;
@@ -24,7 +26,11 @@ interface PlanItem {
 }
 
 export const Plans = ({ profile, activePlanCode }: PlansProps) => {
+  const router = useRouter();
   const { classes } = useStyles();
+  const { publicRuntimeConfig } = getConfig();
+  const [showYearly, setShowYearly] = useState<boolean>(true);
+  const gatewayURL = publicRuntimeConfig.NEXT_PUBLIC_PAYMENT_GATEWAY_URL;
   const plans: Record<string, PlanItem[]> = {
     monthly: [
       {
@@ -101,10 +107,16 @@ export const Plans = ({ profile, activePlanCode }: PlansProps) => {
       },
     ],
   };
+  const { cancelPlan, isCancelPlanLoading } = useCancelPlan({ email: profile.email });
 
-  const { publicRuntimeConfig } = getConfig();
-  const gatewayURL = publicRuntimeConfig.NEXT_PUBLIC_PAYMENT_GATEWAY_URL;
-  const [showYearly, setShowYearly] = useState<boolean>(true);
+  const onPlanButtonClick = (code: string) => {
+    if (activePlanCode === code) {
+      cancelPlan();
+    } else {
+      // activate plan
+      router.push(`${gatewayURL}/api/v1/plans/${code}/buy/${profile.email}/redirect`);
+    }
+  };
 
   return (
     <Stack align="center" spacing="md">
@@ -213,8 +225,9 @@ export const Plans = ({ profile, activePlanCode }: PlansProps) => {
                   <Button
                     component="a"
                     variant="filled"
+                    loading={isCancelPlanLoading}
                     color={activePlanCode === plan.code ? 'red' : 'blue'}
-                    href={`${gatewayURL}/api/v1/plans/${plan.code}/buy/${profile.email}/redirect`}
+                    onClick={() => onPlanButtonClick(plan.code)}
                   >
                     {activePlanCode === plan.code ? 'Cancel Plan' : 'Activate Plan'}
                   </Button>

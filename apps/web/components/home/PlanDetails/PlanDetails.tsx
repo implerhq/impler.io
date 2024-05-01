@@ -1,5 +1,5 @@
-import { colors } from '@config';
-import { Title, Text, Stack, Flex, Button, Skeleton } from '@mantine/core';
+import { MODAL_KEYS, colors } from '@config';
+import { Title, Text, Stack, Flex, Button, Skeleton, Divider } from '@mantine/core';
 import { PlansModal } from '@components/UpgradePlan/PlansModal';
 import { modals } from '@mantine/modals';
 import { useApp } from '@hooks/useApp';
@@ -32,44 +32,51 @@ export function PlanDetails() {
   // Define background color based on conditions
   const backgroundColor = isLessThanZero ? colors.danger : colors.yellow;
 
+  if (!activePlanDetails) return null;
+
   return (
-    <Flex
-      p="sm"
-      gap="sm"
-      direction="row"
-      align="center"
-      style={{
-        border: `1px solid ${isLessThanZero ? colors.danger : colors.yellow}`,
-        backgroundColor: backgroundColor + '20',
-      }}
-    >
-      <Stack spacing="xs" style={{ flexGrow: 1 }}>
-        <Title order={4}>Overall Usage</Title>
-        {typeof activePlanDetails!.usage.IMPORTED_ROWS === 'number' ? (
-          <Text>
-            You have imported {activePlanDetails!.usage.IMPORTED_ROWS} of {numberOfRecords} records this month on the{' '}
-            {activePlanDetails?.plan.name} Plan (Resets on {activePlanDetails!.expiryDate})
-          </Text>
-        ) : (
-          <Text>
-            Overall You have left {activePlanDetails!.meta.IMPORTED_ROWS} of{' '}
-            {activePlanDetails?.plan.charges[0].properties.units} records in {activePlanDetails?.plan.name} Plan (Resets
-            on {activePlanDetails!.expiryDate})
-          </Text>
-        )}
-      </Stack>
-      <Button
-        onClick={() => {
-          modals.open({
-            children: <PlansModal userProfile={profile!} activePlanCode={activePlanDetails?.plan?.code} />,
-            size: '2xl',
-            withCloseButton: false,
-          });
+    <>
+      <Flex
+        p="sm"
+        gap="sm"
+        direction="row"
+        align="center"
+        style={{
+          border: `1px solid ${isLessThanZero ? colors.danger : colors.yellow}`,
+          backgroundColor: backgroundColor + '20',
         }}
-        color={isLessThanZero ? 'red' : 'yellow'}
       >
-        Upgrade Plan
-      </Button>
-    </Flex>
+        <Stack spacing="xs" style={{ flexGrow: 1 }}>
+          <Title order={4}>Overall Usage</Title>
+          {typeof activePlanDetails?.usage.IMPORTED_ROWS === 'number' ? (
+            <Text>
+              You have imported {activePlanDetails!.usage.IMPORTED_ROWS} of {numberOfRecords} records on the{' '}
+              {activePlanDetails?.plan.name} Plan (Resets on {activePlanDetails!.expiryDate})
+            </Text>
+          ) : (
+            <Text>
+              Overall You have left {activePlanDetails!.meta.IMPORTED_ROWS} of{' '}
+              {activePlanDetails?.plan.charges[0].properties.units} records in {activePlanDetails?.plan.name} Plan
+              (Resets on {activePlanDetails!.expiryDate})
+            </Text>
+          )}
+        </Stack>
+        <Button
+          onClick={() => {
+            modals.open({
+              id: MODAL_KEYS.PAYMENT_PLANS,
+              modalId: MODAL_KEYS.PAYMENT_PLANS,
+              children: <PlansModal userProfile={profile!} activePlanCode={activePlanDetails?.plan?.code} />,
+              size: '2xl',
+              withCloseButton: false,
+            });
+          }}
+          color={isLessThanZero ? 'red' : 'yellow'}
+        >
+          Upgrade Plan
+        </Button>
+      </Flex>
+      <Divider />
+    </>
   );
 }

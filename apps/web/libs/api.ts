@@ -8,8 +8,12 @@ interface Route {
 
 const routes: Record<string, Route> = {
   [API_KEYS.FETCH_ACTIVE_SUBSCRIPTION]: {
-    url: (email: string) => `/api/v1/subscription/${email}`,
+    url: () => `/v1/user/subscription`,
     method: 'GET',
+  },
+  [API_KEYS.CANCEL_SUBSCRIPTION]: {
+    url: () => `/v1/user/subscription`,
+    method: 'DELETE',
   },
 
   [API_KEYS.PROJECTS_LIST]: {

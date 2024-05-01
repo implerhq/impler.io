@@ -10,7 +10,7 @@ export default createStyles((theme: MantineTheme): Record<string, any> => {
         textWrap: 'nowrap',
         padding: theme.spacing.sm,
       },
-      'tbody > tr td:first-child': {
+      'tbody > tr td:first-of-type': {
         fontWeight: 'bold',
         fontSize: theme.fontSizes.lg,
         textWrap: 'nowrap',
