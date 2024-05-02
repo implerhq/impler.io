@@ -6,6 +6,7 @@ const Messages: Record<string, NotifyProps> = {
     title: 'Current Membership Cancelled',
     message:
       "Your subscription is cancelled. Your current subscription will continue till it's expiry. You wont be charged again.",
+    color: 'red',
   },
 
   [NOTIFICATION_KEYS.MEMBERSHIP_PURCHASED]: {
