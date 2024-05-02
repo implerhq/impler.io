@@ -2,12 +2,12 @@ import { Stack } from '@mantine/core';
 import { HotTable } from '@handsontable/react';
 import { useRef, useState, useEffect } from 'react';
 
-import { PhasesEum } from '@types';
-import { IUpload, numberFormatter } from '@impler/shared';
+import { PhasesEnum } from '@types';
 import { logAmplitudeEvent } from '@amplitude';
 import { usePhase3 } from '@hooks/Phase3/usePhase3';
+import { IUpload, numberFormatter } from '@impler/shared';
 
-import { ConfirmModal } from '../ConfirmModal';
+import { ConfirmModal } from './ConfirmModal';
 import { Table } from 'components/Common/Table';
 import { Footer } from 'components/Common/Footer';
 
@@ -108,7 +108,7 @@ export function Phase3(props: IPhase3Props) {
 
       <Footer
         primaryButtonLoading={isConfirmReviewLoading}
-        active={PhasesEum.REVIEW}
+        active={PhasesEnum.REVIEW}
         onNextClick={reReviewData}
         onPrevClick={onPrevClick}
       />

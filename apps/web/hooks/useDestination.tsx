@@ -1,77 +1,168 @@
-import { useEffect } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
 import { track } from '@libs/amplitude';
+import { modals } from '@mantine/modals';
 import { API_KEYS, NOTIFICATION_KEYS } from '@config';
-import { IErrorObject, ITemplate } from '@impler/shared';
+import { DestinationsEnum, IErrorObject, IDestinationData, ITemplate } from '@impler/shared';
 
 interface UseDestinationProps {
   template: ITemplate;
 }
 
-interface UpdateDestinationData {
-  authHeaderName: string;
-  callbackUrl: string;
-  chunkSize: number;
-}
-
 export function useDestination({ template }: UseDestinationProps) {
   const queryClient = useQueryClient();
+  const [destination, setDestination] = useState<DestinationsEnum | undefined>();
   const {
+    watch,
     reset,
     control,
+    setValue,
     register,
+    setError,
     handleSubmit,
     formState: { errors },
-  } = useForm<UpdateDestinationData>();
-  const { mutate: updateImport, isLoading: isUpdateImportLoading } = useMutation<
-    ITemplate,
-    IErrorObject,
-    UpdateDestinationData,
-    (string | undefined)[]
-  >(
-    [API_KEYS.TEMPLATE_UPDATE, template._id],
-    (data) =>
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      commonApi<ITemplate>(API_KEYS.TEMPLATE_UPDATE as any, { parameters: [template._id], body: { ...data } }),
+  } = useForm<IDestinationData>({
+    defaultValues: {
+      webhook: {
+        chunkSize: 100,
+      },
+      bubbleIo: {
+        environment: 'development',
+      },
+    },
+  });
+  useQuery<unknown, IErrorObject, IDestinationData, [string, string | undefined]>(
+    [API_KEYS.DESTINATION_FETCH, template._id],
+    () => commonApi<IDestinationData>(API_KEYS.DESTINATION_FETCH as any, { parameters: [template._id] }),
     {
-      onSuccess: (data) => {
-        queryClient.setQueryData<ITemplate[]>([API_KEYS.TEMPLATES_LIST, template?._projectId], (oldData) =>
-          oldData?.map((item) => (item._id === data._id ? data : item))
-        );
-        queryClient.setQueryData<ITemplate>([API_KEYS.TEMPLATE_DETAILS, template._id], data);
-        notify(NOTIFICATION_KEYS.DESTINATION_UPDATED);
+      onSuccess(data) {
+        reset(data);
+        setDestination(data?.destination);
       },
     }
   );
-
-  useEffect(() => {
-    reset({
-      authHeaderName: template.authHeaderName,
-      callbackUrl: template.callbackUrl,
-      chunkSize: template.chunkSize,
+  const { mutate: updateDestination, isLoading: isUpdateDestinationLoading } = useMutation<
+    IDestinationData,
+    IErrorObject,
+    IDestinationData,
+    (string | undefined)[]
+  >(
+    [API_KEYS.TEMPLATE_UPDATE, template._id],
+    (body) =>
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      commonApi<IDestinationData>(API_KEYS.DESTINATION_UPDATE as any, { parameters: [template._id], body }),
+    {
+      onSuccess: (data) => {
+        queryClient.setQueryData<IDestinationData>([API_KEYS.DESTINATION_FETCH, template._id], data);
+        reset(data);
+        setDestination(data?.destination);
+        notify(NOTIFICATION_KEYS.DESTINATION_UPDATED);
+      },
+      onError(error) {
+        notify(NOTIFICATION_KEYS.ERROR_OCCURED, {
+          title: 'Destination data could not be updated',
+          message: error?.message,
+          color: 'red',
+        });
+      },
+    }
+  );
+  const { mutate: mapBubbleIoColumns, isLoading: isMapBubbleIoColumnsLoading } = useMutation<
+    IDestinationData,
+    IErrorObject,
+    IDestinationData,
+    (string | undefined)[]
+  >(
+    [API_KEYS.BUBBLEIO_MAP_COLUMNS, template._id],
+    (body) =>
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      commonApi<IDestinationData>(API_KEYS.BUBBLEIO_MAP_COLUMNS as any, { parameters: [template._id], body }),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [API_KEYS.TEMPLATE_CUSTOMIZATION_GET, template._id] });
+        track({ name: 'BULK COLUMN UPDATE', properties: {} });
+        notify('COLUMNS_UPDATED');
+      },
+      onError(error) {
+        notify(NOTIFICATION_KEYS.ERROR_OCCURED, {
+          title: 'Error mapping columns with Bubble.io',
+          message: error?.message,
+          color: 'red',
+        });
+      },
+    }
+  );
+  const mapBubbleIoColumnsClick = () => {
+    modals.openConfirmModal({
+      centered: true,
+      title: 'Existing columns will be reset',
+      children: 'Are you sure you want to map colums with Bubble.io? This action cannot be undone.',
+      labels: { confirm: 'Confirm', cancel: 'Cancel' },
+      confirmProps: { color: 'red' },
+      onConfirm: handleSubmit((data) => mapBubbleIoColumns(data)),
     });
-  }, [template, reset]);
+  };
+  const resetDestination = (data: IDestinationData) => {
+    modals.openConfirmModal({
+      centered: true,
+      title: 'Destination will be reset',
+      children:
+        'Are you sure you want to reset destination? All the destination data will be deleted. This action cannot be undone.',
+      labels: { confirm: 'Confirm', cancel: 'Cancel' },
+      confirmProps: { color: 'red' },
+      onConfirm: () => {
+        setDestination(undefined);
+        updateDestination(data);
+      },
+    });
+  };
+  const onSubmit = (data: IDestinationData) => {
+    if (data.destination === DestinationsEnum.BUBBLEIO && !data.bubbleIo?.appName && !data.bubbleIo?.customDomainName) {
+      setError(
+        'bubbleIo.appName',
+        {
+          type: 'manual',
+          message: 'Either App Name or Custom Domain Name is required',
+        },
+        {
+          shouldFocus: true,
+        }
+      );
+      setError('bubbleIo.customDomainName', {
+        type: 'manual',
+        message: 'Either App Name or Custom Domain Name is required',
+      });
 
-  const onSubmit = (data: UpdateDestinationData) => {
-    updateImport(data);
+      return;
+    }
+    updateDestination(data);
     track({
       name: 'DESTINATION UPDATED',
       properties: {
-        hasAuthHeaderName: !!data.authHeaderName,
-        hasCallbackUrl: !!data.callbackUrl,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        destination: data.destination,
       },
     });
   };
 
   return {
+    watch,
     errors,
     control,
     register,
-    isUpdateImportLoading,
+    setValue,
+    destination,
+    setDestination,
+    resetDestination,
+    mapBubbleIoColumns,
+    mapBubbleIoColumnsClick,
+    isMapBubbleIoColumnsLoading,
     onSubmit: handleSubmit(onSubmit),
+    isUpdateImportLoading: isUpdateDestinationLoading,
   };
 }

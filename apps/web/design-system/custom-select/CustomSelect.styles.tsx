@@ -9,7 +9,7 @@ const getInputWrapperStyles = (theme: MantineTheme): CSSObject => ({
   border: `0.0625rem solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[4]}`,
 
   ':focus-within': {
-    borderColor: colors.blue,
+    borderColor: theme.colorScheme === 'dark' ? theme.colors.blue[8] : theme.colors.blue[6],
   },
   backgroundColor: theme.colorScheme === 'dark' ? colors.BGPrimaryDark : colors.BGPrimaryLight,
   '&[data-haslabel="true"]': {
@@ -68,7 +68,7 @@ const getLabelStyles = (theme: MantineTheme): CSSObject => ({
   ...theme.fn.fontStyles(),
   fontWeight: 500,
   fontSize: getSize({ size: 'sm', sizes: theme.fontSizes }),
-  color: theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[9],
+  color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.colors.gray[9],
 });
 const getSelectItemsWrapper = (theme: MantineTheme): CSSObject => ({
   padding: 0,
@@ -90,10 +90,8 @@ interface Params {
   size: MantineSize;
 }
 
-export default createStyles((theme: MantineTheme, params: Params): Record<string, any> => {
-  console.log(theme.colors);
-
-  return {
+export default createStyles(
+  (theme: MantineTheme, params: Params): Record<string, any> => ({
     root: getRootStyles(),
     label: getLabelStyles(theme),
     description: getDescriptionStyles(theme),
@@ -102,5 +100,5 @@ export default createStyles((theme: MantineTheme, params: Params): Record<string
     input: getInputStyles(theme, params.size),
     itemsWrapper: getSelectItemsWrapper(theme),
     item: getSelectItemStyles(theme, params.size),
-  };
-});
+  })
+);

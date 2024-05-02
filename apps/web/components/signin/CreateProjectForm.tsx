@@ -1,10 +1,9 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
-import { Title, Stack } from '@mantine/core';
+import { Title, Stack, TextInput as Input } from '@mantine/core';
 import { useMutation } from '@tanstack/react-query';
 
-import { Input } from '@ui/input';
 import { Button } from '@ui/button';
 
 import { commonApi } from '@libs/api';
@@ -27,24 +26,28 @@ export default function CreateProjectForm() {
     IErrorObject,
     ICreateProjectData,
     string[]
-  >([API_KEYS.PROJECT_CREATE], (data) => commonApi(API_KEYS.PROJECT_CREATE as any, { body: data }), {
-    onSuccess: (data) => {
-      if (profileInfo) {
-        setProfileInfo({
-          ...profileInfo,
-          _projectId: data.project._id,
-          accessToken: data.environment.apiKeys[VARIABLES.ZERO].key,
+  >(
+    [API_KEYS.PROJECT_CREATE],
+    (data) => commonApi(API_KEYS.PROJECT_CREATE as any, { body: { ...data, onboarding: true } }),
+    {
+      onSuccess: (data) => {
+        if (profileInfo) {
+          setProfileInfo({
+            ...profileInfo,
+            _projectId: data.project._id,
+            accessToken: data.environment.apiKeys[VARIABLES.ZERO].key,
+          });
+        }
+        track({
+          name: 'PROJECT CREATE',
+          properties: {
+            duringOnboard: true,
+          },
         });
-      }
-      track({
-        name: 'PROJECT CREATE',
-        properties: {
-          duringOnboard: true,
-        },
-      });
-      push('/');
-    },
-  });
+        push('/');
+      },
+    }
+  );
 
   const onProjectFormSubmit = (data: ICreateProjectData) => {
     createProject(data);
@@ -58,7 +61,7 @@ export default function CreateProjectForm() {
       </Title>
       <form onSubmit={handleSubmit(onProjectFormSubmit)} style={{ width: '100%' }}>
         <Stack spacing="sm" pt="sm">
-          <Input placeholder="First Project" error={errors.name?.message} required register={register('name')} />
+          <Input placeholder="First Project" error={errors.name?.message} required {...register('name')} />
           <Button type="submit" fullWidth loading={isCreateProjectLoading}>
             Create
           </Button>

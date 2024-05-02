@@ -14,10 +14,11 @@ export default createStyles((theme) => ({
   selectInput: {
     backgroundColor: theme.colorScheme === 'dark' ? colors.BGSecondaryDark : colors.BGSecondaryLight,
     color: theme.colorScheme === 'dark' ? colors.TXTDark : colors.TXTLight,
-    borderColor: colors.StrokeSecondaryDark,
+    borderColor: colors.DisabledDark,
     '&:focus-within': {
-      borderColor: colors.StrokeSecondaryDark,
+      borderColor: colors.DisabledDark,
     },
+    width: 120,
   },
   item: {
     borderRadius: 0,

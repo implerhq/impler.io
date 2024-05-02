@@ -15,7 +15,7 @@ export enum PromptModalTypesEnum {
   'UPLOAD_AGAIN' = 'UPLOAD_AGAIN',
 }
 
-export enum PhasesEum {
+export enum PhasesEnum {
   VALIDATE,
   UPLOAD,
   MAPPING,
@@ -25,8 +25,9 @@ export enum PhasesEum {
 }
 
 export interface IFormvalues {
-  templateId: string;
   file: File;
+  templateId: string;
+  selectedSheetName?: string;
 }
 
 export interface IUploadValues extends IFormvalues {

@@ -94,8 +94,7 @@ type TrackData =
   | {
       name: 'DESTINATION UPDATED';
       properties: {
-        hasAuthHeaderName?: boolean;
-        hasCallbackUrl?: boolean;
+        destination: string;
       };
     }
   | {
@@ -107,6 +106,17 @@ type TrackData =
       properties: {
         message: string;
       };
+    }
+  | {
+      name: 'IMPORTS PAGINATION';
+      properties: {
+        limit?: number;
+        text?: string;
+      };
+    }
+  | {
+      name: 'IMPORT DUPLICATE';
+      properties: Record<string, never>;
     };
 
 export function track({ name, properties }: TrackData) {

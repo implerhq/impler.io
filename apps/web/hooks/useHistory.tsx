@@ -6,7 +6,7 @@ import { commonApi } from '@libs/api';
 import { track } from '@libs/amplitude';
 import { API_KEYS, VARIABLES } from '@config';
 import { useAppState } from 'store/app.context';
-import { IErrorObject, IHistoryData, downloadFile } from '@impler/shared';
+import { IErrorObject, IPaginationData, IHistoryRecord, downloadFile } from '@impler/shared';
 
 export function useHistory() {
   const { profileInfo } = useAppState();
@@ -27,15 +27,15 @@ export function useHistory() {
       },
     }
   );
-  const { isLoading: isHistoryDataLoading, data: historyData } = useQuery<
+  const { isFetching: isHistoryDataLoading, data: historyData } = useQuery<
     unknown,
     IErrorObject,
-    IHistoryData,
+    IPaginationData<IHistoryRecord>,
     (string | number | undefined | Date)[]
   >(
-    [API_KEYS.IMPORTS_LIST, profileInfo?._projectId, limit, page, name, date],
+    [API_KEYS.ACTIVITY_HISTORY, profileInfo?._projectId, limit, page, name, date],
     () =>
-      commonApi<IHistoryData>(API_KEYS.IMPORTS_LIST as any, {
+      commonApi<IPaginationData<IHistoryRecord>>(API_KEYS.ACTIVITY_HISTORY as any, {
         parameters: [profileInfo!._projectId],
         query: {
           limit,

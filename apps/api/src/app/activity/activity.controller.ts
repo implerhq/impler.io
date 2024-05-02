@@ -41,6 +41,12 @@ export class ActivityController {
       date = undefined;
     }
 
-    return this.uploadHistory.execute(_projectId, name, date, page, limit);
+    return this.uploadHistory.execute({
+      _projectId,
+      name,
+      date,
+      page,
+      limit,
+    });
   }
 }

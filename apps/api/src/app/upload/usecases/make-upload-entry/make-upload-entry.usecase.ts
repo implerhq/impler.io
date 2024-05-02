@@ -38,13 +38,21 @@ export class MakeUploadEntry {
     private customizationRepository: CustomizationRepository
   ) {}
 
-  async execute({ file, templateId, extra, authHeaderValue, schema, output }: MakeUploadEntryCommand) {
+  async execute({
+    file,
+    templateId,
+    extra,
+    authHeaderValue,
+    schema,
+    output,
+    selectedSheetName,
+  }: MakeUploadEntryCommand) {
     const fileOriginalName = file.originalname;
     let csvFile: string | Express.Multer.File = file;
     if (file.mimetype === FileMimeTypesEnum.EXCEL || file.mimetype === FileMimeTypesEnum.EXCELX) {
       try {
         const fileService = new ExcelFileService();
-        csvFile = await fileService.convertToCsv(file);
+        csvFile = await fileService.convertToCsv(file, selectedSheetName);
       } catch (error) {
         throw new FileParseException();
       }
@@ -81,7 +89,9 @@ export class MakeUploadEntry {
             schemaItem.type == ColumnTypesEnum.SELECT && Array.isArray(schemaItem.selectValues)
               ? schemaItem.selectValues
               : [],
-          dateFormats: Array.isArray(schemaItem.dateFormats) ? schemaItem.dateFormats : Defaults.DATE_FORMATS,
+          dateFormats: Array.isArray(schemaItem.dateFormats)
+            ? schemaItem.dateFormats.map((format) => format.toUpperCase())
+            : Defaults.DATE_FORMATS,
           isUnique: schemaItem.isUnique || false,
           defaultValue: schemaItem.defaultValue,
 
@@ -105,8 +115,8 @@ export class MakeUploadEntry {
         },
         'chunkFormat recordFormat'
       );
-      customChunkFormat = defaultCustomization.chunkFormat;
-      customRecordFormat = defaultCustomization.recordFormat;
+      customChunkFormat = defaultCustomization?.chunkFormat;
+      customRecordFormat = defaultCustomization?.recordFormat;
     }
 
     const fileService = new CSVFileService2();

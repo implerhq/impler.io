@@ -12,13 +12,22 @@ export class ReanameFileHeadings {
         const uploadInfo = await this.uploadRepository.findById(_uploadId, 'headings _uploadedFileId customSchema');
         const templateColumnItems = JSON.parse(uploadInfo.customSchema) as ITemplateSchemaItem[];
 
-        const newHeadings = uploadInfo.headings.reduce((headingsArr, heading) => {
-          const foundColumnMapping = templateColumnItems.find((mapping) => mapping.columnHeading === heading);
-          if (foundColumnMapping) headingsArr.push(foundColumnMapping.key);
-          else headingsArr.push(heading);
-
-          return headingsArr;
-        }, []);
+        const newHeadings = [...uploadInfo.headings];
+        templateColumnItems.forEach((mapping) => {
+          if (!mapping.columnHeading) {
+            const headingIndex = newHeadings.findIndex((heading) => heading === mapping.key);
+            if (headingIndex > -1) newHeadings[headingIndex] = '_';
+          } else {
+            const columnHeadingIndex = newHeadings.findIndex((heading) => heading === mapping.columnHeading);
+            const keyHeadingIndex = newHeadings.findIndex((keyHeading) => keyHeading === mapping.key);
+            if (keyHeadingIndex > -1 && columnHeadingIndex > -1) {
+              [newHeadings[keyHeadingIndex], newHeadings[columnHeadingIndex]] = [
+                newHeadings[columnHeadingIndex],
+                newHeadings[keyHeadingIndex],
+              ];
+            }
+          }
+        });
 
         return resolve({ headings: newHeadings });
       } catch (error) {

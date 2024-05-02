@@ -1,9 +1,7 @@
 /* eslint-disable max-len */
 import { forwardRef } from 'react';
 import { HotTable } from '@handsontable/react';
-// eslint-disable-next-line id-length
-import $ from 'jquery';
-
+import 'cooltipz-css/cooltipz.min.css';
 import {
   TextCellType,
   DateCellType,
@@ -40,6 +38,7 @@ registerEditor(BaseEditor);
 
 registerValidator(dateValidator);
 
+import 'handsontable/dist/handsontable.full.min.css';
 import './HandsonTable.styles.min.css';
 
 interface TableProps {
@@ -59,17 +58,16 @@ Handsontable.renderers.registerRenderer(
   function renderer(instance, TD, row, col, prop, value, cellProperties) {
     const name = String(prop).replace('record.', '');
     TD.classList.add('custom-cell');
-    $(TD).tooltip('dispose');
+    TD.ariaLabel = '';
     const soureData = instance.getSourceDataAtRow(row) as IRecord;
-    const fieldValue = typeof soureData.record[name] === 'undefined' ? '' : soureData.record[name];
+    let fieldValue = typeof soureData.record[name] === 'undefined' ? '' : soureData.record[name];
+    if (typeof fieldValue === 'string' && fieldValue.length > name.length + 20)
+      fieldValue = value.substring(0, name.length + 20) + '...';
 
     if (soureData.errors && soureData.errors[name]) {
-      $(TD).tooltip({
-        container: 'body',
-        trigger: 'hover',
-        title: soureData.errors[name],
-        placement: 'auto',
-      });
+      TD.ariaLabel = soureData.errors[name];
+      TD.dataset.cooltipzDir = row < 5 ? 'bottom' : 'top';
+      TD.dataset.cooltipzSize = 'fit';
     }
 
     if (soureData.updated && soureData.updated[name]) {

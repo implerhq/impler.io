@@ -11,3 +11,11 @@ export interface ITemplate {
   totalRecords: number;
   totalInvalidRecords: number;
 }
+
+export interface IImport {
+  _id: string;
+  name: string;
+  totalUploads: number;
+  totalRecords: number;
+  totalInvalidRecords: number;
+}

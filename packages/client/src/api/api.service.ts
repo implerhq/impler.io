@@ -61,6 +61,15 @@ export class ApiService {
     ) as Promise<IImportConfig>;
   }
 
+  async getExcelSheetNames(data: { file: File }) {
+    const formData = new FormData();
+    formData.append('file', data.file);
+
+    return this.httpClient.post(`/common/sheet-names`, formData, {
+      'Content-Type': 'multipart/form-data',
+    }) as Promise<string[]>;
+  }
+
   async uploadFile(data: {
     templateId: string;
     file: File;
@@ -68,6 +77,7 @@ export class ApiService {
     extra?: string;
     schema?: string;
     output?: string;
+    selectedSheetName?: string;
   }) {
     const formData = new FormData();
     formData.append('file', data.file);
@@ -76,6 +86,8 @@ export class ApiService {
     if (data.extra) formData.append('extra', data.extra);
     if (data.schema) formData.append('schema', data.schema);
     if (data.output) formData.append('output', data.output);
+    if (data.selectedSheetName)
+      formData.append('selectedSheetName', data.selectedSheetName);
 
     return this.httpClient.post(`/upload/${data.templateId}`, formData, {
       'Content-Type': 'multipart/form-data',

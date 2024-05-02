@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv';
+import * as path from 'path';
 
 dotenv.config();
 
@@ -11,7 +12,11 @@ const envFileMapper = {
 };
 const selectedEnvFile = envFileMapper[process.env.NODE_ENV] || '.env';
 
-const path = `${__dirname}/${process.env.E2E_RUNNER ? '..' : 'src'}/${selectedEnvFile}`;
+let pathToDotEnv = `${__dirname}/${process.env.E2E_RUNNER ? '..' : 'src'}/${selectedEnvFile}`;
 
-const { error } = dotenv.config({ path });
+if (process.env.MIGRATION) {
+  pathToDotEnv = path.join(__dirname, `../${selectedEnvFile}`);
+}
+
+const { error } = dotenv.config({ path: pathToDotEnv });
 if (error && !process.env.LAMBDA_TASK_ROOT) throw error;

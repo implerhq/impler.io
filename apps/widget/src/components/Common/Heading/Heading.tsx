@@ -1,17 +1,14 @@
 import { Group, MediaQuery, Title, useMantineTheme } from '@mantine/core';
 import { Stepper } from '@ui/Stepper';
 import { TEXTS, variables } from '@config';
-import { PhasesEum } from '@types';
+import { PhasesEnum } from '@types';
 
 interface IHeadingProps {
-  active: PhasesEum;
+  active: PhasesEnum;
   title?: string;
 }
 
 const Steps = [
-  {
-    label: TEXTS.STEPS.VALIDATE,
-  },
   {
     label: TEXTS.STEPS.UPLOAD,
   },
@@ -31,17 +28,14 @@ export function Heading({ active, title }: IHeadingProps) {
 
   return (
     <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
-      {
-        // eslint-disable-next-line no-magic-numbers
-        active === 0 ? (
-          <></>
-        ) : (
-          <Group style={{ justifyContent: 'space-between' }} mb="lg">
-            <Title order={3}>{title}</Title>
-            <Stepper active={active} steps={Steps} primaryColor={theme.colors.primary[variables.colorIndex]} />
-          </Group>
-        )
-      }
+      {active ? (
+        <Group style={{ justifyContent: 'space-between' }} mb="lg">
+          <Title order={3}>{title}</Title>
+          <Stepper active={active - 1} steps={Steps} primaryColor={theme.colors.primary[variables.colorIndex]} />
+        </Group>
+      ) : (
+        <></>
+      )}
     </MediaQuery>
   );
 }

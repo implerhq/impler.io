@@ -39,4 +39,11 @@ export class UploadRequestDto {
   @IsOptional()
   @IsJSON()
   extra: string;
+
+  @ApiProperty({
+    description: 'Name of the excel sheet to Import',
+  })
+  @IsOptional()
+  @IsString()
+  selectedSheetName: string;
 }

@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDefined, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsDefined, IsOptional, IsString } from 'class-validator';
 export class CreateProjectRequestDto {
   @ApiProperty({
     description: 'Name of the project',
@@ -14,4 +14,11 @@ export class CreateProjectRequestDto {
   @IsString()
   @IsOptional()
   authHeaderName: string;
+
+  @ApiPropertyOptional({
+    description: 'Is this project created during onboarding?',
+  })
+  @IsBoolean()
+  @IsOptional()
+  onboarding = false;
 }

@@ -1,15 +1,14 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Title, Text, Stack, Divider, Flex, Box, Alert } from '@mantine/core';
+import { Title, Text, Stack, Divider, Flex, Box, Alert, TextInput as Input } from '@mantine/core';
 
-import { Input } from '@ui/input';
 import { Button } from '@ui/button';
+import { useSignin } from '@hooks/auth/useSignin';
+import { PasswordInput } from '@ui/password-input';
 import { CONSTANTS, ROUTES, colors } from '@config';
 
 import DarkLogo from '@assets/images/logo-dark.png';
 import { GithubIcon } from '@assets/icons/Github.icon';
-import { useSignin } from '@hooks/auth/useSignin';
-import { PasswordInput } from '@ui/password-input';
 
 interface SigninProps {
   API_URL: string;
@@ -60,7 +59,7 @@ export const Signin = ({ API_URL, error }: SigninProps) => {
               {errorMessage.message}
             </Alert>
           ) : null}
-          <Input register={register('email')} size="md" placeholder="Email" type="email" required />
+          <Input {...register('email')} size="md" placeholder="Email" type="email" required />
           <PasswordInput register={register('password')} size="md" placeholder="Password" required />
           <Link href={ROUTES.REQUEST_FORGOT_PASSWORD}>
             <Text size="md" align="right">

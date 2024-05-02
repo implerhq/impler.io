@@ -7,7 +7,7 @@ export type HotItemSchema = {
   data: string;
   className?: string;
   readOnly?: boolean;
-  editor?: 'base' | 'select' | boolean;
+  editor?: 'base' | 'select' | boolean | any;
   dateFormat?: string;
   correctFormat?: boolean;
   selectOptions?: string[];

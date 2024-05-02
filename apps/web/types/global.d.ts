@@ -10,6 +10,7 @@ namespace NodeJS {
     NEXT_PUBLIC_TAWK_PROPERTY_ID: string;
     NEXT_PUBLIC_TAWK_WIDGET_ID: string;
     NEXT_PUBLIC_OPENREPLAY_KEY: string;
+    NEXT_PUBLIC_SENTRY_DSN: string;
 
     NEXT_PUBLIC_GTM_ID: string;
     NEXT_PUBLIC_GOOGLE_ANALYTICS_ID: string;
@@ -32,7 +33,14 @@ interface ICreateProjectData {
 
 interface ICreateTemplateData {
   name: string;
-  code: string;
+}
+interface IDuplicateTemplateData {
+  name: string;
+  _projectId: string;
+  duplicateColumns?: boolean;
+  duplicateDestination?: boolean;
+  duplicateWebhook?: boolean;
+  duplicateValidator?: boolean;
 }
 interface IUpdateTemplateData {
   name: string;

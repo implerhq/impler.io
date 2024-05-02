@@ -58,7 +58,7 @@ export class DalService {
 
     return model
       .find(conditions, 'index isValid errors record updated')
-      .skip((page - 1) * limit)
+      .skip(Math.max(0, (page - 1) * limit)) // when page is 0, it was skiping 0*n records
       .limit(limit)
       .exec();
   }

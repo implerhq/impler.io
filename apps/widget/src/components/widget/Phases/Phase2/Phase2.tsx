@@ -3,7 +3,7 @@ import { Footer } from 'components/Common/Footer';
 import useStyles from './Styles';
 import { useEffect, useRef, useState } from 'react';
 import { usePhase2 } from '@hooks/Phase2/usePhase2';
-import { PhasesEum } from '@types';
+import { PhasesEnum } from '@types';
 import { Controller } from 'react-hook-form';
 import { MappingHeading } from './MappingHeading';
 import { LoadingOverlay } from '@ui/LoadingOverlay';
@@ -71,7 +71,7 @@ export function Phase2(props: IPhase2Props) {
 
       <Footer
         primaryButtonLoading={isMappingFinalizing}
-        active={PhasesEum.MAPPING}
+        active={PhasesEnum.MAPPING}
         onNextClick={onSubmit}
         onPrevClick={onPrevClick}
       />

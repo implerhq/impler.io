@@ -3,10 +3,10 @@ import Head from 'next/head';
 import getConfig from 'next/config';
 import { Poppins } from 'next/font/google';
 import App, { AppProps } from 'next/app';
-import { useLocalStorage } from '@mantine/hooks';
 import { ModalsProvider } from '@mantine/modals';
-import { Notifications } from '@mantine/notifications';
+import { useLocalStorage } from '@mantine/hooks';
 import { init } from '@amplitude/analytics-browser';
+import { Notifications } from '@mantine/notifications';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ColorSchemeProvider, MantineProvider, ColorScheme } from '@mantine/core';
 
@@ -76,10 +76,19 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Impler</title>
-        <meta name="description" content="Build your own workflows" />
+        <link rel="icon" href="/favicon-dark.ico" />
+        <meta name="og:image" content="/banner.png" />
+        <title>Impler | Readymade and scalable data import experience for developers</title>
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
-        <link rel="icon" href="/favicon.ico" />
+        <meta name="og:title" content="Impler | Readymade and scalable data import experience for developers" />
+        <meta
+          name="description"
+          content="100% open source data import experience with readymade CSV & Excel import widget"
+        />
+        <meta
+          name="og:description"
+          content="100% open source data import experience with readymade CSV & Excel import widget"
+        />
       </Head>
       <QueryClientProvider client={client}>
         <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>

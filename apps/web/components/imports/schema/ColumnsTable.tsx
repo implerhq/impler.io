@@ -1,14 +1,13 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { Controller } from 'react-hook-form';
-import { ActionIcon, Checkbox, Flex, Tooltip } from '@mantine/core';
+import { ActionIcon, Checkbox, Flex, Tooltip, TextInput as Input } from '@mantine/core';
 
 import { colors } from '@config';
-import { Table } from '@ui/table';
+import { DraggableTable } from '@ui/table';
 import { useSchema } from '@hooks/useSchema';
 import { COLUMN_TYPES } from '@shared/constants';
 import { DEFAULT_VALUES, IColumn } from '@impler/shared';
 
-import { Input } from '@ui/input';
 import { Select } from '@ui/select';
 import { IconButton } from '@ui/icon-button';
 import { MultiSelect } from '@ui/multi-select';
@@ -16,6 +15,7 @@ import { CustomSelect } from '@ui/custom-select';
 
 import { AddIcon } from '@assets/icons/Add.icon';
 import { EditIcon } from '@assets/icons/Edit.icon';
+import { GripIcon } from '@assets/icons/Grip.icon';
 import { CloseIcon } from '@assets/icons/Close.icon';
 import { CheckIcon } from '@assets/icons/Check.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
@@ -25,7 +25,6 @@ interface ColumnsTableProps {
 }
 
 export function ColumnsTable({ templateId }: ColumnsTableProps) {
-  const [showAddRow, setShowAddRow] = useState(false);
   const SelectRef = useRef(false);
 
   const {
@@ -33,7 +32,10 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
     watch,
     columns,
     control,
+    showAddRow,
     handleSubmit,
+    onMoveColumns,
+    setShowAddRow,
     onEditColumnClick,
     onDeleteColumnClick,
     isColumnCreateLoading,
@@ -51,8 +53,9 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
         handleSubmit();
         SelectRef.current = false;
       }}
+      id="columns"
     >
-      <Table<IColumn>
+      <DraggableTable<IColumn>
         emptyDataText='No columns found click on "+" to add new column'
         headings={[
           {
@@ -88,6 +91,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                 <IconButton label="Delete" onClick={() => onDeleteColumnClick(item._id)}>
                   <DeleteIcon color={colors.danger} />
                 </IconButton>
+                <GripIcon color={colors.yellow} style={{ cursor: 'grab' }} />
               </Flex>
             ),
             width: '15%',
@@ -99,8 +103,8 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
               <>
                 <td colSpan={4} style={{ borderRight: 'none' }}>
                   <Flex gap="xs" align={'center'}>
-                    <Input autoFocus required placeholder="Column Name" register={register('name')} />
-                    <Input required placeholder="Column Key" register={register('key')} />
+                    <Input autoFocus required placeholder="Column Name" {...register('name')} />
+                    <Input required placeholder="Column Key" {...register('key')} />
                     <Controller
                       control={control}
                       name="type"
@@ -116,14 +120,12 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                       )}
                     />
                     {typeValue === 'Regex' && (
-                      <>
-                        <Input
-                          required
-                          register={register('regex')}
-                          error={errors.regex?.message}
-                          placeholder="Regular expression"
-                        />
-                      </>
+                      <Input
+                        required
+                        error={errors.regex?.message}
+                        placeholder="Regular expression"
+                        {...register('regex')}
+                      />
                     )}
                     {typeValue === 'Select' ? (
                       <Controller
@@ -189,7 +191,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                         />
                       )}
                     />
-                    <Checkbox label="Required?" title="Required?" {...register('isRequired')} id="isRequired" />{' '}
+                    <Checkbox label="Required?" title="Required?" {...register('isRequired')} id="isRequired" />
                     <Checkbox label="Unique?" title="Unique?" {...register('isUnique')} id="isUnique" />
                   </Flex>
                 </td>
@@ -207,7 +209,12 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
             ) : (
               <td colSpan={5}>
                 <Tooltip label="Add new column" withArrow position="top-start">
-                  <ActionIcon bg={colors.yellow} variant="transparent" onClick={() => setShowAddRow(true)}>
+                  <ActionIcon
+                    id="add-column"
+                    bg={colors.yellow}
+                    variant="transparent"
+                    onClick={() => setShowAddRow(true)}
+                  >
                     <AddIcon color={colors.white} />
                   </ActionIcon>
                 </Tooltip>
@@ -216,6 +223,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
           </tr>
         }
         data={columns}
+        moveItem={onMoveColumns}
       />
     </form>
   );

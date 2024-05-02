@@ -1,7 +1,7 @@
 import { IconType } from '@types';
 import { IconSizes } from 'config';
 
-export const CopyIcon = ({ size = 'sm', color }: IconType) => {
+export const CopyIcon = ({ size = 'sm', color, className }: IconType) => {
   return (
     <svg
       width={IconSizes[size]}
@@ -9,6 +9,7 @@ export const CopyIcon = ({ size = 'sm', color }: IconType) => {
       color={color}
       viewBox="0 0 20 20"
       fill="none"
+      className={className}
       xmlns="http://www.w3.org/2000/svg"
     >
       <path

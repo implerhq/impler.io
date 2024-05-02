@@ -1,8 +1,7 @@
 import Image from 'next/image';
-import { Title, Stack, Flex, Text } from '@mantine/core';
+import { Title, Stack, Flex, Text, TextInput as Input } from '@mantine/core';
 
 import { colors } from '@config';
-import { Input } from '@ui/input';
 import { Button } from '@ui/button';
 import DarkLogo from '@assets/images/logo-dark.png';
 import { OnboardLayout } from '@layouts/OnboardLayout';
@@ -39,7 +38,7 @@ export default function RequestForgotPasswordPage() {
       ) : (
         <form style={{ width: '100%' }} onSubmit={request}>
           <Stack w="100%">
-            <Input register={register('email')} size="md" placeholder="Email" type="email" required />
+            <Input {...register('email')} size="md" placeholder="Email" type="email" required />
             <Button fullWidth type="submit" size="md" disabled={requestSent} loading={isForgotPasswordRequesting}>
               Send password reset link
             </Button>

@@ -39,13 +39,19 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
   return (
     <>
       <Head>
+        <meta name="og:image" content="/banner.png" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{pageProps.title ? `${pageProps.title} | Impler` : 'Impler'}</title>
+        <link rel="icon" href={colorScheme === 'dark' ? '/favicon-dark.ico' : '/favicon-light.ico'} />
         <meta
           name="description"
-          content="Impler is open-source data import infrastructure, built for engineering teams to help them build rich data import experience without constantly reinventing the wheel."
+          content="100% open source data import experience with readymade CSV & Excel import widget."
         />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href={colorScheme === 'dark' ? '/favicon-dark.ico' : '/favicon-light.ico'} />
+        <meta name="og:title" content="Impler | Readymade and scalable data import experience for developers" />
+        <meta
+          name="og:description"
+          content="100% open source data import experience with readymade CSV & Excel import widget"
+        />
       </Head>
       <div className={classes.root}>
         <LoadingOverlay visible={isProjectsLoading || isProfileLoading} />
@@ -60,6 +66,7 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
             searchable
             creatable
             pl="sm"
+            id="project-manager"
             radius={0}
             value={profile?._projectId}
             getCreateLabel={(query) => `+ Create "${query}"`}
@@ -92,7 +99,7 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
           </Stack>
         </aside>
         <main className={classes.main}>
-          <nav className={classes.nav} ref={navRef}>
+          <nav ref={navRef}>
             {profile && (
               <Flex justify="space-between">
                 <Title order={2}>
