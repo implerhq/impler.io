@@ -34,7 +34,7 @@ export const Plans = ({ profile, activePlanCode }: PlansProps) => {
   const plans: Record<string, PlanItem[]> = {
     monthly: [
       {
-        name: 'Starter (Defualt)',
+        name: 'Starter (Default)',
         code: 'STARTER',
         rowsIncluded: 5000,
         price: 0,
@@ -62,6 +62,15 @@ export const Plans = ({ profile, activePlanCode }: PlansProps) => {
       },
     ],
     yearly: [
+      {
+        name: 'Starter (Default)',
+        code: 'STARTER',
+        rowsIncluded: 5000,
+        price: 0,
+        yearlyPrice: 0,
+        extraChargeOverheadTenThusandRecords: 1,
+        removeBranding: false,
+      },
       {
         name: 'Growth',
         code: 'GROWTH-YEARLY',
