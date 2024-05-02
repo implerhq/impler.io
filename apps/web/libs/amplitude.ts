@@ -131,13 +131,13 @@ export function track({ name, properties }: TrackData) {
       userIdentity.set('profilePicture', properties.profilePicture);
     }
     identify(userIdentity);
-    setUserId(properties.id);
+    setUserId(properties.email);
   } else if (name === 'SIGNIN') {
     const userIdentity = new Identify();
     userIdentity.set('id', properties.id);
     userIdentity.set('email', properties.email);
     identify(userIdentity);
-    setUserId(properties.id);
+    setUserId(properties.email);
   } else if (name === 'LOGOUT') {
     reset();
   }
