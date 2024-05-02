@@ -34,16 +34,8 @@ export const Plans = ({ profile, activePlanCode }: PlansProps) => {
   const plans: Record<string, PlanItem[]> = {
     monthly: [
       {
-        name: 'Sandbox (Default)',
-        code: 'SANDBOX',
-        rowsIncluded: 5000,
-        price: 0,
-        yearlyPrice: 0,
-        removeBranding: false,
-      },
-      {
-        name: 'Starter',
-        code: 'STARTER-MONTHLY',
+        name: 'Starter (Defualt)',
+        code: 'STARTER',
         rowsIncluded: 5000,
         price: 0,
         yearlyPrice: 0,
@@ -71,28 +63,11 @@ export const Plans = ({ profile, activePlanCode }: PlansProps) => {
     ],
     yearly: [
       {
-        name: 'Sandbox  (Default)',
-        code: 'SANDBOX',
-        rowsIncluded: 5000,
-        price: 0,
-        yearlyPrice: 0,
-        removeBranding: false,
-      },
-      {
-        name: 'Starter',
-        code: 'STARTER-YEARLY',
-        price: 0,
-        yearlyPrice: 0,
-        rowsIncluded: 5000,
-        extraChargeOverheadTenThusandRecords: 1,
-        removeBranding: false,
-      },
-      {
         name: 'Growth',
         code: 'GROWTH-YEARLY',
         price: 35,
         yearlyPrice: 420,
-        rowsIncluded: 500000,
+        rowsIncluded: 6000000,
         extraChargeOverheadTenThusandRecords: 0.7,
         removeBranding: true,
       },
@@ -101,7 +76,7 @@ export const Plans = ({ profile, activePlanCode }: PlansProps) => {
         code: 'SCALE-YEARLY',
         price: 75,
         yearlyPrice: 900,
-        rowsIncluded: 1500000,
+        rowsIncluded: 18000000,
         extraChargeOverheadTenThusandRecords: 0.5,
         removeBranding: true,
       },
@@ -221,7 +196,7 @@ export const Plans = ({ profile, activePlanCode }: PlansProps) => {
             <td></td>
             {plans[showYearly ? 'yearly' : 'monthly'].map((plan, index) => (
               <td key={index}>
-                {plan.code === 'SANDBOX' ? null : (
+                {plan.code === 'STARTER' ? null : (
                   <Button
                     component="a"
                     variant="filled"
