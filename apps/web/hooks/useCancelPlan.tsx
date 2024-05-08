@@ -17,10 +17,15 @@ export function useCancelPlan({ email }: UseCancelPlanProps) {
     void,
     [string, string]
   >([API_KEYS.CANCEL_SUBSCRIPTION, email], () => commonApi(API_KEYS.CANCEL_SUBSCRIPTION as any, {}), {
-    onSuccess() {
+    onSuccess(data: any) {
       queryClient.invalidateQueries([API_KEYS.FETCH_ACTIVE_SUBSCRIPTION, email]);
       modals.close(MODAL_KEYS.PAYMENT_PLANS);
-      notify(NOTIFICATION_KEYS.MEMBERSHIP_CANCELLED);
+      notify(NOTIFICATION_KEYS.MEMBERSHIP_CANCELLED, {
+        title: 'Membership Canceled',
+        message: `Your subscription is cancelled.
+         Your current subscription will continue till ${data.expiryDate}. You wont be charged again.`,
+        color: 'red',
+      });
     },
   });
 
