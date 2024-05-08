@@ -2,13 +2,6 @@ import { NOTIFICATION_KEYS } from '@config';
 import { notifications } from '@mantine/notifications';
 
 const Messages: Record<string, NotifyProps> = {
-  [NOTIFICATION_KEYS.MEMBERSHIP_CANCELLED]: {
-    title: 'Current Membership Cancelled',
-    message:
-      "Your subscription is cancelled. Your current subscription will continue till it's expiry. You wont be charged again.",
-    color: 'red',
-  },
-
   [NOTIFICATION_KEYS.MEMBERSHIP_PURCHASED]: {
     title: 'Membership Upgraded',
     message: 'Thankyou for Upgrading your membership',
