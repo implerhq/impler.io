@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+
 /* eslint-disable no-unused-vars */
 declare module '@tawk.to/tawk-messenger-react';
 
@@ -49,10 +50,11 @@ interface ISubscriptionData {
       chargeModal: 'FIXED' | 'VOLUME_BASED';
       properties: Record<string, string | number>;
     }[];
+    charge: number;
   };
   isActive: boolean;
   usage: {
-    IMPORTED_ROWS: number | ChargeItem[];
+    IMPORTED_ROWS: number;
   };
   expiryDate: string;
   meta: {
