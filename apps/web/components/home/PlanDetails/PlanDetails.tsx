@@ -30,7 +30,8 @@ export function PlanDetails() {
     typeof activePlanDetails?.meta.IMPORTED_ROWS === 'number' && activePlanDetails?.meta.IMPORTED_ROWS < 0;
 
   // Define background color based on conditions
-  const backgroundColor = isLessThanZero ? colors.danger : colors.yellow;
+  const backgroundColor =
+    isLessThanZero || activePlanDetails!.usage.IMPORTED_ROWS > numberOfRecords ? colors.danger : colors.yellow;
 
   if (!activePlanDetails) return null;
 
@@ -42,7 +43,9 @@ export function PlanDetails() {
         direction="row"
         align="center"
         style={{
-          border: `1px solid ${isLessThanZero ? colors.danger : colors.yellow}`,
+          border: `1px solid ${
+            isLessThanZero || activePlanDetails.usage.IMPORTED_ROWS > numberOfRecords ? colors.danger : colors.yellow
+          }`,
           backgroundColor: backgroundColor + '20',
         }}
       >
@@ -50,12 +53,13 @@ export function PlanDetails() {
           <Title order={4}>Overall Usage</Title>
           {typeof activePlanDetails?.usage.IMPORTED_ROWS === 'number' ? (
             <Text>
-              You have imported {activePlanDetails!.usage.IMPORTED_ROWS} of {numberOfRecords} records on the{' '}
-              {activePlanDetails?.plan.name} Plan (Resets on {activePlanDetails!.expiryDate})
+              You have imported {activePlanDetails!.usage.IMPORTED_ROWS} of {numberOfRecords} records in the{' '}
+              {activePlanDetails?.plan.name} Plan (Resets on {activePlanDetails!.expiryDate} ) Your total charges are $
+              {activePlanDetails?.plan.charge}
             </Text>
           ) : (
             <Text>
-              Overall You have left {activePlanDetails!.meta.IMPORTED_ROWS} of{' '}
+              Overall You have left {activePlanDetails!.meta.IMPORTED_ROWS}
               {activePlanDetails?.plan.charges[0].properties.units} records in {activePlanDetails?.plan.name} Plan
               (Resets on {activePlanDetails!.expiryDate})
             </Text>
@@ -71,7 +75,7 @@ export function PlanDetails() {
               withCloseButton: false,
             });
           }}
-          color={isLessThanZero ? 'red' : 'yellow'}
+          color={isLessThanZero || activePlanDetails.usage.IMPORTED_ROWS > numberOfRecords ? 'red' : 'blue'}
         >
           Upgrade Plan
         </Button>
