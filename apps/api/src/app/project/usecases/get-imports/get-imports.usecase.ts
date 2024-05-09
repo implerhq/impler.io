@@ -6,7 +6,10 @@ import { PaginationResult } from '@impler/shared';
 
 @Injectable()
 export class GetImports {
-  constructor(private templateRepository: TemplateRepository, private commonRepository: CommonRepository) {}
+  constructor(
+    private templateRepository: TemplateRepository,
+    private commonRepository: CommonRepository
+  ) {}
 
   async execute({
     _projectId,

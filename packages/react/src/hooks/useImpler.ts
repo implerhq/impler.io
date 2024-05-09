@@ -90,7 +90,7 @@ export function useImpler({
       return vv.toString(16);
     });
   }
-  
+
   const showWidget = async ({ colorScheme, data, schema, output }: ShowWidgetProps) => {
     if (window.impler && isImplerInitiated) {
       const payload: IShowPayload = {

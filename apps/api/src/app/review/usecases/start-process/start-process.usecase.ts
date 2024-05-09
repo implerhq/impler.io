@@ -5,7 +5,10 @@ import { TemplateEntity, UploadEntity, UploadRepository } from '@impler/dal';
 
 @Injectable()
 export class StartProcess {
-  constructor(private uploadRepository: UploadRepository, private queueService: QueueService) {}
+  constructor(
+    private uploadRepository: UploadRepository,
+    private queueService: QueueService
+  ) {}
 
   async execute(_uploadId: string): Promise<UploadEntity> {
     let upload = await this.uploadRepository.getUploadWithTemplate(_uploadId, ['destination']);
