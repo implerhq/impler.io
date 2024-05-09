@@ -117,6 +117,10 @@ type TrackData =
   | {
       name: 'IMPORT DUPLICATE';
       properties: Record<string, never>;
+    }
+  | {
+      name: 'IMPORT CLICK';
+      properties: Record<string, never>;
     };
 
 export function track({ name, properties }: TrackData) {
