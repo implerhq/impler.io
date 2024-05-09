@@ -70,7 +70,14 @@ export function PlanDetails() {
             modals.open({
               id: MODAL_KEYS.PAYMENT_PLANS,
               modalId: MODAL_KEYS.PAYMENT_PLANS,
-              children: <PlansModal userProfile={profile!} activePlanCode={activePlanDetails?.plan?.code} />,
+              children: (
+                <PlansModal
+                  userProfile={profile!}
+                  activePlanCode={activePlanDetails?.plan?.code}
+                  canceledOn={activePlanDetails.plan.canceledOn}
+                  expiryDate={activePlanDetails.expiryDate}
+                />
+              ),
               size: '2xl',
               withCloseButton: false,
             });
