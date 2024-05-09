@@ -13,6 +13,8 @@ import { useCancelPlan } from '@hooks/useCancelPlan';
 interface PlansProps {
   profile: IProfileData;
   activePlanCode?: string;
+  canceledOn?: Date;
+  expiryDate: Date;
 }
 
 interface PlanItem {
@@ -25,7 +27,7 @@ interface PlanItem {
   extraChargeOverheadTenThusandRecords?: number;
 }
 
-export const Plans = ({ profile, activePlanCode }: PlansProps) => {
+export const Plans = ({ profile, activePlanCode, canceledOn, expiryDate }: PlansProps) => {
   const router = useRouter();
   const { classes } = useStyles();
   const { publicRuntimeConfig } = getConfig();
@@ -100,6 +102,14 @@ export const Plans = ({ profile, activePlanCode }: PlansProps) => {
       // activate plan
       router.push(`${gatewayURL}/api/v1/plans/${code}/buy/${profile.email}/redirect`);
     }
+  };
+
+  const getButtonTextContent = (planCode: string) => {
+    if (canceledOn !== null && activePlanCode === planCode) {
+      return `Cancelled On ${canceledOn}`;
+    }
+
+    return activePlanCode === planCode ? 'Cancel Plan' : 'Activate Plan';
   };
 
   return (
@@ -205,16 +215,30 @@ export const Plans = ({ profile, activePlanCode }: PlansProps) => {
             <td></td>
             {plans[showYearly ? 'yearly' : 'monthly'].map((plan, index) => (
               <td key={index}>
+                {/* // when plan is cancelled
+                // when plan is expired */}
                 {plan.code === 'STARTER' ? null : (
-                  <Button
-                    component="a"
-                    variant="filled"
-                    loading={isCancelPlanLoading}
-                    color={activePlanCode === plan.code ? 'red' : 'blue'}
-                    onClick={() => onPlanButtonClick(plan.code)}
-                  >
-                    {activePlanCode === plan.code ? 'Cancel Plan' : 'Activate Plan'}
-                  </Button>
+                  <>
+                    <Button
+                      component="a"
+                      variant="filled"
+                      loading={isCancelPlanLoading}
+                      color={activePlanCode === plan.code ? 'red' : 'blue'}
+                      onClick={() => onPlanButtonClick(plan.code)}
+                      disabled={canceledOn !== null && activePlanCode === plan.code}
+                      style={{
+                        color: 'white',
+                      }}
+                      mt={4}
+                    >
+                      {getButtonTextContent(plan.code)}
+                    </Button>
+                    {canceledOn !== null && activePlanCode === plan.code && expiryDate && (
+                      <Text size="sm" mt={2}>
+                        {`Expiring on ${expiryDate}`}
+                      </Text>
+                    )}
+                  </>
                 )}
               </td>
             ))}
