@@ -51,12 +51,13 @@ interface ISubscriptionData {
       properties: Record<string, string | number>;
     }[];
     charge: number;
+    canceledOn?: Date;
   };
   isActive: boolean;
   usage: {
     IMPORTED_ROWS: number;
   };
-  expiryDate: string;
+  expiryDate: Date;
   meta: {
     IMPORTED_ROWS: number;
   };
