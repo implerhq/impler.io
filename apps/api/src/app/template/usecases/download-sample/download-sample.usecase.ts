@@ -8,7 +8,10 @@ import { DownloadSampleCommand } from './download-sample.command';
 
 @Injectable()
 export class DownloadSample {
-  constructor(private columnsRepository: ColumnRepository, private excelFileService: ExcelFileService) {}
+  constructor(
+    private columnsRepository: ColumnRepository,
+    private excelFileService: ExcelFileService
+  ) {}
 
   async execute(_templateId: string, data: DownloadSampleCommand): Promise<Buffer> {
     const columns = await this.columnsRepository.find(

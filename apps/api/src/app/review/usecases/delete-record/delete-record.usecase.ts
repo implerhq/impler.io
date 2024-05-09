@@ -3,7 +3,10 @@ import { DalService, UploadRepository } from '@impler/dal';
 
 @Injectable()
 export class DeleteRecord {
-  constructor(private dalService: DalService, private uploadRepository: UploadRepository) {}
+  constructor(
+    private dalService: DalService,
+    private uploadRepository: UploadRepository
+  ) {}
 
   async execute(_uploadId: string, index: number, isValid?: boolean) {
     await this.dalService.deleteRecord(_uploadId, index);

@@ -4,7 +4,10 @@ import { TemplateListResponseDto } from 'app/project/dtos/template-list-response
 
 @Injectable()
 export class GetTemplates {
-  constructor(private templateRepository: TemplateRepository, private commonRepository: CommonRepository) {}
+  constructor(
+    private templateRepository: TemplateRepository,
+    private commonRepository: CommonRepository
+  ) {}
 
   async execute(_projectId: string): Promise<TemplateListResponseDto[]> {
     const templates = await this.templateRepository.aggregate([

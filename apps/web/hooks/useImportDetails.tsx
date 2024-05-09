@@ -44,8 +44,9 @@ export function useImportDetails({ templateId }: useImportDetailProps) {
     {
       onSuccess: (data) => {
         modals.close(MODAL_KEYS.IMPORT_UPDATE);
-        queryClient.setQueryData<ITemplate[]>([API_KEYS.TEMPLATES_LIST, profileInfo!._projectId], (oldData) =>
-          oldData?.map((item) => (item._id === data._id ? data : item))
+        queryClient.setQueryData<ITemplate[]>(
+          [API_KEYS.TEMPLATES_LIST, profileInfo!._projectId],
+          (oldData) => oldData?.map((item) => (item._id === data._id ? data : item))
         );
         queryClient.setQueryData<ITemplate>([API_KEYS.TEMPLATE_DETAILS, templateId], data);
         notify(NOTIFICATION_KEYS.IMPORT_UPDATED);
@@ -57,8 +58,9 @@ export function useImportDetails({ templateId }: useImportDetailProps) {
     () => commonApi<ITemplate>(API_KEYS.TEMPLATE_DELETE as any, { parameters: [templateId] }),
     {
       onSuccess: () => {
-        queryClient.setQueryData<ITemplate[]>([API_KEYS.TEMPLATES_LIST, profileInfo!._projectId], (oldData) =>
-          oldData?.filter((item) => item._id !== templateId)
+        queryClient.setQueryData<ITemplate[]>(
+          [API_KEYS.TEMPLATES_LIST, profileInfo!._projectId],
+          (oldData) => oldData?.filter((item) => item._id !== templateId)
         );
         queryClient.removeQueries([API_KEYS.TEMPLATE_DETAILS, templateId]);
         notify(NOTIFICATION_KEYS.IMPORT_DELETED);
