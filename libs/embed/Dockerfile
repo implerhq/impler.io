@@ -2,7 +2,7 @@ FROM node:16-buster-slim
 
 WORKDIR /usr/src/app
 
-RUN npm install -g pnpm@7.9.4 --loglevel notice --force
+RUN npm install -g pnpm@8.9.0 --loglevel notice --force
 
 COPY .npmrc .
 COPY package.json .

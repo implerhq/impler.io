@@ -1,8 +1,8 @@
-FROM node:18.13.0-slim
+FROM node:20.13.1-slim
 
 WORKDIR /usr/src/app
 
-RUN npm install -g pnpm@7.9.4 --loglevel notice
+RUN npm install -g pnpm@8.9.0 --loglevel notice
 RUN npm i pm2 -g
 
 COPY package.json .
