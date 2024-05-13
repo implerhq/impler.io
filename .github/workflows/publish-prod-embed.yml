@@ -25,7 +25,7 @@ jobs:
       
       - uses: actions/setup-node@v2
         with:
-          node-version: '18.13.0'
+          node-version: '20.13.1'
 
       - name: Cache pnpm modules
         uses: actions/cache@v2
@@ -39,7 +39,7 @@ jobs:
         env:
           CI: false
         with:
-          version: 7.9.4
+          version: 8.9.0
           run_install: true
 
       - name: Build

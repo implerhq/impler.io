@@ -18,8 +18,8 @@ You can open a new issue from [here](https://github.com/implerhq/impler.io/issue
 
 ### Requirements
 
-- Node.js version v18.13.0
-  - pnpm version 7.9.4
+- Node.js version v20.13.1
+  - pnpm version 8.9.0
 - MongoDB
 - Localstack or AWS S3 credentials (for storing files)
 - RabbitMQ for microservices to interact with each other

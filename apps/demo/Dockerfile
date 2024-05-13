@@ -1,8 +1,8 @@
-FROM node:18.13.0-slim
+FROM node:20.13.1-slim
 
 WORKDIR /usr/src/app
 
-RUN npm install -g pnpm@7.9.4
+RUN npm install -g pnpm@8.9.0
 
 COPY .npmrc .
 COPY package.json .
