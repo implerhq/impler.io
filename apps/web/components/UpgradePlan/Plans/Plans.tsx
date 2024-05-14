@@ -215,8 +215,6 @@ export const Plans = ({ profile, activePlanCode, canceledOn, expiryDate }: Plans
             <td></td>
             {plans[showYearly ? 'yearly' : 'monthly'].map((plan, index) => (
               <td key={index}>
-                {/* // when plan is cancelled
-                // when plan is expired */}
                 {plan.code === 'STARTER' ? null : (
                   <>
                     <Button
