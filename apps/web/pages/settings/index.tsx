@@ -1,4 +1,6 @@
 import { useClipboard } from '@mantine/hooks';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
 import { Flex, Title, Text, ActionIcon, Tooltip, TextInput as Input } from '@mantine/core';
 
 import { Button } from '@ui/button';
@@ -6,8 +8,13 @@ import { AppLayout } from '@layouts/AppLayout';
 import { useSettings } from '@hooks/useSettings';
 import { CopyIcon } from '@assets/icons/Copy.icon';
 import { CheckIcon } from '@assets/icons/Check.icon';
+import StripeEmandate from './StripeEmandate';
+import getConfig from 'next/config';
 
 export default function Settings() {
+  const { publicRuntimeConfig } = getConfig();
+  const stripePromise = loadStripe(publicRuntimeConfig.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+  const stripeSecretKey = publicRuntimeConfig.NEXT_PUBLIC_STRIPE_SECRET_KEY;
   const { accessToken, regenerateAccessToken, isAccessTokenRegenerating } = useSettings();
   const clipboardApiKey = useClipboard({ timeout: 1000 });
 
@@ -33,6 +40,9 @@ export default function Settings() {
         <Button loading={isAccessTokenRegenerating} onClick={regenerateAccessToken}>
           Regenerate Access Token
         </Button>
+        <Elements stripe={stripePromise}>
+          <StripeEmandate stripeSecretKey={stripeSecretKey} />
+        </Elements>
       </>
     </>
   );
