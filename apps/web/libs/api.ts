@@ -7,6 +7,11 @@ interface Route {
 }
 
 const routes: Record<string, Route> = {
+  [API_KEYS.UPDATE_USER]: {
+    url: () => `/v1/user`,
+    method: 'PUT',
+  },
+
   [API_KEYS.FETCH_ACTIVE_SUBSCRIPTION]: {
     url: () => `/v1/user/subscription`,
     method: 'GET',
