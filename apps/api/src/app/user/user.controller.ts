@@ -1,11 +1,10 @@
 import { ApiTags, ApiOperation, ApiSecurity } from '@nestjs/swagger';
-import { Body, Controller, Delete, Get, Put, Query, UseGuards } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Put, Query, UseGuards } from '@nestjs/common';
 
-import { GetImportCounts, CancelSubscription, GetActiveSubscription, UpdateUser } from './usecases';
+import { GetImportCounts, CancelSubscription, GetActiveSubscription, SetupPaymentIntent } from './usecases';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { IJwtPayload, ACCESS_KEY_NAME } from '@impler/shared';
 import { UserSession } from '@shared/framework/user.decorator';
-import { UpdateUserDto } from './usecases/update-user/update-user.dto';
 
 @ApiTags('User')
 @Controller('/user')
@@ -16,7 +15,7 @@ export class UserController {
     private getImportsCount: GetImportCounts,
     private getActiveSubscription: GetActiveSubscription,
     private cancelSubscription: CancelSubscription,
-    private updateCustomer: UpdateUser
+    private setupPaymentIntent: SetupPaymentIntent
   ) {}
 
   @Get('/import-count')
@@ -51,13 +50,11 @@ export class UserController {
     return this.cancelSubscription.execute(user.email);
   }
 
-  @Put()
+  @Put('/setup-intent/:paymentId')
   @ApiOperation({
-    summary: 'Update User Information',
+    summary: 'Setup User Payment Intent',
   })
-  async updateUserPaymentMethod(@UserSession() user: IJwtPayload, @Body() payload: UpdateUserDto) {
-    return this.updateCustomer.execute(user.email, {
-      paymentMethodId: payload.paymentMethodId,
-    });
+  async setupEMandateIntent(@UserSession() user: IJwtPayload, @Param('paymentId') paymentId: string) {
+    return this.setupPaymentIntent.execute(user.email, paymentId);
   }
 }
