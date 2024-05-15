@@ -7,8 +7,8 @@ interface Route {
 }
 
 const routes: Record<string, Route> = {
-  [API_KEYS.UPDATE_USER]: {
-    url: () => `/v1/user`,
+  [API_KEYS.UPDATE_PAYMENT_INTENT]: {
+    url: (paymentMethodId) => `/v1/user/setup-intent/${paymentMethodId}`,
     method: 'PUT',
   },
 
