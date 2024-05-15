@@ -4,7 +4,6 @@ import { PlansModal } from '@components/UpgradePlan/PlansModal';
 import { modals } from '@mantine/modals';
 import { useApp } from '@hooks/useApp';
 import { usePlanDetails } from '@hooks/usePlanDetails';
-
 export function PlanDetails() {
   const { profile } = useApp();
 
