@@ -32,14 +32,14 @@ interface ISubscriptionData {
       };
       chargeModel: string;
       properties?:
-      | {
-        available: boolean;
-      }
-      | {
-        per_unit: number;
-        last_unit: number | string;
-        first_unit: number;
-      }[];
+        | {
+            available: boolean;
+          }
+        | {
+            per_unit: number;
+            last_unit: number | string;
+            first_unit: number;
+          }[];
     }[];
   };
 }
@@ -132,6 +132,24 @@ export class PaymentAPIService {
         [this.AUTH_KEY]: this.AUTH_VALUE,
       },
     });
+
+    return response.data;
+  }
+
+  async updatePaymentMethod(email: string, paymentMethodId: string): Promise<any> {
+    // update the payment API and there pass the payment method id and update it in the customers table
+    if (!this.PAYMENT_API_BASE_URL) return;
+
+    const url = `${this.PAYMENT_API_BASE_URL}/api/v1/customer/${email}/payment-id/${paymentMethodId}`;
+    const response = await axios.put(
+      url,
+      {},
+      {
+        headers: {
+          [this.AUTH_KEY]: this.AUTH_VALUE,
+        },
+      }
+    );
 
     return response.data;
   }
