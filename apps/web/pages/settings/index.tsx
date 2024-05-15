@@ -14,7 +14,6 @@ import getConfig from 'next/config';
 export default function Settings() {
   const { publicRuntimeConfig } = getConfig();
   const stripePromise = loadStripe(publicRuntimeConfig.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
-  const stripeSecretKey = publicRuntimeConfig.NEXT_PUBLIC_STRIPE_SECRET_KEY;
   const { accessToken, regenerateAccessToken, isAccessTokenRegenerating } = useSettings();
   const clipboardApiKey = useClipboard({ timeout: 1000 });
 
@@ -41,7 +40,7 @@ export default function Settings() {
           Regenerate Access Token
         </Button>
         <Elements stripe={stripePromise}>
-          <StripeEmandate stripeSecretKey={stripeSecretKey} />
+          <StripeEmandate />
         </Elements>
       </>
     </>
