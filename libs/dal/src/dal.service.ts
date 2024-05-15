@@ -74,13 +74,11 @@ export class DalService {
       record
     );
   }
-  async deleteRecord(_uploadId: string, index: number) {
+  async deleteRecords(_uploadId: string, index: number[]) {
     const model = this.getRecordCollection(_uploadId);
     if (!model) return;
 
-    await model.deleteOne({
-      index,
-    });
+    await model.deleteMany({ index: { $in: index } });
   }
   getRecordBulkOp(_uploadId: string) {
     const model = this.getRecordCollection(_uploadId);

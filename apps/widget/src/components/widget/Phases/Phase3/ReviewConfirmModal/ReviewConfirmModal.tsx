@@ -11,7 +11,7 @@ interface IConfirmModalProps {
   onConfirm: () => void;
 }
 
-export function ConfirmModal(props: IConfirmModalProps) {
+export function ReviewConfirmModal(props: IConfirmModalProps) {
   const { opened, onClose, onConfirm, totalRecords } = props;
 
   return (

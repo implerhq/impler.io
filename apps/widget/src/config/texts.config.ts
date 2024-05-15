@@ -42,22 +42,22 @@ export const TEXTS = {
   PHASE4: {
     CLOSE: 'Close',
   },
-  CONFIRM_MODAL: {
-    title: '{count} rows appears to be have wrong data',
-    subTitle: 'You can choose to exempt wrong data or keep your wrong data and confirm your upload',
-    EXEMPT_CONTINUE: 'Exempt wrong data and Continue',
-    KEEP_CONTINUE: 'Continue with wrong data',
-  },
   COMPLETE: {
-    title: 'Bravo! {count} rows have been uploaded',
-    subTitle: '{count} rows have been uploaded successfully, and currently is in process, it will be ready shortly.',
+    TITLE: 'Bravo! {count} rows have been uploaded',
+    SUB_TITLE: '{count} rows have been uploaded successfully, and currently is in process, it will be ready shortly.',
     UPLOAD_AGAIN: 'Upload new File',
   },
   SELECT_SHEET_MODAL: {
     SELECT: 'Select',
   },
+  DELETE_CONFIRMATION: {
+    TITLE: `{total} rows will be deleted. Are you sure?`,
+    SUBTITLE: 'This action cannot be undone.',
+    YES: 'Yes',
+    NO: 'Cancel',
+  },
   PROMPT: {
-    title: `Are you sure? You will lose your work in progress.`,
+    TITLE: `Are you sure? You will lose your work in progress.`,
     SUBTITLE_CLOSE: 'Your import is in progress, clicking <b>Yes</b> will reset it.',
     SUBTITLE_RESET: 'Your import is in progress, clicking <b>Yes</b> will reset it.',
     YES: 'Yes',
