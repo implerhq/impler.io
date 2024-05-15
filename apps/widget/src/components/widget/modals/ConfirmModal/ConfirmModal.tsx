@@ -2,37 +2,35 @@ import { Group, Modal as MantineModal, Text, Title } from '@mantine/core';
 
 import { Warning } from '@icons';
 import { Button } from '@ui/Button';
-import { colors, TEXTS } from '@config';
-import { PromptModalTypesEnum } from '@types';
+import { colors } from '@config';
 
 interface IPromptModalProps {
   opened: boolean;
   onCancel: () => void;
   onConfirm: () => void;
-  action?: PromptModalTypesEnum;
+  title: string;
+  subTitle: string;
+  confirmLabel: string;
+  cancelLabel: string;
 }
 
-export function PromptModal(props: IPromptModalProps) {
-  const { opened, onCancel, onConfirm, action } = props;
-  const subTitle = {
-    [PromptModalTypesEnum.CLOSE]: TEXTS.PROMPT.SUBTITLE_CLOSE,
-    [PromptModalTypesEnum.UPLOAD_AGAIN]: TEXTS.PROMPT.SUBTITLE_RESET,
-  };
+export function ConfirmModal(props: IPromptModalProps) {
+  const { opened, onCancel, onConfirm, title, subTitle, confirmLabel, cancelLabel } = props;
 
   return (
     <MantineModal centered opened={opened} onClose={onCancel} withCloseButton={false} padding="xl" size="lg">
       <Group spacing={0} style={{ flexDirection: 'column', textAlign: 'center' }}>
         <Warning fill={colors.red} styles={{ width: 40, height: 40 }} />
         <Title color={colors.red} order={3} mt="sm">
-          {TEXTS.PROMPT.title}
+          {title}
         </Title>
-        <Text color="dimmed" mb="sm" dangerouslySetInnerHTML={{ __html: subTitle[action || ''] }} />
+        <Text color="dimmed" mb="sm" dangerouslySetInnerHTML={{ __html: subTitle }} />
         <Group spacing="sm" style={{ flexDirection: 'row' }}>
           <Button onClick={onCancel} color="gray" variant="outline">
-            {TEXTS.PROMPT.NO}
+            {cancelLabel}
           </Button>
           <Button color="red" onClick={onConfirm}>
-            {TEXTS.PROMPT.YES}
+            {confirmLabel}
           </Button>
         </Group>
       </Group>

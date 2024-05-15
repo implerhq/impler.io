@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { Modal } from '@ui/Modal';
-import { variables } from '@config';
+import { TEXTS, variables } from '@config';
 import { ParentWindow } from '@util';
 import { IUpload } from '@impler/shared';
 import { Phase0 } from './Phases/Phase0';
@@ -11,7 +11,7 @@ import { Phase3 } from './Phases/Phase3';
 import { Phase4 } from './Phases/Phase4';
 import { useWidget } from '@hooks/useWidget';
 import { useAppState } from '@store/app.context';
-import { PromptModal } from './modals/PromptModal';
+import { ConfirmModal } from './modals/ConfirmModal';
 import { Layout } from 'components/Common/Layout';
 import { PhasesEnum, PromptModalTypesEnum } from '@types';
 import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
@@ -65,16 +65,23 @@ export function Widget() {
     [PhasesEnum.REVIEW]: <Phase3 onNextClick={onComplete} onPrevClick={onUploadResetClick} />,
     [PhasesEnum.COMPLETE]: <Phase4 rowsCount={dataCount} onUploadAgainClick={resetProgress} onCloseClick={onClose} />,
   };
+  const subTitle = {
+    [PromptModalTypesEnum.CLOSE]: TEXTS.PROMPT.SUBTITLE_CLOSE,
+    [PromptModalTypesEnum.UPLOAD_AGAIN]: TEXTS.PROMPT.SUBTITLE_RESET,
+  };
 
   return (
     <Modal title={title || templateInfo?.name} opened={showWidget} onClose={onClose}>
       <Layout active={phase} title={title || templateInfo?.name}>
         {PhaseView[phase]}
-        <PromptModal
+        <ConfirmModal
           onCancel={onPromptCancel}
+          title={TEXTS.PROMPT.TITLE}
           onConfirm={onPromptConfirm}
+          cancelLabel={TEXTS.PROMPT.NO}
+          confirmLabel={TEXTS.PROMPT.YES}
           opened={!!promptContinueAction}
-          action={promptContinueAction}
+          subTitle={subTitle[promptContinueAction!]}
         />
       </Layout>
     </Modal>

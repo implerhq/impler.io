@@ -23,6 +23,7 @@ import { validateNotFound } from '@shared/helpers/common.helper';
 import { PaginationResponseDto } from '@shared/dtos/pagination-response.dto';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 import { GetUploadCommand } from '@shared/usecases/get-upload/get-upload.command';
+import { ValidateIndexes } from '@shared/validations/valid-indexes.validation';
 
 @Controller('/review')
 @ApiTags('Review')
@@ -146,16 +147,17 @@ export class ReviewController {
     await this.updateRecord.execute(_uploadId, body);
   }
 
-  @Delete(':uploadId/record/:index')
+  @Delete(':uploadId/record')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Delete review record for ongoing import',
   })
   async deleteReviewRecord(
-    @Param('index') index: number,
-    @Query('isValid') isValid: boolean,
+    @Query('valid') valid: number,
+    @Query('invalid') invalid: number,
+    @Query('indexes', ValidateIndexes) indexes: string,
     @Param('uploadId', ValidateMongoId) _uploadId: string
   ) {
-    await this.deleteRecord.execute(_uploadId, index, isValid);
+    await this.deleteRecord.execute(_uploadId, indexes.split(',').map(Number), valid, invalid);
   }
 }
