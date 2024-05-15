@@ -34,9 +34,12 @@
 .list-wrapper {
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
     background-color: #fff;
-    opacity: 1;
+    opacity: 0;
     z-index: 300;
     position: absolute;
+}
+.list-wrapper.open {
+    opacity: 1;
 }
 
 .list-wrapper ul {
