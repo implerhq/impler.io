@@ -33,7 +33,7 @@ class SelectEditor extends BaseEditor {
   }
   close() {
     this._opened = false;
-    this.listDiv.style.display = 'none';
+    this.listDiv.classList.remove('open');
   }
   getValue() {
     return this.selectInput.value;
@@ -55,7 +55,6 @@ class SelectEditor extends BaseEditor {
     selectStyle.minWidth = `${width}px`;
     selectStyle[this.hot.isRtl() ? 'right' : 'left'] = `${start}px`;
     selectStyle.margin = '0px';
-    selectStyle.display = '';
   }
   prepare(
     row: number,
