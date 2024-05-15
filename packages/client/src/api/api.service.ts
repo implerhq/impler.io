@@ -46,7 +46,7 @@ export class ApiService {
   async checkIsRequestvalid(
     projectId: string,
     templateId?: string,
-    schema?: string
+    schema?: string,
   ) {
     return this.httpClient.post(`/common/valid`, {
       projectId,
@@ -57,7 +57,7 @@ export class ApiService {
 
   async getImportConfig(projectId: string) {
     return this.httpClient.get(
-      `/common/import-config?projectId=${projectId}`
+      `/common/import-config?projectId=${projectId}`,
     ) as Promise<IImportConfig>;
   }
 
@@ -107,7 +107,7 @@ export class ApiService {
   async finalizeMappings(uploadId: string, mappings: IMappingFinalize[]) {
     return this.httpClient.post(
       `/mapping/${uploadId}/finalize`,
-      mappings
+      mappings,
     ) as Promise<IUpload>;
   }
 
@@ -129,13 +129,13 @@ export class ApiService {
     const queryString = this.constructQueryString({ limit, page, type });
 
     return this.httpClient.get(
-      `/review/${uploadId}${queryString}`
+      `/review/${uploadId}${queryString}`,
     ) as Promise<IReviewData>;
   }
 
   async confirmReview(uploadId: string) {
     return this.httpClient.post(
-      `/review/${uploadId}/confirm`
+      `/review/${uploadId}/confirm`,
     ) as Promise<IUpload>;
   }
 
@@ -155,13 +155,13 @@ export class ApiService {
 
   async getValidUploadedRows(uploadId: string, page: number, limit: number) {
     return this.httpClient.get(
-      `/upload/${uploadId}/rows/valid?page=${page}&limit=${limit}`
+      `/upload/${uploadId}/rows/valid?page=${page}&limit=${limit}`,
     ) as Promise<PaginationResult>;
   }
 
   async getInvalidUploadedRows(uploadId: string, page: number, limit: number) {
     return this.httpClient.get(
-      `/upload/${uploadId}/rows/invalid?page=${page}&limit=${limit}`
+      `/upload/${uploadId}/rows/invalid?page=${page}&limit=${limit}`,
     ) as Promise<PaginationResult>;
   }
 
@@ -174,7 +174,7 @@ export class ApiService {
   async downloadSample(
     templateId: string,
     data?: Record<string, string | number>[],
-    schema?: string
+    schema?: string,
   ) {
     return this.httpClient.post(
       `/template/${templateId}/sample`,
@@ -183,7 +183,7 @@ export class ApiService {
         schema,
       },
       {},
-      'blob'
+      'blob',
     ) as Promise<ArrayBuffer>;
   }
 
@@ -191,9 +191,14 @@ export class ApiService {
     return this.httpClient.put(`/review/${uploadId}/record`, record);
   }
 
-  async deleteRecord(uploadId: string, index: number, isValid: boolean) {
+  async deleteRecord(
+    uploadId: string,
+    indexes: number[],
+    valid: number,
+    invalid: number,
+  ) {
     return this.httpClient.delete(
-      `/review/${uploadId}/record/${index}?isValid=${isValid}`
+      `/review/${uploadId}/record?indexes=${indexes}&valid=${valid}&invalid=${invalid}`,
     );
   }
 }
