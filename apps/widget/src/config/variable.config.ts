@@ -30,4 +30,5 @@ export const AMPLITUDE = {
   UPLOAD_AGAIN: 'upload again',
   RESET: 'reset',
   RECORDS: 'records',
+  RECORDS_DELETED: 'Records deleted',
 };
