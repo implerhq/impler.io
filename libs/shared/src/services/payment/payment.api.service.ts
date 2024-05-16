@@ -153,4 +153,21 @@ export class PaymentAPIService {
 
     return response.data;
   }
+
+  async savePaymentIntentId(email: string, paymentMethodId: string): Promise<any> {
+    if (!this.PAYMENT_API_BASE_URL) return;
+
+    const url = `${this.PAYMENT_API_BASE_URL}/api/v1/customer/${email}/payment-intent-id-confirm/${paymentMethodId}`;
+    const response = await axios.put(
+      url,
+      {},
+      {
+        headers: {
+          [this.AUTH_KEY]: this.AUTH_VALUE,
+        },
+      }
+    );
+
+    return response.data;
+  }
 }
