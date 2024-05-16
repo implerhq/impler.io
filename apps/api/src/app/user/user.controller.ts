@@ -1,7 +1,13 @@
 import { ApiTags, ApiOperation, ApiSecurity } from '@nestjs/swagger';
 import { Controller, Delete, Get, Param, Put, Query, UseGuards } from '@nestjs/common';
 
-import { GetImportCounts, CancelSubscription, GetActiveSubscription, SetupPaymentIntent } from './usecases';
+import {
+  GetImportCounts,
+  CancelSubscription,
+  GetActiveSubscription,
+  SetupPaymentIntent,
+  SavePaymentIntentId,
+} from './usecases';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { IJwtPayload, ACCESS_KEY_NAME } from '@impler/shared';
 import { UserSession } from '@shared/framework/user.decorator';
@@ -15,7 +21,8 @@ export class UserController {
     private getImportsCount: GetImportCounts,
     private getActiveSubscription: GetActiveSubscription,
     private cancelSubscription: CancelSubscription,
-    private setupPaymentIntent: SetupPaymentIntent
+    private setupPaymentIntent: SetupPaymentIntent,
+    private savePaymentIntentId: SavePaymentIntentId
   ) {}
 
   @Get('/import-count')
@@ -56,5 +63,21 @@ export class UserController {
   })
   async setupEMandateIntent(@UserSession() user: IJwtPayload, @Param('paymentId') paymentId: string) {
     return this.setupPaymentIntent.execute(user.email, paymentId);
+  }
+
+  @Put('/confirm-intent/:paymentId')
+  @ApiOperation({
+    summary: 'Setup User Payment Intent',
+  })
+  async confirmEMandateIntent(@UserSession() user: IJwtPayload, @Param('paymentId') paymentId: string) {
+    return this.setupPaymentIntent.execute(user.email, paymentId);
+  }
+
+  @Put('/confirm-payment-intent-id/:paymentId')
+  @ApiOperation({
+    summary: 'Save the Payment Intent Id If user cancels the E-Mandate Authorization',
+  })
+  async savePaymentIntentIdRoute(@UserSession() user: IJwtPayload, @Param('paymentId') paymentId: string) {
+    return this.savePaymentIntentId.execute(user.email, paymentId);
   }
 }
