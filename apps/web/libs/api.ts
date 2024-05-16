@@ -7,6 +7,11 @@ interface Route {
 }
 
 const routes: Record<string, Route> = {
+  [API_KEYS.SAVE_PAYMENT_INTENT_ID]: {
+    url: (paymentMethodId) => `/v1/user/confirm-payment-intent-id/${paymentMethodId}`,
+    method: 'PUT',
+  },
+
   [API_KEYS.UPDATE_PAYMENT_INTENT]: {
     url: (paymentMethodId) => `/v1/user/setup-intent/${paymentMethodId}`,
     method: 'PUT',
