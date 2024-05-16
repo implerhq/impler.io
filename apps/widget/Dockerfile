@@ -23,6 +23,5 @@ COPY pnpm-workspace.yaml .
 COPY pnpm-lock.yaml .
 
 RUN pnpm install
-RUN pnpm build
 
 CMD [ "pnpm", "start:static:widget" ]

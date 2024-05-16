@@ -25,6 +25,5 @@ COPY pnpm-lock.yaml .
 ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN pnpm install
-RUN pnpm build
 
 CMD [ "pnpm", "start:static:web" ]
