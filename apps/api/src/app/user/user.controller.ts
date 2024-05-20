@@ -1,16 +1,11 @@
 import { ApiTags, ApiOperation, ApiSecurity } from '@nestjs/swagger';
 import { Controller, Delete, Get, Param, Put, Query, UseGuards } from '@nestjs/common';
 
-import {
-  GetImportCounts,
-  CancelSubscription,
-  GetActiveSubscription,
-  SetupPaymentIntent,
-  SavePaymentIntentId,
-} from './usecases';
+import { GetImportCounts, CancelSubscription, GetActiveSubscription, SetupPaymentIntent } from './usecases';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { IJwtPayload, ACCESS_KEY_NAME } from '@impler/shared';
 import { UserSession } from '@shared/framework/user.decorator';
+import { RetrievePaymentMethods } from './usecases/retrive-payment-methods/retrive-payment-methods.usecase';
 
 @ApiTags('User')
 @Controller('/user')
@@ -22,7 +17,8 @@ export class UserController {
     private getActiveSubscription: GetActiveSubscription,
     private cancelSubscription: CancelSubscription,
     private setupPaymentIntent: SetupPaymentIntent,
-    private savePaymentIntentId: SavePaymentIntentId
+    private confirmIntentId: SetupPaymentIntent,
+    private retrivePaymentMethods: RetrievePaymentMethods
   ) {}
 
   @Get('/import-count')
@@ -65,19 +61,19 @@ export class UserController {
     return this.setupPaymentIntent.execute(user.email, paymentId);
   }
 
-  @Put('/confirm-intent/:paymentId')
+  @Put('/confirm-payment-intent-id/:intentId')
   @ApiOperation({
-    summary: 'Setup User Payment Intent',
+    summary: 'Pass the Payment Intent Id If user cancels the E-Mandate Authorization',
   })
-  async confirmEMandateIntent(@UserSession() user: IJwtPayload, @Param('paymentId') paymentId: string) {
-    return this.setupPaymentIntent.execute(user.email, paymentId);
+  async savePaymentIntentIdRoute(@UserSession() user: IJwtPayload, @Param('intentId') intentId: string) {
+    return this.confirmIntentId.execute(user.email, intentId);
   }
 
-  @Put('/confirm-payment-intent-id/:paymentId')
+  @Get('/payment-methods')
   @ApiOperation({
-    summary: 'Save the Payment Intent Id If user cancels the E-Mandate Authorization',
+    summary: 'Retrieve the Payment Methods of the User',
   })
-  async savePaymentIntentIdRoute(@UserSession() user: IJwtPayload, @Param('paymentId') paymentId: string) {
-    return this.savePaymentIntentId.execute(user.email, paymentId);
+  async retriveUserPaymentMethods(@UserSession() user: IJwtPayload) {
+    return this.retrivePaymentMethods.execute(user.email);
   }
 }
