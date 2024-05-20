@@ -350,7 +350,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
         message: `Successfully deleted ${numberFormatter(vars[1])} valid and ${numberFormatter(
           vars[2]
         )} invalid records. Total ${numberFormatter(vars[1] + vars[2])} records are deleted.`,
-        title: `${vars[1] + vars[2]} records deleted.`,
+        title: `${numberFormatter(vars[1] + vars[2])} records deleted.`,
       });
     },
   });
