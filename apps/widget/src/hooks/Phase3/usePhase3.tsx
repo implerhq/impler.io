@@ -17,6 +17,7 @@ import {
   IUpload,
   IRecord,
   ReviewDataTypesEnum,
+  numberFormatter,
 } from '@impler/shared';
 
 interface IUsePhase3Props {
@@ -155,7 +156,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     {
       onSuccess(data) {
         const newColumnDefs: HotItemSchema[] = [];
-        const newHeadings: string[] = ['*', '#'];
+        const newHeadings: string[] = ['*', 'Sr. No.'];
         newColumnDefs.push({
           type: 'text',
           data: 'record.index',
@@ -344,6 +345,12 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
       logAmplitudeEvent('RECORDS_DELETED', {
         valid: vars[1],
         invalid: vars[2],
+      });
+      notifier.showError({
+        message: `Successfully deleted ${numberFormatter(vars[1])} valid and ${numberFormatter(
+          vars[2]
+        )} invalid records. Total ${numberFormatter(vars[1] + vars[2])} records are deleted.`,
+        title: `${vars[1] + vars[2]} records deleted.`,
       });
     },
   });
