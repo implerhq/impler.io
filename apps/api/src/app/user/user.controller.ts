@@ -1,7 +1,14 @@
 import { ApiTags, ApiOperation, ApiSecurity } from '@nestjs/swagger';
 import { Controller, Delete, Get, Param, Put, Query, UseGuards } from '@nestjs/common';
 
-import { GetImportCounts, CancelSubscription, GetActiveSubscription, SetupPaymentIntent } from './usecases';
+import {
+  GetImportCounts,
+  CancelSubscription,
+  GetActiveSubscription,
+  UpdatePaymentMethod,
+  ConfirmIntentId,
+  DeleteUserPaymentMethod,
+} from './usecases';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { IJwtPayload, ACCESS_KEY_NAME } from '@impler/shared';
 import { UserSession } from '@shared/framework/user.decorator';
@@ -16,9 +23,10 @@ export class UserController {
     private getImportsCount: GetImportCounts,
     private getActiveSubscription: GetActiveSubscription,
     private cancelSubscription: CancelSubscription,
-    private setupPaymentIntent: SetupPaymentIntent,
-    private confirmIntentId: SetupPaymentIntent,
-    private retrivePaymentMethods: RetrievePaymentMethods
+    private updatePaymentMethod: UpdatePaymentMethod,
+    private confirmIntentId: ConfirmIntentId,
+    private retrivePaymentMethods: RetrievePaymentMethods,
+    private deleteUserPaymentMethod: DeleteUserPaymentMethod
   ) {}
 
   @Get('/import-count')
@@ -58,7 +66,7 @@ export class UserController {
     summary: 'Setup User Payment Intent',
   })
   async setupEMandateIntent(@UserSession() user: IJwtPayload, @Param('paymentId') paymentId: string) {
-    return this.setupPaymentIntent.execute(user.email, paymentId);
+    return this.updatePaymentMethod.execute(user.email, paymentId);
   }
 
   @Put('/confirm-payment-intent-id/:intentId')
@@ -75,5 +83,13 @@ export class UserController {
   })
   async retriveUserPaymentMethods(@UserSession() user: IJwtPayload) {
     return this.retrivePaymentMethods.execute(user.email);
+  }
+
+  @Delete('/payment-methods/:paymentMethodId')
+  @ApiOperation({
+    summary: 'Detach or Delete the Payment Method of the User',
+  })
+  async deletePaymentMethodRoute(@Param('paymentMethodId') paymentMethodId: string) {
+    return this.deleteUserPaymentMethod.execute(paymentMethodId);
   }
 }
