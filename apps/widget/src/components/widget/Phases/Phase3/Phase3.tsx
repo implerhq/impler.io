@@ -180,13 +180,14 @@ export function Phase3(props: IPhase3Props) {
         title={replaceVariablesInString(TEXTS.DELETE_CONFIRMATION.TITLE, {
           total: numberFormatter(selectedRowsRef.current.size),
         })}
-        onConfirm={() =>
+        onConfirm={() => {
+          setShowDeleteConfirmModal(false);
           deleteRecords([
             Array.from(selectedRowsRef.current),
             selectedRowsCountRef.current.valid.size,
             selectedRowsCountRef.current.invalid.size,
-          ])
-        }
+          ]);
+        }}
         cancelLabel={TEXTS.DELETE_CONFIRMATION.NO}
         confirmLabel={TEXTS.DELETE_CONFIRMATION.YES}
         opened={!!showDeleteConfirmModal}
