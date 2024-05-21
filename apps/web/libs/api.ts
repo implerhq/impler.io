@@ -7,13 +7,21 @@ interface Route {
 }
 
 const routes: Record<string, Route> = {
-  [API_KEYS.SAVE_PAYMENT_INTENT_ID]: {
-    url: (paymentMethodId) => `/v1/user/confirm-payment-intent-id/${paymentMethodId}`,
-    method: 'PUT',
+  [API_KEYS.PAYMENT_METHOD_LIST]: {
+    url: () => `/v1/user/payment-methods`,
+    method: 'GET',
+  },
+  [API_KEYS.PAYMENT_METHOD_DELETE]: {
+    url: (paymentMethodId: string) => `/v1/user/payment-methods/${paymentMethodId}`,
+    method: 'DELETE',
   },
 
-  [API_KEYS.UPDATE_PAYMENT_INTENT]: {
-    url: (paymentMethodId) => `/v1/user/setup-intent/${paymentMethodId}`,
+  [API_KEYS.ADD_PAYMENT_METHOD]: {
+    url: (paymentMethodId: string) => `/v1/user/setup-intent/${paymentMethodId}`,
+    method: 'PUT',
+  },
+  [API_KEYS.SAVE_INTENT_ID]: {
+    url: (intentId: string) => `/v1/user/confirm-payment-intent-id/${intentId}`,
     method: 'PUT',
   },
 
