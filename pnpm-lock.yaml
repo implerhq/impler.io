@@ -297,11 +297,14 @@ importers:
       '@storybook/manager-webpack5': ^6.5.16
       '@storybook/react': ^6.5.13
       '@storybook/theming': ^7.0.2
+      '@stripe/react-stripe-js': ^2.7.1
+      '@stripe/stripe-js': ^3.4.0
       '@tanstack/react-query': ^4.14.5
       '@tawk.to/tawk-messenger-react': ^2.0.1
       '@types/node': ^18.15.11
       '@types/react': ^18.2.0
       '@types/react-dom': ^18.2.0
+      axios: 1.6.2
       chart.js: ^4.3.0
       embla-carousel-react: ^7.0.9
       eslint: ^8.38.0
@@ -336,8 +339,11 @@ importers:
       '@mantine/prism': 6.0.21_hpnsvztc57wsdtanyivhwcmsrq
       '@openreplay/tracker': 9.0.14
       '@sentry/nextjs': 7.112.2_77yeyxqimom7qoudakh7jsyc6u
+      '@stripe/react-stripe-js': 2.7.1_zeauwjq4ac2tzffgxnwr5gvymq
+      '@stripe/stripe-js': 3.4.0
       '@tanstack/react-query': 4.36.1_biqbaboplfbrettd7655fr4n2y
       '@tawk.to/tawk-messenger-react': 2.0.2_biqbaboplfbrettd7655fr4n2y
+      axios: 1.6.2
       chart.js: 4.4.2
       embla-carousel-react: 7.1.0_react@18.2.0
       jwt-decode: 3.1.2
@@ -7982,6 +7988,24 @@ packages:
       react-dom: 18.2.0_react@18.2.0
       regenerator-runtime: 0.13.11
       resolve-from: 5.0.0
+
+  /@stripe/react-stripe-js/2.7.1_zeauwjq4ac2tzffgxnwr5gvymq:
+    resolution: {integrity: sha512-/i13alp27HaSBbMM6kW0jhy8KqdtOL1T/EcRjFjfhvt+CBtMEg8TD7y28W3oZG0+OBDdCyGGnXgNgrKPYQH40g==}
+    peerDependencies:
+      '@stripe/stripe-js': ^1.44.1 || ^2.0.0 || ^3.0.0
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@stripe/stripe-js': 3.4.0
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    dev: false
+
+  /@stripe/stripe-js/3.4.0:
+    resolution: {integrity: sha512-a2kUP7OrsV0SSIk3UxWa+cnrW+PPIyuCbWIBH8vxfHIqmyeQN/d0lsplZJ2h7MlLsU/sB3EyhNBkhLLT+zHwKw==}
+    engines: {node: '>=12.16'}
+    dev: false
 
   /@surma/rollup-plugin-off-main-thread/2.2.3:
     resolution: {integrity: sha512-lR8q/9W7hZpMWweNiAKU7NQerBnzQQLvi8qnTDU/fxItPhtZVMbPV3lbCwjhIlNBe9Bbr5V+KHshvWmVSG9cxQ==}

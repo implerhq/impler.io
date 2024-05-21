@@ -1,6 +1,7 @@
-import { Tabs } from '@mantine/core';
 import { GenerateAccessToken } from './GenerateAccessToken';
 import { UserCards } from './UserCards';
+
+import { Tabs } from '@mantine/core';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 
@@ -19,10 +20,10 @@ export function SettingsTab() {
   });
 
   return (
-    <Tabs mt={20} defaultValue="accesstoken" value={(tab as string) || 'accesstoken'} onTabChange={handleTabChange}>
+    <Tabs mt={2} defaultValue="accesstoken" value={(tab as string) || 'accesstoken'} onTabChange={handleTabChange}>
       <Tabs.List>
-        <Tabs.Tab value="accesstoken">Regnerate Access Token</Tabs.Tab>
-        <Tabs.Tab value="addcard">Add Card</Tabs.Tab>
+        <Tabs.Tab value="accesstoken">Access Token</Tabs.Tab>
+        <Tabs.Tab value="addcard">Cards</Tabs.Tab>
       </Tabs.List>
 
       <Tabs.Panel value="accesstoken" pt="xs">

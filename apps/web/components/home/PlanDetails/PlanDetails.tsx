@@ -4,6 +4,7 @@ import { PlansModal } from '@components/UpgradePlan/PlansModal';
 import { modals } from '@mantine/modals';
 import { useApp } from '@hooks/useApp';
 import { usePlanDetails } from '@hooks/usePlanDetails';
+
 export function PlanDetails() {
   const { profile } = useApp();
 
@@ -52,15 +53,21 @@ export function PlanDetails() {
           <Title order={4}>Overall Usage</Title>
           {typeof activePlanDetails?.usage.IMPORTED_ROWS === 'number' ? (
             <Text>
-              You have imported {activePlanDetails!.usage.IMPORTED_ROWS} of {numberOfRecords} records in the{' '}
-              {activePlanDetails?.plan.name} Plan (Resets on {activePlanDetails!.expiryDate} ) Your total charges are $
-              {activePlanDetails?.plan.charge}
+              <>
+                You have imported {activePlanDetails!.usage.IMPORTED_ROWS} of {numberOfRecords} records in the{' '}
+                {activePlanDetails?.plan.name} Plan (Resets on {activePlanDetails!.expiryDate} ){' '}
+                {activePlanDetails?.plan.charge === 0.0
+                  ? ` Your total charges are $${activePlanDetails?.plan.charge}.`
+                  : ''}
+              </>
             </Text>
           ) : (
             <Text>
-              Overall You have left {activePlanDetails!.meta.IMPORTED_ROWS}
-              {activePlanDetails?.plan.charges[0].properties.units} records in {activePlanDetails?.plan.name} Plan
-              (Resets on {activePlanDetails!.expiryDate})
+              <>
+                Overall You have left {activePlanDetails!.meta.IMPORTED_ROWS}
+                {activePlanDetails?.plan.charges[0].properties.units} records in {activePlanDetails?.plan.name} Plan
+                (Resets on {activePlanDetails?.expiryDate})
+              </>
             </Text>
           )}
         </Stack>
@@ -78,7 +85,7 @@ export function PlanDetails() {
                 />
               ),
               size: '2xl',
-              withCloseButton: false,
+              withCloseButton: true,
             });
           }}
           color={isLessThanZero || activePlanDetails.usage.IMPORTED_ROWS > numberOfRecords ? 'red' : 'blue'}

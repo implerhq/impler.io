@@ -1,12 +1,34 @@
 import React from 'react';
-import { Stack, Button } from '@mantine/core';
+import { Stack, Button, useMantineTheme } from '@mantine/core';
 import { useAddCard } from '@hooks/useAddCard';
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
+import { notify } from '@libs/notify';
+import { NOTIFICATION_KEYS } from '@config';
 
-export function AddCardModal() {
+interface AddCardModalProps {
+  close: () => void;
+  refetchPaymentMethods: () => void;
+}
+
+export function AddCardModal({ close, refetchPaymentMethods }: AddCardModalProps) {
+  const theme = useMantineTheme();
+  const cardStyle = {
+    style: {
+      base: {
+        color: theme.colorScheme === 'dark' ? '#fff' : '#000',
+        '::placeholder': {
+          color: theme.colorScheme === 'dark' ? '#aaa' : '#555',
+        },
+      },
+      invalid: {
+        color: theme.colors.red[7],
+      },
+    },
+  };
+
   const stripe = useStripe();
   const elements = useElements();
-  const { addPaymentMethod } = useAddCard();
+  const { addPaymentMethod, isAddPaymentMethodLoading } = useAddCard({ close, refetchPaymentMethods });
 
   const handleAddCard = async () => {
     if (!stripe || !elements) return;
@@ -15,20 +37,28 @@ export function AddCardModal() {
 
     if (!cardElement) return;
 
-    const { paymentMethod } = await stripe.createPaymentMethod({
+    const { paymentMethod, error } = await stripe.createPaymentMethod({
       type: 'card',
       card: cardElement,
     });
 
     if (paymentMethod) {
-      addPaymentMethod(paymentMethod.id);
+      return addPaymentMethod(paymentMethod.id);
+    }
+
+    if (error) {
+      notify(NOTIFICATION_KEYS.ERROR_ADDING_PAYMENT_METHOD, {
+        title: 'Error While Authorizing Payment',
+        message: 'Something went wrong while adding payment method, Please try again ',
+        color: 'red',
+      });
     }
   };
 
   return (
     <Stack spacing="md">
-      <CardElement />
-      <Button fullWidth onClick={handleAddCard}>
+      <CardElement options={cardStyle} />
+      <Button loading={isAddPaymentMethodLoading} fullWidth onClick={handleAddCard}>
         Add Card
       </Button>
     </Stack>

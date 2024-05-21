@@ -1,14 +1,14 @@
-import getConfig from 'next/config';
 import React, { useState } from 'react';
-import { useRouter } from 'next/router';
+import { modals } from '@mantine/modals';
 import { Switch, Stack, Table, Button, Text } from '@mantine/core';
 
-import { TickIcon } from '@assets/icons/Tick.icon';
-import { CrossIcon } from '@assets/icons/Cross.icon';
-
+import { MODAL_KEYS } from '@config';
 import useStyles from './Plans.styles';
 import { numberFormatter } from '@impler/shared';
+import { TickIcon } from '@assets/icons/Tick.icon';
+import { CrossIcon } from '@assets/icons/Cross.icon';
 import { useCancelPlan } from '@hooks/useCancelPlan';
+import { SelectCardModal } from '@components/settings';
 
 interface PlansProps {
   profile: IProfileData;
@@ -28,11 +28,8 @@ interface PlanItem {
 }
 
 export const Plans = ({ profile, activePlanCode, canceledOn, expiryDate }: PlansProps) => {
-  const router = useRouter();
   const { classes } = useStyles();
-  const { publicRuntimeConfig } = getConfig();
   const [showYearly, setShowYearly] = useState<boolean>(true);
-  const gatewayURL = publicRuntimeConfig.NEXT_PUBLIC_PAYMENT_GATEWAY_URL;
   const plans: Record<string, PlanItem[]> = {
     monthly: [
       {
@@ -99,8 +96,15 @@ export const Plans = ({ profile, activePlanCode, canceledOn, expiryDate }: Plans
     if (activePlanCode === code) {
       cancelPlan();
     } else {
-      // activate plan
-      router.push(`${gatewayURL}/api/v1/plans/${code}/buy/${profile.email}/redirect`);
+      modals.open({
+        id: MODAL_KEYS.SELECT_CARD,
+        modalId: MODAL_KEYS.SELECT_CARD,
+        children: (
+          <SelectCardModal email={profile.email} planCode={code} onClose={() => modals.close(MODAL_KEYS.SELECT_CARD)} />
+        ),
+        size: '2xl',
+        withCloseButton: false,
+      });
     }
   };
 
@@ -218,16 +222,11 @@ export const Plans = ({ profile, activePlanCode, canceledOn, expiryDate }: Plans
                 {plan.code === 'STARTER' ? null : (
                   <>
                     <Button
-                      component="a"
                       variant="filled"
                       loading={isCancelPlanLoading}
                       color={activePlanCode === plan.code ? 'red' : 'blue'}
                       onClick={() => onPlanButtonClick(plan.code)}
                       disabled={canceledOn !== null && activePlanCode === plan.code}
-                      style={{
-                        color: 'white',
-                      }}
-                      mt={4}
                     >
                       {getButtonTextContent(plan.code)}
                     </Button>

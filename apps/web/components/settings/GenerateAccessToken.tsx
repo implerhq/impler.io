@@ -1,9 +1,10 @@
-import { CopyIcon } from '@assets/icons/Copy.icon';
-import { useSettings } from '@hooks/useSettings';
-import { Flex, Input, ActionIcon, CheckIcon, Button, Title, Text, Tooltip } from '@mantine/core';
 import { useClipboard } from '@mantine/hooks';
+import { Flex, Input, ActionIcon, CheckIcon, Text, Tooltip } from '@mantine/core';
+import { useSettings } from '@hooks/useSettings';
+import { CopyIcon } from '@assets/icons/Copy.icon';
 
 import React from 'react';
+import { Button } from '@ui/button';
 
 export function GenerateAccessToken() {
   const { accessToken, regenerateAccessToken, isAccessTokenRegenerating } = useSettings();
@@ -12,7 +13,6 @@ export function GenerateAccessToken() {
   return (
     <>
       <Flex direction="column" gap="xs" my="sm" w="max-content">
-        <Title order={3}>Access Token</Title>
         <Text fw={400}>Use this token to interact with Impler API</Text>
         <Input
           type="password"
@@ -26,8 +26,8 @@ export function GenerateAccessToken() {
           }
         />
       </Flex>
-      <Button loading={isAccessTokenRegenerating} onClick={regenerateAccessToken}>
-        Regenerate Access Token
+      <Button loading={isAccessTokenRegenerating} onClick={() => regenerateAccessToken()}>
+        Regegenrate Access Token
       </Button>
     </>
   );

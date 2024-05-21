@@ -8,6 +8,7 @@ import { IconButton } from '@ui/icon-button';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
 
 interface CardProps {
+  refetchPaymentMethods: () => void;
   data: ICardData;
   onRemoveCardClick: () => void;
 }

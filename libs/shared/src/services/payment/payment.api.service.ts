@@ -162,10 +162,9 @@ export class PaymentAPIService {
     return response.data;
   }
   async deleteUserPaymentMethod(paymentMethodId: string): Promise<any> {
-    console.log('Payment method id from shared api service', paymentMethodId);
     if (!this.PAYMENT_API_BASE_URL) return;
 
-    const url = `${this.PAYMENT_API_BASE_URL}/api/v1/customer/${paymentMethodId}/delete-payment-method`;
+    const url = `${this.PAYMENT_API_BASE_URL}/api/v1/customer/${paymentMethodId}/payment-methods`;
     const response = await axios.delete(url, {
       headers: {
         [this.AUTH_KEY]: this.AUTH_VALUE,

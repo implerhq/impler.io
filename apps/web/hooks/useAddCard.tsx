@@ -5,7 +5,12 @@ import { useMutation } from '@tanstack/react-query';
 import { useStripe } from '@stripe/react-stripe-js';
 import { API_KEYS, NOTIFICATION_KEYS } from '@config';
 
-export function useAddCard() {
+interface UseAddCardProps {
+  close: () => void;
+  refetchPaymentMethods: () => void;
+}
+
+export function useAddCard({ close, refetchPaymentMethods }: UseAddCardProps) {
   const stripe = useStripe();
 
   const { mutate: addPaymentMethod, isLoading: isAddPaymentMethodLoading } = useMutation<any, IErrorObject, string>(
@@ -16,20 +21,45 @@ export function useAddCard() {
       }),
     {
       async onSuccess(data: any) {
-        if (data && data.status === 'requires_action') {
-          try {
-            const response = await stripe?.confirmCardSetup(data.client_secret);
-            if (response?.error?.type === 'invalid_request_error') {
-              notify(NOTIFICATION_KEYS.ERROR_AUTHORIZING_PAYMENT_METHOD, {
-                title: 'Error While Authorizing Payment',
-                message: response?.error?.message || 'Error while saving payment method',
-                color: 'red',
-              });
-            } else {
-              await saveIntentId(data.intentId);
-            }
-          } catch (error) {}
+        console.log('Payment adding data', data);
+        if (data && data.status === 'succeeded') {
+          notify(NOTIFICATION_KEYS.PAYMENT_METHOD_ADDED, {
+            title: 'Payment Method Added',
+            message: 'Your Payment Method has been added successfully.',
+            color: 'green',
+          });
         }
+
+        if (data && data.status === 'requires_action') {
+          const response = await stripe?.confirmCardSetup(data.client_secret);
+          if (response?.error?.type === 'invalid_request_error') {
+            notify(NOTIFICATION_KEYS.ERROR_AUTHORIZING_PAYMENT_METHOD, {
+              title: 'Error While Authorizing Payment',
+              message: response?.error?.message || 'Error while saving payment method',
+              color: 'red',
+            });
+          } else {
+            notify(NOTIFICATION_KEYS.PAYMENT_METHOD_ADDED, {
+              title: 'Payment method added successfully',
+              message: 'Payment method added successfully. ',
+              color: 'green',
+            });
+            await saveIntentId(data.intentId);
+          }
+        }
+        refetchPaymentMethods();
+        close();
+
+        /*
+         * notify(NOTIFICATION_KEYS.ERROR_AUTHORIZING_PAYMENT_METHOD, {
+         *   title: 'Error While Authorizing Payment',
+         *   message: response?.error?.message || 'Error while saving payment method',
+         *   color: 'red',
+         * });
+         */
+      },
+      onError(error: any) {
+        console.log(error);
       },
     }
   );
@@ -38,6 +68,8 @@ export function useAddCard() {
     await commonApi(API_KEYS.SAVE_INTENT_ID as any, {
       parameters: [intentId],
     });
+    refetchPaymentMethods();
+    close();
   };
 
   return {
