@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { ISubscriptionData } from '../../types';
 
 interface ICheckData {
   uploadId: string;
@@ -19,29 +20,6 @@ interface ICustomer {
   externalId: string;
   id: string;
   currency: 'USD' | 'INR';
-}
-interface ISubscriptionData {
-  usage: {
-    IMPORTED_ROWS: number;
-  };
-  plan: {
-    charges: {
-      billableMetric: {
-        code: string;
-        name: string;
-      };
-      chargeModel: string;
-      properties?:
-        | {
-            available: boolean;
-          }
-        | {
-            per_unit: number;
-            last_unit: number | string;
-            first_unit: number;
-          }[];
-    }[];
-  };
 }
 
 type AVAILABLE_CODES = 'IMPORTED_ROWS' | 'REMOVE_BRANDING';
@@ -154,10 +132,10 @@ export class PaymentAPIService {
     return response.data;
   }
 
-  async savePaymentIntentId(email: string, paymentMethodId: string): Promise<any> {
+  async confirmPaymentIntentId(email: string, intentId: string): Promise<any> {
     if (!this.PAYMENT_API_BASE_URL) return;
 
-    const url = `${this.PAYMENT_API_BASE_URL}/api/v1/customer/${email}/payment-intent-id-confirm/${paymentMethodId}`;
+    const url = `${this.PAYMENT_API_BASE_URL}/api/v1/customer/${email}/payment-intent-id-confirm/${intentId}`;
     const response = await axios.put(
       url,
       {},
@@ -167,6 +145,32 @@ export class PaymentAPIService {
         },
       }
     );
+
+    return response.data;
+  }
+
+  async retriveUserPaymentMethods(email: string): Promise<any> {
+    if (!this.PAYMENT_API_BASE_URL) return;
+
+    const url = `${this.PAYMENT_API_BASE_URL}/api/v1/customer/${email}/payment-methods`;
+    const response = await axios.get(url, {
+      headers: {
+        [this.AUTH_KEY]: this.AUTH_VALUE,
+      },
+    });
+
+    return response.data;
+  }
+  async deleteUserPaymentMethod(paymentMethodId: string): Promise<any> {
+    console.log('Payment method id from shared api service', paymentMethodId);
+    if (!this.PAYMENT_API_BASE_URL) return;
+
+    const url = `${this.PAYMENT_API_BASE_URL}/api/v1/customer/${paymentMethodId}/delete-payment-method`;
+    const response = await axios.delete(url, {
+      headers: {
+        [this.AUTH_KEY]: this.AUTH_VALUE,
+      },
+    });
 
     return response.data;
   }
