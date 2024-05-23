@@ -188,7 +188,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
   const onSubmit = async () => {
     await trigger();
     const file = getValues('file');
-    if ([FileMimeTypesEnum.EXCEL, FileMimeTypesEnum.EXCELX].includes(file.type as FileMimeTypesEnum)) {
+    if (file && [FileMimeTypesEnum.EXCEL, FileMimeTypesEnum.EXCELX].includes(file.type as FileMimeTypesEnum)) {
       getExcelSheetNames({ file: file });
     } else {
       handleSubmit(uploadFile)();
