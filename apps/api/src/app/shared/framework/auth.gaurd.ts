@@ -24,7 +24,10 @@ export class APIKeyGuard implements CanActivate {
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
-  constructor(@Inject(forwardRef(() => AuthService)) private authService: AuthService, private jwtService: JwtService) {
+  constructor(
+    @Inject(forwardRef(() => AuthService)) private authService: AuthService,
+    private jwtService: JwtService
+  ) {
     super();
   }
 

@@ -23,6 +23,7 @@ import { FourIcon } from '@assets/icons/Four.icon';
 import { ThreeIcon } from '@assets/icons/Three.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
 import { LeftArrowIcon } from '@assets/icons/LeftArrow.icon';
+import { track } from '@libs/amplitude';
 
 const Editor = dynamic(() => import('@components/imports/editor').then((mod) => mod.OutputEditor), {
   ssr: false,
@@ -53,6 +54,13 @@ export default function ImportDetails({}) {
     accessToken: profileInfo?.accessToken,
     onUploadComplete: onSpreadsheetImported,
   });
+  const onImportClick = () => {
+    track({
+      name: 'IMPORT CLICK',
+      properties: {},
+    });
+    showWidget({ colorScheme });
+  };
 
   return (
     <Flex gap="sm" direction="column" h="100%" style={{ position: 'relative' }}>
@@ -73,7 +81,7 @@ export default function ImportDetails({}) {
           <Button
             color="green"
             id="import"
-            onClick={() => showWidget({ colorScheme })}
+            onClick={onImportClick}
             // eslint-disable-next-line no-magic-numbers
             disabled={!isImplerInitiated || columns?.length === 0 || isTemplateDataLoading}
           >

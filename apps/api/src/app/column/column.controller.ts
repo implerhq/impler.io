@@ -15,7 +15,11 @@ import { UpdateColumnCommand } from './commands/update-column.command';
 @UseGuards(JwtAuthGuard)
 @ApiSecurity(ACCESS_KEY_NAME)
 export class ColumnController {
-  constructor(private addColumn: AddColumn, private updateColumn: UpdateColumn, private deleteColumn: DeleteColumn) {}
+  constructor(
+    private addColumn: AddColumn,
+    private updateColumn: UpdateColumn,
+    private deleteColumn: DeleteColumn
+  ) {}
 
   @Post(':templateId')
   @ApiOperation({
