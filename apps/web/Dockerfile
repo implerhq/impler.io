@@ -2,7 +2,9 @@ FROM node:20.13.1-slim
 
 WORKDIR /usr/src/app
 
-RUN npm install -g pnpm@8.9.0
+RUN npm i -g \
+  npm@10.5.2 \
+  pnpm@8.9.0
 
 COPY .npmrc .
 COPY package.json .
@@ -24,6 +26,6 @@ COPY pnpm-lock.yaml .
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN pnpm install
+RUN pnpm i
 
 CMD [ "pnpm", "start:static:web" ]

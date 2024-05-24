@@ -10,8 +10,8 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 RUN npm i -g \
-  npm@9.3.1 \
-  pnpm@7.28.0
+  npm@10.5.2 \
+  pnpm@8.9.0
 
 WORKDIR /usr/src/app
 
