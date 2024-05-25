@@ -161,7 +161,11 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
         />
         <Group spacing="xs">
           <Checkbox label="Required?" register={register('isRequired')} />
-          {typeValue !== 'Select' && <Checkbox label="Unique?" register={register('isUnique')} />}
+          {typeValue !== 'Select' ? (
+            <Checkbox label="Unique?" register={register('isUnique')} />
+          ) : (
+            <Checkbox label="Multi Select?" register={register('allowMultiSelect')} />
+          )}
         </Group>
         <Button type="submit" fullWidth loading={isLoading}>
           {data ? 'Update' : 'Add'}

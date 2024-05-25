@@ -31,6 +31,7 @@ interface IRunData {
   dataStream: Writable;
   validator: ValidateFunction;
   extra: any;
+  multiSelectColumnHeadings: string[];
   dateFormats: Record<string, string[]>;
 }
 
@@ -115,11 +116,20 @@ export class BaseReview {
           Array.isArray(column.selectValues) && column.selectValues.length > 0
             ? [...column.selectValues, ...(column.isRequired ? [] : [''])]
             : [''];
-        property = {
-          type: 'string',
-          enum: Array.from(new Set(selectValues)), // handle duplicate
-          ...(!column.isRequired && { default: '' }),
-        };
+        if (column.allowMultiSelect)
+          property = {
+            type: 'array',
+            items: {
+              type: 'string',
+              enum: selectValues,
+            },
+          };
+        else
+          property = {
+            type: 'string',
+            enum: Array.from(new Set(selectValues)), // handle duplicate
+            ...(!column.isRequired && { default: '' }),
+          };
         break;
       case ColumnTypesEnum.REGEX:
         const [full, pattern, flags] = column.regex.match(/\/(.*)\/(.*)|(.*)/);
@@ -250,6 +260,7 @@ export class BaseReview {
     headings,
     dateFormats,
     dataStream,
+    multiSelectColumnHeadings,
   }: IRunData): Promise<ISaveResults> {
     return new Promise(async (resolve, reject) => {
       let totalRecords = -1,
@@ -265,16 +276,34 @@ export class BaseReview {
           const record = results.data;
 
           if (totalRecords >= 1) {
-            const recordObj: Record<string, unknown> = headings.reduce((acc, heading, index) => {
-              if (heading === '_') return acc;
+            const recordObj: {
+              checkRecord: Record<string, unknown>;
+              passRecord: Record<string, unknown>;
+            } = headings.reduce(
+              (acc, heading, index) => {
+                if (heading === '_') return acc;
 
-              acc[heading] = typeof record[index] === 'string' ? record[index].trim() : record[index];
+                acc.checkRecord[heading] = multiSelectColumnHeadings.includes(heading)
+                  ? !record[index]
+                    ? []
+                    : record[index].split(',')
+                  : typeof record[index] === 'string'
+                  ? record[index].trim()
+                  : record[index];
 
-              return acc;
-            }, {});
+                acc.passRecord[heading] = typeof record[index] === 'string' ? record[index].trim() : record[index];
+
+                return acc;
+              },
+              {
+                checkRecord: {},
+                passRecord: {},
+              }
+            );
             const validationResultItem = this.validateRecord({
               index: totalRecords,
-              record: recordObj,
+              checkRecord: recordObj.checkRecord,
+              passRecord: recordObj.passRecord,
               validator,
               dateFormats,
             });
@@ -304,16 +333,18 @@ export class BaseReview {
 
   validateRecord({
     index,
-    record,
+    passRecord,
+    checkRecord,
     validator,
     dateFormats,
   }: {
     index: number;
-    record: Record<string, any>;
     validator: ValidateFunction;
+    passRecord: Record<string, any>;
+    checkRecord: Record<string, any>;
     dateFormats: Record<string, string[]>;
   }) {
-    const isValid = validator({ ...record });
+    const isValid = validator(checkRecord);
     if (!isValid) {
       const errors = this.getErrorsObject(validator.errors, dateFormats);
 
@@ -321,14 +352,14 @@ export class BaseReview {
         index,
         errors: errors,
         isValid: false,
-        record,
+        record: passRecord,
         updated: {},
       };
     } else {
       return {
         index,
         isValid: true,
-        record,
+        record: passRecord,
         errors: {},
         updated: {},
       };
@@ -389,6 +420,7 @@ export class BaseReview {
     extra,
     csvFileStream,
     dateFormats,
+    multiSelectColumnHeadings,
   }: IRunData): Promise<IBatchItem[]> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -403,16 +435,34 @@ export class BaseReview {
           step: (results: Papa.ParseStepResult<any>) => {
             recordsCount++;
             const record = results.data;
-            const recordObj = headings.reduce((acc, heading, index) => {
-              acc[heading] = typeof record[index] === 'string' ? record[index].trim() : record[index];
+            const recordObj: {
+              checkRecord: Record<string, unknown>;
+              passRecord: Record<string, unknown>;
+            } = headings.reduce(
+              (acc, heading, index) => {
+                if (heading === '_') return acc;
 
-              return acc;
-            }, {});
+                acc.checkRecord[heading] = multiSelectColumnHeadings.includes(heading)
+                  ? record[index]?.split(',')
+                  : typeof record[index] === 'string'
+                  ? record[index].trim()
+                  : record[index];
+
+                acc.passRecord[heading] = typeof record[index] === 'string' ? record[index].trim() : record[index];
+
+                return acc;
+              },
+              {
+                checkRecord: {},
+                passRecord: {},
+              }
+            );
 
             if (recordsCount >= 1) {
               const validationResultItem = this.validateRecord({
                 index: recordsCount,
-                record: recordObj,
+                checkRecord: recordObj.checkRecord,
+                passRecord: recordObj.passRecord,
                 validator,
                 dateFormats,
               });

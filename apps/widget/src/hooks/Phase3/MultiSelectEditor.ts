@@ -4,20 +4,21 @@ import { CellProperties } from 'handsontable/settings';
 export class MultiSelectEditor extends BaseEditor {
   [x: string]: any;
   timer: any;
+  value: Set<string> = new Set();
   focus() {
     this.selectInput.focus();
   }
   close() {
-    this.value = [];
+    this.value = new Set();
     this._opened = false;
     this.listDiv.classList.remove('open');
     if (this.timer) this.hot.rootWindow.clearTimeout(this.timer);
   }
   getValue() {
-    return this.value.join(',');
+    return [...this.value].join(',');
   }
   setValue(value: string) {
-    this.value = value ? value.split(',') : [];
+    this.value = new Set(value.split(','));
   }
   open() {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -55,14 +56,14 @@ export class MultiSelectEditor extends BaseEditor {
     // @ts-ignore
     this.prepareOptions(this.cellProperties.selectOptions);
   }
-  drawOptions(values: string[]) {
+  drawOptions(values: Set<string>) {
     values.forEach((value) => {
       this.appendItem(value, false);
     });
     this.selectInput.focus();
   }
   appendItem(value: string, doFocus = true) {
-    this.value = this.value.concat(value);
+    this.value.add(value);
     const span = this.hot.rootDocument.createElement('span');
     span.tabIndex = 0;
     span.role = 'button';
@@ -81,7 +82,7 @@ export class MultiSelectEditor extends BaseEditor {
     if (doFocus) this.selectInput.focus();
   }
   removeItem(value: string) {
-    this.value = this.value.filter((existingKey) => existingKey !== value);
+    this.value.delete(value);
     const spanBadge = this.hot.rootDocument.querySelector(`span[data-value="${value}"]`);
     if (spanBadge) spanBadge.remove();
     const liItem = this.hot.rootDocument.querySelector(`li[data-value="${value}"]`);
@@ -103,7 +104,7 @@ export class MultiSelectEditor extends BaseEditor {
       liElement.innerText = key;
       liElement.dataset.value = key;
       liElement.onclick = () => {
-        const valueSelected = this.value.includes(key);
+        const valueSelected = this.value.has(key);
         if (valueSelected) this.removeItem(key);
         else this.appendItem(key);
       };
@@ -148,6 +149,7 @@ export class MultiSelectEditor extends BaseEditor {
     const svgPath = this.hot.rootDocument.createElementNS('http://www.w3.org/2000/svg', 'path');
     svgPath.setAttribute(
       'd',
+      // eslint-disable-next-line max-len
       'M7.314 5.9l3.535-3.536A1 1 0 1 0 9.435.95L5.899 4.485 2.364.95A1 1 0 1 0 .95 2.364l3.535 3.535L.95 9.435a1 1 0 1 0 1.414 1.414l3.535-3.535 3.536 3.535a1 1 0 1 0 1.414-1.414L7.314 5.899z'
     );
     crossSvg.appendChild(svgPath);

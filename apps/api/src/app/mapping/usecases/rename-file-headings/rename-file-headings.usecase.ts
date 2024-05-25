@@ -25,6 +25,8 @@ export class ReanameFileHeadings {
                 newHeadings[columnHeadingIndex],
                 newHeadings[keyHeadingIndex],
               ];
+            } else if (columnHeadingIndex > -1) {
+              newHeadings[columnHeadingIndex] = mapping.key;
             }
           }
         });

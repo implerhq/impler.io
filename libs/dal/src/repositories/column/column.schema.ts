@@ -10,6 +10,7 @@ const columnSchema = new Schema(
     isRequired: Boolean,
     isUnique: Boolean,
     regex: String,
+    allowMultiSelect: Boolean,
     regexDescription: String,
     selectValues: [String],
     dateFormats: {

@@ -43,6 +43,7 @@ export function useColumnsEditor({ templateId }: UseSchemaProps) {
             selectValues,
             sequence,
             defaultValue,
+            allowMultiSelect,
           }) => ({
             key,
             name,
@@ -56,6 +57,7 @@ export function useColumnsEditor({ templateId }: UseSchemaProps) {
             regexDescription,
             selectValues,
             sequence,
+            allowMultiSelect,
           })
         );
         setValue('columns', JSON.stringify(formattedColumns, null, 2));

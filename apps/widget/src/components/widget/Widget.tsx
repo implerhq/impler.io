@@ -81,6 +81,7 @@ export function Widget() {
           cancelLabel={TEXTS.PROMPT.NO}
           confirmLabel={TEXTS.PROMPT.YES}
           opened={!!promptContinueAction}
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           subTitle={subTitle[promptContinueAction!]}
         />
       </Layout>
