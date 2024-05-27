@@ -16,12 +16,14 @@ export const SupportedFileMimeTypes = [
   'text/csv', // csv
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // EXCELX
   'application/vnd.ms-excel', // EXCEL
+  'application/vnd.ms-excel.sheet.macroenabled.12', // EXCELM
 ];
 
 export enum FileMimeTypesEnum {
   'CSV' = 'text/csv',
   'EXCEL' = 'application/vnd.ms-excel',
   'EXCELX' = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'EXCELM' = 'application/vnd.ms-excel.sheet.macroenabled.12',
   'JSON' = 'application/json',
 }
 

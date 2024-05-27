@@ -18,7 +18,7 @@ export class DownloadSample {
       {
         _templateId,
       },
-      'key type selectValues isRequired'
+      'key type selectValues isRequired allowMultiSelect'
     );
 
     let parsedSchema: ISchemaItem[], columnKeys: IExcelFileHeading[];
@@ -32,6 +32,7 @@ export class DownloadSample {
         type: (columnItem.type as ColumnTypesEnum) || ColumnTypesEnum.STRING,
         selectValues: columnItem.selectValues,
         isRequired: columnItem.isRequired,
+        allowMultiSelect: columnItem.allowMultiSelect,
       }));
     } else {
       // else create structure from existing defualt schema
@@ -40,6 +41,7 @@ export class DownloadSample {
         type: columnItem.type as ColumnTypesEnum,
         selectValues: columnItem.selectValues,
         isRequired: columnItem.isRequired,
+        allowMultiSelect: columnItem.allowMultiSelect,
       }));
     }
 

@@ -49,7 +49,11 @@ export class MakeUploadEntry {
   }: MakeUploadEntryCommand) {
     const fileOriginalName = file.originalname;
     let csvFile: string | Express.Multer.File = file;
-    if (file.mimetype === FileMimeTypesEnum.EXCEL || file.mimetype === FileMimeTypesEnum.EXCELX) {
+    if (
+      file.mimetype === FileMimeTypesEnum.EXCEL ||
+      file.mimetype === FileMimeTypesEnum.EXCELX ||
+      file.mimetype === FileMimeTypesEnum.EXCELM
+    ) {
       try {
         const fileService = new ExcelFileService();
         csvFile = await fileService.convertToCsv(file, selectedSheetName);

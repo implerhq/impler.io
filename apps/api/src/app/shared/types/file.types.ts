@@ -6,4 +6,5 @@ export interface IExcelFileHeading {
   type: ColumnTypesEnum;
   selectValues?: string[];
   dateFormats?: string[];
+  allowMultiSelect?: boolean;
 }

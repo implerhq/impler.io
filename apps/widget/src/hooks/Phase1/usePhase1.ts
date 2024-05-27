@@ -165,9 +165,9 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
 
     const foundTemplate = findTemplate();
     if (foundTemplate && ((Array.isArray(data) && data.length > variables.baseIndex) || schema)) {
-      downloadSample([foundTemplate._id, foundTemplate.name + '.xlsx']);
+      downloadSample([foundTemplate._id, foundTemplate.name + '.xlsm']);
     } else if (foundTemplate && foundTemplate.sampleFileUrl) {
-      getSignedUrl([foundTemplate.sampleFileUrl, foundTemplate.name + ' (sample).xlsx']);
+      getSignedUrl([foundTemplate.sampleFileUrl, foundTemplate.name + ' (sample).xlsm']);
     }
     setIsDownloadInProgress(false);
   };

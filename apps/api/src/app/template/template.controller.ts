@@ -195,6 +195,7 @@ export class TemplateController {
           sequence: columnData.sequence,
           _templateId,
           type: columnData.type,
+          allowMultiSelect: columnData.allowMultiSelect,
         })
       ),
       _templateId

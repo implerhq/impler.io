@@ -21,11 +21,12 @@ export class SaveSampleFile {
       selectValues: columnItem.selectValues,
       isRequired: columnItem.isRequired,
       dateFormats: columnItem.dateFormats,
+      allowMultiSelect: columnItem.allowMultiSelect,
     }));
     const fileName = this.fileNameService.getSampleFileName(templateId);
     const sampleFileUrl = this.fileNameService.getSampleFileUrl(templateId);
     const sampleExcelFile = await this.excelFileService.getExcelFileForHeadings(columnKeys);
-    await this.storageService.uploadFile(fileName, sampleExcelFile, FileMimeTypesEnum.EXCEL);
+    await this.storageService.uploadFile(fileName, sampleExcelFile, FileMimeTypesEnum.EXCELM);
     await this.templateRepository.update({ _id: templateId }, { sampleFileUrl });
   }
 }
