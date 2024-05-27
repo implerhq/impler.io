@@ -119,13 +119,17 @@ export class ExcelFileService {
         });
       }
     });
-
+    const headingNames = headings.map((heading) => heading.key);
+    const endColumnPosition = this.getExcelColumnNameFromIndex(headings.length) + '2';
+    const range = workbook.sheet(0).range(`A2:${endColumnPosition}`);
     if (Array.isArray(data) && data.length > 0) {
-      data.forEach((row) => {
-        worksheet.addRow(row);
-      });
-    }
+      const rows: string[][] = data.reduce<string[][]>((acc: string[][], rowItem: Record<string, any>) => {
+        acc.push(headingNames.map((headingKey) => rowItem[headingKey]));
 
+        return acc;
+      }, []);
+      range.value(rows);
+    }
     const buffer = await workbook.outputAsync();
 
     return buffer as Promise<Buffer>;
