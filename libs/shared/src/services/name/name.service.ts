@@ -4,11 +4,11 @@ export class FileNameService {
 
     return url.origin;
   }
-  getSampleFileName(templateId: string): string {
-    return `${templateId}/sample.xlsm`;
+  getSampleFileName(templateId: string, hasMultiSelect: boolean): string {
+    return `${templateId}/sample.${hasMultiSelect ? 'xlsm' : 'xlsx'}`;
   }
-  getSampleFileUrl(templateId: string): string {
-    const fileName = this.getSampleFileName(templateId);
+  getSampleFileUrl(templateId: string, hasMultiSelect: boolean): string {
+    const fileName = this.getSampleFileName(templateId, hasMultiSelect);
     const origin = this.getURLOrigin();
 
     return [origin, process.env.S3_BUCKET_NAME, fileName].join('/');

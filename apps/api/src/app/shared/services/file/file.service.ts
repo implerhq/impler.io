@@ -93,7 +93,12 @@ export class ExcelFileService {
   }
   async getExcelFileForHeadings(headings: IExcelFileHeading[], data?: Record<string, any>[]): Promise<Buffer> {
     const currentDir = cwd();
-    const workbook = await xlsxPopulate.fromFileAsync(`${currentDir}/src/config/Excel Multi Select Template.xlsm`);
+    const isMultiSelect = headings.some(
+      (heading) => heading.type === ColumnTypesEnum.SELECT && heading.allowMultiSelect
+    );
+    const workbook = await xlsxPopulate.fromFileAsync(
+      `${currentDir}/src/config/${isMultiSelect ? 'Excel Multi Select Template.xlsm' : 'Excel Template.xlsx'}`
+    );
     const worksheet = workbook.sheet('Data');
 
     headings.forEach((heading, index) => {
@@ -102,6 +107,7 @@ export class ExcelFileService {
         worksheet.cell(columnName).value(heading.key + '#MULTI');
       else worksheet.cell(columnName).value(heading.key);
     });
+
     headings.forEach((heading, index) => {
       if (heading.type === ColumnTypesEnum.SELECT) {
         const columnName = this.getExcelColumnNameFromIndex(index + 1);
@@ -120,7 +126,7 @@ export class ExcelFileService {
       }
     });
     const headingNames = headings.map((heading) => heading.key);
-    const endColumnPosition = this.getExcelColumnNameFromIndex(headings.length) + '2';
+    const endColumnPosition = this.getExcelColumnNameFromIndex(headings.length + 1) + '2';
     const range = workbook.sheet(0).range(`A2:${endColumnPosition}`);
     if (Array.isArray(data) && data.length > 0) {
       const rows: string[][] = data.reduce<string[][]>((acc: string[][], rowItem: Record<string, any>) => {

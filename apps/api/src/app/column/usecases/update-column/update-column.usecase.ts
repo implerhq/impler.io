@@ -20,7 +20,7 @@ export class UpdateColumn {
     }
 
     command.dateFormats = command.dateFormats?.map((format) => format.toUpperCase()) || [];
-    const isKeyUpdated = command.key !== column.key;
+    const isKeyUpdated = command.key !== column.key || command.allowMultiSelect !== column.allowMultiSelect;
     const isTypeUpdated = command.type !== column.type;
     const isFieldConditionUpdated =
       JSON.stringify(column.selectValues) !== JSON.stringify(command.selectValues) ||

@@ -97,11 +97,11 @@ export class TemplateController {
     @Body() data: DownloadSampleDto,
     @Res() res: Response
   ) {
-    const buffer = await this.downloadSample.execute(templateId, data);
-    res.header('Content-disposition', 'attachment; filename=anlikodullendirme.xlsx');
-    res.type('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    const { ext, file, type } = await this.downloadSample.execute(templateId, data);
+    res.header(`Content-disposition', 'attachment; filename=sample.${ext}`);
+    res.type(type);
 
-    return res.send(buffer);
+    return res.send(file);
   }
 
   @Get(':templateId/columns')

@@ -23,8 +23,11 @@ export class SaveSampleFile {
       dateFormats: columnItem.dateFormats,
       allowMultiSelect: columnItem.allowMultiSelect,
     }));
-    const fileName = this.fileNameService.getSampleFileName(templateId);
-    const sampleFileUrl = this.fileNameService.getSampleFileUrl(templateId);
+    const hasMultiSelect = columns.some(
+      (columnItem) => columnItem.type === ColumnTypesEnum.SELECT && columnItem.allowMultiSelect
+    );
+    const fileName = this.fileNameService.getSampleFileName(templateId, hasMultiSelect);
+    const sampleFileUrl = this.fileNameService.getSampleFileUrl(templateId, hasMultiSelect);
     const sampleExcelFile = await this.excelFileService.getExcelFileForHeadings(columnKeys);
     await this.storageService.uploadFile(fileName, sampleExcelFile, FileMimeTypesEnum.EXCELM);
     await this.templateRepository.update({ _id: templateId }, { sampleFileUrl });
