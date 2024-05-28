@@ -130,15 +130,18 @@ export class DoReReview extends BaseReview {
     };
 
     for await (const record of this._modal.find({ updated: { $ne: {}, $exists: true } })) {
-      const checkRecord: Record<string, unknown> = multiSelectColumnHeadings.reduce((acc, heading) => {
-        if (heading === '_') return acc;
+      const checkRecord: Record<string, unknown> = multiSelectColumnHeadings.reduce(
+        (acc, heading) => {
+          if (heading === '_') return acc;
 
-        if (multiSelectColumnHeadings.includes(heading) && typeof record.record[heading] === 'string') {
-          acc[heading] = record.record[heading]?.split(',');
-        }
+          if (multiSelectColumnHeadings.includes(heading) && typeof record.record[heading] === 'string') {
+            acc[heading] = record.record[heading]?.split(',');
+          }
 
-        return acc;
-      }, record.record);
+          return acc;
+        },
+        { ...record.record }
+      );
       const validationResult = this.validateRecord({
         validator,
         checkRecord,
