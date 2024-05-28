@@ -46,7 +46,7 @@
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "date-fns": "^2.30.0",
-    "dayjs": "^1.11.10",
+    "dayjs": "^1.11.11",
     "dotenv": "^16.0.2",
     "envalid": "^7.3.1",
     "exceljs": "^4.3.0",

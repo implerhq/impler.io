@@ -4,11 +4,14 @@ import * as Papa from 'papaparse';
 import { Writable } from 'stream';
 import addFormats from 'ajv-formats';
 import addKeywords from 'ajv-keywords';
+import * as customParseFormat from 'dayjs/plugin/customParseFormat';
 import Ajv, { AnySchemaObject, ErrorObject, ValidateFunction } from 'ajv';
 
 import { ColumnTypesEnum, Defaults, ITemplateSchemaItem } from '@impler/shared';
 
 import { SManager, BATCH_LIMIT, MAIN_CODE } from '@shared/services/sandbox';
+
+dayjs.extend(customParseFormat);
 
 interface IDataItem {
   index: number;
