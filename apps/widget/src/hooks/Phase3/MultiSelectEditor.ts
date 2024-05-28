@@ -18,7 +18,7 @@ export class MultiSelectEditor extends BaseEditor {
     return [...this.value].join(',');
   }
   setValue(value: string) {
-    this.value = new Set(value.split(','));
+    this.value = new Set(value ? value.split(',') : []);
   }
   open() {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
