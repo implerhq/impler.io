@@ -8,6 +8,10 @@ export interface IImplerStore {
   authHeaderValue?: string;
 }
 
+export interface ITableStore {
+  selectedRows: Set<number>;
+}
+
 export interface IApiStore {
   api: ApiService;
 }

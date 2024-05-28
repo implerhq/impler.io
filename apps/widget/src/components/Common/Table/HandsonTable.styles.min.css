@@ -1,8 +1,12 @@
 .handsontable td {
     overflow: unset !important;
 }
+.htCore thead tr th {
+    vertical-align: middle !important;
+}
 .custom-cell {
     text-align: center;
+    vertical-align: middle !important;
     padding: 5px !important;
 }
 .index-cell {
@@ -11,32 +15,71 @@
     color: #222 !important;
     padding: 5px !important;
 }
-.del-cell {
+.check-box {
+    margin: 0 auto;
+    cursor: pointer;
+    vertical-align: middle;
+}
+.check-cell {
     cursor: pointer;
     text-align: center;
-    padding: 5px !important;
+    padding: 0.5rem !important;
 }
-.del-btn {
+.check-cell .check-box {
+    width: 15px;
+    height: 15px;
+}
+.check-all-cell {
+    cursor: pointer;
+    text-align: center;
+    padding: 0.3rem !important;
+}
+.check-all-cell .check-box {
+    width: 15px;
+    height: 15px;
+}
+.checkbox {
+    display: inline-flex;
+    position: relative;
+}
+  
+.checkbox__control {
+    -webkit-appearance: none;
+    appearance: none;
+    z-index: 1;
+    border: 0.5px solid #51cf66;
+    width: 15px;
+    height: 15px;
+    border-radius: 0.25rem;
+    margin: 0;
+    cursor: pointer;
+    background-color: #51cf66;
+}
+
+.checkbox__control-icon {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    transition: opacity 400ms ease-in-out;
+    opacity: 0;
+    z-index: 2;
     color: #fff;
-    border: none;
-    outline: none;
-    border-radius: 5px;
-    background-color: #f00;
+    border-radius: 0.25rem;
 }
-.del-btn:hover {
-    background-color: #d00;
-}
-.del-btn svg:hover {
-    fill: #fff;
-    cursor: pointer
+
+.checkbox__control:checked + .checkbox__control-icon {
+    opacity: 1;
 }
 
 .list-wrapper {
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
     background-color: #fff;
-    opacity: 1;
+    visibility: hidden;
     z-index: 300;
     position: absolute;
+}
+.list-wrapper.open {
+    visibility: visible;
 }
 
 .list-wrapper ul {

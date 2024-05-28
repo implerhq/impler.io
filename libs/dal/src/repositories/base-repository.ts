@@ -5,7 +5,10 @@ import { Document, FilterQuery, Model, QueryOptions, Types, UpdateQuery } from '
 export class BaseRepository<T> {
   public _model: Model<any & Document>;
 
-  constructor(protected MongooseModel: Model<any & Document>, protected entity: ClassConstructor<T>) {
+  constructor(
+    protected MongooseModel: Model<any & Document>,
+    protected entity: ClassConstructor<T>
+  ) {
     this._model = MongooseModel;
   }
 

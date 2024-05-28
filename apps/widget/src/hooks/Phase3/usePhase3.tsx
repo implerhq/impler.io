@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { BaseEditor } from 'handsontable/editors';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
@@ -17,6 +17,7 @@ import {
   IUpload,
   IRecord,
   ReviewDataTypesEnum,
+  numberFormatter,
 } from '@impler/shared';
 
 interface IUsePhase3Props {
@@ -33,7 +34,7 @@ class SelectEditor extends BaseEditor {
   }
   close() {
     this._opened = false;
-    this.listDiv.style.display = 'none';
+    this.listDiv.classList.remove('open');
   }
   getValue() {
     return this.selectInput.value;
@@ -55,7 +56,6 @@ class SelectEditor extends BaseEditor {
     selectStyle.minWidth = `${width}px`;
     selectStyle[this.hot.isRtl() ? 'right' : 'left'] = `${start}px`;
     selectStyle.margin = '0px';
-    selectStyle.display = '';
   }
   prepare(
     row: number,
@@ -128,16 +128,27 @@ class SelectEditor extends BaseEditor {
   }
 }
 
+interface IRecordExtended extends IRecord {
+  checked?: boolean;
+}
+
 export function usePhase3({ onNext }: IUsePhase3Props) {
   const { api } = useAPIState();
   const [page, setPage] = useState<number>(defaultPage);
   const [headings, setHeadings] = useState<string[]>([]);
+  const selectedRowsRef = useRef<Set<number>>(new Set());
+  const selectedRowsCountRef = useRef<{ valid: Set<number>; invalid: Set<number> }>({
+    valid: new Set(),
+    invalid: new Set(),
+  });
   const { uploadInfo, setUploadInfo, host } = useAppState();
-  const [reviewData, setReviewData] = useState<IRecord[]>([]);
+  const [allChecked, setAllChecked] = useState<boolean>(false);
+  const [reviewData, setReviewData] = useState<IRecordExtended[]>([]);
   const [columnDefs, setColumnDefs] = useState<HotItemSchema[]>([]);
   const [totalPages, setTotalPages] = useState<number>(defaultPage);
   const [type, setType] = useState<ReviewDataTypesEnum>(ReviewDataTypesEnum.ALL);
   const [showAllDataValidModal, setShowAllDataValidModal] = useState<boolean | undefined>(undefined);
+  const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState<boolean | undefined>(undefined);
 
   useQuery<unknown, IErrorObject, ISchemaColumn[], [string, string]>(
     [`columns:${uploadInfo._id}`, uploadInfo._id],
@@ -145,12 +156,20 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     {
       onSuccess(data) {
         const newColumnDefs: HotItemSchema[] = [];
-        const newHeadings: string[] = ['#'];
+        const newHeadings: string[] = ['*', 'Sr. No.'];
+        newColumnDefs.push({
+          type: 'text',
+          data: 'record.index',
+          readOnly: true,
+          editor: false,
+          renderer: 'check',
+          className: 'check-cell',
+          disableVisualSelection: true,
+        });
         newColumnDefs.push({
           type: 'text',
           data: 'index',
           readOnly: true,
-          editor: false,
           className: 'index-cell',
           disableVisualSelection: true,
         });
@@ -194,16 +213,6 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
           }
           newColumnDefs.push(columnItem);
         });
-        newColumnDefs.push({
-          type: 'text',
-          data: 'record._id',
-          readOnly: true,
-          editor: false,
-          renderer: 'del',
-          className: 'del-cell',
-          disableVisualSelection: true,
-        });
-        newHeadings.push('X');
         setHeadings(newHeadings);
         setColumnDefs(newColumnDefs);
       },
@@ -234,7 +243,10 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     {
       cacheTime: 0,
       onSuccess(reviewDataResponse) {
-        setReviewData(reviewDataResponse.data);
+        setReviewData(
+          reviewDataResponse.data.map((record) => ({ ...record, checked: selectedRowsRef.current.has(record.index) }))
+        );
+        setAllChecked(reviewDataResponse.data.every((record) => selectedRowsRef.current.has(record.index)));
         if (!reviewDataResponse.data.length) {
           let newPage = page;
           if (reviewDataResponse.page > 1 && reviewDataResponse.totalPages < reviewDataResponse.page) {
@@ -272,6 +284,8 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     onSuccess() {
       fetchUploadInfo();
       refetchReviewData([page, type]);
+      selectedRowsRef.current = new Set();
+      selectedRowsCountRef.current = { valid: new Set(), invalid: new Set() };
     },
     onError(error: IErrorObject) {
       notifier.showError({ message: error.message, title: error.error });
@@ -304,24 +318,40 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
   const { mutate: updateRecord } = useMutation<unknown, IErrorObject, IRecord, [string]>([`update`], (record) =>
     api.updateRecord(uploadInfo._id, record)
   );
-  const { mutate: deleteRecord, isLoading: isDeleteRecordLoading } = useMutation<
+  const { mutate: deleteRecords, isLoading: isDeleteRecordLoading } = useMutation<
     unknown,
     IErrorObject,
-    [number, boolean],
+    [number[], number, number],
     [string]
-  >([`delete`], ([index, isValid]) => api.deleteRecord(uploadInfo._id, index, isValid), {
+  >([`delete`], ([indexes, valid, invalid]) => api.deleteRecord(uploadInfo._id, indexes, valid, invalid), {
     onSuccess(data, vars) {
-      const newReviewData = reviewData.filter((record) => record.index !== vars[0]);
+      selectedRowsRef.current.clear();
+      selectedRowsCountRef.current = { valid: new Set(), invalid: new Set() };
       const newUploadInfo = { ...uploadInfo };
-      newUploadInfo.totalRecords = newUploadInfo.totalRecords - 1;
-      if (!vars[1]) {
-        newUploadInfo.invalidRecords = newUploadInfo.invalidRecords - 1;
+      newUploadInfo.totalRecords = newUploadInfo.totalRecords - vars[0].length;
+      if (vars[1]) {
+        newUploadInfo.validRecords = newUploadInfo.validRecords - vars[1];
       }
+      if (vars[2]) {
+        newUploadInfo.invalidRecords = newUploadInfo.invalidRecords - vars[2];
+      }
+      const newReviewData = reviewData.filter((record) => !vars[0].includes(record.index));
       setUploadInfo(newUploadInfo);
       setReviewData(newReviewData);
       if (newReviewData.length === 0) {
         refetchReviewData([getPrevPage(page), type]);
       }
+      setShowDeleteConfirmModal(false);
+      logAmplitudeEvent('RECORDS_DELETED', {
+        valid: vars[1],
+        invalid: vars[2],
+      });
+      notifier.showError({
+        message: `Successfully deleted ${numberFormatter(vars[1])} valid and ${numberFormatter(
+          vars[2]
+        )} invalid records. Total ${numberFormatter(vars[1] + vars[2])} records are deleted.`,
+        title: `${numberFormatter(vars[1] + vars[2])} records deleted.`,
+      });
     },
   });
 
@@ -341,18 +371,24 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     headings,
     totalPages,
     columnDefs,
+    allChecked,
     reReviewData,
     updateRecord,
     onPageChange,
     onTypeChange,
-    deleteRecord,
+    deleteRecords,
     setReviewData,
+    setAllChecked,
+    selectedRowsRef,
     isDoReviewLoading,
     isReviewDataLoading,
+    selectedRowsCountRef,
     showAllDataValidModal,
     isDeleteRecordLoading,
     isConfirmReviewLoading,
+    showDeleteConfirmModal,
     setShowAllDataValidModal,
+    setShowDeleteConfirmModal,
     reviewData: reviewData || [],
     onConfirmReview: confirmReview,
     totalRecords: uploadInfo.totalRecords ?? undefined,

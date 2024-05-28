@@ -266,6 +266,8 @@ export class BaseReview {
 
           if (totalRecords >= 1) {
             const recordObj: Record<string, unknown> = headings.reduce((acc, heading, index) => {
+              if (heading === '_') return acc;
+
               acc[heading] = typeof record[index] === 'string' ? record[index].trim() : record[index];
 
               return acc;
