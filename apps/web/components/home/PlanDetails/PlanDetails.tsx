@@ -12,6 +12,8 @@ export function PlanDetails() {
     email: profile?.email ?? '',
   });
 
+  if (!activePlanDetails) return;
+
   if (isActivePlanLoading) return <Skeleton width="100%" height="200" />;
 
   let numberOfRecords;
