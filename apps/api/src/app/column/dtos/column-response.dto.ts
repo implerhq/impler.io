@@ -59,4 +59,9 @@ export class ColumnResponseDto {
     description: 'Sequence of column',
   })
   sequence?: number;
+
+  @ApiProperty({
+    description: 'If true, the column can have multiple values',
+  })
+  allowMultiSelect?: boolean;
 }

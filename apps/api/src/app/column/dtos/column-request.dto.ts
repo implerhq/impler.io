@@ -104,4 +104,11 @@ export class ColumnRequestDto {
   @IsOptional()
   @Validate(IsNumberOrString)
   defaultValue?: string | number;
+
+  @ApiPropertyOptional({
+    description: 'If true, column can have multiple values',
+  })
+  @IsBoolean()
+  @IsOptional()
+  allowMultiSelect?: boolean;
 }

@@ -49,7 +49,11 @@ export class MakeUploadEntry {
   }: MakeUploadEntryCommand) {
     const fileOriginalName = file.originalname;
     let csvFile: string | Express.Multer.File = file;
-    if (file.mimetype === FileMimeTypesEnum.EXCEL || file.mimetype === FileMimeTypesEnum.EXCELX) {
+    if (
+      file.mimetype === FileMimeTypesEnum.EXCEL ||
+      file.mimetype === FileMimeTypesEnum.EXCELX ||
+      file.mimetype === FileMimeTypesEnum.EXCELM
+    ) {
       try {
         const fileService = new ExcelFileService();
         csvFile = await fileService.convertToCsv(file, selectedSheetName);
@@ -66,7 +70,7 @@ export class MakeUploadEntry {
       {
         _templateId: templateId,
       },
-      'name key isRequired isUnique selectValues dateFormats defaultValue type regex sequence',
+      'name key isRequired isUnique selectValues dateFormats defaultValue type regex sequence allowMultiSelect',
       {
         sort: 'sequence',
       }
@@ -94,6 +98,7 @@ export class MakeUploadEntry {
             : Defaults.DATE_FORMATS,
           isUnique: schemaItem.isUnique || false,
           defaultValue: schemaItem.defaultValue,
+          allowMultiSelect: schemaItem.allowMultiSelect,
 
           sequence: Object.keys(formattedColumns).length,
           columnHeading: '', // used later during mapping

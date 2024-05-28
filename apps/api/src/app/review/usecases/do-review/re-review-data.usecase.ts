@@ -61,10 +61,13 @@ export class DoReReview extends BaseReview {
     const validator = ajv.compile(schema);
     const validations = await this.validatorRepository.findOne({ _templateId: uploadInfo._templateId });
 
-    const uniqueFields = (JSON.parse(uploadInfo.customSchema) as ITemplateSchemaItem[])
-      .filter((column) => column.isUnique)
-      .map((column) => column.key);
+    const columns = JSON.parse(uploadInfo.customSchema) as ITemplateSchemaItem[];
+    const uniqueFields = columns.filter((column) => column.isUnique).map((column) => column.key);
     const uniqueFieldData = uniqueFields.length ? await this.dalService.getFieldData(_uploadId, uniqueFields) : [];
+    const multiSelectColumnHeadings = [];
+    (columns as ITemplateSchemaItem[]).forEach((column) => {
+      if (column.allowMultiSelect) multiSelectColumnHeadings.push(column.key);
+    });
 
     uniqueFieldData.forEach((item) => {
       uniqueFields.forEach((field) => {
@@ -82,12 +85,13 @@ export class DoReReview extends BaseReview {
 
     if (validations && validations.onBatchInitialize) {
       result = await this.batchValidate({
+        result,
         validator,
         dateFormats,
         uploadId: _uploadId,
         extra: uploadInfo.extra,
+        multiSelectColumnHeadings,
         onBatchInitialize: validations.onBatchInitialize,
-        result,
       });
     } else {
       result = await this.normalValidate({
@@ -95,6 +99,7 @@ export class DoReReview extends BaseReview {
         validator,
         dateFormats,
         result,
+        multiSelectColumnHeadings,
       });
     }
 
@@ -108,10 +113,12 @@ export class DoReReview extends BaseReview {
     uploadId,
     validator,
     dateFormats,
+    multiSelectColumnHeadings,
   }: {
     uploadId: string;
     result: ISaveResults;
     validator: ValidateFunction;
+    multiSelectColumnHeadings: string[];
     dateFormats: Record<string, string[]>;
   }) {
     const bulkOp = this.dalService.getRecordBulkOp(uploadId);
@@ -123,11 +130,24 @@ export class DoReReview extends BaseReview {
     };
 
     for await (const record of this._modal.find({ updated: { $ne: {}, $exists: true } })) {
+      const checkRecord: Record<string, unknown> = multiSelectColumnHeadings.reduce(
+        (acc, heading) => {
+          if (heading === '_') return acc;
+
+          if (multiSelectColumnHeadings.includes(heading) && typeof record.record[heading] === 'string') {
+            acc[heading] = record.record[heading]?.split(',');
+          }
+
+          return acc;
+        },
+        { ...record.record }
+      );
       const validationResult = this.validateRecord({
-        index: record.index,
-        record: record.record,
         validator,
+        checkRecord,
         dateFormats,
+        index: record.index,
+        passRecord: record.record,
       });
       response.totalRecords++;
       if (record.isValid && !validationResult.isValid) {
@@ -174,12 +194,14 @@ export class DoReReview extends BaseReview {
     validator,
     dateFormats,
     onBatchInitialize,
+    multiSelectColumnHeadings,
   }: {
     extra: any;
     uploadId: string;
     result: ISaveResults;
     onBatchInitialize: string;
     validator: ValidateFunction;
+    multiSelectColumnHeadings: string[];
     dateFormats: Record<string, string[]>;
   }) {
     const { dataStream } = this.getStreams({
@@ -190,6 +212,7 @@ export class DoReReview extends BaseReview {
       uploadId,
       validator,
       dateFormats,
+      multiSelectColumnHeadings,
     });
 
     await this.processBatches({
@@ -216,10 +239,12 @@ export class DoReReview extends BaseReview {
     uploadId,
     validator,
     dateFormats,
+    multiSelectColumnHeadings,
   }: {
     extra: any;
     uploadId: string;
     validator: ValidateFunction;
+    multiSelectColumnHeadings: string[];
     dateFormats: Record<string, string[]>;
   }) {
     let batchCount = 1;
@@ -232,11 +257,21 @@ export class DoReReview extends BaseReview {
     const resultObj = {};
 
     for await (const record of this._modal.find({ updated: { $ne: {}, $exists: true } })) {
+      const checkRecord: Record<string, unknown> = multiSelectColumnHeadings.reduce((acc, heading) => {
+        if (heading === '_') return acc;
+
+        if (multiSelectColumnHeadings.includes(heading)) {
+          acc[heading] = record.record[heading]?.split(',');
+        }
+
+        return acc;
+      }, record.record);
       const validationResultItem = this.validateRecord({
-        index: record.index,
-        record: record.record,
         validator,
+        checkRecord,
         dateFormats,
+        index: record.index,
+        passRecord: record.record,
       });
       resultObj[Number(record.index)] = record.isValid;
       batchRecords.push(validationResultItem);

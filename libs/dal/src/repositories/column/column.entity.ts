@@ -15,6 +15,8 @@ export class ColumnEntity {
 
   regex?: string;
 
+  allowMultiSelect?: boolean;
+
   regexDescription?: string;
 
   selectValues?: string[];

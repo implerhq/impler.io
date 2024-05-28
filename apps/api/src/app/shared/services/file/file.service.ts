@@ -1,7 +1,9 @@
 import * as XLSX from 'xlsx';
 import * as ExcelJS from 'exceljs';
-import { ParseConfig, parse } from 'papaparse';
+import { cwd } from 'node:process';
+import * as xlsxPopulate from 'xlsx-populate';
 import { CONSTANTS } from '@shared/constants';
+import { ParseConfig, parse } from 'papaparse';
 import { ColumnTypesEnum, Defaults, FileEncodingsEnum } from '@impler/shared';
 import { EmptyFileException } from '@shared/exceptions/empty-file.exception';
 import { InvalidFileException } from '@shared/exceptions/invalid-file.exception';
@@ -89,43 +91,54 @@ export class ExcelFileService {
 
     return columnName.reverse().join('');
   }
-  getExcelFileForHeadings(headings: IExcelFileHeading[], data?: Record<string, any>[]): Promise<Buffer> {
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Data');
-    const headingNames = headings.map((heading) => heading.key);
-    worksheet.columns = headings.map((heading) => {
-      if (heading.type === ColumnTypesEnum.DATE)
-        return {
-          header: heading.key,
-          key: heading.key,
-          style: { numFmt: '@' },
-        };
+  async getExcelFileForHeadings(headings: IExcelFileHeading[], data?: Record<string, any>[]): Promise<Buffer> {
+    const currentDir = cwd();
+    const isMultiSelect = headings.some(
+      (heading) => heading.type === ColumnTypesEnum.SELECT && heading.allowMultiSelect
+    );
+    const workbook = await xlsxPopulate.fromFileAsync(
+      `${currentDir}/src/config/${isMultiSelect ? 'Excel Multi Select Template.xlsm' : 'Excel Template.xlsx'}`
+    );
+    const worksheet = workbook.sheet('Data');
 
-      return { header: heading.key, key: heading.key };
+    headings.forEach((heading, index) => {
+      const columnName = this.getExcelColumnNameFromIndex(index + 1) + '1';
+      if (heading.type === ColumnTypesEnum.SELECT && heading.allowMultiSelect)
+        worksheet.cell(columnName).value(heading.key + '#MULTI');
+      else worksheet.cell(columnName).value(heading.key);
     });
+
     headings.forEach((heading, index) => {
       if (heading.type === ColumnTypesEnum.SELECT) {
-        const keyName = this.addSelectSheet(workbook, heading);
         const columnName = this.getExcelColumnNameFromIndex(index + 1);
-        this.addSelectValidation({
-          ws: worksheet,
-          range: `${columnName}2:${columnName}9999`,
-          keyName,
-          isRequired: heading.isRequired,
+        worksheet.range(`${columnName}2:${columnName}9999`).dataValidation({
+          type: 'list',
+          allowBlank: !heading.isRequired,
+          formula1: `"${heading.selectValues.join(',')}"`,
+          ...(!heading.allowMultiSelect
+            ? {
+                showErrorMessage: true,
+                error: 'Please select from the list',
+                errorTitle: 'Invalid Value',
+              }
+            : {}),
         });
       }
     });
-
+    const headingNames = headings.map((heading) => heading.key);
+    const endColumnPosition = this.getExcelColumnNameFromIndex(headings.length + 1) + '2';
+    const range = workbook.sheet(0).range(`A2:${endColumnPosition}`);
     if (Array.isArray(data) && data.length > 0) {
       const rows: string[][] = data.reduce<string[][]>((acc: string[][], rowItem: Record<string, any>) => {
         acc.push(headingNames.map((headingKey) => rowItem[headingKey]));
 
         return acc;
       }, []);
-      worksheet.addRows(rows);
+      range.value(rows);
     }
+    const buffer = await workbook.outputAsync();
 
-    return workbook.xlsx.writeBuffer() as Promise<Buffer>;
+    return buffer as Promise<Buffer>;
   }
   getExcelSheets(file: Express.Multer.File): Promise<string[]> {
     return new Promise(async (resolve, reject) => {

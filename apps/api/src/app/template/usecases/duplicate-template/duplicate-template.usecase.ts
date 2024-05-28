@@ -55,7 +55,8 @@ export class DuplicateTemplate {
         {
           _templateId,
         },
-        '-_id name key alternateKeys isRequired isUnique type regex regexDescription selectValues dateFormats sequence defaultValue'
+        // eslint-disable-next-line max-len
+        '-_id name key alternateKeys isRequired isUnique type regex regexDescription selectValues dateFormats sequence defaultValue allowMultiSelect'
       );
 
       await this.columnRepository.createMany(
@@ -75,6 +76,7 @@ export class DuplicateTemplate {
         {
           _templateId,
         },
+        // eslint-disable-next-line max-len
         '-_id recordVariables chunkVariables recordFormat chunkFormat combinedFormat isRecordFormatUpdated isChunkFormatUpdated isCombinedFormatUpdated'
       );
 

@@ -44,6 +44,7 @@ export interface ISchemaItem {
   dateFormats?: string[];
   type?: 'String' | 'Number' | 'Date' | 'Email' | 'Regex' | 'Select' | 'Any';
   regex?: string;
+  allowMultiSelect?: boolean;
 }
 
 export type EventCalls =

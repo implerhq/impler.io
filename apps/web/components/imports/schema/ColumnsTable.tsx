@@ -191,6 +191,14 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                         />
                       )}
                     />
+                    {typeValue === 'Select' ? (
+                      <Checkbox
+                        label="Multi Select?"
+                        title="Multi Select?"
+                        {...register('allowMultiSelect')}
+                        id="allowMultiSelect"
+                      />
+                    ) : null}
                     <Checkbox label="Required?" title="Required?" {...register('isRequired')} id="isRequired" />
                     <Checkbox label="Unique?" title="Unique?" {...register('isUnique')} id="isUnique" />
                   </Flex>
