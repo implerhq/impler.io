@@ -133,7 +133,7 @@ export class DoReReview extends BaseReview {
       const checkRecord: Record<string, unknown> = multiSelectColumnHeadings.reduce((acc, heading) => {
         if (heading === '_') return acc;
 
-        if (multiSelectColumnHeadings.includes(heading)) {
+        if (multiSelectColumnHeadings.includes(heading) && typeof record.record[heading] === 'string') {
           acc[heading] = record.record[heading]?.split(',');
         }
 
