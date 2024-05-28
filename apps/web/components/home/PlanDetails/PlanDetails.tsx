@@ -57,10 +57,14 @@ export function PlanDetails() {
             <Text>
               <>
                 You have imported {activePlanDetails!.usage.IMPORTED_ROWS} of {numberOfRecords} records in the{' '}
-                {activePlanDetails?.plan.name} Plan (Resets on {activePlanDetails!.expiryDate} ){' '}
-                {activePlanDetails?.plan.charge === 0.0
-                  ? ` Your total charges are $${activePlanDetails?.plan.charge}.`
-                  : ''}
+                {activePlanDetails?.plan.name} Plan (Resets on {activePlanDetails!.expiryDate}){' '}
+                {activePlanDetails?.plan.charge === 0.0 ? (
+                  ''
+                ) : (
+                  <>
+                    Your total charges are <strong>${activePlanDetails?.plan.charge}</strong>
+                  </>
+                )}
               </>
             </Text>
           ) : (
