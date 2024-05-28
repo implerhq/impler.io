@@ -165,6 +165,7 @@ export class BaseReview {
     let field: string;
 
     return errors.reduce((obj, error) => {
+      console.log(error);
       if (error.keyword === 'required') field = error.params.missingProperty;
       else [, field] = error.instancePath.split('/');
 
