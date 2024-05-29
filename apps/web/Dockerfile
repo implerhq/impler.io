@@ -3,7 +3,7 @@ FROM node:20.13.1-slim
 WORKDIR /usr/src/app
 
 RUN npm i -g \
-  npm@10.5.2 \
+  npm@9.5.1 \
   pnpm@8.9.0
 
 COPY .npmrc .
