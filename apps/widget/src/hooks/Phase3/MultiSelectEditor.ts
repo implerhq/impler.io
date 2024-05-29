@@ -15,7 +15,7 @@ export class MultiSelectEditor extends BaseEditor {
     if (this.timer) this.hot.rootWindow.clearTimeout(this.timer);
   }
   getValue() {
-    return [...this.value].join(',');
+    return this.value.size ? [...this.value].join(',') : undefined;
   }
   setValue(value: string) {
     this.value = new Set(value ? value.split(',') : []);

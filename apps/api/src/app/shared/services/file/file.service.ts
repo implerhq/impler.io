@@ -36,12 +36,11 @@ export class ExcelFileService {
         .slice(0, 25) // exceljs don't allow heading more than 30 characters
     );
   }
-  addSelectSheet(wb: ExcelJS.Workbook, heading: IExcelFileHeading): string {
+  addSelectSheet(wb: any, heading: IExcelFileHeading): string {
     const name = this.formatName(heading.key);
-    const companies = wb.addWorksheet(name);
-    const companyHeadings = [heading.key];
-    companies.addRow(companyHeadings);
-    heading.selectValues.forEach((value) => companies.addRow([value]));
+    const addedSheet = wb.addSheet(name);
+    addedSheet.cell('A1').value(heading.key);
+    heading.selectValues.forEach((value, index) => addedSheet.cell(`A${index + 2}`).value(value));
 
     return name;
   }
@@ -110,11 +109,12 @@ export class ExcelFileService {
 
     headings.forEach((heading, index) => {
       if (heading.type === ColumnTypesEnum.SELECT) {
+        const keyName = this.addSelectSheet(workbook, heading);
         const columnName = this.getExcelColumnNameFromIndex(index + 1);
         worksheet.range(`${columnName}2:${columnName}9999`).dataValidation({
           type: 'list',
           allowBlank: !heading.isRequired,
-          formula1: `"${heading.selectValues.join(',')}"`,
+          formula1: `${keyName}!$A$2:$A$9999`,
           ...(!heading.allowMultiSelect
             ? {
                 showErrorMessage: true,

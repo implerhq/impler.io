@@ -8,7 +8,7 @@ import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { IFormvalues, IUploadValues } from '@types';
 import { useImplerState } from '@store/impler.context';
-import { ColumnTypesEnum, IErrorObject, IOption, ITemplate, IUpload } from '@impler/shared';
+import { ColumnTypesEnum, IErrorObject, IOption, ISchemaItem, ITemplate, IUpload } from '@impler/shared';
 import { FileMimeTypesEnum, IImportConfig, downloadFile } from '@impler/shared';
 import { downloadFileFromURL, getFileNameFromUrl, notifier, ParentWindow } from '@util';
 
@@ -165,9 +165,14 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     }
 
     const foundTemplate = findTemplate();
+    let parsedSchema: ISchemaItem[] | undefined = undefined;
+    try {
+      if (schema) parsedSchema = JSON.parse(schema);
+    } catch (error) {}
+
     if (foundTemplate && ((Array.isArray(data) && data.length > variables.baseIndex) || schema)) {
-      const isMultiSelect = Array.isArray(schema)
-        ? schema.some((schemaItem) => schemaItem.type === ColumnTypesEnum.SELECT && schemaItem.allowMultiSelect)
+      const isMultiSelect = Array.isArray(parsedSchema)
+        ? parsedSchema.some((schemaItem) => schemaItem.type === ColumnTypesEnum.SELECT && schemaItem.allowMultiSelect)
         : foundTemplate.sampleFileUrl?.endsWith('xlsm');
       downloadSample([foundTemplate._id, foundTemplate.name, !!isMultiSelect]);
     } else if (foundTemplate && foundTemplate.sampleFileUrl) {
