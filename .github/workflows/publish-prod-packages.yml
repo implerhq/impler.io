@@ -48,11 +48,13 @@ jobs:
         working-directory: libs/shared
         run: |
           npm config set --workspaces=false --include-workspace-root //registry.npmjs.com/:_authToken=${{ secrets.NPM_TOKEN }}
+          npm config set --workspaces=false --include-workspace-root registry=https://registry.npmjs.org/
           npm publish --access public
 
       - name: Publish @impler/react package on NPM 📦
         working-directory: packages/react
         run: |
           npm config set --workspaces=false --include-workspace-root //registry.npmjs.com/:_authToken=${{ secrets.NPM_TOKEN }}
+          npm config set --workspaces=false --include-workspace-root registry=https://registry.npmjs.org/
           npm publish --access public
 
