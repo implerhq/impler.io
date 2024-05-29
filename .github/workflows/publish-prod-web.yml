@@ -3,7 +3,7 @@ name: Publish Web app to Production
 on:
   push:
     tags:
-      - '**@impler/web@**'
+      - 'v*.*.*'
   workflow_dispatch:
 
 jobs:
@@ -59,3 +59,15 @@ jobs:
           docker push ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:latest
           docker push ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG
           echo "::set-output name=IMAGE::ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG"
+
+      - name: Extract version from tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        id: extract_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+
+      - name: Steps for image version push
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          REGISTERY_OWNER: implerhq
+          DOCKER_NAME: impler/web
+        run: docker push ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:${{ env.VERSION }}
