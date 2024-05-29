@@ -27,7 +27,6 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '20.13.1'
-          registry-url: "https://registry.npmjs.org"
 
       - name: Cache pnpm modules
         uses: actions/cache@v2
@@ -47,14 +46,11 @@ jobs:
       - name: Publish @impler/shared package on NPM 📦
         working-directory: libs/shared
         run: |
-          npm config set --workspaces=false --include-workspace-root //registry.npmjs.com/:_authToken=${{ secrets.NPM_TOKEN }}
-          npm config set --workspaces=false --include-workspace-root registry=https://registry.npmjs.org/
+          npm config set --workspaces=false --include-workspace-root //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
           npm publish --access public
 
       - name: Publish @impler/react package on NPM 📦
         working-directory: packages/react
         run: |
-          npm config set --workspaces=false --include-workspace-root //registry.npmjs.com/:_authToken=${{ secrets.NPM_TOKEN }}
-          npm config set --workspaces=false --include-workspace-root registry=https://registry.npmjs.org/
+          npm config set --workspaces=false --include-workspace-root //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
           npm publish --access public
-
