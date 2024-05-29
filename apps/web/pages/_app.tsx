@@ -89,6 +89,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           name="og:description"
           content="100% open source data import experience with readymade CSV & Excel import widget"
         />
+        <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
       </Head>
       <QueryClientProvider client={client}>
         <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
