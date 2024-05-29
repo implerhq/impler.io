@@ -24,14 +24,14 @@ export function SelectCardModal({ email, planCode, onClose }: SelectCardModalPro
   const { paymentMethods, isPaymentMethodsLoading, isPaymentMethodsFetched } = usePaymentMethods();
 
   useEffect(() => {
-    if (isPaymentMethodsFetched && Array.isArray(paymentMethods) && paymentMethods.length === 0) {
+    if (paymentMethods?.length === 0) {
       notify(NOTIFICATION_KEYS.NO_PAYMENT_METHOD_FOUND, {
         title: 'No Appropriate Payment Method Found',
         message: 'Please Add your Card first. Redirecting you to cards.',
         color: 'red',
       });
       modals.closeAll();
-      router.push(`/settings?tab=addcard`);
+      router.push(`/settings?tab=addcard&action=addcardmodal`);
     }
   }, [isPaymentMethodsFetched]);
 
