@@ -9,6 +9,8 @@ import { TickIcon } from '@assets/icons/Tick.icon';
 import { CrossIcon } from '@assets/icons/Cross.icon';
 import { useCancelPlan } from '@hooks/useCancelPlan';
 import { SelectCardModal } from '@components/settings';
+import getConfig from 'next/config';
+import { useRouter } from 'next/router';
 
 interface PlansProps {
   profile: IProfileData;
@@ -28,6 +30,10 @@ interface PlanItem {
 }
 
 export const Plans = ({ profile, activePlanCode, canceledOn, expiryDate }: PlansProps) => {
+  const router = useRouter();
+  const { publicRuntimeConfig } = getConfig();
+  const defaultPaymentGateway = publicRuntimeConfig.NEXT_PUBLIC_DEFAULT_PAYMENT_GATEWAY;
+  const paymentGatewayURL = publicRuntimeConfig.NEXT_PUBLIC_PAYMENT_GATEWAY_URL;
   const { classes } = useStyles();
   const [showYearly, setShowYearly] = useState<boolean>(true);
   const plans: Record<string, PlanItem[]> = {
@@ -93,6 +99,11 @@ export const Plans = ({ profile, activePlanCode, canceledOn, expiryDate }: Plans
   const { cancelPlan, isCancelPlanLoading } = useCancelPlan({ email: profile.email });
 
   const onPlanButtonClick = (code: string) => {
+    if (defaultPaymentGateway === 'RAZORPAY') {
+      router.push(
+        `${paymentGatewayURL}/api/v1/plans/${code}/buy/${profile.email}/redirect/?gateway=${defaultPaymentGateway}`
+      );
+    }
     if (activePlanCode === code) {
       cancelPlan();
     } else {
