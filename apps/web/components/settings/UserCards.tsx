@@ -66,6 +66,7 @@ export function UserCards() {
     modals.openConfirmModal({
       title: 'Please confirm your action',
       children: 'Are you sure you want to delete your card?',
+      centered: true,
       labels: { confirm: 'Confirm', cancel: 'Cancel' },
       onConfirm: async () => {
         deletePaymentMethod(card.paymentMethodId);
