@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react';
-import { BaseEditor } from 'handsontable/editors';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { notifier } from '@util';
@@ -8,7 +7,6 @@ import { HotItemSchema } from '@types';
 import { logAmplitudeEvent } from '@amplitude';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
-import { CellProperties } from 'handsontable/settings';
 import {
   ColumnTypesEnum,
   ISchemaColumn,
@@ -19,114 +17,14 @@ import {
   ReviewDataTypesEnum,
   numberFormatter,
 } from '@impler/shared';
+import { SelectEditor } from './SelectEditor';
+import { MultiSelectEditor } from './MultiSelectEditor';
 
 interface IUsePhase3Props {
   onNext: (uploadData: IUpload) => void;
 }
 
 const defaultPage = 1;
-
-class SelectEditor extends BaseEditor {
-  [x: string]: any;
-  timer: any;
-  focus() {
-    this.selectInput.focus();
-  }
-  close() {
-    this._opened = false;
-    this.listDiv.classList.remove('open');
-  }
-  getValue() {
-    return this.selectInput.value;
-  }
-  setValue(value) {
-    this.selectInput.value = value;
-  }
-  open() {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const { top, start, width } = this.getEditedCellRect();
-    this._opened = true;
-    this.selectInput.focus();
-
-    this.listDiv.classList.add('open');
-    const selectStyle = this.listDiv.style;
-
-    selectStyle.top = `${top}px`;
-    selectStyle.minWidth = `${width}px`;
-    selectStyle[this.hot.isRtl() ? 'right' : 'left'] = `${start}px`;
-    selectStyle.margin = '0px';
-  }
-  prepare(
-    row: number,
-    column: number,
-    prop: string | number,
-    TD: HTMLTableCellElement,
-    originalValue: any,
-    cellProperties: CellProperties
-  ): void {
-    super.prepare(row, column, prop, TD, originalValue, cellProperties);
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    this.prepareOptions(this.cellProperties.selectOptions);
-  }
-  prepareOptions(options: string[], search?: string) {
-    this.selectUl.innerHTML = '';
-
-    if (!options || !options.length) return;
-
-    if (search) {
-      options = options.filter((key) => key.toLowerCase().includes(search.toLowerCase()));
-    }
-
-    options.forEach((key) => {
-      const liElement = this.hot.rootDocument.createElement('li');
-      liElement.classList.add('option');
-      liElement.dataset.value = key;
-      liElement.dataset.displayText = key;
-      liElement.innerText = key;
-      liElement.onclick = () => {
-        this.selectInput.value = key;
-        this.finishEditing();
-      };
-      this.selectUl.appendChild(liElement);
-    });
-  }
-  search() {
-    const text = this.selectInput.value;
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    this.prepareOptions(this.cellProperties.selectOptions, text);
-  }
-  init() {
-    const listDiv = this.hot.rootDocument.createElement('div');
-    listDiv.classList.add('list-wrapper');
-
-    const input = this.hot.rootDocument.createElement('input');
-    input.classList.add('dd-searchbox');
-    input.type = 'search';
-    input.onkeydown = () => {
-      this.timer = setTimeout(() => {
-        this.search();
-      }, 200);
-    };
-
-    listDiv.appendChild(input);
-
-    const listDropdownWrapper = this.hot.rootDocument.createElement('div');
-    listDropdownWrapper.classList.add('list-dropdown');
-    this.selectUl = this.hot.rootDocument.createElement('ul');
-    listDropdownWrapper.appendChild(this.selectUl);
-    listDiv.appendChild(listDropdownWrapper);
-
-    this.listDiv = listDiv;
-    this.selectInput = input;
-
-    this.hot.rootElement.appendChild(this.listDiv);
-  }
-}
 
 interface IRecordExtended extends IRecord {
   checked?: boolean;
@@ -190,9 +88,9 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
               break;
             case ColumnTypesEnum.SELECT:
               columnItem.type = 'text';
-              columnItem.editor = SelectEditor;
               columnItem.renderer = 'custom';
               columnItem.selectOptions = column.selectValues;
+              columnItem.editor = column.allowMultiSelect ? MultiSelectEditor : SelectEditor;
               break;
             case ColumnTypesEnum.NUMBER:
               columnItem.type = 'numeric';

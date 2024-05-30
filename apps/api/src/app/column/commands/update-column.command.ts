@@ -54,4 +54,7 @@ export class UpdateColumnCommand extends BaseCommand {
   @IsOptional()
   @Validate(IsNumberOrString)
   defaultValue?: string | number;
+
+  @IsOptional()
+  allowMultiSelect?: boolean;
 }

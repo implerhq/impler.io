@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ColumnRepository } from '@impler/dal';
-import { ColumnTypesEnum, ISchemaItem } from '@impler/shared';
+import { ColumnTypesEnum, FileMimeTypesEnum, ISchemaItem } from '@impler/shared';
 
 import { ExcelFileService } from '@shared/services/file';
 import { IExcelFileHeading } from '@shared/types/file.types';
@@ -13,12 +13,19 @@ export class DownloadSample {
     private excelFileService: ExcelFileService
   ) {}
 
-  async execute(_templateId: string, data: DownloadSampleCommand): Promise<Buffer> {
+  async execute(
+    _templateId: string,
+    data: DownloadSampleCommand
+  ): Promise<{
+    file: Buffer;
+    type: string;
+    ext: string;
+  }> {
     const columns = await this.columnsRepository.find(
       {
         _templateId,
       },
-      'key type selectValues isRequired'
+      'key type selectValues isRequired allowMultiSelect'
     );
 
     let parsedSchema: ISchemaItem[], columnKeys: IExcelFileHeading[];
@@ -32,6 +39,7 @@ export class DownloadSample {
         type: (columnItem.type as ColumnTypesEnum) || ColumnTypesEnum.STRING,
         selectValues: columnItem.selectValues,
         isRequired: columnItem.isRequired,
+        allowMultiSelect: columnItem.allowMultiSelect,
       }));
     } else {
       // else create structure from existing defualt schema
@@ -40,9 +48,18 @@ export class DownloadSample {
         type: columnItem.type as ColumnTypesEnum,
         selectValues: columnItem.selectValues,
         isRequired: columnItem.isRequired,
+        allowMultiSelect: columnItem.allowMultiSelect,
       }));
     }
+    const hasMultiSelect = columnKeys.some(
+      (columnItem) => columnItem.type === ColumnTypesEnum.SELECT && columnItem.allowMultiSelect
+    );
+    const buffer = await this.excelFileService.getExcelFileForHeadings(columnKeys, data.data);
 
-    return await this.excelFileService.getExcelFileForHeadings(columnKeys, data.data);
+    return {
+      file: buffer,
+      ext: hasMultiSelect ? 'xlsm' : 'xlsx',
+      type: hasMultiSelect ? FileMimeTypesEnum.EXCELM : FileMimeTypesEnum.EXCELX,
+    };
   }
 }

@@ -3,10 +3,10 @@ import { Writable } from 'stream';
 import { Injectable, BadRequestException } from '@nestjs/common';
 
 import { APIMessages } from '@shared/constants';
-import { PaymentAPIService, UploadStatusEnum } from '@impler/shared';
 import { BaseReview } from './base-review.usecase';
 import { BATCH_LIMIT } from '@shared/services/sandbox';
 import { StorageService } from '@impler/shared/dist/services/storage';
+import { PaymentAPIService, UploadStatusEnum, ITemplateSchemaItem } from '@impler/shared';
 import { UploadRepository, ValidatorRepository, FileRepository, DalService } from '@impler/dal';
 
 interface ISaveResults {
@@ -34,22 +34,33 @@ export class DoReview extends BaseReview {
   async execute(_uploadId: string) {
     this._modal = await this.dalService.createRecordCollection(_uploadId);
 
-    const uploadInfo = await this.uploadRepository.findById(_uploadId);
+    const uploadInfo = await this.uploadRepository.findById(
+      _uploadId,
+      'customSchema _uploadedFileId _templateId extra headings'
+    );
     if (!uploadInfo) {
       throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
     }
     const dateFormats: Record<string, string[]> = {};
     const uniqueItems: Record<string, Set<any>> = {};
+    const columns = JSON.parse(uploadInfo.customSchema);
+    const multiSelectColumnHeadings = [];
+    (columns as ITemplateSchemaItem[]).forEach((column) => {
+      if (column.allowMultiSelect) multiSelectColumnHeadings.push(column.key);
+    });
     const schema = this.buildAJVSchema({
-      columns: JSON.parse(uploadInfo.customSchema),
+      columns,
       dateFormats,
       uniqueItems,
     });
     const ajv = this.getAjvValidator(dateFormats, uniqueItems);
     const validator = ajv.compile(schema);
 
-    const uploadedFileInfo = await this.fileRepository.findById(uploadInfo._uploadedFileId);
-    const validations = await this.validatorRepository.findOne({ _templateId: uploadInfo._templateId });
+    const uploadedFileInfo = await this.fileRepository.findById(uploadInfo._uploadedFileId, 'path');
+    const validations = await this.validatorRepository.findOne(
+      { _templateId: uploadInfo._templateId },
+      'onBatchInitialize'
+    );
 
     let response: ISaveResults;
 
@@ -67,6 +78,7 @@ export class DoReview extends BaseReview {
         extra: uploadInfo.extra,
         dataStream, // not-used
         dateFormats,
+        multiSelectColumnHeadings,
       });
 
       response = {
@@ -99,6 +111,7 @@ export class DoReview extends BaseReview {
         uploadId: _uploadId,
         validator,
         dateFormats,
+        multiSelectColumnHeadings,
       });
     }
 

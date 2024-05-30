@@ -20,7 +20,7 @@ interface IDropzoneProps {
 export function Dropzone(props: IDropzoneProps) {
   const {
     loading,
-    accept = [MIME_TYPES.csv, MIME_TYPES.xlsx],
+    accept = [MIME_TYPES.csv, MIME_TYPES.xlsx, 'application/vnd.ms-excel.sheet.macroenabled.12'],
     onDrop,
     onClear,
     file,

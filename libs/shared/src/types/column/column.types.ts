@@ -17,6 +17,7 @@ export interface ISchemaItem {
   selectValues?: string[];
   dateFormats?: string[];
   type?: ColumnTypesEnum;
+  allowMultiSelect?: boolean;
   regex?: string;
   defaultValue?: string | number;
 }

@@ -7,6 +7,7 @@ export interface IColumn {
   isRequired?: boolean;
   isUnique?: boolean;
   regex?: string;
+  allowMultiSelect?: boolean;
   defaultValue?: string | number;
   regexDescription?: string;
   selectValues?: string[];

@@ -58,4 +58,8 @@ export class AddColumnCommand extends BaseCommand {
   @IsOptional()
   @Validate(IsNumberOrString)
   defaultValue?: string | number;
+
+  @IsBoolean()
+  @IsOptional()
+  allowMultiSelect?: boolean;
 }

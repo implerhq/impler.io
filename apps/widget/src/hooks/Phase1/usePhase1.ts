@@ -8,7 +8,7 @@ import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { IFormvalues, IUploadValues } from '@types';
 import { useImplerState } from '@store/impler.context';
-import { IErrorObject, IOption, ITemplate, IUpload } from '@impler/shared';
+import { ColumnTypesEnum, IErrorObject, IOption, ISchemaItem, ITemplate, IUpload } from '@impler/shared';
 import { FileMimeTypesEnum, IImportConfig, downloadFile } from '@impler/shared';
 import { downloadFileFromURL, getFileNameFromUrl, notifier, ParentWindow } from '@util';
 
@@ -84,16 +84,17 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
       },
     }
   );
-  const { mutate: downloadSample } = useMutation<ArrayBuffer, IErrorObject, [string, string]>(
+  const { mutate: downloadSample } = useMutation<ArrayBuffer, IErrorObject, [string, string, boolean]>(
     ['downloadSample'],
     ([providedTemplateId]) => api.downloadSample(providedTemplateId, data, schema),
     {
       onSuccess(excelFileData, queryVariables) {
+        const isMultiSelect = queryVariables[variables.secondIndex];
         downloadFile(
           new Blob([excelFileData], {
-            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            type: isMultiSelect ? FileMimeTypesEnum.EXCELM : FileMimeTypesEnum.EXCELX,
           }),
-          queryVariables[variables.firstIndex] as string
+          queryVariables[variables.firstIndex] + ` (sample).${isMultiSelect ? 'xlsm' : 'xlsx'}`
         );
       },
     }
@@ -164,10 +165,21 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     }
 
     const foundTemplate = findTemplate();
+    let parsedSchema: ISchemaItem[] | undefined = undefined;
+    try {
+      if (schema) parsedSchema = JSON.parse(schema);
+    } catch (error) {}
+
     if (foundTemplate && ((Array.isArray(data) && data.length > variables.baseIndex) || schema)) {
-      downloadSample([foundTemplate._id, foundTemplate.name + '.xlsx']);
+      const isMultiSelect = Array.isArray(parsedSchema)
+        ? parsedSchema.some((schemaItem) => schemaItem.type === ColumnTypesEnum.SELECT && schemaItem.allowMultiSelect)
+        : foundTemplate.sampleFileUrl?.endsWith('xlsm');
+      downloadSample([foundTemplate._id, foundTemplate.name, !!isMultiSelect]);
     } else if (foundTemplate && foundTemplate.sampleFileUrl) {
-      getSignedUrl([foundTemplate.sampleFileUrl, foundTemplate.name + ' (sample).xlsx']);
+      getSignedUrl([
+        foundTemplate.sampleFileUrl,
+        foundTemplate.name + ` (sample).${foundTemplate.sampleFileUrl.substr(-4, 4)}`,
+      ]);
     }
     setIsDownloadInProgress(false);
   };
@@ -188,7 +200,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
   const onSubmit = async () => {
     await trigger();
     const file = getValues('file');
-    if ([FileMimeTypesEnum.EXCEL, FileMimeTypesEnum.EXCELX].includes(file.type as FileMimeTypesEnum)) {
+    if (file && [FileMimeTypesEnum.EXCEL, FileMimeTypesEnum.EXCELX].includes(file.type as FileMimeTypesEnum)) {
       getExcelSheetNames({ file: file });
     } else {
       handleSubmit(uploadFile)();
