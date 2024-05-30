@@ -101,10 +101,12 @@ export class ExcelFileService {
     const worksheet = workbook.sheet('Data');
 
     headings.forEach((heading, index) => {
-      const columnName = this.getExcelColumnNameFromIndex(index + 1) + '1';
+      const columnName = this.getExcelColumnNameFromIndex(index + 1);
+      const columnHeadingCellName = columnName + '1';
       if (heading.type === ColumnTypesEnum.SELECT && heading.allowMultiSelect)
-        worksheet.cell(columnName).value(heading.key + '#MULTI');
-      else worksheet.cell(columnName).value(heading.key);
+        worksheet.cell(columnHeadingCellName).value(heading.key + '#MULTI');
+      else worksheet.cell(columnHeadingCellName).value(heading.key);
+      if (heading.type === ColumnTypesEnum.DATE) worksheet.column(columnName).style('numberFormat', '@');
     });
 
     headings.forEach((heading, index) => {
