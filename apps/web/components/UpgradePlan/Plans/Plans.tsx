@@ -1,3 +1,5 @@
+import getConfig from 'next/config';
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { modals } from '@mantine/modals';
 import { Switch, Stack, Table, Button, Text } from '@mantine/core';
@@ -9,8 +11,6 @@ import { TickIcon } from '@assets/icons/Tick.icon';
 import { CrossIcon } from '@assets/icons/Cross.icon';
 import { useCancelPlan } from '@hooks/useCancelPlan';
 import { SelectCardModal } from '@components/settings';
-import getConfig from 'next/config';
-import { useRouter } from 'next/router';
 
 interface PlansProps {
   profile: IProfileData;
@@ -29,73 +29,74 @@ interface PlanItem {
   extraChargeOverheadTenThusandRecords?: number;
 }
 
+const plans: Record<string, PlanItem[]> = {
+  monthly: [
+    {
+      name: 'Starter (Default)',
+      code: 'STARTER',
+      rowsIncluded: 5000,
+      price: 0,
+      yearlyPrice: 0,
+      extraChargeOverheadTenThusandRecords: 1,
+      removeBranding: false,
+    },
+    {
+      name: 'Growth',
+      code: 'GROWTH-MONTHLY',
+      price: 42,
+      yearlyPrice: 0,
+      rowsIncluded: 500000,
+      extraChargeOverheadTenThusandRecords: 0.7,
+      removeBranding: true,
+    },
+    {
+      name: 'Scale',
+      code: 'SCALE-MONTHLY',
+      price: 90,
+      yearlyPrice: 0,
+      rowsIncluded: 1500000,
+      extraChargeOverheadTenThusandRecords: 0.5,
+      removeBranding: true,
+    },
+  ],
+  yearly: [
+    {
+      name: 'Starter (Default)',
+      code: 'STARTER',
+      rowsIncluded: 5000,
+      price: 0,
+      yearlyPrice: 0,
+      extraChargeOverheadTenThusandRecords: 1,
+      removeBranding: false,
+    },
+    {
+      name: 'Growth',
+      code: 'GROWTH-YEARLY',
+      price: 35,
+      yearlyPrice: 420,
+      rowsIncluded: 6000000,
+      extraChargeOverheadTenThusandRecords: 0.7,
+      removeBranding: true,
+    },
+    {
+      name: 'Scale',
+      code: 'SCALE-YEARLY',
+      price: 75,
+      yearlyPrice: 900,
+      rowsIncluded: 18000000,
+      extraChargeOverheadTenThusandRecords: 0.5,
+      removeBranding: true,
+    },
+  ],
+};
+
 export const Plans = ({ profile, activePlanCode, canceledOn, expiryDate }: PlansProps) => {
   const router = useRouter();
+  const { classes } = useStyles();
   const { publicRuntimeConfig } = getConfig();
+  const [showYearly, setShowYearly] = useState<boolean>(true);
   const defaultPaymentGateway = publicRuntimeConfig.NEXT_PUBLIC_DEFAULT_PAYMENT_GATEWAY;
   const paymentGatewayURL = publicRuntimeConfig.NEXT_PUBLIC_PAYMENT_GATEWAY_URL;
-  const { classes } = useStyles();
-  const [showYearly, setShowYearly] = useState<boolean>(true);
-  const plans: Record<string, PlanItem[]> = {
-    monthly: [
-      {
-        name: 'Starter (Default)',
-        code: 'STARTER',
-        rowsIncluded: 5000,
-        price: 0,
-        yearlyPrice: 0,
-        extraChargeOverheadTenThusandRecords: 1,
-        removeBranding: false,
-      },
-      {
-        name: 'Growth',
-        code: 'GROWTH-MONTHLY',
-        price: 42,
-        yearlyPrice: 0,
-        rowsIncluded: 500000,
-        extraChargeOverheadTenThusandRecords: 0.7,
-        removeBranding: true,
-      },
-      {
-        name: 'Scale',
-        code: 'SCALE-MONTHLY',
-        price: 90,
-        yearlyPrice: 0,
-        rowsIncluded: 1500000,
-        extraChargeOverheadTenThusandRecords: 0.5,
-        removeBranding: true,
-      },
-    ],
-    yearly: [
-      {
-        name: 'Starter (Default)',
-        code: 'STARTER',
-        rowsIncluded: 5000,
-        price: 0,
-        yearlyPrice: 0,
-        extraChargeOverheadTenThusandRecords: 1,
-        removeBranding: false,
-      },
-      {
-        name: 'Growth',
-        code: 'GROWTH-YEARLY',
-        price: 35,
-        yearlyPrice: 420,
-        rowsIncluded: 6000000,
-        extraChargeOverheadTenThusandRecords: 0.7,
-        removeBranding: true,
-      },
-      {
-        name: 'Scale',
-        code: 'SCALE-YEARLY',
-        price: 75,
-        yearlyPrice: 900,
-        rowsIncluded: 18000000,
-        extraChargeOverheadTenThusandRecords: 0.5,
-        removeBranding: true,
-      },
-    ],
-  };
   const { cancelPlan, isCancelPlanLoading } = useCancelPlan({ email: profile.email });
 
   const onPlanButtonClick = (code: string) => {
@@ -108,13 +109,11 @@ export const Plans = ({ profile, activePlanCode, canceledOn, expiryDate }: Plans
       cancelPlan();
     } else {
       modals.open({
-        id: MODAL_KEYS.SELECT_CARD,
-        modalId: MODAL_KEYS.SELECT_CARD,
-        children: (
-          <SelectCardModal email={profile.email} planCode={code} onClose={() => modals.close(MODAL_KEYS.SELECT_CARD)} />
-        ),
         size: '2xl',
         withCloseButton: false,
+        id: MODAL_KEYS.SELECT_CARD,
+        modalId: MODAL_KEYS.SELECT_CARD,
+        children: <SelectCardModal email={profile.email} planCode={code} onClose={modals.closeAll} />,
       });
     }
   };
