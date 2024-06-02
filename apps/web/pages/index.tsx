@@ -4,6 +4,7 @@ import { Stack, Title } from '@mantine/core';
 import { ImportCount } from '@components/home/ImportCount/ImportCount';
 import { PlanDetails } from '@components/home/PlanDetails';
 import { AppLayout } from '@layouts/AppLayout';
+import { TransactionHistory } from '@components/home/TransactionHistory';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -19,6 +20,7 @@ export default function Home() {
       <Stack>
         <Title order={2}>Home</Title>
         {publicRuntimeConfig.NEXT_PUBLIC_PAYMENT_GATEWAY_URL && <PlanDetails />}
+        <TransactionHistory />
         <ImportCount />
       </Stack>
     </>
