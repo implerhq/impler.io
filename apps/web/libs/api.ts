@@ -7,6 +7,11 @@ interface Route {
 }
 
 const routes: Record<string, Route> = {
+  [API_KEYS.TRANSACTION_HISTORY]: {
+    url: () => `/v1/user/transactions/history`,
+    method: 'GET',
+  },
+
   [API_KEYS.PAYMENT_METHOD_LIST]: {
     url: () => `/v1/user/payment-methods`,
     method: 'GET',
