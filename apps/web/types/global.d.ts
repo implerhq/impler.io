@@ -107,3 +107,13 @@ interface IImportCountData {
     Reviewing: number;
   };
 }
+
+interface ITransactionHistory {
+  transactionDate: Date;
+  planName: string;
+  transactionStatus: string;
+  membershipDate: Date;
+  expiryDate: string;
+  isPlanActive: boolean;
+  charge: number;
+}
