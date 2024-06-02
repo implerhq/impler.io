@@ -8,6 +8,7 @@ import {
   UpdatePaymentMethod,
   ConfirmIntentId,
   DeleteUserPaymentMethod,
+  GetTransactionHistory,
 } from './usecases';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { IJwtPayload, ACCESS_KEY_NAME } from '@impler/shared';
@@ -26,7 +27,8 @@ export class UserController {
     private updatePaymentMethod: UpdatePaymentMethod,
     private confirmIntentId: ConfirmIntentId,
     private retrivePaymentMethods: RetrievePaymentMethods,
-    private deleteUserPaymentMethod: DeleteUserPaymentMethod
+    private deleteUserPaymentMethod: DeleteUserPaymentMethod,
+    private getTransactionHistory: GetTransactionHistory
   ) {}
 
   @Get('/import-count')
@@ -91,5 +93,13 @@ export class UserController {
   })
   async deletePaymentMethodRoute(@Param('paymentMethodId') paymentMethodId: string) {
     return this.deleteUserPaymentMethod.execute(paymentMethodId);
+  }
+
+  @Get('/transactions/history')
+  @ApiOperation({
+    summary: 'Get Transaction History for User',
+  })
+  async getTransactionHistoryRoute(@UserSession() user: IJwtPayload) {
+    return this.getTransactionHistory.execute(user.email);
   }
 }

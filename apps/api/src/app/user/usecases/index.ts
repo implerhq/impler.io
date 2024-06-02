@@ -5,6 +5,7 @@ import { UpdatePaymentMethod } from './setup-payment-intent/setup-payment-intent
 import { ConfirmIntentId } from './save-payment-intent-id/save-paymentintentid.usecase';
 import { RetrievePaymentMethods } from './retrive-payment-methods/retrive-payment-methods.usecase';
 import { DeleteUserPaymentMethod } from './delete-user-payment-method/delete-user-payment-method.usecase';
+import { GetTransactionHistory } from './get-transaction-history/get-transaction-history.usecase';
 
 export const USE_CASES = [
   GetImportCounts,
@@ -14,6 +15,7 @@ export const USE_CASES = [
   ConfirmIntentId,
   RetrievePaymentMethods,
   DeleteUserPaymentMethod,
+  GetTransactionHistory,
   //
 ];
 
@@ -25,4 +27,5 @@ export {
   ConfirmIntentId,
   RetrievePaymentMethods,
   DeleteUserPaymentMethod,
+  GetTransactionHistory,
 };
