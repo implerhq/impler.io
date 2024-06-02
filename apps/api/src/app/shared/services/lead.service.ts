@@ -36,14 +36,14 @@ export class LeadService {
   public async createLead(data: ILeadInformation): Promise<any> {
     const accessToken = await this.getAccessToken();
     if (accessToken) {
-      // eslint-disable-next-line max-len
-      const url = `https://marketingautomation.zoho.com/api/v1/json/listsubscribe?listkey=${
+      // Add Lead to marketing automation
+      const maUrl = `https://marketingautomation.zoho.com/api/v1/json/listsubscribe?listkey=${
         process.env.LEAD_LIST_KEY
       }&leadinfo=${JSON.stringify(data)}&topic_id=${process.env.LEAD_TOPIC_ID}`;
-      if (this.log) console.log(url);
+      if (this.log) console.log(maUrl);
 
-      const response = await axios.post(
-        url,
+      const maResponse = await axios.post(
+        maUrl,
         {},
         {
           headers: {
@@ -51,9 +51,32 @@ export class LeadService {
           },
         }
       );
-      if (this.log) console.log('Lead created', response.data);
+      if (this.log) console.log('Lead created', maResponse.data);
 
-      return response.data;
+      // Add Lead to Zoho CRM
+      const crmUrl = `https://www.zohoapis.com/crm/v6/Leads`;
+      if (this.log) console.log(crmUrl);
+
+      const crmResponse = await axios.post(
+        crmUrl,
+        {
+          data: [
+            {
+              Last_Name: data['Last Name'],
+              First_Name: data['First Name'],
+              Email: data['Lead Email'],
+            },
+          ],
+        },
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${accessToken}`,
+          },
+        }
+      );
+      if (this.log) console.log('Lead created', crmResponse.data);
+
+      return crmResponse.data;
     }
   }
 }
