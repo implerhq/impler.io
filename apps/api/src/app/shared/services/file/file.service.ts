@@ -106,7 +106,7 @@ export class ExcelFileService {
       if (heading.type === ColumnTypesEnum.SELECT && heading.allowMultiSelect)
         worksheet.cell(columnHeadingCellName).value(heading.key + '#MULTI');
       else worksheet.cell(columnHeadingCellName).value(heading.key);
-      if (heading.type === ColumnTypesEnum.DATE) worksheet.column(columnName).style('numberFormat', '@');
+      worksheet.column(columnName).style('numberFormat', '@');
     });
 
     headings.forEach((heading, index) => {
