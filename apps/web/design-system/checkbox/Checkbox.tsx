@@ -5,10 +5,19 @@ interface CheckboxProps {
   label?: string;
   defaultChecked?: boolean;
   register?: any;
+  checked?: boolean;
 }
 
-export function Checkbox({ label, defaultChecked, register }: CheckboxProps) {
+export function Checkbox({ label, defaultChecked, register, checked }: CheckboxProps) {
   const { classes } = useStyles();
 
-  return <MantineCheckbox classNames={classes} defaultChecked={defaultChecked} label={label} {...register} />;
+  return (
+    <MantineCheckbox
+      classNames={classes}
+      defaultChecked={defaultChecked}
+      checked={checked}
+      label={label}
+      {...register}
+    />
+  );
 }

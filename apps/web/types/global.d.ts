@@ -109,6 +109,7 @@ interface IImportCountData {
 }
 
 interface ITransactionHistory {
+  _id: string;
   transactionDate: Date;
   planName: string;
   transactionStatus: string;
