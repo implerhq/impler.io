@@ -46,7 +46,7 @@ export class DoReview extends BaseReview {
     const multiSelectColumnHeadings = new Set<string>();
     const numberColumnHeadings = new Set<string>();
     (columns as ITemplateSchemaItem[]).forEach((column) => {
-      if (column.allowMultiSelect) multiSelectColumnHeadings.add(column.key);
+      if (column.type === ColumnTypesEnum.SELECT && column.allowMultiSelect) multiSelectColumnHeadings.add(column.key);
       if (column.type === ColumnTypesEnum.NUMBER) numberColumnHeadings.add(column.key);
     });
     const schema = this.buildAJVSchema({
