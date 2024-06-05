@@ -50,12 +50,7 @@ export class LeadService {
       // 3500000 = 58 minutes
       return this.maAccessToken;
     }
-    if (
-      process.env.CRM_REFRESH_TOKEN &&
-      process.env.CRM_CLIENT_ID &&
-      process.env.CRM_CLIENT_SECRET &&
-      process.env.DO_TEST
-    ) {
+    if (process.env.CRM_REFRESH_TOKEN && process.env.CRM_CLIENT_ID && process.env.CRM_CLIENT_SECRET) {
       // eslint-disable-next-line max-len
       const url = `https://accounts.zoho.com/oauth/v2/token?client_id=${process.env.CRM_CLIENT_ID}&grant_type=refresh_token&client_secret=${process.env.CRM_CLIENT_SECRET}&refresh_token=${process.env.CRM_REFRESH_TOKEN}`;
       if (this.log) console.log('CRM URL', url);
