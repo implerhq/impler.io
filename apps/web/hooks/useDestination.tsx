@@ -59,10 +59,12 @@ export function useDestination({ template }: UseDestinationProps) {
       onSuccess: (data) => {
         queryClient.setQueryData<IDestinationData>([API_KEYS.DESTINATION_FETCH, template._id], data);
         reset(data);
+        modals.closeAll();
         setDestination(data?.destination);
         notify(NOTIFICATION_KEYS.DESTINATION_UPDATED);
       },
       onError(error) {
+        modals.closeAll();
         notify(NOTIFICATION_KEYS.ERROR_OCCURED, {
           title: 'Destination data could not be updated',
           message: error?.message,

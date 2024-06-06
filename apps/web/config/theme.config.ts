@@ -28,6 +28,7 @@ export const colors = {
   StrokeDark: '#52555E',
   StrokeLight: '#CCCCCC',
 
+  StrokeSecondaryLight: '#dee2e6',
   StrokeSecondaryDark: '#707070',
 
   white: '#FFFFFF',

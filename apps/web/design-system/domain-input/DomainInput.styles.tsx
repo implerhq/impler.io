@@ -17,14 +17,14 @@ export default createStyles((theme: MantineTheme, params: ParamProps): Record<st
       '&:focus-within': {
         borderColor,
       },
-      backgroundColor: colors.BGPrimaryDark,
+      backgroundColor: theme.colorScheme === 'dark' ? colors.BGPrimaryDark : colors.BGPrimaryLight,
     },
     rightSection: {
       padding: '0 10px',
       width: 'unset',
       position: 'unset',
       textWrap: 'nowrap',
-      backgroundColor: colors.BGSecondaryDark,
+      backgroundColor: theme.colorScheme === 'dark' ? colors.BGSecondaryDark : colors.BGSecondaryLight,
       borderLeft: `0.0625rem solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[4]}`,
     },
     input: {
