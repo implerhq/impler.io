@@ -26,7 +26,7 @@ export const DestinationItem = ({ title, subtitle, onClick, children, active }: 
             {subtitle}
           </Title>
         </Stack>
-        <Switch color={colors.blue} checked={!!active} onKeyDown={onClick} onClick={onClick} onChange={onClick} />
+        <Switch color={colors.blue} checked={!!active} onClick={onClick} />
       </Flex>
       <Collapse in={!!active}>{children}</Collapse>
     </Stack>
