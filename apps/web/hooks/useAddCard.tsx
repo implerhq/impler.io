@@ -21,7 +21,6 @@ export function useAddCard({ close, refetchPaymentMethods }: UseAddCardProps) {
       }),
     {
       async onSuccess(data: any) {
-        console.log('Payment adding data', data);
         if (data && data.status === 'succeeded') {
           notify(NOTIFICATION_KEYS.PAYMENT_METHOD_ADDED, {
             title: 'Payment Method Added',
@@ -39,9 +38,11 @@ export function useAddCard({ close, refetchPaymentMethods }: UseAddCardProps) {
               color: 'red',
             });
           } else {
+            await stripe?.confirmCardSetup(data.client_secret);
+
             notify(NOTIFICATION_KEYS.PAYMENT_METHOD_ADDED, {
               title: 'Payment method added successfully',
-              message: 'Payment method added successfully. ',
+              message: 'Your payment method has been added successfully. ',
               color: 'green',
             });
             await saveIntentId(data.intentId);
@@ -49,17 +50,13 @@ export function useAddCard({ close, refetchPaymentMethods }: UseAddCardProps) {
         }
         refetchPaymentMethods();
         close();
-
-        /*
-         * notify(NOTIFICATION_KEYS.ERROR_AUTHORIZING_PAYMENT_METHOD, {
-         *   title: 'Error While Authorizing Payment',
-         *   message: response?.error?.message || 'Error while saving payment method',
-         *   color: 'red',
-         * });
-         */
       },
       onError(error: any) {
-        console.log(error);
+        notify(NOTIFICATION_KEYS.ERROR_ADDING_PAYMENT_METHOD, {
+          title: 'Error while adding payment method',
+          message: error,
+          color: 'red',
+        });
       },
     }
   );
