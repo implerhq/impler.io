@@ -2,9 +2,9 @@ import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { modals } from '@mantine/modals';
-import { Switch, Stack, Table, Button, Text } from '@mantine/core';
+import { Switch, Stack, Table, Button, Text, Badge, Group } from '@mantine/core';
 
-import { MODAL_KEYS } from '@config';
+import { MODAL_KEYS, colors } from '@config';
 import useStyles from './Plans.styles';
 import { numberFormatter } from '@impler/shared';
 import { TickIcon } from '@assets/icons/Tick.icon';
@@ -128,13 +128,18 @@ export const Plans = ({ profile, activePlanCode, canceledOn, expiryDate }: Plans
 
   return (
     <Stack align="center" spacing="md">
-      <Switch
-        size="xl"
-        checked={showYearly}
-        offLabel={<Text size="md">Monthly</Text>}
-        onLabel={<Text size="md">Yearly (20% Off)</Text>}
-        onChange={(event) => setShowYearly(event.currentTarget.checked)}
-      />
+      <Group>
+        <Text weight={700} size="sm">
+          Monthly
+        </Text>
+        <Switch size="md" checked={showYearly} onChange={(event) => setShowYearly(event.currentTarget.checked)} />
+        <Text weight={700} size="sm">
+          Yearly
+        </Text>
+        <Badge color="red" size="lg">
+          <Text color={colors.BGPrimaryLight}>Save 20% </Text>
+        </Badge>
+      </Group>
       <Table className={classes.table} fontSize="md" striped withBorder withColumnBorders>
         <thead>
           <tr>
