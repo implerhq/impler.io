@@ -115,6 +115,12 @@ export class BaseReview {
           ...(!column.isRequired && { default: null }),
         };
         break;
+      case ColumnTypesEnum.DOUBLE:
+        property = {
+          allOf: [{ type: 'number' }, ...(!column.isRequired ? [{ type: ['number', 'null'] }] : [])],
+          ...(!column.isRequired && { default: null }),
+        };
+        break;
       case ColumnTypesEnum.SELECT:
         const selectValues =
           Array.isArray(column.selectValues) && column.selectValues.length > 0
@@ -203,6 +209,9 @@ export class BaseReview {
           message = `${String(data)} must be a number`;
         } else if (Array.isArray(error.params.type) && error.params.type.toString() === 'integer,null')
           message = `${String(data)} must be a number or empty`;
+        else if (error.params.type === 'number') message = `${String(data)} must be a number`;
+        else if (Array.isArray(error.params.type) && error.params.type.toString() === 'number,null')
+          message = `${String(data)} must be a number or empty`;
         else message = ' ' + error.message;
         break;
       case error.keyword === 'enum':
@@ -272,7 +281,7 @@ export class BaseReview {
         if (heading === '_') return acc;
         let val = record[index];
 
-        if (numberColumnHeadings.has(heading) && val !== '') val = Number(val);
+        if (numberColumnHeadings.has(heading) && val !== '' && !isNaN(val)) val = Number(val);
         if (typeof val === 'string') val = val.trim();
 
         if (multiSelectColumnHeadings.has(heading)) acc.checkRecord[heading] = !val ? [] : val.split(',');

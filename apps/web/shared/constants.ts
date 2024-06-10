@@ -8,6 +8,10 @@ export const COLUMN_TYPES = [
     value: 'Number',
   },
   {
+    label: 'Double',
+    value: 'Double',
+  },
+  {
     label: 'Select',
     value: 'Select',
   },
