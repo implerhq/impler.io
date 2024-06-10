@@ -105,7 +105,12 @@ export function Phase3(props: IPhase3Props) {
 
             const currentData = [...reviewData];
 
-            if (currentData && oldVal != newVal && !(oldVal === '' && newVal === undefined)) {
+            if (
+              currentData &&
+              oldVal != newVal &&
+              !(oldVal === '' && newVal === undefined) &&
+              !(newVal === '' && oldVal === undefined)
+            ) {
               if (!currentData[row].updated) {
                 currentData[row].updated = {};
               }
