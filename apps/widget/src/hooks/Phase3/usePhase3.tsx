@@ -96,6 +96,10 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
               columnItem.type = 'numeric';
               columnItem.renderer = 'custom';
               break;
+            case ColumnTypesEnum.DOUBLE:
+              columnItem.type = 'numeric';
+              columnItem.renderer = 'custom';
+              break;
             case ColumnTypesEnum.DATE:
               columnItem.type = 'date';
               if (column.dateFormats?.length) {
