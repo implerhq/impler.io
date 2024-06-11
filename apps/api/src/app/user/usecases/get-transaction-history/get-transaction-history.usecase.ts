@@ -16,6 +16,8 @@ export class GetTransactionHistory {
       expiryDate: transactionItem.expiryDate,
       isPlanActive: transactionItem.isPlanActive,
       charge: transactionItem.charge,
+      amount: transactionItem.amount,
+      currency: transactionItem.currency,
       _id: transactionItem.id,
     }));
   }
