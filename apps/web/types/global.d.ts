@@ -117,4 +117,6 @@ interface ITransactionHistory {
   expiryDate: string;
   isPlanActive: boolean;
   charge: number;
+  amount: number;
+  currency: string;
 }
