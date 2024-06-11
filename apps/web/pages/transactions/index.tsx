@@ -57,6 +57,14 @@ export default function Transactions() {
               title: 'Charge',
               key: 'charge',
             },
+            {
+              title: 'Amount',
+              key: 'amount',
+            },
+            {
+              title: 'Currency',
+              key: 'currency',
+            },
           ]}
           data={transactions || []}
         />
