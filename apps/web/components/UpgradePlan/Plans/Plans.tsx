@@ -2,7 +2,7 @@ import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { modals } from '@mantine/modals';
-import { Switch, Stack, Table, Button, Text, Badge, Group } from '@mantine/core';
+import { Switch, Stack, Table, Button, Text, Badge, Group, useMantineColorScheme } from '@mantine/core';
 
 import { MODAL_KEYS, colors } from '@config';
 import useStyles from './Plans.styles';
@@ -93,6 +93,7 @@ const plans: Record<string, PlanItem[]> = {
 export const Plans = ({ profile, activePlanCode, canceledOn, expiryDate }: PlansProps) => {
   const router = useRouter();
   const { classes } = useStyles();
+  const theme = useMantineColorScheme();
   const { publicRuntimeConfig } = getConfig();
   const [showYearly, setShowYearly] = useState<boolean>(true);
   const defaultPaymentGateway = publicRuntimeConfig.NEXT_PUBLIC_DEFAULT_PAYMENT_GATEWAY;
@@ -120,7 +121,11 @@ export const Plans = ({ profile, activePlanCode, canceledOn, expiryDate }: Plans
 
   const getButtonTextContent = (planCode: string) => {
     if (canceledOn !== null && activePlanCode === planCode) {
-      return `Cancelled On ${canceledOn}`;
+      return (
+        <Text color={theme.colorScheme === 'dark' ? colors.BGPrimaryLight : colors.BGPrimaryDark}>
+          Cancelled On {canceledOn?.toString()}
+        </Text>
+      );
     }
 
     return activePlanCode === planCode ? 'Cancel Plan' : 'Activate Plan';
