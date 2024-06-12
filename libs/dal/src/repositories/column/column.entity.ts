@@ -7,9 +7,11 @@ export class ColumnEntity {
 
   alternateKeys?: string[];
 
-  isRequired: boolean;
+  isRequired?: boolean;
 
-  isUnique: boolean;
+  isUnique?: boolean;
+
+  isFrozen?: boolean;
 
   type: string;
 

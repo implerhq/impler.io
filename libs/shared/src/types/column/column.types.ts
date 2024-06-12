@@ -15,6 +15,7 @@ export interface ISchemaItem {
   alternateKeys?: string[];
   isRequired?: boolean;
   isUnique?: boolean;
+  isFrozen?: boolean;
   selectValues?: string[];
   dateFormats?: string[];
   type?: ColumnTypesEnum;
