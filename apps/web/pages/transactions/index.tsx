@@ -54,11 +54,11 @@ export default function Transactions() {
               },
             },
             {
-              title: 'Charge',
+              title: 'Extra Usage Charge',
               key: 'charge',
             },
             {
-              title: 'Amount',
+              title: 'Plan Amount',
               key: 'amount',
             },
             {
