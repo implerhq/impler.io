@@ -1,11 +1,11 @@
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { Radio, Flex, Text, Loader } from '@mantine/core';
+import { Radio, Flex, Text, Loader, Group } from '@mantine/core';
 
 import { Button } from '@ui/button';
 import { notify } from '@libs/notify';
-import { NOTIFICATION_KEYS, colors } from '@config';
+import { MODAL_KEYS, NOTIFICATION_KEYS, colors } from '@config';
 import { usePaymentMethods } from '@hooks/usePaymentMethods';
 import { modals } from '@mantine/modals';
 
@@ -31,7 +31,7 @@ export function SelectCardModal({ email, planCode, onClose }: SelectCardModalPro
         color: 'red',
       });
       modals.closeAll();
-      router.push(`/settings?tab=addcard&action=addcardmodal`);
+      router.push('/settings?tab=addcard&action=addcardmodal');
     }
   }, [isPaymentMethodsFetched]);
 
@@ -42,6 +42,13 @@ export function SelectCardModal({ email, planCode, onClose }: SelectCardModalPro
       );
       onClose();
     }
+  };
+
+  const handleAddMoreCard = () => {
+    modals.close(MODAL_KEYS.SELECT_CARD);
+    modals.close(MODAL_KEYS.PAYMENT_PLANS);
+
+    router.push('/settings?tab=addcard&action=addcardmodal');
   };
 
   return isPaymentMethodsLoading ? (
@@ -65,7 +72,13 @@ export function SelectCardModal({ email, planCode, onClose }: SelectCardModalPro
             </Flex>
           </label>
         ))}
-        <Flex justify="center" mt="lg">
+        <Flex justify="center" mt="lg" direction="column" align="center">
+          <Group mb={10}>
+            <Text onClick={handleAddMoreCard} color={colors.yellow} td="underline" style={{ cursor: 'pointer' }}>
+              Add Card
+            </Text>
+          </Group>
+
           <Button color="blue" variant="filled" onClick={handleProceed}>
             Proceed
           </Button>
