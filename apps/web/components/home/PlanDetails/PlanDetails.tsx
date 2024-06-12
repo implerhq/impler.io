@@ -89,7 +89,7 @@ export function PlanDetails() {
           <>
             <Flex direction="column" gap={5} align="center">
               <Title order={3} fw="bold">
-                {activePlanDetails.plan.charge}
+                {'$' + activePlanDetails.plan.charge}
               </Title>
               <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
                 Outstanding Amount
