@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 import _whatever from 'multer';
 import { Response } from 'express';
-import { ColumnEntity, FileEntity } from '@impler/dal';
+import { FileEntity } from '@impler/dal';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ACCESS_KEY_NAME, Defaults, UploadStatusEnum } from '@impler/shared';
 import {
@@ -120,7 +120,7 @@ export class UploadController {
   @ApiOperation({
     summary: 'Get upload columns',
   })
-  async getColumns(@Param('uploadId', ValidateMongoId) uploadId: string): Promise<ColumnEntity[]> {
+  async getColumns(@Param('uploadId', ValidateMongoId) uploadId: string) {
     return this.getUploadColumns.execute(uploadId);
   }
 

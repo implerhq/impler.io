@@ -35,6 +35,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
   const [page, setPage] = useState<number>(defaultPage);
   const [headings, setHeadings] = useState<string[]>([]);
   const selectedRowsRef = useRef<Set<number>>(new Set());
+  const [frozenColumns, setFrozenColumns] = useState<number>(2);
   const selectedRowsCountRef = useRef<{ valid: Set<number>; invalid: Set<number> }>({
     valid: new Set(),
     invalid: new Set(),
@@ -53,6 +54,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     () => api.getColumns(uploadInfo._id),
     {
       onSuccess(data) {
+        let updatedFrozenColumns = 2;
         const newColumnDefs: HotItemSchema[] = [];
         const newHeadings: string[] = ['*', 'Sr. No.'];
         newColumnDefs.push({
@@ -72,6 +74,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
           disableVisualSelection: true,
         });
         data.forEach((column: ISchemaColumn) => {
+          if (column.isFrozen) updatedFrozenColumns++;
           newHeadings.push(column.name);
           const columnItem: HotItemSchema = {
             className: 'htCenter',
@@ -96,13 +99,16 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
               columnItem.type = 'numeric';
               columnItem.renderer = 'custom';
               break;
+            case ColumnTypesEnum.DOUBLE:
+              columnItem.type = 'numeric';
+              columnItem.renderer = 'custom';
+              break;
             case ColumnTypesEnum.DATE:
               columnItem.type = 'date';
               if (column.dateFormats?.length) {
                 columnItem.dateFormat = column.dateFormats[variables.baseIndex];
                 columnItem.correctFormat = true;
               }
-
               columnItem.renderer = 'custom';
               break;
             default:
@@ -113,6 +119,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
         });
         setHeadings(newHeadings);
         setColumnDefs(newColumnDefs);
+        setFrozenColumns(updatedFrozenColumns);
       },
     }
   );
@@ -277,6 +284,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     deleteRecords,
     setReviewData,
     setAllChecked,
+    frozenColumns,
     selectedRowsRef,
     isDoReviewLoading,
     isReviewDataLoading,

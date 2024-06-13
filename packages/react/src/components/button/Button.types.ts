@@ -39,10 +39,11 @@ export interface ISchemaItem {
   alternateKeys?: string[];
   isRequired?: boolean;
   isUnique?: boolean;
+  isFrozen?: boolean;
   defaultValue?: string | '<<null>>' | '<<undefined>>' | '<<>>' | '<<[]>>' | '<<true>>' | '<<false>>';
   selectValues?: string[];
   dateFormats?: string[];
-  type?: 'String' | 'Number' | 'Date' | 'Email' | 'Regex' | 'Select' | 'Any';
+  type?: 'String' | 'Number' | 'Double' | 'Date' | 'Email' | 'Regex' | 'Select' | 'Any';
   regex?: string;
   allowMultiSelect?: boolean;
 }

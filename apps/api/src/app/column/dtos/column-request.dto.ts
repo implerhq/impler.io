@@ -43,14 +43,21 @@ export class ColumnRequestDto {
   })
   @IsBoolean()
   @IsOptional()
-  isRequired = false;
+  isRequired? = false;
 
   @ApiPropertyOptional({
     description: 'While true, it Indicates column value should be unique in data',
   })
   @IsBoolean()
   @IsOptional()
-  isUnique = false;
+  isUnique? = false;
+
+  @ApiPropertyOptional({
+    description: 'While true, it Indicates column value should be frozen in data',
+  })
+  @IsBoolean()
+  @IsOptional()
+  isFrozen? = false;
 
   @ApiProperty({
     description: 'Specifies the type of column',

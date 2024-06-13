@@ -6,6 +6,7 @@ export enum ColumnTypesEnum {
   'REGEX' = 'Regex',
   'SELECT' = 'Select',
   'ANY' = 'Any',
+  'DOUBLE' = 'Double',
 }
 
 export interface ISchemaItem {
@@ -14,6 +15,7 @@ export interface ISchemaItem {
   alternateKeys?: string[];
   isRequired?: boolean;
   isUnique?: boolean;
+  isFrozen?: boolean;
   selectValues?: string[];
   dateFormats?: string[];
   type?: ColumnTypesEnum;

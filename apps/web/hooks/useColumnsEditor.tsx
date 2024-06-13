@@ -37,11 +37,11 @@ export function useColumnsEditor({ templateId }: UseSchemaProps) {
             alternateKeys,
             isRequired,
             isUnique,
+            isFrozen,
             regex,
             dateFormats,
             regexDescription,
             selectValues,
-            sequence,
             defaultValue,
             allowMultiSelect,
           }) => ({
@@ -51,12 +51,12 @@ export function useColumnsEditor({ templateId }: UseSchemaProps) {
             alternateKeys,
             isRequired,
             isUnique,
+            isFrozen,
             regex,
             dateFormats,
             defaultValue,
             regexDescription,
             selectValues,
-            sequence,
             allowMultiSelect,
           })
         );

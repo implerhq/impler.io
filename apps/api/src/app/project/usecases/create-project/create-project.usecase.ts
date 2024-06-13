@@ -45,6 +45,7 @@ export class CreateProject {
           _templateId: template._id,
           name: 'Date',
           key: 'Date *',
+          isFrozen: true,
           type: ColumnTypesEnum.DATE,
           isRequired: true,
           dateFormats: ['DD/MM/YYYY'],

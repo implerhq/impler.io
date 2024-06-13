@@ -39,6 +39,7 @@ export function Phase3(props: IPhase3Props) {
     reReviewData,
     updateRecord,
     onPageChange,
+    frozenColumns,
     setReviewData,
     setAllChecked,
     deleteRecords,
@@ -73,6 +74,7 @@ export function Phase3(props: IPhase3Props) {
     logAmplitudeEvent('CONFIRM');
     onConfirmReview();
   };
+  console.log(frozenColumns);
 
   return (
     <>
@@ -98,6 +100,7 @@ export function Phase3(props: IPhase3Props) {
         </Flex>
         <Table
           ref={tableRef}
+          frozenColumns={frozenColumns}
           width={tableWrapperDimensions.width}
           height={tableWrapperDimensions.height}
           onValueChange={(row, prop, oldVal, newVal) => {

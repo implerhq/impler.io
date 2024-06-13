@@ -166,6 +166,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
           ) : (
             <Checkbox label="Multi Select?" register={register('allowMultiSelect')} />
           )}
+          <Checkbox label="Frozen?" register={register('isFrozen')} />
         </Group>
         <Button type="submit" fullWidth loading={isLoading}>
           {data ? 'Update' : 'Add'}

@@ -69,16 +69,22 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
             width: '15%',
           },
           {
-            title: 'Is required?',
+            title: 'Required?',
             key: 'isRequired',
             width: '10%',
             Cell: (item) => item.isRequired && <CheckIcon color={colors.success} />,
           },
           {
-            title: 'Is unique?',
+            title: 'Unique?',
             key: 'isUnique',
             width: '10%',
             Cell: (item) => item.isUnique && <CheckIcon color={colors.success} />,
+          },
+          {
+            title: 'Frozen?',
+            key: 'isFrozen',
+            width: '10%',
+            Cell: (item) => item.isFrozen && <CheckIcon color={colors.success} />,
           },
           {
             title: '',
@@ -101,7 +107,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
           <tr>
             {showAddRow ? (
               <>
-                <td colSpan={4} style={{ borderRight: 'none' }}>
+                <td colSpan={5} style={{ borderRight: 'none' }}>
                   <Flex gap="xs" align={'center'}>
                     <Input autoFocus required placeholder="Column Name" {...register('name')} />
                     <Input required placeholder="Column Key" {...register('key')} />
@@ -200,7 +206,10 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                       />
                     ) : null}
                     <Checkbox label="Required?" title="Required?" {...register('isRequired')} id="isRequired" />
-                    <Checkbox label="Unique?" title="Unique?" {...register('isUnique')} id="isUnique" />
+                    {typeValue !== 'Select' ? (
+                      <Checkbox label="Unique?" title="Unique?" {...register('isUnique')} id="isUnique" />
+                    ) : null}
+                    <Checkbox label="Frozen?" title="Frozen?" {...register('isFrozen')} id="isFrozen" />
                   </Flex>
                 </td>
                 <td style={{ borderLeft: 'none' }}>
@@ -215,7 +224,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                 </td>
               </>
             ) : (
-              <td colSpan={5}>
+              <td colSpan={6}>
                 <Tooltip label="Add new column" withArrow position="top-start">
                   <ActionIcon
                     id="add-column"

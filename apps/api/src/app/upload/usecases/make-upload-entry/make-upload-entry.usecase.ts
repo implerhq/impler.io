@@ -70,7 +70,7 @@ export class MakeUploadEntry {
       {
         _templateId: templateId,
       },
-      'name key isRequired isUnique selectValues dateFormats defaultValue type regex sequence allowMultiSelect',
+      'name key isRequired isUnique isFrozen selectValues dateFormats defaultValue type regex sequence allowMultiSelect',
       {
         sort: 'sequence',
       }
@@ -86,6 +86,7 @@ export class MakeUploadEntry {
         formattedColumns[schemaItem.key] = {
           name: schemaItem.name || 'Untitled Column',
           isRequired: schemaItem.isRequired || false,
+          isFrozen: schemaItem.isFrozen,
           key: schemaItem.key,
           type: schemaItem.type || ColumnTypesEnum.STRING,
           regex: schemaItem.regex,
