@@ -11,6 +11,7 @@
 }
 .index-cell {
     text-align: center;
+    vertical-align: middle !important;
     background-color: #f0f0f0 !important;
     color: #222 !important;
     padding: 5px !important;
@@ -21,6 +22,7 @@
     vertical-align: middle;
 }
 .check-cell {
+    height: 24px !important;
     cursor: pointer;
     text-align: center;
     padding: 0.5rem !important;
@@ -41,6 +43,7 @@
 .checkbox {
     display: inline-flex;
     position: relative;
+    vertical-align: middle;
 }
   
 .checkbox__control {
@@ -104,7 +107,10 @@
     border: 1px solid #ddd;
     
 }
-
+.ht_clone_left {
+    box-shadow: 2px 0px 6px 0px rgb(0 0 0 / 20%);
+}
+  
 .dd-searchbox {
   padding: 0.5rem;
   background-color: #fff;

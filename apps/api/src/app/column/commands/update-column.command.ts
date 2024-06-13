@@ -20,11 +20,15 @@ export class UpdateColumnCommand extends BaseCommand {
 
   @IsBoolean()
   @IsOptional()
-  isRequired = false;
+  isRequired? = false;
 
   @IsBoolean()
   @IsOptional()
-  isUnique = false;
+  isUnique? = false;
+
+  @IsBoolean()
+  @IsOptional()
+  isFrozen? = false;
 
   @IsDefined()
   type: ColumnTypesEnum;

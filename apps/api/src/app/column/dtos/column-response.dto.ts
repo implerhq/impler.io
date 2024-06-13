@@ -22,12 +22,17 @@ export class ColumnResponseDto {
   @ApiPropertyOptional({
     description: 'While true, it Indicates column value should exists in data',
   })
-  isRequired = false;
+  isRequired? = false;
 
   @ApiPropertyOptional({
     description: 'While true, it Indicates column value should be unique in data',
   })
-  isUnique = false;
+  isUnique? = false;
+
+  @ApiPropertyOptional({
+    description: 'While true, it Indicates column value should be frozen in data',
+  })
+  isFrozen? = false;
 
   @ApiProperty({
     description: 'Specifies the type of column',

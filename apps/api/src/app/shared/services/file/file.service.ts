@@ -109,6 +109,10 @@ export class ExcelFileService {
       worksheet.column(columnName).style('numberFormat', '@');
     });
 
+    const frozenColumns = headings.filter((heading) => heading.isFrozen).length;
+    if (frozenColumns) worksheet.freezePanes(frozenColumns, 1); // freeze panes (freeze first n column and first row)
+    else worksheet.freezePanes(0, 1); // freeze 0 column and first row
+
     headings.forEach((heading, index) => {
       if (heading.type === ColumnTypesEnum.SELECT) {
         const keyName = this.addSelectSheet(workbook, heading);

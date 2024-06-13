@@ -44,6 +44,7 @@ import './HandsonTable.styles.min.css';
 interface TableProps {
   headings: string[];
   allChecked?: boolean;
+  frozenColumns?: number;
   height?: string | number;
   width?: string | number;
   afterRender?: () => void;
@@ -158,6 +159,7 @@ export const Table = forwardRef<HotTable, TableProps>(
       allChecked,
       onRowCheck,
       onCheckAll,
+      frozenColumns = 2,
       onValueChange,
     }: TableProps,
     gridRef
@@ -207,6 +209,8 @@ export const Table = forwardRef<HotTable, TableProps>(
         columns={columnDefs}
         colHeaders={headings}
         afterRender={afterRender}
+        manualColumnResize
+        fixedColumnsLeft={frozenColumns}
         licenseKey={HANDSONTABLE_LICENSE_KEY}
       />
     );
