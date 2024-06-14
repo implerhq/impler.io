@@ -47,6 +47,7 @@ export function SelectCardModal({ email, planCode, onClose, paymentMethodId }: S
   });
 
   const handleProceed = () => {
+    modals.closeAll();
     if (selectedPaymentMethod) {
       router.push(
         `${gatewayURL}/api/v1/plans/${planCode}/buy/${email}/redirect?paymentMethodId=${selectedPaymentMethod}`
