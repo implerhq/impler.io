@@ -1,26 +1,26 @@
 import { Stack } from '@mantine/core';
 import { useRouter } from 'next/router';
 import { modals } from '@mantine/modals';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import { Modal, SimpleGrid, Box, LoadingOverlay } from '@mantine/core';
 
 import { Card } from './Card';
 import { AddCard } from './AddCard';
-import { AddCardModal } from '@components/settings';
+import { AddCardModal } from './AddCardModal';
 import { usePaymentMethods } from '@hooks/usePaymentMethods';
 
 export function UserCards() {
   const router = useRouter();
-  const { tab, action } = router.query;
-  const [opened, { open, close }] = useDisclosure(false);
+  const { action } = router.query;
+  const [opened, { open, close }] = useDisclosure(action === 'addcardmodal');
   const {
     refetchPaymentMethods,
     paymentMethods,
     deletePaymentMethod,
     isDeletePaymentMethodLoading,
     isPaymentMethodsLoading,
-  } = usePaymentMethods();
+  } = usePaymentMethods({ enabled: action !== 'addcardmodal' });
 
   function handleDeleteCard(paymentMethodId: string) {
     modals.openConfirmModal({
@@ -33,12 +33,6 @@ export function UserCards() {
     });
   }
 
-  useEffect(() => {
-    if (tab === 'addcard' && action === 'addcardmodal') {
-      open();
-    }
-  }, [action, open, tab]);
-
   return (
     <Box pos="relative" mt={20}>
       <LoadingOverlay visible={isDeletePaymentMethodLoading || isPaymentMethodsLoading} />
@@ -47,8 +41,9 @@ export function UserCards() {
           spacing="sm"
           cols={4}
           breakpoints={[
-            { maxWidth: 'lg', cols: 3, spacing: 'md' },
-            { maxWidth: 'sm', cols: 2, spacing: 'sm' },
+            { maxWidth: 'xl', cols: 3, spacing: 'md' },
+            { maxWidth: 'lg', cols: 2, spacing: 'md' },
+            { maxWidth: 'sm', cols: 1, spacing: 'sm' },
           ]}
         >
           {paymentMethods?.map((card) => (
