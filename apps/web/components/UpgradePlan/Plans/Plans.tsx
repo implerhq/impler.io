@@ -1,16 +1,15 @@
-import getConfig from 'next/config';
-import { useRouter } from 'next/router';
-import React, { useState } from 'react';
 import { modals } from '@mantine/modals';
+import { useLocalStorage } from '@mantine/hooks';
+import React, { useState } from 'react';
 import { Switch, Stack, Table, Button, Text, Badge, Group, useMantineColorScheme } from '@mantine/core';
 
-import { MODAL_KEYS, colors } from '@config';
 import useStyles from './Plans.styles';
 import { numberFormatter } from '@impler/shared';
 import { TickIcon } from '@assets/icons/Tick.icon';
 import { CrossIcon } from '@assets/icons/Cross.icon';
 import { useCancelPlan } from '@hooks/useCancelPlan';
 import { SelectCardModal } from '@components/settings';
+import { CONSTANTS, MODAL_KEYS, colors } from '@config';
 
 interface PlansProps {
   profile: IProfileData;
@@ -91,24 +90,19 @@ const plans: Record<string, PlanItem[]> = {
 };
 
 export const Plans = ({ profile, activePlanCode, canceledOn, expiryDate }: PlansProps) => {
-  const router = useRouter();
   const { classes } = useStyles();
   const theme = useMantineColorScheme();
-  const { publicRuntimeConfig } = getConfig();
   const [showYearly, setShowYearly] = useState<boolean>(true);
-  const defaultPaymentGateway = publicRuntimeConfig.NEXT_PUBLIC_DEFAULT_PAYMENT_GATEWAY;
-  const paymentGatewayURL = publicRuntimeConfig.NEXT_PUBLIC_PAYMENT_GATEWAY_URL;
   const { cancelPlan, isCancelPlanLoading } = useCancelPlan({ email: profile.email });
+  const [, setPlanCodeName] = useLocalStorage<string>({
+    key: CONSTANTS.PLAN_CODE_STORAGE_KEY,
+  });
 
   const onPlanButtonClick = (code: string) => {
-    if (defaultPaymentGateway === 'RAZORPAY') {
-      router.push(
-        `${paymentGatewayURL}/api/v1/plans/${code}/buy/${profile.email}/redirect/?gateway=${defaultPaymentGateway}`
-      );
-    }
     if (activePlanCode === code) {
       cancelPlan();
     } else {
+      setPlanCodeName(code);
       modals.open({
         size: '2xl',
         withCloseButton: false,
