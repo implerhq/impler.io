@@ -1,4 +1,6 @@
 export const CONSTANTS = {
+  PLAN_CODE_STORAGE_KEY: 'plan',
+  CREATED_PAYMENT_METHOD_KEY: 'paymentMethod',
   GITHUB_LOGIN_URL: '/v1/auth/github',
   AUTH_COOKIE_NAME: 'authentication',
   AUTHENTICATION_ERROR_CODE: 'AuthenticationError',
@@ -141,6 +143,7 @@ export const ROUTES = {
   IMPORTS: '/imports',
   SETTINGS: '/settings',
   ACTIVITIES: '/activities',
+  ADD_CARD: '/settings?tab=addcard&action=addcardmodal',
 };
 
 export const REGULAR_EXPRESSIONS = {
