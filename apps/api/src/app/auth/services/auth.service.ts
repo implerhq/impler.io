@@ -37,6 +37,7 @@ export class AuthService {
         'First Name': user.firstName,
         'Last Name': user.lastName,
         'Lead Email': user.email,
+        'Lead Source': 'Github Signup',
       });
       userCreated = true;
     }
