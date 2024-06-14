@@ -1,8 +1,9 @@
+import { useMutation, useQuery } from '@tanstack/react-query';
+
 import { commonApi } from '@libs/api';
+import { notify } from '@libs/notify';
 import { API_KEYS, NOTIFICATION_KEYS } from '@config';
 import { ICardData, IErrorObject } from '@impler/shared';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { notify } from '@libs/notify';
 
 export function usePaymentMethods() {
   const {
