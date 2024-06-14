@@ -5,6 +5,7 @@ interface ILeadInformation {
   'First Name': string;
   'Last Name': string;
   'Lead Email': string;
+  'Lead Source': 'Website Signup' | 'Github Signup';
 }
 
 @Injectable()
@@ -98,6 +99,7 @@ export class LeadService {
               Last_Name: data['Last Name'],
               First_Name: data['First Name'],
               Email: data['Lead Email'],
+              Lead_Source: data['Lead Source'],
             },
           ],
         },
