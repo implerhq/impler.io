@@ -1,5 +1,5 @@
 export * from './Card';
 export * from './UserCards';
-export * from './AddCardModal';
+export * from './AddCard';
 export * from './SettingsTab';
 export * from './SelectCardModal';
