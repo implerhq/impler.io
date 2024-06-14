@@ -118,7 +118,7 @@ export function PlanDetails() {
             <>{activePlanDetails!.expiryDate}</>
           </Title>
           <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
-            Plan Resets
+            Expiry Date
           </Text>
         </Flex>
         <Flex direction="column" gap={5} align="center">
