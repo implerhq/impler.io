@@ -1,15 +1,15 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
-import { API_KEYS, NOTIFICATION_KEYS } from '@config';
+import { commonApi } from '@libs/api';
 import { ICardData, IErrorObject } from '@impler/shared';
+import { API_KEYS, NOTIFICATION_KEYS } from '@config';
 
 export function usePaymentMethods() {
   const {
     data: paymentMethods,
     refetch: refetchPaymentMethods,
-    isLoading: isPaymentMethodsLoading,
+    isFetching: isPaymentMethodsLoading,
     isFetched: isPaymentMethodsFetched,
   } = useQuery<unknown, IErrorObject, ICardData[], [string]>([API_KEYS.PAYMENT_METHOD_LIST], () =>
     commonApi<ICardData[]>(API_KEYS.PAYMENT_METHOD_LIST as any, {})
@@ -26,11 +26,7 @@ export function usePaymentMethods() {
       commonApi<ICardData>(API_KEYS.PAYMENT_METHOD_DELETE as any, { parameters: [paymentMethodId] }),
     {
       onSuccess: () => {
-        notify(NOTIFICATION_KEYS.PAYMENT_METHOD_DELETED, {
-          title: 'Card Deleted',
-          message: 'Card deleted successfully',
-          color: 'red',
-        });
+        notify(NOTIFICATION_KEYS.CARD_REMOVED);
         refetchPaymentMethods();
       },
     }

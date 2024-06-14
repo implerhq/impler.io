@@ -49,8 +49,7 @@ export const AddCardModal = ({ close, refetchPaymentMethods }: AddCardModalProps
       notify(NOTIFICATION_KEYS.ERROR_ADDING_PAYMENT_METHOD, {
         title: 'Error adding card!',
         message:
-          error.message ||
-          'Something went wrong while adding payment method. Please try with different card or try again later.',
+          error.message || 'Something went wrong while adding card. Please try with different card or try again later.',
         color: 'red',
       });
     }

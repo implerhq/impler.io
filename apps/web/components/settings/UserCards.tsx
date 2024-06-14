@@ -20,7 +20,7 @@ export function UserCards() {
     deletePaymentMethod,
     isDeletePaymentMethodLoading,
     isPaymentMethodsLoading,
-  } = usePaymentMethods({ enabled: action !== 'addcardmodal' });
+  } = usePaymentMethods();
 
   function handleDeleteCard(paymentMethodId: string) {
     modals.openConfirmModal({

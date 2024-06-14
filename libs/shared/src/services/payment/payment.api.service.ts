@@ -115,7 +115,6 @@ export class PaymentAPIService {
   }
 
   async updatePaymentMethod(email: string, paymentMethodId: string): Promise<any> {
-    // update the payment API and there pass the payment method id and update it in the customers table
     if (!this.PAYMENT_API_BASE_URL) return;
 
     const url = `${this.PAYMENT_API_BASE_URL}/api/v1/customer/${email}/payment-id/${paymentMethodId}`;

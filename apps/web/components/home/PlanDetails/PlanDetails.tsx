@@ -1,15 +1,31 @@
 import Link from 'next/link';
+import { useEffect } from 'react';
 import { modals } from '@mantine/modals';
 import { Title, Text, Flex, Button, Skeleton } from '@mantine/core';
 
 import { useApp } from '@hooks/useApp';
-import { MODAL_KEYS, colors } from '@config';
+import { SelectCardModal } from '@components/settings';
 import { usePlanDetails } from '@hooks/usePlanDetails';
+import { CONSTANTS, MODAL_KEYS, colors } from '@config';
 import { PlansModal } from '@components/UpgradePlan/PlansModal';
 import { numberFormatter } from '@impler/shared/dist/utils/helpers';
 
 export function PlanDetails() {
   const { profile } = useApp();
+
+  useEffect(() => {
+    const planCode = localStorage.getItem(CONSTANTS.PLAN_CODE_STORAGE_KEY);
+    if (planCode && profile) {
+      modals.open({
+        size: '2xl',
+        withCloseButton: false,
+        id: MODAL_KEYS.SELECT_CARD,
+        modalId: MODAL_KEYS.SELECT_CARD,
+        children: <SelectCardModal planCode={planCode} email={profile.email} onClose={modals.closeAll} />,
+      });
+      localStorage.removeItem(CONSTANTS.PLAN_CODE_STORAGE_KEY);
+    }
+  }, [profile]);
 
   const { activePlanDetails, isActivePlanLoading } = usePlanDetails({
     email: profile?.email ?? '',

@@ -12,13 +12,11 @@ export default function Settings() {
 
   return (
     <>
-      <>
-        <Title order={2}>Settings</Title>
+      <Title order={2}>Settings</Title>
 
-        <Elements stripe={stripePromise}>
-          <SettingsTab />
-        </Elements>
-      </>
+      <Elements stripe={stripePromise}>
+        <SettingsTab />
+      </Elements>
     </>
   );
 }

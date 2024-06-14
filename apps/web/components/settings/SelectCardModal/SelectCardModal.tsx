@@ -1,13 +1,16 @@
-import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { modals } from '@mantine/modals';
+import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Radio, Flex, Text, Loader, Group, Divider, Title, Stack, useMantineTheme } from '@mantine/core';
-import { Button } from '@ui/button';
 
-import Image from 'next/image';
-import { MODAL_KEYS, ROUTES, colors } from '@config';
-import { usePaymentMethods } from '@hooks/usePaymentMethods';
+import { Button } from '@ui/button';
+import { notify } from '@libs/notify';
+import { commonApi } from '@libs/api';
+import { ICardData, IErrorObject } from '@impler/shared';
+import { API_KEYS, MODAL_KEYS, NOTIFICATION_KEYS, ROUTES, colors } from '@config';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -21,10 +24,26 @@ interface SelectCardModalProps {
 export function SelectCardModal({ email, planCode, onClose, paymentMethodId }: SelectCardModalProps) {
   const theme = useMantineTheme();
   const router = useRouter();
-  const { action } = router.query;
   const gatewayURL = publicRuntimeConfig.NEXT_PUBLIC_PAYMENT_GATEWAY_URL;
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | undefined>(paymentMethodId);
-  const { paymentMethods, isPaymentMethodsLoading } = usePaymentMethods({ enabled: action !== 'addcardmodal' });
+  const { data: paymentMethods, isLoading: isPaymentMethodsLoading } = useQuery<
+    unknown,
+    IErrorObject,
+    ICardData[],
+    [string]
+  >([API_KEYS.PAYMENT_METHOD_LIST], () => commonApi<ICardData[]>(API_KEYS.PAYMENT_METHOD_LIST as any, {}), {
+    onSuccess(data) {
+      if (data?.length === 0) {
+        notify(NOTIFICATION_KEYS.NO_PAYMENT_METHOD_FOUND, {
+          title: 'No Cards Found!',
+          message: 'Please Add your Card first. Redirecting you to cards!',
+          color: 'red',
+        });
+        modals.closeAll();
+        router.push(ROUTES.ADD_CARD);
+      }
+    },
+  });
 
   const handleProceed = () => {
     if (selectedPaymentMethod) {
@@ -52,18 +71,22 @@ export function SelectCardModal({ email, planCode, onClose, paymentMethodId }: S
     setSelectedPaymentMethod(methodId);
   };
 
-  return isPaymentMethodsLoading ? (
-    <Loader />
-  ) : (
+  return (
     <>
       <Radio.Group
         name="paymentMethod"
-        label={<Title size={20}>Select the card you want to proceed with</Title>}
+        label={<Title size={20}>Select the card</Title>}
         value={selectedPaymentMethod || undefined}
         onChange={handlePaymentMethodChange}
         w={480}
       >
         <Divider my="sm" mt={10} />
+        {isPaymentMethodsLoading ? (
+          <Flex align="center" justify="center">
+            <Loader />
+          </Flex>
+        ) : null}
+
         {paymentMethods?.map((method) => {
           const cardBrandsSrc = method.brand.toLowerCase().replaceAll(' ', '_') || 'default';
 
@@ -105,10 +128,10 @@ export function SelectCardModal({ email, planCode, onClose, paymentMethodId }: S
           );
         })}
         <Flex gap="xl" mt="lg">
-          <Button pr={20} variant="outline" onClick={handleAddMoreCard} fullWidth>
+          <Button pr={20} variant="outline" onClick={handleAddMoreCard} fullWidth disabled={isPaymentMethodsLoading}>
             + Add Card
           </Button>
-          <Button onClick={handleProceed} variant="filled" fullWidth>
+          <Button onClick={handleProceed} variant="filled" fullWidth disabled={isPaymentMethodsLoading}>
             Proceed
           </Button>
         </Flex>

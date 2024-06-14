@@ -81,7 +81,7 @@ export class UserController {
 
   @Get('/payment-methods')
   @ApiOperation({
-    summary: 'Retrieve the Payment Methods of the User',
+    summary: 'Retrieve the cards of the User',
   })
   async retriveUserPaymentMethods(@UserSession() user: IJwtPayload) {
     return this.retrivePaymentMethods.execute(user.email);
@@ -89,7 +89,7 @@ export class UserController {
 
   @Delete('/payment-methods/:paymentMethodId')
   @ApiOperation({
-    summary: 'Detach or Delete the Payment Method of the User',
+    summary: 'Detach or Delete the card of the User',
   })
   async deletePaymentMethodRoute(@Param('paymentMethodId') paymentMethodId: string) {
     return this.deleteUserPaymentMethod.execute(paymentMethodId);
