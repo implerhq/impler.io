@@ -10,7 +10,7 @@ interface AddCardModalProps {
   refetchPaymentMethods: () => void;
 }
 
-export function AddCardModal({ close, refetchPaymentMethods }: AddCardModalProps) {
+export const AddCardModal = ({ close, refetchPaymentMethods }: AddCardModalProps) => {
   const theme = useMantineTheme();
   const cardStyle = {
     style: {
@@ -25,7 +25,6 @@ export function AddCardModal({ close, refetchPaymentMethods }: AddCardModalProps
       },
     },
   };
-
   const stripe = useStripe();
   const elements = useElements();
   const { addPaymentMethod, isAddPaymentMethodLoading } = useAddCard({ close, refetchPaymentMethods });
@@ -65,6 +64,4 @@ export function AddCardModal({ close, refetchPaymentMethods }: AddCardModalProps
       </Button>
     </Stack>
   );
-}
-
-export default AddCardModal;
+};
