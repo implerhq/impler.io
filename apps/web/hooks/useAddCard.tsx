@@ -6,6 +6,7 @@ import { useLocalStorage } from '@mantine/hooks';
 import { useMutation } from '@tanstack/react-query';
 import { useStripe } from '@stripe/react-stripe-js';
 import { API_KEYS, CONSTANTS, NOTIFICATION_KEYS, ROUTES } from '@config';
+import { useState } from 'react';
 
 interface UseAddCardProps {
   close: () => void;
@@ -15,8 +16,9 @@ interface UseAddCardProps {
 export function useAddCard({ close, refetchPaymentMethods }: UseAddCardProps) {
   const router = useRouter();
   const stripe = useStripe();
+  const [isPaymentMethodLoading, setIsPaymentMethodLoading] = useState<boolean>(false);
   const [planCodeName] = useLocalStorage<string>({ key: CONSTANTS.PLAN_CODE_STORAGE_KEY });
-  const { mutate: addPaymentMethod, isLoading: isAddPaymentMethodLoading } = useMutation<any, IErrorObject, string>(
+  const { mutate: addPaymentMethod } = useMutation<any, IErrorObject, string>(
     [API_KEYS.ADD_PAYMENT_METHOD],
     async (paymentMethodId) =>
       commonApi(API_KEYS.ADD_PAYMENT_METHOD as any, {
@@ -53,6 +55,7 @@ export function useAddCard({ close, refetchPaymentMethods }: UseAddCardProps) {
           message: error,
           color: 'red',
         });
+        setIsPaymentMethodLoading(false);
       },
     }
   );
@@ -75,6 +78,7 @@ export function useAddCard({ close, refetchPaymentMethods }: UseAddCardProps) {
   return {
     performReturnAction,
     addPaymentMethod,
-    isAddPaymentMethodLoading,
+    isPaymentMethodLoading,
+    setIsPaymentMethodLoading,
   };
 }

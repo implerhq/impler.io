@@ -27,7 +27,10 @@ export const AddCardModal = ({ close, refetchPaymentMethods }: AddCardModalProps
   };
   const stripe = useStripe();
   const elements = useElements();
-  const { addPaymentMethod, isAddPaymentMethodLoading } = useAddCard({ close, refetchPaymentMethods });
+  const { addPaymentMethod, isPaymentMethodLoading, setIsPaymentMethodLoading } = useAddCard({
+    close,
+    refetchPaymentMethods,
+  });
 
   const handleAddCard = async () => {
     if (!stripe || !elements) return;
@@ -36,6 +39,7 @@ export const AddCardModal = ({ close, refetchPaymentMethods }: AddCardModalProps
 
     if (!cardElement) return;
 
+    setIsPaymentMethodLoading(true);
     const { paymentMethod, error } = await stripe.createPaymentMethod({
       type: 'card',
       card: cardElement,
@@ -53,12 +57,13 @@ export const AddCardModal = ({ close, refetchPaymentMethods }: AddCardModalProps
         color: 'red',
       });
     }
+    setIsPaymentMethodLoading(false);
   };
 
   return (
     <Stack spacing="md">
       <CardElement options={cardStyle} />
-      <Button loading={isAddPaymentMethodLoading} fullWidth onClick={handleAddCard}>
+      <Button loading={isPaymentMethodLoading} fullWidth onClick={handleAddCard}>
         Add Card
       </Button>
     </Stack>
