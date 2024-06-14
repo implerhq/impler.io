@@ -21,7 +21,7 @@ export function useCancelPlan({ email }: UseCancelPlanProps) {
       queryClient.invalidateQueries([API_KEYS.FETCH_ACTIVE_SUBSCRIPTION, email]);
       modals.close(MODAL_KEYS.PAYMENT_PLANS);
       notify(NOTIFICATION_KEYS.MEMBERSHIP_CANCELLED, {
-        title: 'Membership Cancelled',
+        title: 'Subscription Cancelled',
         message: `Your subscription is cancelled.
          Your current subscription will continue till ${data.expiryDate}. You won't be charged again.`,
         color: 'red',

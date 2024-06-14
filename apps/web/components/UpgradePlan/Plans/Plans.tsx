@@ -1,6 +1,6 @@
+import React, { useState } from 'react';
 import { modals } from '@mantine/modals';
 import { useLocalStorage } from '@mantine/hooks';
-import React, { useState } from 'react';
 import { Switch, Stack, Table, Button, Text, Badge, Group, useMantineColorScheme } from '@mantine/core';
 
 import useStyles from './Plans.styles';
@@ -135,7 +135,7 @@ export const Plans = ({ profile, activePlanCode, canceledOn, expiryDate }: Plans
         <Text weight={700} size="sm">
           Yearly
         </Text>
-        <Badge color="red" size="lg">
+        <Badge color="cyan" size="lg" variant="filled">
           <Text color={colors.BGPrimaryLight}>Save 20% </Text>
         </Badge>
       </Group>
@@ -187,7 +187,7 @@ export const Plans = ({ profile, activePlanCode, canceledOn, expiryDate }: Plans
             {plans[showYearly ? 'yearly' : 'monthly'].map((plan, index) => (
               <td key={index}>
                 {plan.extraChargeOverheadTenThusandRecords
-                  ? `$${plan.extraChargeOverheadTenThusandRecords} (Billed monthly)`
+                  ? `$${plan.extraChargeOverheadTenThusandRecords} (Billed ${showYearly ? 'yearly' : 'monthly'})`
                   : 'Not Available'}
               </td>
             ))}

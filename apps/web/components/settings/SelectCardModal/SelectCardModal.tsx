@@ -11,6 +11,7 @@ import { notify } from '@libs/notify';
 import { commonApi } from '@libs/api';
 import { ICardData, IErrorObject } from '@impler/shared';
 import { API_KEYS, MODAL_KEYS, NOTIFICATION_KEYS, ROUTES, colors } from '@config';
+import { capitalizeFirstLetter } from '@shared/utils';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -115,7 +116,7 @@ export function SelectCardModal({ email, planCode, onClose, paymentMethodId }: S
                   />
                   <Stack spacing={2}>
                     <Text fw={700} size="md">
-                      {method.brand[0].toUpperCase() + method.brand.slice(1)} **** {method.last4Digits}
+                      {capitalizeFirstLetter(method.brand)} **** {method.last4Digits}
                     </Text>
                     <Text mt={10} size="sm">
                       Expires {`${method.expMonth}/${method.expYear}`}

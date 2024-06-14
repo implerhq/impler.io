@@ -6,6 +6,7 @@ import { Table } from '@ui/table';
 import { Button } from '@ui/button';
 import { Checkbox } from '@ui/checkbox';
 import { AppLayout } from '@layouts/AppLayout';
+import { capitalizeFirstLetter } from '@shared/utils';
 import { LeftArrowIcon } from '@assets/icons/LeftArrow.icon';
 import { useTransactionHistory } from '@hooks/useTransactionHistory';
 
@@ -37,6 +38,9 @@ export default function Transactions() {
             {
               title: 'Transaction Status',
               key: 'transactionStatus',
+              Cell(item) {
+                return capitalizeFirstLetter(item.transactionStatus);
+              },
             },
             {
               title: 'Membership Date',
@@ -64,6 +68,9 @@ export default function Transactions() {
             {
               title: 'Currency',
               key: 'currency',
+              Cell(item) {
+                return item.currency?.toUpperCase();
+              },
             },
           ]}
           data={transactions || []}
