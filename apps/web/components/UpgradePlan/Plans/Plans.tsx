@@ -15,7 +15,7 @@ interface PlansProps {
   profile: IProfileData;
   activePlanCode?: string;
   canceledOn?: Date;
-  expiryDate: Date;
+  expiryDate?: Date;
 }
 
 interface PlanItem {

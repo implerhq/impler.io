@@ -6,7 +6,7 @@ interface PlanProps {
   userProfile: IProfileData;
   activePlanCode?: string;
   canceledOn?: Date;
-  expiryDate: Date;
+  expiryDate?: Date;
 }
 
 export const PlansModal = ({ userProfile, activePlanCode, canceledOn, expiryDate }: PlanProps) => {
