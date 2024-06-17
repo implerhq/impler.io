@@ -31,25 +31,28 @@ export function SelectCardModal({ email, planCode, onClose, paymentMethodId }: S
   const router = useRouter();
   const gatewayURL = publicRuntimeConfig.NEXT_PUBLIC_PAYMENT_GATEWAY_URL;
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | undefined>(paymentMethodId);
-  const { data: paymentMethods, isLoading: isPaymentMethodsLoading } = useQuery<
-    unknown,
-    IErrorObject,
-    ICardData[],
-    [string]
-  >([API_KEYS.PAYMENT_METHOD_LIST], () => commonApi<ICardData[]>(API_KEYS.PAYMENT_METHOD_LIST as any, {}), {
-    onSuccess(data) {
-      if (data?.length === 0) {
-        setPlanCodeName(planCode);
-        notify(NOTIFICATION_KEYS.NO_PAYMENT_METHOD_FOUND, {
-          title: 'No Cards Found!',
-          message: 'Please Add your Card first. Redirecting you to cards!',
-          color: 'red',
-        });
-        modals.closeAll();
-        router.push(ROUTES.ADD_CARD);
-      }
-    },
-  });
+  const {
+    data: paymentMethods,
+    isLoading: isPaymentMethodsLoading,
+    isFetching: isPaymentMethodsFetching,
+  } = useQuery<unknown, IErrorObject, ICardData[], [string]>(
+    [API_KEYS.PAYMENT_METHOD_LIST],
+    () => commonApi<ICardData[]>(API_KEYS.PAYMENT_METHOD_LIST as any, {}),
+    {
+      onSuccess(data) {
+        if (data?.length === 0) {
+          setPlanCodeName(planCode);
+          notify(NOTIFICATION_KEYS.NO_PAYMENT_METHOD_FOUND, {
+            title: 'No Cards Found!',
+            message: 'Please Add your Card first. Redirecting you to cards!',
+            color: 'red',
+          });
+          modals.closeAll();
+          router.push(ROUTES.ADD_CARD);
+        }
+      },
+    }
+  );
 
   const handleProceed = () => {
     modals.closeAll();
@@ -91,7 +94,7 @@ export function SelectCardModal({ email, planCode, onClose, paymentMethodId }: S
         w={480}
       >
         <Divider my="sm" mt={10} />
-        {isPaymentMethodsLoading ? (
+        {isPaymentMethodsLoading || isPaymentMethodsFetching ? (
           <Flex align="center" justify="center">
             <Loader />
           </Flex>
