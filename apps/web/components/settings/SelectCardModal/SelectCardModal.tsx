@@ -3,15 +3,16 @@ import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { modals } from '@mantine/modals';
 import { useEffect, useState } from 'react';
+import { useLocalStorage } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { Radio, Flex, Text, Loader, Group, Divider, Title, Stack, useMantineTheme } from '@mantine/core';
 
 import { Button } from '@ui/button';
 import { notify } from '@libs/notify';
 import { commonApi } from '@libs/api';
-import { ICardData, IErrorObject } from '@impler/shared';
-import { API_KEYS, MODAL_KEYS, NOTIFICATION_KEYS, ROUTES, colors } from '@config';
 import { capitalizeFirstLetter } from '@shared/utils';
+import { ICardData, IErrorObject } from '@impler/shared';
+import { API_KEYS, CONSTANTS, MODAL_KEYS, NOTIFICATION_KEYS, ROUTES, colors } from '@config';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -23,6 +24,9 @@ interface SelectCardModalProps {
 }
 
 export function SelectCardModal({ email, planCode, onClose, paymentMethodId }: SelectCardModalProps) {
+  const [, setPlanCodeName] = useLocalStorage<string>({
+    key: CONSTANTS.PLAN_CODE_STORAGE_KEY,
+  });
   const theme = useMantineTheme();
   const router = useRouter();
   const gatewayURL = publicRuntimeConfig.NEXT_PUBLIC_PAYMENT_GATEWAY_URL;
@@ -35,6 +39,7 @@ export function SelectCardModal({ email, planCode, onClose, paymentMethodId }: S
   >([API_KEYS.PAYMENT_METHOD_LIST], () => commonApi<ICardData[]>(API_KEYS.PAYMENT_METHOD_LIST as any, {}), {
     onSuccess(data) {
       if (data?.length === 0) {
+        setPlanCodeName(planCode);
         notify(NOTIFICATION_KEYS.NO_PAYMENT_METHOD_FOUND, {
           title: 'No Cards Found!',
           message: 'Please Add your Card first. Redirecting you to cards!',
@@ -48,11 +53,14 @@ export function SelectCardModal({ email, planCode, onClose, paymentMethodId }: S
 
   const handleProceed = () => {
     modals.closeAll();
+    onClose();
     if (selectedPaymentMethod) {
-      router.push(
-        `${gatewayURL}/api/v1/plans/${planCode}/buy/${email}/redirect?paymentMethodId=${selectedPaymentMethod}`
-      );
-      onClose();
+      const url =
+        `${gatewayURL}/api/v1/plans/${planCode}/buy/${email}/redirect?paymentMethodId=${selectedPaymentMethod}`.replaceAll(
+          '"',
+          ''
+        );
+      router.push(url);
     }
   };
 
