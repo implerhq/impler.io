@@ -53,7 +53,7 @@ export function UserCards() {
         </SimpleGrid>
       </Stack>
 
-      <Modal opened={opened} withCloseButton onClose={close} title="Add Your Card" centered>
+      <Modal zIndex={1000} opened={opened} withCloseButton onClose={close} title="Add Your Card" centered>
         <AddCardModal refetchPaymentMethods={refetchPaymentMethods} close={close} />
       </Modal>
     </Box>
