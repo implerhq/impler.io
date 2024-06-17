@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import { modals } from '@mantine/modals';
-import { useLocalStorage } from '@mantine/hooks';
 import { Switch, Stack, Table, Button, Text, Badge, Group, useMantineColorScheme } from '@mantine/core';
 
 import useStyles from './Plans.styles';
+import { MODAL_KEYS, colors } from '@config';
 import { numberFormatter } from '@impler/shared';
 import { TickIcon } from '@assets/icons/Tick.icon';
 import { CrossIcon } from '@assets/icons/Cross.icon';
 import { useCancelPlan } from '@hooks/useCancelPlan';
 import { SelectCardModal } from '@components/settings';
-import { CONSTANTS, MODAL_KEYS, colors } from '@config';
 
 interface PlansProps {
   profile: IProfileData;
@@ -94,15 +93,10 @@ export const Plans = ({ profile, activePlanCode, canceledOn, expiryDate }: Plans
   const theme = useMantineColorScheme();
   const [showYearly, setShowYearly] = useState<boolean>(true);
   const { cancelPlan, isCancelPlanLoading } = useCancelPlan({ email: profile.email });
-  const [, setPlanCodeName] = useLocalStorage<string>({
-    key: CONSTANTS.PLAN_CODE_STORAGE_KEY,
-  });
-
   const onPlanButtonClick = (code: string) => {
     if (activePlanCode === code) {
       cancelPlan();
     } else {
-      setPlanCodeName(code);
       modals.open({
         size: '2xl',
         withCloseButton: false,
