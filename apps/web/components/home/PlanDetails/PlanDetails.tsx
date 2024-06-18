@@ -148,7 +148,7 @@ export function PlanDetails() {
             onClick={onUpgradeButtonClick}
             color={isLessThanZero || activePlanDetails.usage.IMPORTED_ROWS > numberOfRecords ? 'red' : 'blue'}
           >
-            Upgrade Plan
+            Choose Plan
           </Button>
           <Text component={Link} href="/transactions" color={colors.yellow} td="underline">
             View all transactions
