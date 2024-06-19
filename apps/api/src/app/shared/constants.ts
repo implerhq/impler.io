@@ -56,7 +56,6 @@ export const CONSTANTS = {
   "extra": "{{extra}}"
 }`,
   BUBBLEIO_PROPS: {},
-  DEFAULT_CURRENCY: 'usd',
 };
 
 export const COOKIE_CONFIG: CookieOptions = {
