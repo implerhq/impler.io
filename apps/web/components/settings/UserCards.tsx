@@ -1,7 +1,7 @@
+import React from 'react';
 import { Stack } from '@mantine/core';
 import { useRouter } from 'next/router';
 import { modals } from '@mantine/modals';
-import React from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import { Modal, SimpleGrid, Box, LoadingOverlay } from '@mantine/core';
 
@@ -12,7 +12,7 @@ import { usePaymentMethods } from '@hooks/usePaymentMethods';
 
 export function UserCards() {
   const router = useRouter();
-  const { action } = router.query;
+  const { action, plan } = router.query;
   const [opened, { open, close }] = useDisclosure(action === 'addcardmodal');
   const {
     refetchPaymentMethods,
@@ -54,7 +54,7 @@ export function UserCards() {
       </Stack>
 
       <Modal zIndex={1000} opened={opened} withCloseButton onClose={close} title="Add Your Card" centered>
-        <AddCardModal refetchPaymentMethods={refetchPaymentMethods} close={close} />
+        <AddCardModal plan={plan as string} refetchPaymentMethods={refetchPaymentMethods} close={close} />
       </Modal>
     </Box>
   );
