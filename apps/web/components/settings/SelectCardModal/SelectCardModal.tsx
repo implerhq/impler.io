@@ -11,7 +11,7 @@ import { notify } from '@libs/notify';
 import { commonApi } from '@libs/api';
 import { capitalizeFirstLetter } from '@shared/utils';
 import { ICardData, IErrorObject } from '@impler/shared';
-import { API_KEYS, MODAL_KEYS, NOTIFICATION_KEYS, ROUTES, colors } from '@config';
+import { API_KEYS, CONSTANTS, MODAL_KEYS, NOTIFICATION_KEYS, ROUTES, colors } from '@config';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -43,7 +43,7 @@ export function SelectCardModal({ email, planCode, onClose, paymentMethodId }: S
             color: 'red',
           });
           modals.closeAll();
-          router.push(ROUTES.ADD_CARD + `&plan=${planCode}`);
+          router.push(ROUTES.ADD_CARD + `&${CONSTANTS.PLAN_CODE_QUERY_KEY}=${planCode}`);
         }
       },
     }

@@ -6,7 +6,7 @@ import { useMutation } from '@tanstack/react-query';
 import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
 import { IErrorObject } from '@impler/shared';
-import { API_KEYS, NOTIFICATION_KEYS, ROUTES } from '@config';
+import { API_KEYS, CONSTANTS, NOTIFICATION_KEYS, ROUTES } from '@config';
 
 interface UseAddCardProps {
   close: () => void;
@@ -71,7 +71,7 @@ export function useAddCard({ close, planCode, refetchPaymentMethods }: UseAddCar
 
   const performReturnAction = async () => {
     if (planCode) {
-      router.push(ROUTES.HOME + `?plan=${planCode}`);
+      router.push(ROUTES.HOME + `?${CONSTANTS.PLAN_CODE_QUERY_KEY}=${planCode}`);
     }
   };
 

@@ -1,5 +1,5 @@
 export const CONSTANTS = {
-  PLAN_CODE_STORAGE_KEY: 'plan',
+  PLAN_CODE_QUERY_KEY: 'plan_code',
   GITHUB_LOGIN_URL: '/v1/auth/github',
   AUTH_COOKIE_NAME: 'authentication',
   AUTHENTICATION_ERROR_CODE: 'AuthenticationError',
