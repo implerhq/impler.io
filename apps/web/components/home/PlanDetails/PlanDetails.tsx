@@ -1,17 +1,20 @@
 import Link from 'next/link';
 import { useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { modals } from '@mantine/modals';
 import { Title, Text, Flex, Button, Skeleton, Stack } from '@mantine/core';
 
 import { useApp } from '@hooks/useApp';
+import { MODAL_KEYS, ROUTES, colors } from '@config';
 import { SelectCardModal } from '@components/settings';
 import { usePlanDetails } from '@hooks/usePlanDetails';
-import { CONSTANTS, MODAL_KEYS, colors } from '@config';
 import { PlansModal } from '@components/UpgradePlan/PlansModal';
 import { numberFormatter } from '@impler/shared/dist/utils/helpers';
 
 export function PlanDetails() {
+  const router = useRouter();
   const { profile } = useApp();
+  const { plan } = router.query;
 
   const { activePlanDetails, isActivePlanLoading } = usePlanDetails({
     email: profile?.email ?? '',
@@ -35,18 +38,17 @@ export function PlanDetails() {
   };
 
   useEffect(() => {
-    const planCode = localStorage.getItem(CONSTANTS.PLAN_CODE_STORAGE_KEY);
-    if (planCode && profile) {
+    if (plan && profile) {
       modals.open({
         size: '2xl',
         withCloseButton: false,
         id: MODAL_KEYS.SELECT_CARD,
         modalId: MODAL_KEYS.SELECT_CARD,
-        children: <SelectCardModal planCode={planCode} email={profile.email} onClose={modals.closeAll} />,
+        children: <SelectCardModal planCode={plan as string} email={profile.email} onClose={modals.closeAll} />,
       });
-      localStorage.removeItem(CONSTANTS.PLAN_CODE_STORAGE_KEY);
+      router.push(ROUTES.HOME, {}, { shallow: true });
     }
-  }, [profile]);
+  }, [profile, plan, router]);
 
   if (isActivePlanLoading) return <Skeleton width="100%" height="200" />;
 
