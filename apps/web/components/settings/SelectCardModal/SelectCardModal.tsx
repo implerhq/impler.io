@@ -3,7 +3,6 @@ import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { modals } from '@mantine/modals';
 import { useEffect, useState } from 'react';
-import { useLocalStorage } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { Radio, Flex, Text, Loader, Group, Divider, Title, Stack, useMantineTheme } from '@mantine/core';
 
@@ -12,7 +11,7 @@ import { notify } from '@libs/notify';
 import { commonApi } from '@libs/api';
 import { capitalizeFirstLetter } from '@shared/utils';
 import { ICardData, IErrorObject } from '@impler/shared';
-import { API_KEYS, CONSTANTS, MODAL_KEYS, NOTIFICATION_KEYS, ROUTES, colors } from '@config';
+import { API_KEYS, MODAL_KEYS, NOTIFICATION_KEYS, ROUTES, colors } from '@config';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -24,9 +23,6 @@ interface SelectCardModalProps {
 }
 
 export function SelectCardModal({ email, planCode, onClose, paymentMethodId }: SelectCardModalProps) {
-  const [, setPlanCodeName] = useLocalStorage<string>({
-    key: CONSTANTS.PLAN_CODE_STORAGE_KEY,
-  });
   const theme = useMantineTheme();
   const router = useRouter();
   const gatewayURL = publicRuntimeConfig.NEXT_PUBLIC_PAYMENT_GATEWAY_URL;
@@ -41,7 +37,6 @@ export function SelectCardModal({ email, planCode, onClose, paymentMethodId }: S
     {
       onSuccess(data) {
         if (data?.length === 0) {
-          setPlanCodeName(planCode);
           notify(NOTIFICATION_KEYS.NO_PAYMENT_METHOD_FOUND, {
             title: 'No Cards Found!',
             message: 'Please Add your Card first. Redirecting you to cards!',
