@@ -1,23 +1,23 @@
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { useStripe } from '@stripe/react-stripe-js';
+import { useMutation } from '@tanstack/react-query';
+
 import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
-import { useRouter } from 'next/router';
 import { IErrorObject } from '@impler/shared';
-import { useLocalStorage } from '@mantine/hooks';
-import { useMutation } from '@tanstack/react-query';
-import { useStripe } from '@stripe/react-stripe-js';
-import { API_KEYS, CONSTANTS, NOTIFICATION_KEYS, ROUTES } from '@config';
-import { useState } from 'react';
+import { API_KEYS, NOTIFICATION_KEYS, ROUTES } from '@config';
 
 interface UseAddCardProps {
   close: () => void;
+  planCode?: string | null;
   refetchPaymentMethods: () => void;
 }
 
-export function useAddCard({ close, refetchPaymentMethods }: UseAddCardProps) {
+export function useAddCard({ close, planCode, refetchPaymentMethods }: UseAddCardProps) {
   const router = useRouter();
   const stripe = useStripe();
   const [isPaymentMethodLoading, setIsPaymentMethodLoading] = useState<boolean>(false);
-  const [planCodeName] = useLocalStorage<string>({ key: CONSTANTS.PLAN_CODE_STORAGE_KEY });
   const { mutate: addPaymentMethod } = useMutation<any, IErrorObject, string>(
     [API_KEYS.ADD_PAYMENT_METHOD],
     async (paymentMethodId) =>
@@ -70,8 +70,8 @@ export function useAddCard({ close, refetchPaymentMethods }: UseAddCardProps) {
   };
 
   const performReturnAction = async () => {
-    if (planCodeName) {
-      router.push(ROUTES.HOME);
+    if (planCode) {
+      router.push(ROUTES.HOME + `?plan=${planCode}`);
     }
   };
 
