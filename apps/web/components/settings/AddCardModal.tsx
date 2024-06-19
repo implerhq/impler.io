@@ -1,16 +1,18 @@
 import React from 'react';
 import { Stack, Button, useMantineTheme } from '@mantine/core';
-import { useAddCard } from '@hooks/useAddCard';
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
+
 import { notify } from '@libs/notify';
 import { NOTIFICATION_KEYS } from '@config';
+import { useAddCard } from '@hooks/useAddCard';
 
 interface AddCardModalProps {
+  plan?: string;
   close: () => void;
   refetchPaymentMethods: () => void;
 }
 
-export const AddCardModal = ({ close, refetchPaymentMethods }: AddCardModalProps) => {
+export const AddCardModal = ({ plan, close, refetchPaymentMethods }: AddCardModalProps) => {
   const theme = useMantineTheme();
   const cardStyle = {
     style: {
@@ -27,8 +29,10 @@ export const AddCardModal = ({ close, refetchPaymentMethods }: AddCardModalProps
   };
   const stripe = useStripe();
   const elements = useElements();
+
   const { addPaymentMethod, isPaymentMethodLoading, setIsPaymentMethodLoading } = useAddCard({
     close,
+    planCode: plan,
     refetchPaymentMethods,
   });
 
