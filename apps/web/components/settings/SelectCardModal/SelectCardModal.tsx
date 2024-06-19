@@ -48,7 +48,7 @@ export function SelectCardModal({ email, planCode, onClose, paymentMethodId }: S
             color: 'red',
           });
           modals.closeAll();
-          router.push(ROUTES.ADD_CARD);
+          router.push(ROUTES.ADD_CARD + `&plan=${planCode}`);
         }
       },
     }
