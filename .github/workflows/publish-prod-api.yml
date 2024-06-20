@@ -6,7 +6,6 @@ on:
       - '**@impler/api@**'
       - '**@impler/shared@**'
       - '**@impler/dal@**'
-  workflow_dispatch:
 
 jobs:
   publish_prod_api:
