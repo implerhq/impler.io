@@ -10,6 +10,7 @@ import { SharedModule } from '../shared/shared.module';
 import { GitHubStrategy } from './services/passport/github.strategy';
 import { JwtStrategy } from './services/passport/jwt.strategy';
 import { LeadService } from '@shared/services/lead.service';
+import { PaymentAPIService } from '@impler/shared';
 
 const AUTH_STRATEGIES: Provider[] = [JwtStrategy];
 
@@ -32,7 +33,7 @@ if (process.env.GITHUB_OAUTH_CLIENT_ID) {
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, ...AUTH_STRATEGIES, ...USE_CASES, LeadService],
+  providers: [AuthService, ...AUTH_STRATEGIES, ...USE_CASES, LeadService, PaymentAPIService],
   exports: [AuthService],
 })
 export class AuthModule implements NestModule {

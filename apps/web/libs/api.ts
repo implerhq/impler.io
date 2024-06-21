@@ -7,6 +7,38 @@ interface Route {
 }
 
 const routes: Record<string, Route> = {
+  [API_KEYS.TRANSACTION_HISTORY]: {
+    url: () => `/v1/user/transactions/history`,
+    method: 'GET',
+  },
+
+  [API_KEYS.PAYMENT_METHOD_LIST]: {
+    url: () => `/v1/user/payment-methods`,
+    method: 'GET',
+  },
+  [API_KEYS.PAYMENT_METHOD_DELETE]: {
+    url: (paymentMethodId: string) => `/v1/user/payment-methods/${paymentMethodId}`,
+    method: 'DELETE',
+  },
+
+  [API_KEYS.ADD_PAYMENT_METHOD]: {
+    url: (paymentMethodId: string) => `/v1/user/setup-intent/${paymentMethodId}`,
+    method: 'PUT',
+  },
+  [API_KEYS.SAVE_INTENT_ID]: {
+    url: (intentId: string) => `/v1/user/confirm-payment-intent-id/${intentId}`,
+    method: 'PUT',
+  },
+
+  [API_KEYS.FETCH_ACTIVE_SUBSCRIPTION]: {
+    url: () => `/v1/user/subscription`,
+    method: 'GET',
+  },
+  [API_KEYS.CANCEL_SUBSCRIPTION]: {
+    url: () => `/v1/user/subscription`,
+    method: 'DELETE',
+  },
+
   [API_KEYS.PROJECTS_LIST]: {
     url: () => '/v1/project',
     method: 'GET',
@@ -45,6 +77,10 @@ const routes: Record<string, Route> = {
   },
   [API_KEYS.ME]: {
     url: () => `/v1/auth/me`,
+    method: 'GET',
+  },
+  [API_KEYS.IMPORT_COUNT]: {
+    url: () => `/v1/user/import-count`,
     method: 'GET',
   },
 
@@ -190,24 +226,28 @@ export async function commonApi<T>(
     cookie,
     headers,
     query,
+    baseUrl,
+    credentials = 'include',
   }: {
     parameters?: string[];
     body?: any;
+    credentials?: 'include' | 'omit' | 'same-origin' | undefined;
     headers?: Record<string, string>;
     cookie?: string;
     query?: Record<string, string | number | undefined>;
+    baseUrl?: string;
   }
 ) {
   try {
     const route = routes[key];
-    let url = publicRuntimeConfig.NEXT_PUBLIC_API_BASE_URL + route.url(parameters);
+    let url = (baseUrl || publicRuntimeConfig.NEXT_PUBLIC_API_BASE_URL) + route.url(parameters);
     url = url + '?' + queryObjToString(query);
     const method = route.method;
 
     const response = await fetch(url, {
       method,
       body: JSON.stringify(body),
-      credentials: 'include',
+      ...(credentials ? { credentials: credentials } : {}),
       headers: {
         'Content-Type': 'application/json',
         ...(headers ? headers : {}),

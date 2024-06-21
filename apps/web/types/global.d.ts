@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+
 /* eslint-disable no-unused-vars */
 declare module '@tawk.to/tawk-messenger-react';
 
@@ -12,8 +13,10 @@ namespace NodeJS {
     NEXT_PUBLIC_OPENREPLAY_KEY: string;
     NEXT_PUBLIC_SENTRY_DSN: string;
 
+    NEXT_PUBLIC_PAYMENT_GATEWAY_URL: string;
     NEXT_PUBLIC_GTM_ID: string;
     NEXT_PUBLIC_GOOGLE_ANALYTICS_ID: string;
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: string;
   }
 }
 
@@ -25,6 +28,37 @@ interface IProfileData {
   profilePicture: string;
   _projectId: string;
   accessToken: string;
+}
+
+interface ChargeItem {
+  first_unit: number;
+  last_unit: number;
+  per_unit: number;
+}
+
+interface ISubscriptionData {
+  plan: {
+    code: string;
+    name: string;
+    charges: {
+      billableMetric: {
+        code: string;
+        name: string;
+      };
+      chargeModal: 'FIXED' | 'VOLUME_BASED';
+      properties: Record<string, string | number>;
+    }[];
+    charge: number;
+    canceledOn?: Date;
+  };
+  isActive: boolean;
+  usage: {
+    IMPORTED_ROWS: number;
+  };
+  expiryDate: Date;
+  meta: {
+    IMPORTED_ROWS: number;
+  };
 }
 
 interface ICreateProjectData {
@@ -60,4 +94,27 @@ interface ISignupData {
   lastName: string;
   email: string;
   password: string;
+}
+
+interface IImportCountData {
+  date: string;
+  records: {
+    Completed: number;
+    Terminated: number;
+    Mapping: number;
+    Reviewing: number;
+  };
+}
+
+interface ITransactionHistory {
+  _id: string;
+  transactionDate: Date;
+  planName: string;
+  transactionStatus: string;
+  membershipDate: Date;
+  expiryDate: string;
+  isPlanActive: boolean;
+  charge: number;
+  amount: number;
+  currency: string;
 }

@@ -6,13 +6,15 @@ import { AuthService } from '../../services/auth.service';
 import { RegisterUserCommand } from './register-user.command';
 import { UniqueEmailException } from '@shared/exceptions/unique-email.exception';
 import { LeadService } from '@shared/services/lead.service';
+import { PaymentAPIService } from '@impler/shared';
 
 @Injectable()
 export class RegisterUser {
   constructor(
     private userRepository: UserRepository,
     private authService: AuthService,
-    private leadService: LeadService
+    private leadService: LeadService,
+    private paymentAPIService: PaymentAPIService
   ) {}
 
   async execute(command: RegisterUserCommand) {
@@ -37,6 +39,14 @@ export class RegisterUser {
       'Lead Email': user.email,
       'Lead Source': 'Website Signup',
     });
+
+    const userData = {
+      name: user.firstName + ' ' + user.lastName,
+      email: user.email,
+      externalId: user.email,
+    };
+
+    await this.paymentAPIService.createUser(userData);
 
     const token = this.authService.getSignedToken({
       _id: user._id,

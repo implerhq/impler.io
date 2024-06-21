@@ -38,5 +38,9 @@ declare namespace NodeJS {
     LEAD_CLIENT_SECRET: string;
     LEAD_TOPIC_ID: string;
     LEAD_LIST_KEY: string;
+
+    PAYMENT_API_BASE_URL: string;
+    PAYMENT_AUTH_KEY: string;
+    PAYMENT_AUTH_VALUE: string;
   }
 }

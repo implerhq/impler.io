@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { ActionIcon, Flex, Group, LoadingOverlay, Title, useMantineTheme } from '@mantine/core';
 
+import { track } from '@libs/amplitude';
 import { ROUTES, colors } from '@config';
 import { useImpler } from '@impler/react';
 import { useImportDetails } from '@hooks/useImportDetails';
@@ -23,7 +24,6 @@ import { FourIcon } from '@assets/icons/Four.icon';
 import { ThreeIcon } from '@assets/icons/Three.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
 import { LeftArrowIcon } from '@assets/icons/LeftArrow.icon';
-import { track } from '@libs/amplitude';
 
 const Editor = dynamic(() => import('@components/imports/editor').then((mod) => mod.OutputEditor), {
   ssr: false,

@@ -74,7 +74,6 @@ export function Phase3(props: IPhase3Props) {
     logAmplitudeEvent('CONFIRM');
     onConfirmReview();
   };
-  console.log(frozenColumns);
 
   return (
     <>

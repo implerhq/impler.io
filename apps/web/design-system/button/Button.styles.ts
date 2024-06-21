@@ -3,6 +3,13 @@ import { createStyles, MantineTheme } from '@mantine/core';
 import { colors } from '@config';
 import { ButtonColors, ButtonVariants } from './Button';
 
+const colorsCodes: Record<ButtonColors, string> = {
+  blue: colors.blue,
+  red: colors.danger,
+  green: colors.green,
+  invariant: colors.black,
+};
+
 const getRootFilledStyles = (theme: MantineTheme, color: ButtonColors = 'blue', fullWidth?: boolean) => ({
   ...(color === 'blue' && {
     backgroundColor: colors.blue,
@@ -41,15 +48,28 @@ const getRootFilledStyles = (theme: MantineTheme, color: ButtonColors = 'blue', 
   },
 });
 
-const getRootOutlineStyles = (theme: MantineTheme, color: ButtonColors = 'blue', fullWidth?: boolean) => ({
+const getRootOutlineStyles = (
+  theme: MantineTheme,
+  color: ButtonColors = 'blue',
+  fullWidth?: boolean,
+  borderLess?: boolean
+) => ({
   borderRadius: '0px',
   backgroundColor: 'transparent',
   width: fullWidth ? '100%' : 'max-content',
   transition: 'color 0.2s, background-color 0.2s, border-color ease-in-out',
-  border: `1px solid ${theme.colorScheme === 'dark' ? colors.StrokeDark : colors.StrokeLight}`,
-  color: theme.colorScheme === 'dark' ? colors.white : colors.black,
+  border: borderLess
+    ? `1px solid transparent`
+    : `1px solid ${
+        color === 'invariant'
+          ? theme.colorScheme === 'dark'
+            ? colors.StrokeDark
+            : colors.StrokeLight
+          : colorsCodes[color]
+      }`,
+  color: color === 'invariant' ? (theme.colorScheme === 'dark' ? colors.white : colors.black) : colorsCodes[color],
   '> svg': {
-    color: theme.colorScheme === 'dark' ? colors.white : colors.black,
+    color: color === 'invariant' ? (theme.colorScheme === 'dark' ? colors.white : colors.black) : colorsCodes[color],
   },
   ['&:hover']: {
     ...(color === 'blue' && {
@@ -83,6 +103,7 @@ interface Params {
   variant?: ButtonVariants;
   color?: ButtonColors;
   fullWidth?: boolean;
+  borderLess?: boolean;
 }
 
 export default createStyles((theme: MantineTheme, params: Params): Record<string, any> => {
@@ -90,6 +111,6 @@ export default createStyles((theme: MantineTheme, params: Params): Record<string
     root:
       params.variant === 'filled'
         ? getRootFilledStyles(theme, params.color, params.fullWidth)
-        : getRootOutlineStyles(theme, params.color, params.fullWidth),
+        : getRootOutlineStyles(theme, params.color, params.fullWidth, params.borderLess),
   };
 });
