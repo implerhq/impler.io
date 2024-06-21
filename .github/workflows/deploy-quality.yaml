@@ -14,10 +14,13 @@ jobs:
     uses: ./.github/workflows/build-api.yml
 
   setup_ssh:
-    uses: webfactory/ssh-agent@v0.5.3
-    with:
-      ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
     # runs-on: ubuntu-latest
     # steps:
     # - name: Setup Project
