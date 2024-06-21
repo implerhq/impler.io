@@ -20,13 +20,20 @@ export async function run() {
 
   if (users.length > 0) {
     // eslint-disable-next-line no-console
-    for (const user of users) {
-      await paymentAPIService.createUser({
-        email: user.email,
-        externalId: user.email,
-        name: `${user.firstName} ${user.lastName}`,
-      });
-    }
+    await Promise.all(
+      users.map(async (user) => {
+        try {
+          await paymentAPIService.createUser({
+            email: user.email,
+            externalId: user.email,
+            name: `${user.firstName} ${user.lastName}`,
+          });
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        } catch (error) {
+          console.error(error);
+        }
+      })
+    );
   }
 
   // eslint-disable-next-line no-console
