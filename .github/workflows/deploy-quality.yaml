@@ -12,6 +12,10 @@ jobs:
   build_api:
     needs:
       - setup_project
+    permissions:
+      contents: read
+      packages: write 
+      deployments: write
     # if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/api/') }}
     uses: ./.github/workflows/build-api.yml
 
