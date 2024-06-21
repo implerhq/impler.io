@@ -1,0 +1,44 @@
+name: Deploy with Docker Compose
+
+on:
+  push:
+    branches:
+      - next
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Setup Project
+      uses: ./.github/workflows/reusable-setup.yml
+    
+    - name: Build API
+      if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/api/') }}
+      uses: ./.github/workflows/build-api.yml
+
+    - name: Build Embed
+      if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/embed/') }}
+      uses: ./.github/workflows/build-embed.yml
+
+    - name: Build Queue Manager
+      if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/queuemanager/') }}
+      uses: ./.github/workflows/build-queuemanager.yml
+
+    - name: Build Web
+      if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/web/') }}
+      uses: ./.github/workflows/build-web.yml
+
+    - name: Build Widget
+      if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/widget/') }}
+      uses: ./.github/workflows/build-widget.yml
+
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Run Docker Compose Up
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} \
+          "cd /home/impler/impler-quality && docker-compose up -d"
