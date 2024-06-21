@@ -8,6 +8,16 @@ on:
 jobs:
   setup_project:
     uses: ./.github/workflows/reusable-setup.yml
+
+  build_api:
+    if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/api/') }}
+    uses: ./.github/workflows/build-api.yml
+
+  setup_ssh:
+    uses: webfactory/ssh-agent@v0.5.3
+    with:
+      ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      
     # runs-on: ubuntu-latest
     # steps:
     # - name: Setup Project
