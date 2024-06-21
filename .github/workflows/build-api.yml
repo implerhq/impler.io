@@ -50,8 +50,8 @@ jobs:
           REGISTERY_OWNER: implerhq
           DOCKER_NAME: impler/api
           IMAGE_TAG: ${{ github.sha }}
-          GH_ACTOR: implerhq
-          GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
+          # GH_ACTOR: implerhq
+          # GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
         run: |
           [ -z "$GH_PASSWORD" ] && { echo "Error: GH_PASSWORD is not set"; exit 1; }
           echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
