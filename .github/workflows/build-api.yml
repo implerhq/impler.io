@@ -53,7 +53,8 @@ jobs:
           GH_ACTOR: implerhq
           GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
         run: |
-          echo "${{ secrets.GH_PACKAGES }}" | docker login ghcr.io -u $GH_ACTOR --password-stdin
+          [ -z "$GH_PASSWORD" ] && { echo "Error: GH_PASSWORD is not set"; exit 1; }
+          echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
           docker build -t ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG -f apps/api/Dockerfile .
           docker tag ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:latest
           docker tag ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:prod
