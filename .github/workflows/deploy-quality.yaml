@@ -7,9 +7,6 @@ on:
 
 jobs:
   build_api:
-    env:
-      GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
-      GH_ACTOR: implerhq
     permissions:
       contents: read
       packages: write 
