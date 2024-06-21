@@ -12,7 +12,8 @@ import { CommonModule } from './app/common/common.module';
 import { HealthModule } from 'app/health/health.module';
 import { AuthModule } from './app/auth/auth.module';
 import { EnvironmentModule } from './app/environment/environment.module';
-import { ActivityModule } from 'app/activity/activity.module';
+import { ActivityModule } from './app/activity/activity.module';
+import { UserModule } from './app/user/user.module';
 
 const modules: Array<Type | DynamicModule | Promise<DynamicModule> | ForwardReference> = [
   ProjectModule,
@@ -25,6 +26,7 @@ const modules: Array<Type | DynamicModule | Promise<DynamicModule> | ForwardRefe
   CommonModule,
   HealthModule,
   AuthModule,
+  UserModule,
   EnvironmentModule,
   ActivityModule,
 ];

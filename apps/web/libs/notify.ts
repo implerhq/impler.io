@@ -2,6 +2,11 @@ import { NOTIFICATION_KEYS } from '@config';
 import { notifications } from '@mantine/notifications';
 
 const Messages: Record<string, NotifyProps> = {
+  [NOTIFICATION_KEYS.MEMBERSHIP_PURCHASED]: {
+    title: 'Membership Upgraded',
+    message: 'Thankyou for Upgrading your membership',
+  },
+
   [NOTIFICATION_KEYS.IMPORT_UPDATED]: {
     title: 'Import details updated',
     message: 'Import details has been updated',
@@ -45,6 +50,15 @@ const Messages: Record<string, NotifyProps> = {
     title: 'Something went wrong!',
     message: 'Something is not right! Our team is informed about it, please try again after some time.',
     color: 'red',
+  },
+  [NOTIFICATION_KEYS.CARD_ADDED]: {
+    title: 'Card Added',
+    message: 'New card is added to the system.',
+    color: 'green',
+  },
+  [NOTIFICATION_KEYS.CARD_REMOVED]: {
+    title: 'Card Removed',
+    message: 'Card is removed from the system.',
   },
 };
 

@@ -3,10 +3,10 @@ import { Writable } from 'stream';
 import { Injectable, BadRequestException } from '@nestjs/common';
 
 import { APIMessages } from '@shared/constants';
-import { ColumnTypesEnum, ITemplateSchemaItem, UploadStatusEnum } from '@impler/shared';
 import { BaseReview } from './base-review.usecase';
 import { BATCH_LIMIT } from '@shared/services/sandbox';
 import { StorageService } from '@impler/shared/dist/services/storage';
+import { PaymentAPIService, ColumnTypesEnum, UploadStatusEnum, ITemplateSchemaItem } from '@impler/shared';
 import { UploadRepository, ValidatorRepository, FileRepository, DalService } from '@impler/dal';
 
 interface ISaveResults {
@@ -18,14 +18,15 @@ interface ISaveResults {
 
 @Injectable()
 export class DoReview extends BaseReview {
-  private _modal: Model<any>;
+  private _modal: Model<unknown>;
 
   constructor(
     private storageService: StorageService,
     private uploadRepository: UploadRepository,
     private validatorRepository: ValidatorRepository,
     private fileRepository: FileRepository,
-    private dalService: DalService
+    private dalService: DalService,
+    private paymentAPIService: PaymentAPIService
   ) {
     super();
   }
@@ -157,6 +158,12 @@ export class DoReview extends BaseReview {
         validRecords,
         invalidRecords,
       }
+    );
+    const userExternalIdOrEmail = await this.uploadRepository.getUserEmailFromUploadId(uploadId);
+
+    await this.paymentAPIService.createEvent(
+      { uploadId, totalRecords, validRecords, invalidRecords },
+      userExternalIdOrEmail
     );
   }
 }

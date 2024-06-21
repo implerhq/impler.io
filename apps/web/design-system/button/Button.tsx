@@ -17,6 +17,7 @@ interface ButtonProps extends MantineButtonProps {
   href?: string;
   fullWidth?: boolean;
   onClick?: () => void;
+  borderLess?: boolean;
 }
 
 export function Button({
@@ -29,13 +30,14 @@ export function Button({
   onClick,
   type,
   loading,
+  borderLess = false,
   disabled = false,
   component = 'button',
   size = 'sm',
   color = 'blue',
   variant = 'filled',
 }: PropsWithChildren<ButtonProps>) {
-  const { classes } = useStyles({ variant, color, fullWidth });
+  const { classes } = useStyles({ variant, color, fullWidth, borderLess });
 
   return (
     <MantineButton

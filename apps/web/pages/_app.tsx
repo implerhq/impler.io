@@ -108,7 +108,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                     backgroundColor: colorScheme === 'dark' ? colors.black : colors.white,
                     borderRadius: 0,
                     boxShadow: 'none',
-                    flex: `0 0 40rem !important`,
+                    // flex: `0 0 40rem !important`,
                   },
                   header: {
                     backgroundColor: colorScheme === 'dark' ? colors.black : colors.white,
