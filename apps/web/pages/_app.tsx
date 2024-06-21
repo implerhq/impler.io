@@ -100,7 +100,6 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             <Notifications />
             <ModalsProvider
               modalProps={{
-                withinPortal: false,
                 styles: {
                   title: {
                     color: colorScheme === 'dark' ? colors.white : colors.black,
