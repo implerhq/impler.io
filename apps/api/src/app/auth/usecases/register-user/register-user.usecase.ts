@@ -37,6 +37,7 @@ export class RegisterUser {
       'First Name': user.firstName,
       'Last Name': user.lastName,
       'Lead Email': user.email,
+      'Lead Source': 'Website Signup',
     });
 
     const userData = {
