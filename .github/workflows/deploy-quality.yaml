@@ -17,45 +17,46 @@ jobs:
     if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/api/') }}
     uses: ./.github/workflows/build-api.yml
 
-  setup_ssh:
+  build_embed:
+    permissions:
+      contents: read
+      packages: write
+      deployments: write
+    if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/demo/') }}
+    uses: ./.github/workflows/build-embed.yml
+
+  build_queuemanager:
+    permissions:
+      contents: read
+      packages: write
+      deployments: write
+    if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/queue-manager/') }}
+    uses: ./.github/workflows/build-queuemanager.yml
+
+  build_web:
+    permissions:
+      contents: read
+      packages: write
+      deployments: write
+    if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/web/') }}
+    uses: ./.github/workflows/build-web.yml
+
+  build_widget:
+    permissions:
+      contents: read
+      packages: write
+      deployments: write
+    if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/widget/') }}
+    uses: ./.github/workflows/build-widget.yml
+
+  deploy_with_ssh:
     runs-on: ubuntu-latest
     steps:
-      - name: Set up SSH
+      - name: Set up SSH and Run Docker Compose Up
         uses: webfactory/ssh-agent@v0.5.3
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-    # runs-on: ubuntu-latest
-    # steps:
-    # - name: Setup Project
-    #   uses: ./.github/workflows/reusable-setup.yml
-    
-    # - name: Build API
-    #   if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/api/') }}
-    #   uses: ./.github/workflows/build-api.yml
-
-    # - name: Build Embed
-    #   if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/embed/') }}
-    #   uses: ./.github/workflows/build-embed.yml
-
-    # - name: Build Queue Manager
-    #   if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/queuemanager/') }}
-    #   uses: ./.github/workflows/build-queuemanager.yml
-
-    # - name: Build Web
-    #   if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/web/') }}
-    #   uses: ./.github/workflows/build-web.yml
-
-    # - name: Build Widget
-    #   if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/widget/') }}
-    #   uses: ./.github/workflows/build-widget.yml
-
-    # - name: Setup SSH
-    #   uses: webfactory/ssh-agent@v0.5.3
-    #   with:
-    #     ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-    # - name: Run Docker Compose Up
-    #   run: |
-    #     ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} \
-    #       "cd /home/impler/impler-quality && docker-compose up -d"
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_QA }}
+      - name: Run Docker Compose Up
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME_QA }}@${{ secrets.SSH_HOST_QA }} \
+            "cd ${{ secrets.SSH_PATH_QA }} && docker compose up -d"
