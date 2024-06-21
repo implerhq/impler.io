@@ -1,13 +1,10 @@
-name: Publish Embed to Production
+name: Publish Queue Manager to Production
 
 on:
-  push:
-    tags:
-      - '**@impler/embed@**'
-  workflow_dispatch:
+  workflow_call:
 
 jobs:
-  publish_prod_embed:
+  build_queuemanager:
     if: "!contains(github.event.head_commit.message, 'ci skip')"
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
@@ -18,44 +15,17 @@ jobs:
       packages: write 
       deployments: write
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-      - name: Setup kernel for react native, increase watchers
-        run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
-      
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '20.13.1'
-
-      - name: Cache pnpm modules
-        uses: actions/cache@v2
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-
-
-      - uses: pnpm/action-setup@v2.0.1
-        env:
-          CI: false
-        with:
-          version: 8.9.0
-          run_install: true
-
-      - name: Build
-        run: pnpm run --filter @impler/embed build:prod
-
       - name: Build, tag, and push image to Github Container Registry
         id: build-image
         env:
           REGISTERY_OWNER: implerhq
-          DOCKER_NAME: impler/embed
+          DOCKER_NAME: impler/queue-manager
           IMAGE_TAG: ${{ github.sha }}
           GH_ACTOR: implerhq
           GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
         run: |
           echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
-          docker build -t ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG -f libs/embed/Dockerfile .
+          docker build -t ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG -f apps/queue-manager/Dockerfile .
           docker tag ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:latest
           docker tag ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:prod
 
