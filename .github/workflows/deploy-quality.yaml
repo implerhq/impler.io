@@ -56,7 +56,7 @@ jobs:
       # - build_queuemanager
       # - build_web
       # - build_widget
-    if: needs.build_api.outputs.build_status == 'success' || needs.build_embed.outputs.build_status == 'success'
+    if: needs.build_api.result == 'success' || needs.build_embed.result == 'success'
     steps:
       - name: Set up SSH and Run Docker Compose Up
         uses: webfactory/ssh-agent@v0.5.3
