@@ -14,6 +14,8 @@ jobs:
     # if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/api/') }}
     uses: ./.github/workflows/build-api.yml
     secrets: inherit
+    outputs:
+      build_status: ${{ steps.build_status.outcome == 'success' }}
 
   build_embed:
     permissions:
@@ -22,39 +24,43 @@ jobs:
       deployments: write
     if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/demo/') }}
     uses: ./.github/workflows/build-embed.yml
+    secrets: inherit
+    outputs:
+      build_status: ${{ steps.build_status.outcome == 'success' }}
 
-  build_queuemanager:
-    permissions:
-      contents: read
-      packages: write
-      deployments: write
-    if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/queue-manager/') }}
-    uses: ./.github/workflows/build-queuemanager.yml
+  # build_queuemanager:
+  #   permissions:
+  #     contents: read
+  #     packages: write
+  #     deployments: write
+  #   if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/queue-manager/') }}
+  #   uses: ./.github/workflows/build-queuemanager.yml
 
-  build_web:
-    permissions:
-      contents: read
-      packages: write
-      deployments: write
-    if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/web/') }}
-    uses: ./.github/workflows/build-web.yml
+  # build_web:
+  #   permissions:
+  #     contents: read
+  #     packages: write
+  #     deployments: write
+  #   if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/web/') }}
+  #   uses: ./.github/workflows/build-web.yml
 
-  build_widget:
-    permissions:
-      contents: read
-      packages: write
-      deployments: write
-    if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/widget/') }}
-    uses: ./.github/workflows/build-widget.yml
+  # build_widget:
+  #   permissions:
+  #     contents: read
+  #     packages: write
+  #     deployments: write
+  #   if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/widget/') }}
+  #   uses: ./.github/workflows/build-widget.yml
 
   deploy_with_ssh:
     runs-on: ubuntu-latest
     needs:
       - build_api
       - build_embed
-      - build_queuemanager
-      - build_web
-      - build_widget
+      # - build_queuemanager
+      # - build_web
+      # - build_widget
+    if: needs.build_api.outputs.build_status == 'true' || needs.build_embed.outputs.build_status == 'true'
     steps:
       - name: Set up SSH and Run Docker Compose Up
         uses: webfactory/ssh-agent@v0.5.3
