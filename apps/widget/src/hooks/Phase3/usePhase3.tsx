@@ -220,8 +220,9 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
       notifier.showError({ message: error.message, title: error.error });
     },
   });
-  const { mutate: updateRecord } = useMutation<unknown, IErrorObject, IRecord, [string]>([`update`], (record) =>
-    api.updateRecord(uploadInfo._id, record)
+  const { mutate: updateRecord } = useMutation<unknown, IErrorObject, Partial<IRecord>, [string]>(
+    [`update`],
+    (record) => api.updateRecord(uploadInfo._id, record)
   );
   const { mutate: deleteRecords, isLoading: isDeleteRecordLoading } = useMutation<
     unknown,

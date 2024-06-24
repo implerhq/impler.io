@@ -1,6 +1,6 @@
 import { Badge, Flex, Stack } from '@mantine/core';
-import { HotTable } from '@handsontable/react';
 import { useRef, useState, useEffect } from 'react';
+import HotTableClass from '@handsontable/react/hotTableClass';
 
 import { PhasesEnum } from '@types';
 import { logAmplitudeEvent } from '@amplitude';
@@ -11,12 +11,12 @@ import { ReviewConfirmModal } from './ReviewConfirmModal';
 import { Table } from 'components/Common/Table';
 import { Footer } from 'components/Common/Footer';
 
+import { TEXTS } from '@config';
 import { Button } from '@ui/Button';
 import { Pagination } from '@ui/Pagination';
 import { LoadingOverlay } from '@ui/LoadingOverlay';
 import { SegmentedControl } from '@ui/SegmentedControl';
 import { ConfirmModal } from 'components/widget/modals/ConfirmModal';
-import { TEXTS } from '@config';
 
 interface IPhase3Props {
   onNextClick: (uploadData: IUpload) => void;
@@ -24,7 +24,7 @@ interface IPhase3Props {
 }
 
 export function Phase3(props: IPhase3Props) {
-  const tableRef = useRef<HotTable>(null);
+  const tableRef = useRef<HotTableClass>(null);
   const { onNextClick, onPrevClick } = props;
   const {
     page,
@@ -119,7 +119,11 @@ export function Phase3(props: IPhase3Props) {
               currentData[row].record[name] = newVal;
               currentData[row].updated[name] = true;
               setReviewData(currentData);
-              updateRecord(currentData[row]);
+              updateRecord({
+                index: currentData[row].index,
+                record: currentData[row].record,
+                updated: currentData[row].updated,
+              });
             }
           }}
           onRowCheck={(rowIndex, recordIndex, checked) => {

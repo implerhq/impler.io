@@ -187,7 +187,7 @@ export class ApiService {
     ) as Promise<ArrayBuffer>;
   }
 
-  async updateRecord(uploadId: string, record: IRecord) {
+  async updateRecord(uploadId: string, record: Partial<IRecord>) {
     return this.httpClient.put(`/review/${uploadId}/record`, record);
   }
 
