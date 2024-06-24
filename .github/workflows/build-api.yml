@@ -5,6 +5,7 @@ on:
     secrets:
       GH_PACKAGES:
         required: true
+  workflow_dispatch:
 
 jobs:
   publish_prod_api:

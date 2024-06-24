@@ -2,6 +2,7 @@ name: Publish Widget to Production
 
 on:
   workflow_call:
+  workflow_dispatch:
 
 jobs:
   build_widget:
@@ -15,6 +16,30 @@ jobs:
       packages: write 
       deployments: write
     steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - name: Setup kernel for react native, increase watchers
+        run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+      
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '20.13.1'
+
+      - name: Cache pnpm modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
+      
+      - uses: pnpm/action-setup@v2.0.1
+        env:
+          CI: false
+        with:
+          version: 8.9.0
+          run_install: true
+
       - name: Envsetup  
         working-directory: apps/widget
         run: npm run envsetup
