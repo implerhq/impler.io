@@ -6,22 +6,16 @@ on:
       - next
 
 jobs:
-  setup_project:
-    uses: ./.github/workflows/reusable-setup.yml
-
   build_api:
-    needs:
-      - setup_project
     permissions:
       contents: read
-      packages: write
+      packages: write 
       deployments: write
     # if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/api/') }}
     uses: ./.github/workflows/build-api.yml
+    secrets: inherit
 
   build_embed:
-    needs:
-      - setup_project
     permissions:
       contents: read
       packages: write
@@ -30,8 +24,6 @@ jobs:
     uses: ./.github/workflows/build-embed.yml
 
   build_queuemanager:
-    needs:
-      - setup_project
     permissions:
       contents: read
       packages: write
@@ -40,8 +32,6 @@ jobs:
     uses: ./.github/workflows/build-queuemanager.yml
 
   build_web:
-    needs:
-      - setup_project
     permissions:
       contents: read
       packages: write
@@ -50,8 +40,6 @@ jobs:
     uses: ./.github/workflows/build-web.yml
 
   build_widget:
-    needs:
-      - setup_project  
     permissions:
       contents: read
       packages: write
@@ -62,13 +50,11 @@ jobs:
   deploy_with_ssh:
     runs-on: ubuntu-latest
     needs:
-      - setup_project
       - build_api
       - build_embed
       - build_queuemanager
       - build_web
       - build_widget
-    # if: needs.setup_project.outputs.success == 'true' || needs.build_api.outputs.success == 'true' || needs.build_embed.outputs.success == 'true' || needs.build_queuemanager.outputs.success == 'true' || needs.build_web.outputs.success == 'true' || needs.build_widget.outputs.success == 'true'
     steps:
       - name: Set up SSH and Run Docker Compose Up
         uses: webfactory/ssh-agent@v0.5.3
