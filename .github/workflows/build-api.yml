@@ -2,6 +2,9 @@ name: Publish API to Production
 
 on:
   workflow_call:
+    secrets:
+      GH_PACKAGES:
+        required: true
 
 jobs:
   publish_prod_api:
@@ -9,7 +12,6 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     timeout-minutes: 80
-    # environment: Production
     permissions:
       contents: read
       packages: write 
@@ -51,7 +53,7 @@ jobs:
           DOCKER_NAME: impler/api
           IMAGE_TAG: ${{ github.sha }}
           GH_ACTOR: implerhq
-          GH_PASSWORD: ${{ secrets.DEMO_SECRET }}
+          GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
         run: |
           [ -z "$GH_PASSWORD" ] && { echo "Error: GH_PASSWORD is not set"; exit 1; }
           echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
