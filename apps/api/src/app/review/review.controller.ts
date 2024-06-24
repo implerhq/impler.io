@@ -1,8 +1,8 @@
 import { ApiOperation, ApiTags, ApiSecurity, ApiQuery, ApiOkResponse } from '@nestjs/swagger';
 import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 
+import { UploadEntity } from '@impler/dal';
 import { APIMessages } from '@shared/constants';
-import { RecordEntity, UploadEntity } from '@impler/dal';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { validateUploadStatus } from '@shared/helpers/upload.helpers';
 import { Defaults, ACCESS_KEY_NAME, UploadStatusEnum, ReviewDataTypesEnum } from '@impler/shared';
@@ -19,6 +19,7 @@ import {
   UpdateImportCountCommand,
 } from './usecases';
 
+import { UpdateCellDto } from './dtos/update-cell.dto';
 import { validateNotFound } from '@shared/helpers/common.helper';
 import { PaginationResponseDto } from '@shared/dtos/pagination-response.dto';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
@@ -143,7 +144,7 @@ export class ReviewController {
   @ApiOperation({
     summary: 'Update review record for ongoing import',
   })
-  async updateReviewData(@Param('uploadId', ValidateMongoId) _uploadId: string, @Body() body: RecordEntity) {
+  async updateReviewData(@Param('uploadId', ValidateMongoId) _uploadId: string, @Body() body: UpdateCellDto) {
     await this.updateRecord.execute(_uploadId, body);
   }
 

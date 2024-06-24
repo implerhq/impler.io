@@ -62,7 +62,12 @@ export class DalService {
       .limit(limit)
       .exec();
   }
-  async updateRecord(_uploadId: string, index: number, record: RecordEntity) {
+  async updateRecord(
+    _uploadId: string,
+    index: number,
+    record: Record<string, string>,
+    updated: Record<string, boolean>
+  ) {
     const model = this.getRecordCollection(_uploadId);
     if (!model) return;
     if (record._id) delete record._id;
@@ -71,7 +76,12 @@ export class DalService {
       {
         index,
       },
-      record
+      {
+        $set: {
+          record,
+          updated,
+        },
+      }
     );
   }
   async deleteRecords(_uploadId: string, index: number[]) {

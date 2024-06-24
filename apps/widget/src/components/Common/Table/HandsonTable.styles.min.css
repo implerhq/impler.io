@@ -9,6 +9,13 @@
     vertical-align: middle !important;
     padding: 5px !important;
 }
+.cell-value {
+    max-width: 80%;
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
 .index-cell {
     text-align: center;
     vertical-align: middle !important;
@@ -107,9 +114,10 @@
     border: 1px solid #ddd;
     
 }
-.ht_clone_left {
+/* .ht_clone_left {
     box-shadow: 2px 0px 6px 0px rgb(0 0 0 / 20%);
-}
+} */
+
   
 .dd-searchbox {
   padding: 0.5rem;
