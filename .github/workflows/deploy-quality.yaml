@@ -13,6 +13,7 @@ jobs:
       deployments: write
     # if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/api/') }}
     uses: ./.github/workflows/build-api.yml
+    secrets: inherit
 
   build_embed:
     permissions:
