@@ -20,7 +20,7 @@ jobs:
       contents: read
       packages: write
       deployments: write
-    if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/demo/') }}
+    # if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/demo/') }}
     uses: ./.github/workflows/build-embed.yml
     secrets: inherit
 
