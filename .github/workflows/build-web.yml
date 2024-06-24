@@ -2,6 +2,7 @@ name: Publish Web app to Production
 
 on:
   workflow_call:
+  workflow_dispatch:
 
 jobs:
   build_web:
