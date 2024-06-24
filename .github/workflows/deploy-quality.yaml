@@ -14,19 +14,15 @@ jobs:
     # if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/api/') }}
     uses: ./.github/workflows/build-api.yml
     secrets: inherit
-    outputs:
-      build_status: ${{ steps.build_status.outcome == 'success' }}
 
   build_embed:
     permissions:
       contents: read
       packages: write
       deployments: write
-    if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/demo/') }}
+    # if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/demo/') }}
     uses: ./.github/workflows/build-embed.yml
     secrets: inherit
-    outputs:
-      build_status: ${{ steps.build_status.outcome == 'success' }}
 
   # build_queuemanager:
   #   permissions:
@@ -60,7 +56,7 @@ jobs:
       # - build_queuemanager
       # - build_web
       # - build_widget
-    if: needs.build_api.outputs.build_status == 'true' || needs.build_embed.outputs.build_status == 'true'
+    if: needs.build_api.outputs.build_status == 'success' || needs.build_embed.outputs.build_status == 'success'
     steps:
       - name: Set up SSH and Run Docker Compose Up
         uses: webfactory/ssh-agent@v0.5.3
