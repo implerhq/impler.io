@@ -11,7 +11,7 @@ jobs:
       contents: read
       packages: write 
       deployments: write
-    if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && (contains(toJSON(github.event.head_commit.modified), 'apps/api/') || contains(toJSON(github.event.head_commit.added), 'apps/api/') || contains(toJSON(github.event.head_commit.removed), 'apps/api/')) }}
+    if: ${{ contains(github.event.head_commit.message, 'api-changed') }}
     uses: ./.github/workflows/build-api.yml
     secrets: inherit
 
