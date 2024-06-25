@@ -1,9 +1,10 @@
 name: Deploy Impler to Quality
 
 on:
-  push:
-    branches:
-      - next
+  pull_request:
+    branches: [next]
+    types:
+      - closed
 
 jobs:
   build_api:
@@ -11,7 +12,7 @@ jobs:
       contents: read
       packages: write 
       deployments: write
-    if: ${{ contains(github.event.head_commit.message, 'api-changed') }}
+    if: ${{ (github.event.pull_request.merged == true) && (contains(github.event.pull_request.labels.*.name, 'impler/api')) }}
     uses: ./.github/workflows/build-api.yml
     secrets: inherit
 
