@@ -11,7 +11,7 @@ jobs:
       contents: read
       packages: write 
       deployments: write
-    if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/api/') }}
+    if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && (contains(toJSON(github.event.head_commit.modified), 'apps/api/') || contains(toJSON(github.event.head_commit.added), 'apps/api/') || contains(toJSON(github.event.head_commit.removed), 'apps/api/')) }}
     uses: ./.github/workflows/build-api.yml
     secrets: inherit
 
@@ -20,7 +20,7 @@ jobs:
       contents: read
       packages: write
       deployments: write
-    if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/demo/') }}
+    if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && (contains(toJSON(github.event.head_commit.modified), 'libs/embed/') || contains(toJSON(github.event.head_commit.added), 'libs/embed/') || contains(toJSON(github.event.head_commit.removed), 'libs/embed/')) }}
     uses: ./.github/workflows/build-embed.yml
     secrets: inherit
 
@@ -29,7 +29,7 @@ jobs:
       contents: read
       packages: write
       deployments: write
-    if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/queue-manager/') }}
+    if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && (contains(toJSON(github.event.head_commit.modified), 'apps/queue-manager/') || contains(toJSON(github.event.head_commit.added), 'apps/queue-manager/') || contains(toJSON(github.event.head_commit.removed), 'apps/queue-manager/')) }}
     uses: ./.github/workflows/build-queuemanager.yml
     secrets: inherit
 
@@ -38,7 +38,7 @@ jobs:
       contents: read
       packages: write
       deployments: write
-    if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/web/') }}
+    if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && (contains(toJSON(github.event.head_commit.modified), 'apps/web/') || contains(toJSON(github.event.head_commit.added), 'apps/web/') || contains(toJSON(github.event.head_commit.removed), 'apps/web/')) }}
     uses: ./.github/workflows/build-web.yml
     secrets: inherit
 
@@ -47,7 +47,7 @@ jobs:
       contents: read
       packages: write
       deployments: write
-    if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && contains(toJSON(github.event.head_commit.modified), 'apps/widget/') }}
+    if: ${{ github.event_name == 'push' && (github.event.head_commit.modified || github.event.head_commit.added || github.event.head_commit.removed) && (contains(toJSON(github.event.head_commit.modified), 'apps/widget/') || contains(toJSON(github.event.head_commit.added), 'apps/widget/') || contains(toJSON(github.event.head_commit.removed), 'apps/widget/')) }}
     uses: ./.github/workflows/build-widget.yml
     secrets: inherit
 
