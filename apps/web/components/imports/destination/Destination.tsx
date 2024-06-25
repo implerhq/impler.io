@@ -16,12 +16,13 @@ interface DestinationProps {
 
 export function Destination({ template }: DestinationProps) {
   const {
-    destination,
-    register,
-    control,
+    watch,
     errors,
+    control,
     onSubmit,
     setValue,
+    register,
+    destination,
     setDestination,
     resetDestination,
     mapBubbleIoColumnsClick,
@@ -39,6 +40,7 @@ export function Destination({ template }: DestinationProps) {
       setValue('destination', newDestination);
     }
   };
+  const bubbleDestinationEnvironment = watch('bubbleIo.environment');
 
   return (
     <Stack>
@@ -107,15 +109,6 @@ export function Destination({ template }: DestinationProps) {
               )}
             />
 
-            <Input
-              label="Custom Domain Name"
-              placeholder="Custom Domain Name"
-              {...register('bubbleIo.customDomainName', {
-                pattern: /^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+[a-zA-Z]{2,63}$/,
-              })}
-              description="Required, if application is hosted on custom domain. Ex. myapp.io"
-              error={errors?.bubbleIo?.customDomainName ? 'Please enter valid domain name' : undefined}
-            />
             <Controller
               control={control}
               name="bubbleIo.environment"
@@ -132,6 +125,17 @@ export function Destination({ template }: DestinationProps) {
                 />
               )}
             />
+            {bubbleDestinationEnvironment === 'production' && (
+              <Input
+                label="Custom Domain Name"
+                placeholder="Custom Domain Name"
+                {...register('bubbleIo.customDomainName', {
+                  pattern: /^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+[a-zA-Z]{2,63}$/,
+                })}
+                description="Required, if application is hosted on custom domain. Ex. myapp.io"
+                error={errors?.bubbleIo?.customDomainName ? 'Please enter valid domain name' : undefined}
+              />
+            )}
             <Input
               required
               label="API Private Key"
