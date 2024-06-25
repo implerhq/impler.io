@@ -60,7 +60,7 @@ export default class _Document extends Document<MyDocumentProps> {
         <body>
           <Main />
           <NextScript />
-          <Script type="text/javascript" src={publicRuntimeConfig.NEXT_PUBLIC_EMBED_URL} strategy="beforeInteractive" />
+          {publicRuntimeConfig.NEXT_PUBLIC_EMBED_URL && <Script type="text/javascript" src={publicRuntimeConfig.NEXT_PUBLIC_EMBED_URL} strategy="beforeInteractive" />}
         </body>
       </Html>
     );
