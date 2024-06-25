@@ -28,6 +28,21 @@ export function Footer({
   const { classes } = useStyles();
 
   const FooterActions = {
+    [PhasesEnum.IMAGE_UPLOAD]: (
+      <>
+        <Button
+          loading={secondaryButtonLoading}
+          disabled={secondaryButtonDisabled}
+          onClick={onPrevClick}
+          variant="outline"
+        >
+          {TEXTS['PHASE0-1'].HAVE_TEMPLATE}
+        </Button>
+        <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
+          {TEXTS['PHASE0-1'].GENERATE_TEMPLATE}
+        </Button>
+      </>
+    ),
     [PhasesEnum.UPLOAD]: (
       <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
         {TEXTS.PHASE1.SEE_MAPPING}

@@ -5,7 +5,7 @@ import { Download } from '@icons';
 import { PhasesEnum } from '@types';
 import { Select } from '@ui/Select';
 import { Button } from '@ui/Button';
-import { Dropzone } from '@ui/Dropzone';
+import { UploadDropzone } from '@ui/UploadDropzone';
 import { TEXTS, variables } from '@config';
 import { LoadingOverlay } from '@ui/LoadingOverlay';
 import { usePhase1 } from '@hooks/Phase1/usePhase1';
@@ -78,7 +78,7 @@ export function Phase1(props: IPhase1Props) {
           required: TEXTS.VALIDATION.FILE_REQUIRED,
         }}
         render={({ field, fieldState }) => (
-          <Dropzone
+          <UploadDropzone
             loading={isUploadLoading}
             onReject={() => {
               setError('file', {

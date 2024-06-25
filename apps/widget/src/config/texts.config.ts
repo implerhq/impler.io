@@ -6,16 +6,21 @@ export const TEXTS = {
     COMPLETE: 'Complete',
   },
   STEPS: {
+    IMAGE_TEMPLATE: 'Generate Template',
     UPLOAD: 'Upload',
     MAPPING: 'Map Columns',
     REVIEW: 'Review',
     COMPLETE: 'Complete',
   },
   DROPZONE: {
-    TITLE: 'Drop your file here or ',
-    BROWSE: 'Browse',
+    TITLE: 'Drop and drop file here or ',
+    BROWSE: 'Browse from computer',
     SUBTITLE: 'Bring any .csv or .xlsx file here to start Import',
     FILE_SELECTION: 'File selected successfully',
+  },
+  'PHASE0-1': {
+    HAVE_TEMPLATE: 'I have a template',
+    GENERATE_TEMPLATE: 'Generate Template',
   },
   PHASE1: {
     SELECT_TITLE: 'Template',

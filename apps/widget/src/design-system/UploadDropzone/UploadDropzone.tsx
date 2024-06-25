@@ -1,6 +1,6 @@
 import { Group, Text } from '@mantine/core';
 import { Dropzone as MantineDropzone, FileWithPath, MIME_TYPES } from '@mantine/dropzone';
-import useStyles from './Dropzone.style';
+import useStyles from './UploadDropzone.styles';
 import { TEXTS } from '../../config/texts.config';
 import { FileIcon, CheckIcon } from '../../icons';
 import { File as FileCMP } from '../File';
@@ -17,7 +17,7 @@ interface IDropzoneProps {
   className?: string;
 }
 
-export function Dropzone(props: IDropzoneProps) {
+export function UploadDropzone(props: IDropzoneProps) {
   const {
     loading,
     accept = [MIME_TYPES.csv, MIME_TYPES.xlsx, 'application/vnd.ms-excel.sheet.macroenabled.12'],

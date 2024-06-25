@@ -5,6 +5,7 @@ import { TEXTS, variables } from '@config';
 import { ParentWindow } from '@util';
 import { IUpload } from '@impler/shared';
 import { Phase0 } from './Phases/Phase0';
+import { Phase01 } from './Phases/Phase0-1';
 import { Phase1 } from './Phases/Phase1';
 import { Phase2 } from './Phases/Phase2';
 import { Phase3 } from './Phases/Phase3';
@@ -30,14 +31,15 @@ export function Widget() {
   const onPromptConfirm = () => {
     terminateUpload();
     setPromptContinueAction(undefined);
-    ParentWindow.UploadTerminated({ uploadId: uploadInfo._id });
+    if (uploadInfo._id) ParentWindow.UploadTerminated({ uploadId: uploadInfo._id });
     if (promptContinueAction === PromptModalTypesEnum.CLOSE) closeWidget();
   };
   const onPromptCancel = () => {
     setPromptContinueAction(undefined);
   };
   const onClose = () => {
-    if ([PhasesEnum.VALIDATE, PhasesEnum.UPLOAD, PhasesEnum.COMPLETE].includes(phase)) closeWidget(true);
+    if ([PhasesEnum.VALIDATE, PhasesEnum.IMAGE_UPLOAD, PhasesEnum.UPLOAD, PhasesEnum.COMPLETE].includes(phase))
+      closeWidget(true);
     else setPromptContinueAction(PromptModalTypesEnum.CLOSE);
   };
   const closeWidget = (resetPhase?: boolean) => {
@@ -59,7 +61,8 @@ export function Widget() {
   };
 
   const PhaseView = {
-    [PhasesEnum.VALIDATE]: <Phase0 onValidationSuccess={() => setPhase(PhasesEnum.UPLOAD)} />,
+    [PhasesEnum.VALIDATE]: <Phase0 onValidationSuccess={() => setPhase(PhasesEnum.IMAGE_UPLOAD)} />,
+    [PhasesEnum.IMAGE_UPLOAD]: <Phase01 />,
     [PhasesEnum.UPLOAD]: <Phase1 onNextClick={() => setPhase(PhasesEnum.MAPPING)} />,
     [PhasesEnum.MAPPING]: <Phase2 onNextClick={() => setPhase(PhasesEnum.REVIEW)} onPrevClick={onUploadResetClick} />,
     [PhasesEnum.REVIEW]: <Phase3 onNextClick={onComplete} onPrevClick={onUploadResetClick} />,
@@ -72,7 +75,7 @@ export function Widget() {
 
   return (
     <Modal title={title || templateInfo?.name} opened={showWidget} onClose={onClose}>
-      <Layout active={phase} title={title || templateInfo?.name}>
+      <Layout active={phase} title={title || templateInfo?.name} imageTemplateAvailable>
         {PhaseView[phase]}
         <ConfirmModal
           onCancel={onPromptCancel}
