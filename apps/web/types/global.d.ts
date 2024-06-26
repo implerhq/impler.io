@@ -118,3 +118,13 @@ interface ITransactionHistory {
   amount: number;
   currency: string;
 }
+
+interface ICheckoutData {
+  planName: string;
+  planAmount: number;
+  outstandingAmount?: number;
+  currency: string;
+  totalPrice: number;
+  discount?: number;
+  proratedRefund?: number;
+}
