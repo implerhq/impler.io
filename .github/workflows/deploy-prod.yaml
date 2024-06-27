@@ -2,7 +2,7 @@ name: Deploy Impler to Quality
 
 on:
   pull_request:
-    branches: [next]
+    branches: [main]
     types:
       - closed
 
