@@ -1,2 +1,2 @@
-export * from './SelectCardModal';
+export * from '../AddCard/SelectCardModal';
 export * from './CheckoutDetails';
