@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 
@@ -8,13 +7,13 @@ import { IErrorObject } from '@impler/shared';
 
 interface UseCouponProps {
   planCode: string;
+  setAppliedCouponCode: (couponCode: string) => void;
 }
 interface CouponFormInputs {
   couponCode: string;
 }
 
-export function useCoupon({ planCode }: UseCouponProps) {
-  const [appliedCouponCode, setAppliedCouponCode] = useState<string>();
+export function useCoupon({ setAppliedCouponCode, planCode }: UseCouponProps) {
   const {
     register,
     handleSubmit,
@@ -43,7 +42,6 @@ export function useCoupon({ planCode }: UseCouponProps) {
     register,
     applyCoupon,
     handleSubmit,
-    appliedCouponCode,
     applyCouponSubmit,
     setAppliedCouponCode,
     isApplyCouponLoading,
