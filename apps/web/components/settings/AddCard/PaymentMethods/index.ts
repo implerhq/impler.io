@@ -1,2 +1,2 @@
-export * from './PaymentMethodGroup';
+export * from './PaymentMethods';
 export * from './PaymentMethodOption';
