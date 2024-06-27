@@ -1,3 +1,3 @@
 export * from './AddCard';
-export * from './PaymentMethod/PaymentMethodOption';
-export * from './PaymentMethod/PaymentMethodGroup';
+export * from './PaymentMethods/PaymentMethodOption';
+export * from './PaymentMethods/PaymentMethodGroup';
