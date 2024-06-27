@@ -13,7 +13,7 @@ import { CheckoutDetails } from '../Checkout/CheckoutDetails';
 
 import { ICardData, IErrorObject } from '@impler/shared';
 import { API_KEYS, CONSTANTS, NOTIFICATION_KEYS, ROUTES } from '@config';
-import { PaymentMethodGroup } from './PaymentMethods/PaymentMethodGroup';
+import { PaymentMethods } from './PaymentMethods/PaymentMethods';
 import Coupon from './Coupon/Coupon';
 
 const { publicRuntimeConfig } = getConfig();
@@ -97,7 +97,7 @@ export function SelectCardModal({ email, planCode, onClose, paymentMethodId }: S
           </Title>
           <Divider my="sm" mt={10} />
 
-          <PaymentMethodGroup
+          <PaymentMethods
             paymentMethods={paymentMethods}
             selectedPaymentMethod={selectedPaymentMethod}
             handlePaymentMethodChange={handlePaymentMethodChange}
