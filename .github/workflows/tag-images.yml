@@ -23,12 +23,19 @@ jobs:
           GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
         run: |
           echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin 
-
+      
+      - name: Get Latest Docker Version
+        run: |  # Multi-line command definition
+          #!/bin/bash
+          # (Your script content from previous response)
+          version=$(curl -sSL https://api.github.com/repos/implerhq/impler.io/releases/latest | jq -r '.tag_name' | grep -oP 'v\K\d+(?:\.\d+){2}')
+          echo "DOCKER_VERSION=$version" >> $GITHUB_ENV  # Add to environment variables    
+          
       - name: Tag API
         env:
           REGISTERY_OWNER: implerhq
           DOCKER_NAME: impler/api
-          DOCKER_VERSION: ${{ inputs.version }}
+          DOCKER_VERSION: ${{ env.DOCKER_VERSION }}
         run: |
           docker pull ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:prod
           docker tag ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:prod ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$DOCKER_VERSION
@@ -39,7 +46,7 @@ jobs:
         env:
           REGISTERY_OWNER: implerhq
           DOCKER_NAME: impler/queue-manager
-          DOCKER_VERSION: ${{ inputs.version }}
+          DOCKER_VERSION: ${{ env.DOCKER_VERSION }}
         run: |
           docker pull ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:prod
           docker tag ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:prod ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$DOCKER_VERSION
@@ -50,7 +57,7 @@ jobs:
         env:
           REGISTERY_OWNER: implerhq
           DOCKER_NAME: impler/embed
-          DOCKER_VERSION: ${{ inputs.version }}
+          DOCKER_VERSION: ${{ env.DOCKER_VERSION }}
         run: |
           docker pull ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:prod
           docker tag ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:prod ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$DOCKER_VERSION
@@ -61,7 +68,7 @@ jobs:
         env:
           REGISTERY_OWNER: implerhq
           DOCKER_NAME: impler/widget
-          DOCKER_VERSION: ${{ inputs.version }}
+          DOCKER_VERSION: ${{ env.DOCKER_VERSION }}
         run: |
           docker pull ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:prod
           docker tag ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:prod ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$DOCKER_VERSION
@@ -72,7 +79,7 @@ jobs:
         env:
           REGISTERY_OWNER: implerhq
           DOCKER_NAME: impler/web
-          DOCKER_VERSION: ${{ inputs.version }}
+          DOCKER_VERSION: ${{ env.DOCKER_VERSION }}
         run: |
           docker pull ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:prod
           docker tag ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:prod ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$DOCKER_VERSION
