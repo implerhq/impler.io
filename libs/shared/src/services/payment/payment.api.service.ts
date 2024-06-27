@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ISubscriptionData } from '../../types';
-import { constructQueryString } from 'libs/shared/dist';
+import { constructQueryString } from '../../utils';
 
 interface ICheckData {
   uploadId: string;
