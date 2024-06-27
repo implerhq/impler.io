@@ -6,6 +6,8 @@ import { ConfirmIntentId } from './save-payment-intent-id/save-paymentintentid.u
 import { RetrievePaymentMethods } from './retrive-payment-methods/retrive-payment-methods.usecase';
 import { DeleteUserPaymentMethod } from './delete-user-payment-method/delete-user-payment-method.usecase';
 import { GetTransactionHistory } from './get-transaction-history/get-transaction-history.usecase';
+import { ApplyCoupon } from './apply-coupon/apply-coupon.usecase';
+import { Checkout } from './checkout/checkout.usecase';
 
 export const USE_CASES = [
   GetImportCounts,
@@ -16,6 +18,8 @@ export const USE_CASES = [
   RetrievePaymentMethods,
   DeleteUserPaymentMethod,
   GetTransactionHistory,
+  ApplyCoupon,
+  Checkout,
   //
 ];
 
@@ -28,4 +32,6 @@ export {
   RetrievePaymentMethods,
   DeleteUserPaymentMethod,
   GetTransactionHistory,
+  ApplyCoupon,
+  Checkout,
 };
