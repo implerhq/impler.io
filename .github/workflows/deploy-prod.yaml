@@ -91,4 +91,4 @@ jobs:
       - name: Run Docker Compose Up
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME_QA }}@${{ secrets.SSH_HOST_QA }} \
-            "cd ${{ secrets.SSH_PATH_QA }} && docker compose up -d"
+            "cd ${{ secrets.SSH_PATH_QA }} && docker compose up --pull always -d"
