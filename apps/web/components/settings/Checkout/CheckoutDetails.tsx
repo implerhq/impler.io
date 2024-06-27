@@ -45,7 +45,7 @@ export function CheckoutDetails({ checkoutData, isCheckoutDataLoading }: Checkou
         {checkoutData.proratedRefund ? (
           <Group position="apart">
             <Text>Prorated Refund</Text>
-            <Text>-{`${checkoutData.outstandingAmount} (${checkoutData.currency})`}</Text>
+            <Text>-{`${checkoutData.proratedRefund} (${checkoutData.currency})`}</Text>
           </Group>
         ) : null}
 
