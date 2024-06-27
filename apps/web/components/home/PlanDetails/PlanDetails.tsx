@@ -13,6 +13,9 @@ import { numberFormatter } from '@impler/shared/dist/utils/helpers';
 
 export function PlanDetails() {
   const router = useRouter();
+  const status = router.query?.status;
+  const planName = router.query?.plan;
+
   const { profile } = useApp();
   const { [CONSTANTS.PLAN_CODE_QUERY_KEY]: selectedPlan } = router.query;
 
@@ -36,6 +39,28 @@ export function PlanDetails() {
       withCloseButton: true,
     });
   };
+  useEffect(() => {
+    if (planName && status) {
+      modals.openConfirmModal({
+        id: MODAL_KEYS.PAYMENT_SUCCEED,
+        title: status === CONSTANTS.PAYMENT_SUCCCESS_CODE ? 'Subscription activated' : 'Payment failed',
+        centered: true,
+        children: (
+          <Text fw="bolder" align="center">
+            {status === CONSTANTS.PAYMENT_SUCCCESS_CODE
+              ? CONSTANTS.PAYMENT_SUCCESS_MESSAGE
+              : CONSTANTS.PAYMENT_FAILED_MESSAGE}
+          </Text>
+        ),
+        labels: { confirm: 'Ok', cancel: false },
+        confirmProps: { color: status === CONSTANTS.PAYMENT_SUCCCESS_CODE ? 'green' : 'red' },
+
+        onConfirm: () => {
+          router.push(ROUTES.HOME, {}, { shallow: true });
+        },
+      });
+    }
+  }, [planName, status, router]);
 
   useEffect(() => {
     if (selectedPlan && profile) {

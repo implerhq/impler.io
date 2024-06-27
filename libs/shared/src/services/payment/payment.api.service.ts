@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { ISubscriptionData } from '../../types';
+import { constructQueryString } from '../../utils';
 
 interface ICheckData {
   uploadId: string;
@@ -59,7 +60,8 @@ export class PaymentAPIService {
   async checkEvent(email: string, type: AVAILABLE_CODES = 'IMPORTED_ROWS'): Promise<boolean> {
     if (!this.PAYMENT_API_BASE_URL) return true;
 
-    const url = `${this.PAYMENT_API_BASE_URL}/api/v1/check?externalId=${email}&billableMetricCode=${type}`;
+    let url = `${this.PAYMENT_API_BASE_URL}/api/v1/check`;
+    url += constructQueryString({ externalId: email, billableMetricCode: type });
     const response = await axios.get(url, {
       headers: {
         [this.AUTH_KEY]: this.AUTH_VALUE,
@@ -183,5 +185,52 @@ export class PaymentAPIService {
     });
 
     return response.data;
+  }
+
+  async checkAppliedCoupon(couponCode: string, userEmail: string, planCode: string) {
+    const url = `${this.PAYMENT_API_BASE_URL}/api/v1/coupon/${couponCode}/apply/${userEmail}/plan/${planCode}`;
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          [this.AUTH_KEY]: this.AUTH_VALUE,
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        throw error.response.data;
+      }
+      throw new Error();
+    }
+  }
+  async checkout({
+    externalId,
+    paymentMethodId,
+    planCode,
+    couponCode,
+  }: {
+    externalId: string;
+    planCode: string;
+    paymentMethodId: string;
+    couponCode?: string;
+  }) {
+    try {
+      let url = `${this.PAYMENT_API_BASE_URL}/api/v1/checkout`;
+      url += constructQueryString({ planCode, externalId, paymentMethodId, couponCode });
+
+      const response = await axios.get(url, {
+        headers: {
+          [this.AUTH_KEY]: this.AUTH_VALUE,
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        throw error.response.data;
+      }
+      throw new Error('Failed to perform checkout operation.');
+    }
   }
 }

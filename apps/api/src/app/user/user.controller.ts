@@ -9,6 +9,8 @@ import {
   ConfirmIntentId,
   DeleteUserPaymentMethod,
   GetTransactionHistory,
+  ApplyCoupon,
+  Checkout,
 } from './usecases';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { IJwtPayload, ACCESS_KEY_NAME } from '@impler/shared';
@@ -21,14 +23,16 @@ import { RetrievePaymentMethods } from './usecases/retrive-payment-methods/retri
 @ApiSecurity(ACCESS_KEY_NAME)
 export class UserController {
   constructor(
+    private checkout: Checkout,
+    private applyCoupon: ApplyCoupon,
     private getImportsCount: GetImportCounts,
     private getActiveSubscription: GetActiveSubscription,
     private cancelSubscription: CancelSubscription,
     private updatePaymentMethod: UpdatePaymentMethod,
     private confirmIntentId: ConfirmIntentId,
+    private getTransactionHistory: GetTransactionHistory,
     private retrivePaymentMethods: RetrievePaymentMethods,
-    private deleteUserPaymentMethod: DeleteUserPaymentMethod,
-    private getTransactionHistory: GetTransactionHistory
+    private deleteUserPaymentMethod: DeleteUserPaymentMethod
   ) {}
 
   @Get('/import-count')
@@ -101,5 +105,36 @@ export class UserController {
   })
   async getTransactionHistoryRoute(@UserSession() user: IJwtPayload) {
     return this.getTransactionHistory.execute(user.email);
+  }
+
+  @Get('/coupons/:couponCode/apply/:planCode')
+  @ApiOperation({
+    summary:
+      'Check if a Particular coupon is available to apply for a particular plan and if the coupon is valid or not',
+  })
+  async applyCouponRoute(
+    @UserSession() user: IJwtPayload,
+    @Param('couponCode') couponCode: string,
+    @Param('planCode') planCode: string
+  ) {
+    return this.applyCoupon.execute(couponCode, user.email, planCode);
+  }
+
+  @Get('/checkout')
+  @ApiOperation({
+    summary: 'Make successfull checkout once the coupon is successfully applied',
+  })
+  async checkoutRoute(
+    @Query('planCode') planCode: string,
+    @UserSession() user: IJwtPayload,
+    @Query('paymentMethodId') paymentMethodId: string,
+    @Query('couponCode') couponCode?: string
+  ) {
+    return this.checkout.execute({
+      planCode: planCode,
+      externalId: user.email,
+      paymentMethodId: paymentMethodId,
+      couponCode: couponCode,
+    });
   }
 }

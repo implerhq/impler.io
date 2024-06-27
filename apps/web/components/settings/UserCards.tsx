@@ -8,7 +8,7 @@ import { Modal, SimpleGrid, Box, LoadingOverlay } from '@mantine/core';
 import { Card } from './Card';
 import { CONSTANTS } from '@config';
 import { AddCard } from './AddCard';
-import { AddCardModal } from './AddCardModal';
+import { AddCardModal } from './AddCard/AddCardModal';
 import { usePaymentMethods } from '@hooks/usePaymentMethods';
 
 export function UserCards() {

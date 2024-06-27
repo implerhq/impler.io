@@ -2,16 +2,11 @@ import getConfig from 'next/config';
 import { API_KEYS, VARIABLES } from '@config';
 
 interface Route {
-  url: (params: any) => string;
+  url: (...rest: string[]) => string;
   method: string;
 }
 
 const routes: Record<string, Route> = {
-  [API_KEYS.TRANSACTION_HISTORY]: {
-    url: () => `/v1/user/transactions/history`,
-    method: 'GET',
-  },
-
   [API_KEYS.PAYMENT_METHOD_LIST]: {
     url: () => `/v1/user/payment-methods`,
     method: 'GET',
@@ -19,6 +14,19 @@ const routes: Record<string, Route> = {
   [API_KEYS.PAYMENT_METHOD_DELETE]: {
     url: (paymentMethodId: string) => `/v1/user/payment-methods/${paymentMethodId}`,
     method: 'DELETE',
+  },
+  [API_KEYS.TRANSACTION_HISTORY]: {
+    url: () => `/v1/user/transactions/history`,
+    method: 'GET',
+  },
+  [API_KEYS.APPLY_COUPON_CODE]: {
+    url: (coponCode, planCode) => `/v1/user/coupons/${coponCode}/apply/${planCode}`,
+    method: 'GET',
+  },
+
+  [API_KEYS.CHECKOUT]: {
+    url: () => `/v1/user/checkout`,
+    method: 'GET',
   },
 
   [API_KEYS.ADD_PAYMENT_METHOD]: {
@@ -240,7 +248,7 @@ export async function commonApi<T>(
 ) {
   try {
     const route = routes[key];
-    let url = (baseUrl || publicRuntimeConfig.NEXT_PUBLIC_API_BASE_URL) + route.url(parameters);
+    let url = (baseUrl || publicRuntimeConfig.NEXT_PUBLIC_API_BASE_URL) + route.url(...(parameters || []));
     url = url + '?' + queryObjToString(query);
     const method = route.method;
 
