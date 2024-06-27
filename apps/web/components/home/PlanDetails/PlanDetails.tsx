@@ -39,7 +39,6 @@ export function PlanDetails() {
       withCloseButton: true,
     });
   };
-
   useEffect(() => {
     if (planName && status) {
       modals.openConfirmModal({
@@ -53,12 +52,15 @@ export function PlanDetails() {
               : CONSTANTS.PAYMENT_FAILED_MESSAGE}
           </Text>
         ),
-        labels: { confirm: 'Ok', cancel: 'Cancel' },
+        labels: { confirm: 'Ok', cancel: false },
         confirmProps: { color: status === CONSTANTS.PAYMENT_SUCCCESS_CODE ? 'green' : 'red' },
+
+        onConfirm: () => {
+          router.push(ROUTES.HOME, {}, { shallow: true });
+        },
       });
-      router.push(ROUTES.HOME, {}, { shallow: true });
     }
-  }, []);
+  }, [planName, status, router]);
 
   useEffect(() => {
     if (selectedPlan && profile) {
