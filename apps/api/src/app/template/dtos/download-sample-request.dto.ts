@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsArray, IsJSON } from 'class-validator';
 
 export class DownloadSampleDto {
@@ -8,4 +9,21 @@ export class DownloadSampleDto {
   @IsJSON()
   @IsOptional()
   schema?: string;
+
+  @ApiProperty({
+    type: 'file',
+    required: false,
+  })
+  file: Express.Multer.File;
+
+  @ApiProperty({
+    type: 'string',
+    required: false,
+  })
+  @IsOptional()
+  importId: string;
+
+  @IsJSON()
+  @IsOptional()
+  imagesSchema?: string;
 }

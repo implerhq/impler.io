@@ -52,6 +52,7 @@
     "exceljs": "^4.3.0",
     "hat": "^0.0.3",
     "jsonwebtoken": "^9.0.0",
+    "jszip": "^3.10.1",
     "nodemailer": "^6.9.3",
     "papaparse": "^5.4.1",
     "passport": "^0.6.0",
