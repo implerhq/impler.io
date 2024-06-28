@@ -2,7 +2,7 @@ import { Group, Text } from '@mantine/core';
 import { Dropzone as MantineDropzone, FileWithPath, MIME_TYPES } from '@mantine/dropzone';
 import { ImageIcon } from '../../icons';
 import useStyles from './FileDropdown.styles';
-import { TEXTS } from '../../config/texts.config';
+import { TEXTS, variables } from '../../config';
 
 interface IDropzoneProps {
   loading?: boolean;
@@ -10,22 +10,28 @@ interface IDropzoneProps {
   onReject?: () => void;
   onDrop: (files: FileWithPath[]) => void;
   title?: string;
+  error?: string;
 }
 
 export function FileDropzone(props: IDropzoneProps) {
-  const { loading, accept = [MIME_TYPES.png, MIME_TYPES.jpeg], onDrop, onReject, title } = props;
+  const { loading, accept = [MIME_TYPES.png, MIME_TYPES.jpeg], onDrop, onReject, title, error } = props;
   const { classes } = useStyles();
 
   const SelectFileContent = () => {
     return (
-      <MantineDropzone onReject={onReject} onDrop={onDrop} accept={accept} loading={loading} classNames={classes}>
+      <MantineDropzone
+        onDrop={onDrop}
+        accept={accept}
+        loading={loading}
+        onReject={onReject}
+        classNames={classes}
+        maxSize={variables.LIMIT_5_MB} // 5 MB
+      >
         <Group position="center">
           <div>
-            <MantineDropzone.Idle>
-              <Group position="center" p="xs">
-                <ImageIcon />
-              </Group>
-            </MantineDropzone.Idle>
+            <Group position="center" p="xs">
+              <ImageIcon />
+            </Group>
             <Text align="center">
               {TEXTS.DROPZONE.TITLE}{' '}
               <Text component="span" className={classes.browseText}>
@@ -46,6 +52,11 @@ export function FileDropzone(props: IDropzoneProps) {
         </Text>
       ) : null}
       <SelectFileContent />
+      {error ? (
+        <Text size="xs" mt={3} color="red">
+          {error}
+        </Text>
+      ) : null}
     </div>
   );
 }

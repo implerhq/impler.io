@@ -26,7 +26,7 @@ export function Phase1(props: IPhase1Props) {
     control,
     setError,
     templates,
-    onDownload,
+    onDownloadClick,
     excelSheetNames,
     isUploadLoading,
     onTemplateChange,
@@ -52,20 +52,20 @@ export function Phase1(props: IPhase1Props) {
             }}
             render={({ field, fieldState }) => (
               <Select
+                width="50%"
+                ref={field.ref}
+                value={field.value}
+                onChange={onTemplateChange}
+                error={fieldState.error?.message}
                 title={TEXTS.PHASE1.SELECT_TITLE}
                 placeholder={TEXTS.PHASE1.SELECT_PLACEHOLDER}
-                data={templates}
-                width="50%"
-                error={fieldState.error?.message}
-                onChange={onTemplateChange}
-                value={field.value}
-                ref={field.ref}
+                data={templates?.map((template) => ({ value: template._id, label: template.name })) || []}
               />
             )}
           />
         )}
         <div className={classes.download}>
-          <Button loading={isDownloadInProgress} leftIcon={<Download />} onClick={onDownload}>
+          <Button loading={isDownloadInProgress} leftIcon={<Download />} onClick={onDownloadClick}>
             {TEXTS.PHASE1.DOWNLOAD_SAMPLE}
           </Button>
         </div>

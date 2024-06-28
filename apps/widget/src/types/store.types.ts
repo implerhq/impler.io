@@ -6,6 +6,7 @@ export interface IImplerStore {
   templateId?: string;
   extra?: string;
   authHeaderValue?: string;
+  setTemplateId: (templateId: string) => void;
 }
 
 export interface ITableStore {

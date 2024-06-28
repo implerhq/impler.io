@@ -171,17 +171,10 @@ export class ApiService {
     }) as Promise<string>;
   }
 
-  async downloadSample(
-    templateId: string,
-    data?: Record<string, string | number>[],
-    schema?: string,
-  ) {
+  async downloadSample(templateId: string, data: FormData) {
     return this.httpClient.post(
       `/template/${templateId}/sample`,
-      {
-        data,
-        schema,
-      },
+      data,
       {},
       'blob',
     ) as Promise<ArrayBuffer>;

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import * as Sentry from '@sentry/react';
 import { variables } from '@config';
 import { downloadFile } from '@impler/shared';
 
@@ -54,3 +55,11 @@ export function getFileNameFromUrl(url: string) {
 
   return pathArr.join('/');
 }
+
+export function captureError(error: any) {
+  if (Sentry.isInitialized()) Sentry.captureException(error);
+  else console.error(error);
+}
+
+export const getObjectId = (math = Math, date = Date, hr = 16, sec = (sp: number) => math.floor(sp).toString(hr)) =>
+  sec(date.now() / 1000) + ' '.repeat(hr).replace(/./g, () => sec(math.random() * hr));
