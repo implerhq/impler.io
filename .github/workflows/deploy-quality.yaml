@@ -64,11 +64,11 @@ jobs:
       always() && 
       (needs.build_api.result == 'success' || needs.build_embed.result == 'success' || needs.build_queuemanager.result == 'success' || needs.build_web.result == 'success' || needs.build_widget.result == 'success')
     steps:
-      - name: Set up SSH and Run Docker Compose Up
+      - name: Set up SSH and Up the service
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_QA }}
       - name: Run Docker Compose Up
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME_QA }}@${{ secrets.SSH_HOST_QA }} \
-            "cd ${{ secrets.SSH_PATH_QA }} && docker compose up --pull always -d"
+            "cd ${{ secrets.SSH_PATH_QA }} && sudo docker compose up --pull always -d"
