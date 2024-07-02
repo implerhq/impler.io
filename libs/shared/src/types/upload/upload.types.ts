@@ -58,6 +58,7 @@ export type SendWebhookCachedData = {
   chunkFormat?: string;
   defaultValues: string;
   multiSelectHeadings?: string[];
+  imageHeadings?: string[];
 };
 
 export type SendBubbleCachedData = {

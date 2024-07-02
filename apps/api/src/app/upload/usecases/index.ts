@@ -1,3 +1,4 @@
+import { GetAsset } from './get-asset/get-asset.usecase';
 import { GetUploadColumns } from './get-columns/get-columns.usecase';
 import { GetUpload } from '@shared/usecases/get-upload/get-upload.usecase';
 import { TerminateUpload } from './terminate-upload/terminate-upload.usecase';
@@ -7,6 +8,7 @@ import { GetOriginalFileContent } from './get-original-file-content/get-original
 import { GetUploadProcessInformation } from './get-upload-process-info/get-upload-process-info.usecase';
 
 export const USE_CASES = [
+  GetAsset,
   GetUpload,
   TerminateUpload,
   MakeUploadEntry,
@@ -18,6 +20,7 @@ export const USE_CASES = [
 ];
 
 export {
+  GetAsset,
   GetUpload,
   MakeUploadEntry,
   TerminateUpload,

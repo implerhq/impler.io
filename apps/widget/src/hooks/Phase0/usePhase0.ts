@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import { IErrorObject } from '@impler/shared';
@@ -14,18 +15,17 @@ export function usePhase0({ goNext }: IUsePhase0Props) {
   const { schema, showWidget } = useAppState();
   const { projectId, templateId } = useImplerState();
 
-  const { error, isLoading } = useQuery<boolean, IErrorObject, any, (string | undefined)[]>(
+  const { data, error, isLoading } = useQuery<unknown, IErrorObject, { success: boolean }, (string | undefined)[]>(
     ['valid', projectId, templateId, schema],
-    () => api.checkIsRequestvalid(projectId, templateId, schema) as Promise<boolean>,
+    () => api.checkIsRequestvalid(projectId, templateId, schema) as Promise<{ success: boolean }>,
     {
-      onSuccess(valid) {
-        if (valid) {
-          goNext();
-        }
-      },
       refetchOnWindowFocus: true,
     }
   );
+
+  useEffect(() => {
+    if (data?.success) goNext();
+  }, [data]);
 
   return {
     error,

@@ -5,6 +5,7 @@ import { ColumnTypesEnum, FileMimeTypesEnum, FileNameService, ISchemaItem } from
 
 import { ExcelFileService } from '@shared/services/file';
 import { IExcelFileHeading } from '@shared/types/file.types';
+import { getAssetMimeType } from '@shared/helpers/common.helper';
 import { DownloadSampleDataCommand } from './download-sample.command';
 import { StorageService } from '@impler/shared/dist/services/storage';
 
@@ -76,7 +77,7 @@ export class DownloadSample {
           const file = zip.files[filename];
           const fileData = await file.async('base64');
           const storageFilename = this.fileNameService.getAssetFilePath(data.importId, filename);
-          await this.storageService.uploadFile(storageFilename, fileData, this.getAssetMimeType(filename));
+          await this.storageService.uploadFile(storageFilename, fileData, getAssetMimeType(filename));
         })
       );
     }
@@ -86,11 +87,5 @@ export class DownloadSample {
       ext: hasMultiSelect ? 'xlsm' : 'xlsx',
       type: hasMultiSelect ? FileMimeTypesEnum.EXCELM : FileMimeTypesEnum.EXCELX,
     };
-  }
-  getAssetMimeType(name: string): string {
-    if (name.endsWith('.png')) return FileMimeTypesEnum.PNG;
-    else if (name.endsWith('.jpg')) return FileMimeTypesEnum.JPEG;
-    else if (name.endsWith('.jpeg')) return FileMimeTypesEnum.JPEG;
-    throw new Error('Unsupported file type');
   }
 }
