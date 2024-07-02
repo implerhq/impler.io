@@ -122,6 +122,7 @@ export class BaseReview {
         };
         break;
       case ColumnTypesEnum.SELECT:
+      case ColumnTypesEnum.IMAGE:
         const selectValues =
           Array.isArray(column.selectValues) && column.selectValues.length > 0
             ? [...column.selectValues, ...(column.isRequired ? [] : [''])]

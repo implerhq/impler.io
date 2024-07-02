@@ -91,10 +91,7 @@ export class MakeUploadEntry {
           isRequired: schemaItem.isRequired || false,
           isFrozen: schemaItem.isFrozen,
           key: schemaItem.key,
-          type:
-            schemaItem.type === ColumnTypesEnum.IMAGE
-              ? ColumnTypesEnum.SELECT
-              : schemaItem.type || ColumnTypesEnum.STRING,
+          type: schemaItem.type || ColumnTypesEnum.STRING,
           regex: schemaItem.regex,
           selectValues: parsedImageSchema?.[schemaItem.key] || schemaItem.selectValues || [],
           dateFormats: Array.isArray(schemaItem.dateFormats)
@@ -119,7 +116,6 @@ export class MakeUploadEntry {
     } else {
       const formattedColumns = columns.map((columnItem) => ({
         ...columnItem,
-        type: columnItem.type === ColumnTypesEnum.IMAGE ? ColumnTypesEnum.SELECT : columnItem.type,
         selectValues: parsedImageSchema?.[columnItem.key] || columnItem.selectValues || [],
       }));
       combinedSchema = JSON.stringify(formattedColumns);
