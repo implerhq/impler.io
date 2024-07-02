@@ -39,25 +39,25 @@ export function CheckoutDetails({ checkoutData, isCheckoutDataLoading }: Checkou
         </Group>
         <Group position="apart">
           <Text>Plan Amount (Recurring)</Text>
-          <Text>{`${checkoutData.planAmount} (${checkoutData.currency})`}</Text>
+          <Text>{`${checkoutData.planAmount} (${checkoutData.currency.toUpperCase()})`}</Text>
         </Group>
 
         {checkoutData.proratedRefund ? (
           <Group position="apart">
             <Text>Prorated Refund</Text>
-            <Text>-{`${checkoutData.proratedRefund} (${checkoutData.currency})`}</Text>
+            <Text>-{`${checkoutData.proratedRefund} (${checkoutData.currency.toUpperCase()})`}</Text>
           </Group>
         ) : null}
 
         <Group position="apart">
           <Text>Outstanding Charges</Text>
-          <Text>{`${checkoutData.outstandingAmount} (${checkoutData.currency})`}</Text>
+          <Text>{`${checkoutData.outstandingAmount} (${checkoutData.currency.toUpperCase()})`}</Text>
         </Group>
 
         {checkoutData.discount ? (
           <Group position="apart">
             <Text>Coupon Discount</Text>
-            <Text>-{`${checkoutData.discount} (${checkoutData.currency})`}</Text>
+            <Text>-{`${checkoutData.discount} (${checkoutData.currency.toUpperCase()})`}</Text>
           </Group>
         ) : null}
 
@@ -66,7 +66,7 @@ export function CheckoutDetails({ checkoutData, isCheckoutDataLoading }: Checkou
             <Divider />
             <Group position="apart">
               <Text>Total Amount</Text>
-              <Text>{`${checkoutData.totalPrice} (${checkoutData.currency})`}</Text>
+              <Text>{`${checkoutData.totalPrice} (${checkoutData.currency.toUpperCase()})`}</Text>
             </Group>
           </>
         ) : null}
