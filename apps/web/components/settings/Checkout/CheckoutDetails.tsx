@@ -61,7 +61,7 @@ export function CheckoutDetails({ checkoutData, isCheckoutDataLoading }: Checkou
           </Group>
         ) : null}
 
-        {checkoutData.totalPrice ? (
+        {typeof checkoutData.totalPrice !== 'undefined' ? (
           <>
             <Divider />
             <Group position="apart">
