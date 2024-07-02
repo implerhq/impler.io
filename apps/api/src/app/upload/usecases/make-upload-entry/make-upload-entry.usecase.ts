@@ -45,6 +45,8 @@ export class MakeUploadEntry {
     authHeaderValue,
     schema,
     output,
+    importId,
+    imageSchema,
     selectedSheetName,
   }: MakeUploadEntryCommand) {
     const fileOriginalName = file.originalname;
@@ -75,6 +77,7 @@ export class MakeUploadEntry {
         sort: 'sequence',
       }
     );
+    const parsedImageSchema = imageSchema ? JSON.parse(imageSchema) : undefined;
     let parsedSchema: ISchemaItem[], combinedSchema: string, customRecordFormat: string, customChunkFormat: string;
     try {
       if (schema) parsedSchema = JSON.parse(schema);
@@ -88,12 +91,12 @@ export class MakeUploadEntry {
           isRequired: schemaItem.isRequired || false,
           isFrozen: schemaItem.isFrozen,
           key: schemaItem.key,
-          type: schemaItem.type || ColumnTypesEnum.STRING,
+          type:
+            schemaItem.type === ColumnTypesEnum.IMAGE
+              ? ColumnTypesEnum.SELECT
+              : schemaItem.type || ColumnTypesEnum.STRING,
           regex: schemaItem.regex,
-          selectValues:
-            schemaItem.type == ColumnTypesEnum.SELECT && Array.isArray(schemaItem.selectValues)
-              ? schemaItem.selectValues
-              : [],
+          selectValues: parsedImageSchema?.[schemaItem.key] || schemaItem.selectValues || [],
           dateFormats: Array.isArray(schemaItem.dateFormats)
             ? schemaItem.dateFormats.map((format) => format.toUpperCase())
             : Defaults.DATE_FORMATS,
@@ -114,7 +117,12 @@ export class MakeUploadEntry {
         }
       }
     } else {
-      combinedSchema = JSON.stringify(columns);
+      const formattedColumns = columns.map((columnItem) => ({
+        ...columnItem,
+        type: columnItem.type === ColumnTypesEnum.IMAGE ? ColumnTypesEnum.SELECT : columnItem.type,
+        selectValues: parsedImageSchema?.[columnItem.key] || columnItem.selectValues || [],
+      }));
+      combinedSchema = JSON.stringify(formattedColumns);
       const defaultCustomization = await this.customizationRepository.findOne(
         {
           _templateId: templateId,
@@ -127,7 +135,7 @@ export class MakeUploadEntry {
 
     const fileService = new CSVFileService2();
     const fileHeadings = await fileService.getFileHeaders(csvFile);
-    const uploadId = this.commonRepository.generateMongoId().toString();
+    const uploadId = importId || this.commonRepository.generateMongoId().toString();
     const fileEntity = await this.makeFileEntry(uploadId, csvFile, fileOriginalName);
 
     const originalFileName = this.fileNameService.getOriginalFileName(fileOriginalName);

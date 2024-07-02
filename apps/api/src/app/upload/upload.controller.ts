@@ -30,7 +30,6 @@ import { GetUploadCommand } from '@shared/usecases/get-upload/get-upload.command
 import { ValidateTemplate } from '@shared/validations/valid-template.validation';
 
 import { UploadRequestDto } from './dtos/upload-request.dto';
-import { MakeUploadEntryCommand } from './usecases/make-upload-entry/make-upload-entry.command';
 import {
   TerminateUpload,
   MakeUploadEntry,
@@ -72,17 +71,18 @@ export class UploadController {
     @Param('templateId', ValidateTemplate) templateId: string,
     @UploadedFile('file', ValidImportFile) file: Express.Multer.File
   ) {
-    return this.makeUploadEntry.execute(
-      MakeUploadEntryCommand.create({
-        file: file,
-        templateId,
-        extra: body.extra,
-        schema: body.schema,
-        output: body.output,
-        authHeaderValue: body.authHeaderValue,
-        selectedSheetName: body.selectedSheetName,
-      })
-    );
+    return this.makeUploadEntry.execute({
+      file: file,
+      templateId,
+      extra: body.extra,
+      schema: body.schema,
+      output: body.output,
+      importId: body.importId,
+      imageSchema: body.imageSchema,
+
+      authHeaderValue: body.authHeaderValue,
+      selectedSheetName: body.selectedSheetName,
+    });
   }
 
   @Get(':uploadId')
