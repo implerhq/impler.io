@@ -9,6 +9,7 @@ export interface ITemplate {
   totalColumns: number;
   totalUploads: number;
   totalRecords: number;
+  imageColumns: string[];
   totalInvalidRecords: number;
 }
 
