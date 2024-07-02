@@ -6,7 +6,7 @@ import { FileNameService } from '@impler/shared';
 import { ExcelFileService } from '@shared/services';
 import { ColumnRepository, TemplateRepository } from '@impler/dal';
 import { S3StorageService } from '@impler/shared/dist/services/storage';
-import { SaveSampleFile } from '@shared/usecases/save-sample-file/save-sample-file.usecase';
+import { SaveSampleFile } from '@shared/usecases';
 
 export async function run() {
   // eslint-disable-next-line no-console

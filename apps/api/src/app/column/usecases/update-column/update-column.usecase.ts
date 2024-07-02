@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { ColumnRepository } from '@impler/dal';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
-import { SaveSampleFile } from '@shared/usecases/save-sample-file/save-sample-file.usecase';
+import { SaveSampleFile } from '@shared/usecases';
 import { UpdateCustomization } from 'app/template/usecases';
 import { UpdateColumnCommand } from '../../commands/update-column.command';
+import { UpdateImageColumns } from '@shared/usecases';
 
 @Injectable()
 export class UpdateColumn {
   constructor(
     private saveSampleFile: SaveSampleFile,
     private columnRepository: ColumnRepository,
+    private updateImageTemplates: UpdateImageColumns,
     private updateCustomization: UpdateCustomization
   ) {}
 
@@ -29,6 +31,7 @@ export class UpdateColumn {
 
     column = await this.columnRepository.findOneAndUpdate({ _id }, command);
     const columns = await this.columnRepository.find({ _templateId: column._templateId });
+    await this.updateImageTemplates.execute(columns, column._templateId);
 
     if (isKeyUpdated || isTypeUpdated || isFieldConditionUpdated) {
       await this.saveSampleFile.execute(columns, column._templateId);

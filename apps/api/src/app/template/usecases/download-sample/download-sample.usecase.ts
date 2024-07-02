@@ -18,9 +18,9 @@ export class DownloadSample {
   ) {}
 
   async execute({
-    _templateId,
     data,
     images,
+    _templateId,
   }: {
     _templateId: string;
     images?: Express.Multer.File;
@@ -30,8 +30,8 @@ export class DownloadSample {
     type: string;
     ext: string;
   }> {
-    const isImageTemplate = images && data.importId && data.imagesSchema;
-    const imageSchema = isImageTemplate ? JSON.parse(data.imagesSchema) : undefined;
+    const isImageTemplate = images && data.importId && data.imageSchema;
+    const imageSchema = isImageTemplate ? JSON.parse(data.imageSchema) : undefined;
     const columns = await this.columnsRepository.find(
       {
         _templateId,

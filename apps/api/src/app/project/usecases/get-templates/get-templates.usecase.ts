@@ -16,6 +16,14 @@ export class GetTemplates {
           _projectId: this.commonRepository.generateMongoId(_projectId),
         },
       },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          sampleFileUrl: 1,
+          imageColumns: 1,
+        },
+      },
       { $addFields: { templateId: { $toString: '$_id' } } },
       {
         $lookup: {
@@ -37,6 +45,7 @@ export class GetTemplates {
     return templates.map((template) => ({
       _id: template._id,
       name: template.name,
+      imageColumns: template.imageColumns,
       sampleFileUrl: template.sampleFileUrl,
       totalColumns: template.columns?.length,
     }));

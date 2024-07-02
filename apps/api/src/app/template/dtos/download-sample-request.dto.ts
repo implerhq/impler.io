@@ -25,5 +25,5 @@ export class DownloadSampleDto {
 
   @IsJSON()
   @IsOptional()
-  imagesSchema?: string;
+  imageSchema?: string;
 }
