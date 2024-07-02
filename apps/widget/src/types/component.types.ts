@@ -36,4 +36,6 @@ export interface IUploadValues extends IFormvalues {
   extra?: string;
   schema?: string;
   output?: string;
+  importId?: string;
+  imageSchema?: string;
 }

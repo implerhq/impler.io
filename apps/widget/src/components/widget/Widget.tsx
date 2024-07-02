@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 import { Modal } from '@ui/Modal';
-import { TEXTS, variables } from '@config';
 import { ParentWindow } from '@util';
+import { TEXTS, variables } from '@config';
 import { IUpload } from '@impler/shared';
 import { Phase0 } from './Phases/Phase0';
 import { Phase01 } from './Phases/Phase0-1';
@@ -14,11 +14,13 @@ import { useWidget } from '@hooks/useWidget';
 import { useAppState } from '@store/app.context';
 import { ConfirmModal } from './modals/ConfirmModal';
 import { Layout } from 'components/Common/Layout';
+import { useTemplates } from '@hooks/useTemplates';
 import { PhasesEnum, PromptModalTypesEnum } from '@types';
 import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
 
 export function Widget() {
   const defaultDataCount = 0;
+  const { hasImageUpload } = useTemplates();
   const { terminateUpload, phase, setPhase } = useWidget();
   const [dataCount, setDataCount] = useState<number>(defaultDataCount);
   const [promptContinueAction, setPromptContinueAction] = useState<PromptModalTypesEnum>();
@@ -61,8 +63,10 @@ export function Widget() {
   };
 
   const PhaseView = {
-    [PhasesEnum.VALIDATE]: <Phase0 onValidationSuccess={() => setPhase(PhasesEnum.IMAGE_UPLOAD)} />,
-    [PhasesEnum.IMAGE_UPLOAD]: <Phase01 />,
+    [PhasesEnum.VALIDATE]: (
+      <Phase0 onValidationSuccess={() => setPhase(hasImageUpload ? PhasesEnum.IMAGE_UPLOAD : PhasesEnum.UPLOAD)} />
+    ),
+    [PhasesEnum.IMAGE_UPLOAD]: <Phase01 goToUpload={() => setPhase(PhasesEnum.UPLOAD)} />,
     [PhasesEnum.UPLOAD]: <Phase1 onNextClick={() => setPhase(PhasesEnum.MAPPING)} />,
     [PhasesEnum.MAPPING]: <Phase2 onNextClick={() => setPhase(PhasesEnum.REVIEW)} onPrevClick={onUploadResetClick} />,
     [PhasesEnum.REVIEW]: <Phase3 onNextClick={onComplete} onPrevClick={onUploadResetClick} />,
@@ -75,7 +79,7 @@ export function Widget() {
 
   return (
     <Modal title={title || templateInfo?.name} opened={showWidget} onClose={onClose}>
-      <Layout active={phase} title={title || templateInfo?.name} imageTemplateAvailable>
+      <Layout active={phase} title={title || templateInfo?.name} hasImageUpload={hasImageUpload}>
         {PhaseView[phase]}
         <ConfirmModal
           onCancel={onPromptCancel}

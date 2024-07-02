@@ -6,16 +6,16 @@ import { PhasesEnum } from '@types';
 interface ILayoutProps {
   active: PhasesEnum;
   title?: string;
-  imageTemplateAvailable?: boolean;
+  hasImageUpload?: boolean;
 }
 
 export function Layout(props: PropsWithChildren<ILayoutProps>) {
   const { classes } = useStyles();
-  const { children, active, title } = props;
+  const { children, active, title, hasImageUpload } = props;
 
   return (
     <div className={classes.root}>
-      <Heading active={active} title={title} imageTemplateAvailable={props.imageTemplateAvailable} />
+      <Heading active={active} title={title} hasImageUpload={hasImageUpload} />
       <div className={classes.container}>{children}</div>
     </div>
   );

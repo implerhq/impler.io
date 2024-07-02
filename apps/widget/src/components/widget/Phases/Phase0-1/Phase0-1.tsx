@@ -9,12 +9,21 @@ import { Footer } from 'components/Common/Footer';
 import { usePhase01 } from '@hooks/Phase0-1/usePhase01';
 import { ImageWithIndicator } from '@ui/ImageWithIndicator';
 
-const columns = ['Name', 'Email', 'Phone', 'Address', 'Date'];
+interface Phase01Props {
+  goToUpload: () => void;
+}
 
-export function Phase01() {
-  const { fields, remove, control, onImageSelect, onGenerateTemplateClick, isDownloadInProgress, errors } = usePhase01({
-    columns,
-  });
+export function Phase01({ goToUpload }: Phase01Props) {
+  const {
+    fields,
+    errors,
+    remove,
+    control,
+    imageColumns,
+    onImageSelect,
+    isDownloadInProgress,
+    onGenerateTemplateClick,
+  } = usePhase01({ goToUpload });
   const wrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
   const [containerHeight, setContainerHeight] = useState<number>(200);
 
@@ -31,7 +40,7 @@ export function Phase01() {
             name="key"
             render={({ field }) => (
               <Select
-                data={columns}
+                data={imageColumns}
                 value={field.value}
                 title="Select Column"
                 onChange={field.onChange}
@@ -67,7 +76,7 @@ export function Phase01() {
         </Stack>
       </Stack>
       <Footer
-        onPrevClick={() => {}}
+        onPrevClick={goToUpload}
         active={PhasesEnum.IMAGE_UPLOAD}
         onNextClick={onGenerateTemplateClick}
         primaryButtonLoading={isDownloadInProgress}

@@ -19,7 +19,7 @@ export const TEXTS = {
     FILE_SELECTION: 'File selected successfully',
   },
   'PHASE0-1': {
-    HAVE_TEMPLATE: 'I have a template',
+    IMPORT_FILE: 'Import File',
     GENERATE_TEMPLATE: 'Generate Template',
   },
   PHASE1: {

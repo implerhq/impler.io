@@ -30,12 +30,13 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     formState: { errors },
   } = useForm<IFormvalues>();
   const { api } = useAPIState();
-  const { getSignedUrl, onDownload } = useSample();
+  const { templates } = useTemplates();
+  const { getSignedUrl, onDownload } = useSample({});
   const [excelSheetNames, setExcelSheetNames] = useState<string[]>([]);
   const { projectId, templateId, authHeaderValue, extra } = useImplerState();
   const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
-  const { setUploadInfo, setTemplateInfo, setImportConfig, output, schema, data } = useAppState();
-  const { templates } = useTemplates({ projectId });
+  const { setUploadInfo, setTemplateInfo, setImportConfig, output, schema, data, importId, imageSchema } =
+    useAppState();
 
   const { isFetched: isImportConfigLoaded, isLoading: isImportConfigLoading } = useQuery<
     IImportConfig,
@@ -132,6 +133,8 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
         extra,
         schema,
         output,
+        importId,
+        imageSchema,
       });
     }
   };
@@ -151,12 +154,8 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
   useEffect(() => {
     if (templateId) {
       setValue('templateId', templateId);
-      const foundTemplate = templates?.find((templateItem) => templateItem._id === templateId);
-      if (foundTemplate) {
-        setTemplateInfo(foundTemplate);
-      }
     }
-  }, [templateId, templates]);
+  }, [templateId]);
 
   return {
     control,

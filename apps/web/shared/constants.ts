@@ -20,6 +20,10 @@ export const COLUMN_TYPES = [
     value: 'Date',
   },
   {
+    label: 'Image',
+    value: 'Image',
+  },
+  {
     label: 'Regular Expression',
     value: 'Regex',
   },

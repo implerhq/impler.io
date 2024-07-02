@@ -6,7 +6,7 @@ import { TEXTS, variables } from '@config';
 interface IHeadingProps {
   title?: string;
   active: PhasesEnum;
-  imageTemplateAvailable?: boolean;
+  hasImageUpload?: boolean;
 }
 
 const Steps = [
@@ -24,7 +24,7 @@ const Steps = [
   },
 ];
 
-export function Heading({ active, title, imageTemplateAvailable }: IHeadingProps) {
+export function Heading({ active, title, hasImageUpload }: IHeadingProps) {
   const theme = useMantineTheme();
 
   return (
@@ -33,9 +33,9 @@ export function Heading({ active, title, imageTemplateAvailable }: IHeadingProps
         <Group style={{ justifyContent: 'space-between' }} mb="lg">
           <Title order={3}>{title}</Title>
           <Stepper
-            active={active - 1}
+            active={active - (hasImageUpload ? 1 : 2)}
             steps={[
-              ...(imageTemplateAvailable
+              ...(hasImageUpload
                 ? [
                     {
                       label: TEXTS.STEPS.IMAGE_TEMPLATE,

@@ -58,6 +58,7 @@ export function getFileNameFromUrl(url: string) {
 
 export function captureError(error: any) {
   if (Sentry.isInitialized()) Sentry.captureException(error);
+  // eslint-disable-next-line no-console
   else console.error(error);
 }
 

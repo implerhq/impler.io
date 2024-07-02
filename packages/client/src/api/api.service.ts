@@ -77,6 +77,8 @@ export class ApiService {
     extra?: string;
     schema?: string;
     output?: string;
+    importId?: string;
+    imageSchema?: string;
     selectedSheetName?: string;
   }) {
     const formData = new FormData();
@@ -88,6 +90,8 @@ export class ApiService {
     if (data.output) formData.append('output', data.output);
     if (data.selectedSheetName)
       formData.append('selectedSheetName', data.selectedSheetName);
+    if (data.importId) formData.append('importId', data.importId);
+    if (data.imageSchema) formData.append('imageSchema', data.imageSchema);
 
     return this.httpClient.post(`/upload/${data.templateId}`, formData, {
       'Content-Type': 'multipart/form-data',

@@ -36,7 +36,7 @@ export function Footer({
           onClick={onPrevClick}
           variant="outline"
         >
-          {TEXTS['PHASE0-1'].HAVE_TEMPLATE}
+          {TEXTS['PHASE0-1'].IMPORT_FILE}
         </Button>
         <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
           {TEXTS['PHASE0-1'].GENERATE_TEMPLATE}

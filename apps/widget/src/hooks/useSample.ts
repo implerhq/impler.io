@@ -7,7 +7,11 @@ import { useAppState } from '@store/app.context';
 import { downloadFileFromURL, getFileNameFromUrl, notifier } from '@util';
 import { ColumnTypesEnum, FileMimeTypesEnum, IErrorObject, ISchemaItem, ITemplate, downloadFile } from '@impler/shared';
 
-export function useSample() {
+interface UseSampleProps {
+  onDownloadComplete?: () => void;
+}
+
+export function useSample({ onDownloadComplete }: UseSampleProps) {
   const { api } = useAPIState();
   const { schema, data } = useAppState();
   const { mutate: getSignedUrl, isLoading: isGetSignedUrlLoading } = useMutation<
@@ -35,6 +39,7 @@ export function useSample() {
         }),
         queryVariables.name + ` (sample).${queryVariables.isMultiSelect ? 'xlsm' : 'xlsx'}`
       );
+      if (onDownloadComplete) onDownloadComplete();
     },
   });
 
