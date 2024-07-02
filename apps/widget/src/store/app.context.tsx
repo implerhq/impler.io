@@ -40,6 +40,8 @@ const AppContextProvider = ({
 
   const reset = () => {
     setUploadInfo({} as IUpload);
+    setImportId(undefined);
+    setImageSchema(undefined);
   };
 
   return (

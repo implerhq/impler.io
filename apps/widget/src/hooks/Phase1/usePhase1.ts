@@ -58,6 +58,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
       onSuccess(uploadData) {
         ParentWindow.UploadStarted({ templateId: uploadData._templateId, uploadId: uploadData._id });
         setUploadInfo(uploadData);
+        console.log(uploadData);
         goNext();
       },
       onError(error: IErrorObject) {

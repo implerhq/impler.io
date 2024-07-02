@@ -5,9 +5,11 @@ import { PhasesEnum } from '@types';
 import { IErrorObject, IUpload } from '@impler/shared';
 import { useAppState } from '@store/app.context';
 import { useAPIState } from '@store/api.context';
+import { useTemplates } from './useTemplates';
 
 export function useWidget() {
   const { api } = useAPIState();
+  const { hasImageUpload } = useTemplates();
   const { reset: resetAppState, uploadInfo } = useAppState();
   const [phase, setPhase] = useState<PhasesEnum>(PhasesEnum.VALIDATE);
 
@@ -17,7 +19,8 @@ export function useWidget() {
     {
       onSuccess: () => {
         resetAppState();
-        setPhase(PhasesEnum.VALIDATE);
+        if (hasImageUpload) setPhase(PhasesEnum.IMAGE_UPLOAD);
+        else setPhase(PhasesEnum.UPLOAD);
       },
     }
   );

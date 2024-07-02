@@ -29,6 +29,7 @@ export const TEXTS = {
     SELECT_PLACEHOLDER: 'Select Template',
     DOWNLOAD_SAMPLE_TITLE: 'Download sample csv file',
     DOWNLOAD_SAMPLE: 'Download sample',
+    GENERATE_TEMPLATE: 'Generate Template',
     SEE_MAPPING: 'See Mapping',
     SELECT_FILE: 'Select a file',
   },

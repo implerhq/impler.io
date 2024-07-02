@@ -47,6 +47,7 @@ export function Widget() {
   const closeWidget = (resetPhase?: boolean) => {
     setShowWidget(false);
     resetAmplitude();
+    resetAppState();
     if (resetPhase) setPhase(PhasesEnum.VALIDATE);
     setTimeout(() => {
       ParentWindow.Close();
@@ -67,7 +68,13 @@ export function Widget() {
       <Phase0 onValidationSuccess={() => setPhase(hasImageUpload ? PhasesEnum.IMAGE_UPLOAD : PhasesEnum.UPLOAD)} />
     ),
     [PhasesEnum.IMAGE_UPLOAD]: <Phase01 goToUpload={() => setPhase(PhasesEnum.UPLOAD)} />,
-    [PhasesEnum.UPLOAD]: <Phase1 onNextClick={() => setPhase(PhasesEnum.MAPPING)} />,
+    [PhasesEnum.UPLOAD]: (
+      <Phase1
+        hasImageUpload={hasImageUpload}
+        onNextClick={() => setPhase(PhasesEnum.MAPPING)}
+        generateImageTemplate={() => setPhase(PhasesEnum.IMAGE_UPLOAD)}
+      />
+    ),
     [PhasesEnum.MAPPING]: <Phase2 onNextClick={() => setPhase(PhasesEnum.REVIEW)} onPrevClick={onUploadResetClick} />,
     [PhasesEnum.REVIEW]: <Phase3 onNextClick={onComplete} onPrevClick={onUploadResetClick} />,
     [PhasesEnum.COMPLETE]: <Phase4 rowsCount={dataCount} onUploadAgainClick={resetProgress} onCloseClick={onClose} />,
@@ -76,6 +83,7 @@ export function Widget() {
     [PromptModalTypesEnum.CLOSE]: TEXTS.PROMPT.SUBTITLE_CLOSE,
     [PromptModalTypesEnum.UPLOAD_AGAIN]: TEXTS.PROMPT.SUBTITLE_RESET,
   };
+  console.log('Widget', phase);
 
   return (
     <Modal title={title || templateInfo?.name} opened={showWidget} onClose={onClose}>

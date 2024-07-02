@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { IErrorObject } from '@impler/shared';
 import { useAPIState } from '@store/api.context';
@@ -14,12 +14,8 @@ export function usePhase0({ goNext }: IUsePhase0Props) {
   const { schema, showWidget } = useAppState();
   const { projectId, templateId } = useImplerState();
 
-  const {
-    error,
-    isLoading,
-    mutate: checkIsRequestvalid,
-  } = useMutation<boolean, IErrorObject, any, string[]>(
-    ['valid'],
+  const { error, isLoading } = useQuery<boolean, IErrorObject, any, (string | undefined)[]>(
+    ['valid', projectId, templateId, schema],
     () => api.checkIsRequestvalid(projectId, templateId, schema) as Promise<boolean>,
     {
       onSuccess(valid) {
@@ -27,17 +23,13 @@ export function usePhase0({ goNext }: IUsePhase0Props) {
           goNext();
         }
       },
+      refetchOnWindowFocus: true,
     }
   );
-
-  const handleValidate = async () => {
-    return checkIsRequestvalid({ projectId, templateId, schema });
-  };
 
   return {
     error,
     isLoading,
-    handleValidate,
     isWidgetOpened: showWidget,
   };
 }

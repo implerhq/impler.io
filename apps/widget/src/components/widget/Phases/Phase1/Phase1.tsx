@@ -1,12 +1,12 @@
 import { Group } from '@mantine/core';
 import { Controller } from 'react-hook-form';
 
-import { Download } from '@icons';
 import { PhasesEnum } from '@types';
 import { Select } from '@ui/Select';
 import { Button } from '@ui/Button';
-import { UploadDropzone } from '@ui/UploadDropzone';
 import { TEXTS, variables } from '@config';
+import { DownloadIcon, BackIcon } from '@icons';
+import { UploadDropzone } from '@ui/UploadDropzone';
 import { LoadingOverlay } from '@ui/LoadingOverlay';
 import { usePhase1 } from '@hooks/Phase1/usePhase1';
 
@@ -16,11 +16,12 @@ import { SheetSelectModal } from './SheetSelectModal';
 
 interface IPhase1Props {
   onNextClick: () => void;
+  hasImageUpload: boolean;
+  generateImageTemplate: () => void;
 }
 
-export function Phase1(props: IPhase1Props) {
+export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTemplate }: IPhase1Props) {
   const { classes } = useStyles();
-  const { onNextClick: goNext } = props;
   const {
     onSubmit,
     control,
@@ -38,6 +39,10 @@ export function Phase1(props: IPhase1Props) {
   } = usePhase1({
     goNext,
   });
+  const onDownload = () => {
+    if (hasImageUpload) generateImageTemplate();
+    else onDownloadClick();
+  };
 
   return (
     <>
@@ -65,8 +70,12 @@ export function Phase1(props: IPhase1Props) {
           />
         )}
         <div className={classes.download}>
-          <Button loading={isDownloadInProgress} leftIcon={<Download />} onClick={onDownloadClick}>
-            {TEXTS.PHASE1.DOWNLOAD_SAMPLE}
+          <Button
+            onClick={onDownload}
+            loading={isDownloadInProgress}
+            leftIcon={hasImageUpload ? <BackIcon /> : <DownloadIcon />}
+          >
+            {hasImageUpload ? TEXTS.PHASE1.GENERATE_TEMPLATE : TEXTS.PHASE1.DOWNLOAD_SAMPLE}
           </Button>
         </div>
       </Group>
