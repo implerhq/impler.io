@@ -46,15 +46,14 @@ export function PlanDetails() {
         title: status === CONSTANTS.PAYMENT_SUCCCESS_CODE ? 'Subscription activated' : 'Payment failed',
         centered: true,
         children: (
-          <Text fw="bolder" align="center">
+          <Text size="md" weight={500} align="center" mb="20">
             {status === CONSTANTS.PAYMENT_SUCCCESS_CODE
               ? CONSTANTS.PAYMENT_SUCCESS_MESSAGE
               : CONSTANTS.PAYMENT_FAILED_MESSAGE}
           </Text>
         ),
-        labels: { confirm: 'Ok', cancel: false },
+        labels: { confirm: 'Ok', cancel: null },
         confirmProps: { color: status === CONSTANTS.PAYMENT_SUCCCESS_CODE ? 'green' : 'red' },
-
         onConfirm: () => {
           router.push(ROUTES.HOME, {}, { shallow: true });
         },
