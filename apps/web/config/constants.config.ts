@@ -9,9 +9,11 @@ export const CONSTANTS = {
   PAYMENT_FAILED_CODE: 'failed',
   PAYMENT_SUCCESS_MESSAGE:
     // eslint-disable-next-line max-len
-    'Congratulations! Your subscription is activated and benefits are added to your account. We hope you will love the experience. If anything needed feel free to contact the support team.',
+    'Congratulations! Your subscription has been activated, and benefits have been added to your account. We hope you will love the experience. If you need anything, feel free to contact the support team.',
   PAYMENT_FAILED_MESSAGE:
-    'Some error occurred with payment. No amount is deducted. Please try again later or contact the support team.',
+    'An error occurred with the payment. No amount has been deducted. Please try again later or contact the support team.',
+  SUBSCRIPTION_ACTIVATED_TITLE: 'Subscription activated',
+  SUBSCRIPTION_FAILED_TITLE: 'Payment failed',
 };
 
 export const VARIABLES = {
