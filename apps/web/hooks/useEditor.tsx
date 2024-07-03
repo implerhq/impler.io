@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -5,14 +6,14 @@ import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
 import { track } from '@libs/amplitude';
 import { API_KEYS, NOTIFICATION_KEYS } from '@config';
-import { IErrorObject, ICustomization } from '@impler/shared';
+import { IErrorObject, ICustomization, IDestinationData, DestinationsEnum } from '@impler/shared';
 
 interface UseEditorProps {
   templateId: string;
 }
 
 interface CustomizationDataFormat {
-  combinedFormat: string;
+  format?: string;
 }
 
 export function useEditor({ templateId }: UseEditorProps) {
@@ -21,24 +22,25 @@ export function useEditor({ templateId }: UseEditorProps) {
     reset,
     control,
     setError,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm<CustomizationDataFormat>();
+  const { data: destination, isLoading: isDestinationLoading } = useQuery<
+    unknown,
+    IErrorObject,
+    IDestinationData,
+    [string, string | undefined]
+  >([API_KEYS.DESTINATION_FETCH, templateId], () =>
+    commonApi<IDestinationData>(API_KEYS.DESTINATION_FETCH as any, { parameters: [templateId] })
+  );
   const { data: customization, isLoading: isCustomizationLoading } = useQuery<
     ICustomization,
     IErrorObject,
     ICustomization,
     string[]
-  >(
-    [API_KEYS.TEMPLATE_CUSTOMIZATION_GET, templateId],
-    () => commonApi<ICustomization>(API_KEYS.TEMPLATE_CUSTOMIZATION_GET as any, { parameters: [templateId] }),
-    {
-      onSuccess(data) {
-        reset({
-          combinedFormat: data.combinedFormat,
-        });
-      },
-    }
+  >([API_KEYS.TEMPLATE_CUSTOMIZATION_GET, templateId], () =>
+    commonApi<ICustomization>(API_KEYS.TEMPLATE_CUSTOMIZATION_GET as any, { parameters: [templateId] })
   );
   const { mutate: updateCustomization, isLoading: isUpdateCustomizationLoading } = useMutation<
     ICustomization,
@@ -63,6 +65,23 @@ export function useEditor({ templateId }: UseEditorProps) {
       },
     }
   );
+  const { mutate: syncCustomization, isLoading: isSyncCustomizationLoading } = useMutation<
+    ICustomization,
+    IErrorObject,
+    void,
+    string[]
+  >(
+    [API_KEYS.TEMPLATE_CUSTOMIZATION_UPDATE, templateId],
+    () => commonApi<ICustomization>(API_KEYS.TEMPLATE_CUSTOMIZATION_SYNC as any, { parameters: [templateId] }),
+    {
+      onSuccess(data) {
+        queryClient.setQueryData([API_KEYS.TEMPLATE_CUSTOMIZATION_GET, templateId], data);
+        const formatKey = getFormatKey();
+        console.log(formatKey);
+        setValue('format', formatKey);
+      },
+    }
+  );
 
   const validateFormat = (data: string): boolean => {
     try {
@@ -76,32 +95,51 @@ export function useEditor({ templateId }: UseEditorProps) {
   };
   const onSaveClick = () => {
     handleSubmit((data) => {
-      let { combinedFormat } = data;
-      // Remove single-line & multi-line comments
-      combinedFormat = combinedFormat.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
-      try {
-        validateFormat(combinedFormat);
-      } catch (error) {
-        return setError('combinedFormat', {
-          type: (error as any).type,
-          message: (error as Error).message,
-        });
+      let { format } = data;
+      if (format) {
+        // Remove single-line & multi-line comments
+        format = format?.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
+        try {
+          validateFormat(format);
+        } catch (error) {
+          return setError('format', {
+            type: (error as any).type,
+            message: (error as Error).message,
+          });
+        }
       }
 
+      const formatKey = getFormatKey();
       updateCustomization({
-        combinedFormat,
+        [formatKey]: format,
       });
     })();
   };
+  const getFormatKey = () =>
+    destination?.destination === DestinationsEnum.BUBBLEIO ? 'recordFormat' : 'combinedFormat';
+
+  useEffect(() => {
+    if (destination?.destination && customization) {
+      let format = customization.combinedFormat; // default for webhook
+      if (destination.destination === DestinationsEnum.BUBBLEIO) {
+        format = customization.recordFormat;
+      }
+      reset({ format });
+    }
+  }, [destination, customization, reset]);
 
   return {
     errors,
     control,
     onSaveClick,
+    destination,
     handleSubmit,
     customization,
+    syncCustomization,
     updateCustomization,
+    isDestinationLoading,
     isCustomizationLoading,
+    isSyncCustomizationLoading,
     isUpdateCustomizationLoading,
   };
 }

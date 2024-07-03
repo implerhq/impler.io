@@ -1,36 +1,56 @@
-import { Flex, Group, Text } from '@mantine/core';
-import useStyles from './ImportCard.styles';
 import Link from 'next/link';
+import { MouseEvent } from 'react';
+import { Divider, Flex, Stack, Text } from '@mantine/core';
+
+import useStyles from './ImportCard.styles';
+import { IconButton } from '@ui/icon-button';
+import { CopyIcon } from '@assets/icons/Copy.icon';
 
 interface ImportCardProps {
+  id?: string;
+  href: string;
   title: string;
   imports: number;
   totalRecords: number;
   errorRecords: number;
-  href: string;
+  onDuplicateClick?: (e: MouseEvent<HTMLButtonElement>) => void;
 }
 
-export function ImportCard({ title, imports, totalRecords, errorRecords, href }: ImportCardProps) {
+export function ImportCard({
+  id,
+  title,
+  imports,
+  totalRecords,
+  errorRecords,
+  onDuplicateClick,
+  href,
+}: ImportCardProps) {
   const { classes } = useStyles();
 
   return (
-    <Link href={href} className={classes.root}>
-      <Text size="xl" className={classes.name}>
-        {title}
-      </Text>
+    <Link id={id} href={href} className={classes.root}>
       <Flex justify="space-between">
-        <Group spacing="xs">
-          <Text className={classes.key}>Imports</Text>
+        <Text size="xl" className={`title ${classes.name}`}>
+          {title}
+        </Text>
+        <IconButton label="Duplicate Import" onClick={onDuplicateClick}>
+          <CopyIcon className={classes.duplicate} />
+        </IconButton>
+      </Flex>
+      <Divider />
+      <Flex justify="space-between" align="center">
+        <Stack spacing={0} align="center">
           <Text className={classes.value}>{imports}</Text>
-        </Group>
-        <Group spacing="xs">
-          <Text className={classes.key}>Total Records</Text>
+          <Text className={classes.key}>Imports</Text>
+        </Stack>
+        <Stack spacing={0} align="center">
           <Text className={classes.value}>{totalRecords}</Text>
-        </Group>
-        <Group spacing="xs">
-          <Text className={classes.key}>Error Records</Text>
+          <Text className={classes.key}>Records Imported</Text>
+        </Stack>
+        <Stack spacing={0} align="center">
           <Text className={classes.value}>{errorRecords}</Text>
-        </Group>
+          <Text className={classes.key}>Error Records</Text>
+        </Stack>
       </Flex>
     </Link>
   );

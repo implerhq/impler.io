@@ -1,9 +1,22 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 import _whatever from 'multer';
+import { Response } from 'express';
 import { FileEntity } from '@impler/dal';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ACCESS_KEY_NAME, Defaults, UploadStatusEnum } from '@impler/shared';
-import { Body, Controller, Get, Param, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+  Res,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ApiTags, ApiSecurity, ApiConsumes, ApiOperation, ApiParam, ApiQuery, ApiOkResponse } from '@nestjs/swagger';
 
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
@@ -17,19 +30,27 @@ import { GetUploadCommand } from '@shared/usecases/get-upload/get-upload.command
 import { ValidateTemplate } from '@shared/validations/valid-template.validation';
 
 import { UploadRequestDto } from './dtos/upload-request.dto';
-import { MakeUploadEntry } from './usecases/make-upload-entry/make-upload-entry.usecase';
 import { MakeUploadEntryCommand } from './usecases/make-upload-entry/make-upload-entry.command';
-import { PaginateFileContent } from './usecases/paginate-file-content/paginate-file-content.usecase';
-import { GetUploadProcessInformation } from './usecases/get-upload-process-info/get-upload-process-info.usecase';
+import {
+  TerminateUpload,
+  MakeUploadEntry,
+  GetUploadColumns,
+  PaginateFileContent,
+  GetUploadProcessInformation,
+  GetOriginalFileContent,
+} from './usecases';
 
-@Controller('/upload')
 @ApiTags('Uploads')
+@Controller('/upload')
 @ApiSecurity(ACCESS_KEY_NAME)
 @UseGuards(JwtAuthGuard)
 export class UploadController {
   constructor(
-    private makeUploadEntry: MakeUploadEntry,
     private getUpload: GetUpload,
+    private terminateUpload: TerminateUpload,
+    private makeUploadEntry: MakeUploadEntry,
+    private getUploadColumns: GetUploadColumns,
+    private getOriginalFileContent: GetOriginalFileContent,
     private getUploadProcessInfo: GetUploadProcessInformation,
     private paginateFileContent: PaginateFileContent
   ) {}
@@ -47,16 +68,19 @@ export class UploadController {
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(
-    @UploadedFile('file', ValidImportFile) file: Express.Multer.File,
     @Body() body: UploadRequestDto,
-    @Param('templateId', ValidateTemplate) templateId: string
+    @Param('templateId', ValidateTemplate) templateId: string,
+    @UploadedFile('file', ValidImportFile) file: Express.Multer.File
   ) {
-    return await this.makeUploadEntry.execute(
+    return this.makeUploadEntry.execute(
       MakeUploadEntryCommand.create({
         file: file,
         templateId,
         extra: body.extra,
+        schema: body.schema,
+        output: body.output,
         authHeaderValue: body.authHeaderValue,
+        selectedSheetName: body.selectedSheetName,
       })
     );
   }
@@ -82,6 +106,36 @@ export class UploadController {
     );
 
     return uploadInfo.headings;
+  }
+
+  @Delete(':uploadId')
+  @ApiOperation({
+    summary: 'Terminate upload',
+  })
+  async terminate(@Param('uploadId', ValidateMongoId) uploadId: string) {
+    return this.terminateUpload.execute(uploadId);
+  }
+
+  @Get(':uploadId/columns')
+  @ApiOperation({
+    summary: 'Get upload columns',
+  })
+  async getColumns(@Param('uploadId', ValidateMongoId) uploadId: string) {
+    return this.getUploadColumns.execute(uploadId);
+  }
+
+  @Get(':uploadId/files/original')
+  @ApiOperation({
+    summary: 'Get original uploaded file',
+  })
+  @ApiOkResponse({
+    description: 'Returns original uploaded file',
+  })
+  async getOriginalFile(@Param('uploadId', ValidateMongoId) uploadId: string, @Res() res: Response) {
+    const { name, content, type } = await this.getOriginalFileContent.execute(uploadId);
+    res.setHeader('Content-Type', type);
+    res.setHeader('Content-Disposition', 'attachment; filename=' + name);
+    content.pipe(res);
   }
 
   @Get(':uploadId/rows/valid')

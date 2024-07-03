@@ -2,17 +2,26 @@ import { NOTIFICATION_KEYS } from '@config';
 import { notifications } from '@mantine/notifications';
 
 const Messages: Record<string, NotifyProps> = {
+  [NOTIFICATION_KEYS.MEMBERSHIP_PURCHASED]: {
+    title: 'Membership Upgraded',
+    message: 'Thankyou for Upgrading your membership',
+  },
+
   [NOTIFICATION_KEYS.IMPORT_UPDATED]: {
     title: 'Import details updated',
     message: 'Import details has been updated',
   },
   [NOTIFICATION_KEYS.IMPORT_CREATED]: {
-    title: 'Import record created',
-    message: 'Import record has been created successfully',
+    title: 'Import created',
+    message: 'Import has been created successfully',
+  },
+  [NOTIFICATION_KEYS.IMPORT_DUPLICATED]: {
+    title: 'Import duplicated',
+    message: 'Import has been duplicated successfully',
   },
   [NOTIFICATION_KEYS.IMPORT_DELETED]: {
-    title: 'Import record deleted',
-    message: 'Import record has been deleted successfully',
+    title: 'Import deleted',
+    message: 'Import has been deleted successfully',
   },
   [NOTIFICATION_KEYS.DESTINATION_UPDATED]: {
     title: 'Destination details updated',
@@ -36,6 +45,20 @@ const Messages: Record<string, NotifyProps> = {
     title: 'Validations updated',
     message: 'Validations has been updated',
     color: 'green',
+  },
+  [NOTIFICATION_KEYS.ERROR_OCCURED]: {
+    title: 'Something went wrong!',
+    message: 'Something is not right! Our team is informed about it, please try again after some time.',
+    color: 'red',
+  },
+  [NOTIFICATION_KEYS.CARD_ADDED]: {
+    title: 'Card Added',
+    message: 'New card is added to the system.',
+    color: 'green',
+  },
+  [NOTIFICATION_KEYS.CARD_REMOVED]: {
+    title: 'Card Removed',
+    message: 'Card is removed from the system.',
   },
 };
 

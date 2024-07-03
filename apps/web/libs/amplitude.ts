@@ -94,12 +94,32 @@ type TrackData =
   | {
       name: 'DESTINATION UPDATED';
       properties: {
-        hasAuthHeaderName?: boolean;
-        hasCallbackUrl?: boolean;
+        destination: string;
       };
     }
   | {
       name: 'LOGOUT';
+      properties: Record<string, never>;
+    }
+  | {
+      name: 'ERROR';
+      properties: {
+        message: string;
+      };
+    }
+  | {
+      name: 'IMPORTS PAGINATION';
+      properties: {
+        limit?: number;
+        text?: string;
+      };
+    }
+  | {
+      name: 'IMPORT DUPLICATE';
+      properties: Record<string, never>;
+    }
+  | {
+      name: 'IMPORT CLICK';
       properties: Record<string, never>;
     };
 
@@ -115,13 +135,13 @@ export function track({ name, properties }: TrackData) {
       userIdentity.set('profilePicture', properties.profilePicture);
     }
     identify(userIdentity);
-    setUserId(properties.id);
+    setUserId(properties.email);
   } else if (name === 'SIGNIN') {
     const userIdentity = new Identify();
     userIdentity.set('id', properties.id);
     userIdentity.set('email', properties.email);
     identify(userIdentity);
-    setUserId(properties.id);
+    setUserId(properties.email);
   } else if (name === 'LOGOUT') {
     reset();
   }

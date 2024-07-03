@@ -1,21 +1,18 @@
 import Head from 'next/head';
 import Image from 'next/image';
-import getConfig from 'next/config';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { PropsWithChildren, useRef } from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import TawkMessengerReact from '@tawk.to/tawk-messenger-react';
 import { Flex, Group, LoadingOverlay, Select, Stack, Title, useMantineColorScheme } from '@mantine/core';
 
+import useStyles from './AppLayout.styles';
+import { HomeIcon } from '@assets/icons/Home.icon';
+import { LogoutIcon } from '@assets/icons/Logout.icon';
 import { ImportIcon } from '@assets/icons/Import.icon';
 import { ActivitiesIcon } from '@assets/icons/Activities.icon';
-import useStyles from './AppLayout.styles';
 import LogoBlack from '@assets/images/full-logo-dark.png';
 import LogoWhite from '@assets/images/full-logo-light.png';
-import { LogoutIcon } from '@assets/icons/Logout.icon';
 
-import { CONSTANTS } from '@config';
 import { useApp } from '@hooks/useApp';
 import { NavItem } from '@ui/nav-item';
 import { UserMenu } from '@ui/user-menu';
@@ -23,7 +20,9 @@ import { track } from '@libs/amplitude';
 import { ColorSchemeToggle } from '@ui/toggle-color-scheme';
 import { SettingsIcon } from '@assets/icons/Settings.icon';
 
-const { publicRuntimeConfig } = getConfig();
+const Support = dynamic(() => import('components/common/Support').then((mod) => mod.Support), {
+  ssr: false,
+});
 
 interface PageProps {
   title?: string;
@@ -31,25 +30,31 @@ interface PageProps {
 
 export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps: PageProps }>) {
   const router = useRouter();
-  const twakRef = useRef<any>();
+
   const { classes } = useStyles();
   const navRef = useRef<HTMLElement>(null);
   const { colorScheme } = useMantineColorScheme();
-  const { profile, projects, createProject, logout, setProjectId, isProjectsLoading } = useApp();
+  const { profile, projects, createProject, logout, setProjectId, isProjectsLoading, isProfileLoading } = useApp();
 
   return (
     <>
       <Head>
+        <meta name="og:image" content="/banner.png" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{pageProps.title ? `${pageProps.title} | Impler` : 'Impler'}</title>
+        <link rel="icon" href={colorScheme === 'dark' ? '/favicon-dark.ico' : '/favicon-light.ico'} />
         <meta
           name="description"
-          content="Impler is open-source data import infrastructure, built for engineering teams to help them build rich data import experience without constantly reinventing the wheel."
+          content="100% open source data import experience with readymade CSV & Excel import widget."
         />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href={colorScheme === 'dark' ? '/favicon-dark.ico' : '/favicon-light.ico'} />
+        <meta name="og:title" content="Impler | Readymade and scalable data import experience for developers" />
+        <meta
+          name="og:description"
+          content="100% open source data import experience with readymade CSV & Excel import widget"
+        />
       </Head>
       <div className={classes.root}>
-        <LoadingOverlay visible={isProjectsLoading} />
+        <LoadingOverlay visible={isProjectsLoading || isProfileLoading} />
         <aside className={classes.aside}>
           <div className={classes.logoContainer}>
             <Image src={colorScheme === 'dark' ? LogoWhite : LogoBlack} alt="Impler Logo" width={140} />
@@ -61,6 +66,7 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
             searchable
             creatable
             pl="sm"
+            id="project-manager"
             radius={0}
             value={profile?._projectId}
             getCreateLabel={(query) => `+ Create "${query}"`}
@@ -72,6 +78,7 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
             }}
           />
           <Stack spacing="sm" py="xs">
+            <NavItem active={router.pathname === '/'} href="/" icon={<HomeIcon size="lg" />} title="Home" />
             <NavItem
               active={router.pathname.includes('/imports')}
               href="/imports"
@@ -93,7 +100,7 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
           </Stack>
         </aside>
         <main className={classes.main}>
-          <nav className={classes.nav} ref={navRef}>
+          <nav ref={navRef}>
             {profile && (
               <Flex justify="space-between">
                 <Title order={2}>
@@ -124,23 +131,7 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
           </div>
         </main>
       </div>
-      {publicRuntimeConfig.NEXT_PUBLIC_TAWK_PROPERTY_ID && publicRuntimeConfig.NEXT_PUBLIC_TAWK_WIDGET_ID ? (
-        <TawkMessengerReact
-          propertyId={publicRuntimeConfig.NEXT_PUBLIC_TAWK_PROPERTY_ID}
-          widgetId={publicRuntimeConfig.NEXT_PUBLIC_TAWK_WIDGET_ID}
-          ref={twakRef}
-          onLoad={() => {
-            if (typeof window !== 'undefined' && localStorage.getItem(CONSTANTS.PROFILE_STORAGE_NAME)) {
-              const user = JSON.parse(localStorage.getItem(CONSTANTS.PROFILE_STORAGE_NAME)!);
-              twakRef.current?.setAttributes({
-                id: user._id,
-                name: user.firstName,
-                email: user.email,
-              });
-            }
-          }}
-        />
-      ) : null}
+      <Support profile={profile} />
     </>
   );
 }

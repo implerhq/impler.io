@@ -1,7 +1,8 @@
-import { IsArray, IsBoolean, IsDefined, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsDefined, IsNumber, IsOptional, IsString, Validate } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ColumnTypesEnum } from '@impler/shared';
 import { BaseCommand } from '@shared/commands/base.command';
+import { IsNumberOrString } from '@shared/framework/number-or-string.validator';
 
 export class UpdateColumnCommand extends BaseCommand {
   @IsString()
@@ -19,11 +20,15 @@ export class UpdateColumnCommand extends BaseCommand {
 
   @IsBoolean()
   @IsOptional()
-  isRequired = false;
+  isRequired? = false;
 
   @IsBoolean()
   @IsOptional()
-  isUnique = false;
+  isUnique? = false;
+
+  @IsBoolean()
+  @IsOptional()
+  isFrozen? = false;
 
   @IsDefined()
   type: ColumnTypesEnum;
@@ -41,7 +46,19 @@ export class UpdateColumnCommand extends BaseCommand {
   @Type(() => Array<string>)
   selectValues: string[];
 
+  @IsArray()
+  @IsOptional()
+  @Type(() => Array<string>)
+  dateFormats: string[];
+
   @IsNumber()
   @IsOptional()
   sequence: number;
+
+  @IsOptional()
+  @Validate(IsNumberOrString)
+  defaultValue?: string | number;
+
+  @IsOptional()
+  allowMultiSelect?: boolean;
 }

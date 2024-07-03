@@ -6,6 +6,10 @@ import {
   IReviewData,
   ITemplate,
   PaginationResult,
+  IImportConfig,
+  ISchemaColumn,
+  IRecord,
+  constructQueryString,
 } from '@impler/shared';
 
 export class ApiService {
@@ -15,17 +19,6 @@ export class ApiService {
 
   constructor(private backendUrl: string) {
     this.httpClient = new HttpClient(backendUrl);
-  }
-
-  constructQueryString(obj: Record<string, string | number>): string {
-    const arr = [];
-    Object.keys(obj).forEach((key: string) => {
-      if (obj[key] !== undefined && obj[key] !== null)
-        arr.push(`${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`);
-    });
-    const query = arr.join('&');
-
-    return query ? `?${query}` : '';
   }
 
   setAuthorizationToken(token: string) {
@@ -40,8 +33,31 @@ export class ApiService {
     this.isAuthenticated = false;
   }
 
-  async checkIsRequestvalid(projectId: string, template?: string) {
-    return this.httpClient.post(`/common/valid`, { projectId, template });
+  async checkIsRequestvalid(
+    projectId: string,
+    templateId?: string,
+    schema?: string,
+  ) {
+    return this.httpClient.post(`/common/valid`, {
+      projectId,
+      templateId,
+      schema,
+    });
+  }
+
+  async getImportConfig(projectId: string) {
+    return this.httpClient.get(
+      `/common/import-config?projectId=${projectId}`,
+    ) as Promise<IImportConfig>;
+  }
+
+  async getExcelSheetNames(data: { file: File }) {
+    const formData = new FormData();
+    formData.append('file', data.file);
+
+    return this.httpClient.post(`/common/sheet-names`, formData, {
+      'Content-Type': 'multipart/form-data',
+    }) as Promise<string[]>;
   }
 
   async uploadFile(data: {
@@ -49,12 +65,19 @@ export class ApiService {
     file: File;
     authHeaderValue?: string;
     extra?: string;
+    schema?: string;
+    output?: string;
+    selectedSheetName?: string;
   }) {
     const formData = new FormData();
     formData.append('file', data.file);
     if (data.authHeaderValue)
       formData.append('authHeaderValue', data.authHeaderValue);
     if (data.extra) formData.append('extra', data.extra);
+    if (data.schema) formData.append('schema', data.schema);
+    if (data.output) formData.append('output', data.output);
+    if (data.selectedSheetName)
+      formData.append('selectedSheetName', data.selectedSheetName);
 
     return this.httpClient.post(`/upload/${data.templateId}`, formData, {
       'Content-Type': 'multipart/form-data',
@@ -74,41 +97,61 @@ export class ApiService {
   async finalizeMappings(uploadId: string, mappings: IMappingFinalize[]) {
     return this.httpClient.post(
       `/mapping/${uploadId}/finalize`,
-      mappings
+      mappings,
     ) as Promise<IUpload>;
   }
 
-  async getReviewData(
-    uploadId: string,
-    page?: number,
-    limit?: number
-  ): Promise<IReviewData> {
-    const queryString = this.constructQueryString({ limit, page });
+  async doReivewData(uploadId: string) {
+    return this.httpClient.post(`/review/${uploadId}`);
+  }
+
+  async getReviewData({
+    uploadId,
+    page,
+    limit,
+    type,
+  }: {
+    uploadId: string;
+    page?: number;
+    limit?: number;
+    type?: string;
+  }): Promise<IReviewData> {
+    const queryString = constructQueryString({ limit, page, type });
 
     return this.httpClient.get(
-      `/review/${uploadId}${queryString}`
+      `/review/${uploadId}${queryString}`,
     ) as Promise<IReviewData>;
   }
 
-  async confirmReview(uploadId: string, processInvalidRecords?: boolean) {
-    return this.httpClient.post(`/review/${uploadId}/confirm`, {
-      processInvalidRecords,
-    }) as Promise<IUpload>;
+  async confirmReview(uploadId: string) {
+    return this.httpClient.post(
+      `/review/${uploadId}/confirm`,
+    ) as Promise<IUpload>;
   }
 
   async getUpload(uploadId: string) {
     return this.httpClient.get(`/upload/${uploadId}`) as Promise<IUpload>;
   }
 
+  async terminateUpload(uploadId: string) {
+    return this.httpClient.delete(`/upload/${uploadId}`) as Promise<IUpload>;
+  }
+
+  async getColumns(uploadId: string) {
+    return this.httpClient.get(`/upload/${uploadId}/columns`) as Promise<
+      ISchemaColumn[]
+    >;
+  }
+
   async getValidUploadedRows(uploadId: string, page: number, limit: number) {
     return this.httpClient.get(
-      `/upload/${uploadId}/rows/valid?page=${page}&limit=${limit}`
+      `/upload/${uploadId}/rows/valid?page=${page}&limit=${limit}`,
     ) as Promise<PaginationResult>;
   }
 
   async getInvalidUploadedRows(uploadId: string, page: number, limit: number) {
     return this.httpClient.get(
-      `/upload/${uploadId}/rows/invalid?page=${page}&limit=${limit}`
+      `/upload/${uploadId}/rows/invalid?page=${page}&limit=${limit}`,
     ) as Promise<PaginationResult>;
   }
 
@@ -116,5 +159,36 @@ export class ApiService {
     return this.httpClient.post(`/common/signed-url`, {
       key,
     }) as Promise<string>;
+  }
+
+  async downloadSample(
+    templateId: string,
+    data?: Record<string, string | number>[],
+    schema?: string,
+  ) {
+    return this.httpClient.post(
+      `/template/${templateId}/sample`,
+      {
+        data,
+        schema,
+      },
+      {},
+      'blob',
+    ) as Promise<ArrayBuffer>;
+  }
+
+  async updateRecord(uploadId: string, record: Partial<IRecord>) {
+    return this.httpClient.put(`/review/${uploadId}/record`, record);
+  }
+
+  async deleteRecord(
+    uploadId: string,
+    indexes: number[],
+    valid: number,
+    invalid: number,
+  ) {
+    return this.httpClient.delete(
+      `/review/${uploadId}/record?indexes=${indexes}&valid=${valid}&invalid=${invalid}`,
+    );
   }
 }

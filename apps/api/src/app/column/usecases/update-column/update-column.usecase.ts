@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { createRecordFormat, updateCombinedFormat } from '@impler/shared';
-import { UpdateColumnCommand } from '../../commands/update-column.command';
+import { ColumnRepository } from '@impler/dal';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
-import { ColumnRepository, CustomizationRepository } from '@impler/dal';
 import { SaveSampleFile } from '@shared/usecases/save-sample-file/save-sample-file.usecase';
+import { UpdateCustomization } from 'app/template/usecases';
+import { UpdateColumnCommand } from '../../commands/update-column.command';
 
 @Injectable()
 export class UpdateColumn {
   constructor(
     private saveSampleFile: SaveSampleFile,
     private columnRepository: ColumnRepository,
-    private customizationRepository: CustomizationRepository
+    private updateCustomization: UpdateCustomization
   ) {}
 
   async execute(command: UpdateColumnCommand, _id: string) {
@@ -19,10 +19,12 @@ export class UpdateColumn {
       throw new DocumentNotFoundException('Column', _id);
     }
 
-    const isKeyUpdated = command.key !== column.key;
+    command.dateFormats = command.dateFormats?.map((format) => format.toUpperCase()) || [];
+    const isKeyUpdated = command.key !== column.key || command.allowMultiSelect !== column.allowMultiSelect;
     const isTypeUpdated = command.type !== column.type;
     const isFieldConditionUpdated =
       JSON.stringify(column.selectValues) !== JSON.stringify(command.selectValues) ||
+      JSON.stringify(column.dateFormats) !== JSON.stringify(command.dateFormats) ||
       column.isRequired !== command.isRequired;
 
     column = await this.columnRepository.findOneAndUpdate({ _id }, command);
@@ -34,23 +36,12 @@ export class UpdateColumn {
 
     if (isKeyUpdated) {
       const variables = columns.map((columnItem) => columnItem.key);
-      await this.updateCustomization(column._templateId, variables);
+      await this.updateCustomization.execute(column._templateId, {
+        recordVariables: variables,
+        internal: true,
+      });
     }
 
     return column;
-  }
-
-  async updateCustomization(_templateId: string, variables: string[]) {
-    const customization = await this.customizationRepository.findOne({
-      _templateId,
-    });
-    customization.recordVariables = variables;
-    if (!customization.isRecordFormatUpdated) {
-      customization.recordFormat = createRecordFormat(variables);
-    }
-    if (!customization.isCombinedFormatUpdated) {
-      customization.combinedFormat = updateCombinedFormat(customization.combinedFormat, variables);
-    }
-    await this.customizationRepository.update({ _templateId }, customization);
   }
 }

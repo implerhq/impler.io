@@ -1,11 +1,10 @@
-import { Stack } from '@mantine/core';
+import { useEffect } from 'react';
+import { Stack, TextInput as Input } from '@mantine/core';
 import { useForm } from 'react-hook-form';
 import { useFocusTrap } from '@mantine/hooks';
 
-import { Input } from '@ui/input';
 import { Button } from '@ui/button';
 import { ITemplate } from '@impler/shared';
-import { useEffect } from 'react';
 
 interface UpdateImportFormProps {
   data: ITemplate;
@@ -31,11 +30,11 @@ export function UpdateImportForm({ onSubmit, data }: UpdateImportFormProps) {
     <form onSubmit={handleSubmit(onSubmit)} ref={focusTrapRef}>
       <Stack spacing="sm">
         <Input
-          placeholder="I want to import..."
-          dataAutoFocus
+          autoFocus
           required
-          register={register('name')}
+          {...register('name')}
           error={errors.name?.message}
+          placeholder="I want to import..."
         />
         <Button type="submit" fullWidth>
           Update

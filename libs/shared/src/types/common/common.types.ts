@@ -1,6 +1,6 @@
-export type PaginationResult = {
+export type PaginationResult<T = any> = {
   page: number;
-  data: any[];
+  data: T[];
   limit: number;
   totalPages: number;
   totalRecords: number;

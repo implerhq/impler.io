@@ -1,10 +1,12 @@
 /* eslint-disable no-magic-numbers */
 import { subMonths, subWeeks, subYears, format, subDays } from 'date-fns';
 
-import { TemplateRepository } from '../template';
+import { TemplateEntity, TemplateRepository } from '../template';
 import { BaseRepository } from '../base-repository';
 import { UploadEntity } from './upload.entity';
 import { Upload } from './upload.schema';
+import { Environment } from '../environment';
+import { Types } from 'mongoose';
 
 export class UploadRepository extends BaseRepository<UploadEntity> {
   private templateRepository: TemplateRepository;
@@ -12,21 +14,82 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
     super(Upload, UploadEntity);
     this.templateRepository = new TemplateRepository();
   }
-
-  async getUploadInformation(uploadId: string): Promise<UploadEntity> {
-    return await Upload.findById(uploadId).populate('_allDataFileId', 'path name');
-  }
-  async getUploadInvalidDataInformation(uploadId: string): Promise<UploadEntity> {
-    return await Upload.findById(uploadId).populate('_invalidDataFileId', 'path name');
-  }
   async getUploadProcessInformation(uploadId: string): Promise<UploadEntity> {
-    return await Upload.findById(uploadId)
-      .populate('_uploadedFileId', 'path originalName')
-      .populate('_invalidDataFileId', 'path name')
-      .populate('_validDataFileId', 'path name');
+    return await Upload.findById(uploadId).populate('_uploadedFileId', 'path originalName');
   }
   async getUploadWithTemplate(uploadId: string, fields: string[]): Promise<UploadEntity> {
     return await Upload.findById(uploadId).populate('_templateId', fields.join(' '));
+  }
+  async getImportCount(_userId: string, startDate: Date, endDate: Date) {
+    const userProjects = await Environment.find(
+      {
+        'apiKeys._userId': new Types.ObjectId(_userId),
+      },
+      '_projectId'
+    );
+
+    const result = await this.aggregate([
+      {
+        $addFields: {
+          _templateId: { $toObjectId: '$_templateId' },
+        },
+      },
+      {
+        $lookup: {
+          from: 'templates',
+          localField: '_templateId',
+          foreignField: '_id',
+          as: 'template',
+        },
+      },
+      { $unwind: '$template' },
+      {
+        $match: {
+          $and: [
+            {
+              'template._projectId': {
+                $in:
+                  Array.isArray(userProjects) && userProjects.length > 0
+                    ? userProjects.map((project) => new Types.ObjectId(project._projectId))
+                    : [],
+              },
+            },
+            {
+              uploadedDate: {
+                $gte: startDate,
+                $lte: endDate,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $addFields: {
+          statusCount: {
+            totalRecords: '$totalRecords',
+            status: '$status',
+            uploadDate: '$uploadedDate',
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { date: '$uploadedDate', format: '%Y-%m-%d' },
+          },
+          records: {
+            $addToSet: '$statusCount',
+          },
+        },
+      },
+      {
+        $sort: {
+          _id: 1,
+        },
+      },
+    ]);
+
+    return result;
   }
   async getStats(_projectId: string) {
     const now: number = Date.now();
@@ -149,6 +212,7 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
                 uploadedDate: 1,
                 totalRecords: 1,
                 validRecords: 1,
+                originalFileName: 1,
                 status: 1,
                 _template: {
                   name: 1,
@@ -222,5 +286,22 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
     }
 
     return formattedResults;
+  }
+
+  async getUserEmailFromUploadId(uploadId: string): Promise<string> {
+    const uploadInfoWithTemplate = await Upload.findById(uploadId).populate([
+      {
+        path: '_templateId',
+      },
+    ]);
+    const environment = await Environment.find({
+      _projectId: (uploadInfoWithTemplate._templateId as unknown as TemplateEntity)._projectId,
+    }).populate([
+      {
+        path: 'apiKeys._userId',
+      },
+    ]);
+
+    return environment[0].apiKeys[0]._userId.email;
   }
 }

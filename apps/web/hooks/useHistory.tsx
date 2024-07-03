@@ -1,27 +1,42 @@
-import { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { useDebouncedState, useLocalStorage } from '@mantine/hooks';
+import { useState } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useDebouncedState } from '@mantine/hooks';
 
 import { commonApi } from '@libs/api';
 import { track } from '@libs/amplitude';
-import { API_KEYS, CONSTANTS, VARIABLES } from '@config';
-import { IErrorObject, IHistoryData } from '@impler/shared';
+import { API_KEYS, VARIABLES } from '@config';
+import { useAppState } from 'store/app.context';
+import { IErrorObject, IPaginationData, IHistoryRecord, downloadFile } from '@impler/shared';
 
 export function useHistory() {
+  const { profileInfo } = useAppState();
   const [date, setDate] = useState<Date>();
-  const [limit, setLimit] = useState<number>(VARIABLES.TEN);
   const [page, setPage] = useState<number>();
+  const [limit, setLimit] = useState<number>(VARIABLES.TEN);
   const [name, setName] = useDebouncedState('', VARIABLES.TWO_HUNDREDS);
-  const [profile] = useLocalStorage<IProfileData>({ key: CONSTANTS.PROFILE_STORAGE_NAME });
-  const {
-    refetch: fetchHistoryData,
-    isLoading: isHistoryDataLoading,
-    data: historyData,
-  } = useQuery<unknown, IErrorObject, IHistoryData, (string | number | undefined)[]>(
-    [API_KEYS.IMPORTS_LIST, limit, page, name],
+  const { isLoading: isDownloadOriginalFileLoading, mutate: downloadOriginalFile } = useMutation<
+    ArrayBuffer,
+    IErrorObject,
+    [string, string]
+  >(
+    ['downloadOriginal'],
+    ([uploadId]) => commonApi(API_KEYS.DONWLOAD_ORIGINAL_FILE as any, { parameters: [uploadId] }),
+    {
+      onSuccess(excelFileData, variables) {
+        downloadFile(new Blob([excelFileData]), variables[1]);
+      },
+    }
+  );
+  const { isFetching: isHistoryDataLoading, data: historyData } = useQuery<
+    unknown,
+    IErrorObject,
+    IPaginationData<IHistoryRecord>,
+    (string | number | undefined | Date)[]
+  >(
+    [API_KEYS.ACTIVITY_HISTORY, profileInfo?._projectId, limit, page, name, date],
     () =>
-      commonApi<IHistoryData>(API_KEYS.IMPORTS_LIST as any, {
-        parameters: [profile._projectId!],
+      commonApi<IPaginationData<IHistoryRecord>>(API_KEYS.ACTIVITY_HISTORY as any, {
+        parameters: [profileInfo!._projectId],
         query: {
           limit,
           page,
@@ -30,16 +45,10 @@ export function useHistory() {
         },
       }),
     {
-      enabled: false,
+      enabled: !!profileInfo,
       keepPreviousData: true,
     }
   );
-
-  useEffect(() => {
-    if (profile?._projectId) {
-      fetchHistoryData();
-    }
-  }, [profile?._projectId, fetchHistoryData, page, limit, name, date]);
 
   function onDateChange(newDate?: Date) {
     setDate(newDate);
@@ -78,7 +87,9 @@ export function useHistory() {
     onNameChange,
     onPageChange: setPage,
     onLimitChange,
+    downloadOriginalFile,
     isHistoryDataLoading,
+    isDownloadOriginalFileLoading,
     historyData,
     name,
     date,

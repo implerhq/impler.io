@@ -1,73 +1,64 @@
 import { Injectable } from '@nestjs/common';
-import { Defaults, UploadStatusEnum } from '@impler/shared';
-import { ColumnEntity, ColumnRepository, MappingEntity, MappingRepository, UploadRepository } from '@impler/dal';
+import { UploadRepository } from '@impler/dal';
+import { Defaults, ITemplateSchemaItem, UploadStatusEnum } from '@impler/shared';
 import { DoMappingCommand } from './do-mapping.command';
 
 @Injectable()
 export class DoMapping {
-  constructor(
-    private columnRepository: ColumnRepository,
-    private mappingRepository: MappingRepository,
-    private uploadRepository: UploadRepository
-  ) {}
+  constructor(private uploadRepository: UploadRepository) {}
 
   async execute(command: DoMappingCommand) {
-    const columns = await this.columnRepository.find(
-      {
-        _templateId: command._templateId,
-      },
-      'key alternateKeys sequence',
-      {
-        sort: 'sequence',
-      }
+    const uploadInfo = await this.uploadRepository.findById(command._uploadId, 'customSchema');
+    const updatedTemplateSchema = this.buildMapping(JSON.parse(uploadInfo.customSchema), command.headings);
+    await this.uploadRepository.update(
+      { _id: command._uploadId },
+      { status: UploadStatusEnum.MAPPING, customSchema: JSON.stringify(updatedTemplateSchema) }
     );
-    const mapping = this.buildMapping(columns, command.headings, command._uploadId);
-    const createdHeadings = await this.mappingRepository.createMany(mapping);
-    await this.uploadRepository.update({ _id: command._uploadId }, { status: UploadStatusEnum.MAPPING });
 
-    return createdHeadings;
+    return updatedTemplateSchema;
   }
 
-  private buildMapping(columns: ColumnEntity[], headings: string[], _uploadId: string) {
-    const mappings: MappingEntity[] = [];
+  private buildMapping(columns: ITemplateSchemaItem[], headings: string[]): ITemplateSchemaItem[] {
+    const mapHeadings = [...headings];
     for (const column of columns) {
-      const heading = this.findBestMatchingHeading(headings, column.key, column.alternateKeys);
-      if (heading) {
-        mappings.push(this.buildMappingItem(column._id, _uploadId, heading));
-      } else {
-        mappings.push(this.buildMappingItem(column._id, _uploadId));
+      const headingIndex = this.findBestMatchingHeading(mapHeadings, column.key, column.alternateKeys);
+      if (headingIndex > Defaults.MINUS_ONE) {
+        const [heading] = mapHeadings.splice(headingIndex, Defaults.ONE);
+        if (heading) {
+          column.columnHeading = heading;
+        }
       }
     }
 
-    return mappings;
+    return columns;
   }
 
-  private findBestMatchingHeading(headings: string[], key: string, alternateKeys: string[]): string | null {
-    const mappedHeading = headings.find((heading: string) => this.checkStringEqual(heading, key));
-    if (mappedHeading) {
+  private findBestMatchingHeading(headings: string[], key: string, alternateKeys: string[]): number {
+    const mappedHeadingIndex = headings.findIndex((heading: string) => this.checkStringEqual(heading, key));
+    if (mappedHeadingIndex > Defaults.MINUS_ONE) {
       // compare key
-      return mappedHeading;
+      return mappedHeadingIndex;
     } else if (Array.isArray(alternateKeys) && alternateKeys.length) {
       // compare alternateKeys
-      const intersection = headings.find(
+      const intersectionIndex = headings.findIndex(
         (heading: string) => !!alternateKeys.find((altKey) => this.checkStringEqual(altKey, heading))
       );
 
-      return intersection;
+      return intersectionIndex;
     }
 
-    return null;
+    return Defaults.MINUS_ONE;
   }
 
   private checkStringEqual(a: string, b: string): boolean {
-    return String(a).localeCompare(String(b), undefined, { sensitivity: 'accent' }) === Defaults.ZERO;
-  }
+    const str1 = String(a).trim().toLowerCase();
+    const str2 = String(b).trim().toLowerCase();
 
-  private buildMappingItem(columnId: string, uploadId: string, heading?: string): MappingEntity {
-    return {
-      _columnId: columnId,
-      _uploadId: uploadId,
-      columnHeading: heading || null,
-    };
+    const eualityCheck = str1.localeCompare(str2, undefined, { sensitivity: 'accent' }) === Defaults.ZERO;
+    if (eualityCheck) return true;
+
+    const includeCheck = str1.includes(str2) || str2.includes(str1);
+
+    return includeCheck;
   }
 }

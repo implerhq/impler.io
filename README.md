@@ -1,25 +1,44 @@
 <a name="readme-top"></a>
 
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-
-
-<!-- PROJECT LOGO -->
-<br />
 <div align="center">
+  <a href="https://impler.io?utm_source=github" target="_blank">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/implerhq/impler.io/assets/50201755/7695ab1a-29f2-475c-976a-a74c9dfd60cc">
+    <source media="(prefers-color-scheme: light)" srcset="https://github.com/implerhq/impler.io/assets/50201755/8ac1e6f3-37a1-40ac-bdb9-53e1a0702bbc">
+    <img alt="Impler Logo" src="https://github.com/implerhq/impler.io/assets/50201755/7695ab1a-29f2-475c-976a-a74c9dfd60cc" width="280"/>
+  </picture>
+  </a>
+</div>
 
-<h3 align="center">impler.io</h3>
+<br />
 
+<p align="center">
+  <a href="https://github.com/implerhq/impler.io/graphs/contributors">
+    <img src="https://img.shields.io/github/contributors/implerhq/impler.io.svg?style=for-the-badge" alt="Impler Contributors" />
+  </a>
+  <a href="https://github.com/implerhq/impler.io/network/members">
+    <img src="https://img.shields.io/github/forks/implerhq/impler.io.svg?style=for-the-badge" alt="Impler Forks" />
+  </a>
+  <a href="https://github.com/implerhq/impler.io/issues">
+    <img src="https://img.shields.io/github/issues/implerhq/impler.io.svg?style=for-the-badge" alt="Impler Issues" />
+  </a>
+  <a href="https://github.com/implerhq/impler.io/stargazers">
+    <img src="https://img.shields.io/github/stars/implerhq/impler.io.svg?style=for-the-badge" alt="Impler Stars" />
+  </a>
+</p>
+
+<h1 align="center">Readymade and scalable data import experience for developers👩‍💻</h1>
+<div align="center">Simple and intuitive way to onboard users data via guided import widget</div>
+
+<br />
+
+<div align="center">
   <p align="center">
-    Open source infrastructure for data import
-    <br />
     <a href="https://docs.impler.io"><strong>Explore the docs »</strong></a>
     <br />
-    <br />
-    <a href="https://web.impler.io">Try Now</a>
+    <a href="https://web.impler.io">See it first hand</a>
+    ·
+    <a href="https://discord.impler.io">Meet the team</a>
     ·
     <a href="https://github.com/implerhq/impler.io/issues/new?assignees=&labels=&template=bug_report.md&title=">Report Bug</a>
     ·
@@ -27,107 +46,88 @@
   </p>
 </div>
 
+## 🤔 Why Impler?
 
+Impler provides embeddable, scalable, and readymade data import experience in products. With Impler you don't need to worry about building and managing complex architecture for importing customers' data. Just integrate impler with few easy steps and the data import experience will be ready in just a few minutes.
 
-<!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li><a href="#setup">Setup</a></li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ol>
-</details>
+## ✨ Features
 
+- 🕸️ Guided and responsive data import widget
+- ☠️ Static and Dynamic validations to validate all kinds of data
+- 📔 Auto-generate Excel template along with excel based validations
+- 🧹 Facility to clean the invalid data during import
+- 🪝 Webhook support to send imported data to the application
+- 💪 Ability to provide default and dynamic schema
+- 🧪 Event hooks to react according to widget status
+- 🤸‍♂️ Facility to format data application receives
+- 👨‍💻 Guided and driven by community
 
+## 🚀 Getting Started
 
-<!-- ABOUT THE PROJECT -->
-## About The Project
+The best way to explore the possibilities of the platform is by creating your Import. Head over to [web portal](https://web.impler.io) and setup your account.
 
-All projects need to give some kind of data import facility, so that their users can import data in application through files like `.csv`, `.xls`, `.xlsx`, etc.
+After setting up your account, you can create an import and add columns to it. Once columns are added you're ready to import data.
 
-At first it looks like just importing file and inserting in database, but as the app grows facilities like validating data, data mapping, becomes must. `impler` provides infrastructure to applications, so that they don't have to write code for data import.
+There are two ways:
+1. Click on `Import` button to open the import widget from the web portal
+2. Embed import widget import widget into your application
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+To integrate impler into your reactjs application, you need to install the package:
 
-### Built With
+```bash
+npm install @impler/react
+```
 
-* [Nestjs](https://nestjs.com/)
-* [Typescript](https://www.typescriptlang.org/)
-* [Nx](https://nx.dev/)
-* [Pnpm](https://pnpm.io/)
+Add script in your app before closing body tag
+```html
+<script type="text/javascript" src="https://embed.impler.io/embed.umd.min.js" async></script>
+```
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+```ts
+import { useImpler } from '@impler/react';
+        
+const { showWidget, isImplerInitiated } = useImpler({
+    templateId: "<TEMPLATE_ID>",
+    projectId: "<PROJECT_ID>",
+    accessToken: "<ACCESS_TOKEN>",
+});
 
-## Setup
-To set up `impler.io` locally, you need the following things installed in your computer.
-1. `pnpm`
-2. `localstack`
-3. `mongodb`
+<button disabled={!isImplerInitiated} onClick={showWidget}>
+    Import
+</button>
+```
 
-Follow these steps to setup the project locally,
-1. Clone the repo, `git clone https://github.com/implerhq/impler.io`.
-2. Install the dependencies, `pnpm install`.
-3. Do setups for projects by running, `pnpm setup:project`.
-4. Start the application, `pnpm start:dev`.
-5. Go to web app, `http://localhost:4200`.
+## 🏁 Contributing
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+Contributions are what makes the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-<!-- CONTRIBUTING -->
-## Contributing
+Here are a few ways:
+- Help with open issues or create your own
+- Share your thoughts and suggestions with us over [discord](https://discord.impler.io)
+- Help create tutorials and blog posts
+- Request a feature by opening an issue with the tag `enhancement`
+- Report a bug by providing steps to reproduce
 
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+If you have something in mind that would make it better, please fork the repo and create a pull request. Every hand is appreciated!
 
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
+## 💻 Need Help?
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+We are more than happy to help you. If you are getting any errors or facing problems while working on this project, join our [discord server](https://discord.impler.io) and ask for help. We are open to discussing anything related to the project.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+## ⚡ Immediate working space with Gitpod
 
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/implerhq/impler.io)
 
+## 🔗 Quick Links
 
-<!-- LICENSE -->
-## License
+🏡 [Home page](https://impler.io?utm_source=github) <br />
+🏗️ [Contribution Guidelines](https://github.com/implerhq/impler.io/blob/next/CONTRIBUTING.md) <br />
+💻 [Run Impler Locally](https://docs.impler.io/community/run-impler-locally)
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+## 🛡️ License
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+Impler is licensed under the MIT License - see the [LICENSE](https://github.com/implerhq/impler.io/blob/next/LICENSE) file for details.
 
+## 🎖️ Thank you
 
-
-<!-- CONTACT -->
-## Contact
-
-Implerhq - [@implerhq](https://www.linkedin.com/company/implerhq)
-
-Project Link: [https://github.com/implerhq/impler.io](https://github.com/implerhq/impler.io)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-<!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/implerhq/impler.io.svg?style=for-the-badge
-[contributors-url]: https://github.com/implerhq/impler.io/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/implerhq/impler.io.svg?style=for-the-badge
-[forks-url]: https://github.com/implerhq/impler.io/network/members
-[stars-shield]: https://img.shields.io/github/stars/implerhq/impler.io.svg?style=for-the-badge
-[stars-url]: https://github.com/implerhq/impler.io/stargazers
-[issues-shield]: https://img.shields.io/github/issues/implerhq/impler.io.svg?style=for-the-badge
-[issues-url]: https://github.com/implerhq/impler.io/issues
-[license-shield]: https://img.shields.io/github/license/implerhq/impler.io.svg?style=for-the-badge
-[license-url]: https://github.com/implerhq/impler.io/blob/master/LICENSE.txt
+The beauty of open-source software is enhanced through collaborative efforts. Don't forget to give the project a star :star:! Thanks again!

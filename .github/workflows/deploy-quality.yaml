@@ -1,0 +1,74 @@
+name: Deploy Impler to Quality
+
+on:
+  pull_request:
+    branches: [next]
+    types:
+      - closed
+
+jobs:
+  build_api:
+    permissions:
+      contents: read
+      packages: write 
+      deployments: write
+    if: ${{ (github.event.pull_request.merged == true) && (contains(github.event.pull_request.labels.*.name, 'impler/api')) }}
+    uses: ./.github/workflows/build-api.yml
+    secrets: inherit
+
+  build_embed:
+    permissions:
+      contents: read
+      packages: write
+      deployments: write
+    if: ${{ (github.event.pull_request.merged == true) && (contains(github.event.pull_request.labels.*.name, 'impler/embed')) }}
+    uses: ./.github/workflows/build-embed.yml
+    secrets: inherit
+
+  build_queuemanager:
+    permissions:
+      contents: read
+      packages: write
+      deployments: write
+    if: ${{ (github.event.pull_request.merged == true) && (contains(github.event.pull_request.labels.*.name, 'impler/queuemanager')) }}
+    uses: ./.github/workflows/build-queuemanager.yml
+    secrets: inherit
+
+  build_web:
+    permissions:
+      contents: read
+      packages: write
+      deployments: write
+    if: ${{ (github.event.pull_request.merged == true) && (contains(github.event.pull_request.labels.*.name, 'impler/web')) }}
+    uses: ./.github/workflows/build-web.yml
+    secrets: inherit
+
+  build_widget:
+    permissions:
+      contents: read
+      packages: write
+      deployments: write
+    if: ${{ (github.event.pull_request.merged == true) && (contains(github.event.pull_request.labels.*.name, 'impler/widget')) }}
+    uses: ./.github/workflows/build-widget.yml
+    secrets: inherit
+
+  deploy_with_ssh:
+    runs-on: ubuntu-latest
+    needs:
+      - build_api
+      - build_embed
+      - build_queuemanager
+      - build_web
+      - build_widget
+    if: |
+      always() && 
+      (needs.build_api.result == 'success' || needs.build_embed.result == 'success' || needs.build_queuemanager.result == 'success' || needs.build_web.result == 'success' || needs.build_widget.result == 'success')
+    steps:
+      - name: Set up SSH and Up the service
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_QA }}
+      - name: Run Docker Compose Up
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME_QA }}@${{ secrets.SSH_HOST_QA }} \
+            "cd ${{ secrets.SSH_PATH_QA }} && sudo docker compose up --pull always -d"

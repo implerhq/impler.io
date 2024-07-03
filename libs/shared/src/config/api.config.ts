@@ -1,4 +1,4 @@
-export const ACCESS_KEY_NAME = 'access_key';
+export const ACCESS_KEY_NAME = 'accesskey';
 
 export enum ENVTypesEnum {
   'DEV' = 'dev',

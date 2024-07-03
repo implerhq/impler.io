@@ -28,10 +28,6 @@ const getMainStyles = (theme: MantineTheme): React.CSSProperties => ({
   overflow: 'auto',
 });
 
-const getNavStyles = (): React.CSSProperties => ({
-  alignItems: 'center',
-});
-
 const getContentStyles = (theme: MantineTheme): React.CSSProperties => ({
   paddingTop: theme.spacing.md,
   flexGrow: 1,
@@ -50,7 +46,6 @@ export default createStyles((theme): Record<string, any> => {
     root: getRootStyles(),
     aside: getAsideStyles(),
     main: getMainStyles(theme),
-    nav: getNavStyles(),
     content: getContentStyles(theme),
     contentBox: getContentBoxStyles(theme),
     logoContainer: getLogoContainerStyles(theme),

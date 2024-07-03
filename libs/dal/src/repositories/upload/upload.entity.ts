@@ -11,9 +11,11 @@ export class UploadEntity {
 
   _invalidDataFileId: string;
 
-  _invalidCSVDataFileId: string;
-
   invalidCSVDataFileUrl: string;
+
+  originalFileName: string;
+
+  originalFileType: string;
 
   headings: string[];
 
@@ -32,4 +34,10 @@ export class UploadEntity {
   extra: string;
 
   processInvalidRecords: boolean;
+
+  customSchema: string;
+
+  customRecordFormat: string;
+
+  customChunkFormat: string;
 }

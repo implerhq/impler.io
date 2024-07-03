@@ -4,59 +4,93 @@ Thank you for showing an interest in contributing to `Impler`! All kinds of cont
 
 ## Submitting an issue
 
-Before submitting a new issue, please search the [issues](https://github.com/knovator/impler.io/issues) and [discussion](https://github.com/knovator/impler.io/discussions) tabs. Maybe an issue or discussion already exists and might inform you of workarounds. Otherwise, you can give new information.
+Before submitting a new issue, please search the [issues](https://github.com/implerhq/impler.io/issues) and [discussion](https://github.com/implerhq/impler.io/discussions) tabs. Maybe an issue or discussion already exists and might inform you of workarounds. Otherwise, you can give new information.
 
-While we want to fix all the [issues](https://github.com/knovator/impler.io/issues), before fixing a bug we need to be able to reproduce and confirm it. Please provide us with a minimal reproduction scenario using a repository or [Gist](https://gist.github.com/). Having a live, reproducible scenario gives us the information without asking questions back & forth with additional questions like:
+While we want to fix all the [issues](https://github.com/implerhq/impler.io/issues), before fixing a bug we need to be able to reproduce and confirm it. Please provide us with a minimal reproduction scenario using a repository or [Gist](https://gist.github.com/). Having a live, reproducible scenario gives us the information without asking questions back & forth with additional questions like:
 
 - What is failing or not working?
 - Idea about context like `Self-Hosted`/`React`/`Iframe-embed` environment
 - Steps to reproduce
 
-You can open a new issue from [here](https://github.com/knovator/impler.io/issues/new).
+You can open a new issue from [here](https://github.com/implerhq/impler.io/issues/new).
 
 ## Projects setup and Architecture
 
 ### Requirements
 
-- Node.js version v14.19.3
+- Node.js version v20.13.1
+  - pnpm version 8.9.0
 - MongoDB
-- localstack or AWS S3 credentials (for storing files)
-- **(Optional)** pnpm - Needed if you want to install new packages
+- Localstack or AWS S3 credentials (for storing files)
+- RabbitMQ for microservices to interact with each other
 
-### Setup the project
+> Using docker is the easiest way to set up MongoDB, LocalStack, and RabbitMQ services.
 
-The project is a monorepo, meaning that it is a collection of multiple packages managed in the same repository.
 
-Follow these steps to setup the project locally,
+## Setting Up the Project Locally
 
-1. Clone the repo, git clone https://github.com/knovator/impler.io.
-2. After cloning your fork,
-   1. Install the dependencies by running, `pnpm install`.
-   2. Do setup for projects by running, `pnpm setup:project`.
-   3. Start the application, `pnpm start:dev`.
-   4. Start interacting with API by visiting http://localhost:3000/api or see demo on http://localhost:5173.
+### To set up the project locally, follow these steps:
 
-## Missing a Feature or Facing an issue?
+1. **Fork the Repository:**  
+   Start by forking the repository to your own GitHub account. This creates a copy of the repository under your account, allowing you to freely make changes without affecting the original project.
 
-If a feature is missing or you're experiencing issue, you can create issue [here](https://github.com/knovator/impler.io/issues/new). 
+2. **Clone the Repository:**  
+   Once forked, clone the repository to your local machine using the following command:
+
+   ```bash
+   git clone git@github.com:your-username/repository-name.git
+   
+Replace your-username with your GitHub username and repository-name with the name of the repository you forked. This command will create a local copy of the project on your machine, enabling you to work on it offline.
+
+After cloning your fork, follow these steps to set up the project locally,
+
+3. **Install the dependencies by running:**
+      ```bash
+      pnpm install
+4. **Do setup for projects by running:** 
+      ```bash
+      pnpm setup:project
+### Start the application by running the following commands.
+5. **Start backend API:**
+      ```bash
+      pnpm start:api
+6. **Start web portal:**
+      ```bash
+      pnpm start:web
+7. **Start embed script:**
+      ```bash
+      pnpm start:embed
+8. **Start import widget:**
+      ```bash
+      pnpm start:widget
+9. **Start queue-manager:**
+      ```bash
+      pnpm start:queue-manager
+10. **Start interacting with web UI by visiting:**
+      ```bash
+      http://localhost:4200
+
+## Missing a Feature or Facing an Issue?
+
+If a feature is missing or you're experiencing an issue, you can report it [here](https://github.com/implerhq/impler.io/issues/new). 
 
 ## Coding guidelines
 
 To ensure consistency throughout the source code, please keep these rules in mind as you are working:
 
-- All features or bug fixes must be tested by one or more specs (unit-tests).
+- All features or bug fixes must be tested.
 - We use [Eslint default rule guide](https://eslint.org/docs/rules/), with minor changes. An automated formatter is available using prettier.
 
 ## Need help? Questions and suggestions
 
-Questions, suggestions, and thoughts are most welcome. Feel free to open a [GitHub Discussion](https://github.com/knovator/impler.io/discussions). 
-We can also be reached in our [Discord Server](https://discord.impler.io).
+Questions, suggestions, and thoughts are most welcome. Feel free to open a [GitHub Discussion](https://github.com/implerhq/impler.io/discussions). 
+We can also be reached on our [Discord Server](https://discord.impler.io).
 
 ## Ways to contribute
 
-- Try Importing file and platform and give feedback
-- Help with open [issues](https://github.com/knovator/impler.io/issues) or [create your own](https://github.com/knovator/impler.io/issues/new)
-- Share your thoughts and suggestions with us
+- Use a platform and try importing files and share your thoughts
+- Help with open [issues](https://github.com/implerhq/impler.io/issues) or [create your own](https://github.com/implerhq/impler.io/issues/new)
+- Share your thoughts and suggestions with us over [discord](https://discord.impler.io)
 - Help create tutorials and blog posts
 - Request a feature by submitting a proposal
 - Report a bug

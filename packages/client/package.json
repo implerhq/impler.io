@@ -1,6 +1,6 @@
 {
   "name": "@impler/client",
-  "version": "0.7.1",
+  "version": "0.20.1",
   "description": "API client to be used in end user environments",
   "license": "MIT",
   "author": "implerhq",
@@ -28,11 +28,7 @@
     "fix:prettier": "prettier \"src/**/*.ts\" --write",
     "fix:lint": "eslint src --ext .ts --fix",
     "test:prettier": "prettier \"src/**/*.ts\"",
-    "watch:build": "tsc -p tsconfig.json -w",
-    "doc": "run-s doc:html && open-cli build/docs/index.html",
-    "doc:html": "typedoc src/ --exclude **/*.spec.ts --target ES6 --mode file --out build/docs",
-    "doc:json": "typedoc src/ --exclude **/*.spec.ts --target ES6 --mode file --json build/docs/typedoc.json",
-    "doc:publish": "gh-pages -m \"[ci skip] Updates\" -d build/docs"
+    "watch:build": "tsc -p tsconfig.json -w"
   },
   "devDependencies": {
     "@types/node": "^18.11.9",
@@ -41,8 +37,8 @@
     "typescript": "4.8.4"
   },
   "dependencies": {
-    "@impler/shared": "^0.7.1",
-    "axios": "^0.26.1"
+    "@impler/shared": "^0.20.1",
+    "axios": "1.6.2"
   },
   "engines": {
     "node": ">=10"

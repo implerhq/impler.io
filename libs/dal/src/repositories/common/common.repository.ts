@@ -4,7 +4,7 @@ export class CommonRepository {
   async count<T>(name: string, query: FilterQuery<T>): Promise<number> {
     const model = models[name];
     if (model) {
-      const count = await model.count(query);
+      const count = await model.estimatedDocumentCount(query);
 
       return count;
     }

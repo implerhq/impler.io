@@ -50,3 +50,26 @@ export function replaceVariablesInString(str: string, obj: Record<string, string
     return typeof value === 'string' || typeof value === 'number' ? value : a;
   });
 }
+
+export function downloadFile(blob: Blob, name: string) {
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', name);
+  document.body.appendChild(link);
+  link.click();
+
+  // Clean up and remove the link
+  link.parentNode?.removeChild(link);
+}
+
+export function constructQueryString(obj: Record<string, string | number>): string {
+  const arr = [];
+  Object.keys(obj).forEach((key: string) => {
+    if (obj[key] !== undefined && obj[key] !== null)
+      arr.push(`${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`);
+  });
+  const query = arr.join('&');
+
+  return query ? `?${query}` : '';
+}

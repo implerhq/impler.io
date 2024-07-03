@@ -9,14 +9,21 @@ const columnSchema = new Schema(
     alternateKeys: [String],
     isRequired: Boolean,
     isUnique: Boolean,
+    isFrozen: Boolean,
     regex: String,
+    allowMultiSelect: Boolean,
     regexDescription: String,
     selectValues: [String],
+    dateFormats: {
+      type: [String],
+      default: ['DD/MM/YYYY'],
+    },
     sequence: Number,
     _templateId: {
       type: Schema.Types.String,
       ref: 'Template',
     },
+    defaultValue: Schema.Types.Mixed,
     type: String,
   },
   { ...schemaOptions }

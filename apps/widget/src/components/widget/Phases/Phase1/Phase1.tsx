@@ -1,15 +1,18 @@
-import { TEXTS } from '@config';
+import { Group } from '@mantine/core';
+import { Controller } from 'react-hook-form';
+
+import { Download } from '@icons';
+import { PhasesEnum } from '@types';
 import { Select } from '@ui/Select';
 import { Button } from '@ui/Button';
 import { Dropzone } from '@ui/Dropzone';
+import { TEXTS, variables } from '@config';
 import { LoadingOverlay } from '@ui/LoadingOverlay';
-import { Group } from '@mantine/core';
-import { Download } from '@icons';
+import { usePhase1 } from '@hooks/Phase1/usePhase1';
+
 import useStyles from './Styles';
 import { Footer } from 'components/Common/Footer';
-import { usePhase1 } from '@hooks/Phase1/usePhase1';
-import { Controller } from 'react-hook-form';
-import { PhasesEum } from '@types';
+import { SheetSelectModal } from './SheetSelectModal';
 
 interface IPhase1Props {
   onNextClick: () => void;
@@ -21,20 +24,24 @@ export function Phase1(props: IPhase1Props) {
   const {
     onSubmit,
     control,
+    setError,
     templates,
     onDownload,
+    excelSheetNames,
     isUploadLoading,
     onTemplateChange,
+    onSelectExcelSheet,
     showSelectTemplate,
     isInitialDataLoaded,
     isDownloadInProgress,
+    onSelectSheetModalReset,
   } = usePhase1({
     goNext,
   });
 
   return (
     <>
-      <LoadingOverlay visible={!isInitialDataLoaded || isUploadLoading} />
+      <LoadingOverlay visible={!isInitialDataLoaded} />
       <Group className={classes.templateContainer} spacing="lg" noWrap>
         {showSelectTemplate && (
           <Controller
@@ -58,7 +65,7 @@ export function Phase1(props: IPhase1Props) {
           />
         )}
         <div className={classes.download}>
-          <Button loading={isDownloadInProgress} size="sm" leftIcon={<Download />} onClick={onDownload}>
+          <Button loading={isDownloadInProgress} leftIcon={<Download />} onClick={onDownload}>
             {TEXTS.PHASE1.DOWNLOAD_SAMPLE}
           </Button>
         </div>
@@ -72,9 +79,18 @@ export function Phase1(props: IPhase1Props) {
         }}
         render={({ field, fieldState }) => (
           <Dropzone
+            loading={isUploadLoading}
+            onReject={() => {
+              setError('file', {
+                message: `File type not supported! Please select a .csv or .xlsx file.`,
+                type: 'manual',
+              });
+            }}
             className={classes.dropzone}
-            // eslint-disable-next-line no-magic-numbers
-            onDrop={(selectedFile) => field.onChange(selectedFile[0])}
+            onDrop={(selectedFile) => {
+              field.onChange(selectedFile[variables.baseIndex]);
+              setError('file', {});
+            }}
             onClear={() => field.onChange(undefined)}
             title={TEXTS.PHASE1.SELECT_FILE}
             file={field.value}
@@ -83,11 +99,19 @@ export function Phase1(props: IPhase1Props) {
         )}
       />
 
+      <SheetSelectModal
+        control={control}
+        onSubmit={onSelectExcelSheet}
+        excelSheetNames={excelSheetNames}
+        opened={!!excelSheetNames.length}
+        onClose={onSelectSheetModalReset}
+      />
+
       <Footer
         primaryButtonLoading={isUploadLoading}
         onNextClick={onSubmit}
         onPrevClick={() => {}}
-        active={PhasesEum.UPLOAD}
+        active={PhasesEnum.UPLOAD}
       />
     </>
   );

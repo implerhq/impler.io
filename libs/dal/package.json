@@ -1,6 +1,6 @@
 {
   "name": "@impler/dal",
-  "version": "0.7.1",
+  "version": "0.20.1",
   "author": "implerhq",
   "license": "MIT",
   "private": true,
@@ -16,15 +16,15 @@
     "lint:fix": "eslint src --fix"
   },
   "dependencies": {
-    "@impler/shared": "^0.7.1",
+    "@impler/shared": "^0.20.1",
     "class-transformer": "^0.5.1",
     "date-fns": "^2.30.0",
-    "mongoose": "^6.6.1",
+    "mongoose": "8.0.1",
     "rimraf": "^3.0.2"
   },
   "devDependencies": {
     "@types/node": "^18.7.18",
-    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-prettier": "5.0.0",
     "nodemon": "^2.0.20",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.0",

@@ -1,11 +1,12 @@
 import { Group, Text } from '@mantine/core';
 import { Button } from '@ui/Button';
 import { TEXTS, variables } from '@config';
-import { PhasesEum } from '@types';
+import { PhasesEnum } from '@types';
 import useStyles from './Styles';
+import { useAppState } from '@store/app.context';
 
 interface IFooterProps {
-  active: PhasesEum;
+  active: PhasesEnum;
   primaryButtonDisabled?: boolean;
   secondaryButtonDisabled?: boolean;
   primaryButtonLoading?: boolean;
@@ -14,25 +15,25 @@ interface IFooterProps {
   onNextClick: () => void;
 }
 
-export function Footer(props: IFooterProps) {
+export function Footer({
+  active,
+  onNextClick,
+  onPrevClick,
+  primaryButtonLoading,
+  secondaryButtonLoading,
+  primaryButtonDisabled,
+  secondaryButtonDisabled,
+}: IFooterProps) {
+  const { importConfig } = useAppState();
   const { classes } = useStyles();
-  const {
-    active,
-    onNextClick,
-    onPrevClick,
-    primaryButtonLoading,
-    secondaryButtonLoading,
-    primaryButtonDisabled,
-    secondaryButtonDisabled,
-  } = props;
 
   const FooterActions = {
-    [PhasesEum.UPLOAD]: (
+    [PhasesEnum.UPLOAD]: (
       <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
         {TEXTS.PHASE1.SEE_MAPPING}
       </Button>
     ),
-    [PhasesEum.MAPPING]: (
+    [PhasesEnum.MAPPING]: (
       <>
         <Button
           loading={secondaryButtonLoading}
@@ -47,7 +48,7 @@ export function Footer(props: IFooterProps) {
         </Button>
       </>
     ),
-    [PhasesEum.REVIEW]: (
+    [PhasesEnum.REVIEW]: (
       <>
         <Button
           loading={secondaryButtonLoading}
@@ -58,11 +59,11 @@ export function Footer(props: IFooterProps) {
           {TEXTS.PHASE2.UPLOAD_AGAIN}
         </Button>
         <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
-          {TEXTS.PHASE3.CONFIRM_UPLOAD}
+          {TEXTS.PHASE3.RE_REVIEW_DATA}
         </Button>
       </>
     ),
-    [PhasesEum.COMPLETE]: (
+    [PhasesEnum.COMPLETE]: (
       <>
         <Button
           loading={secondaryButtonLoading}
@@ -80,13 +81,17 @@ export function Footer(props: IFooterProps) {
   };
 
   return (
-    <Group className={classes.wrapper}>
-      <a className={classes.poweredBy} href={variables.implerWebsite} target="_blank" rel="noopener noreferrer">
-        <Text size="xs">
-          Powered by <img src="/logo-full.png" className={classes.implerImage} />
-        </Text>
-      </a>
-      <Group spacing="md">{FooterActions[active]}</Group>
+    <Group className={classes.wrapper} spacing="xs">
+      {importConfig && importConfig.showBranding === true ? (
+        <a className={classes.poweredBy} href={variables.implerWebsite} target="_blank" rel="noopener noreferrer">
+          <Text size="xs">
+            Powered by <img src="/logo-full.png" className={classes.implerImage} />
+          </Text>
+        </a>
+      ) : (
+        <div />
+      )}
+      <Group spacing="xs">{FooterActions[active]}</Group>
     </Group>
   );
 }

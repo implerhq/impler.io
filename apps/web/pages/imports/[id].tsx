@@ -1,25 +1,25 @@
 import Link from 'next/link';
+import { useState } from 'react';
 import dynamic from 'next/dynamic';
-import getConfig from 'next/config';
-import { GetServerSideProps } from 'next';
-import { ActionIcon, Flex, Group, Title, useMantineTheme } from '@mantine/core';
+import { useRouter } from 'next/router';
+import { ActionIcon, Flex, Group, LoadingOverlay, Title, useMantineTheme } from '@mantine/core';
 
-import { commonApi } from '@libs/api';
-import { ITemplate } from '@impler/shared';
+import { track } from '@libs/amplitude';
+import { ROUTES, colors } from '@config';
 import { useImpler } from '@impler/react';
 import { useImportDetails } from '@hooks/useImportDetails';
-import { API_KEYS, CONSTANTS, ROUTES, colors } from '@config';
 
 import { Tabs } from '@ui/Tabs';
 import { Button } from '@ui/button';
 import { Schema } from '@components/imports/schema';
 import { Snippet } from '@components/imports/Snippet';
-import { Destination } from '@components/imports/Destination';
+import { Destination } from '@components/imports/destination';
 
 import { AppLayout } from '@layouts/AppLayout';
 import { OneIcon } from '@assets/icons/One.icon';
 import { TwoIcon } from '@assets/icons/Two.icon';
 import { EditIcon } from '@assets/icons/Edit.icon';
+import { FiveIcon } from '@assets/icons/Five.icon';
 import { FourIcon } from '@assets/icons/Four.icon';
 import { ThreeIcon } from '@assets/icons/Three.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
@@ -32,34 +32,46 @@ const Validator = dynamic(() => import('@components/imports/validator').then((mo
   ssr: false,
 });
 
-interface ImportDetailProps {
-  template: ITemplate;
-}
-
-const { publicRuntimeConfig } = getConfig();
-
-export default function ImportDetails({ template }: ImportDetailProps) {
+export default function ImportDetails({}) {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<'schema' | 'destination' | 'snippet' | 'validator' | 'output'>();
   const { colorScheme } = useMantineTheme();
-  const { onUpdateClick, onDeleteClick, templateData, profile, onSpreadsheetImported, columns } = useImportDetails({
-    template,
+  const {
+    columns,
+    profileInfo,
+    templateData,
+    onUpdateClick,
+    onDeleteClick,
+    isTemplateDataLoading,
+    onSpreadsheetImported,
+  } = useImportDetails({
+    templateId: router.query.id as string,
   });
   const { showWidget, isImplerInitiated } = useImpler({
-    templateId: template._id,
-    projectId: template._projectId,
-    accessToken: profile?.accessToken,
     primaryColor: colors.blue,
+    templateId: templateData?._id,
+    projectId: templateData?._projectId,
+    accessToken: profileInfo?.accessToken,
     onUploadComplete: onSpreadsheetImported,
   });
+  const onImportClick = () => {
+    track({
+      name: 'IMPORT CLICK',
+      properties: {},
+    });
+    showWidget({ colorScheme });
+  };
 
   return (
-    <Flex gap="sm" direction="column" h="100%">
+    <Flex gap="sm" direction="column" h="100%" style={{ position: 'relative' }}>
+      <LoadingOverlay visible={isTemplateDataLoading} />
       <Flex justify="space-between">
         <Group spacing="xs">
           <Button variant="outline" component={Link} href={ROUTES.IMPORTS} color="invariant">
             <LeftArrowIcon />
           </Button>
           <Group spacing={0}>
-            <Title order={2}>{templateData.name}</Title>
+            <Title order={2}>{templateData?.name}</Title>
             <ActionIcon onClick={onUpdateClick} p={0}>
               <EditIcon color={colors.blue} size="sm" />
             </ActionIcon>
@@ -67,9 +79,11 @@ export default function ImportDetails({ template }: ImportDetailProps) {
         </Group>
         <Group spacing="xs">
           <Button
-            disabled={!isImplerInitiated || columns?.length === 0}
             color="green"
-            onClick={() => showWidget({ colorScheme })}
+            id="import"
+            onClick={onImportClick}
+            // eslint-disable-next-line no-magic-numbers
+            disabled={!isImplerInitiated || columns?.length === 0 || isTemplateDataLoading}
           >
             Import
           </Button>
@@ -78,78 +92,59 @@ export default function ImportDetails({ template }: ImportDetailProps) {
           </Button>
         </Group>
       </Flex>
-      <Tabs
-        keepMounted={false}
-        items={[
-          {
-            value: 'schema',
-            title: 'Schema',
-            icon: <OneIcon size="xs" />,
-            content: <Schema templateId={template._id} />,
-          },
-          {
-            value: 'snippet',
-            title: 'Snippet',
-            icon: <TwoIcon size="xs" />,
-            content: (
-              <Snippet templateId={template._id} projectId={template._projectId} accessToken={profile?.accessToken} />
-            ),
-          },
-          {
-            value: 'destination',
-            title: 'Destination',
-            icon: <ThreeIcon size="xs" />,
-            content: <Destination template={template} accessToken={profile?.accessToken} />,
-          },
-          ...(publicRuntimeConfig.NEXT_PUBLIC_CUSTOM_VALIDATION_ENABLED === 'true'
-            ? [
-                {
-                  value: 'validator',
-                  title: 'Validator',
-                  content: <Validator templateId={template._id} />,
-                },
-              ]
-            : []),
-          {
-            value: 'output',
-            title: 'Output',
-            icon: <FourIcon size="xs" />,
-            content: <Editor templateId={template._id} />,
-          },
-        ]}
-        defaultValue="schema"
-      />
+      {templateData && (
+        <Tabs
+          value={activeTab}
+          onTabChange={(value: any) => setActiveTab(value)}
+          keepMounted={false}
+          items={[
+            {
+              id: 'schema',
+              value: 'schema',
+              title: 'Schema',
+              icon: <OneIcon size="xs" />,
+              content: <Schema templateId={templateData._id} />,
+            },
+            {
+              id: 'destination',
+              value: 'destination',
+              title: 'Destination',
+              icon: <TwoIcon size="xs" />,
+              content: <Destination template={templateData} />,
+            },
+            {
+              id: 'snippet',
+              value: 'snippet',
+              title: 'Snippet',
+              icon: <ThreeIcon size="xs" />,
+              content: (
+                <Snippet
+                  templateId={templateData._id}
+                  projectId={templateData._projectId}
+                  accessToken={profileInfo?.accessToken}
+                />
+              ),
+            },
+            {
+              id: 'validator',
+              value: 'validator',
+              title: 'Validator',
+              icon: <FourIcon size="xs" />,
+              content: <Validator templateId={templateData._id} />,
+            },
+            {
+              id: 'output',
+              value: 'output',
+              title: 'Output',
+              icon: <FiveIcon size="xs" />,
+              content: <Editor templateId={templateData._id} switchToDestination={() => setActiveTab('destination')} />,
+            },
+          ]}
+          defaultValue="schema"
+        />
+      )}
     </Flex>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  try {
-    const templateId = context.params?.id as string | undefined;
-    const authenticationToken = context.req.cookies[CONSTANTS.AUTH_COOKIE_NAME];
-    if (!templateId || !authenticationToken) throw new Error();
-
-    const template = await commonApi<ITemplate>(API_KEYS.TEMPLATE_DETAILS as any, {
-      parameters: [templateId],
-      cookie: `${CONSTANTS.AUTH_COOKIE_NAME}=${authenticationToken}`,
-    });
-    if (!template) throw new Error();
-
-    return {
-      props: {
-        title: template.name,
-        template,
-      },
-    };
-  } catch (error) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: ROUTES.IMPORTS,
-      },
-      props: {},
-    };
-  }
-};
 
 ImportDetails.Layout = AppLayout;

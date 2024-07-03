@@ -15,5 +15,17 @@ export class MakeUploadEntryCommand extends BaseCommand {
 
   @IsOptional()
   @IsString()
+  schema?: string;
+
+  @IsOptional()
+  @IsString()
+  output?: string;
+
+  @IsOptional()
+  @IsString()
   authHeaderValue?: string;
+
+  @IsString()
+  @IsOptional()
+  selectedSheetName?: string;
 }

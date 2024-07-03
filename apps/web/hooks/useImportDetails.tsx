@@ -1,62 +1,68 @@
 import { useRouter } from 'next/router';
 import { modals } from '@mantine/modals';
-import { useLocalStorage } from '@mantine/hooks';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
 import { track } from '@libs/amplitude';
+import { useAppState } from 'store/app.context';
 import { ITemplate, IErrorObject, IColumn } from '@impler/shared';
 import { UpdateImportForm } from '@components/imports/forms/UpdateImportForm';
-import { API_KEYS, CONSTANTS, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS, ROUTES } from '@config';
+import { API_KEYS, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS, ROUTES } from '@config';
 
 interface useImportDetailProps {
-  template: ITemplate;
+  templateId: string;
 }
 
-export function useImportDetails({ template }: useImportDetailProps) {
+export function useImportDetails({ templateId }: useImportDetailProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { refetch: refetchTemplateData, data: templateData } = useQuery(
-    [API_KEYS.TEMPLATE_DETAILS, template._id],
-    () => commonApi<ITemplate>(API_KEYS.TEMPLATE_DETAILS as any, { parameters: [template._id] }),
+  const { profileInfo } = useAppState();
+  const {
+    data: templateData,
+    refetch: refetchTemplateData,
+    isLoading: isTemplateDataLoading,
+  } = useQuery(
+    [API_KEYS.TEMPLATE_DETAILS, templateId],
+    () => commonApi<ITemplate>(API_KEYS.TEMPLATE_DETAILS as any, { parameters: [templateId] }),
     {
-      initialData: template,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
+      onError() {
+        router.push(ROUTES.IMPORTS);
+      },
     }
   );
   const { data: columns, isLoading: isColumnListLoading } = useQuery<unknown, IErrorObject, IColumn[], string[]>(
-    [API_KEYS.TEMPLATE_COLUMNS_LIST, template._id],
-    () => commonApi<IColumn[]>(API_KEYS.TEMPLATE_COLUMNS_LIST as any, { parameters: [template._id] })
+    [API_KEYS.TEMPLATE_COLUMNS_LIST, templateId],
+    () => commonApi<IColumn[]>(API_KEYS.TEMPLATE_COLUMNS_LIST as any, { parameters: [templateId] })
   );
-  const [profile] = useLocalStorage<IProfileData>({ key: CONSTANTS.PROFILE_STORAGE_NAME });
 
   const { mutate: updateImport } = useMutation<ITemplate, IErrorObject, IUpdateTemplateData, (string | undefined)[]>(
-    [API_KEYS.TEMPLATE_UPDATE, template._id],
+    [API_KEYS.TEMPLATE_UPDATE, templateId],
     (data) =>
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      commonApi<ITemplate>(API_KEYS.TEMPLATE_UPDATE as any, { parameters: [template._id], body: { ...data } }),
+      commonApi<ITemplate>(API_KEYS.TEMPLATE_UPDATE as any, { parameters: [templateId], body: { ...data } }),
     {
       onSuccess: (data) => {
         modals.close(MODAL_KEYS.IMPORT_UPDATE);
-        queryClient.setQueryData<ITemplate[]>([API_KEYS.TEMPLATES_LIST, profile?._projectId], (oldData) =>
-          oldData?.map((item) => (item._id === data._id ? data : item))
+        queryClient.setQueryData<ITemplate[]>(
+          [API_KEYS.TEMPLATES_LIST, profileInfo!._projectId],
+          (oldData) => oldData?.map((item) => (item._id === data._id ? data : item))
         );
-        queryClient.setQueryData<ITemplate>([API_KEYS.TEMPLATE_DETAILS, template._id], data);
+        queryClient.setQueryData<ITemplate>([API_KEYS.TEMPLATE_DETAILS, templateId], data);
         notify(NOTIFICATION_KEYS.IMPORT_UPDATED);
       },
     }
   );
   const { mutate: deleteImport } = useMutation<ITemplate, IErrorObject, void, (string | undefined)[]>(
-    [API_KEYS.TEMPLATE_DELETE, template._id],
-    () => commonApi<ITemplate>(API_KEYS.TEMPLATE_DELETE as any, { parameters: [template._id] }),
+    [API_KEYS.TEMPLATE_DELETE, templateId],
+    () => commonApi<ITemplate>(API_KEYS.TEMPLATE_DELETE as any, { parameters: [templateId] }),
     {
       onSuccess: () => {
-        queryClient.setQueryData<ITemplate[]>([API_KEYS.TEMPLATES_LIST, profile?._projectId], (oldData) =>
-          oldData?.filter((item) => item._id !== template._id)
+        queryClient.setQueryData<ITemplate[]>(
+          [API_KEYS.TEMPLATES_LIST, profileInfo!._projectId],
+          (oldData) => oldData?.filter((item) => item._id !== templateId)
         );
-        queryClient.removeQueries([API_KEYS.TEMPLATE_DETAILS, template._id]);
+        queryClient.removeQueries([API_KEYS.TEMPLATE_DETAILS, templateId]);
         notify(NOTIFICATION_KEYS.IMPORT_DELETED);
         router.replace(ROUTES.IMPORTS);
       },
@@ -74,12 +80,13 @@ export function useImportDetails({ template }: useImportDetailProps) {
   };
 
   const onUpdateClick = () => {
-    modals.open({
-      modalId: MODAL_KEYS.IMPORT_UPDATE,
-      title: MODAL_TITLES.IMPORT_UPDATE,
+    if (templateData)
+      modals.open({
+        modalId: MODAL_KEYS.IMPORT_UPDATE,
+        title: MODAL_TITLES.IMPORT_UPDATE,
 
-      children: <UpdateImportForm onSubmit={updateImport} data={templateData} />,
-    });
+        children: <UpdateImportForm onSubmit={updateImport} data={templateData} />,
+      });
   };
 
   const onSpreadsheetImported = () => {
@@ -90,5 +97,14 @@ export function useImportDetails({ template }: useImportDetailProps) {
     });
   };
 
-  return { columns, isColumnListLoading, onSpreadsheetImported, profile, onUpdateClick, onDeleteClick, templateData };
+  return {
+    columns,
+    profileInfo,
+    templateData,
+    onUpdateClick,
+    onDeleteClick,
+    isColumnListLoading,
+    isTemplateDataLoading,
+    onSpreadsheetImported,
+  };
 }

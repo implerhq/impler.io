@@ -6,9 +6,17 @@ export interface IColumn {
   alternateKeys?: string[];
   isRequired?: boolean;
   isUnique?: boolean;
+  isFrozen?: boolean;
   regex?: string;
+  allowMultiSelect?: boolean;
+  defaultValue?: string | number;
   regexDescription?: string;
   selectValues?: string[];
+  dateFormats?: string[];
   sequence?: number;
   _templateId: string;
+}
+
+export interface ISchemaColumn extends IColumn {
+  columnHeading: string;
 }

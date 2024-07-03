@@ -1,31 +1,38 @@
 import { ChangeEvent } from 'react';
-import { Badge, Group, LoadingOverlay, Stack, Title } from '@mantine/core';
+import { ActionIcon, Badge, Group, LoadingOverlay, Stack, Title, Tooltip, TextInput as Input } from '@mantine/core';
 
-import { Input } from '@ui/input';
 import { Table } from '@ui/table';
-import { VARIABLES } from '@config';
+import { VARIABLES, colors } from '@config';
 import { Pagination } from '@ui/pagination';
 import { DateInput } from '@ui/date-input';
 import { useHistory } from '@hooks/useHistory';
 import { IHistoryRecord } from '@impler/shared';
 import { SearchIcon } from '@assets/icons/Search.icon';
+import { DownloadIcon } from '@assets/icons/Download.icon';
 
 export function History() {
-  const { historyData, isHistoryDataLoading, onLimitChange, onPageChange, onNameChange, onDateChange, name, date } =
-    useHistory();
+  const {
+    historyData,
+    downloadOriginalFile,
+    isHistoryDataLoading,
+    onLimitChange,
+    onPageChange,
+    onNameChange,
+    onDateChange,
+    name,
+    date,
+  } = useHistory();
 
   return (
     <Stack spacing="xs">
       <Title order={3}>History</Title>
       <Group spacing="xs" style={{ position: 'relative' }}>
         <Input
+          type="search"
+          defaultValue={name}
           icon={<SearchIcon />}
           placeholder="Search imports by name..."
-          register={{
-            defaultValue: name,
-            onChange: (e: ChangeEvent<HTMLInputElement>) => onNameChange(e.currentTarget.value),
-          }}
-          type="search"
+          onChange={(e: ChangeEvent<HTMLInputElement>) => onNameChange(e.currentTarget.value)}
         />
         <DateInput
           allowDeselect
@@ -81,6 +88,23 @@ export function History() {
             {
               title: 'Records',
               key: 'totalRecords',
+            },
+            {
+              title: 'Download Original File',
+              key: 'download',
+              width: 100,
+              Cell(item) {
+                return item.originalFileName ? (
+                  <Tooltip label="Download original file" withArrow>
+                    <ActionIcon
+                      variant="transparent"
+                      onClick={() => downloadOriginalFile([item._id, item.originalFileName])}
+                    >
+                      <DownloadIcon color={colors.yellow} />
+                    </ActionIcon>
+                  </Tooltip>
+                ) : null;
+              },
             },
           ]}
           data={historyData?.data || []}

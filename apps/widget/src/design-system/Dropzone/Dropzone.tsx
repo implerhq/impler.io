@@ -8,6 +8,7 @@ import { File as FileCMP } from '../File';
 interface IDropzoneProps {
   loading?: boolean;
   accept?: string[];
+  onReject?: () => void;
   onDrop: (files: FileWithPath[]) => void;
   onClear?: () => void;
   file?: FileWithPath;
@@ -19,10 +20,11 @@ interface IDropzoneProps {
 export function Dropzone(props: IDropzoneProps) {
   const {
     loading,
-    accept = [MIME_TYPES.csv, MIME_TYPES.xls, MIME_TYPES.xlsx],
+    accept = [MIME_TYPES.csv, MIME_TYPES.xlsx, 'application/vnd.ms-excel.sheet.macroenabled.12'],
     onDrop,
     onClear,
     file,
+    onReject,
     title,
     className,
     error,
@@ -41,7 +43,7 @@ export function Dropzone(props: IDropzoneProps) {
             <Group position="center" mb="sm">
               <CheckIcon className={classes.checkIcon} />
             </Group>
-            <Text size="xl" mb="sm" align="center">
+            <Text size="lg" mb="sm" align="center">
               {TEXTS.DROPZONE.FILE_SELECTION}
             </Text>
             {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
@@ -54,7 +56,7 @@ export function Dropzone(props: IDropzoneProps) {
 
   const SelectFileContent = () => {
     return (
-      <MantineDropzone onDrop={onDrop} accept={accept} loading={loading} classNames={classes}>
+      <MantineDropzone onReject={onReject} onDrop={onDrop} accept={accept} loading={loading} classNames={classes}>
         <Group position="center">
           <div>
             <Text align="center" weight="bold">

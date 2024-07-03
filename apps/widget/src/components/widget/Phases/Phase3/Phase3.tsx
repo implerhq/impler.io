@@ -1,18 +1,22 @@
-import { colors, TEXTS } from '@config';
-import { usePhase3 } from '@hooks/Phase3/usePhase3';
-import { Download, Warning } from '@icons';
-import { IUpload } from '@impler/shared';
-import { Group, Text } from '@mantine/core';
-import { PhasesEum } from '@types';
-import { Button } from '@ui/Button';
-import { LoadingOverlay } from '@ui/LoadingOverlay';
-import { Pagination } from '@ui/Pagination';
-import { Table } from '@ui/Table';
-import { Footer } from 'components/Common/Footer';
+import { Badge, Flex, Stack } from '@mantine/core';
 import { useRef, useState, useEffect } from 'react';
-import { ConfirmModal } from '../ConfirmModal';
-import useStyles from './Styles';
-import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
+import HotTableClass from '@handsontable/react/hotTableClass';
+
+import { PhasesEnum } from '@types';
+import { logAmplitudeEvent } from '@amplitude';
+import { usePhase3 } from '@hooks/Phase3/usePhase3';
+import { IUpload, numberFormatter, replaceVariablesInString } from '@impler/shared';
+
+import { ReviewConfirmModal } from './ReviewConfirmModal';
+import { Table } from 'components/Common/Table';
+import { Footer } from 'components/Common/Footer';
+
+import { TEXTS } from '@config';
+import { Button } from '@ui/Button';
+import { Pagination } from '@ui/Pagination';
+import { LoadingOverlay } from '@ui/LoadingOverlay';
+import { SegmentedControl } from '@ui/SegmentedControl';
+import { ConfirmModal } from 'components/widget/modals/ConfirmModal';
 
 interface IPhase3Props {
   onNextClick: (uploadData: IUpload) => void;
@@ -20,20 +24,37 @@ interface IPhase3Props {
 }
 
 export function Phase3(props: IPhase3Props) {
-  const { classes } = useStyles();
+  const tableRef = useRef<HotTableClass>(null);
   const { onNextClick, onPrevClick } = props;
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const {
-    onPageChange,
-    onExportData,
-    heaings,
-    isInitialDataLoaded,
-    reviewData,
     page,
+    type,
+    headings,
+    columnDefs,
     totalPages,
-    totalData,
+    reviewData,
+    allChecked,
+    totalRecords,
+    onTypeChange,
+    reReviewData,
+    updateRecord,
+    onPageChange,
+    frozenColumns,
+    setReviewData,
+    setAllChecked,
+    deleteRecords,
+    invalidRecords,
     onConfirmReview,
+    selectedRowsRef,
+    isDoReviewLoading,
+    isReviewDataLoading,
+    selectedRowsCountRef,
+    showAllDataValidModal,
+    isDeleteRecordLoading,
     isConfirmReviewLoading,
+    showDeleteConfirmModal,
+    setShowAllDataValidModal,
+    setShowDeleteConfirmModal,
   } = usePhase3({ onNext: onNextClick });
   const tableWrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
   const [tableWrapperDimensions, setTableWrapperDimentions] = useState({
@@ -44,59 +65,144 @@ export function Phase3(props: IPhase3Props) {
   useEffect(() => {
     //  setting wrapper height
     setTableWrapperDimentions({
-      height: tableWrapperRef.current.getBoundingClientRect().height,
+      height: tableWrapperRef.current.getBoundingClientRect().height - 50,
       width: tableWrapperRef.current.getBoundingClientRect().width,
     });
   }, []);
 
-  const onConfirmClick = () => {
-    setShowConfirmModal(true);
-  };
-
-  const onReviewConfirmed = (exempt: boolean) => {
-    logAmplitudeEvent('CONFIRM', { exempt });
-    resetAmplitude();
-    setShowConfirmModal(false);
-    onConfirmReview(exempt);
+  const onReviewConfirmed = () => {
+    logAmplitudeEvent('CONFIRM');
+    onConfirmReview();
   };
 
   return (
     <>
-      <LoadingOverlay visible={!isInitialDataLoaded || isConfirmReviewLoading} />
-      <Group className={classes.textContainer} align="center">
-        <Group align="center" spacing="xs">
-          <Warning fill={colors.red} className={classes.warningIcon} />
-          <Text color={colors.red}>{TEXTS.PHASE3.INVALID_DATA_INFO}</Text>
-        </Group>
-        <Button size="sm" leftIcon={<Download />} onClick={onExportData}>
-          {TEXTS.PHASE3.EXPORT_DATA}
-        </Button>
-      </Group>
+      <LoadingOverlay
+        visible={isReviewDataLoading || isDoReviewLoading || isConfirmReviewLoading || isDeleteRecordLoading}
+      />
 
-      <div ref={tableWrapperRef} style={{ flexGrow: 1 }}>
+      <Stack ref={tableWrapperRef} style={{ flexGrow: 1 }} spacing="xs" align="flex-start">
+        <Flex direction="row" justify="space-between" w="100%">
+          <SegmentedControl
+            value={type}
+            onChange={onTypeChange}
+            allDataLength={numberFormatter(totalRecords)}
+            invalidDataLength={numberFormatter(invalidRecords)}
+            validDataLength={numberFormatter(totalRecords - invalidRecords)}
+          />
+          <Button color="red" disabled={!selectedRowsRef.current.size} onClick={() => setShowDeleteConfirmModal(true)}>
+            Delete
+            <Badge variant="light" ml="xs" color="red">
+              {numberFormatter(selectedRowsRef.current.size)}
+            </Badge>
+          </Button>
+        </Flex>
         <Table
-          style={{
-            height: tableWrapperDimensions.height,
+          ref={tableRef}
+          frozenColumns={frozenColumns}
+          width={tableWrapperDimensions.width}
+          height={tableWrapperDimensions.height}
+          onValueChange={(row, prop, oldVal, newVal) => {
+            const name = String(prop).replace('record.', '');
+
+            const currentData = [...reviewData];
+
+            if (
+              currentData &&
+              oldVal != newVal &&
+              !(oldVal === '' && newVal === undefined) &&
+              !(newVal === '' && oldVal === undefined)
+            ) {
+              if (!currentData[row].updated) {
+                currentData[row].updated = {};
+              }
+              currentData[row].record[name] = newVal;
+              currentData[row].updated[name] = true;
+              setReviewData(currentData);
+              updateRecord({
+                index: currentData[row].index,
+                record: currentData[row].record,
+                updated: currentData[row].updated,
+              });
+            }
           }}
-          headings={heaings}
+          onRowCheck={(rowIndex, recordIndex, checked) => {
+            const currentData = [...reviewData];
+            currentData[rowIndex].checked = checked;
+            const newSelectedRowsCountRef = { ...selectedRowsCountRef.current };
+            if (checked) {
+              selectedRowsRef.current.add(recordIndex);
+              if (currentData[rowIndex].isValid) newSelectedRowsCountRef.valid.add(recordIndex);
+              else newSelectedRowsCountRef.invalid.add(recordIndex);
+            } else {
+              selectedRowsRef.current.delete(recordIndex);
+              if (currentData[rowIndex].isValid) newSelectedRowsCountRef.valid.delete(recordIndex);
+              else newSelectedRowsCountRef.invalid.delete(recordIndex);
+            }
+            setReviewData(currentData);
+            selectedRowsCountRef.current = newSelectedRowsCountRef;
+            setAllChecked(selectedRowsRef.current.size === currentData.length);
+          }}
+          onCheckAll={(checked) => {
+            setAllChecked(checked);
+            const currentData = [...reviewData];
+            currentData.forEach((record) => {
+              record.checked = checked;
+            });
+            const newSelectedRows = selectedRowsRef.current;
+            const newSelectedRowsCountRef = { ...selectedRowsCountRef.current };
+            currentData.forEach((record) => {
+              if (checked) {
+                newSelectedRows.add(record.index);
+                if (record.isValid) newSelectedRowsCountRef.valid.add(record.index);
+                else newSelectedRowsCountRef.invalid.add(record.index);
+              } else {
+                newSelectedRows.delete(record.index);
+                if (record.isValid) newSelectedRowsCountRef.valid.delete(record.index);
+                else newSelectedRowsCountRef.invalid.delete(record.index);
+              }
+            });
+            selectedRowsRef.current = newSelectedRows;
+            selectedRowsCountRef.current = newSelectedRowsCountRef;
+            setReviewData(currentData);
+          }}
           data={reviewData}
-          emptyDataText=""
+          headings={headings}
+          columnDefs={columnDefs}
+          allChecked={allChecked}
         />
-      </div>
+      </Stack>
       <Pagination page={page} total={totalPages} onChange={onPageChange} />
 
       <Footer
         primaryButtonLoading={isConfirmReviewLoading}
-        active={PhasesEum.REVIEW}
-        onNextClick={onConfirmClick}
+        active={PhasesEnum.REVIEW}
+        onNextClick={reReviewData}
         onPrevClick={onPrevClick}
       />
-
-      <ConfirmModal
+      <ReviewConfirmModal
+        opened={!!showAllDataValidModal}
+        onClose={() => setShowAllDataValidModal(false)}
         onConfirm={onReviewConfirmed}
-        onClose={() => setShowConfirmModal(false)}
-        opened={showConfirmModal}
-        wrongDataCount={totalData}
+        totalRecords={totalRecords}
+      />
+      <ConfirmModal
+        onCancel={() => setShowDeleteConfirmModal(false)}
+        title={replaceVariablesInString(TEXTS.DELETE_CONFIRMATION.TITLE, {
+          total: numberFormatter(selectedRowsRef.current.size),
+        })}
+        onConfirm={() => {
+          setShowDeleteConfirmModal(false);
+          deleteRecords([
+            Array.from(selectedRowsRef.current),
+            selectedRowsCountRef.current.valid.size,
+            selectedRowsCountRef.current.invalid.size,
+          ]);
+        }}
+        cancelLabel={TEXTS.DELETE_CONFIRMATION.NO}
+        confirmLabel={TEXTS.DELETE_CONFIRMATION.YES}
+        opened={!!showDeleteConfirmModal}
+        subTitle={TEXTS.DELETE_CONFIRMATION.SUBTITLE}
       />
     </>
   );

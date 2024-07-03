@@ -5,21 +5,29 @@ export class ColumnEntity {
 
   key: string;
 
-  alternateKeys: string[];
+  alternateKeys?: string[];
 
-  isRequired: boolean;
+  isRequired?: boolean;
 
-  isUnique: boolean;
+  isUnique?: boolean;
+
+  isFrozen?: boolean;
 
   type: string;
 
-  regex: string;
+  regex?: string;
 
-  regexDescription: string;
+  allowMultiSelect?: boolean;
 
-  selectValues: string[];
+  regexDescription?: string;
 
-  sequence: number;
+  selectValues?: string[];
+
+  dateFormats?: string[];
+
+  sequence?: number;
 
   _templateId: string;
+
+  defaultValue?: string | number;
 }

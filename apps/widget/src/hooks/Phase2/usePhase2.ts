@@ -21,7 +21,7 @@ export function usePhase2({ goNext }: IUsePhase2Props) {
       disabled?: boolean;
     }[]
   >(uploadInfo.headings.map((heading) => ({ value: heading, label: heading })));
-  const { control, reset, handleSubmit } = useForm<{ mappings: IMappingFinalize[] }>();
+  const { getValues, control, reset, handleSubmit } = useForm<{ mappings: IMappingFinalize[] }>();
   const {
     isFetched,
     isLoading,
@@ -45,7 +45,8 @@ export function usePhase2({ goNext }: IUsePhase2Props) {
         );
         reset({
           mappings: mappingsResponse.map((mapping) => ({
-            _columnId: mapping.column._columnId,
+            key: mapping.key,
+            name: mapping.name,
             columnHeading: mapping.columnHeading,
           })),
         });
@@ -76,10 +77,17 @@ export function usePhase2({ goNext }: IUsePhase2Props) {
   const onFinalizeMapping = (data: { mappings: IMappingFinalize[] }) => {
     finalizeMapping(data.mappings);
   };
-  const onFieldSelect = (value: string) => {
-    const newHeadings = [...headings];
-    const index = newHeadings.findIndex((heading) => heading.value === value);
-    newHeadings[index] = { ...newHeadings[index], disabled: true };
+  const onFieldSelect = () => {
+    const newMappings = getValues('mappings');
+    const finalizedFields = newMappings.reduce((acc: string[], mappingItem) => {
+      if (mappingItem.columnHeading) acc.push(mappingItem.columnHeading);
+
+      return acc;
+    }, []);
+    const newHeadings = [...headings].map((mappingItem) => ({
+      ...mappingItem,
+      disabled: finalizedFields.includes(mappingItem.value),
+    }));
     setHeadings(newHeadings);
   };
 

@@ -17,17 +17,22 @@ export class ColumnResponseDto {
     description: 'Alternative possible keys of the column',
     type: Array<string>,
   })
-  alternateKeys: string[];
+  alternateKeys?: string[];
 
   @ApiPropertyOptional({
     description: 'While true, it Indicates column value should exists in data',
   })
-  isRequired = false;
+  isRequired? = false;
 
   @ApiPropertyOptional({
     description: 'While true, it Indicates column value should be unique in data',
   })
-  isUnique = false;
+  isUnique? = false;
+
+  @ApiPropertyOptional({
+    description: 'While true, it Indicates column value should be frozen in data',
+  })
+  isFrozen? = false;
 
   @ApiProperty({
     description: 'Specifies the type of column',
@@ -38,20 +43,30 @@ export class ColumnResponseDto {
   @ApiPropertyOptional({
     description: 'Regex if type is Regex',
   })
-  regex: string;
+  regex?: string;
 
   @ApiPropertyOptional({
     description: 'Description of Regex',
   })
-  regexDescription: string;
+  regexDescription?: string;
 
   @ApiPropertyOptional({
     description: 'List of possible values for column if type is Select',
   })
-  selectValues: string[];
+  selectValues?: string[];
+
+  @ApiPropertyOptional({
+    description: 'List of possible date formats for column if type is Date',
+  })
+  dateFormats?: string[];
 
   @ApiProperty({
     description: 'Sequence of column',
   })
-  sequence: number;
+  sequence?: number;
+
+  @ApiProperty({
+    description: 'If true, the column can have multiple values',
+  })
+  allowMultiSelect?: boolean;
 }

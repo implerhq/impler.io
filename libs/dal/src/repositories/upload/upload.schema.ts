@@ -25,11 +25,13 @@ const uploadSchema = new Schema(
       type: Schema.Types.String,
       ref: 'File',
     },
-    _invalidCSVDataFileId: {
-      type: Schema.Types.String,
-      ref: 'File',
-    },
     invalidCSVDataFileUrl: {
+      type: Schema.Types.String,
+    },
+    originalFileName: {
+      type: Schema.Types.String,
+    },
+    originalFileType: {
       type: Schema.Types.String,
     },
     uploadedDate: {
@@ -45,6 +47,9 @@ const uploadSchema = new Schema(
     authHeaderValue: String,
     status: String,
     extra: String,
+    customSchema: String,
+    customRecordFormat: String,
+    customChunkFormat: String,
     processInvalidRecords: {
       type: Boolean,
       default: false,

@@ -1,11 +1,7 @@
 name: Publish Packages to NPM Registry
 
 on:
-  push:
-    tags:
-      - '**@impler/react@**'
-      - '**@impler/shared@**'
-  workflow_dispatch:
+  workflow_call:
 
 jobs:
   publish_prod_react:
@@ -13,7 +9,6 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     timeout-minutes: 80
-    environment: Production
     permissions:
       contents: read
       packages: write 
@@ -26,7 +21,7 @@ jobs:
       
       - uses: actions/setup-node@v2
         with:
-          node-version: '18.13.0'
+          node-version: '20.13.1'
 
       - name: Cache pnpm modules
         uses: actions/cache@v2
@@ -37,19 +32,20 @@ jobs:
             ${{ runner.os }}-
       
       - uses: pnpm/action-setup@v2.0.1
+        env:
+          CI: false
         with:
-          version: 7.9.4
+          version: 8.9.0
           run_install: true
 
       - name: Publish @impler/shared package on NPM 📦
         working-directory: libs/shared
         run: |
-          npm config set _authToken=${{ secrets.NPM_TOKEN }}
+          npm config set --workspaces=false --include-workspace-root //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
           npm publish --access public
 
       - name: Publish @impler/react package on NPM 📦
         working-directory: packages/react
         run: |
-          npm config set _authToken=${{ secrets.NPM_TOKEN }}
+          npm config set --workspaces=false --include-workspace-root //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
           npm publish --access public
-

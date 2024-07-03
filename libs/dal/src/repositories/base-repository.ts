@@ -5,7 +5,10 @@ import { Document, FilterQuery, Model, QueryOptions, Types, UpdateQuery } from '
 export class BaseRepository<T> {
   public _model: Model<any & Document>;
 
-  constructor(protected MongooseModel: Model<any & Document>, protected entity: ClassConstructor<T>) {
+  constructor(
+    protected MongooseModel: Model<any & Document>,
+    protected entity: ClassConstructor<T>
+  ) {
     this._model = MongooseModel;
   }
 
@@ -22,10 +25,14 @@ export class BaseRepository<T> {
   }
 
   async findById(id: string, select?: string): Promise<T | null> {
-    const data = await this.MongooseModel.findById(id, select);
-    if (!data) return null;
+    try {
+      const data = await this.MongooseModel.findById(id, select);
+      if (!data) return null;
 
-    return this.mapEntity(data.toObject());
+      return this.mapEntity(data.toObject());
+    } catch (error) {
+      return null;
+    }
   }
 
   async findOne(query: FilterQuery<T & Document>, select?: string) {
@@ -61,6 +68,31 @@ export class BaseRepository<T> {
       .exec();
 
     return this.mapEntities(data);
+  }
+
+  async paginate(
+    query: FilterQuery<T & Document>,
+    select = '',
+    options: { limit?: number; sort?: any; skip?: number } = {}
+  ): Promise<{
+    data: T[];
+    total: number;
+  } | null> {
+    const data = await this.MongooseModel.find(query, select, {
+      sort: options.sort || null,
+    })
+      .skip(options.skip)
+      .limit(options.limit)
+      .lean()
+      .exec();
+
+    const count = await this.count(query);
+    if (!data) return null;
+
+    return {
+      data: data ? this.mapEntities(data) : [],
+      total: count,
+    };
   }
 
   async *findBatch(

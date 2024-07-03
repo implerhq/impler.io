@@ -1,8 +1,7 @@
-import { Stack } from '@mantine/core';
 import { useForm } from 'react-hook-form';
 import { useFocusTrap } from '@mantine/hooks';
+import { Stack, TextInput as Input } from '@mantine/core';
 
-import { Input } from '@ui/input';
 import { Button } from '@ui/button';
 
 interface CreateImportFormProps {
@@ -20,13 +19,7 @@ export function CreateImportForm({ onSubmit }: CreateImportFormProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} ref={focusTrapRef}>
       <Stack spacing="sm">
-        <Input
-          placeholder="Import title"
-          dataAutoFocus
-          required
-          register={register('name')}
-          error={errors.name?.message}
-        />
+        <Input placeholder="Import title" autoFocus required {...register('name')} error={errors.name?.message} />
         <Button type="submit" fullWidth>
           Create & Continue
         </Button>

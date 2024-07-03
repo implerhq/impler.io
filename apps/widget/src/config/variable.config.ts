@@ -16,6 +16,7 @@ export const variables = {
   defaultAlpha: 1,
   shadesMultipler: 2,
   maxColorNumber: 255,
+  closeDelayInMS: 100,
   implerWebsite: 'https://impler.io?utm_source=widget',
 };
 
@@ -28,4 +29,6 @@ export const AMPLITUDE = {
   CONFIRM: 'confirm',
   UPLOAD_AGAIN: 'upload again',
   RESET: 'reset',
+  RECORDS: 'records',
+  RECORDS_DELETED: 'Records deleted',
 };

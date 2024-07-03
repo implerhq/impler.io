@@ -8,3 +8,7 @@ export function addOpacityToHex(color: string, alpha: number) {
 
   return color + alphaHex;
 }
+
+export function capitalizeFirstLetter(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}

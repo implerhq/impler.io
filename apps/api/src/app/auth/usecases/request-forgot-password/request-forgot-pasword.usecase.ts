@@ -12,7 +12,10 @@ export class RequestForgotPassword {
   private MAX_ATTEMPTS_IN_A_DAY = 15;
   private RATE_LIMIT_IN_SECONDS = 60;
   private RATE_LIMIT_IN_HOURS = 24;
-  constructor(private emailService: EmailService, private userRepository: UserRepository) {}
+  constructor(
+    private emailService: EmailService,
+    private userRepository: UserRepository
+  ) {}
 
   async execute(command: RequestForgotPasswordCommand) {
     const user = await this.userRepository.findByEmail(command.email);

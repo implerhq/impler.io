@@ -1,8 +1,21 @@
-FROM node:18.13.0-slim
+FROM node:18.16.1-bullseye-slim
+
+COPY apps/api/src/config/default.cf /usr/local/etc/isolate
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+    locales \
+    locales-all \
+    libcap-dev \
+ && rm -rf /var/lib/apt/lists/*
+
+RUN npm i -g \
+  npm@9.5.1 \
+  pnpm@8.9.0
 
 WORKDIR /usr/src/app
 
-RUN npm install -g pnpm@7.9.4 --loglevel notice
+RUN npm install -g pnpm@8.9.0 --loglevel notice
 RUN npm i pm2 -g
 
 COPY package.json .

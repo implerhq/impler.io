@@ -1,26 +1,109 @@
 version: "3"
 services:
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    logging:
+      driver: "none"
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - mongodb:/data/db
+    ports:
+      - 27017:27017
+    restart: unless-stopped
+    networks:
+      - impler
   api:
+    privileged: true
     build:
       dockerfile: "apps/api/Dockerfile"
       context: ".."
+    container_name: api
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${API_PORT}
+      WIDGET_BASE_URL: ${WIDGET_BASE_URL}
+      WEB_BASE_URL: ${WEB_BASE_URL}
+      MONGO_URL: ${MONGO_URL}
+      S3_REGION: ${S3_REGION}
+      S3_LOCAL_STACK: ${S3_LOCAL_STACK}
+      S3_BUCKET_NAME: ${S3_BUCKET_NAME}
+      JWT_SECRET: ${JWT_SECRET}
+      COOKIE_DOMAIN: ${COOKIE_DOMAIN}
+      RABBITMQ_CONN_URL: ${RABBITMQ_CONN_URL}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      GITHUB_OAUTH_CLIENT_ID: ${GITHUB_OAUTH_CLIENT_ID}
+      GITHUB_OAUTH_CLIENT_SECRET: ${GITHUB_OAUTH_CLIENT_SECRET}
+      GITHUB_OAUTH_REDIRECT: ${GITHUB_OAUTH_REDIRECT}
+      SES_REGION: ${SES_REGION}
+      SES_ACCESS_KEY_ID: ${SES_ACCESS_KEY_ID}
+      SES_SECRET_ACCESS_KEY: ${SES_SECRET_ACCESS_KEY}
+      EMAIL_FROM: ${EMAIL_FROM}
+      EMAIL_FROM_NAME: ${EMAIL_FROM_NAME}
+      EXECUTION_MODE: ${EXECUTION_MODE}
+    ports:
+      - "3000:3000"
+    networks:
+      - impler
   queue-manager:
     build:
       dockerfile: "apps/queue-manager/Dockerfile"
       context: ".."
-  demo:
-    build:
-      dockerfile: "apps/demo/Dockerfile"
-      context: ".."
+    container_name: queue-manager
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      MONGO_URL: ${MONGO_URL}
+      RABBITMQ_CONN_URL: ${RABBITMQ_CONN_URL}
+      S3_REGION: ${S3_REGION}
+      S3_LOCAL_STACK: ${S3_LOCAL_STACK}
+      S3_BUCKET_NAME: ${S3_BUCKET_NAME}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    networks:
+      - impler
   widget:
     build:
       dockerfile: "apps/widget/Dockerfile"
       context: ".."
+    environment:
+      REACT_APP_API_URL: ${API_ROOT_URL}
+      REACT_APP_SENTRY_DSN: ${SENTRY_DSN}
+      REACT_APP_ENVIRONMENT: ${NODE_ENV}
+      REACT_APP_AMPLITUDE_ID: ${AMPLITUDE_ID}
+    ports:
+      - 3500:3500
+    networks:
+      - impler
   embed:
     build:
       dockerfile: "libs/embed/Dockerfile"
       context: ".."
+    container_name: embed
+    environment:
+      WIDGET_URL: ${WIDGET_BASE_URL}
+    ports:
+      - 4701:4701
+    networks:
+      - impler
   web:
     build:
       dockerfile: "apps/web/Dockerfile"
       context: ".."
+    container_name: web
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: ${API_ROOT_URL}
+      NEXT_PUBLIC_EMBED_URL: ${WIDGET_EMBED_PATH}
+      NEXT_PUBLIC_AMPLITUDE_ID: ${WEB_AMPLITUDE_ID}
+      NEXT_PUBLIC_GTM_ID: ${NEXT_PUBLIC_GTM_ID}
+      NEXT_PUBLIC_GOOGLE_ANALYTICS_ID: ${NEXT_PUBLIC_GOOGLE_ANALYTICS_ID}
+    ports:
+      - 4200:4200
+    networks:
+      - impler
+volumes:
+  mongodb: ~
+networks:
+  impler:

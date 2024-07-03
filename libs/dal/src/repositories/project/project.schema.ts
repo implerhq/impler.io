@@ -11,6 +11,10 @@ const projectSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'User',
     },
+    showBranding: {
+      type: Schema.Types.Boolean,
+      default: true,
+    },
   },
   { ...schemaOptions }
 );

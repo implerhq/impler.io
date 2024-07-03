@@ -15,7 +15,11 @@ import { UpdateColumnCommand } from './commands/update-column.command';
 @UseGuards(JwtAuthGuard)
 @ApiSecurity(ACCESS_KEY_NAME)
 export class ColumnController {
-  constructor(private addColumn: AddColumn, private updateColumn: UpdateColumn, private deleteColumn: DeleteColumn) {}
+  constructor(
+    private addColumn: AddColumn,
+    private updateColumn: UpdateColumn,
+    private deleteColumn: DeleteColumn
+  ) {}
 
   @Post(':templateId')
   @ApiOperation({
@@ -28,17 +32,8 @@ export class ColumnController {
   ): Promise<ColumnResponseDto> {
     return this.addColumn.execute(
       AddColumnCommand.create({
-        key: body.key,
-        alternateKeys: body.alternateKeys,
-        isRequired: body.isRequired,
-        isUnique: body.isUnique,
-        name: body.name,
-        regex: body.regex,
-        regexDescription: body.regexDescription,
-        selectValues: body.selectValues,
-        sequence: body.sequence,
+        ...body,
         _templateId,
-        type: body.type,
       }),
       _templateId
     );

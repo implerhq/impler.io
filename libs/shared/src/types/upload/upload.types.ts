@@ -1,3 +1,5 @@
+import { DestinationsEnum } from '../destination/destination.types';
+
 export enum UploadStatusEnum {
   'UPLOADED' = 'Uploaded',
   'MAPPING' = 'Mapping',
@@ -7,18 +9,21 @@ export enum UploadStatusEnum {
   'CONFIRMED' = 'Confirmed',
   'PROCESSING' = 'Processing',
   'COMPLETED' = 'Completed',
+  'TERMINATED' = 'Terminated',
 }
 
 export const SupportedFileMimeTypes = [
   'text/csv', // csv
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // EXCELX
   'application/vnd.ms-excel', // EXCEL
+  'application/vnd.ms-excel.sheet.macroenabled.12', // EXCELM
 ];
 
 export enum FileMimeTypesEnum {
   'CSV' = 'text/csv',
   'EXCEL' = 'application/vnd.ms-excel',
   'EXCELX' = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'EXCELM' = 'application/vnd.ms-excel.sheet.macroenabled.12',
   'JSON' = 'application/json',
 }
 
@@ -30,35 +35,61 @@ export enum FileEncodingsEnum {
 }
 
 export enum QueuesEnum {
-  'PROCESS_FILE' = 'PROCESS_FILE',
+  'SEND_WEBHOOK_DATA' = 'SEND_WEBHOOK_DATA',
+  'SEND_BUBBLE_DATA' = 'SEND_BUBBLE_DATA',
+  'END_IMPORT' = 'END_IMPORT',
 }
 
-export type ProcessFileCachedData = {
+export type SendWebhookCachedData = {
   page: number;
   callbackUrl: string;
   chunkSize: number;
   name: string; // template name
   extra?: string;
-  isInvalidRecords: boolean;
-  processInvalidRecords: boolean;
   authHeaderName: string;
   authHeaderValue: string;
   _templateId: string;
-  validDataFilePath?: string;
-  invalidDataFilePath?: string;
+  allDataFilePath?: string;
   fileName: string;
-  recordFormat: string;
-  chunkFormat: string;
+  recordFormat?: string;
+  chunkFormat?: string;
+  defaultValues: string;
+  multiSelectHeadings?: string[];
 };
 
-export type ProcessFileData = {
-  uploadId: string;
-  cache?: ProcessFileCachedData;
+export type SendBubbleCachedData = {
+  page: number;
+  chunkSize: number;
+  bubbleUrl: string;
+  apiPrivateKey: string;
+  _templateId: string;
+  recordFormat: string;
+  defaultValues: string;
+  allDataFilePath?: string;
 };
-export type PublishToQueueData = ProcessFileData;
+
+export type SendBubbleData = {
+  uploadId: string;
+  cache: SendBubbleCachedData;
+};
+
+export type SendWebhookData = {
+  uploadId: string;
+  cache?: SendWebhookCachedData;
+};
+export type PublishToQueueData = SendWebhookData;
+
+export type EndImportData = {
+  uploadId: string;
+  destination: DestinationsEnum;
+};
 
 export interface IFileInformation {
   headings: string[];
   data: Record<string, unknown>[];
   totalRecords: number;
+}
+
+export interface IImportConfig {
+  showBranding: boolean;
 }

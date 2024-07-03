@@ -11,8 +11,9 @@ import {
   Validate,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ColumnTypesEnum } from '@impler/shared';
+import { ColumnTypesEnum, Defaults } from '@impler/shared';
 import { IsValidRegex } from '@shared/framework/is-valid-regex.validator';
+import { IsNumberOrString } from '@shared/framework/number-or-string.validator';
 
 export class ColumnRequestDto {
   @ApiProperty({
@@ -42,14 +43,21 @@ export class ColumnRequestDto {
   })
   @IsBoolean()
   @IsOptional()
-  isRequired = false;
+  isRequired? = false;
 
   @ApiPropertyOptional({
     description: 'While true, it Indicates column value should be unique in data',
   })
   @IsBoolean()
   @IsOptional()
-  isUnique = false;
+  isUnique? = false;
+
+  @ApiPropertyOptional({
+    description: 'While true, it Indicates column value should be frozen in data',
+  })
+  @IsBoolean()
+  @IsOptional()
+  isFrozen? = false;
 
   @ApiProperty({
     description: 'Specifies the type of column',
@@ -83,10 +91,31 @@ export class ColumnRequestDto {
   @Type(() => Array<string>)
   selectValues: string[] = [];
 
+  @ApiPropertyOptional({
+    description: 'List of date formats for column if type is Date',
+  })
+  @ValidateIf((object) => object.type === ColumnTypesEnum.DATE)
+  @Type(() => Array<string>)
+  dateFormats: string[] = Defaults.DATE_FORMATS;
+
   @ApiProperty({
     description: 'Sequence of column',
   })
   @IsNumber()
   @IsOptional()
   sequence: number;
+
+  @ApiProperty({
+    description: 'Default value for cell',
+  })
+  @IsOptional()
+  @Validate(IsNumberOrString)
+  defaultValue?: string | number;
+
+  @ApiPropertyOptional({
+    description: 'If true, column can have multiple values',
+  })
+  @IsBoolean()
+  @IsOptional()
+  allowMultiSelect?: boolean;
 }

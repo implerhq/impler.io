@@ -1,4 +1,4 @@
-import { MantineThemeOverride } from '@mantine/core';
+import { MantineTheme, MantineThemeOverride } from '@mantine/core';
 
 export const colors = {
   danger: '#F64747',
@@ -10,6 +10,7 @@ export const colors = {
   green: '#00B3B6',
   greenDark: '#008489',
   yellow: '#F7B801',
+  grey: '#B9BEBD',
 
   BGPrimaryDark: '#111111',
   BGPrimaryLight: '#F3F3F3',
@@ -28,6 +29,7 @@ export const colors = {
   StrokeDark: '#52555E',
   StrokeLight: '#CCCCCC',
 
+  StrokeSecondaryLight: '#dee2e6',
   StrokeSecondaryDark: '#707070',
 
   white: '#FFFFFF',
@@ -80,6 +82,31 @@ export const mantineConfig: MantineThemeOverride = {
   headings: {
     sizes: {
       h1: { fontSize: '2rem', lineHeight: 1.2 },
+    },
+  },
+  components: {
+    Input: {
+      styles: (theme: MantineTheme) => ({
+        input: {
+          borderRadius: 0,
+          backgroundColor: theme.colorScheme === 'dark' ? colors.BGPrimaryDark : colors.BGPrimaryLight,
+        },
+      }),
+    },
+    InputWrapper: {
+      styles: () => ({
+        label: {
+          marginBottom: 5,
+        },
+      }),
+    },
+    Checkbox: {
+      styles: (theme: MantineTheme) => ({
+        input: {
+          borderRadius: 0,
+          backgroundColor: theme.colorScheme === 'dark' ? colors.BGPrimaryDark : colors.BGPrimaryLight,
+        },
+      }),
     },
   },
   globalStyles: (theme) => ({

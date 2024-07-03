@@ -1,30 +1,29 @@
-import { ProcessFileCachedData } from '@impler/shared';
-
 export interface ISendDataParameters {
-  data: Record<string, unknown>;
+  data: string | Record<string, unknown>;
   url: string;
   page: number;
   method: 'POST';
   uploadId: string;
   headers?: Record<string, string>;
 }
-export interface IBuildSendDataParameters {
+export interface IBaseSendDataParameters {
   data: any[];
   page: number;
   chunkSize: number;
-  isInvalidRecords: boolean;
+  defaultValues: string;
+  totalRecords: number;
+  recordFormat?: string;
+}
+export interface IBuildSendDataParameters extends IBaseSendDataParameters {
   template: string;
   uploadId: string;
   fileName: string;
   extra?: string;
-  recordFormat: string;
-  chunkFormat: string;
+  defaultValues: string;
+  recordFormat?: string;
+  chunkFormat?: string;
+  multiSelectHeadings?: string[];
 }
-export interface IGetNextDataParameters extends ProcessFileCachedData {
-  validData: any[];
-  invalidData: any[];
-}
-
 export interface ISendDataResponse {
   statusCode: number;
   status: 'FAILED' | 'SUCCEED';
@@ -39,6 +38,5 @@ export interface ISendData {
   page: number;
   pageSize: number;
   extra: string;
-  isInvalidRecords: boolean;
   fileName: string;
 }

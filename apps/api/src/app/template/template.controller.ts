@@ -1,5 +1,6 @@
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, UseGuards } from '@nestjs/common';
+import { Response } from 'express';
 import { ApiOperation, ApiTags, ApiOkResponse, ApiSecurity, ApiBody } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Res, UseGuards } from '@nestjs/common';
 
 import { UploadEntity } from '@impler/dal';
 import { ACCESS_KEY_NAME } from '@impler/shared';
@@ -8,16 +9,14 @@ import { AddColumnCommand } from 'app/column/commands/add-column.command';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
 
-import { TemplateResponseDto } from './dtos/template-response.dto';
-import { CreateTemplateRequestDto } from './dtos/create-template-request.dto';
-import { UpdateTemplateRequestDto } from './dtos/update-template-request.dto';
-
 import {
   GetUploads,
+  DuplicateTemplate,
   GetTemplateColumns,
   CreateTemplate,
   DeleteTemplate,
   UpdateTemplate,
+  SyncCustomization,
   GetTemplateDetails,
   GetUploadsCommand,
   CreateTemplateCommand,
@@ -25,17 +24,31 @@ import {
   UpdateTemplateColumns,
   GetCustomization,
   UpdateCustomization,
-  UpdateCustomizationCommand,
   GetValidations,
+  DownloadSample,
+  GetDestination,
   UpdateValidations,
+  UpdateDestination,
+  MapBubbleIoColumns,
+  UpdateDestinationCommand,
+  DuplicateTemplateCommand,
   UpdateValidationsCommand,
 } from './usecases';
-import { ColumnResponseDto } from 'app/column/dtos/column-response.dto';
+
+import { TemplateResponseDto } from './dtos/template-response.dto';
 import { ColumnRequestDto } from 'app/column/dtos/column-request.dto';
-import { CustomizationResponseDto } from './dtos/customization-response.dto';
-import { UpdateCustomizationRequestDto } from './dtos/update-customization-request.dto';
+import { DownloadSampleDto } from './dtos/download-sample-request.dto';
+import { ColumnResponseDto } from 'app/column/dtos/column-response.dto';
 import { ValidationsResponseDto } from './dtos/validations-response.dto';
+import { DestinationResponseDto } from './dtos/destination-response.dto';
+import { UpdateDestinationDto } from './dtos/update-destination-request.dto';
+import { CustomizationResponseDto } from './dtos/customization-response.dto';
+import { CreateTemplateRequestDto } from './dtos/create-template-request.dto';
+import { UpdateTemplateRequestDto } from './dtos/update-template-request.dto';
+import { DuplicateTemplateRequestDto } from './dtos/duplicate-template-request.dto';
+import { UpdateValidationResponseDto } from './dtos/update-validation-response.dto';
 import { UpdateValidationsRequestDto } from './dtos/update-validations-request.dto';
+import { UpdateCustomizationRequestDto } from './dtos/update-customization-request.dto';
 
 @Controller('/template')
 @ApiTags('Template')
@@ -43,16 +56,22 @@ import { UpdateValidationsRequestDto } from './dtos/update-validations-request.d
 @UseGuards(JwtAuthGuard)
 export class TemplateController {
   constructor(
-    private getTemplateColumns: GetTemplateColumns,
     private getUploads: GetUploads,
     private getValidations: GetValidations,
+    private downloadSample: DownloadSample,
+    private getDestination: GetDestination,
     private getCustomization: GetCustomization,
+    private updateDestination: UpdateDestination,
     private updateValidations: UpdateValidations,
-    private updateCustomization: UpdateCustomization,
+    private syncCustomization: SyncCustomization,
+    private duplicateTemplate: DuplicateTemplate,
     private createTemplateUsecase: CreateTemplate,
     private updateTemplateUsecase: UpdateTemplate,
     private deleteTemplateUsecase: DeleteTemplate,
+    private getTemplateColumns: GetTemplateColumns,
     private getTemplateDetails: GetTemplateDetails,
+    private mapBubbleIoColumns: MapBubbleIoColumns,
+    private updateCustomization: UpdateCustomization,
     private updateTemplateColumns: UpdateTemplateColumns
   ) {}
 
@@ -69,18 +88,34 @@ export class TemplateController {
     return this.getTemplateDetails.execute(templateId);
   }
 
+  @Post(':templateId/sample')
+  @ApiOperation({
+    summary: 'Get Template Sample',
+  })
+  async downloadSampleRoute(
+    @Param('templateId', ValidateMongoId) templateId: string,
+    @Body() data: DownloadSampleDto,
+    @Res() res: Response
+  ) {
+    const { ext, file, type } = await this.downloadSample.execute(templateId, data);
+    res.header(`Content-disposition', 'attachment; filename=sample.${ext}`);
+    res.type(type);
+
+    return res.send(file);
+  }
+
   @Get(':templateId/columns')
   @ApiOperation({
     summary: 'Get template columns',
   })
   @ApiOkResponse({
-    type: [TemplateResponseDto],
+    type: [ColumnResponseDto],
   })
   async getColumns(@Param('templateId') _templateId: string): Promise<ColumnResponseDto[]> {
     return this.getTemplateColumns.execute(_templateId);
   }
 
-  @Post('')
+  @Post()
   @ApiOperation({
     summary: 'Create new template',
   })
@@ -98,6 +133,20 @@ export class TemplateController {
     );
   }
 
+  @Post(':templateId/duplicate')
+  @ApiOperation({
+    summary: 'Duplicate template',
+  })
+  @ApiOkResponse({
+    type: TemplateResponseDto,
+  })
+  async duplicateTemplateRoute(
+    @Param('templateId', ValidateMongoId) templateId: string,
+    @Body() body: DuplicateTemplateRequestDto
+  ): Promise<TemplateResponseDto> {
+    return this.duplicateTemplate.execute(templateId, DuplicateTemplateCommand.create(body));
+  }
+
   @Put(':templateId')
   @ApiOperation({
     summary: 'Update template',
@@ -111,11 +160,7 @@ export class TemplateController {
   ): Promise<TemplateResponseDto> {
     const document = await this.updateTemplateUsecase.execute(
       UpdateTemplateCommand.create({
-        _projectId: body._projectId,
-        callbackUrl: body.callbackUrl,
-        chunkSize: body.chunkSize,
         name: body.name,
-        authHeaderName: body.authHeaderName,
       }),
       templateId
     );
@@ -142,17 +187,58 @@ export class TemplateController {
           alternateKeys: columnData.alternateKeys,
           isRequired: columnData.isRequired,
           isUnique: columnData.isUnique,
+          isFrozen: columnData.isFrozen,
           name: columnData.name,
           regex: columnData.regex,
           regexDescription: columnData.regexDescription,
           selectValues: columnData.selectValues,
+          dateFormats: columnData.dateFormats,
           sequence: columnData.sequence,
           _templateId,
           type: columnData.type,
+          allowMultiSelect: columnData.allowMultiSelect,
         })
       ),
       _templateId
     );
+  }
+
+  @Put(':templateId/map-bubble-io-columns')
+  @ApiOperation({
+    summary: 'Update columns for Template from BubbleIo',
+  })
+  async mapBubbleIoColumnsRoute(
+    @Param('templateId', ValidateMongoId) templateId: string,
+    @Body() body: UpdateDestinationDto
+  ): Promise<DestinationResponseDto> {
+    return this.mapBubbleIoColumns.execute(templateId, UpdateDestinationCommand.create(body));
+  }
+
+  @Get(':templateId/destination')
+  @ApiOperation({
+    summary: 'Get template destination',
+  })
+  @ApiOkResponse({
+    type: DestinationResponseDto,
+  })
+  async getTemplateDestinationRoute(
+    @Param('templateId', ValidateMongoId) templateId: string
+  ): Promise<DestinationResponseDto> {
+    return this.getDestination.execute(templateId);
+  }
+
+  @Put(':templateId/destination')
+  @ApiOperation({
+    summary: 'Update template destination',
+  })
+  @ApiOkResponse({
+    type: DestinationResponseDto,
+  })
+  async updateTemplateDestinationRoute(
+    @Param('templateId', ValidateMongoId) templateId: string,
+    @Body() body: UpdateDestinationDto
+  ): Promise<DestinationResponseDto> {
+    return this.updateDestination.execute(templateId, UpdateDestinationCommand.create(body));
   }
 
   @Delete(':templateId')
@@ -183,6 +269,7 @@ export class TemplateController {
     );
   }
 
+  // Customization
   @Get(':templateId/customizations')
   @ApiOperation({
     summary: 'Get template customizations',
@@ -204,10 +291,24 @@ export class TemplateController {
   async updateCustomizationRequest(
     @Param('templateId', ValidateMongoId) templateId: string,
     @Body() body: UpdateCustomizationRequestDto
-  ): Promise<CustomizationResponseDto> {
-    return this.updateCustomization.execute(templateId, UpdateCustomizationCommand.create(body));
+  ) {
+    return this.updateCustomization.execute(templateId, body);
   }
 
+  @Put(':templateId/customizations/sync')
+  @ApiOperation({
+    summary: 'Sync template customizations',
+  })
+  @ApiOkResponse({
+    type: CustomizationResponseDto,
+  })
+  async syncCustomizationRoute(
+    @Param('templateId', ValidateMongoId) templateId: string
+  ): Promise<CustomizationResponseDto> {
+    return this.syncCustomization.execute(templateId);
+  }
+
+  // Validations
   @Get(':templateId/validations')
   @ApiOperation({
     summary: 'Get template validations',
@@ -224,12 +325,12 @@ export class TemplateController {
     summary: 'Update template validations',
   })
   @ApiOkResponse({
-    type: ValidationsResponseDto,
+    type: UpdateValidationResponseDto,
   })
   async updateValidationsRoute(
     @Param('templateId', ValidateMongoId) templateId: string,
     @Body() body: UpdateValidationsRequestDto
-  ): Promise<ValidationsResponseDto> {
+  ): Promise<UpdateValidationResponseDto> {
     return this.updateValidations.execute(templateId, UpdateValidationsCommand.create(body));
   }
 }

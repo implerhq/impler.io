@@ -1,6 +1,7 @@
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
-import { IJwtPayload } from '@impler/shared';
+import { IJwtPayload, PaymentAPIService } from '@impler/shared';
+import { CONSTANTS } from '@shared/constants';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserEntity, UserRepository, EnvironmentRepository } from '@impler/dal';
 import { UserNotFoundException } from '@shared/exceptions/user-not-found.exception';
@@ -14,7 +15,8 @@ export class AuthService {
     private jwtService: JwtService,
     private leadService: LeadService,
     private userRepository: UserRepository,
-    private environmentRepository: EnvironmentRepository
+    private environmentRepository: EnvironmentRepository,
+    private paymentAPIService: PaymentAPIService
   ) {}
 
   async authenticate({ profile, provider }: IAuthenticationData): Promise<IStrategyResponse> {
@@ -36,8 +38,16 @@ export class AuthService {
         'First Name': user.firstName,
         'Last Name': user.lastName,
         'Lead Email': user.email,
+        'Lead Source': 'Github Signup',
       });
       userCreated = true;
+
+      const userData = {
+        name: user.firstName + ' ' + user.lastName,
+        email: user.email,
+        externalId: user.email,
+      };
+      this.paymentAPIService.createUser(userData);
     }
     if (!user) {
       throw new UserNotFoundException();
@@ -140,7 +150,8 @@ export class AuthService {
           accessToken: user.accessToken,
         },
         {
-          expiresIn: '30 days',
+          secret: process.env.JWT_SECRET,
+          expiresIn: CONSTANTS.maxAge,
           issuer: 'impler',
         }
       )
@@ -168,13 +179,13 @@ export class AuthService {
 
   async apiKeyAuthenticate(apiKey: string) {
     const environment = await this.environmentRepository.findByApiKey(apiKey);
-    if (!environment) throw new UnauthorizedException('API Key not found');
+    if (!environment) throw new UnauthorizedException('API Key not found!');
 
     const key = environment.apiKeys.find((i) => i.key === apiKey);
-    if (!key) throw new UnauthorizedException('API Key not found');
+    if (!key) throw new UnauthorizedException('API Key not found!');
 
     const user = await this.getUser({ _id: key._userId });
-    if (!user) throw new UnauthorizedException('User not found');
+    if (!user) throw new UnauthorizedException('User not found!');
 
     return this.getSignedToken(
       {

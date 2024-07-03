@@ -14,4 +14,4 @@ currently being supported with security updates.
 
 We are happy to receive your suggestion regarding security.
 
-You can create issue [here](https://github.com/knovator/impler.io/issues/new) or start new discussion from [here](https://github.com/knovator/impler.io/discussions/new).
+You can create an issue [here](https://github.com/implerhq/impler.io/issues/new) or start a new discussion from [here](https://github.com/implerhq/impler.io/discussions/new).

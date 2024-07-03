@@ -1,10 +1,10 @@
-import { Group, Title, useMantineTheme } from '@mantine/core';
+import { Group, MediaQuery, Title, useMantineTheme } from '@mantine/core';
 import { Stepper } from '@ui/Stepper';
 import { TEXTS, variables } from '@config';
-import { PhasesEum } from '@types';
+import { PhasesEnum } from '@types';
 
 interface IHeadingProps {
-  active: PhasesEum;
+  active: PhasesEnum;
   title?: string;
 }
 
@@ -27,9 +27,15 @@ export function Heading({ active, title }: IHeadingProps) {
   const theme = useMantineTheme();
 
   return (
-    <Group style={{ justifyContent: 'space-between' }} mb="lg">
-      <Title order={3}>{title}</Title>
-      <Stepper active={active} steps={Steps} primaryColor={theme.colors.primary[variables.colorIndex]} />
-    </Group>
+    <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
+      {active ? (
+        <Group style={{ justifyContent: 'space-between' }} mb="lg">
+          <Title order={3}>{title}</Title>
+          <Stepper active={active - 1} steps={Steps} primaryColor={theme.colors.primary[variables.colorIndex]} />
+        </Group>
+      ) : (
+        <></>
+      )}
+    </MediaQuery>
   );
 }

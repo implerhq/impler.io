@@ -1,38 +1,42 @@
-import jwt from 'jwt-decode';
-import { useLocalStorage } from '@mantine/hooks';
 import { useMutation } from '@tanstack/react-query';
 
+import { API_KEYS } from '@config';
 import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
 import { track } from '@libs/amplitude';
-import { API_KEYS, CONSTANTS } from '@config';
 import { IErrorObject } from '@impler/shared';
+import { useAppState } from 'store/app.context';
 
 interface RegenerateData {
-  token: string;
+  accessToken: string;
 }
 
 export function useSettings() {
-  const [profile, setProfile] = useLocalStorage<IProfileData>({ key: CONSTANTS.PROFILE_STORAGE_NAME });
+  const { profileInfo, setProfileInfo } = useAppState();
   const { mutate: regenerateAccessToken, isLoading: isAccessTokenRegenerating } = useMutation<
     RegenerateData,
     IErrorObject,
     void,
-    unknown
-  >([API_KEYS.REGENERATE], () => commonApi<RegenerateData>('REGENERATE', {}), {
+    (string | undefined)[]
+  >([API_KEYS.REGENERATE, profileInfo?._projectId], () => commonApi<RegenerateData>('REGENERATE', {}), {
     onSuccess: (data) => {
-      setProfile(jwt(data.token));
       track({
         name: 'REGENERATE TOKEN',
         properties: {},
       });
       notify('REGENERATED');
+      if (profileInfo) {
+        setProfileInfo({
+          ...profileInfo,
+          accessToken: data.accessToken,
+        });
+      }
     },
   });
 
   return {
     regenerateAccessToken,
     isAccessTokenRegenerating,
-    accessToken: profile?.accessToken,
+    accessToken: profileInfo?.accessToken,
   };
 }

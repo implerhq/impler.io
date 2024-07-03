@@ -4,11 +4,12 @@ export interface IHistoryRecord {
   status: string;
   uploadedDate: string;
   validRecords: number;
+  originalFileName: string;
   name: string;
 }
 
-export interface IHistoryData {
-  data: IHistoryRecord[];
+export interface IPaginationData<T = any> {
+  data: T[];
   limit: number;
   page: number;
   totalPages: number;

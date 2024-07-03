@@ -1,7 +1,8 @@
-import { IsArray, IsBoolean, IsDefined, IsMongoId, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsDefined, IsMongoId, IsNumber, IsOptional, IsString, Validate } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ColumnTypesEnum } from '@impler/shared';
 import { BaseCommand } from '@shared/commands/base.command';
+import { IsNumberOrString } from '@shared/framework/number-or-string.validator';
 
 export class AddColumnCommand extends BaseCommand {
   @IsString()
@@ -15,37 +16,54 @@ export class AddColumnCommand extends BaseCommand {
   @IsArray()
   @IsOptional()
   @Type(() => Array<string>)
-  alternateKeys: string[];
+  alternateKeys? = [];
 
   @IsBoolean()
   @IsOptional()
-  isRequired = false;
+  isRequired? = false;
 
   @IsBoolean()
   @IsOptional()
-  isUnique = false;
+  isUnique? = false;
+
+  @IsBoolean()
+  @IsOptional()
+  isFrozen? = false;
 
   @IsDefined()
   type: ColumnTypesEnum;
 
   @IsString()
   @IsOptional()
-  regex: string;
+  regex?: string;
 
   @IsString()
   @IsOptional()
-  regexDescription: string;
+  regexDescription?: string;
 
   @IsArray()
   @IsOptional()
   @Type(() => Array<string>)
-  selectValues: string[];
+  selectValues?: string[];
+
+  @IsArray()
+  @IsOptional()
+  @Type(() => Array<string>)
+  dateFormats?: string[];
 
   @IsNumber()
   @IsOptional()
-  sequence: number;
+  sequence?: number;
 
   @IsDefined()
   @IsMongoId()
   _templateId: string;
+
+  @IsOptional()
+  @Validate(IsNumberOrString)
+  defaultValue?: string | number;
+
+  @IsBoolean()
+  @IsOptional()
+  allowMultiSelect?: boolean;
 }

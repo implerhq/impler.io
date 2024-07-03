@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { modals } from '@mantine/modals';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -7,6 +8,7 @@ import { track } from '@libs/amplitude';
 import { IColumn, IErrorObject } from '@impler/shared';
 import { API_KEYS, MODAL_KEYS, MODAL_TITLES } from '@config';
 
+import { useUpdateBulkColumns } from './useUpdateBulkColumns';
 import { ConfirmDelete } from '@components/imports/forms/ConfirmDelete';
 import { UpdateColumnForm } from '@components/imports/forms/UpdateColumnForm';
 
@@ -16,7 +18,8 @@ interface UseSchemaProps {
 
 export function useSchema({ templateId }: UseSchemaProps) {
   const queryClient = useQueryClient();
-  const { register, control, reset, setFocus, handleSubmit } = useForm<IColumn>({
+  const [showAddRow, setShowAddRow] = useState(false);
+  const { register, control, watch, reset, setFocus, handleSubmit, formState } = useForm<IColumn>({
     defaultValues: {
       type: 'String',
     },
@@ -35,7 +38,7 @@ export function useSchema({ templateId }: UseSchemaProps) {
     (data) => commonApi(API_KEYS.COLUMN_CREATE as any, { parameters: [templateId], body: data }),
     {
       onSuccess: (data) => {
-        queryClient.invalidateQueries([API_KEYS.TEMPLATE_COLUMNS_LIST, templateId]);
+        queryClient.refetchQueries([API_KEYS.TEMPLATE_COLUMNS_LIST, templateId]);
         track({
           name: 'COLUMN CREATE',
           properties: {
@@ -64,6 +67,7 @@ export function useSchema({ templateId }: UseSchemaProps) {
       },
     }
   );
+  const { updateColumns } = useUpdateBulkColumns({ templateId });
 
   function onEditColumnClick(columnId: string) {
     const columnData = columns?.find((item) => item._id === columnId);
@@ -85,7 +89,14 @@ export function useSchema({ templateId }: UseSchemaProps) {
     modals.close(MODAL_KEYS.COLUMN_DELETE);
     onDelete(columnId);
   }
-
+  function onMoveColumns(itemIndex: number, dropIndex: number) {
+    if (columns) {
+      const newColumns = [...columns];
+      const moveItem = newColumns.splice(itemIndex, 1)[0];
+      newColumns.splice(dropIndex, 0, moveItem);
+      updateColumns(newColumns);
+    }
+  }
   function onDeleteColumnClick(columnId: string) {
     modals.open({
       modalId: MODAL_KEYS.COLUMN_DELETE,
@@ -97,10 +108,19 @@ export function useSchema({ templateId }: UseSchemaProps) {
     createColumn(data);
   }
 
+  useEffect(() => {
+    if (showAddRow) setFocus('name');
+  }, [setFocus, showAddRow]);
+
   return {
+    watch,
     control,
     columns,
     register,
+    formState,
+    showAddRow,
+    onMoveColumns,
+    setShowAddRow,
     onEditColumnClick,
     onDeleteColumnClick,
     isColumnCreateLoading,

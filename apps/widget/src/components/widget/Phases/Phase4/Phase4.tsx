@@ -3,7 +3,7 @@ import { TEXTS } from '@config';
 import { CheckIcon } from '@icons';
 import { Footer } from 'components/Common/Footer';
 import useStyles from './Styles';
-import { PhasesEum } from '@types';
+import { PhasesEnum } from '@types';
 import { numberFormatter, replaceVariablesInString } from '@impler/shared';
 import { useAppState } from '@store/app.context';
 
@@ -22,15 +22,15 @@ export function Phase4(props: IPhase4Props) {
     <>
       <Group className={classes.wrapper}>
         <CheckIcon className={classes.check} />
-        <Title color={primaryColor} order={2} mt="md">
-          {replaceVariablesInString(TEXTS.COMPLETE.title, { count: numberFormatter(rowsCount) })}
+        <Title className={classes.title} color={primaryColor} order={2} mt="md">
+          {replaceVariablesInString(TEXTS.COMPLETE.TITLE, { count: numberFormatter(rowsCount) })}
         </Title>
-        <Text size="xl" color="dimmed">
-          {replaceVariablesInString(TEXTS.COMPLETE.subTitle, { count: numberFormatter(rowsCount) })}
+        <Text className={classes.subTitle} color="dimmed">
+          {replaceVariablesInString(TEXTS.COMPLETE.SUB_TITLE, { count: numberFormatter(rowsCount) })}
         </Text>
       </Group>
 
-      <Footer active={PhasesEum.COMPLETE} onNextClick={onUploadAgainClick} onPrevClick={onCloseClick} />
+      <Footer active={PhasesEnum.COMPLETE} onNextClick={onUploadAgainClick} onPrevClick={onCloseClick} />
     </>
   );
 }

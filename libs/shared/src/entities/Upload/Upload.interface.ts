@@ -5,8 +5,9 @@ export interface IUpload {
   _allDataFileId: string;
   _validDataFileId: string;
   _invalidDataFileId: string;
-  _invalidCSVDataFileId: string;
   invalidCSVDataFileUrl: string;
+  originalFileName: string;
+  originalFileType: string;
   headings: string[];
   uploadedDate: Date;
   totalRecords: number;
@@ -17,4 +18,6 @@ export interface IUpload {
   extra: string;
   __v: number;
   processInvalidRecords: boolean;
+  customRecordFormat: string;
+  customChunkFormat: string;
 }

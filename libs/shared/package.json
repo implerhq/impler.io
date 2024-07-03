@@ -1,6 +1,6 @@
 {
   "name": "@impler/shared",
-  "version": "0.7.1",
+  "version": "0.20.1",
   "description": "Reusable types and classes to shared between apps and libraries",
   "license": "MIT",
   "author": "implerhq",
@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "@types/node": "^18.7.18",
+    "@types/uuid": "^9.0.2",
     "rimraf": "^3.0.2",
     "typescript": "^4.8.3"
   },
@@ -31,7 +32,8 @@
     "@aws-sdk/client-s3": "^3.185.0",
     "@aws-sdk/lib-storage": "^3.360.0",
     "@aws-sdk/s3-request-presigner": "^3.276.0",
-    "axios": "^0.26.1"
+    "axios": "1.6.2",
+    "uuid": "^9.0.0"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": ["prettier --ignore-path .eslintignore --write"],

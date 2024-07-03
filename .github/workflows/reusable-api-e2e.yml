@@ -21,13 +21,15 @@ jobs:
     
     - uses: actions/setup-node@v2
       with:
-        node-version: '18.13.0'
+        node-version: '20.13.1'
 
     - uses: pnpm/action-setup@v2
       name: Install pnpm
       id: pnpm-install
+      env:
+        CI: false
       with:
-        version: 7.9.4
+        version: 8.9.0
         run_install: false
 
     - name: Get pnpm store directory
@@ -46,6 +48,8 @@ jobs:
 
     - name: Install dependencies
       run: pnpm install
+      env:
+        CI: false
 
     # Runs a set of commands using the runners shell
     - name: Run a test

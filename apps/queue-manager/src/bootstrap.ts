@@ -1,14 +1,24 @@
 import './config/env-config';
+import * as Sentry from '@sentry/node';
+import { validateEnv } from './config/env-validator';
 import amqp, { ChannelWrapper } from 'amqp-connection-manager';
-import { ProcessFileConsumer } from './consumers';
+import { IAmqpConnectionManager } from 'amqp-connection-manager/dist/esm/AmqpConnectionManager';
+
 import { QueuesEnum } from '@impler/shared';
 import { DalService } from '@impler/dal';
-import { IAmqpConnectionManager } from 'amqp-connection-manager/dist/esm/AmqpConnectionManager';
-import { validateEnv } from './config/env-validator';
+import { SendWebhookDataConsumer, EndImportConsumer, SendBubbleDataConsumer } from './consumers';
 
 let connection: IAmqpConnectionManager, chanelWrapper: ChannelWrapper;
 
 validateEnv();
+
+if (process.env.SENTRY_DSN) {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    integrations: [new Sentry.Integrations.Console({ tracing: true })],
+    tracesSampleRate: 1.0,
+  });
+}
 
 export async function bootstrap() {
   // conenct dal service
@@ -26,15 +36,29 @@ export async function bootstrap() {
   });
 
   // initialize consumers
-  const processFileConsumer = new ProcessFileConsumer();
+  const endImportConsumer = new EndImportConsumer();
+  const sendBubbleDataConsumer = new SendBubbleDataConsumer();
+  const sendWebhookdataConsumer = new SendWebhookDataConsumer();
 
   // add queues to channel
   chanelWrapper.addSetup((channel) => {
     return Promise.all([
-      channel.assertQueue(QueuesEnum.PROCESS_FILE, {
+      channel.assertQueue(QueuesEnum.END_IMPORT, {
         durable: false,
       }),
-      channel.consume(QueuesEnum.PROCESS_FILE, processFileConsumer.message.bind(processFileConsumer), { noAck: true }),
+      channel.consume(QueuesEnum.END_IMPORT, endImportConsumer.message.bind(endImportConsumer), { noAck: true }),
+      channel.assertQueue(QueuesEnum.SEND_WEBHOOK_DATA, {
+        durable: false,
+      }),
+      channel.consume(QueuesEnum.SEND_WEBHOOK_DATA, sendWebhookdataConsumer.message.bind(sendWebhookdataConsumer), {
+        noAck: true,
+      }),
+      channel.assertQueue(QueuesEnum.SEND_BUBBLE_DATA, {
+        durable: false,
+      }),
+      channel.consume(QueuesEnum.SEND_BUBBLE_DATA, sendBubbleDataConsumer.message.bind(sendBubbleDataConsumer), {
+        noAck: true,
+      }),
     ]);
   });
 }

@@ -12,7 +12,10 @@ import { isDateString } from '@shared/helpers/common.helper';
 @UseGuards(JwtAuthGuard)
 @ApiSecurity(ACCESS_KEY_NAME)
 export class ActivityController {
-  constructor(private uploadSummary: UploadSummary, private uploadHistory: UploadHistory) {}
+  constructor(
+    private uploadSummary: UploadSummary,
+    private uploadHistory: UploadHistory
+  ) {}
 
   @Get(':projectId/summary')
   @ApiOperation({
@@ -41,6 +44,12 @@ export class ActivityController {
       date = undefined;
     }
 
-    return this.uploadHistory.execute(_projectId, name, date, page, limit);
+    return this.uploadHistory.execute({
+      _projectId,
+      name,
+      date,
+      page,
+      limit,
+    });
   }
 }

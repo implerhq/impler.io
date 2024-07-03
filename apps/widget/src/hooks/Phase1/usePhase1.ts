@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useImplerState } from '@store/impler.context';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { useAPIState } from '@store/api.context';
-import { IErrorObject, IOption, ITemplate, IUpload } from '@impler/shared';
-import { useAppState } from '@store/app.context';
-import { downloadFileFromURL, getFileNameFromUrl, notifier, ParentWindow } from '@util';
-import { IFormvalues, IUploadValues } from '@types';
-import { variables } from '@config';
 import { logAmplitudeEvent } from '@amplitude';
+import { useMutation, useQuery } from '@tanstack/react-query';
+
+import { variables } from '@config';
+import { useAPIState } from '@store/api.context';
+import { useAppState } from '@store/app.context';
+import { IFormvalues, IUploadValues } from '@types';
+import { useImplerState } from '@store/impler.context';
+import { ColumnTypesEnum, IErrorObject, IOption, ISchemaItem, ITemplate, IUpload } from '@impler/shared';
+import { FileMimeTypesEnum, IImportConfig, downloadFile } from '@impler/shared';
+import { downloadFileFromURL, getFileNameFromUrl, notifier, ParentWindow } from '@util';
 
 interface IUsePhase1Props {
   goNext: () => void;
@@ -16,33 +18,46 @@ interface IUsePhase1Props {
 
 export function usePhase1({ goNext }: IUsePhase1Props) {
   const { api } = useAPIState();
-  const { setUploadInfo, setTemplateInfo } = useAppState();
   const [templates, setTemplates] = useState<IOption[]>([]);
-  const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
+  const [excelSheetNames, setExcelSheetNames] = useState<string[]>([]);
   const { projectId, templateId, authHeaderValue, extra } = useImplerState();
-  const {
-    data: dataTemplates,
-    isFetched,
-    isLoading,
-  } = useQuery<ITemplate[], IErrorObject, ITemplate[], string[]>(['templates'], () => api.getTemplates(projectId), {
-    onSuccess(templatesResponse) {
-      setTemplates(
-        templatesResponse.map((item) => ({
-          label: item.name,
-          value: item._id,
-        }))
-      );
-      if (templateId) {
-        const foundTemplate = templatesResponse.find((templateItem) => templateItem._id === templateId);
-        if (foundTemplate) {
-          setTemplateInfo(foundTemplate);
-        }
-      }
+  const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
+  const { setUploadInfo, setTemplateInfo, setImportConfig, output, schema, data } = useAppState();
+
+  const { isFetched: isImportConfigLoaded, isLoading: isImportConfigLoading } = useQuery<
+    IImportConfig,
+    IErrorObject,
+    IImportConfig
+  >(['importConfig'], () => api.getImportConfig(projectId), {
+    onSuccess(importConfigResponse) {
+      setImportConfig(importConfigResponse);
     },
     onError(error: IErrorObject) {
       notifier.showError({ message: error.message, title: error.error });
     },
   });
+  const {
+    data: dataTemplates,
+    isFetched,
+    isLoading,
+  } = useQuery<ITemplate[], IErrorObject, ITemplate[], string[]>(
+    ['templates', projectId],
+    () => api.getTemplates(projectId),
+    {
+      onSuccess(templatesResponse) {
+        setTemplates(
+          templatesResponse.map((item) => ({
+            label: item.name,
+            value: item._id,
+          }))
+        );
+      },
+      onError(error: IErrorObject) {
+        notifier.showError({ message: error.message, title: error.error });
+      },
+      refetchOnMount: 'always',
+    }
+  );
   const { isLoading: isUploadLoading, mutate: submitUpload } = useMutation<IUpload, IErrorObject, IUploadValues>(
     ['upload'],
     (values: any) => api.uploadFile(values),
@@ -69,19 +84,56 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
       },
     }
   );
+  const { mutate: downloadSample } = useMutation<ArrayBuffer, IErrorObject, [string, string, boolean]>(
+    ['downloadSample'],
+    ([providedTemplateId]) => api.downloadSample(providedTemplateId, data, schema),
+    {
+      onSuccess(excelFileData, queryVariables) {
+        const isMultiSelect = queryVariables[variables.secondIndex];
+        downloadFile(
+          new Blob([excelFileData], {
+            type: isMultiSelect ? FileMimeTypesEnum.EXCELM : FileMimeTypesEnum.EXCELX,
+          }),
+          queryVariables[variables.firstIndex] + ` (sample).${isMultiSelect ? 'xlsm' : 'xlsx'}`
+        );
+      },
+    }
+  );
+  const { mutate: getExcelSheetNames } = useMutation<string[], IErrorObject, { file: File }>(
+    ['getExcelSheetNames'],
+    (file) => api.getExcelSheetNames(file),
+    {
+      onSuccess(sheetNames) {
+        if (sheetNames.length <= 1) {
+          setValue('selectedSheetName', sheetNames[0]);
+          handleSubmit(uploadFile)();
+        } else setExcelSheetNames(sheetNames);
+      },
+      onError(error: IErrorObject) {
+        notifier.showError({ title: error.error, message: error.message });
+      },
+    }
+  );
   const {
     control,
     register,
     trigger,
-    getValues,
     setValue,
+    setError,
+    getValues,
     handleSubmit,
     formState: { errors },
   } = useForm<IFormvalues>();
 
   useEffect(() => {
-    if (templateId) setValue('templateId', templateId);
-  }, [templateId]);
+    if (templateId) {
+      setValue('templateId', templateId);
+      const foundTemplate = dataTemplates?.find((templateItem) => templateItem._id === templateId);
+      if (foundTemplate) {
+        setTemplateInfo(foundTemplate);
+      }
+    }
+  }, [templateId, dataTemplates]);
 
   const findTemplate = (): ITemplate | undefined => {
     let foundTemplate: ITemplate | undefined;
@@ -113,13 +165,25 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     }
 
     const foundTemplate = findTemplate();
-    if (foundTemplate && foundTemplate.sampleFileUrl) {
-      getSignedUrl([foundTemplate.sampleFileUrl, foundTemplate.name + ' (sample).xlsx']);
+    let parsedSchema: ISchemaItem[] | undefined = undefined;
+    try {
+      if (schema) parsedSchema = JSON.parse(schema);
+    } catch (error) {}
+
+    if (foundTemplate && ((Array.isArray(data) && data.length > variables.baseIndex) || schema)) {
+      const isMultiSelect = Array.isArray(parsedSchema)
+        ? parsedSchema.some((schemaItem) => schemaItem.type === ColumnTypesEnum.SELECT && schemaItem.allowMultiSelect)
+        : foundTemplate.sampleFileUrl?.endsWith('xlsm');
+      downloadSample([foundTemplate._id, foundTemplate.name, !!isMultiSelect]);
+    } else if (foundTemplate && foundTemplate.sampleFileUrl) {
+      getSignedUrl([
+        foundTemplate.sampleFileUrl,
+        foundTemplate.name + ` (sample).${foundTemplate.sampleFileUrl.substr(-4, 4)}`,
+      ]);
     }
     setIsDownloadInProgress(false);
   };
-
-  const onSubmit = (submitData: IFormvalues) => {
+  const uploadFile = async (submitData: IFormvalues) => {
     const foundTemplate = findTemplate();
     if (foundTemplate) {
       submitData.templateId = foundTemplate._id;
@@ -128,21 +192,39 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
         ...submitData,
         authHeaderValue,
         extra,
+        schema,
+        output,
       });
     }
+  };
+  const onSubmit = async () => {
+    await trigger();
+    const file = getValues('file');
+    if (file && [FileMimeTypesEnum.EXCEL, FileMimeTypesEnum.EXCELX].includes(file.type as FileMimeTypesEnum)) {
+      getExcelSheetNames({ file: file });
+    } else {
+      handleSubmit(uploadFile)();
+    }
+  };
+  const onSelectSheetModalReset = () => {
+    setExcelSheetNames([]);
   };
 
   return {
     control,
     errors,
+    setError,
     register,
+    onSubmit,
     templates,
     onDownload,
+    excelSheetNames,
     isUploadLoading,
     onTemplateChange,
     isDownloadInProgress,
-    isInitialDataLoaded: isFetched && !isLoading,
+    onSelectSheetModalReset,
     showSelectTemplate: !templateId,
-    onSubmit: handleSubmit(onSubmit),
+    onSelectExcelSheet: handleSubmit(uploadFile),
+    isInitialDataLoaded: isFetched && !isLoading && isImportConfigLoaded && !isImportConfigLoading,
   };
 }

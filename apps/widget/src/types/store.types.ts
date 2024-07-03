@@ -1,12 +1,15 @@
 import { ApiService } from '@impler/client';
-import { IUpload, ITemplate } from '@impler/shared';
+import { IUpload, ITemplate, IImportConfig } from '@impler/shared';
 
 export interface IImplerStore {
   projectId: string;
   templateId?: string;
-  accessToken?: string;
   extra?: string;
   authHeaderValue?: string;
+}
+
+export interface ITableStore {
+  selectedRows: Set<number>;
 }
 
 export interface IApiStore {
@@ -15,10 +18,18 @@ export interface IApiStore {
 
 export interface IAppStore {
   title?: string;
+  data?: Record<string, string | number>[];
   templateInfo: ITemplate;
   uploadInfo: IUpload;
   reset: () => void;
+  host: string;
   primaryColor: string;
-  setTemplateInfo: (templateInfo: ITemplate) => void;
+  schema?: string;
+  output?: string;
+  showWidget: boolean;
+  importConfig: IImportConfig;
+  setShowWidget: (status: boolean) => void;
   setUploadInfo: (uploadInfo: IUpload) => void;
+  setTemplateInfo: (templateInfo: ITemplate) => void;
+  setImportConfig: (importConfig: IImportConfig) => void;
 }
