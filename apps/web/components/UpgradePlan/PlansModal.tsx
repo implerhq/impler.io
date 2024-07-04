@@ -12,7 +12,7 @@ interface PlanProps {
 export const PlansModal = ({ userProfile, activePlanCode, canceledOn, expiryDate }: PlanProps) => {
   return (
     <Container fluid={true}>
-      <Stack align="center">
+      <Stack align="center" justify="center">
         <Title order={2} align="center">
           Choose the plan that works best for you
         </Title>

@@ -12,6 +12,7 @@ namespace NodeJS {
     NEXT_PUBLIC_TAWK_WIDGET_ID: string;
     NEXT_PUBLIC_OPENREPLAY_KEY: string;
     NEXT_PUBLIC_SENTRY_DSN: string;
+    NEXT_PUBLIC_FORMBRICKS_ENVIRONMENT_ID: string;
 
     NEXT_PUBLIC_PAYMENT_GATEWAY_URL: string;
     NEXT_PUBLIC_GTM_ID: string;
@@ -117,4 +118,14 @@ interface ITransactionHistory {
   charge: number;
   amount: number;
   currency: string;
+}
+
+interface ICheckoutData {
+  planName: string;
+  planAmount: number;
+  outstandingAmount?: number;
+  currency: string;
+  totalPrice: number;
+  discount?: number;
+  proratedRefund?: number;
 }

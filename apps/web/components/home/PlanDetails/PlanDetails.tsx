@@ -10,9 +10,13 @@ import { usePlanDetails } from '@hooks/usePlanDetails';
 import { PlansModal } from '@components/UpgradePlan/PlansModal';
 import { CONSTANTS, MODAL_KEYS, ROUTES, colors } from '@config';
 import { numberFormatter } from '@impler/shared/dist/utils/helpers';
+import { ConfirmationModal } from '@components/ConfirmationModal';
 
 export function PlanDetails() {
   const router = useRouter();
+  const status = router.query?.status;
+  const planName = router.query?.plan;
+
   const { profile } = useApp();
   const { [CONSTANTS.PLAN_CODE_QUERY_KEY]: selectedPlan } = router.query;
 
@@ -36,6 +40,18 @@ export function PlanDetails() {
       withCloseButton: true,
     });
   };
+  useEffect(() => {
+    if (planName && status) {
+      modals.open({
+        title:
+          status === CONSTANTS.PAYMENT_SUCCCESS_CODE
+            ? CONSTANTS.SUBSCRIPTION_ACTIVATED_TITLE
+            : CONSTANTS.SUBSCRIPTION_FAILED_TITLE,
+        children: <ConfirmationModal status={status as string} />,
+      });
+      router.push(ROUTES.HOME, {}, { shallow: true });
+    }
+  }, [planName, status, router]);
 
   useEffect(() => {
     if (selectedPlan && profile) {

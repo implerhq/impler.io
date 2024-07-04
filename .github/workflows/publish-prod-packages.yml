@@ -1,11 +1,7 @@
 name: Publish Packages to NPM Registry
 
 on:
-  push:
-    tags:
-      - '**@impler/react@**'
-      - '**@impler/shared@**'
-  workflow_dispatch:
+  workflow_call:
 
 jobs:
   publish_prod_react:
@@ -13,7 +9,6 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     timeout-minutes: 80
-    environment: Production
     permissions:
       contents: read
       packages: write 

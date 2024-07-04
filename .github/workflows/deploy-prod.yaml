@@ -1,10 +1,9 @@
-name: Deploy Impler to Quality
+name: Deploy Impler to Production
 
 on:
-  pull_request:
-    branches: [next]
-    types:
-      - closed
+  push:
+    branches:
+      - main
 
 jobs:
   build_api:
@@ -12,7 +11,6 @@ jobs:
       contents: read
       packages: write 
       deployments: write
-    if: ${{ (github.event.pull_request.merged == true) && (contains(github.event.pull_request.labels.*.name, 'impler/api')) }}
     uses: ./.github/workflows/build-api.yml
     secrets: inherit
 
@@ -21,7 +19,6 @@ jobs:
       contents: read
       packages: write
       deployments: write
-    if: ${{ (github.event.pull_request.merged == true) && (contains(github.event.pull_request.labels.*.name, 'impler/embed')) }}
     uses: ./.github/workflows/build-embed.yml
     secrets: inherit
 
@@ -30,7 +27,6 @@ jobs:
       contents: read
       packages: write
       deployments: write
-    if: ${{ (github.event.pull_request.merged == true) && (contains(github.event.pull_request.labels.*.name, 'impler/queuemanager')) }}
     uses: ./.github/workflows/build-queuemanager.yml
     secrets: inherit
 
@@ -39,7 +35,6 @@ jobs:
       contents: read
       packages: write
       deployments: write
-    if: ${{ (github.event.pull_request.merged == true) && (contains(github.event.pull_request.labels.*.name, 'impler/web')) }}
     uses: ./.github/workflows/build-web.yml
     secrets: inherit
 
@@ -48,8 +43,23 @@ jobs:
       contents: read
       packages: write
       deployments: write
-    if: ${{ (github.event.pull_request.merged == true) && (contains(github.event.pull_request.labels.*.name, 'impler/widget')) }}
     uses: ./.github/workflows/build-widget.yml
+    secrets: inherit
+
+  tag_images:
+    permissions:
+      contents: read
+      packages: write
+      deployments: write
+    uses: ./.github/workflows/tag-images.yml
+    secrets: inherit
+
+  publish_npm:
+    permissions:
+      contents: read
+      packages: write
+      deployments: write
+    uses: ./.github/workflows/publish-prod-packages.yml
     secrets: inherit
 
   deploy_with_ssh:
@@ -60,15 +70,17 @@ jobs:
       - build_queuemanager
       - build_web
       - build_widget
+      - tag_images
+      - publish_npm
     if: |
       always() && 
-      (needs.build_api.result == 'success' || needs.build_embed.result == 'success' || needs.build_queuemanager.result == 'success' || needs.build_web.result == 'success' || needs.build_widget.result == 'success')
+      (needs.build_api.result == 'success' && needs.build_embed.result == 'success' && needs.build_queuemanager.result == 'success' && needs.build_web.result == 'success' && needs.build_widget.result == 'success' && needs.tag_images.result == 'success' && needs.publish_npm.result == 'success')
     steps:
-      - name: Set up SSH and Up the service
+      - name: Set up SSH and Run Docker Compose Up
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_QA }}
       - name: Run Docker Compose Up
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME_QA }}@${{ secrets.SSH_HOST_QA }} \
-            "cd ${{ secrets.SSH_PATH_QA }} && sudo docker compose up --pull always -d"
+            "cd ${{ secrets.SSH_PATH_QA }} && docker compose up --pull always -d"

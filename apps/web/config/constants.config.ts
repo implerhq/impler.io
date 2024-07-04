@@ -5,6 +5,15 @@ export const CONSTANTS = {
   AUTHENTICATION_ERROR_CODE: 'AuthenticationError',
   PROFILE_STORAGE_NAME: 'profile',
   REACT_DOCUMENTATION_URL: 'https://docs.impler.io/widget/react-component#props',
+  PAYMENT_SUCCCESS_CODE: 'success',
+  PAYMENT_FAILED_CODE: 'failed',
+  PAYMENT_SUCCESS_MESSAGE:
+    // eslint-disable-next-line max-len
+    'Congratulations! Your subscription has been activated, and benefits have been added to your account. We hope you will love the experience. If you need anything, feel free to contact the support team.',
+  PAYMENT_FAILED_MESSAGE:
+    'An error occurred with the payment. No amount has been deducted. Please try again later or contact the support team.',
+  SUBSCRIPTION_ACTIVATED_TITLE: 'Subscription activated',
+  SUBSCRIPTION_FAILED_TITLE: 'Payment failed',
 };
 
 export const VARIABLES = {
@@ -23,6 +32,7 @@ export const VARIABLES = {
 
 export const MODAL_KEYS = {
   SELECT_CARD: 'SELECT_CARD',
+  PAYMENT_SUCCEED: 'successfull_payment',
 
   IMPORT_DUPLICATE: 'IMPORT_DUPLICATE',
   IMPORT_CREATE: 'IMPORT_CREATE',
@@ -49,6 +59,10 @@ export const MODAL_TITLES = {
 };
 
 export const API_KEYS = {
+  CHECKOUT: 'CHECKOUT',
+
+  APPLY_COUPON_CODE: 'APPLY_COUPON_CODE',
+
   TRANSACTION_HISTORY: 'TRANSACTION_HISTORY',
 
   PAYMENT_METHOD_DELETE: 'PAYMENT_METHOD_DELETE',
