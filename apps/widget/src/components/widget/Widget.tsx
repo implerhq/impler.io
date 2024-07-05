@@ -83,7 +83,6 @@ export function Widget() {
     [PromptModalTypesEnum.CLOSE]: TEXTS.PROMPT.SUBTITLE_CLOSE,
     [PromptModalTypesEnum.UPLOAD_AGAIN]: TEXTS.PROMPT.SUBTITLE_RESET,
   };
-  console.log('Widget', phase);
 
   return (
     <Modal title={title || templateInfo?.name} opened={showWidget} onClose={onClose}>

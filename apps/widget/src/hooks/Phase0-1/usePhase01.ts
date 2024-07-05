@@ -17,7 +17,7 @@ export function usePhase01({ goToUpload }: UsePhase01Props) {
   const { setImportId, setImageSchema } = useAppState();
   const { templateId } = useImplerState();
   const imageSchemaRef = useRef<Map<string, Set<string>>>(new Map());
-  const { onDownload } = useSample({ onDownloadComplete: goToUpload });
+  const { onDownload, isDownloadSampleLoading } = useSample({ onDownloadComplete: goToUpload });
   const { templates, isTemplatesFetchedAfterMount, imageColumns } = useTemplates();
   const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
   const {
@@ -109,7 +109,7 @@ export function usePhase01({ goToUpload }: UsePhase01Props) {
     register,
     imageColumns,
     onImageSelect,
-    isDownloadInProgress,
     onGenerateTemplateClick,
+    isDownloadInProgress: isDownloadInProgress || isDownloadSampleLoading,
   };
 }
