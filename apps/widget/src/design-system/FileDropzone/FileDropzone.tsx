@@ -14,7 +14,14 @@ interface IDropzoneProps {
 }
 
 export function FileDropzone(props: IDropzoneProps) {
-  const { loading, accept = [MIME_TYPES.png, MIME_TYPES.jpeg], onDrop, onReject, title, error } = props;
+  const {
+    title,
+    error,
+    onDrop,
+    loading,
+    onReject,
+    accept = [MIME_TYPES.png, MIME_TYPES.jpeg, MIME_TYPES.webp, MIME_TYPES.svg],
+  } = props;
   const { classes } = useStyles();
 
   const SelectFileContent = () => {
@@ -27,19 +34,18 @@ export function FileDropzone(props: IDropzoneProps) {
         classNames={classes}
         maxSize={variables.LIMIT_5_MB} // 5 MB
       >
-        <Group position="center">
-          <div>
-            <Group position="center" p="xs">
-              <ImageIcon />
-            </Group>
-            <Text align="center">
-              {TEXTS.DROPZONE.TITLE}{' '}
-              <Text component="span" className={classes.browseText}>
-                {TEXTS.DROPZONE.BROWSE}
-              </Text>
-            </Text>
-          </div>
+        <Group position="center" p="xs">
+          <ImageIcon />
         </Group>
+        <Text align="center">
+          {TEXTS.FILE_DROPZONE.TITLE}{' '}
+          <Text component="span" className={classes.browseText}>
+            {TEXTS.FILE_DROPZONE.BROWSE}
+          </Text>
+        </Text>
+        <Text size="xs" align="center">
+          {TEXTS.FILE_DROPZONE.FILE_SIZE}
+        </Text>
       </MantineDropzone>
     );
   };

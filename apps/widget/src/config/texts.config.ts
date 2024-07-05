@@ -12,15 +12,19 @@ export const TEXTS = {
     REVIEW: 'Review',
     COMPLETE: 'Complete',
   },
-  DROPZONE: {
+  FILE_DROPZONE: {
     TITLE: 'Drop and drop file here or ',
     BROWSE: 'Browse from computer',
+    FILE_SIZE: 'Image size should be less than 5 MB. Supported formats are PNG, JPG and JPEG.',
     SUBTITLE: 'Bring any .csv or .xlsx file here to start Import',
     FILE_SELECTION: 'File selected successfully',
   },
   'PHASE0-1': {
     IMPORT_FILE: 'Import File',
     GENERATE_TEMPLATE: 'Generate Template',
+    ALERT_TITLE: 'Generate template with images',
+    ALERT_SUBTITLE:
+      'Drag and drop images below for image columns and generate a template file containing names of uploaded images.',
   },
   PHASE1: {
     SELECT_TITLE: 'Template',

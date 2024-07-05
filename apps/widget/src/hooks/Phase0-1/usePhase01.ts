@@ -92,7 +92,11 @@ export function usePhase01({ goToUpload }: UsePhase01Props) {
     } else captureError('Template not found while generating image template');
     setIsDownloadInProgress(false);
   };
-
+  const onRemoveImage = (index: number) => {
+    const image = fields[index];
+    imageSchemaRef.current.get(image.key)?.delete(image.image.name);
+    remove(index);
+  };
   useEffect(() => {
     if (Array.isArray(imageColumns) && imageColumns.length) {
       setValue('key', imageColumns[0]);
@@ -104,10 +108,10 @@ export function usePhase01({ goToUpload }: UsePhase01Props) {
   return {
     fields,
     errors,
-    remove,
     control,
     register,
     imageColumns,
+    onRemoveImage,
     onImageSelect,
     onGenerateTemplateClick,
     isDownloadInProgress: isDownloadInProgress || isDownloadSampleLoading,

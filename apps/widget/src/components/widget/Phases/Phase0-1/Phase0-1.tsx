@@ -1,9 +1,12 @@
-import { ReactNode, useEffect, useRef, useState } from 'react';
 import { Controller } from 'react-hook-form';
-import { Flex, Stack, Text } from '@mantine/core';
+import { useLocalStorage } from '@mantine/hooks';
+import { Alert, Flex, Stack, Text } from '@mantine/core';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 
+import { Warning } from '@icons';
 import { Select } from '@ui/Select';
 import { PhasesEnum } from '@types';
+import { colors, TEXTS, variables } from '@config';
 import { FileDropzone } from '@ui/FileDropzone';
 import { Footer } from 'components/Common/Footer';
 import { usePhase01 } from '@hooks/Phase0-1/usePhase01';
@@ -14,13 +17,17 @@ interface Phase01Props {
 }
 
 export function Phase01({ goToUpload }: Phase01Props) {
+  const [showAlert, setShowAlert] = useLocalStorage<boolean>({
+    key: variables.SHOW_IMAGE_ALERT_STORAGE_KEY,
+    defaultValue: true,
+  });
   const {
     fields,
     errors,
-    remove,
     control,
     imageColumns,
     onImageSelect,
+    onRemoveImage,
     isDownloadInProgress,
     onGenerateTemplateClick,
   } = usePhase01({ goToUpload });
@@ -29,12 +36,23 @@ export function Phase01({ goToUpload }: Phase01Props) {
 
   useEffect(() => {
     setContainerHeight(wrapperRef.current.getBoundingClientRect().height);
-  }, []);
+  }, [showAlert]);
 
   return (
     <>
       <Stack style={{ flexGrow: 1 }}>
-        <Flex gap="sm">
+        <Flex gap="sm" direction="column">
+          {showAlert && (
+            <Alert
+              color="blue"
+              withCloseButton
+              onClose={() => setShowAlert(false)}
+              title={TEXTS['PHASE0-1'].ALERT_TITLE}
+              icon={<Warning fill={colors.primary} />}
+            >
+              {TEXTS['PHASE0-1'].ALERT_SUBTITLE}
+            </Alert>
+          )}
           <Controller
             control={control}
             name="key"
@@ -55,11 +73,21 @@ export function Phase01({ goToUpload }: Phase01Props) {
             fields.reduce((acc, field, index) => {
               if (Array.isArray(acc[field.key])) {
                 acc[field.key].push(
-                  <ImageWithIndicator src={field.dataUrl} key={field.image.name} onCloseClick={() => remove(index)} />
+                  <ImageWithIndicator
+                    caption={field.image.name}
+                    src={field.dataUrl}
+                    key={field.image.name}
+                    onCloseClick={() => onRemoveImage(index)}
+                  />
                 );
               } else {
                 acc[field.key] = [
-                  <ImageWithIndicator src={field.dataUrl} key={field.image.name} onCloseClick={() => remove(index)} />,
+                  <ImageWithIndicator
+                    caption={field.image.name}
+                    src={field.dataUrl}
+                    key={field.image.name}
+                    onCloseClick={() => onRemoveImage(index)}
+                  />,
                 ];
               }
 
