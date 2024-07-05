@@ -76,7 +76,6 @@ export function Phase01({ goToUpload }: Phase01Props) {
         </Stack>
       </Stack>
       <Footer
-        onPrevClick={goToUpload}
         active={PhasesEnum.IMAGE_UPLOAD}
         onNextClick={onGenerateTemplateClick}
         primaryButtonLoading={isDownloadInProgress}
