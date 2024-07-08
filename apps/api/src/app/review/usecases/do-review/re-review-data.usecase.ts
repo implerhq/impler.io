@@ -75,6 +75,29 @@ export class DoReReview extends BaseReview {
         uniqueItems[field].add(item.record[field]);
       });
     });
+    const bulkOperations = [];
+    for (const key of Object.keys(uniqueItems)) {
+      const itemsArray = Array.from(uniqueItems[key]);
+      // Iterate over each value in unique field
+      for (const item of itemsArray) {
+        // update first occurance of data
+        bulkOperations.push({
+          updateOne: {
+            filter: { [`record.${key}`]: item },
+            update: { $set: { [`updated.${key}`]: true } },
+          },
+        });
+        // update second occurance of data for validity
+        bulkOperations.push({
+          updateOne: {
+            filter: { [`record.${key}`]: item, [`updated.${key}`]: false },
+            update: { $set: { [`updated.${key}`]: true } },
+          },
+        });
+      }
+      uniqueItems[key].clear();
+    }
+    await this._modal.bulkWrite(bulkOperations);
 
     let result: ISaveResults = {
       uploadId: _uploadId,
