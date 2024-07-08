@@ -62,7 +62,7 @@ export class CommonController {
       throw new BadRequestException();
     }
 
-    return this.getImportConfig.execute(projectId);
+    return await this.getImportConfig.execute(projectId);
   }
 
   @Post('/sheet-names')
