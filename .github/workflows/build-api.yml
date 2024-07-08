@@ -56,13 +56,13 @@ jobs:
         run: |
           echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
           docker build -t ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG -f apps/api/Dockerfile .
-          docker tag ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:latest
           # docker tag ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:prod
+          docker tag ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:latest
 
           docker run --network=host --name api -dit --env NODE_ENV=test --env JWT_SECRET=impler --env COOKIE_DOMAIN=impler ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG
           docker run --network=host appropriate/curl --retry 10 --retry-delay 5 --retry-connrefused http://localhost:3000/v1/health-check | grep 'ok'
 
           # docker push ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:prod
           docker push ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:latest
-          # docker push ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG
-          # echo "::set-output name=IMAGE::ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG"
+          docker push ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG
+          echo "::set-output name=IMAGE::ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG"
