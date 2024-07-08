@@ -78,7 +78,7 @@ interface IDuplicateTemplateData {
   duplicateValidator?: boolean;
 }
 interface IUpdateTemplateData {
-  mode: string;
+  mode?: string;
   name?: string;
 }
 
