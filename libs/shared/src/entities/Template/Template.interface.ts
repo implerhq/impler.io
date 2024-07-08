@@ -10,6 +10,7 @@ export interface ITemplate {
   totalUploads: number;
   totalRecords: number;
   totalInvalidRecords: number;
+  mode: string;
 }
 
 export interface IImport {
