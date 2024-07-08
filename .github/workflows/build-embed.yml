@@ -48,7 +48,7 @@ jobs:
         env:
           REGISTERY_OWNER: implerhq
           DOCKER_NAME: impler/embed
-          IMAGE_TAG: ${{ github.sha }}
+          IMAGE_TAG: ${{ github.event.pull_request.head.sha || github.sha }}
           GH_ACTOR: implerhq
           GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
         run: |
