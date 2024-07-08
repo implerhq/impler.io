@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import { ActionIcon, Flex, Group, LoadingOverlay, Title, useMantineTheme } from '@mantine/core';
+import { ActionIcon, Flex, Group, LoadingOverlay, Title, useMantineTheme, Select } from '@mantine/core';
 
 import { track } from '@libs/amplitude';
 import { ROUTES, colors } from '@config';
@@ -34,6 +34,7 @@ const Validator = dynamic(() => import('@components/imports/validator').then((mo
 
 export default function ImportDetails({}) {
   const router = useRouter();
+  // const [importMode, setImportMode] = useState<'manual' | 'automatic'>('manual');
   const [activeTab, setActiveTab] = useState<'schema' | 'destination' | 'snippet' | 'validator' | 'output'>();
   const { colorScheme } = useMantineTheme();
   const {
@@ -44,6 +45,7 @@ export default function ImportDetails({}) {
     onDeleteClick,
     isTemplateDataLoading,
     onSpreadsheetImported,
+    updateImport,
   } = useImportDetails({
     templateId: router.query.id as string,
   });
@@ -78,6 +80,21 @@ export default function ImportDetails({}) {
           </Group>
         </Group>
         <Group spacing="xs">
+          <Select
+            placeholder="Select Import Mode"
+            size="sm"
+            maw={125}
+            id="import-mode"
+            data={[
+              { label: 'Manual', value: 'manual' },
+              { label: 'Automatic', value: 'automatic' },
+            ]}
+            onChange={(importMode: string) => {
+              updateImport({
+                mode: importMode,
+              });
+            }}
+          />
           <Button
             color="green"
             id="import"
@@ -85,7 +102,7 @@ export default function ImportDetails({}) {
             // eslint-disable-next-line no-magic-numbers
             disabled={!isImplerInitiated || columns?.length === 0 || isTemplateDataLoading}
           >
-            Import
+            Importer
           </Button>
           <Button variant="outline" color="red" onClick={onDeleteClick}>
             <DeleteIcon />
