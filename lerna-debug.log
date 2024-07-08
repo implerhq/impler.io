@@ -1,0 +1,102 @@
+0 silly argv {
+0 silly argv   _: [ 'version' ],
+0 silly argv   push: false,
+0 silly argv   lernaVersion: '8.1.5',
+0 silly argv   '$0': 'node_modules/lerna/dist/cli.js',
+0 silly argv   bump: 'patch'
+0 silly argv }
+1 notice cli v8.1.5
+2 verbose packageConfigs Explicit "packages" configuration found in lerna.json. Resolving packages using the configured glob(s): ["apps/*","libs/*","packages/*"]
+3 verbose rootPath /home/knovator/Desktop/projects/R-D/data-import/impler.io
+4 info current version 0.20.1
+5 silly isAnythingCommitted
+6 verbose isAnythingCommitted 1
+7 silly getCurrentBranch
+8 verbose currentBranch preparations/v0.20.2
+9 silly hasTags
+10 verbose hasTags true
+11 silly git-describe.sync "3b9beb11" => {"refCount":"1834","sha":"3b9beb11","isDirty":false}
+12 info Assuming all packages changed
+13 verbose updated @impler/api
+14 verbose updated @impler/demo
+15 verbose updated @impler/queue-manager
+16 verbose updated @impler/web
+17 verbose updated @impler/widget
+18 verbose updated @impler/dal
+19 verbose updated @impler/embed
+20 verbose updated @impler/shared
+21 verbose updated @impler/client
+22 verbose updated @impler/react
+23 verbose git-describe undefined => "3b9beb11"
+24 silly git-describe parsed => {"refCount":"1834","sha":"3b9beb11","isDirty":false}
+25 info execute Skipping git push
+26 info execute Skipping releases
+27 silly lifecycle No script for "preversion" in "impler.io", continuing
+28 silly lifecycle No script for "preversion" in "@impler/embed", continuing
+29 silly lifecycle No script for "preversion" in "@impler/shared", continuing
+30 verbose version @impler/embed has no lockfile. Skipping lockfile update.
+31 verbose version @impler/shared has no lockfile. Skipping lockfile update.
+32 silly lifecycle No script for "version" in "@impler/embed", continuing
+33 silly lifecycle No script for "version" in "@impler/shared", continuing
+34 silly lifecycle No script for "preversion" in "@impler/dal", continuing
+35 silly lifecycle No script for "preversion" in "@impler/client", continuing
+36 silly lifecycle No script for "preversion" in "@impler/react", continuing
+37 verbose version @impler/dal has no lockfile. Skipping lockfile update.
+38 verbose version @impler/client has no lockfile. Skipping lockfile update.
+39 verbose version @impler/react has no lockfile. Skipping lockfile update.
+40 silly lifecycle No script for "version" in "@impler/dal", continuing
+41 silly lifecycle No script for "preversion" in "@impler/api", continuing
+42 silly lifecycle No script for "preversion" in "@impler/queue-manager", continuing
+43 silly lifecycle No script for "version" in "@impler/react", continuing
+44 silly lifecycle No script for "preversion" in "@impler/web", continuing
+45 silly lifecycle No script for "version" in "@impler/client", continuing
+46 silly lifecycle No script for "preversion" in "@impler/demo", continuing
+47 verbose version @impler/api has no lockfile. Skipping lockfile update.
+48 verbose version @impler/queue-manager has no lockfile. Skipping lockfile update.
+49 verbose version @impler/web has no lockfile. Skipping lockfile update.
+50 verbose version @impler/demo has no lockfile. Skipping lockfile update.
+51 silly lifecycle No script for "version" in "@impler/api", continuing
+52 silly lifecycle No script for "preversion" in "@impler/widget", continuing
+53 silly lifecycle No script for "version" in "@impler/queue-manager", continuing
+54 silly lifecycle No script for "version" in "@impler/web", continuing
+55 silly lifecycle No script for "version" in "@impler/demo", continuing
+56 verbose version @impler/widget has no lockfile. Skipping lockfile update.
+57 silly lifecycle No script for "version" in "@impler/widget", continuing
+58 silly lifecycle No script for "version" in "impler.io", continuing
+59 verbose version Updating root pnpm-lock.yaml
+60 silly version Skipped applying prettier to ignored file: libs/embed/package.json
+61 silly version Skipped applying prettier to ignored file: libs/shared/package.json
+62 silly version Skipped applying prettier to ignored file: libs/dal/package.json
+63 silly version Skipped applying prettier to ignored file: packages/react/package.json
+64 silly version Skipped applying prettier to ignored file: packages/client/package.json
+65 silly version Skipped applying prettier to ignored file: apps/api/package.json
+66 silly version Skipped applying prettier to ignored file: apps/queue-manager/package.json
+67 silly version Skipped applying prettier to ignored file: apps/web/package.json
+68 silly version Skipped applying prettier to ignored file: apps/demo/package.json
+69 silly version Skipped applying prettier to ignored file: apps/widget/package.json
+70 silly version Successfully applied prettier to updated file: lerna.json
+71 silly version Successfully applied prettier to updated file: pnpm-lock.yaml
+72 silly gitAdd [
+72 silly gitAdd   'libs/embed/package.json',
+72 silly gitAdd   'libs/shared/package.json',
+72 silly gitAdd   'libs/dal/package.json',
+72 silly gitAdd   'packages/react/package.json',
+72 silly gitAdd   'packages/client/package.json',
+72 silly gitAdd   'apps/api/package.json',
+72 silly gitAdd   'apps/queue-manager/package.json',
+72 silly gitAdd   'apps/web/package.json',
+72 silly gitAdd   'apps/demo/package.json',
+72 silly gitAdd   'apps/widget/package.json',
+72 silly gitAdd   'lerna.json',
+72 silly gitAdd   'pnpm-lock.yaml'
+72 silly gitAdd ]
+73 silly gitCommit v0.20.2
+74 verbose git [ 'commit', '-m', 'v0.20.2' ]
+75 silly gitTag v0.20.2 git tag %s -m %s
+76 verbose git [ 'tag', 'v0.20.2', '-m', 'v0.20.2' ]
+77 error Error: Command failed with exit code 128: git tag v0.20.2 -m v0.20.2
+77 error fatal: tag 'v0.20.2' already exists
+77 error     at makeError (/home/knovator/Desktop/projects/R-D/data-import/impler.io/node_modules/.pnpm/execa@5.0.0/node_modules/execa/lib/error.js:59:11)
+77 error     at handlePromise (/home/knovator/Desktop/projects/R-D/data-import/impler.io/node_modules/.pnpm/execa@5.0.0/node_modules/execa/index.js:114:26)
+77 error     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+77 error     at async VersionCommand.gitCommitAndTagVersion (/home/knovator/Desktop/projects/R-D/data-import/impler.io/node_modules/.pnpm/lerna@8.1.5/node_modules/lerna/dist/index.js:9940:9)
