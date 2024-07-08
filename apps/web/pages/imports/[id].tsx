@@ -8,6 +8,7 @@ import { track } from '@libs/amplitude';
 import { ROUTES, colors } from '@config';
 import { useImpler } from '@impler/react';
 import { useImportDetails } from '@hooks/useImportDetails';
+import { ImportModeEnum } from '@shared/importmode.enum';
 
 import { Tabs } from '@ui/Tabs';
 import { Button } from '@ui/button';
@@ -81,19 +82,16 @@ export default function ImportDetails({}) {
         </Group>
         <Group spacing="xs">
           <Select
-            placeholder="Select Import Mode"
             size="sm"
             maw={125}
-            id="import-mode"
+            placeholder="Mode"
             data={[
-              { label: 'Manual', value: 'manual' },
-              { label: 'Automatic', value: 'automatic' },
+              { label: 'Manual', value: ImportModeEnum.MANUAL },
+              { label: 'Automatic', value: ImportModeEnum.AUTOMATIC },
             ]}
-            onChange={(importMode: string) => {
-              updateImport({
-                mode: importMode,
-              });
-            }}
+            defaultValue={ImportModeEnum.MANUAL}
+            value={templateData?.mode}
+            onChange={(mode) => updateImport({ mode: mode || undefined })}
           />
           <Button
             color="green"
@@ -102,7 +100,7 @@ export default function ImportDetails({}) {
             // eslint-disable-next-line no-magic-numbers
             disabled={!isImplerInitiated || columns?.length === 0 || isTemplateDataLoading}
           >
-            Importer
+            Import
           </Button>
           <Button variant="outline" color="red" onClick={onDeleteClick}>
             <DeleteIcon />
