@@ -30,7 +30,7 @@ jobs:
       contents: read
       packages: write
       deployments: write
-    if: ${{ (github.event.pull_request.merged == true) && (contains(github.event.pull_request.labels.*.name, 'impler/queuemanager')) }}
+    if: ${{ (github.event.pull_request.merged == true) && (contains(github.event.pull_request.labels.*.name, 'impler/queue-manager')) }}
     uses: ./.github/workflows/build-queuemanager.yml
     secrets: inherit
 
