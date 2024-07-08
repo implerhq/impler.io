@@ -9,3 +9,4 @@ export * from './environment/environment.types';
 export * from './destination/destination.types';
 export * from './review';
 export * from './subscription';
+export * from './template';
