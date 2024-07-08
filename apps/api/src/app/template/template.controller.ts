@@ -161,6 +161,7 @@ export class TemplateController {
     const document = await this.updateTemplateUsecase.execute(
       UpdateTemplateCommand.create({
         name: body.name,
+        mode: body.mode,
       }),
       templateId
     );
