@@ -10,7 +10,7 @@
     padding: 5px !important;
 }
 .cell-value {
-    max-width: 80%;
+    max-width: 75%;
     display: inline-block;
     text-overflow: ellipsis;
     overflow: hidden;
