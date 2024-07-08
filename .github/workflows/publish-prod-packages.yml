@@ -47,8 +47,8 @@ jobs:
         working-directory: libs/shared
         run: |
           npm config set --workspaces=false --include-workspace-root registry https://registry.npmjs.org/
-          npm config set --workspaces=false --include-workspace-root //registry.npmjs.org/:_authToken=$NPM_TOKEN
-          NPM_TOKEN=$NPMTOKEN npm publish --access public
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+          npm publish --access public
 
       - name: Publish @impler/react package on NPM 📦
         env:
@@ -56,5 +56,5 @@ jobs:
         working-directory: packages/react
         run: |
           npm config set --workspaces=false --include-workspace-root registry https://registry.npmjs.org/
-          npm config set --workspaces=false --include-workspace-root //registry.npmjs.org/:_authToken=$NPM_TOKEN
-          NPM_TOKEN=$NPMTOKEN npm publish --access public
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+          npm publish --access public
