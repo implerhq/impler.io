@@ -15,6 +15,11 @@ import { ConfirmModal } from './modals/ConfirmModal';
 import { Layout } from 'components/Common/Layout';
 import { PhasesEnum, PromptModalTypesEnum } from '@types';
 import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
+import { AutoImportPhase0 } from './Phases/AutoImportPhases/AutoImportPhase0';
+import { AutoImportPhase1 } from './Phases/AutoImportPhases/AutoImportPhase1';
+import { AutoImportPhase2 } from './Phases/AutoImportPhases/AutoImportPhase2';
+import { AutoImportPhase3 } from './Phases/AutoImportPhases/AutoImportPhase3';
+import { ImportModeEnum } from '@impler/shared/src/types/importmode.enum';
 
 export function Widget() {
   const defaultDataCount = 0;
@@ -22,6 +27,7 @@ export function Widget() {
   const [dataCount, setDataCount] = useState<number>(defaultDataCount);
   const [promptContinueAction, setPromptContinueAction] = useState<PromptModalTypesEnum>();
   const { showWidget, setShowWidget, reset: resetAppState, uploadInfo, templateInfo, title } = useAppState();
+  const { importConfig } = useAppState();
 
   const onUploadResetClick = () => {
     logAmplitudeEvent('RESET');
@@ -58,13 +64,28 @@ export function Widget() {
     ParentWindow.UploadCompleted(uploadData);
   };
 
-  const PhaseView = {
-    [PhasesEnum.VALIDATE]: <Phase0 onValidationSuccess={() => setPhase(PhasesEnum.UPLOAD)} />,
-    [PhasesEnum.UPLOAD]: <Phase1 onNextClick={() => setPhase(PhasesEnum.MAPPING)} />,
-    [PhasesEnum.MAPPING]: <Phase2 onNextClick={() => setPhase(PhasesEnum.REVIEW)} onPrevClick={onUploadResetClick} />,
-    [PhasesEnum.REVIEW]: <Phase3 onNextClick={onComplete} onPrevClick={onUploadResetClick} />,
-    [PhasesEnum.COMPLETE]: <Phase4 rowsCount={dataCount} onUploadAgainClick={resetProgress} onCloseClick={onClose} />,
-  };
+  const importMode = importConfig.mode;
+
+  const PhaseView =
+    importMode === ImportModeEnum.MANUAL
+      ? {
+          [PhasesEnum.VALIDATE]: <Phase0 onValidationSuccess={() => setPhase(PhasesEnum.UPLOAD)} />,
+          [PhasesEnum.UPLOAD]: <Phase1 onNextClick={() => setPhase(PhasesEnum.MAPPING)} />,
+          [PhasesEnum.MAPPING]: (
+            <Phase2 onNextClick={() => setPhase(PhasesEnum.REVIEW)} onPrevClick={onUploadResetClick} />
+          ),
+          [PhasesEnum.REVIEW]: <Phase3 onNextClick={onComplete} onPrevClick={onUploadResetClick} />,
+          [PhasesEnum.COMPLETE]: (
+            <Phase4 rowsCount={dataCount} onUploadAgainClick={resetProgress} onCloseClick={onClose} />
+          ),
+        }
+      : {
+          [PhasesEnum.CONFIGURE]: <AutoImportPhase0 {...() => setPhase(PhasesEnum.CONFIGURE)} />,
+          [PhasesEnum.MAPCOLUMNS]: <AutoImportPhase1 {...() => setPhase(PhasesEnum.MAPCOLUMNS)} />,
+          [PhasesEnum.SCHEDULE]: <AutoImportPhase2 {...() => setPhase(PhasesEnum.SCHEDULE)} />,
+          [PhasesEnum.CONFORM]: <AutoImportPhase3 {...() => setPhase(PhasesEnum.CONFORM)} />,
+        };
+
   const subTitle = {
     [PromptModalTypesEnum.CLOSE]: TEXTS.PROMPT.SUBTITLE_CLOSE,
     [PromptModalTypesEnum.UPLOAD_AGAIN]: TEXTS.PROMPT.SUBTITLE_RESET,
@@ -74,6 +95,7 @@ export function Widget() {
     <Modal title={title || templateInfo?.name} opened={showWidget} onClose={onClose}>
       <Layout active={phase} title={title || templateInfo?.name}>
         {PhaseView[phase]}
+
         <ConfirmModal
           onCancel={onPromptCancel}
           title={TEXTS.PROMPT.TITLE}
