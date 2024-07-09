@@ -8,7 +8,7 @@ import { track } from '@libs/amplitude';
 import { ROUTES, colors } from '@config';
 import { useImpler } from '@impler/react';
 import { useImportDetails } from '@hooks/useImportDetails';
-import { ImportModeEnum } from '@shared/importmode.enum';
+import { TemplateModeEnum } from '@impler/shared';
 
 import { Tabs } from '@ui/Tabs';
 import { Button } from '@ui/button';
@@ -86,10 +86,10 @@ export default function ImportDetails({}) {
             maw={125}
             placeholder="Mode"
             data={[
-              { label: 'Manual', value: ImportModeEnum.MANUAL },
-              { label: 'Automatic', value: ImportModeEnum.AUTOMATIC },
+              { label: 'Manual', value: TemplateModeEnum.MANUAL },
+              { label: 'Automatic', value: TemplateModeEnum.AUTOMATIC },
             ]}
-            defaultValue={ImportModeEnum.MANUAL}
+            defaultValue={TemplateModeEnum.MANUAL}
             value={templateData?.mode}
             onChange={(mode) => updateImport({ mode: mode || undefined })}
           />
