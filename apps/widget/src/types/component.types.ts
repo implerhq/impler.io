@@ -22,6 +22,10 @@ export enum PhasesEnum {
   REVIEW,
   CONFIRMATION,
   COMPLETE,
+  CONFIGURE,
+  MAPCOLUMNS,
+  SCHEDULE,
+  CONFORM,
 }
 
 export interface IFormvalues {
