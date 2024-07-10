@@ -59,8 +59,8 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
               searchable
               value={value}
               onChange={onChange}
-              label="Excel column keys"
-              placeholder="Excel column keys"
+              label="Alternative column keys"
+              placeholder="Alternative column keys"
               getCreateLabel={(query) => `+ ${query}`}
               data={Array.isArray(value) ? value : []}
               onCreate={(newItem) => {
