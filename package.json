@@ -1,6 +1,6 @@
 {
   "name": "impler.io",
-  "version": "0.20.3",
+  "version": "0.20.4",
   "description": "Open source infrastructure to import data easily",
   "packageManager": "pnpm@8.9.0",
   "private": true,
