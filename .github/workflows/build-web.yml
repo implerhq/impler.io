@@ -41,6 +41,9 @@ jobs:
           run_install: true
 
       - name: Log in to GitHub Container Registry
+        env:
+          GH_ACTOR: implerhq
+          GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
         run: echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
 
       - name: Build & Tag Docker image
