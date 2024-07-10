@@ -66,7 +66,6 @@ jobs:
         run: |
           for i in {1..5}; do
             if curl --output /dev/null --silent --head --fail http://localhost:4200; then
-              echo "Application is up!"
               exit 0
             fi
             echo "Waiting for the application to start..."
