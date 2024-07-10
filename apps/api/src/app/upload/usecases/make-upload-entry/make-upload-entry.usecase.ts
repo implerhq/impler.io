@@ -70,7 +70,7 @@ export class MakeUploadEntry {
       {
         _templateId: templateId,
       },
-      'name key isRequired isUnique isFrozen selectValues dateFormats defaultValue type regex sequence allowMultiSelect',
+      'name key isRequired isUnique isFrozen selectValues dateFormats defaultValue type regex sequence allowMultiSelect alternateKeys',
       {
         sort: 'sequence',
       }
@@ -100,6 +100,7 @@ export class MakeUploadEntry {
           isUnique: schemaItem.isUnique || false,
           defaultValue: schemaItem.defaultValue,
           allowMultiSelect: schemaItem.allowMultiSelect,
+          alternateKeys: Array.isArray(schemaItem.alternateKeys) ? schemaItem.alternateKeys : [],
 
           sequence: Object.keys(formattedColumns).length,
           columnHeading: '', // used later during mapping
