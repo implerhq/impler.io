@@ -26,6 +26,6 @@ COPY packages/react ./packages/react
 ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN pnpm i
-RUN pnpm build
+# RUN pnpm build
 
 CMD ["pnpm", "start:static:web"]
