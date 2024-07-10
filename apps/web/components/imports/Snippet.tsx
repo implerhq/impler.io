@@ -17,7 +17,7 @@ export function Snippet({ projectId, templateId, accessToken }: SnippetProps) {
 
   return (
     <>
-      <Accordion variant="contained" radius={0}>
+      <Accordion variant="contained" radius={0} defaultValue="button">
         <Accordion.Item value="script">
           <Accordion.Control>
             <Title color={colorScheme === 'dark' ? colors.white : colors.black} order={4}>
@@ -60,8 +60,8 @@ export function Snippet({ projectId, templateId, accessToken }: SnippetProps) {
             <Prism language="tsx">{`import { useImpler } from '@impler/react';
         
 const { showWidget, isImplerInitiated } = useImpler({
-    templateId: "${templateId}",
     projectId: "${projectId}",
+    templateId: "${templateId}",
     accessToken: "${accessToken}",
 });
 
