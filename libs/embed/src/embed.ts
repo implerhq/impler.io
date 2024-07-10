@@ -121,7 +121,7 @@ class Impler {
           this.postMessageToContentWindow(event.data.type, this.activeWidgetId!);
           break;
         default:
-          this.postMessageToContentWindow(event.data.type, event.data.value);
+          this.postMessageToContentWindow(event.data.type, this.activeWidgetId!, event.data.value);
       }
     }
   };
