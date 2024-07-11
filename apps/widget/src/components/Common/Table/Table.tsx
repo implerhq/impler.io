@@ -216,6 +216,7 @@ export const Table = forwardRef<HotTableClass, TableProps>(
         colHeaders={headings}
         afterRender={afterRender}
         manualColumnResize
+        stretchH="all"
         fixedColumnsLeft={frozenColumns}
         licenseKey={HANDSONTABLE_LICENSE_KEY}
       />
