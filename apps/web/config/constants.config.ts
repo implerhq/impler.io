@@ -163,3 +163,45 @@ export const ROUTES = {
 export const REGULAR_EXPRESSIONS = {
   URL: /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/gm,
 };
+
+export const COLUMN_TYPES = [
+  {
+    label: 'String',
+    value: 'String',
+  },
+  {
+    label: 'Number',
+    value: 'Number',
+  },
+  {
+    label: 'Double',
+    value: 'Double',
+  },
+  {
+    label: 'Select',
+    value: 'Select',
+  },
+  {
+    label: 'Date',
+    value: 'Date',
+  },
+  {
+    label: 'Regular Expression',
+    value: 'Regex',
+  },
+  {
+    label: 'Email',
+    value: 'Email',
+  },
+  {
+    label: 'Any',
+    value: 'Any',
+  },
+];
+
+export const TEXTS = {
+  TITLE: 'CSV Excel Import Experience for SaaS',
+  DESCRIPTION:
+    // eslint-disable-next-line max-len
+    "Build the best CSV Excel Import Experience for SaaS in 10 Minutes. Onboard customers' data with a hassle-free data importer in your app.",
+};

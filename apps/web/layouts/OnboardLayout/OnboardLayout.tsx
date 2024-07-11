@@ -5,6 +5,7 @@ import { PropsWithChildren } from 'react';
 import { Carousel } from '@mantine/carousel';
 import { Grid, Title, Text, Stack } from '@mantine/core';
 
+import { TEXTS } from '@config';
 import useStyles from './OnboardLayout.styles';
 import WidgetSlideImage from '@assets/images/auth-carousel/widget.png';
 import PowerfullSlideImage from '@assets/images/auth-carousel/powerfull.png';
@@ -42,10 +43,13 @@ export function OnboardLayout({ children }: PropsWithChildren) {
   return (
     <>
       <Head>
-        <title>Get started with Impler</title>
-        <meta name="description" content="Manage your import and exports at one place" />
+        <title>Get started | Impler</title>
+        <meta name="description" content={TEXTS.DESCRIPTION} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
+        <meta name="description" content={TEXTS.DESCRIPTION} />
+        <meta name="og:title" content={TEXTS.TITLE} />
+        <meta name="og:description" content={TEXTS.DESCRIPTION} />
       </Head>
       <main>
         <Grid className={classes.grid} gutter={0}>
