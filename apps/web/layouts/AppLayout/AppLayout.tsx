@@ -9,6 +9,8 @@ import useStyles from './AppLayout.styles';
 import { HomeIcon } from '@assets/icons/Home.icon';
 import { LogoutIcon } from '@assets/icons/Logout.icon';
 import { ImportIcon } from '@assets/icons/Import.icon';
+import { OutLinkIcon } from '@assets/icons/OutLink.icon';
+import { SettingsIcon } from '@assets/icons/Settings.icon';
 import { ActivitiesIcon } from '@assets/icons/Activities.icon';
 import LogoBlack from '@assets/images/full-logo-dark.png';
 import LogoWhite from '@assets/images/full-logo-light.png';
@@ -18,7 +20,7 @@ import { NavItem } from '@ui/nav-item';
 import { UserMenu } from '@ui/user-menu';
 import { track } from '@libs/amplitude';
 import { ColorSchemeToggle } from '@ui/toggle-color-scheme';
-import { SettingsIcon } from '@assets/icons/Settings.icon';
+import { TEXTS } from '@config';
 
 const Support = dynamic(() => import('components/common/Support').then((mod) => mod.Support), {
   ssr: false,
@@ -43,15 +45,9 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{pageProps.title ? `${pageProps.title} | Impler` : 'Impler'}</title>
         <link rel="icon" href={colorScheme === 'dark' ? '/favicon-dark.ico' : '/favicon-light.ico'} />
-        <meta
-          name="description"
-          content="100% open source data import experience with readymade CSV & Excel import widget."
-        />
-        <meta name="og:title" content="Impler | Readymade and scalable data import experience for developers" />
-        <meta
-          name="og:description"
-          content="100% open source data import experience with readymade CSV & Excel import widget"
-        />
+        <meta name="description" content={TEXTS.DESCRIPTION} />
+        <meta name="og:title" content={TEXTS.TITLE} />
+        <meta name="og:description" content={TEXTS.DESCRIPTION} />
       </Head>
       <div className={classes.root}>
         <LoadingOverlay visible={isProjectsLoading || isProfileLoading} />
@@ -96,6 +92,12 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
               href="/settings"
               icon={<SettingsIcon size="lg" />}
               title="Settings"
+            />
+            <NavItem
+              target="_blank"
+              title="Documentation"
+              href="https://docs.impler.io"
+              icon={<OutLinkIcon size="lg" />}
             />
           </Stack>
         </aside>
