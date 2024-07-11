@@ -31,7 +31,7 @@ jobs:
           DOCKER_NAME: impler/widget
           IMAGE_TAG: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
-          docker build -t ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG -f libs/widget/Dockerfile .
+          docker build -t ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG -f apps/widget/Dockerfile .
           docker tag ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:latest
 
       - name: Run Docker container
