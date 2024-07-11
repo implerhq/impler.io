@@ -14,5 +14,5 @@ export class ImportConfigResponseDto {
   })
   @IsDefined()
   @IsString()
-  mode: string;
+  mode?: string;
 }
