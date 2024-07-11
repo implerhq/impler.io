@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form';
 import { useDisclosure } from '@mantine/hooks';
 import { Group, Text, Stack } from '@mantine/core';
 const parseCronExpression = require('util/helpers/cronstrue');
-import { blueBadges, cronExamples } from '@config';
+import { cronExampleBadges, cronExamples } from '@config';
 import { PhasesEnum } from '@types';
 import { AutoImportFooter } from 'components/Common/Footer';
 import { CronScheduleInputTextBoxes } from './CronScheduleInputTextBoxes';
@@ -67,7 +67,7 @@ export function AutoImportPhase3({ onNextClick }: IAutoImportPhase3Props) {
           )}
         </Text>
         <Group spacing="xl" mx="auto">
-          <TooltipBadges badges={blueBadges} onBadgeClick={handleBadgeClick} />
+          <TooltipBadges badges={cronExampleBadges} onBadgeClick={handleBadgeClick} />
         </Group>
         <CollapsibleExplanationTable opened={opened} toggle={toggle} cronExamples={cronExamples} />
         <AutoImportFooter active={PhasesEnum.SCHEDULE} onPrevClick={() => {}} onNextClick={onNextClick} />
