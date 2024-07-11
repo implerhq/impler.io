@@ -9,7 +9,7 @@ interface CollapsibleExplanationTableProps {
 
 export function CollapsibleExplanationTable({ cronExamples, opened, toggle }: CollapsibleExplanationTableProps) {
   return (
-    <Paper style={{ marginTop: '32px', padding: '16px', border: '1px solid #f0f0f0', backgroundColor: '#ffffff' }}>
+    <Paper p="xs" style={{ border: '1px solid #f0f0f0', backgroundColor: '#ffffff' }}>
       <Flex
         style={{
           justifyContent: 'center',
