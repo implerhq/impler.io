@@ -1,6 +1,6 @@
-import { CheckIcon } from '../../icons/check.icon';
 import { Stepper as MantineStepper, DefaultMantineColor } from '@mantine/core';
 import useStyles from './Stepper.styles';
+import { CheckIcon } from '../../icons/check.icon';
 import { colors } from '../../config/colors.config';
 
 interface IStep {
@@ -22,7 +22,7 @@ export function Stepper(props: IStepperProps) {
     if (index == active) {
       return primaryColor || colors.primary;
     } else if (index < active) {
-      return 'green';
+      return colors.success;
     }
 
     return 'gray';
