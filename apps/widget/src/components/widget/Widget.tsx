@@ -11,15 +11,16 @@ import { Phase3 } from './Phases/Phase3';
 import { Phase4 } from './Phases/Phase4';
 import { useWidget } from '@hooks/useWidget';
 import { useAppState } from '@store/app.context';
-import { ConfirmModal } from './modals/ConfirmModal';
 import { Layout } from 'components/Common/Layout';
+import { TemplateModeEnum } from '@impler/shared';
+import { ConfirmModal } from './modals/ConfirmModal';
 import { PhasesEnum, PromptModalTypesEnum } from '@types';
 import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
-import { AutoImportPhase0 } from './Phases/AutoImportPhases/AutoImportPhase0';
+
 import { AutoImportPhase1 } from './Phases/AutoImportPhases/AutoImportPhase1';
 import { AutoImportPhase2 } from './Phases/AutoImportPhases/AutoImportPhase2';
 import { AutoImportPhase3 } from './Phases/AutoImportPhases/AutoImportPhase3';
-import { ImportModeEnum } from '@impler/shared/src/types/importmode.enum';
+import { AutoImportPhase4 } from './Phases/AutoImportPhases/AutoImportPhase4';
 
 export function Widget() {
   const defaultDataCount = 0;
@@ -64,12 +65,12 @@ export function Widget() {
     ParentWindow.UploadCompleted(uploadData);
   };
 
-  const importMode = importConfig.mode;
+  importConfig.mode = TemplateModeEnum.AUTOMATIC;
 
-  const PhaseView =
-    importMode === ImportModeEnum.MANUAL
+  const PhaseView = {
+    [PhasesEnum.VALIDATE]: <Phase0 onValidationSuccess={() => setPhase(PhasesEnum.UPLOAD)} />,
+    ...(importConfig.mode === TemplateModeEnum.MANUAL
       ? {
-          [PhasesEnum.VALIDATE]: <Phase0 onValidationSuccess={() => setPhase(PhasesEnum.UPLOAD)} />,
           [PhasesEnum.UPLOAD]: <Phase1 onNextClick={() => setPhase(PhasesEnum.MAPPING)} />,
           [PhasesEnum.MAPPING]: (
             <Phase2 onNextClick={() => setPhase(PhasesEnum.REVIEW)} onPrevClick={onUploadResetClick} />
@@ -80,11 +81,12 @@ export function Widget() {
           ),
         }
       : {
-          [PhasesEnum.CONFIGURE]: <AutoImportPhase0 {...() => setPhase(PhasesEnum.CONFIGURE)} />,
-          [PhasesEnum.MAPCOLUMNS]: <AutoImportPhase1 {...() => setPhase(PhasesEnum.MAPCOLUMNS)} />,
-          [PhasesEnum.SCHEDULE]: <AutoImportPhase2 {...() => setPhase(PhasesEnum.SCHEDULE)} />,
-          [PhasesEnum.CONFORM]: <AutoImportPhase3 {...() => setPhase(PhasesEnum.CONFORM)} />,
-        };
+          [PhasesEnum.CONFIGURE]: <AutoImportPhase1 onNextClick={() => setPhase(PhasesEnum.MAPCOLUMNS)} />,
+          [PhasesEnum.MAPCOLUMNS]: <AutoImportPhase2 onNextClick={() => setPhase(PhasesEnum.SCHEDULE)} />,
+          [PhasesEnum.SCHEDULE]: <AutoImportPhase3 onNextClick={() => setPhase(PhasesEnum.CONFORM)} />,
+          [PhasesEnum.CONFORM]: <AutoImportPhase4 onNextClick={() => setPhase(PhasesEnum.CONFORM)} />,
+        }),
+  };
 
   const subTitle = {
     [PromptModalTypesEnum.CLOSE]: TEXTS.PROMPT.SUBTITLE_CLOSE,
