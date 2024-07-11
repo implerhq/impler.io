@@ -16,16 +16,16 @@ export enum PromptModalTypesEnum {
 }
 
 export enum PhasesEnum {
-  VALIDATE,
-  UPLOAD,
-  MAPPING,
-  REVIEW,
-  CONFIRMATION,
-  COMPLETE,
-  CONFIGURE,
-  MAPCOLUMNS,
-  SCHEDULE,
-  CONFORM,
+  VALIDATE = 0,
+  UPLOAD = 1,
+  MAPPING = 2,
+  REVIEW = 3,
+  COMPLETE = 4,
+
+  CONFIGURE = 1,
+  MAPCOLUMNS = 2,
+  SCHEDULE = 3,
+  CONFORM = 4,
 }
 
 export interface IFormvalues {
