@@ -11,6 +11,13 @@ export const TEXTS = {
     REVIEW: 'Review',
     COMPLETE: 'Complete',
   },
+  AUTOIMPORTSTEPS: {
+    CONFIGURE: 'Configure',
+    MAPCOLUMNS: 'Map Columns',
+    SCHEDULE: 'Schedule',
+    CONFORM: 'Conform',
+  },
+
   DROPZONE: {
     TITLE: 'Drop your file here or ',
     BROWSE: 'Browse',
@@ -41,6 +48,11 @@ export const TEXTS = {
   },
   PHASE4: {
     CLOSE: 'Close',
+  },
+  AUTOIMPORTPHASE1: {},
+
+  AUTOIMPORTPHASETITLE: {
+    CONFIGURE: 'Configure',
   },
   COMPLETE: {
     TITLE: 'Bravo! {count} rows have been uploaded',
