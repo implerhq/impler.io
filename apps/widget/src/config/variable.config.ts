@@ -32,3 +32,21 @@ export const AMPLITUDE = {
   RECORDS: 'records',
   RECORDS_DELETED: 'Records deleted',
 };
+
+export const cronExampleBadges = [
+  '*/5 * * * *',
+  '*/8 * * * *',
+  '*/00 * * * *',
+  '*/0 * 6 * *',
+  '*/8 * * 5 *',
+  '*/00 * 4 * *',
+  '*/0 * 6 * *',
+];
+
+export const cronExamples = [
+  { expression: '* * * * *', schedule: 'Every minute' },
+  { expression: '0 * * * *', schedule: 'Every hour' },
+  { expression: '0 0 * * *', schedule: 'Every day at 12:00 AM' },
+  { expression: '0 0 * * FRI', schedule: 'At 12:00 AM, only on Friday' },
+  { expression: '0 0 1 * *', schedule: 'At 12:00 AM, on day 1 of the month' },
+];
