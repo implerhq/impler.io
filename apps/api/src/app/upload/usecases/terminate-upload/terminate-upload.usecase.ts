@@ -10,16 +10,18 @@ export class TerminateUpload {
   ) {}
 
   async execute(_uploadId: string) {
-    const upload = await this.uploadRepository.findOneAndUpdate(
+    const upload = await this.uploadRepository.findOne(
       {
         _id: _uploadId,
       },
-      {
-        status: UploadStatusEnum.TERMINATED,
-      }
+      'status'
     );
     if (upload) {
-      await this.dalService.dropRecordCollection(_uploadId);
+      await this.uploadRepository.update({ _id: _uploadId }, { status: UploadStatusEnum.TERMINATED });
+      if ([UploadStatusEnum.MAPPED, UploadStatusEnum.REVIEWING].includes(upload.status as UploadStatusEnum)) {
+        await this.dalService.dropRecordCollection(_uploadId);
+      }
+      upload.status = UploadStatusEnum.TERMINATED;
     }
 
     return upload;
