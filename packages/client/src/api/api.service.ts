@@ -9,6 +9,7 @@ import {
   IImportConfig,
   ISchemaColumn,
   IRecord,
+  constructQueryString,
 } from '@impler/shared';
 
 export class ApiService {
@@ -18,17 +19,6 @@ export class ApiService {
 
   constructor(private backendUrl: string) {
     this.httpClient = new HttpClient(backendUrl);
-  }
-
-  constructQueryString(obj: Record<string, string | number>): string {
-    const arr = [];
-    Object.keys(obj).forEach((key: string) => {
-      if (obj[key] !== undefined && obj[key] !== null)
-        arr.push(`${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`);
-    });
-    const query = arr.join('&');
-
-    return query ? `?${query}` : '';
   }
 
   setAuthorizationToken(token: string) {
@@ -126,7 +116,7 @@ export class ApiService {
     limit?: number;
     type?: string;
   }): Promise<IReviewData> {
-    const queryString = this.constructQueryString({ limit, page, type });
+    const queryString = constructQueryString({ limit, page, type });
 
     return this.httpClient.get(
       `/review/${uploadId}${queryString}`,
@@ -187,7 +177,7 @@ export class ApiService {
     ) as Promise<ArrayBuffer>;
   }
 
-  async updateRecord(uploadId: string, record: IRecord) {
+  async updateRecord(uploadId: string, record: Partial<IRecord>) {
     return this.httpClient.put(`/review/${uploadId}/record`, record);
   }
 

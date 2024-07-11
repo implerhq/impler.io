@@ -59,8 +59,8 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
               searchable
               value={value}
               onChange={onChange}
-              label="Excel column keys"
-              placeholder="Excel column keys"
+              label="Alternative column keys"
+              placeholder="Alternative column keys"
               getCreateLabel={(query) => `+ ${query}`}
               data={Array.isArray(value) ? value : []}
               onCreate={(newItem) => {
@@ -166,6 +166,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
           ) : (
             <Checkbox label="Multi Select?" register={register('allowMultiSelect')} />
           )}
+          <Checkbox label="Frozen?" register={register('isFrozen')} />
         </Group>
         <Button type="submit" fullWidth loading={isLoading}>
           {data ? 'Update' : 'Add'}

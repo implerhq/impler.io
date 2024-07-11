@@ -1,9 +1,19 @@
 export const CONSTANTS = {
+  PLAN_CODE_QUERY_KEY: 'plan_code',
   GITHUB_LOGIN_URL: '/v1/auth/github',
   AUTH_COOKIE_NAME: 'authentication',
   AUTHENTICATION_ERROR_CODE: 'AuthenticationError',
   PROFILE_STORAGE_NAME: 'profile',
   REACT_DOCUMENTATION_URL: 'https://docs.impler.io/widget/react-component#props',
+  PAYMENT_SUCCCESS_CODE: 'success',
+  PAYMENT_FAILED_CODE: 'failed',
+  PAYMENT_SUCCESS_MESSAGE:
+    // eslint-disable-next-line max-len
+    'Congratulations! Your subscription has been activated, and benefits have been added to your account. We hope you will love the experience. If you need anything, feel free to contact the support team.',
+  PAYMENT_FAILED_MESSAGE:
+    'An error occurred with the payment. No amount has been deducted. Please try again later or contact the support team.',
+  SUBSCRIPTION_ACTIVATED_TITLE: 'Subscription activated',
+  SUBSCRIPTION_FAILED_TITLE: 'Payment failed',
 };
 
 export const VARIABLES = {
@@ -21,6 +31,9 @@ export const VARIABLES = {
 };
 
 export const MODAL_KEYS = {
+  SELECT_CARD: 'SELECT_CARD',
+  PAYMENT_SUCCEED: 'successfull_payment',
+
   IMPORT_DUPLICATE: 'IMPORT_DUPLICATE',
   IMPORT_CREATE: 'IMPORT_CREATE',
   IMPORT_UPDATE: 'IMPORT_UPDATE',
@@ -29,6 +42,8 @@ export const MODAL_KEYS = {
   COLUMN_DELETE: 'COLUMN_DELETE',
 
   VALIDATIONS_OUTPUT: 'VALIDATIONS_OUTPUT',
+  PAYMENT_PLANS: 'PAYMENT_PLANS',
+  PAYMENT_DETAILS_ADD: 'PAYMENT_PLANS',
 };
 
 export const MODAL_TITLES = {
@@ -44,6 +59,21 @@ export const MODAL_TITLES = {
 };
 
 export const API_KEYS = {
+  CHECKOUT: 'CHECKOUT',
+
+  APPLY_COUPON_CODE: 'APPLY_COUPON_CODE',
+
+  TRANSACTION_HISTORY: 'TRANSACTION_HISTORY',
+
+  PAYMENT_METHOD_DELETE: 'PAYMENT_METHOD_DELETE',
+  PAYMENT_METHOD_LIST: 'PAYMENT_METHOD_LIST',
+
+  ADD_PAYMENT_METHOD: 'ADD_PAYMENT_METHOD',
+  SAVE_INTENT_ID: 'SAVE_SETUP_INTENT_ID',
+
+  FETCH_ACTIVE_SUBSCRIPTION: 'FETCH_ACTIVE_SUBSCRIPTION',
+  CANCEL_SUBSCRIPTION: 'CANCEL_SUBSCRIPTION',
+
   PROJECT_SWITCH: 'PROJECT_SWITCH',
   PROJECTS_LIST: 'PROJECT_LIST',
   PROJECT_CREATE: 'PROJECT_CREATE',
@@ -84,10 +114,21 @@ export const API_KEYS = {
 
   ME: 'ME',
   REGENERATE: 'REGENERATE',
+  IMPORT_COUNT: 'IMPORT_COUNT',
   DONWLOAD_ORIGINAL_FILE: 'DOWNLOAD_ORIGINAL_FILE',
 };
 
 export const NOTIFICATION_KEYS = {
+  ERROR_ADDING_PAYMENT_METHOD: 'ERROR_ADDING_PAYMENT_METHOD',
+  NO_PAYMENT_METHOD_FOUND: 'NO_PAYMENT_METHOD_FOUND',
+
+  ERROR_AUTHORIZING_PAYMENT_METHOD: 'ERROR_AUTHORIZING_PAYMENT_METHOD',
+
+  PAYMENT_INTENT_ID_UPDATED: 'PAYMENT_INTENT_ID_UPDATED',
+
+  MEMBERSHIP_CANCELLED: 'MEMBERSHIP_CANCELLED',
+  MEMBERSHIP_PURCHASED: 'MEMBERSHIP_PURCHASED',
+
   IMPORT_DUPLICATED: 'IMPORT_DUPLICATED',
   IMPORT_UPDATED: 'IMPORT_UPDATED',
   IMPORT_CREATED: 'IMPORT_CREATED',
@@ -102,6 +143,9 @@ export const NOTIFICATION_KEYS = {
   REGENERATED: 'REGENERATED',
 
   ERROR_OCCURED: 'ERROR_OCCURED',
+
+  CARD_ADDED: 'CARD_ADDED',
+  CARD_REMOVED: 'CARD_REMOVED',
 };
 
 export const ROUTES = {
@@ -113,6 +157,7 @@ export const ROUTES = {
   IMPORTS: '/imports',
   SETTINGS: '/settings',
   ACTIVITIES: '/activities',
+  ADD_CARD: '/settings?tab=addcard&action=addcardmodal',
 };
 
 export const REGULAR_EXPRESSIONS = {

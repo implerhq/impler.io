@@ -62,3 +62,14 @@ export function downloadFile(blob: Blob, name: string) {
   // Clean up and remove the link
   link.parentNode?.removeChild(link);
 }
+
+export function constructQueryString(obj: Record<string, string | number>): string {
+  const arr = [];
+  Object.keys(obj).forEach((key: string) => {
+    if (obj[key] !== undefined && obj[key] !== null)
+      arr.push(`${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`);
+  });
+  const query = arr.join('&');
+
+  return query ? `?${query}` : '';
+}

@@ -11,8 +11,8 @@ export class GetCustomization {
 
     return {
       ...customization,
-      chunkVariables: customization.chunkVariables?.map((variable) => createVariable(variable)) || [],
-      recordVariables: customization.recordVariables?.map((variable) => createVariable(variable)) || [],
+      chunkVariables: customization?.chunkVariables?.map((variable) => createVariable(variable)) || [],
+      recordVariables: customization?.recordVariables?.map((variable) => createVariable(variable)) || [],
     };
   }
 }

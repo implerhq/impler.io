@@ -3,10 +3,10 @@ import { Writable } from 'stream';
 import { Injectable, BadRequestException } from '@nestjs/common';
 
 import { APIMessages } from '@shared/constants';
-import { ITemplateSchemaItem, UploadStatusEnum } from '@impler/shared';
 import { BaseReview } from './base-review.usecase';
 import { BATCH_LIMIT } from '@shared/services/sandbox';
 import { StorageService } from '@impler/shared/dist/services/storage';
+import { PaymentAPIService, ColumnTypesEnum, UploadStatusEnum, ITemplateSchemaItem } from '@impler/shared';
 import { UploadRepository, ValidatorRepository, FileRepository, DalService } from '@impler/dal';
 
 interface ISaveResults {
@@ -18,14 +18,15 @@ interface ISaveResults {
 
 @Injectable()
 export class DoReview extends BaseReview {
-  private _modal: Model<any>;
+  private _modal: Model<unknown>;
 
   constructor(
     private storageService: StorageService,
     private uploadRepository: UploadRepository,
     private validatorRepository: ValidatorRepository,
     private fileRepository: FileRepository,
-    private dalService: DalService
+    private dalService: DalService,
+    private paymentAPIService: PaymentAPIService
   ) {
     super();
   }
@@ -43,9 +44,12 @@ export class DoReview extends BaseReview {
     const dateFormats: Record<string, string[]> = {};
     const uniqueItems: Record<string, Set<any>> = {};
     const columns = JSON.parse(uploadInfo.customSchema);
-    const multiSelectColumnHeadings = [];
+    const multiSelectColumnHeadings = new Set<string>();
+    const numberColumnHeadings = new Set<string>();
     (columns as ITemplateSchemaItem[]).forEach((column) => {
-      if (column.allowMultiSelect) multiSelectColumnHeadings.push(column.key);
+      if (column.type === ColumnTypesEnum.SELECT && column.allowMultiSelect) multiSelectColumnHeadings.add(column.key);
+      if (column.type === ColumnTypesEnum.NUMBER || column.type === ColumnTypesEnum.DOUBLE)
+        numberColumnHeadings.add(column.key);
     });
     const schema = this.buildAJVSchema({
       columns,
@@ -77,6 +81,7 @@ export class DoReview extends BaseReview {
         extra: uploadInfo.extra,
         dataStream, // not-used
         dateFormats,
+        numberColumnHeadings,
         multiSelectColumnHeadings,
       });
 
@@ -110,6 +115,7 @@ export class DoReview extends BaseReview {
         uploadId: _uploadId,
         validator,
         dateFormats,
+        numberColumnHeadings,
         multiSelectColumnHeadings,
       });
     }
@@ -152,6 +158,12 @@ export class DoReview extends BaseReview {
         validRecords,
         invalidRecords,
       }
+    );
+    const userExternalIdOrEmail = await this.uploadRepository.getUserEmailFromUploadId(uploadId);
+
+    await this.paymentAPIService.createEvent(
+      { uploadId, totalRecords, validRecords, invalidRecords },
+      userExternalIdOrEmail
     );
   }
 }

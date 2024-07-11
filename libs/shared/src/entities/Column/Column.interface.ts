@@ -6,6 +6,7 @@ export interface IColumn {
   alternateKeys?: string[];
   isRequired?: boolean;
   isUnique?: boolean;
+  isFrozen?: boolean;
   regex?: string;
   allowMultiSelect?: boolean;
   defaultValue?: string | number;

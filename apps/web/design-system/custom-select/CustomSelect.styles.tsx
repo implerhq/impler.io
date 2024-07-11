@@ -42,7 +42,7 @@ const getInputStyles = (theme: MantineTheme, size: MantineSize): CSSObject => ({
     content: 'attr(data-placeholder)',
     pointerEvents: 'none',
     display: 'block',
-    color: theme.colorScheme === 'dark' ? theme.colors.dark[2] : theme.colors.gray[5],
+    color: theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[5],
   },
 });
 const getSelectItemStyles = (theme: MantineTheme, size: MantineSize): CSSObject => ({

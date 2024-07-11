@@ -36,12 +36,11 @@ export class ExcelFileService {
         .slice(0, 25) // exceljs don't allow heading more than 30 characters
     );
   }
-  addSelectSheet(wb: ExcelJS.Workbook, heading: IExcelFileHeading): string {
+  addSelectSheet(wb: any, heading: IExcelFileHeading): string {
     const name = this.formatName(heading.key);
-    const companies = wb.addWorksheet(name);
-    const companyHeadings = [heading.key];
-    companies.addRow(companyHeadings);
-    heading.selectValues.forEach((value) => companies.addRow([value]));
+    const addedSheet = wb.addSheet(name);
+    addedSheet.cell('A1').value(heading.key);
+    heading.selectValues.forEach((value, index) => addedSheet.cell(`A${index + 2}`).value(value));
 
     return name;
   }
@@ -102,19 +101,26 @@ export class ExcelFileService {
     const worksheet = workbook.sheet('Data');
 
     headings.forEach((heading, index) => {
-      const columnName = this.getExcelColumnNameFromIndex(index + 1) + '1';
+      const columnName = this.getExcelColumnNameFromIndex(index + 1);
+      const columnHeadingCellName = columnName + '1';
       if (heading.type === ColumnTypesEnum.SELECT && heading.allowMultiSelect)
-        worksheet.cell(columnName).value(heading.key + '#MULTI');
-      else worksheet.cell(columnName).value(heading.key);
+        worksheet.cell(columnHeadingCellName).value(heading.key + '#MULTI');
+      else worksheet.cell(columnHeadingCellName).value(heading.key);
+      worksheet.column(columnName).style('numberFormat', '@');
     });
+
+    const frozenColumns = headings.filter((heading) => heading.isFrozen).length;
+    if (frozenColumns) worksheet.freezePanes(frozenColumns, 1); // freeze panes (freeze first n column and first row)
+    else worksheet.freezePanes(0, 1); // freeze 0 column and first row
 
     headings.forEach((heading, index) => {
       if (heading.type === ColumnTypesEnum.SELECT) {
+        const keyName = this.addSelectSheet(workbook, heading);
         const columnName = this.getExcelColumnNameFromIndex(index + 1);
         worksheet.range(`${columnName}2:${columnName}9999`).dataValidation({
           type: 'list',
           allowBlank: !heading.isRequired,
-          formula1: `"${heading.selectValues.join(',')}"`,
+          formula1: `${keyName}!$A$2:$A$9999`,
           ...(!heading.allowMultiSelect
             ? {
                 showErrorMessage: true,

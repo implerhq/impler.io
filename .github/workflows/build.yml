@@ -1,10 +1,10 @@
 name: Build
 
 on:
-  push:
-    branches:
-      - next
-
+  workflow_dispatch
+#   push:
+#     branches:
+#       - next
 
 jobs:
   build:

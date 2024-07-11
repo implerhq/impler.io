@@ -8,7 +8,12 @@ export class GetTemplateColumns {
   async execute(_templateId: string) {
     return this.columnRepository.find(
       { _templateId },
-      '_id name key type alternateKeys isRequired isUnique selectValues regex dateFormats defaultValue sequence allowMultiSelect'
+      '_id name key type alternateKeys isRequired isUnique isFrozen selectValues regex dateFormats defaultValue sequence allowMultiSelect',
+      {
+        sort: {
+          isFrozen: -1,
+        },
+      }
     );
   }
 }

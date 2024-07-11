@@ -1,11 +1,10 @@
 name: Publish Packages to NPM Registry
 
 on:
-  push:
-    tags:
-      - '**@impler/react@**'
-      - '**@impler/shared@**'
-  workflow_dispatch:
+  workflow_call:
+    secrets:
+      NPM_TOKEN:
+        required: true
 
 jobs:
   publish_prod_react:
@@ -13,7 +12,6 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     timeout-minutes: 80
-    environment: Production
     permissions:
       contents: read
       packages: write 
@@ -44,14 +42,19 @@ jobs:
           run_install: true
 
       - name: Publish @impler/shared package on NPM 📦
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         working-directory: libs/shared
         run: |
-          npm config set --workspaces=false --include-workspace-root //registry.npmjs.com/:_authToken=${{ secrets.NPM_TOKEN }}
+          npm config set --workspaces=false --include-workspace-root registry https://registry.npmjs.org/
+          npm config set --workspaces=false --include-workspace-root //registry.npmjs.org/:_authToken=$NPM_TOKEN
           npm publish --access public
 
       - name: Publish @impler/react package on NPM 📦
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         working-directory: packages/react
         run: |
-          npm config set --workspaces=false --include-workspace-root //registry.npmjs.com/:_authToken=${{ secrets.NPM_TOKEN }}
+          npm config set --workspaces=false --include-workspace-root registry https://registry.npmjs.org/
+          npm config set --workspaces=false --include-workspace-root //registry.npmjs.org/:_authToken=$NPM_TOKEN
           npm publish --access public
-

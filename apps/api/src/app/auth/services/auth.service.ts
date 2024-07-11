@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
-import { IJwtPayload } from '@impler/shared';
+import { IJwtPayload, PaymentAPIService } from '@impler/shared';
 import { CONSTANTS } from '@shared/constants';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserEntity, UserRepository, EnvironmentRepository } from '@impler/dal';
@@ -15,7 +15,8 @@ export class AuthService {
     private jwtService: JwtService,
     private leadService: LeadService,
     private userRepository: UserRepository,
-    private environmentRepository: EnvironmentRepository
+    private environmentRepository: EnvironmentRepository,
+    private paymentAPIService: PaymentAPIService
   ) {}
 
   async authenticate({ profile, provider }: IAuthenticationData): Promise<IStrategyResponse> {
@@ -37,8 +38,16 @@ export class AuthService {
         'First Name': user.firstName,
         'Last Name': user.lastName,
         'Lead Email': user.email,
+        'Lead Source': 'Github Signup',
       });
       userCreated = true;
+
+      const userData = {
+        name: user.firstName + ' ' + user.lastName,
+        email: user.email,
+        externalId: user.email,
+      };
+      this.paymentAPIService.createUser(userData);
     }
     if (!user) {
       throw new UserNotFoundException();

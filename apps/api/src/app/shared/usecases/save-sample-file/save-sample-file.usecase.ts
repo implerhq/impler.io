@@ -15,14 +15,18 @@ export class SaveSampleFile {
   ) {}
 
   async execute(columns: ColumnEntity[], templateId: string) {
-    const columnKeys: IExcelFileHeading[] = columns.map((columnItem) => ({
-      key: columnItem.key,
-      type: columnItem.type as ColumnTypesEnum,
-      selectValues: columnItem.selectValues,
-      isRequired: columnItem.isRequired,
-      dateFormats: columnItem.dateFormats,
-      allowMultiSelect: columnItem.allowMultiSelect,
-    }));
+    const columnKeys: IExcelFileHeading[] = columns
+      .map((columnItem) => ({
+        key: columnItem.key,
+        type: columnItem.type as ColumnTypesEnum,
+        selectValues: columnItem.selectValues,
+        isFrozen: columnItem.isFrozen,
+        isRequired: columnItem.isRequired,
+        dateFormats: columnItem.dateFormats,
+        allowMultiSelect: columnItem.allowMultiSelect,
+      }))
+      .sort((a, b) => (a.isFrozen === b.isFrozen ? 0 : a.isFrozen ? -1 : 1));
+
     const hasMultiSelect = columns.some(
       (columnItem) => columnItem.type === ColumnTypesEnum.SELECT && columnItem.allowMultiSelect
     );

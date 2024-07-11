@@ -3,7 +3,7 @@ import { Writable } from 'stream';
 import { ValidateFunction } from 'ajv';
 import { Injectable, BadRequestException } from '@nestjs/common';
 
-import { ITemplateSchemaItem, UploadStatusEnum } from '@impler/shared';
+import { ColumnTypesEnum, ITemplateSchemaItem, UploadStatusEnum } from '@impler/shared';
 import { UploadRepository, ValidatorRepository, DalService } from '@impler/dal';
 
 import { APIMessages } from '@shared/constants';
@@ -64,9 +64,9 @@ export class DoReReview extends BaseReview {
     const columns = JSON.parse(uploadInfo.customSchema) as ITemplateSchemaItem[];
     const uniqueFields = columns.filter((column) => column.isUnique).map((column) => column.key);
     const uniqueFieldData = uniqueFields.length ? await this.dalService.getFieldData(_uploadId, uniqueFields) : [];
-    const multiSelectColumnHeadings = [];
+    const multiSelectColumnHeadings = new Set<string>();
     (columns as ITemplateSchemaItem[]).forEach((column) => {
-      if (column.allowMultiSelect) multiSelectColumnHeadings.push(column.key);
+      if (column.type === ColumnTypesEnum.SELECT && column.allowMultiSelect) multiSelectColumnHeadings.add(column.key);
     });
 
     uniqueFieldData.forEach((item) => {
@@ -75,6 +75,29 @@ export class DoReReview extends BaseReview {
         uniqueItems[field].add(item.record[field]);
       });
     });
+    const bulkOperations = [];
+    for (const key of Object.keys(uniqueItems)) {
+      const itemsArray = Array.from(uniqueItems[key]);
+      // Iterate over each value in unique field
+      for (const item of itemsArray) {
+        // update first occurance of data
+        bulkOperations.push({
+          updateOne: {
+            filter: { [`record.${key}`]: item },
+            update: { $set: { [`updated.${key}`]: true } },
+          },
+        });
+        // update second occurance of data for validity
+        bulkOperations.push({
+          updateOne: {
+            filter: { [`record.${key}`]: item, [`updated.${key}`]: false },
+            update: { $set: { [`updated.${key}`]: true } },
+          },
+        });
+      }
+      uniqueItems[key].clear();
+    }
+    await this._modal.bulkWrite(bulkOperations);
 
     let result: ISaveResults = {
       uploadId: _uploadId,
@@ -107,7 +130,26 @@ export class DoReReview extends BaseReview {
 
     return result;
   }
+  formatRecord({
+    record,
+    multiSelectColumnHeadings,
+  }: {
+    headings?: string[];
+    record: Record<string, any>;
+    numberColumnHeadings?: Set<string>;
+    multiSelectColumnHeadings?: Set<string>;
+  }) {
+    return Array.from(multiSelectColumnHeadings).reduce(
+      (acc, heading) => {
+        if (typeof record.record[heading] === 'string') {
+          acc[heading] = record.record[heading]?.split(',');
+        }
 
+        return acc;
+      },
+      { ...record.record }
+    );
+  }
   private async normalValidate({
     result,
     uploadId,
@@ -118,7 +160,7 @@ export class DoReReview extends BaseReview {
     uploadId: string;
     result: ISaveResults;
     validator: ValidateFunction;
-    multiSelectColumnHeadings: string[];
+    multiSelectColumnHeadings: Set<string>;
     dateFormats: Record<string, string[]>;
   }) {
     const bulkOp = this.dalService.getRecordBulkOp(uploadId);
@@ -130,18 +172,7 @@ export class DoReReview extends BaseReview {
     };
 
     for await (const record of this._modal.find({ updated: { $ne: {}, $exists: true } })) {
-      const checkRecord: Record<string, unknown> = multiSelectColumnHeadings.reduce(
-        (acc, heading) => {
-          if (heading === '_') return acc;
-
-          if (multiSelectColumnHeadings.includes(heading) && typeof record.record[heading] === 'string') {
-            acc[heading] = record.record[heading]?.split(',');
-          }
-
-          return acc;
-        },
-        { ...record.record }
-      );
+      const checkRecord: Record<string, unknown> = this.formatRecord({ record, multiSelectColumnHeadings });
       const validationResult = this.validateRecord({
         validator,
         checkRecord,
@@ -201,7 +232,7 @@ export class DoReReview extends BaseReview {
     result: ISaveResults;
     onBatchInitialize: string;
     validator: ValidateFunction;
-    multiSelectColumnHeadings: string[];
+    multiSelectColumnHeadings: Set<string>;
     dateFormats: Record<string, string[]>;
   }) {
     const { dataStream } = this.getStreams({
@@ -244,7 +275,7 @@ export class DoReReview extends BaseReview {
     extra: any;
     uploadId: string;
     validator: ValidateFunction;
-    multiSelectColumnHeadings: string[];
+    multiSelectColumnHeadings: Set<string>;
     dateFormats: Record<string, string[]>;
   }) {
     let batchCount = 1;
@@ -257,15 +288,7 @@ export class DoReReview extends BaseReview {
     const resultObj = {};
 
     for await (const record of this._modal.find({ updated: { $ne: {}, $exists: true } })) {
-      const checkRecord: Record<string, unknown> = multiSelectColumnHeadings.reduce((acc, heading) => {
-        if (heading === '_') return acc;
-
-        if (multiSelectColumnHeadings.includes(heading)) {
-          acc[heading] = record.record[heading]?.split(',');
-        }
-
-        return acc;
-      }, record.record);
+      const checkRecord: Record<string, unknown> = this.formatRecord({ record, multiSelectColumnHeadings });
       const validationResultItem = this.validateRecord({
         validator,
         checkRecord,

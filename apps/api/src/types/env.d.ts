@@ -29,10 +29,18 @@ declare namespace NodeJS {
     EMAIL_FROM: string;
     EMAIL_FROM_NAME: string;
 
+    CRM_REFRESH_TOKEN: string;
+    CRM_CLIENT_ID: string;
+    CRM_CLIENT_SECRET: string;
+
     LEAD_REFRESH_TOKEN: string;
     LEAD_CLIENT_ID: string;
     LEAD_CLIENT_SECRET: string;
     LEAD_TOPIC_ID: string;
     LEAD_LIST_KEY: string;
+
+    PAYMENT_API_BASE_URL: string;
+    PAYMENT_AUTH_KEY: string;
+    PAYMENT_AUTH_VALUE: string;
   }
 }

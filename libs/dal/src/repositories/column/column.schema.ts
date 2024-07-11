@@ -9,6 +9,7 @@ const columnSchema = new Schema(
     alternateKeys: [String],
     isRequired: Boolean,
     isUnique: Boolean,
+    isFrozen: Boolean,
     regex: String,
     allowMultiSelect: Boolean,
     regexDescription: String,

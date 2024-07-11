@@ -187,6 +187,7 @@ export class TemplateController {
           alternateKeys: columnData.alternateKeys,
           isRequired: columnData.isRequired,
           isUnique: columnData.isUnique,
+          isFrozen: columnData.isFrozen,
           name: columnData.name,
           regex: columnData.regex,
           regexDescription: columnData.regexDescription,

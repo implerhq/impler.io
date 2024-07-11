@@ -69,3 +69,7 @@ export const VARIABLES = {
   ONE: 1,
   TWO: 2,
 };
+
+export const DATE_FORMATS = {
+  COMMON: 'DD MMM YYYY',
+};
