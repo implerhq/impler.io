@@ -21,31 +21,6 @@ jobs:
       - name: Setup kernel for react native, increase watchers
         run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '20.13.1'
-      
-      - name: Cache pnpm modules
-        uses: actions/cache@v2
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-
-      
-      - uses: pnpm/action-setup@v2.0.1
-        env:
-          CI: false
-        with:
-          version: 8.9.0
-          run_install: true
-
-      - name: Log in to GitHub Container Registry
-        env:
-          GH_ACTOR: implerhq
-          GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
-        run: echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
-
       - name: Build & Tag Docker image
         env:
           REGISTERY_OWNER: implerhq
@@ -73,6 +48,12 @@ jobs:
           done
           echo "Application failed to start"
           exit 1
+
+      - name: Log in to GitHub Container Registry
+        env:
+          GH_ACTOR: implerhq
+          GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
+        run: echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
 
       - name: Push Docker image
         env:
