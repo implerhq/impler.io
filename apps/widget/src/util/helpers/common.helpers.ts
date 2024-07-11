@@ -54,3 +54,9 @@ export function getFileNameFromUrl(url: string) {
 
   return pathArr.join('/');
 }
+export function isValidCronCharacter(value: string): boolean {
+  //const cronCharacterRegex = /^[0-9*,/\-?]+$/; // This will not accept the letters like for example FRI
+  const cronCharacterRegex = /^[0-9*,/\-?A-Za-z]+$/;
+
+  return cronCharacterRegex.test(value);
+}
