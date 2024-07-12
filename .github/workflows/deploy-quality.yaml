@@ -5,6 +5,7 @@ on:
     branches: [next]
     types:
       - closed
+  workflow_dispatch:
 
 jobs:
   build_api:
@@ -30,7 +31,7 @@ jobs:
       contents: read
       packages: write
       deployments: write
-    if: ${{ (github.event.pull_request.merged == true) && (contains(github.event.pull_request.labels.*.name, 'impler/queuemanager')) }}
+    if: ${{ (github.event.pull_request.merged == true) && (contains(github.event.pull_request.labels.*.name, 'impler/queue-manager')) }}
     uses: ./.github/workflows/build-queuemanager.yml
     secrets: inherit
 
@@ -71,4 +72,4 @@ jobs:
       - name: Run Docker Compose Up
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME_QA }}@${{ secrets.SSH_HOST_QA }} \
-            "cd ${{ secrets.SSH_PATH_QA }} && sudo docker compose up --pull always -d"
+            "cd ${{ secrets.SSH_PATH_QA }} && sudo docker compose up --pull always -d && sudo docker image prune -a -f"

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Group, Stack, TextInput as Input } from '@mantine/core';
 import { Controller, useForm } from 'react-hook-form';
 
-import { COLUMN_TYPES } from '@shared/constants';
+import { COLUMN_TYPES } from '@config';
 import { DEFAULT_VALUES, IColumn } from '@impler/shared';
 
 import { Button } from '@ui/button';
@@ -59,8 +59,8 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
               searchable
               value={value}
               onChange={onChange}
-              label="Excel column keys"
-              placeholder="Excel column keys"
+              label="Alternative column keys"
+              placeholder="Alternative column keys"
               getCreateLabel={(query) => `+ ${query}`}
               data={Array.isArray(value) ? value : []}
               onCreate={(newItem) => {

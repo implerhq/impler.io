@@ -2,6 +2,9 @@ name: Publish Packages to NPM Registry
 
 on:
   workflow_call:
+    secrets:
+      NPM_TOKEN:
+        required: true
 
 jobs:
   publish_prod_react:
@@ -39,13 +42,19 @@ jobs:
           run_install: true
 
       - name: Publish @impler/shared package on NPM 📦
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         working-directory: libs/shared
         run: |
-          npm config set --workspaces=false --include-workspace-root //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
+          npm config set --workspaces=false --include-workspace-root registry https://registry.npmjs.org/
+          npm config set --workspaces=false --include-workspace-root //registry.npmjs.org/:_authToken=$NPM_TOKEN
           npm publish --access public
 
       - name: Publish @impler/react package on NPM 📦
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         working-directory: packages/react
         run: |
-          npm config set --workspaces=false --include-workspace-root //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
+          npm config set --workspaces=false --include-workspace-root registry https://registry.npmjs.org/
+          npm config set --workspaces=false --include-workspace-root //registry.npmjs.org/:_authToken=$NPM_TOKEN
           npm publish --access public
