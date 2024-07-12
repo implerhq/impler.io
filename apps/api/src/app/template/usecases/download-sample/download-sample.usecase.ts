@@ -77,7 +77,11 @@ export class DownloadSample {
           const file = zip.files[filename];
           const fileData = await file.async('base64');
           const storageFilename = this.fileNameService.getAssetFilePath(data.importId, filename);
-          await this.storageService.uploadFile(storageFilename, fileData, getAssetMimeType(filename));
+          await this.storageService.uploadFile(
+            storageFilename,
+            Buffer.from(fileData, 'base64'),
+            getAssetMimeType(filename)
+          );
         })
       );
     }
