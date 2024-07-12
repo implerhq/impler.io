@@ -1,39 +1,21 @@
 import { useForm } from 'react-hook-form';
 import { useDisclosure } from '@mantine/hooks';
-import { Group, Text, Stack } from '@mantine/core';
+import { Group, Text, Stack, Flex, Container } from '@mantine/core';
 const parseCronExpression = require('util/helpers/cronstrue');
-import { cronExampleBadges, cronExamples } from '@config';
+import { colors, cronExampleBadges, cronExamples, ScheduleFormValues, TEXTS } from '@config';
 import { PhasesEnum } from '@types';
 import { AutoImportFooter } from 'components/Common/Footer';
-import { CronScheduleInputTextBoxes } from './CronScheduleInputTextBoxes';
+import { CronScheduleInputTextBox } from './CronScheduleInputTextBox';
 import { CollapsibleExplanationTable } from './CollapsibleExplanationTable';
-import { TooltipBadges } from './TooltipBadges';
+import { TooltipBadge } from './TooltipBadge';
 
 interface IAutoImportPhase3Props {
   onNextClick: () => void;
 }
 
-type ScheduleFormValues = {
-  Minute: string;
-  Hour: string;
-  Day: string;
-  Month: string;
-  Days: string;
-};
-
 export function AutoImportPhase3({ onNextClick }: IAutoImportPhase3Props) {
   const [opened, { toggle }] = useDisclosure(false);
-
-  const { control, watch, setValue } = useForm<ScheduleFormValues>({
-    defaultValues: {
-      Minute: '',
-      Hour: '',
-      Day: '',
-      Month: '*',
-      Days: '*',
-    },
-  });
-
+  const { control, watch, setValue } = useForm<ScheduleFormValues>();
   const scheduleData = watch();
 
   const handleBadgeClick = (cronExpression: string) => {
@@ -45,33 +27,57 @@ export function AutoImportPhase3({ onNextClick }: IAutoImportPhase3Props) {
     setValue('Days', days);
   };
 
-  const getCronDescriptionfromCronExpression = (cronExpression: string): string => {
+  const getCronDescriptionfromCronExpression = (cronExpression: string): { description: string; isError: boolean } => {
     try {
-      return parseCronExpression.toString(cronExpression);
+      if (!cronExpression) {
+        return { description: '', isError: false };
+      }
+      const description: string = parseCronExpression.toString(cronExpression);
+      if (description.includes('undefined')) {
+        return { description: TEXTS.INVALID_CRON.MESSAGE, isError: true };
+      }
+
+      return { description, isError: false };
     } catch (error) {
-      return '';
+      return {
+        description: TEXTS.INVALID_CRON.MESSAGE,
+        isError: true,
+      };
     }
   };
 
+  const cronResult = getCronDescriptionfromCronExpression(
+    `${scheduleData.Minute} ${scheduleData.Hour} ${scheduleData.Day} ${scheduleData.Month} ${scheduleData.Days}`
+  );
+
   return (
     <>
-      <Stack spacing="lg" style={{ flexGrow: 1 }}>
-        <Group noWrap mx="auto">
-          {(Object.keys(scheduleData) as Array<keyof ScheduleFormValues>).map((key) => (
-            <CronScheduleInputTextBoxes key={key} name={key as keyof ScheduleFormValues} control={control} />
-          ))}
-        </Group>
-        <Text size="xl" fw="bolder" align="center">
-          {getCronDescriptionfromCronExpression(
-            `${scheduleData.Minute} ${scheduleData.Hour} ${scheduleData.Day} ${scheduleData.Month} ${scheduleData.Days}`
-          )}
-        </Text>
-        <Group spacing="xl" mx="auto">
-          <TooltipBadges badges={cronExampleBadges} onBadgeClick={handleBadgeClick} />
-        </Group>
-        <CollapsibleExplanationTable opened={opened} toggle={toggle} cronExamples={cronExamples} />
-        <AutoImportFooter active={PhasesEnum.SCHEDULE} onPrevClick={() => {}} onNextClick={onNextClick} />
-      </Stack>
+      <Container style={{ flexGrow: 1 }} px={0}>
+        <Stack spacing="lg">
+          <Group noWrap mx="auto">
+            <CronScheduleInputTextBox name="Minute" control={control} />
+            <CronScheduleInputTextBox name="Hour" control={control} />
+            <CronScheduleInputTextBox name="Day" control={control} />
+            <CronScheduleInputTextBox name="Month" control={control} />
+            <CronScheduleInputTextBox name="Days" control={control} />
+          </Group>
+          <Text color={cronResult.isError ? colors.red : ''} size="xl" fw="bolder" align="center">
+            {cronResult.description}
+          </Text>
+          <Flex gap="lg" justify="center" wrap="wrap">
+            {cronExampleBadges.map((badgeInfo, index) => (
+              <TooltipBadge
+                tooltipLabel={parseCronExpression.toString(badgeInfo)}
+                key={index}
+                badge={badgeInfo}
+                onBadgeClick={handleBadgeClick}
+              />
+            ))}
+          </Flex>
+          <CollapsibleExplanationTable opened={opened} toggle={toggle} cronExamples={cronExamples} />
+        </Stack>
+      </Container>
+      <AutoImportFooter active={PhasesEnum.SCHEDULE} onPrevClick={() => {}} onNextClick={onNextClick} />
     </>
   );
 }
