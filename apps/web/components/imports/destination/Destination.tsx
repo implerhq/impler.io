@@ -3,10 +3,10 @@ import { DestinationsEnum, ITemplate } from '@impler/shared';
 import { Stack, TextInput as Input, Group } from '@mantine/core';
 
 import { Button } from '@ui/button';
-import { Select } from '@ui/select';
 import { NumberInput } from '@ui/number-input';
 import { DoaminInput } from '@ui/domain-input';
 import { REGULAR_EXPRESSIONS } from '@config';
+import { NativeSelect } from '@ui/native-select';
 import { useDestination } from '@hooks/useDestination';
 import { DestinationItem } from './DestinationItem';
 
@@ -113,7 +113,7 @@ export function Destination({ template }: DestinationProps) {
               control={control}
               name="bubbleIo.environment"
               render={({ field }) => (
-                <Select
+                <NativeSelect
                   register={{
                     value: field.value,
                     onChange: field.onChange,

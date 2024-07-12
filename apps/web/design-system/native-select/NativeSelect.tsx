@@ -1,6 +1,6 @@
 import { NativeSelect as MantineSelect, SelectItem, Variants } from '@mantine/core';
 
-interface SelectProps {
+interface NativeSelectProps {
   placeholder?: string;
   data: (string | SelectItem)[];
   register?: any;
@@ -12,7 +12,7 @@ interface SelectProps {
   variant?: Variants<'default' | 'filled' | 'unstyled'>;
 }
 
-export function Select({
+export function NativeSelect({
   error,
   required,
   placeholder,
@@ -22,7 +22,7 @@ export function Select({
   autoFocus,
   onFocus,
   variant,
-}: SelectProps) {
+}: NativeSelectProps) {
   return (
     <MantineSelect
       error={error}
