@@ -1,5 +1,6 @@
-import { Paper, Flex, Text, Collapse, Table } from '@mantine/core';
+import { Flex, Text, Collapse, Table, UnstyledButton, Stack } from '@mantine/core';
 import { ChevronDown } from '@icons';
+import { colors } from '@config';
 
 interface CollapsibleExplanationTableProps {
   opened: boolean;
@@ -9,46 +10,39 @@ interface CollapsibleExplanationTableProps {
 
 export function CollapsibleExplanationTable({ cronExamples, opened, toggle }: CollapsibleExplanationTableProps) {
   return (
-    <Paper p="xs" style={{ border: '1px solid #f0f0f0', backgroundColor: '#ffffff' }}>
-      <Flex
-        style={{
-          justifyContent: 'center',
-          alignItems: 'center',
-          cursor: 'pointer',
-          fontWeight: 'bold',
-          fontSize: '18px',
-        }}
-        onClick={toggle}
-      >
-        <Text mr="sm">Explanation</Text>
-        <ChevronDown
-          styles={{
-            transition: 'transform 0.3s ease',
-            transform: opened ? 'rotate(180deg)' : 'rotate(0deg)',
-            fontWeight: 'bold',
-            fontSize: '18px',
-          }}
-        />
-      </Flex>
+    <Stack spacing="xs" p="xs" style={{ border: `1px solid #f0f0f0` }} bg={colors.white}>
+      <UnstyledButton onClick={toggle}>
+        <Flex justify="center" align="center" onClick={toggle}>
+          <Text size="md" fw="bold" mr="sm">
+            Valid Values
+          </Text>
+          <ChevronDown
+            styles={{
+              transition: 'transform 0.3s ease',
+              transform: opened ? 'rotate(180deg)' : 'rotate(0deg)',
+            }}
+          />
+        </Flex>
+      </UnstyledButton>
 
       <Collapse in={opened}>
-        <Table highlightOnHover mt="md" style={{ borderCollapse: 'collapse', textAlign: 'center' }}>
+        <Table highlightOnHover>
           <thead>
             <tr style={{ backgroundColor: '#edf3ff' }}>
-              <th style={{ padding: '8px', textAlign: 'center' }}>Cron Expression</th>
-              <th style={{ padding: '8px', textAlign: 'center' }}>Schedule</th>
+              <th style={{ textAlign: 'center' }}>Cron Expression</th>
+              <th style={{ textAlign: 'center' }}>Schedule</th>
             </tr>
           </thead>
           <tbody>
             {cronExamples.map((example, index) => (
               <tr key={index}>
-                <td style={{ padding: '8px', textAlign: 'center' }}>{example.expression}</td>
-                <td style={{ padding: '8px', textAlign: 'center' }}>{example.schedule}</td>
+                <td style={{ textAlign: 'center' }}>{example.expression}</td>
+                <td style={{ textAlign: 'center' }}>{example.schedule}</td>
               </tr>
             ))}
           </tbody>
         </Table>
       </Collapse>
-    </Paper>
+    </Stack>
   );
 }
