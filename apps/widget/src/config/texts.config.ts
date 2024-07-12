@@ -54,6 +54,10 @@ export const TEXTS = {
   AUTOIMPORTPHASETITLE: {
     CONFIGURE: 'Configure',
   },
+  INVALID_CRON: {
+    MESSAGE: 'Expression values are incorrect. Please update values as per valid values below!',
+  },
+
   COMPLETE: {
     TITLE: 'Bravo! {count} rows have been uploaded',
     SUB_TITLE: '{count} rows have been uploaded successfully, and currently is in process, it will be ready shortly.',
