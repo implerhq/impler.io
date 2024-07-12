@@ -50,3 +50,11 @@ export const cronExamples = [
   { expression: '0 0 * * FRI', schedule: 'At 12:00 AM, only on Friday' },
   { expression: '0 0 1 * *', schedule: 'At 12:00 AM, on day 1 of the month' },
 ];
+
+export type ScheduleFormValues = {
+  Minute: string;
+  Hour: string;
+  Day: string;
+  Month: string;
+  Days: string;
+};
