@@ -49,7 +49,10 @@ export const TEXTS = {
   PHASE4: {
     CLOSE: 'Close',
   },
-  AUTOIMPORTPHASE1: {},
+  AUTOIMPORTPHASE2: {
+    NAME_IN_SCHEMA_TITLE: 'Column in schema',
+    NAME_IN_FEED_TITLE: 'Name in your RSS feed title',
+  },
 
   AUTOIMPORTPHASETITLE: {
     CONFIGURE: 'Configure',
