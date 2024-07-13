@@ -7,7 +7,7 @@ export class UserJobEntity {
 
   cron: string;
 
-  headings: string;
+  headings: string[];
 
   createdOn: Date;
 }
