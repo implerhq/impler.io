@@ -19,7 +19,7 @@ const jobMappingSchema = new Schema(
     path: {
       type: Schema.Types.String,
     },
-    jobId: {
+    _userJobId: {
       type: Schema.Types.ObjectId,
       ref: 'UserJob',
     },
@@ -31,4 +31,4 @@ interface IJobMapping extends JobMappingEntity, Document {
   _id: never;
 }
 
-export const JobMapping = models.JobMapping || model<IJobMapping>('Template', jobMappingSchema);
+export const JobMapping = models.JobMapping || model<IJobMapping>('JobMapping', jobMappingSchema);
