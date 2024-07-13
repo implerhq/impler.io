@@ -32,4 +32,4 @@ interface IUserJobDocument extends UserJobEntity, Document {
   _id: never;
 }
 
-export const UserJob = models.UserJobs || model<IUserJobDocument>('Template', userJobSchema);
+export const UserJob = models.UserJob || model<IUserJobDocument>('UserJob', userJobSchema);
