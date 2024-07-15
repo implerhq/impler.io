@@ -1,10 +1,10 @@
 import React from 'react';
-import { Select } from './Select';
+import { NativeSelect } from './NativeSelect';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 export default {
-  title: 'Select',
-  component: Select,
+  title: 'NativeSelect',
+  component: NativeSelect,
   argTypes: {
     clearable: { type: 'boolean' },
     searchable: { type: 'boolean' },
@@ -13,9 +13,9 @@ export default {
     getCreateLabel: { type: 'function' },
     defaultValue: { type: 'string' },
   },
-} as ComponentMeta<typeof Select>;
+} as ComponentMeta<typeof NativeSelect>;
 
-const Template: ComponentStory<typeof Select> = (args: any) => <Select {...args} />;
+const Template: ComponentStory<typeof NativeSelect> = (args: any) => <NativeSelect {...args} />;
 
 export const Primary = Template.bind({});
 Primary.args = {
