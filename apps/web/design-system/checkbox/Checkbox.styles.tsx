@@ -1,7 +1,6 @@
 import { createStyles } from '@mantine/core';
 
 const getLabelStyles = (): React.CSSProperties => ({
-  paddingLeft: 5,
   cursor: 'pointer',
 });
 

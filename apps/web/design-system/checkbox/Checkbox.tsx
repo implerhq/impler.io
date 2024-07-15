@@ -1,4 +1,4 @@
-import { Checkbox as MantineCheckbox } from '@mantine/core';
+import { Checkbox as MantineCheckbox, MantineNumberSize } from '@mantine/core';
 import useStyles from './Checkbox.styles';
 
 interface CheckboxProps {
@@ -6,9 +6,11 @@ interface CheckboxProps {
   defaultChecked?: boolean;
   register?: any;
   checked?: boolean;
+  description?: string;
+  size?: MantineNumberSize;
 }
 
-export function Checkbox({ label, defaultChecked, register, checked }: CheckboxProps) {
+export function Checkbox({ label, defaultChecked, register, checked, description, size }: CheckboxProps) {
   const { classes } = useStyles();
 
   return (
@@ -17,6 +19,8 @@ export function Checkbox({ label, defaultChecked, register, checked }: CheckboxP
       defaultChecked={defaultChecked}
       checked={checked}
       label={label}
+      size={size}
+      description={description}
       {...register}
     />
   );

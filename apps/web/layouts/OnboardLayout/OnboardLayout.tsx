@@ -44,12 +44,12 @@ export function OnboardLayout({ children }: PropsWithChildren) {
     <>
       <Head>
         <title>Get started | Impler</title>
-        <meta name="description" content={TEXTS.DESCRIPTION} />
+        <meta name="description" content={TEXTS.SEO_DESCRIPTION} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
-        <meta name="description" content={TEXTS.DESCRIPTION} />
-        <meta name="og:title" content={TEXTS.TITLE} />
-        <meta name="og:description" content={TEXTS.DESCRIPTION} />
+        <meta name="description" content={TEXTS.SEO_DESCRIPTION} />
+        <meta name="og:title" content={TEXTS.SEO_TITLE} />
+        <meta name="og:description" content={TEXTS.SEO_DESCRIPTION} />
       </Head>
       <main>
         <Grid className={classes.grid} gutter={0}>

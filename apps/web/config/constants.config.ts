@@ -37,7 +37,6 @@ export const MODAL_KEYS = {
   IMPORT_DUPLICATE: 'IMPORT_DUPLICATE',
   IMPORT_CREATE: 'IMPORT_CREATE',
   IMPORT_UPDATE: 'IMPORT_UPDATE',
-  COLUMN_CREATE: 'COLUMN_CREATE',
   COLUMN_UPDATE: 'COLUMN_UPDATE',
   COLUMN_DELETE: 'COLUMN_DELETE',
 
@@ -49,10 +48,9 @@ export const MODAL_KEYS = {
 export const MODAL_TITLES = {
   IMPORT_DUPLICATE: 'Duplicate Import',
   IMPORT_CREATE: 'Start with a new Import',
-  COLUMN_CREATE: 'Add a new Column',
   IMPORT_UPDATE: 'Update Import',
   IMPORT_DELETE: 'Delete Import',
-  COLUMN_UPDATE: 'Update Column',
+  COLUMN_UPDATE: 'Configure Column',
   COLUMN_DELETE: 'Delete Column',
 
   VALIDATIONS_OUTPUT: 'Test code output',
@@ -200,8 +198,8 @@ export const COLUMN_TYPES = [
 ];
 
 export const TEXTS = {
-  TITLE: 'CSV Excel Import Experience for SaaS',
-  DESCRIPTION:
+  SEO_TITLE: 'CSV Excel Import Experience for SaaS',
+  SEO_DESCRIPTION:
     // eslint-disable-next-line max-len
     "Build the best CSV Excel Import Experience for SaaS in 10 Minutes. Onboard customers' data with a hassle-free data importer in your app.",
 };
