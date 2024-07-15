@@ -104,7 +104,7 @@ export class ExcelFileService {
       const columnName = this.getExcelColumnNameFromIndex(index + 1);
       const columnHeadingCellName = columnName + '1';
       if (heading.type === ColumnTypesEnum.SELECT && heading.allowMultiSelect)
-        worksheet.cell(columnHeadingCellName).value(heading.key + '#MULTI');
+        worksheet.cell(columnHeadingCellName).value(heading.key + '#MULTI' + '#' + (heading.delimiter || ','));
       else worksheet.cell(columnHeadingCellName).value(heading.key);
       worksheet.column(columnName).style('numberFormat', '@');
     });

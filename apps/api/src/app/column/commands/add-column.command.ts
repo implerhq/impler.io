@@ -1,6 +1,6 @@
 import { IsArray, IsBoolean, IsDefined, IsMongoId, IsNumber, IsOptional, IsString, Validate } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ColumnTypesEnum } from '@impler/shared';
+import { ColumnDelimiterEnum, ColumnTypesEnum } from '@impler/shared';
 import { BaseCommand } from '@shared/commands/base.command';
 import { IsNumberOrString } from '@shared/framework/number-or-string.validator';
 
@@ -66,4 +66,7 @@ export class AddColumnCommand extends BaseCommand {
   @IsBoolean()
   @IsOptional()
   allowMultiSelect?: boolean;
+
+  @IsOptional()
+  delimiter?: ColumnDelimiterEnum;
 }

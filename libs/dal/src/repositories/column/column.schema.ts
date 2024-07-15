@@ -18,6 +18,7 @@ const columnSchema = new Schema(
       type: [String],
       default: ['DD/MM/YYYY'],
     },
+    delimiter: String,
     sequence: Number,
     _templateId: {
       type: Schema.Types.String,

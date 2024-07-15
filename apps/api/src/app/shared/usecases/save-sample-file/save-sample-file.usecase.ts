@@ -21,6 +21,7 @@ export class SaveSampleFile {
         type: columnItem.type as ColumnTypesEnum,
         selectValues: columnItem.selectValues,
         isFrozen: columnItem.isFrozen,
+        delimiter: columnItem.delimiter,
         isRequired: columnItem.isRequired,
         dateFormats: columnItem.dateFormats,
         allowMultiSelect: columnItem.allowMultiSelect,
