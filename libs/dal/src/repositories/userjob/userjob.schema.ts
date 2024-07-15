@@ -10,7 +10,7 @@ const userJobSchema = new Schema(
     url: {
       type: Schema.Types.String,
     },
-    templateId: {
+    _templateId: {
       type: Schema.Types.ObjectId,
       ref: 'Template',
     },
