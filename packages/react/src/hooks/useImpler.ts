@@ -15,6 +15,7 @@ export function useImpler({
   onUploadComplete,
   onWidgetClose,
   onUploadStart,
+  onDataImported,
   onUploadTerminate,
 }: UseImplerProps) {
   const [uuid] = useState(generateUuid());
@@ -30,7 +31,8 @@ export function useImpler({
           if (onUploadTerminate) onUploadTerminate(eventData.value);
           break;
         case EventTypesEnum.UPLOAD_COMPLETED:
-          if (onUploadComplete) onUploadComplete(eventData.value);
+          if (onDataImported) onDataImported(eventData.value.importedData);
+          if (onUploadComplete) onUploadComplete(eventData.value.uploadInfo);
           break;
         case EventTypesEnum.CLOSE_WIDGET:
           if (onWidgetClose) onWidgetClose();

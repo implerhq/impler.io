@@ -59,7 +59,10 @@ export type EventCalls =
     }
   | {
       type: EventTypesEnum.UPLOAD_COMPLETED;
-      value: IUpload;
+      value: {
+        uploadInfo: IUpload;
+        importedData: Record<string, any>[];
+      };
     }
   | {
       type: EventTypesEnum.CLOSE_WIDGET;
@@ -86,6 +89,6 @@ export interface UseImplerProps {
   onUploadStart?: (value: UploadTemplateData) => void;
   onUploadTerminate?: (value: UploadData) => void;
   onUploadComplete?: (value: IUpload) => void;
-  onDataImported?: () => void;
+  onDataImported?: (importedData: Record<string, any>[]) => void;
   onWidgetClose?: () => void;
 }
