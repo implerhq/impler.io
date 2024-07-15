@@ -121,7 +121,10 @@ export function useEditor({ templateId }: UseEditorProps) {
   useEffect(() => {
     if (destination?.destination && customization) {
       let format = customization.combinedFormat; // default for webhook
-      if (destination.destination === DestinationsEnum.BUBBLEIO) {
+      if (
+        destination.destination === DestinationsEnum.BUBBLEIO ||
+        destination.destination === DestinationsEnum.FRONTEND
+      ) {
         format = customization.recordFormat;
       }
       reset({ format });

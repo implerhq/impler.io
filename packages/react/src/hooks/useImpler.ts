@@ -1,29 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { EventTypesEnum, IShowPayload, IUpload } from '@impler/shared';
+import { EventTypesEnum, IShowPayload } from '@impler/shared';
 
 import { logError } from '../utils/logger';
-import { EventCalls, UploadTemplateData, UploadData, ISchemaItem } from '../components/button/Button.types';
-
-interface ShowWidgetProps {
-  colorScheme?: 'light' | 'dark';
-  schema?: ISchemaItem[];
-  data?: Record<string, string | any>[];
-  output?: Record<string, string | any>;
-}
-
-interface UseImplerProps {
-  title?: string;
-  projectId?: string;
-  templateId?: string;
-  accessToken?: string;
-  primaryColor?: string;
-  extra?: string | Record<string, any>;
-  authHeaderValue?: string | (() => string) | (() => Promise<string>);
-  onUploadStart?: (value: UploadTemplateData) => void;
-  onUploadTerminate?: (value: UploadData) => void;
-  onUploadComplete?: (value: IUpload) => void;
-  onWidgetClose?: () => void;
-}
+import { EventCalls, ShowWidgetProps, UseImplerProps } from '../types';
 
 export function useImpler({
   projectId,
@@ -36,6 +15,7 @@ export function useImpler({
   onUploadComplete,
   onWidgetClose,
   onUploadStart,
+  onDataImported,
   onUploadTerminate,
 }: UseImplerProps) {
   const [uuid] = useState(generateUuid());
@@ -51,7 +31,8 @@ export function useImpler({
           if (onUploadTerminate) onUploadTerminate(eventData.value);
           break;
         case EventTypesEnum.UPLOAD_COMPLETED:
-          if (onUploadComplete) onUploadComplete(eventData.value);
+          if (onDataImported) onDataImported(eventData.value.importedData);
+          if (onUploadComplete) onUploadComplete(eventData.value.uploadInfo);
           break;
         case EventTypesEnum.CLOSE_WIDGET:
           if (onWidgetClose) onWidgetClose();

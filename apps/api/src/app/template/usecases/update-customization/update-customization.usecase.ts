@@ -81,7 +81,7 @@ export class UpdateCustomization {
           combinedFormat,
           internal: true,
         });
-      } else if (destination == DestinationsEnum.BUBBLEIO) {
+      } else if (destination == DestinationsEnum.BUBBLEIO || destination == DestinationsEnum.FRONTEND) {
         const recordFormat = createRecordFormat(recordVariables, CONSTANTS.BUBBLEIO_PROPS);
 
         return this.execute(_templateId, {
