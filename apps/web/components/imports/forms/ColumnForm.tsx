@@ -4,7 +4,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { Stack, TextInput as Input, Text, Divider, SimpleGrid, Title, Group, CloseButton, Select } from '@mantine/core';
 
 import { ColumnTypesEnum, DEFAULT_VALUES, IColumn } from '@impler/shared';
-import { colors, COLUMN_TYPES, MODAL_KEYS, MODAL_TITLES } from '@config';
+import { colors, COLUMN_TYPES, DELIMITERS, MODAL_KEYS, MODAL_TITLES } from '@config';
 
 import { Button } from '@ui/button';
 import { Textarea } from '@ui/textarea';
@@ -105,29 +105,46 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 )}
               />
               {typeValue === ColumnTypesEnum.SELECT ? (
-                <Controller
-                  name="selectValues"
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <MultiSelect
-                      creatable
-                      clearable
-                      searchable
-                      label="Select Values"
-                      placeholder="Select Values"
-                      description="User can only select value from the provided list"
-                      getCreateLabel={(query) => `+ Add ${query}`}
-                      data={Array.isArray(value) ? value : []}
-                      value={value}
-                      onCreate={(newItem) => {
-                        onChange([...(Array.isArray(value) ? value : []), newItem]);
+                <>
+                  <Controller
+                    name="selectValues"
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <MultiSelect
+                        creatable
+                        clearable
+                        searchable
+                        label="Select Values"
+                        placeholder="Select Values"
+                        description="User can only select value from the provided list"
+                        getCreateLabel={(query) => `+ Add ${query}`}
+                        data={Array.isArray(value) ? value : []}
+                        value={value}
+                        onCreate={(newItem) => {
+                          onChange([...(Array.isArray(value) ? value : []), newItem]);
 
-                        return newItem;
-                      }}
-                      onChange={onChange}
-                    />
-                  )}
-                />
+                          return newItem;
+                        }}
+                        onChange={onChange}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="delimiter"
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <Select
+                        label="Delimiter"
+                        data={DELIMITERS}
+                        placeholder="Comma (,)"
+                        value={value}
+                        data-autofocus
+                        onChange={onChange}
+                        description="Delimiter used to separate multiple select values"
+                      />
+                    )}
+                  />
+                </>
               ) : null}
               {typeValue === ColumnTypesEnum.DATE ? (
                 <Controller
