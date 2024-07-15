@@ -1,6 +1,6 @@
 import { colors } from '@config';
 import { CheckIcon } from '@icons';
-import { Text, Stack, Center, Paper } from '@mantine/core';
+import { Text, Stack, Paper } from '@mantine/core';
 import { PhasesEnum } from '@types';
 import { AutoImportFooter } from 'components/Common/Footer/AutoImportFooter';
 
@@ -12,8 +12,8 @@ export function AutoImportPhase4(props: IAutoImportPhase4Props) {
   console.log(props);
 
   return (
-    <Center>
-      <Stack mt="xl" align="center" spacing="lg">
+    <>
+      <Stack mt="md" align="center" style={{ flexGrow: 1 }}>
         <CheckIcon
           styles={{
             backgroundColor: 'green',
@@ -39,6 +39,6 @@ export function AutoImportPhase4(props: IAutoImportPhase4Props) {
         onPrevClick={() => {}}
         active={PhasesEnum.CONFORM}
       />
-    </Center>
+    </>
   );
 }

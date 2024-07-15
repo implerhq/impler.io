@@ -37,7 +37,7 @@
     "typescript": "4.8.4"
   },
   "dependencies": {
-    "@impler/shared": "^0.20.4",
+    "@impler/shared": "workspace:^",
     "axios": "1.6.2"
   },
   "engines": {

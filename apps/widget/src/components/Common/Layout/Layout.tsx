@@ -2,6 +2,7 @@ import { PropsWithChildren } from 'react';
 import { Heading } from 'components/Common/Heading';
 import useStyles from './Styles';
 import { PhasesEnum } from '@types';
+import { TemplateModeEnum } from '@impler/shared';
 
 interface ILayoutProps {
   active: PhasesEnum;
@@ -14,7 +15,7 @@ export function Layout(props: PropsWithChildren<ILayoutProps>) {
 
   return (
     <div className={classes.root}>
-      <Heading active={active} title={title} />
+      <Heading mode={TemplateModeEnum.AUTOMATIC} active={active} title={title} />
       <div className={classes.container}>{children}</div>
     </div>
   );

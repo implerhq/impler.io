@@ -16,8 +16,8 @@
     "lint:fix": "pnpm lint -- --fix"
   },
   "dependencies": {
-    "@impler/dal": "^0.20.4",
-    "@impler/shared": "^0.20.4",
+    "@impler/dal": "workspace:^",
+    "@impler/shared": "workspace:^",
     "@sentry/node": "^7.112.2",
     "axios": "1.6.2",
     "dotenv": "^16.0.2",

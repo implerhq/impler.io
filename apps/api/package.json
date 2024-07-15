@@ -21,8 +21,8 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.185.0",
     "@aws-sdk/client-ses": "^3.354.0",
-    "@impler/dal": "^0.20.4",
-    "@impler/shared": "^0.20.4",
+    "@impler/dal": "workspace:^",
+    "@impler/shared": "workspace:^",
     "@nestjs/common": "^9.1.2",
     "@nestjs/core": "^9.1.2",
     "@nestjs/jwt": "^10.0.1",
