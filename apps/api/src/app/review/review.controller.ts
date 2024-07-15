@@ -23,7 +23,6 @@ import { UpdateCellDto } from './dtos/update-cell.dto';
 import { validateNotFound } from '@shared/helpers/common.helper';
 import { PaginationResponseDto } from '@shared/dtos/pagination-response.dto';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
-import { GetUploadCommand } from '@shared/usecases/get-upload/get-upload.command';
 import { ValidateIndexes } from '@shared/validations/valid-indexes.validation';
 
 @Controller('/review')
@@ -115,12 +114,10 @@ export class ReviewController {
     summary: 'Confirm review data for uploaded file',
   })
   async doConfirmReview(@Param('uploadId', ValidateMongoId) _uploadId: string): Promise<UploadEntity> {
-    const uploadInformation = await this.getUpload.execute(
-      GetUploadCommand.create({
-        uploadId: _uploadId,
-        select: 'status _validDataFileId _invalidDataFileId totalRecords invalidRecords _templateId',
-      })
-    );
+    const uploadInformation = await this.getUpload.execute({
+      uploadId: _uploadId,
+      select: 'status _validDataFileId _invalidDataFileId totalRecords invalidRecords _templateId',
+    });
 
     // throw error if upload information not found
     validateNotFound(uploadInformation, 'upload');
