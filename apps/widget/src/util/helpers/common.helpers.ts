@@ -60,3 +60,11 @@ export function isValidCronCharacter(value: string): boolean {
 
   return cronCharacterRegex.test(value);
 }
+
+export const validateUrl = {
+  required: 'RSS URL is required',
+  pattern: {
+    value: /^(https?:\/\/)?([\w-]+(\.[\w-]+)+\.?(:\d+)?)(\/[^\s]*)?$/,
+    message: 'Enter a valid URL',
+  },
+};
