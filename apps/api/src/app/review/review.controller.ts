@@ -1,7 +1,6 @@
 import { ApiOperation, ApiTags, ApiSecurity, ApiQuery, ApiOkResponse } from '@nestjs/swagger';
 import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 
-import { UploadEntity } from '@impler/dal';
 import { APIMessages } from '@shared/constants';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { validateUploadStatus } from '@shared/helpers/upload.helpers';
@@ -113,7 +112,7 @@ export class ReviewController {
   @ApiOperation({
     summary: 'Confirm review data for uploaded file',
   })
-  async doConfirmReview(@Param('uploadId', ValidateMongoId) _uploadId: string): Promise<UploadEntity> {
+  async doConfirmReview(@Param('uploadId', ValidateMongoId) _uploadId: string) {
     const uploadInformation = await this.getUpload.execute({
       uploadId: _uploadId,
       select: 'status _validDataFileId _invalidDataFileId totalRecords invalidRecords _templateId',
