@@ -3,7 +3,7 @@ export class UserJobEntity {
 
   url: string;
 
-  templateId: string;
+  _templateId: string;
 
   cron: string;
 
