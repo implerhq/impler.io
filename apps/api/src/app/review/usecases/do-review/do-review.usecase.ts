@@ -44,10 +44,11 @@ export class DoReview extends BaseReview {
     const dateFormats: Record<string, string[]> = {};
     const uniqueItems: Record<string, Set<any>> = {};
     const columns = JSON.parse(uploadInfo.customSchema);
-    const multiSelectColumnHeadings = new Set<string>();
+    const multiSelectColumnHeadings: Record<string, string> = {};
     const numberColumnHeadings = new Set<string>();
     (columns as ITemplateSchemaItem[]).forEach((column) => {
-      if (column.type === ColumnTypesEnum.SELECT && column.allowMultiSelect) multiSelectColumnHeadings.add(column.key);
+      if (column.type === ColumnTypesEnum.SELECT && column.allowMultiSelect)
+        multiSelectColumnHeadings[column.key] = column.delimiter;
       if (column.type === ColumnTypesEnum.NUMBER || column.type === ColumnTypesEnum.DOUBLE)
         numberColumnHeadings.add(column.key);
     });

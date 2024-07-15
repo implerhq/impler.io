@@ -19,6 +19,7 @@ export class ExcelFileService {
           XLSX.utils.sheet_to_csv(ws, {
             blankrows: false,
             skipHidden: true,
+            forceQuotes: true,
             // rawNumbers: true, // was converting 12:12:12 to 1.3945645673
           })
         );
