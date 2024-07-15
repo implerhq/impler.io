@@ -1,0 +1,15 @@
+export const keysToOmit: Set<string> = new Set([
+  'rss > channel > atom:link > $ > type',
+  'rss > channel > atom:link > $ > rel',
+  'rss > channel > atom:link > $ > href',
+  'rss > $ > xmlns:media',
+  'rss > $ > xmlns:dc',
+  'rss > $ > xmlns:content',
+  'rss > $ > xmlns:atom',
+  'rss > $ > version',
+  'rss > $ > xmlns:wfw',
+  'rss > $ > xmlns:sy',
+  'rss > $ > xmlns:slash',
+  'feed > $ > xmlns',
+  'feed > $ > xmlns:media',
+]);
