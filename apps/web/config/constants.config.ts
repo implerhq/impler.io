@@ -197,6 +197,17 @@ export const COLUMN_TYPES = [
   },
 ];
 
+export const DELIMITERS = [
+  {
+    label: 'Comma (,)',
+    value: ',',
+  },
+  {
+    label: 'Semicolon (;)',
+    value: ';',
+  },
+];
+
 export const TEXTS = {
   SEO_TITLE: 'CSV Excel Import Experience for SaaS',
   SEO_DESCRIPTION:
