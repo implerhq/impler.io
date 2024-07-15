@@ -25,6 +25,7 @@ export function Destination({ template }: DestinationProps) {
     destination,
     setDestination,
     resetDestination,
+    updateDestination,
     mapBubbleIoColumnsClick,
     isUpdateImportLoading,
     isMapBubbleIoColumnsLoading,
@@ -38,12 +39,22 @@ export function Destination({ template }: DestinationProps) {
     else {
       setDestination(newDestination);
       setValue('destination', newDestination);
+      if (newDestination === DestinationsEnum.FRONTEND) {
+        setDestination(newDestination);
+        updateDestination({ destination: DestinationsEnum.FRONTEND, webhook: undefined, bubbleIo: undefined });
+      }
     }
   };
   const bubbleDestinationEnvironment = watch('bubbleIo.environment');
 
   return (
     <Stack>
+      <DestinationItem
+        title="Get Imported Data in Frontend"
+        subtitle="User imported data will be sent to frontend"
+        active={destination === DestinationsEnum.FRONTEND}
+        onClick={() => swithDestination(DestinationsEnum.FRONTEND)}
+      />
       <DestinationItem
         title="Webhook"
         subtitle="Provide webhook to receive data"

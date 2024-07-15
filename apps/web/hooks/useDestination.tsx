@@ -161,6 +161,7 @@ export function useDestination({ template }: UseDestinationProps) {
     destination,
     setDestination,
     resetDestination,
+    updateDestination,
     mapBubbleIoColumns,
     mapBubbleIoColumnsClick,
     isMapBubbleIoColumnsLoading,
