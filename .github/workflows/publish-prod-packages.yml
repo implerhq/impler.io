@@ -46,6 +46,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         working-directory: libs/shared
         run: |
+          npm config set --workspaces=false --include-workspace-root registry https://registry.npmjs.org/
           npm config set --workspaces=false --include-workspace-root //registry.npmjs.org/:_authToken=$NPM_TOKEN
           npm publish --access public
 
@@ -54,5 +55,6 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         working-directory: packages/react
         run: |
+          npm config set --workspaces=false --include-workspace-root registry https://registry.npmjs.org/
           npm config set --workspaces=false --include-workspace-root //registry.npmjs.org/:_authToken=$NPM_TOKEN
           npm publish --access public

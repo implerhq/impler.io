@@ -20,45 +20,48 @@ jobs:
       - uses: actions/checkout@v2
       - name: Setup kernel for react native, increase watchers
         run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
-      
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '20.13.1'
 
-      - name: Cache pnpm modules
-        uses: actions/cache@v2
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-
-
-      - uses: pnpm/action-setup@v2.0.1
-        env:
-          CI: false
-        with:
-          version: 8.9.0
-          run_install: true
-
-      - name: Build
-        run: pnpm run --filter @impler/embed build:prod
-
-      - name: Build, tag, and push image to Github Container Registry
-        id: build-image
+      - name: Build & Tag Docker image
         env:
           REGISTERY_OWNER: implerhq
           DOCKER_NAME: impler/embed
-          IMAGE_TAG: ${{ github.sha }}
-          GH_ACTOR: implerhq
-          GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
+          IMAGE_TAG: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
-          echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
           docker build -t ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG -f libs/embed/Dockerfile .
           docker tag ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:latest
-          docker tag ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:prod
+        
+      - name: Run Docker container
+        env:
+          REGISTERY_OWNER: implerhq
+          DOCKER_NAME: impler/embed
+          IMAGE_TAG: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: docker run --network=host -dit ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG
 
-          docker push ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:prod
-          docker push ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:latest
+      - name: Check application health
+        run: |
+          for i in {1..5}; do
+            if curl --output /dev/null --silent --head --fail http://localhost:4701/embed.umd.min.js; then
+              exit 0
+            fi
+            echo "Waiting for the application to start..."
+            sleep 5
+          done
+          echo "Application failed to start"
+          exit 1
+
+      - name: Log in to GitHub Container Registry
+        env:
+          GH_ACTOR: implerhq
+          GH_PASSWORD: ${{ secrets.GH_PACKAGES }}
+        run: echo $GH_PASSWORD | docker login ghcr.io -u $GH_ACTOR --password-stdin
+      
+      - name: Push Docker image
+        env:
+          REGISTERY_OWNER: implerhq
+          DOCKER_NAME: impler/embed
+          IMAGE_TAG: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
           docker push ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG
+          docker push ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:latest
           echo "::set-output name=IMAGE::ghcr.io/$REGISTERY_OWNER/$DOCKER_NAME:$IMAGE_TAG"
 

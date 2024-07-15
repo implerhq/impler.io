@@ -3,9 +3,9 @@ import { Controller } from 'react-hook-form';
 import { ActionIcon, Checkbox, Flex, Tooltip, TextInput as Input } from '@mantine/core';
 
 import { colors } from '@config';
+import { COLUMN_TYPES } from '@config';
 import { DraggableTable } from '@ui/table';
 import { useSchema } from '@hooks/useSchema';
-import { COLUMN_TYPES } from '@shared/constants';
 import { DEFAULT_VALUES, IColumn } from '@impler/shared';
 
 import { Select } from '@ui/select';
