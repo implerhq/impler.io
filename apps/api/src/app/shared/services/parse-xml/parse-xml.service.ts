@@ -1,17 +1,16 @@
-import xml2js from 'xml2js';
+import * as xml2js from 'xml2js';
 import axios from 'axios';
 import { keysToOmit } from './keysToOmit';
 import { IMappedResult, IMapping, IXmlObject } from '@shared/types/parse-xml.types';
 
-const parser = new xml2js.Parser({ strict: false });
-
 const parseXmlFromUrl = async (url: string): Promise<IXmlObject> => {
   try {
+    const parser = new xml2js.Parser({ strict: false });
     const response = await axios.get(url);
     const xmlData = response.data;
     const parsedData = await parser.parseStringPromise(xmlData);
 
-    return JSON.parse(JSON.stringify(parsedData)).toLowerCase();
+    return JSON.parse(JSON.stringify(parsedData).toLocaleLowerCase());
   } catch (error) {
     throw error;
   }
@@ -71,12 +70,12 @@ function mappingFunction(mappings: IMapping[], values: any[]): IMappedResult[] {
 }
 
 export async function parseRssFeed(url: string): Promise<{
-  fileStructure: string[];
+  rssKeyHeading: string[];
   mappedObject: IMappedResult[];
 }> {
   try {
     const outputFile = await parseXmlFromUrl(url);
-    const fileStructure = printKeys(outputFile);
+    const rssKeyHeading = printKeys(outputFile);
 
     const mappings: IMapping[] = [
       { key: 'title', mapping: 'rss > channel > title' },
@@ -88,7 +87,7 @@ export async function parseRssFeed(url: string): Promise<{
     const returnedValues = mappings.map(({ mapping }) => getValueByPath(outputFile, mapping));
     const mappedObject = mappingFunction(mappings, returnedValues);
 
-    return { fileStructure, mappedObject };
+    return { rssKeyHeading, mappedObject };
   } catch (error) {
     throw error;
   }
