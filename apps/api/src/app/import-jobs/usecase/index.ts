@@ -1,12 +1,14 @@
 import { CreateUserJob } from './create-userjob/create-userjob.usecase';
-import { GetImportJobInfo } from './get-importjobinfo/get-importjobinfo.usecase';
-import { GetImportMappingInfo } from './get-mapping/get-mapping.usecase';
+import { GetJobMapping } from './get-jobmapping/get-jobmapping.usecase';
+import { CreateJobMapping } from './create-jobmapping/create-jobmapping.usecase';
+import { UpdateUserJob } from './update-cronexpression/update-userjob.usecase';
 
 export const USECASES = [
   CreateUserJob,
-  GetImportJobInfo,
-  GetImportMappingInfo,
+  GetJobMapping,
+  CreateJobMapping,
+  UpdateUserJob,
   //
 ];
 
-export { CreateUserJob, GetImportJobInfo, GetImportMappingInfo };
+export { CreateUserJob, GetJobMapping, CreateJobMapping, UpdateUserJob };
