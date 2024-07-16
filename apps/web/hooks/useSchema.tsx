@@ -5,9 +5,10 @@ import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
+import { notify } from '@libs/notify';
 import { track } from '@libs/amplitude';
 import { IColumn, IErrorObject } from '@impler/shared';
-import { API_KEYS, MODAL_KEYS, MODAL_TITLES } from '@config';
+import { API_KEYS, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS } from '@config';
 
 import { useUpdateBulkColumns } from './useUpdateBulkColumns';
 import { ConfirmDelete } from '@components/imports/forms/ConfirmDelete';
@@ -60,6 +61,11 @@ export function useSchema({ templateId }: UseSchemaProps) {
         reset({});
         setFocus('name');
       },
+      onError: (error: IErrorObject) => {
+        notify(NOTIFICATION_KEYS.COLUMN_ERRROR, {
+          message: error.message,
+        });
+      },
     }
   );
   const { mutate: updateColumn } = useMutation<IColumn, IErrorObject, { id: string; data: IColumn }, string[]>(
@@ -69,6 +75,11 @@ export function useSchema({ templateId }: UseSchemaProps) {
       onSuccess: () => {
         queryClient.invalidateQueries([API_KEYS.TEMPLATE_COLUMNS_LIST, templateId]);
         modals.close(MODAL_KEYS.COLUMN_UPDATE);
+      },
+      onError: (error: IErrorObject) => {
+        notify(NOTIFICATION_KEYS.COLUMN_ERRROR, {
+          message: error.message,
+        });
       },
     }
   );

@@ -60,6 +60,11 @@ const Messages: Record<string, NotifyProps> = {
     title: 'Card Removed',
     message: 'Card is removed from the system.',
   },
+  [NOTIFICATION_KEYS.COLUMN_ERRROR]: {
+    title: 'Issue with column data',
+    message: 'It looks like column data is not correct. Please fix it and try again.',
+    color: 'red',
+  },
 };
 
 interface NotifyProps {

@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ColumnRepository } from '@impler/dal';
-import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
-import { SaveSampleFile } from '@shared/usecases/save-sample-file/save-sample-file.usecase';
 import { UpdateCustomization } from 'app/template/usecases';
 import { UpdateColumnCommand } from '../../commands/update-column.command';
+import { UniqueColumnException } from '@shared/exceptions/unique-column.exception';
+import { SaveSampleFile } from '@shared/usecases/save-sample-file/save-sample-file.usecase';
+import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
 
 @Injectable()
 export class UpdateColumn {
@@ -19,6 +20,12 @@ export class UpdateColumn {
       throw new DocumentNotFoundException('Column', _id);
     }
 
+    const columns = await this.columnRepository.find({ _templateId: column._templateId });
+    const isKeyUnique = columns.some((columnItem) => columnItem.key === command.key);
+    if (isKeyUnique) {
+      throw new UniqueColumnException();
+    }
+
     command.dateFormats = command.dateFormats?.map((format) => format.toUpperCase()) || [];
     const isKeyUpdated = command.key !== column.key || command.allowMultiSelect !== column.allowMultiSelect;
     const isTypeUpdated = command.type !== column.type;
@@ -28,7 +35,6 @@ export class UpdateColumn {
       column.isRequired !== command.isRequired;
 
     column = await this.columnRepository.findOneAndUpdate({ _id }, command);
-    const columns = await this.columnRepository.find({ _templateId: column._templateId });
 
     if (isKeyUpdated || isTypeUpdated || isFieldConditionUpdated) {
       await this.saveSampleFile.execute(columns, column._templateId);
