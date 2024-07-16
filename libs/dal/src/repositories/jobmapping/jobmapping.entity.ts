@@ -1,5 +1,5 @@
 export class JobMappingEntity {
-  _id: string;
+  _id?: string;
 
   key: string;
 
@@ -7,7 +7,7 @@ export class JobMappingEntity {
 
   isRequired: boolean;
 
-  path: string;
+  path: string[];
 
   jobId: string;
 }
