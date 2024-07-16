@@ -1,36 +1,41 @@
-import { useEffect, useRef, useState } from 'react';
 import { Group } from '@mantine/core';
-import { PhasesEnum } from '@types';
+import { Controller } from 'react-hook-form';
+import { useEffect, useRef, useState } from 'react';
+
 import useStyles from './Styles';
-import { AutoImportFooter } from 'components/Common/Footer/AutoImportFooter';
-import { MappingHeading } from './MappingHeading';
+import { PhasesEnum } from '@types';
 import { MappingItem } from '@ui/MappingItem';
+import { MappingHeading } from './MappingHeading';
+import { AutoImportFooter } from 'components/Common/Footer/AutoImportFooter';
+import { useAutoImportPhase2 } from '../hooks/AutoImportPhase2/useAutoImportPhase2';
 
 interface IAutoImportPhase2Props {
   onNextClick: () => void;
 }
 
+const defaulWrappertHeight = 200;
 export function AutoImportPhase2({ onNextClick }: IAutoImportPhase2Props) {
-  const defaulWrappertHeight = 200;
   const { classes } = useStyles();
   const [wrapperHeight, setWrapperHeight] = useState(defaulWrappertHeight);
+  const { control, mappings, onSubmit, onFieldSelect, headings } = useAutoImportPhase2({
+    goNext: onNextClick,
+  });
 
-  const wrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
-  const titlesRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const titlesRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // setting wrapper height
-    setWrapperHeight(
-      wrapperRef.current.getBoundingClientRect().height - titlesRef.current.getBoundingClientRect().height
-    );
+    if (wrapperRef.current && titlesRef.current) {
+      setWrapperHeight(
+        wrapperRef.current.getBoundingClientRect().height - titlesRef.current.getBoundingClientRect().height
+      );
+    }
   }, []);
 
   return (
     <>
       <div style={{ flexGrow: 1 }} ref={wrapperRef}>
-        {/* Heading */}
         <MappingHeading ref={titlesRef} />
-        {/* Mapping Items */}
         <div
           className={classes.mappingWrapper}
           style={{
@@ -38,40 +43,34 @@ export function AutoImportPhase2({ onNextClick }: IAutoImportPhase2Props) {
           }}
         >
           <Group align="center">
-            <MappingItem
-              searchable
-              required={true}
-              heading={'Name'}
-              options={[
-                'feed > category > $ > term',
-                'feed > category > $ > label',
-                'feed > updated',
-                'feed > id',
-                'feed > link > $ > rel',
-                'feed > link > $ > href',
-                'feed > link > $ > type',
-                'feed > title',
-                'feed > entry > author > name',
-                'feed > entry > author > uri',
-                'feed > entry > category > $ > term',
-                'feed > entry > category > $ > label',
-                'feed > entry > content > _',
-                'feed > entry > content > $ > type',
-                'feed > entry > id',
-                'feed > entry > media:thumbnail > $ > url',
-                'feed > entry > link > $ > href',
-                'feed > entry > updated',
-                'feed > entry > published',
-                'feed > entry > title',
-              ]}
-            />
-            <MappingItem searchable required={true} heading={'Title'} options={['feed > category > title']} />
+            {Array.isArray(mappings) &&
+              mappings.map((column, index) => (
+                <Controller
+                  key={column._id}
+                  name={`mappings.${index}.path`}
+                  control={control}
+                  render={({ field }) => (
+                    <MappingItem
+                      searchable
+                      required={column.isRequired}
+                      heading={column.name}
+                      options={headings}
+                      value={field.value}
+                      onChange={(value) => {
+                        field.onChange(value);
+                        onFieldSelect();
+                      }}
+                      ref={field.ref}
+                    />
+                  )}
+                />
+              ))}
           </Group>
         </div>
       </div>
 
       <AutoImportFooter
-        onNextClick={onNextClick}
+        onNextClick={onSubmit}
         primaryButtonLoading={false}
         onPrevClick={() => {}}
         active={PhasesEnum.MAPCOLUMNS}
