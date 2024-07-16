@@ -2,30 +2,25 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { IUserJob } from '@impler/shared';
 
 interface JobsInfoContextType {
-  jobsInfo: IUserJob | null;
-  setJobsInfo: React.Dispatch<React.SetStateAction<IUserJob | null>>;
+  jobsInfo: IUserJob;
+  setJobsInfo: (info: IUserJob) => void;
 }
 
-const defaultContextValue: JobsInfoContextType = {
-  jobsInfo: null,
-  setJobsInfo: () => null,
-};
-
-const JobsInfoContext = createContext<JobsInfoContextType>(defaultContextValue);
+const JobsInfoContext = createContext<JobsInfoContextType | null>(null);
 
 interface JobsInfoProviderProps {
   children: ReactNode;
 }
 
 export const JobsInfoProvider: React.FC<JobsInfoProviderProps> = ({ children }) => {
-  const [jobsInfo, setJobsInfo] = useState<IUserJob | null>(null);
+  const [jobsInfo, setJobsInfo] = useState<IUserJob>({} as IUserJob);
 
   return <JobsInfoContext.Provider value={{ jobsInfo, setJobsInfo }}>{children}</JobsInfoContext.Provider>;
 };
 
 export const useJobsInfo = (): JobsInfoContextType => {
   const context = useContext(JobsInfoContext);
-  if (context === defaultContextValue) {
+  if (context === null) {
     throw new Error('useJobsInfo must be used within a JobsInfoProvider');
   }
 
