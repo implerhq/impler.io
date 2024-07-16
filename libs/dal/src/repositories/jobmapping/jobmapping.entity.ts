@@ -7,7 +7,7 @@ export class JobMappingEntity {
 
   isRequired: boolean;
 
-  path: string[];
+  path: string;
 
   jobId: string;
 }
