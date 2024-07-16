@@ -7,6 +7,7 @@ import {
   UploadStatusEnum,
   replaceVariablesInObject,
   DestinationsEnum,
+  ColumnDelimiterEnum,
 } from '@impler/shared';
 import { QueueService } from '@shared/services/queue.service';
 import { DalService, TemplateEntity, UploadRepository } from '@impler/dal';
@@ -76,7 +77,7 @@ export class StartProcess {
       parsesdCustomSchema.forEach((item: ITemplateSchemaItem) => {
         if (item.defaultValue) defaultValuesObj[item.key] = item.defaultValue;
         if (item.type === ColumnTypesEnum.SELECT && item.allowMultiSelect)
-          multiSelectHeadings[item.key] = item.delimiter;
+          multiSelectHeadings[item.key] = item.delimiter || ColumnDelimiterEnum.COMMA;
       });
     }
 

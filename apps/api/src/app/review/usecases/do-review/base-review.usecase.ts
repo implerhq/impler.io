@@ -285,10 +285,15 @@ export class BaseReview {
         if (typeof val === 'string') val = val.trim();
         if (multiSelectColumnHeadings[heading]) {
           if (val)
-            val = val.replace(
-              new RegExp(`^[${multiSelectColumnHeadings[heading]}]+|[${multiSelectColumnHeadings[heading]}]+$`, 'g'),
-              ''
-            );
+            val = val
+              .replace(
+                new RegExp(`^[${multiSelectColumnHeadings[heading]}]+|[${multiSelectColumnHeadings[heading]}]+$`, 'g'),
+                ''
+              )
+              .replace(
+                new RegExp(`[${multiSelectColumnHeadings[heading]}]{2,}`, 'g'),
+                multiSelectColumnHeadings[heading]
+              );
           acc.checkRecord[heading] = !val ? [] : val.split(multiSelectColumnHeadings[heading]);
         } else acc.checkRecord[heading] = val;
 

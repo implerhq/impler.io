@@ -3,7 +3,7 @@ import { Writable } from 'stream';
 import { ValidateFunction } from 'ajv';
 import { Injectable, BadRequestException } from '@nestjs/common';
 
-import { ColumnTypesEnum, ITemplateSchemaItem, UploadStatusEnum } from '@impler/shared';
+import { ColumnDelimiterEnum, ColumnTypesEnum, ITemplateSchemaItem, UploadStatusEnum } from '@impler/shared';
 import { UploadRepository, ValidatorRepository, DalService } from '@impler/dal';
 
 import { APIMessages } from '@shared/constants';
@@ -67,7 +67,7 @@ export class DoReReview extends BaseReview {
     const multiSelectColumnHeadings: Record<string, string> = {};
     (columns as ITemplateSchemaItem[]).forEach((column) => {
       if (column.type === ColumnTypesEnum.SELECT && column.allowMultiSelect)
-        multiSelectColumnHeadings[column.key] = column.delimiter || ',';
+        multiSelectColumnHeadings[column.key] = column.delimiter || ColumnDelimiterEnum.COMMA;
     });
 
     uniqueFieldData.forEach((item) => {

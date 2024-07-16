@@ -8,6 +8,7 @@ import {
   ITemplateSchemaItem,
   ColumnTypesEnum,
   getRecordFormat,
+  ColumnDelimiterEnum,
 } from '@impler/shared';
 import {
   ColumnRepository,
@@ -98,7 +99,7 @@ export class MakeUploadEntry {
           dateFormats: Array.isArray(schemaItem.dateFormats)
             ? schemaItem.dateFormats.map((format) => format.toUpperCase())
             : Defaults.DATE_FORMATS,
-          delimiter: schemaItem.delimiter,
+          delimiter: schemaItem.delimiter || ColumnDelimiterEnum.COMMA,
           isUnique: schemaItem.isUnique || false,
           defaultValue: schemaItem.defaultValue,
           allowMultiSelect: schemaItem.allowMultiSelect,
