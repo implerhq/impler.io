@@ -1,7 +1,18 @@
 import Link from 'next/link';
 import { modals } from '@mantine/modals';
 import { Controller, useForm } from 'react-hook-form';
-import { Stack, TextInput as Input, Text, Divider, SimpleGrid, Title, Group, CloseButton, Select } from '@mantine/core';
+import {
+  Stack,
+  TextInput as Input,
+  Text,
+  Divider,
+  SimpleGrid,
+  Title,
+  Group,
+  CloseButton,
+  Select,
+  useMantineColorScheme,
+} from '@mantine/core';
 
 import { ColumnTypesEnum, DEFAULT_VALUES, IColumn } from '@impler/shared';
 import { colors, COLUMN_TYPES, DELIMITERS, MODAL_KEYS, MODAL_TITLES } from '@config';
@@ -19,6 +30,7 @@ interface ColumnFormProps {
 }
 
 export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
+  const { colorScheme } = useMantineColorScheme();
   const {
     watch,
     control,
@@ -29,6 +41,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
     defaultValues: data,
   });
   const typeValue = watch('type');
+  const multiSelectValue = watch('allowMultiSelect');
 
   const onClose = () => {
     modals.close(MODAL_KEYS.COLUMN_UPDATE);
@@ -129,21 +142,6 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                       />
                     )}
                   />
-                  <Controller
-                    name="delimiter"
-                    control={control}
-                    render={({ field: { value, onChange } }) => (
-                      <Select
-                        label="Delimiter"
-                        data={DELIMITERS}
-                        placeholder="Comma (,)"
-                        value={value}
-                        data-autofocus
-                        onChange={onChange}
-                        description="Delimiter used to separate multiple select values"
-                      />
-                    )}
-                  />
                 </>
               ) : null}
               {typeValue === ColumnTypesEnum.DATE ? (
@@ -199,7 +197,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 )}
               />
             </Stack>
-            <Stack spacing="sm" p="xs" bg={colors.BGSecondaryDark}>
+            <Stack spacing="sm" p="xs" bg={colorScheme === 'dark' ? colors.BGSecondaryDark : colors.BGSecondaryLight}>
               <Title order={5}>Column Validations</Title>
               <Checkbox
                 label="Required Values"
@@ -237,6 +235,24 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                   description="Users will be required to resolve any duplicated values inside of this column prior to import."
                 />
               )}
+              {multiSelectValue && typeValue === ColumnTypesEnum.SELECT ? (
+                <Controller
+                  name="delimiter"
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <Select
+                      label="Delimiter"
+                      data={DELIMITERS}
+                      placeholder="Comma (,)"
+                      value={value}
+                      data-autofocus
+                      defaultValue=","
+                      onChange={onChange}
+                      description="Delimiter used to separate multiple select values"
+                    />
+                  )}
+                />
+              ) : null}
               <Checkbox
                 label="Freeze Column"
                 register={register('isFrozen')}
