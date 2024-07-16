@@ -21,8 +21,10 @@ export class UpdateColumn {
     }
 
     const columns = await this.columnRepository.find({ _templateId: column._templateId });
-    const isKeyUnique = columns.some((columnItem) => columnItem.key === command.key);
-    if (isKeyUnique) {
+    const sameKeyColumns = columns
+      .map((columnItem) => (columnItem._id === _id ? { ...command, ...columnItem } : columnItem))
+      .filter((columnItem) => columnItem.key === command.key);
+    if (sameKeyColumns.length > 1) {
       throw new UniqueColumnException();
     }
 

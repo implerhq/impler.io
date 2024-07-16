@@ -15,8 +15,8 @@ export class AddColumn {
 
   async execute(command: AddColumnCommand, _templateId: string) {
     const columns = await this.columnRepository.find({ _templateId });
-    const isKeyUnique = columns.some((column) => column.key === command.key);
-    if (isKeyUnique) {
+    const sameKeyColumns = columns.filter((columnItem) => columnItem.key === command.key);
+    if (sameKeyColumns.length > 0) {
       throw new UniqueColumnException();
     }
     const column = await this.columnRepository.create({
