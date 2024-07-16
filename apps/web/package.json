@@ -29,7 +29,6 @@
     "@mantine/next": "6.0.21",
     "@mantine/notifications": "6.0.21",
     "@mantine/prism": "6.0.21",
-    "@openreplay/tracker": "^9.0.9",
     "@sentry/nextjs": "^7.112.2",
     "@stripe/react-stripe-js": "^2.7.1",
     "@stripe/stripe-js": "^3.4.0",
