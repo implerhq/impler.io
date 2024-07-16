@@ -1,9 +1,10 @@
 import { ApiTags, ApiSecurity, ApiOperation } from '@nestjs/swagger';
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
-import { CreateUserJob, GetImportJobInfo } from './usecase';
+import { Body, Controller, Get, Param, ParseArrayPipe, Post, Put, UseGuards } from '@nestjs/common';
+import { CreateUserJob, GetJobMapping, CreateJobMapping, UpdateUserJob } from './usecase';
+import { UpdateJobMappingDto } from './dtos/update-jobmapping.dto';
+import { UpdateJobInfoDto } from './dtos/update-jobinfo.dto';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { ACCESS_KEY_NAME } from '@impler/shared';
-import { GetImportMappingInfo } from './usecase/get-mapping/get-mapping.usecase';
 
 @ApiTags('Import-Jobs')
 @Controller('/import-jobs')
@@ -12,11 +13,14 @@ import { GetImportMappingInfo } from './usecase/get-mapping/get-mapping.usecase'
 export class ImportJobsController {
   constructor(
     private createUserJob: CreateUserJob,
-    private getImportJobInfo: GetImportJobInfo,
-    private getImportMappingInfo: GetImportMappingInfo
+    private getJobMapping: GetJobMapping,
+    private updateJobMapping: CreateJobMapping,
+    private updateCronExpresion: UpdateUserJob
   ) {}
   @Post(':templateId')
   @ApiOperation({ summary: 'Create User Job' })
+  @UseGuards(JwtAuthGuard)
+  @ApiSecurity(ACCESS_KEY_NAME)
   async createUserJobRoute(@Param('templateId') templateId: string, @Body() body: { url: string }) {
     return this.createUserJob.execute({
       _templateId: templateId,
@@ -28,12 +32,24 @@ export class ImportJobsController {
   @ApiOperation({ summary: 'Fetch the Import Job Information based on jobId' })
   @UseGuards(JwtAuthGuard)
   @ApiSecurity(ACCESS_KEY_NAME)
-  async getImportJobInfoRoute(@Param('jobId') jobId: string, templateId: string) {
-    return this.getImportJobInfo.execute(jobId, templateId);
+  async getImportJobInfoRoute(@Param('jobId') jobId: string) {
+    return this.getJobMapping.execute(jobId);
   }
 
-  @Get(':templateId')
-  async getMapppingSchemaRoute(@Param('templateId') templateId: string) {
-    return this.getImportMappingInfo.execute(templateId);
+  @Put(':jobId/mappings')
+  @ApiOperation({ summary: 'Update Mappings Route' })
+  @UseGuards(JwtAuthGuard)
+  async updateMappingRoute(
+    @Param('jobId') jobId: string,
+    @Body(new ParseArrayPipe({ items: UpdateJobMappingDto, optional: true })) body: UpdateJobMappingDto[]
+  ) {
+    return this.updateJobMapping.execute(body);
+  }
+
+  @Put(':jobId')
+  @ApiOperation({ summary: 'Update Fields' })
+  @UseGuards(JwtAuthGuard)
+  async updateUserJobRoute(@Param('jobId') jobId: string, @Body() userJobData: UpdateJobInfoDto) {
+    this.updateCronExpresion.execute(jobId, userJobData);
   }
 }
