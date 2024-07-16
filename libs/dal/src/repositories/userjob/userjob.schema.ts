@@ -4,9 +4,6 @@ import { UserJobEntity } from './userjob.entity';
 
 const userJobSchema = new Schema(
   {
-    _id: {
-      type: Schema.Types.String,
-    },
     url: {
       type: Schema.Types.String,
     },
@@ -18,7 +15,7 @@ const userJobSchema = new Schema(
       type: Schema.Types.String,
     },
     headings: {
-      type: Schema.Types.String,
+      type: [Schema.Types.String],
     },
     createdOn: {
       type: Schema.Types.Date,
