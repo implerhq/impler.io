@@ -58,3 +58,11 @@ export type ScheduleFormValues = {
   Month: string;
   Days: string;
 };
+
+export const defaultCronValues: ScheduleFormValues = {
+  Minute: '*',
+  Hour: '*',
+  Day: '*',
+  Month: '*',
+  Days: '*',
+};
