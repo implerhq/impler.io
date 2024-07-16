@@ -4,9 +4,6 @@ import { JobMappingEntity } from './jobmapping.entity';
 
 const jobMappingSchema = new Schema(
   {
-    _id: {
-      type: Schema.Types.String,
-    },
     key: {
       type: Schema.Types.String,
     },
