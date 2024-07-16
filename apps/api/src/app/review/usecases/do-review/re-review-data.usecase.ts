@@ -67,7 +67,7 @@ export class DoReReview extends BaseReview {
     const multiSelectColumnHeadings: Record<string, string> = {};
     (columns as ITemplateSchemaItem[]).forEach((column) => {
       if (column.type === ColumnTypesEnum.SELECT && column.allowMultiSelect)
-        multiSelectColumnHeadings[column.key] = column.delimiter;
+        multiSelectColumnHeadings[column.key] = column.delimiter || ',';
     });
 
     uniqueFieldData.forEach((item) => {
