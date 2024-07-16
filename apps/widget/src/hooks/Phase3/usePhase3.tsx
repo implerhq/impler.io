@@ -198,7 +198,10 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     },
   });
   const { isLoading: isConfirmReviewLoading, mutate: confirmReview } = useMutation<
-    IUpload,
+    {
+      uploadInfo: IUpload;
+      importedData: Record<string, any>[];
+    },
     IErrorObject,
     void,
     [string]
@@ -207,15 +210,15 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
       logAmplitudeEvent('RECORDS', {
         type: 'invalid',
         host,
-        records: uploadData.invalidRecords,
+        records: uploadData.uploadInfo.invalidRecords,
       });
       logAmplitudeEvent('RECORDS', {
         type: 'valid',
         host,
-        records: uploadData.totalRecords - uploadData.invalidRecords,
+        records: uploadData.uploadInfo.totalRecords - uploadData.uploadInfo.invalidRecords,
       });
-      setUploadInfo(uploadData);
-      onNext(uploadData);
+      setUploadInfo(uploadData.uploadInfo);
+      onNext(uploadData.uploadInfo);
     },
     onError(error: IErrorObject) {
       notifier.showError({ message: error.message, title: error.error });
