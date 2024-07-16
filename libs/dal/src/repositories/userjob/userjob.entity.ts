@@ -1,5 +1,5 @@
 export class UserJobEntity {
-  _id: string;
+  _id?: string;
 
   url: string;
 
