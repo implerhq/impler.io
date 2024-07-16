@@ -31,8 +31,10 @@ export function useImpler({
           if (onUploadTerminate) onUploadTerminate(eventData.value);
           break;
         case EventTypesEnum.UPLOAD_COMPLETED:
-          if (onDataImported) onDataImported(eventData.value.importedData);
-          if (onUploadComplete) onUploadComplete(eventData.value.uploadInfo);
+          if (onUploadComplete) onUploadComplete(eventData.value);
+          break;
+        case EventTypesEnum.DATA_IMPORTED:
+          if (onDataImported) onDataImported(eventData.value);
           break;
         case EventTypesEnum.CLOSE_WIDGET:
           if (onWidgetClose) onWidgetClose();

@@ -21,7 +21,7 @@ import { SelectEditor } from './SelectEditor';
 import { MultiSelectEditor } from './MultiSelectEditor';
 
 interface IUsePhase3Props {
-  onNext: (uploadData: IUpload) => void;
+  onNext: (uploadData: IUpload, importedData?: Record<string, any>[]) => void;
 }
 
 const defaultPage = 1;
@@ -218,7 +218,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
         records: uploadData.uploadInfo.totalRecords - uploadData.uploadInfo.invalidRecords,
       });
       setUploadInfo(uploadData.uploadInfo);
-      onNext(uploadData.uploadInfo);
+      onNext(uploadData.uploadInfo, uploadData.importedData);
     },
     onError(error: IErrorObject) {
       notifier.showError({ message: error.message, title: error.error });
