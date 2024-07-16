@@ -447,9 +447,6 @@ importers:
       '@mantine/prism':
         specifier: 6.0.21
         version: 6.0.21(@mantine/core@6.0.21)(@mantine/hooks@6.0.21)(react-dom@18.2.0)(react@18.2.0)
-      '@openreplay/tracker':
-        specifier: ^9.0.9
-        version: 9.0.14
       '@sentry/nextjs':
         specifier: ^7.112.2
         version: 7.118.0(next@14.1.1)(react@18.2.0)(webpack@5.92.1)
@@ -4608,10 +4605,6 @@ packages:
   /@mdx-js/util@1.6.22:
     resolution: {integrity: sha512-H1rQc1ZOHANWBvPcW+JpGwr+juXSxM8Q8YCkm3GhZd8REu1fHR3z99CErO1p9pkcfcxZnMdIZdIsXkOHY0NilA==}
 
-  /@medv/finder@3.2.0:
-    resolution: {integrity: sha512-JmU7JIBwyL8RAzefvzALT4sP2M0biGk8i2invAgpQmma/QgfsaqoHIvJ7S0YC8n9hUVG8X3Leul2nGa06PvhbQ==}
-    dev: false
-
   /@mongodb-js/saslprep@1.1.7:
     resolution: {integrity: sha512-dCHW/oEX0KJ4NjDULBo3JiOaK5+6axtpBbS+ao2ZInoAL9/YRQLhXzSNAFz7hP4nzLkIqsfYAK/PDE3+XHny0Q==}
     dependencies:
@@ -5751,15 +5744,6 @@ packages:
     dependencies:
       '@octokit/openapi-types': 18.1.1
     dev: true
-
-  /@openreplay/tracker@9.0.14:
-    resolution: {integrity: sha512-UqzJFrbaxL/MDiT5eeOzqhmW/cHuT95bSVhP3OXv6edC7vezF9D5rEAhKIK21LNrjibcZy9GEmCeM9z6YjisHA==}
-    engines: {node: '>=14.0'}
-    dependencies:
-      '@medv/finder': 3.2.0
-      error-stack-parser: 2.1.4
-      fflate: 0.7.4
-    dev: false
 
   /@pkgjs/parseargs@0.11.0:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -14102,10 +14086,6 @@ packages:
 
   /fetch-retry@5.0.6:
     resolution: {integrity: sha512-3yurQZ2hD9VISAhJJP9bpYFNQrHHBXE2JxxjY5aLEcDi46RmAzJE2OC9FAde0yis5ElW0jTTzs0zfg/Cca4XqQ==}
-
-  /fflate@0.7.4:
-    resolution: {integrity: sha512-5u2V/CDW15QM1XbbgS+0DfPxVB+jUKhWEKuuFuHncbk3tEEqzmoXL+2KyOFuKGqOnmdIy0/davWF1CkuwtibCw==}
-    dev: false
 
   /figgy-pudding@3.5.2:
     resolution: {integrity: sha512-0btnI/H8f2pavGMN8w40mlSKOfTK2SVJmBfBeVIj3kNw0swwgzyRq0d5TJVOwodFmtvpPeWPN/MCcfuWF0Ezbw==}
