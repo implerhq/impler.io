@@ -1,7 +1,11 @@
 import { ReactNode } from 'react';
-import { MultiSelect as MantineMultiSelect, SelectItem } from '@mantine/core';
+import {
+  MultiSelect as MantineMultiSelect,
+  MultiSelectProps as MantineMultiSelectProps,
+  SelectItem,
+} from '@mantine/core';
 
-interface MultiSelectProps {
+interface MultiSelectProps extends MantineMultiSelectProps {
   placeholder?: string;
   data: SelectItem[] | string[];
   value?: string[];
@@ -32,6 +36,7 @@ export function MultiSelect({
   description,
   getCreateLabel,
   maxSelectedValues,
+  ...rest
 }: MultiSelectProps) {
   return (
     <MantineMultiSelect
@@ -50,6 +55,7 @@ export function MultiSelect({
       data-haslabel={!!label}
       description={description}
       maxSelectedValues={maxSelectedValues}
+      {...rest}
     />
   );
 }

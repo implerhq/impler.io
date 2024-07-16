@@ -35,8 +35,8 @@ interface IRunData {
   validator: ValidateFunction;
   extra: any;
   numberColumnHeadings: Set<string>;
-  multiSelectColumnHeadings: Set<string>;
   dateFormats: Record<string, string[]>;
+  multiSelectColumnHeadings: Record<string, string>;
 }
 
 interface ISaveResults {
@@ -274,7 +274,7 @@ export class BaseReview {
     headings: string[];
     record: Record<string, any>;
     numberColumnHeadings: Set<string>;
-    multiSelectColumnHeadings: Set<string>;
+    multiSelectColumnHeadings: Record<string, string>;
   }) {
     return headings.reduce(
       (acc, heading, index) => {
@@ -283,9 +283,19 @@ export class BaseReview {
 
         if (numberColumnHeadings.has(heading) && val !== '' && !isNaN(val)) val = Number(val);
         if (typeof val === 'string') val = val.trim();
-
-        if (multiSelectColumnHeadings.has(heading)) acc.checkRecord[heading] = !val ? [] : val.split(',');
-        else acc.checkRecord[heading] = val;
+        if (multiSelectColumnHeadings[heading]) {
+          if (val)
+            val = val
+              .replace(
+                new RegExp(`^[${multiSelectColumnHeadings[heading]}]+|[${multiSelectColumnHeadings[heading]}]+$`, 'g'),
+                ''
+              )
+              .replace(
+                new RegExp(`[${multiSelectColumnHeadings[heading]}]{2,}`, 'g'),
+                multiSelectColumnHeadings[heading]
+              );
+          acc.checkRecord[heading] = !val ? [] : val.split(multiSelectColumnHeadings[heading]);
+        } else acc.checkRecord[heading] = val;
 
         acc.passRecord[heading] = val;
 

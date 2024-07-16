@@ -52,10 +52,11 @@ export function Widget() {
     resetAppState();
     setPhase(PhasesEnum.VALIDATE);
   };
-  const onComplete = (uploadData: IUpload) => {
+  const onComplete = (uploadData: IUpload, importedData?: Record<string, any>[]) => {
     setDataCount(uploadData.totalRecords);
     setPhase(PhasesEnum.COMPLETE);
     ParentWindow.UploadCompleted(uploadData);
+    if (importedData) ParentWindow.DataImported(importedData);
   };
 
   const PhaseView = {

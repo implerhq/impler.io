@@ -15,10 +15,10 @@ export class MultiSelectEditor extends BaseEditor {
     if (this.timer) this.hot.rootWindow.clearTimeout(this.timer);
   }
   getValue() {
-    return this.value.size ? [...this.value].join(',') : undefined;
+    return this.value.size ? [...this.value].join(this.cellProperties.delimiter || ',') : undefined;
   }
   setValue(value: string) {
-    this.value = new Set(value ? value.split(',') : []);
+    this.value = new Set(value ? value.split(this.cellProperties.delimiter || ',') : []);
   }
   open() {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

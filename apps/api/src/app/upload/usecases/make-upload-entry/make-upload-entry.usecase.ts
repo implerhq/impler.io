@@ -8,6 +8,7 @@ import {
   ITemplateSchemaItem,
   ColumnTypesEnum,
   getRecordFormat,
+  ColumnDelimiterEnum,
 } from '@impler/shared';
 import {
   ColumnRepository,
@@ -70,7 +71,8 @@ export class MakeUploadEntry {
       {
         _templateId: templateId,
       },
-      'name key isRequired isUnique isFrozen selectValues dateFormats defaultValue type regex sequence allowMultiSelect alternateKeys',
+      // eslint-disable-next-line max-len
+      'name key isRequired isUnique isFrozen selectValues dateFormats defaultValue type regex sequence allowMultiSelect alternateKeys delimiter',
       {
         sort: 'sequence',
       }
@@ -97,6 +99,7 @@ export class MakeUploadEntry {
           dateFormats: Array.isArray(schemaItem.dateFormats)
             ? schemaItem.dateFormats.map((format) => format.toUpperCase())
             : Defaults.DATE_FORMATS,
+          delimiter: schemaItem.delimiter || ColumnDelimiterEnum.COMMA,
           isUnique: schemaItem.isUnique || false,
           defaultValue: schemaItem.defaultValue,
           allowMultiSelect: schemaItem.allowMultiSelect,

@@ -118,9 +118,6 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                     backgroundColor: addOpacityToHex(colorScheme === 'dark' ? colors.white : colors.black, 0.2),
                     backdropFilter: 'blur(5px)',
                   },
-                  inner: {
-                    top: '10%',
-                  },
                 },
               }}
             >

@@ -8,6 +8,7 @@ import {
   FileNameService,
   ITemplateSchemaItem,
   ColumnTypesEnum,
+  ColumnDelimiterEnum,
 } from '@impler/shared';
 import { StorageService } from '@impler/shared/dist/services/storage';
 import {
@@ -122,10 +123,10 @@ export class SendWebhookDataConsumer extends BaseConsumer {
       Math.max((page - DEFAULT_PAGE) * chunkSize, MIN_LIMIT),
       Math.min(page * chunkSize, data.length)
     );
-    if (Array.isArray(multiSelectHeadings) && multiSelectHeadings.length > 0) {
+    if (multiSelectHeadings && Object.keys(multiSelectHeadings).length > 0) {
       slicedData = slicedData.map((obj) => {
-        multiSelectHeadings.forEach((heading) => {
-          obj.record[heading] = obj.record[heading] ? obj.record[heading].split(',') : [];
+        Object.keys(multiSelectHeadings).forEach((heading) => {
+          obj.record[heading] = obj.record[heading] ? obj.record[heading].split(multiSelectHeadings[heading]) : [];
         });
 
         return obj;
@@ -166,12 +167,13 @@ export class SendWebhookDataConsumer extends BaseConsumer {
     const webhookDestination = await this.webhookDestinationRepository.findOne({ _templateId: uploadata._templateId });
 
     const defaultValueObj = {};
-    const multiSelectHeadings = [];
+    const multiSelectHeadings = {};
     const customSchema = JSON.parse(uploadata.customSchema) as ITemplateSchemaItem[];
     if (Array.isArray(customSchema)) {
       customSchema.forEach((item: ITemplateSchemaItem) => {
         if (item.defaultValue) defaultValueObj[item.key] = item.defaultValue;
-        if (item.type === ColumnTypesEnum.SELECT && item.allowMultiSelect) multiSelectHeadings.push(item.key);
+        if (item.type === ColumnTypesEnum.SELECT && item.allowMultiSelect)
+          multiSelectHeadings[item.key] = item.delimiter || ColumnDelimiterEnum.COMMA;
       });
     }
 

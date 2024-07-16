@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ColumnTypesEnum } from '@impler/shared';
+import { ColumnDelimiterEnum, ColumnTypesEnum } from '@impler/shared';
 
 export class ColumnResponseDto {
   @ApiProperty({
@@ -69,4 +69,10 @@ export class ColumnResponseDto {
     description: 'If true, the column can have multiple values',
   })
   allowMultiSelect?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Specify the delimiter for multi-select value',
+    enum: ColumnDelimiterEnum,
+  })
+  delimiter?: string;
 }

@@ -124,9 +124,10 @@ export class ApiService {
   }
 
   async confirmReview(uploadId: string) {
-    return this.httpClient.post(
-      `/review/${uploadId}/confirm`,
-    ) as Promise<IUpload>;
+    return this.httpClient.post(`/review/${uploadId}/confirm`) as Promise<{
+      uploadInfo: IUpload;
+      importedData: Record<string, any>[];
+    }>;
   }
 
   async getUpload(uploadId: string) {

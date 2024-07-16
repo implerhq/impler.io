@@ -6,7 +6,13 @@ import { APIMessages } from '@shared/constants';
 import { BaseReview } from './base-review.usecase';
 import { BATCH_LIMIT } from '@shared/services/sandbox';
 import { StorageService } from '@impler/shared/dist/services/storage';
-import { PaymentAPIService, ColumnTypesEnum, UploadStatusEnum, ITemplateSchemaItem } from '@impler/shared';
+import {
+  PaymentAPIService,
+  ColumnTypesEnum,
+  UploadStatusEnum,
+  ITemplateSchemaItem,
+  ColumnDelimiterEnum,
+} from '@impler/shared';
 import { UploadRepository, ValidatorRepository, FileRepository, DalService } from '@impler/dal';
 
 interface ISaveResults {
@@ -44,10 +50,11 @@ export class DoReview extends BaseReview {
     const dateFormats: Record<string, string[]> = {};
     const uniqueItems: Record<string, Set<any>> = {};
     const columns = JSON.parse(uploadInfo.customSchema);
-    const multiSelectColumnHeadings = new Set<string>();
+    const multiSelectColumnHeadings: Record<string, string> = {};
     const numberColumnHeadings = new Set<string>();
     (columns as ITemplateSchemaItem[]).forEach((column) => {
-      if (column.type === ColumnTypesEnum.SELECT && column.allowMultiSelect) multiSelectColumnHeadings.add(column.key);
+      if (column.type === ColumnTypesEnum.SELECT && column.allowMultiSelect)
+        multiSelectColumnHeadings[column.key] = column.delimiter || ColumnDelimiterEnum.COMMA;
       if (column.type === ColumnTypesEnum.NUMBER || column.type === ColumnTypesEnum.DOUBLE)
         numberColumnHeadings.add(column.key);
     });

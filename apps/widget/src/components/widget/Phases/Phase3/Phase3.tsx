@@ -19,7 +19,7 @@ import { SegmentedControl } from '@ui/SegmentedControl';
 import { ConfirmModal } from 'components/widget/modals/ConfirmModal';
 
 interface IPhase3Props {
-  onNextClick: (uploadData: IUpload) => void;
+  onNextClick: (uploadData: IUpload, importedData?: Record<string, any>[]) => void;
   onPrevClick: () => void;
 }
 

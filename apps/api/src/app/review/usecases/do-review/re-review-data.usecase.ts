@@ -3,7 +3,7 @@ import { Writable } from 'stream';
 import { ValidateFunction } from 'ajv';
 import { Injectable, BadRequestException } from '@nestjs/common';
 
-import { ColumnTypesEnum, ITemplateSchemaItem, UploadStatusEnum } from '@impler/shared';
+import { ColumnDelimiterEnum, ColumnTypesEnum, ITemplateSchemaItem, UploadStatusEnum } from '@impler/shared';
 import { UploadRepository, ValidatorRepository, DalService } from '@impler/dal';
 
 import { APIMessages } from '@shared/constants';
@@ -64,9 +64,10 @@ export class DoReReview extends BaseReview {
     const columns = JSON.parse(uploadInfo.customSchema) as ITemplateSchemaItem[];
     const uniqueFields = columns.filter((column) => column.isUnique).map((column) => column.key);
     const uniqueFieldData = uniqueFields.length ? await this.dalService.getFieldData(_uploadId, uniqueFields) : [];
-    const multiSelectColumnHeadings = new Set<string>();
+    const multiSelectColumnHeadings: Record<string, string> = {};
     (columns as ITemplateSchemaItem[]).forEach((column) => {
-      if (column.type === ColumnTypesEnum.SELECT && column.allowMultiSelect) multiSelectColumnHeadings.add(column.key);
+      if (column.type === ColumnTypesEnum.SELECT && column.allowMultiSelect)
+        multiSelectColumnHeadings[column.key] = column.delimiter || ColumnDelimiterEnum.COMMA;
     });
 
     uniqueFieldData.forEach((item) => {
@@ -137,12 +138,12 @@ export class DoReReview extends BaseReview {
     headings?: string[];
     record: Record<string, any>;
     numberColumnHeadings?: Set<string>;
-    multiSelectColumnHeadings?: Set<string>;
+    multiSelectColumnHeadings?: Record<string, string>;
   }) {
-    return Array.from(multiSelectColumnHeadings).reduce(
+    return Object.keys(multiSelectColumnHeadings).reduce(
       (acc, heading) => {
         if (typeof record.record[heading] === 'string') {
-          acc[heading] = record.record[heading]?.split(',');
+          acc[heading] = record.record[heading]?.split(multiSelectColumnHeadings[heading]);
         }
 
         return acc;
@@ -160,7 +161,7 @@ export class DoReReview extends BaseReview {
     uploadId: string;
     result: ISaveResults;
     validator: ValidateFunction;
-    multiSelectColumnHeadings: Set<string>;
+    multiSelectColumnHeadings: Record<string, string>;
     dateFormats: Record<string, string[]>;
   }) {
     const bulkOp = this.dalService.getRecordBulkOp(uploadId);
@@ -232,7 +233,7 @@ export class DoReReview extends BaseReview {
     result: ISaveResults;
     onBatchInitialize: string;
     validator: ValidateFunction;
-    multiSelectColumnHeadings: Set<string>;
+    multiSelectColumnHeadings: Record<string, string>;
     dateFormats: Record<string, string[]>;
   }) {
     const { dataStream } = this.getStreams({
@@ -275,7 +276,7 @@ export class DoReReview extends BaseReview {
     extra: any;
     uploadId: string;
     validator: ValidateFunction;
-    multiSelectColumnHeadings: Set<string>;
+    multiSelectColumnHeadings: Record<string, string>;
     dateFormats: Record<string, string[]>;
   }) {
     let batchCount = 1;

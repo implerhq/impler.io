@@ -7,7 +7,6 @@ import { validateNotFound } from '@shared/helpers/common.helper';
 import { validateUploadStatus } from '@shared/helpers/upload.helpers';
 import { GetUpload } from '@shared/usecases/get-upload/get-upload.usecase';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
-import { GetUploadCommand } from '@shared/usecases/get-upload/get-upload.command';
 
 import { UpdateMappingDto } from './dtos/update-columns.dto';
 import {
@@ -42,12 +41,10 @@ export class MappingController {
   async getMappingInformation(
     @Param('uploadId', ValidateMongoId) uploadId: string
   ): Promise<Partial<ITemplateSchemaItem>[]> {
-    const uploadInformation = await this.getUpload.execute(
-      GetUploadCommand.create({
-        uploadId,
-        select: 'status headings _templateId',
-      })
-    );
+    const uploadInformation = await this.getUpload.execute({
+      uploadId,
+      select: 'status headings _templateId',
+    });
 
     // throw error if upload information not found
     validateNotFound(uploadInformation, 'upload');
@@ -80,12 +77,10 @@ export class MappingController {
     @Param('uploadId', ValidateMongoId) _uploadId: string,
     @Body(new ParseArrayPipe({ items: UpdateMappingDto, optional: true })) body: UpdateMappingDto[]
   ) {
-    const uploadInformation = await this.getUpload.execute(
-      GetUploadCommand.create({
-        uploadId: _uploadId,
-        select: 'status customSchema headings',
-      })
-    );
+    const uploadInformation = await this.getUpload.execute({
+      uploadId: _uploadId,
+      select: 'status customSchema headings',
+    });
 
     // throw error if upload information not found
     validateNotFound(uploadInformation, 'upload');
