@@ -48,7 +48,7 @@ export class DoReview extends BaseReview {
     const numberColumnHeadings = new Set<string>();
     (columns as ITemplateSchemaItem[]).forEach((column) => {
       if (column.type === ColumnTypesEnum.SELECT && column.allowMultiSelect)
-        multiSelectColumnHeadings[column.key] = column.delimiter;
+        multiSelectColumnHeadings[column.key] = column.delimiter || ',';
       if (column.type === ColumnTypesEnum.NUMBER || column.type === ColumnTypesEnum.DOUBLE)
         numberColumnHeadings.add(column.key);
     });

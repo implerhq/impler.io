@@ -92,7 +92,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
             case ColumnTypesEnum.SELECT:
               columnItem.type = 'text';
               columnItem.renderer = 'custom';
-              columnItem.delimiter = column.delimiter;
+              columnItem.delimiter = column.delimiter || ',';
               columnItem.selectOptions = column.selectValues;
               columnItem.editor = column.allowMultiSelect ? MultiSelectEditor : SelectEditor;
               break;

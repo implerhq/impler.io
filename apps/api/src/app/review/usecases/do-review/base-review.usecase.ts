@@ -283,7 +283,6 @@ export class BaseReview {
 
         if (numberColumnHeadings.has(heading) && val !== '' && !isNaN(val)) val = Number(val);
         if (typeof val === 'string') val = val.trim();
-
         if (multiSelectColumnHeadings[heading])
           acc.checkRecord[heading] = !val ? [] : val.split(multiSelectColumnHeadings[heading]);
         else acc.checkRecord[heading] = val;
