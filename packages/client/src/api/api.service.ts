@@ -10,6 +10,8 @@ import {
   ISchemaColumn,
   IRecord,
   constructQueryString,
+  IUserJobMapping,
+  IJobInformation,
 } from '@impler/shared';
 
 export class ApiService {
@@ -190,5 +192,30 @@ export class ApiService {
     return this.httpClient.delete(
       `/review/${uploadId}/record?indexes=${indexes}&valid=${valid}&invalid=${invalid}`,
     );
+  }
+
+  async getRssXmlMappingHeading(_templateId: string, url: string) {
+    return this.httpClient.post(`/import-jobs/${_templateId}`, {
+      url,
+    });
+  }
+
+  async getUserJobMappings(jobId: string) {
+    return this.httpClient.get(`/import-jobs/${jobId}/mappings`) as Promise<
+      IUserJobMapping[]
+    >;
+  }
+
+  async createUserJobMapings(jobId: string, mappings: IUserJobMapping[]) {
+    return this.httpClient.put(
+      `/import-jobs/${jobId}/mappings`,
+      mappings,
+    ) as Promise<IUserJobMapping[]>;
+  }
+
+  async updateUserJob(jobId: string, userJobData: IJobInformation) {
+    return this.httpClient.put(`/import-jobs/${jobId}`, {
+      userJobData,
+    });
   }
 }
