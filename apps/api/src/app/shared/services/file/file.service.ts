@@ -4,7 +4,7 @@ import { cwd } from 'node:process';
 import * as xlsxPopulate from 'xlsx-populate';
 import { CONSTANTS } from '@shared/constants';
 import { ParseConfig, parse } from 'papaparse';
-import { ColumnTypesEnum, Defaults, FileEncodingsEnum } from '@impler/shared';
+import { ColumnDelimiterEnum, ColumnTypesEnum, Defaults, FileEncodingsEnum } from '@impler/shared';
 import { EmptyFileException } from '@shared/exceptions/empty-file.exception';
 import { InvalidFileException } from '@shared/exceptions/invalid-file.exception';
 import { IExcelFileHeading } from '@shared/types/file.types';
@@ -105,7 +105,9 @@ export class ExcelFileService {
       const columnName = this.getExcelColumnNameFromIndex(index + 1);
       const columnHeadingCellName = columnName + '1';
       if (heading.type === ColumnTypesEnum.SELECT && heading.allowMultiSelect)
-        worksheet.cell(columnHeadingCellName).value(heading.key + '#MULTI' + '#' + (heading.delimiter || ','));
+        worksheet
+          .cell(columnHeadingCellName)
+          .value(heading.key + '#MULTI' + '#' + (heading.delimiter || ColumnDelimiterEnum.COMMA));
       else worksheet.cell(columnHeadingCellName).value(heading.key);
       worksheet.column(columnName).style('numberFormat', '@');
     });

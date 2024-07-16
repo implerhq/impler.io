@@ -8,6 +8,7 @@ import {
   FileNameService,
   ITemplateSchemaItem,
   ColumnTypesEnum,
+  ColumnDelimiterEnum,
 } from '@impler/shared';
 import { StorageService } from '@impler/shared/dist/services/storage';
 import {
@@ -172,7 +173,7 @@ export class SendWebhookDataConsumer extends BaseConsumer {
       customSchema.forEach((item: ITemplateSchemaItem) => {
         if (item.defaultValue) defaultValueObj[item.key] = item.defaultValue;
         if (item.type === ColumnTypesEnum.SELECT && item.allowMultiSelect)
-          multiSelectHeadings[item.key] = item.delimiter || ',';
+          multiSelectHeadings[item.key] = item.delimiter || ColumnDelimiterEnum.COMMA;
       });
     }
 

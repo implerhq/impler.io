@@ -16,6 +16,7 @@ import {
   IRecord,
   ReviewDataTypesEnum,
   numberFormatter,
+  ColumnDelimiterEnum,
 } from '@impler/shared';
 import { SelectEditor } from './SelectEditor';
 import { MultiSelectEditor } from './MultiSelectEditor';
@@ -92,7 +93,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
             case ColumnTypesEnum.SELECT:
               columnItem.type = 'text';
               columnItem.renderer = 'custom';
-              columnItem.delimiter = column.delimiter || ',';
+              columnItem.delimiter = column.delimiter || ColumnDelimiterEnum.COMMA;
               columnItem.selectOptions = column.selectValues;
               columnItem.editor = column.allowMultiSelect ? MultiSelectEditor : SelectEditor;
               break;
