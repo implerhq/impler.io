@@ -27,6 +27,7 @@ export const APIMessages = {
   EMAIL_ALREADY_EXISTS: 'Email already exists',
   INCORRECT_KEYS_FOUND: 'Invalid keys found! Please check and correct them from web',
   INVALID_AUTH_TOKEN: 'Invalid authentication token',
+  INVALID_RSS_URL: 'The Specified URL doesn`t contain any RSS XML Feed, Please enter a Valid RSS XML URL',
 };
 
 export const CONSTANTS = {
