@@ -96,10 +96,10 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
             ),
           },
           {
-            title: '',
+            title: 'Actions',
             key: 'actions',
             Cell: (item) => (
-              <Flex justify="flex-end" gap="xs">
+              <Flex gap="xs">
                 <IconButton label="Edit" onClick={() => onEditColumnClick(item._id)}>
                   <EditIcon color={colors.blue} />
                 </IconButton>
