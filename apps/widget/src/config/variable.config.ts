@@ -66,3 +66,11 @@ export const defaultCronValues: ScheduleFormValues = {
   Month: '*',
   Days: '0',
 };
+
+export const fieldAllowedValues = {
+  Minute: '0-59, *, /, -',
+  Hour: '0-23, *, /, -',
+  Day: '1-31, *, /, -, ?',
+  Month: '1-12, JAN-DEC, *, /, -',
+  Days: '0-7, SUN-SAT, *, /, -, ?',
+};
