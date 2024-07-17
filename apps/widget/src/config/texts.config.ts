@@ -49,6 +49,15 @@ export const TEXTS = {
   PHASE4: {
     CLOSE: 'Close',
   },
+
+  AUTOIMPORTPHASES: {
+    BUTTONTEXT: {
+      MAPCOLUMN: 'Map Column',
+      SCHEDULE: 'Schedule',
+      CONFORM: 'Conform',
+      CLOSE: 'Close',
+    },
+  },
   AUTOIMPORTPHASE2: {
     NAME_IN_SCHEMA_TITLE: 'Column in schema',
     KEY_IN_FEED_TITLE: 'Key in your RSS feed ',
