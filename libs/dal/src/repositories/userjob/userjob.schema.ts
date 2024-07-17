@@ -17,10 +17,6 @@ const userJobSchema = new Schema(
     headings: {
       type: [Schema.Types.String],
     },
-    createdOn: {
-      type: Schema.Types.Date,
-      default: Date.now,
-    },
   },
   { ...schemaOptions }
 );
