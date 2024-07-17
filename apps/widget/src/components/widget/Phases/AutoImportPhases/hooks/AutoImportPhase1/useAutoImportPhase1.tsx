@@ -16,6 +16,7 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
 
   const { isLoading, mutate: getRssXmlHeading } = useMutation<IUserJob, IErrorObject, string, [string]>(
     ['getRssXmlHeading'],
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     (url: string) => api.getRssXmlMappingHeading(templateId!, url) as Promise<IUserJob>,
     {
       onSuccess(data) {
