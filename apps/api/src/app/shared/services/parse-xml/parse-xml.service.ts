@@ -3,6 +3,17 @@ import axios from 'axios';
 import { keysToOmit } from './keysToOmit';
 import { IMappedResult, IMapping, IXmlObject } from '@shared/types/parse-xml.types';
 
+export async function getMimeType(url: string): Promise<string | null> {
+  try {
+    const response = await axios.head(url);
+    const mimeType = response.headers['content-type'] || null;
+
+    return mimeType?.split(';')[0] || null;
+  } catch (error) {
+    return null;
+  }
+}
+
 const parseXmlFromUrl = async (url: string): Promise<IXmlObject> => {
   try {
     const parser = new xml2js.Parser({ strict: false });
