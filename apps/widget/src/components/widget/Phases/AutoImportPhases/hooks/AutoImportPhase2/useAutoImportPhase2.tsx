@@ -23,7 +23,7 @@ export function useAutoImportPhase2({ goNext }: IUseAutoImportPhase2Props) {
     IErrorObject,
     IUserJobMapping[],
     string[]
-  >(['getUserJobMappings'], () => api.getUserJobMappings(jobsInfo!._id), {
+  >(['getUserJobMappings'], () => api.getUserJobMappings(jobsInfo?._id), {
     onSuccess(mappingsResponse) {
       setHeadings(
         jobsInfo.headings.map((heading) => ({
