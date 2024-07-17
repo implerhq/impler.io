@@ -1,46 +1,30 @@
 import { TextInput } from '@mantine/core';
-import { isValidCronCharacter } from '@util';
 import { Control, Controller } from 'react-hook-form';
 import { ScheduleFormValues } from '@config';
 
 interface CronScheduleInputProps {
   name: keyof ScheduleFormValues;
-  control: Control<ScheduleFormValues>;
+  control: Control<ScheduleFormValues, any>;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }
 
-export function CronScheduleInputTextBox({ name, control }: CronScheduleInputProps) {
+export function CronScheduleInputTextBox({ name, control, onFocus, onBlur }: CronScheduleInputProps) {
   return (
     <Controller
       name={name}
       control={control}
-      rules={{
-        validate: isValidCronCharacter,
-      }}
       render={({ field }) => (
         <TextInput
-          label={String(name)}
-          maw={200}
-          value={field.value}
+          {...field}
+          label={name}
+          onFocus={(e) => {
+            field.onChange(e);
+            if (onFocus) onFocus();
+          }}
           onBlur={(e) => {
-            const value = e.target.value.trim();
-            field.onChange(value || '*');
-            field.onBlur();
-          }}
-          onChange={(e) => {
-            const value = e.target.value;
-            field.onChange(value);
-          }}
-          styles={{
-            label: {
-              textAlign: 'center',
-              display: 'block',
-            },
-            input: {
-              textAlign: 'center',
-            },
-            wrapper: {
-              textAlign: 'center',
-            },
+            field.onChange(e);
+            if (onBlur) onBlur();
           }}
         />
       )}
