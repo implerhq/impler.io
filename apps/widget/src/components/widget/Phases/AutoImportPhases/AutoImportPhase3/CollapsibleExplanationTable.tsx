@@ -1,7 +1,6 @@
-import { Flex, Text, Collapse, Table, UnstyledButton, Stack } from '@mantine/core';
-import { fieldAllowedValues } from '@config';
+import { Flex, Text, Collapse, Table, UnstyledButton, Stack, Group } from '@mantine/core';
 import { ChevronDown } from '@icons';
-import { colors } from '@config';
+import { colors, cronFieldDefinitions } from '@config';
 
 interface CollapsibleExplanationTableProps {
   opened: boolean;
@@ -16,18 +15,19 @@ export function CollapsibleExplanationTable({
   toggle,
   focusedField,
 }: CollapsibleExplanationTableProps) {
-  const getAllowedValues = () => {
-    if (!focusedField) return [];
+  const getFieldData = () => {
+    if (!focusedField) return null;
 
-    return [{ expression: fieldAllowedValues[focusedField], schedule: `Allowed values for ${focusedField}` }];
+    return cronFieldDefinitions.find((fieldObj) => fieldObj[focusedField]);
   };
 
-  const displayExamples = focusedField ? getAllowedValues() : cronExamples;
+  const fieldData = getFieldData();
 
   return (
-    <Stack spacing="xs" p="xs" style={{ border: `1px solid #f0f0f0` }} bg={colors.white}>
+    <Stack spacing="xs" p="xs" style={{ border: '1px solid #f0f0f0' }} bg={colors.white}>
+      <Group></Group>
       <UnstyledButton onClick={toggle}>
-        <Flex justify="center" align="center" onClick={toggle}>
+        <Flex justify="center" align="center">
           <Text size="md" fw="bold" mr="sm">
             {focusedField ? `Allowed Values for ${focusedField}` : 'Valid Values'}
           </Text>
@@ -44,17 +44,24 @@ export function CollapsibleExplanationTable({
         <Table highlightOnHover>
           <thead>
             <tr style={{ backgroundColor: '#edf3ff' }}>
-              <th style={{ textAlign: 'center' }}>Allowed Values</th>
+              <th style={{ textAlign: 'center' }}>{focusedField ? 'Allowed Values' : 'Expression'}</th>
               <th style={{ textAlign: 'center' }}>Description</th>
             </tr>
           </thead>
           <tbody>
-            {displayExamples.map((example, index) => (
-              <tr key={index}>
-                <td style={{ textAlign: 'center' }}>{example.expression}</td>
-                <td style={{ textAlign: 'center' }}>{example.schedule}</td>
-              </tr>
-            ))}
+            {!focusedField || !fieldData
+              ? cronExamples.map((example, index) => (
+                  <tr key={index}>
+                    <td style={{ textAlign: 'center' }}>{example.expression}</td>
+                    <td style={{ textAlign: 'center' }}>{example.schedule}</td>
+                  </tr>
+                ))
+              : fieldData[focusedField].values.map((value, index) => (
+                  <tr key={index}>
+                    <td style={{ textAlign: 'center' }}>{value}</td>
+                    <td style={{ textAlign: 'center' }}>{fieldData[focusedField].description[index]}</td>
+                  </tr>
+                ))}
           </tbody>
         </Table>
       </Collapse>
