@@ -11,7 +11,7 @@ import {
   IRecord,
   constructQueryString,
   IUserJobMapping,
-  IJobInformation,
+  IUserJob,
 } from '@impler/shared';
 
 export class ApiService {
@@ -213,9 +213,10 @@ export class ApiService {
     ) as Promise<IUserJobMapping[]>;
   }
 
-  async updateUserJob(jobId: string, userJobData: IJobInformation) {
-    return this.httpClient.put(`/import-jobs/${jobId}`, {
+  async updateUserJob(jobId: string, userJobData: Partial<IUserJob>) {
+    return this.httpClient.put(
+      `/import-jobs/${jobId}`,
       userJobData,
-    });
+    ) as Promise<IUserJob>;
   }
 }
