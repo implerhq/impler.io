@@ -37,9 +37,7 @@ export function AutoImportPhase4({ onCloseClick }: IAutoImportPhase4Props) {
         </Text>
       </Stack>
       <AutoImportFooter
-        onNextClick={() => {
-          onCloseClick;
-        }}
+        onNextClick={onCloseClick}
         primaryButtonLoading={false}
         onPrevClick={() => {}}
         active={PhasesEnum.CONFORM}
