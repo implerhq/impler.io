@@ -73,7 +73,6 @@ export function AutoImportPhase3({ onNextClick }: IAutoImportPhase3Props) {
 
   const handleBlur = () => {
     setFocusedField(null);
-    setTableOpened(false);
   };
 
   const toggleTable = () => {
