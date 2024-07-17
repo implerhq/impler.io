@@ -1,15 +1,18 @@
 import { colors } from '@config';
 import { CheckIcon } from '@icons';
 import { Text, Stack, Paper } from '@mantine/core';
+import { useJobsInfo } from '@store/jobinfo.context';
+const parseCronExpression = require('util/helpers/cronstrue');
+
 import { PhasesEnum } from '@types';
 import { AutoImportFooter } from 'components/Common/Footer/AutoImportFooter';
 
 interface IAutoImportPhase4Props {
-  onNextClick: () => void;
+  onCloseClick: () => void;
 }
 
-export function AutoImportPhase4(props: IAutoImportPhase4Props) {
-  console.log(props);
+export function AutoImportPhase4({ onCloseClick }: IAutoImportPhase4Props) {
+  const { jobsInfo } = useJobsInfo();
 
   return (
     <>
@@ -27,14 +30,16 @@ export function AutoImportPhase4(props: IAutoImportPhase4Props) {
           Import Job is Scheduled From URL
         </Text>
         <Paper bg={colors.softBlue} style={{ maxWidth: '100%', width: 'fit-content' }} p="xl">
-          <Text color={colors.lightBlue}>https://timesofindia.com/rssfeeds/-2121212121.cms</Text>
+          <Text color={colors.lightBlue}>{jobsInfo.url}</Text>
         </Paper>
         <Text fw="bold" color={colors.softGrey}>
-          Will be executed on Every Sunday 12:00 AM
+          Will be executed on {parseCronExpression.toString(jobsInfo.cron)}
         </Text>
       </Stack>
       <AutoImportFooter
-        onNextClick={() => {}}
+        onNextClick={() => {
+          onCloseClick;
+        }}
         primaryButtonLoading={false}
         onPrevClick={() => {}}
         active={PhasesEnum.CONFORM}
