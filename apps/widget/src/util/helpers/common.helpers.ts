@@ -65,6 +65,6 @@ export const validateRssUrl = {
   required: 'RSS URL is required',
   pattern: {
     value: /^(https?:\/\/)?([\w-]+(\.[\w-]+)+\.?(:\d+)?)(\/[^\s]*)?$/,
-    message: 'Enter a valid URL',
+    message: 'Please Enter a valid RSS Feed URL',
   },
 };
