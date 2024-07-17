@@ -16,6 +16,18 @@ export function CronScheduleInputTextBox({ name, control, onFocus, onBlur }: Cro
       control={control}
       render={({ field }) => (
         <TextInput
+          styles={{
+            label: {
+              textAlign: 'center',
+              display: 'block',
+            },
+            input: {
+              textAlign: 'center',
+            },
+            wrapper: {
+              textAlign: 'center',
+            },
+          }}
           {...field}
           label={name}
           onFocus={(e) => {
