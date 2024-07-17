@@ -1,4 +1,4 @@
-import { TextInput, Text, Stack } from '@mantine/core';
+import { Stack, TextInput } from '@mantine/core';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Container } from 'components/Common/Container';
 import { PhasesEnum } from '@types';
@@ -33,18 +33,10 @@ export function AutoImportPhase1({ onNextClick }: IAutoImportPhase1Props) {
     <Container>
       <Stack spacing="xs" style={{ height: '100%', justifyContent: 'space-between' }}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Text mt="sm" ml="md">
-            RSS URL
-          </Text>
           <TextInput
-            maw="100%"
+            label="RSS URL"
             placeholder="Enter the RSS URL"
             size="md"
-            p="sm"
-            style={{
-              borderRadius: '10px',
-              borderColor: errors.rssUrl ? 'red' : undefined,
-            }}
             {...register('rssUrl', validateRssUrl)}
             error={errors.rssUrl && errors.rssUrl.message}
           />
