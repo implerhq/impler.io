@@ -84,7 +84,7 @@ export function Widget() {
           [PhasesEnum.CONFIGURE]: <AutoImportPhase1 onNextClick={() => setPhase(PhasesEnum.MAPCOLUMNS)} />,
           [PhasesEnum.MAPCOLUMNS]: <AutoImportPhase2 onNextClick={() => setPhase(PhasesEnum.SCHEDULE)} />,
           [PhasesEnum.SCHEDULE]: <AutoImportPhase3 onNextClick={() => setPhase(PhasesEnum.CONFORM)} />,
-          [PhasesEnum.CONFORM]: <AutoImportPhase4 onNextClick={() => setPhase(PhasesEnum.CONFORM)} />,
+          [PhasesEnum.CONFORM]: <AutoImportPhase4 onCloseClick={onClose} />,
         }),
   };
 
