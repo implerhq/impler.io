@@ -1,13 +1,15 @@
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDisclosure } from '@mantine/hooks';
 import { Group, Text, Stack, Flex, Container } from '@mantine/core';
 const parseCronExpression = require('util/helpers/cronstrue');
-import { colors, cronExampleBadges, cronExamples, ScheduleFormValues, TEXTS } from '@config';
+import { colors, cronExampleBadges, cronExamples, ScheduleFormValues, defaultCronValues, TEXTS } from '@config';
 import { PhasesEnum } from '@types';
 import { AutoImportFooter } from 'components/Common/Footer';
 import { CronScheduleInputTextBox } from './CronScheduleInputTextBox';
 import { CollapsibleExplanationTable } from './CollapsibleExplanationTable';
 import { TooltipBadge } from './TooltipBadge';
+import { useAutoImportPhase3 } from '../hooks/AutoImportPhase3/useAutoImportPhase3';
 
 interface IAutoImportPhase3Props {
   onNextClick: () => void;
@@ -15,8 +17,19 @@ interface IAutoImportPhase3Props {
 
 export function AutoImportPhase3({ onNextClick }: IAutoImportPhase3Props) {
   const [opened, { toggle }] = useDisclosure(false);
-  const { control, watch, setValue } = useForm<ScheduleFormValues>();
+  const { control, watch, setValue } = useForm<ScheduleFormValues>({
+    defaultValues: defaultCronValues,
+  });
   const scheduleData = watch();
+  const [cronDescription, setCronDescription] = useState({ description: '', isError: false });
+
+  const { updateUserJob } = useAutoImportPhase3({ goNext: onNextClick });
+
+  useEffect(() => {
+    const cronExpression = `${scheduleData.Minute} ${scheduleData.Hour} ${scheduleData.Day} ${scheduleData.Month} ${scheduleData.Days}`;
+    const result = getCronDescriptionfromCronExpression(cronExpression);
+    setCronDescription(result);
+  }, [scheduleData]);
 
   const handleBadgeClick = (cronExpression: string) => {
     const [minute, hour, day, month, days] = cronExpression.split(' ');
@@ -46,9 +59,12 @@ export function AutoImportPhase3({ onNextClick }: IAutoImportPhase3Props) {
     }
   };
 
-  const cronResult = getCronDescriptionfromCronExpression(
-    `${scheduleData.Minute} ${scheduleData.Hour} ${scheduleData.Day} ${scheduleData.Month} ${scheduleData.Days}`
-  );
+  const handleNextClick = () => {
+    const cronExpression = `${scheduleData.Minute} ${scheduleData.Hour} ${scheduleData.Day} ${scheduleData.Month} ${scheduleData.Days}`;
+    updateUserJob({
+      cron: cronExpression,
+    });
+  };
 
   return (
     <>
@@ -61,8 +77,8 @@ export function AutoImportPhase3({ onNextClick }: IAutoImportPhase3Props) {
             <CronScheduleInputTextBox name="Month" control={control} />
             <CronScheduleInputTextBox name="Days" control={control} />
           </Group>
-          <Text color={cronResult.isError ? colors.red : ''} size="xl" fw="bolder" align="center">
-            {cronResult.description}
+          <Text color={cronDescription.isError ? colors.red : ''} size="xl" fw="bolder" align="center">
+            {cronDescription.description || 'Every minute'}
           </Text>
           <Flex gap="lg" justify="center" wrap="wrap">
             {cronExampleBadges.map((badgeInfo, index) => (
@@ -77,7 +93,7 @@ export function AutoImportPhase3({ onNextClick }: IAutoImportPhase3Props) {
           <CollapsibleExplanationTable opened={opened} toggle={toggle} cronExamples={cronExamples} />
         </Stack>
       </Container>
-      <AutoImportFooter active={PhasesEnum.SCHEDULE} onPrevClick={() => {}} onNextClick={onNextClick} />
+      <AutoImportFooter active={PhasesEnum.SCHEDULE} onPrevClick={() => {}} onNextClick={handleNextClick} />
     </>
   );
 }
