@@ -8,6 +8,4 @@ export class UserJobEntity {
   cron: string;
 
   headings: string[];
-
-  createdOn: Date;
 }
