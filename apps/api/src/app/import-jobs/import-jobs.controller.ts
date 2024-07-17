@@ -15,7 +15,7 @@ export class ImportJobsController {
     private createUserJob: CreateUserJob,
     private getJobMapping: GetJobMapping,
     private updateJobMapping: CreateJobMapping,
-    private updateCronExpresion: UpdateUserJob
+    private updateUserJob: UpdateUserJob
   ) {}
   @Post(':templateId')
   @ApiOperation({ summary: 'Create User Job' })
@@ -50,6 +50,6 @@ export class ImportJobsController {
   @ApiOperation({ summary: 'Update Fields' })
   @UseGuards(JwtAuthGuard)
   async updateUserJobRoute(@Param('jobId') jobId: string, @Body() userJobData: UpdateJobInfoDto) {
-    this.updateCronExpresion.execute(jobId, userJobData);
+    return this.updateUserJob.execute(jobId, userJobData);
   }
 }
