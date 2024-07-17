@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useDisclosure } from '@mantine/hooks';
 import { Group, Text, Stack, Flex, Container } from '@mantine/core';
 const parseCronExpression = require('util/helpers/cronstrue');
 import { colors, cronExampleBadges, cronExamples, ScheduleFormValues, defaultCronValues, TEXTS } from '@config';
@@ -16,12 +15,13 @@ interface IAutoImportPhase3Props {
 }
 
 export function AutoImportPhase3({ onNextClick }: IAutoImportPhase3Props) {
-  const [opened, { toggle }] = useDisclosure(false);
+  const [tableOpened, setTableOpened] = useState(false);
   const { control, watch, setValue } = useForm<ScheduleFormValues>({
     defaultValues: defaultCronValues,
   });
   const scheduleData = watch();
   const [cronDescription, setCronDescription] = useState({ description: '', isError: false });
+  const [focusedField, setFocusedField] = useState<keyof ScheduleFormValues | null>(null);
 
   const { updateUserJob } = useAutoImportPhase3({ goNext: onNextClick });
 
@@ -66,16 +66,58 @@ export function AutoImportPhase3({ onNextClick }: IAutoImportPhase3Props) {
     });
   };
 
+  const handleFocus = (fieldName: keyof ScheduleFormValues) => {
+    setFocusedField(fieldName);
+    setTableOpened(true);
+  };
+
+  const handleBlur = () => {
+    setFocusedField(null);
+    setTableOpened(false);
+  };
+
+  const toggleTable = () => {
+    if (focusedField) {
+      setFocusedField(null);
+    }
+    setTableOpened(!tableOpened);
+  };
+
   return (
     <>
       <Container style={{ flexGrow: 1 }} px={0}>
         <Stack spacing="lg">
           <Group noWrap mx="auto">
-            <CronScheduleInputTextBox name="Minute" control={control} />
-            <CronScheduleInputTextBox name="Hour" control={control} />
-            <CronScheduleInputTextBox name="Day" control={control} />
-            <CronScheduleInputTextBox name="Month" control={control} />
-            <CronScheduleInputTextBox name="Days" control={control} />
+            <CronScheduleInputTextBox
+              name="Minute"
+              control={control}
+              onFocus={() => handleFocus('Minute')}
+              onBlur={handleBlur}
+            />
+            <CronScheduleInputTextBox
+              name="Hour"
+              control={control}
+              onFocus={() => handleFocus('Hour')}
+              onBlur={handleBlur}
+            />
+            <CronScheduleInputTextBox
+              name="Day"
+              control={control}
+              onFocus={() => handleFocus('Day')}
+              onBlur={handleBlur}
+            />
+            <CronScheduleInputTextBox
+              name="Month"
+              control={control}
+              onFocus={() => handleFocus('Month')}
+              onBlur={handleBlur}
+            />
+            <CronScheduleInputTextBox
+              name="Days"
+              control={control}
+              onFocus={() => handleFocus('Days')}
+              onBlur={handleBlur}
+            />
           </Group>
           <Text color={cronDescription.isError ? colors.red : ''} size="xl" fw="bolder" align="center">
             {cronDescription.description}
@@ -90,7 +132,12 @@ export function AutoImportPhase3({ onNextClick }: IAutoImportPhase3Props) {
               />
             ))}
           </Flex>
-          <CollapsibleExplanationTable opened={opened} toggle={toggle} cronExamples={cronExamples} />
+          <CollapsibleExplanationTable
+            opened={tableOpened}
+            toggle={toggleTable}
+            cronExamples={cronExamples}
+            focusedField={focusedField}
+          />
         </Stack>
       </Container>
       <AutoImportFooter active={PhasesEnum.SCHEDULE} onPrevClick={() => {}} onNextClick={handleNextClick} />
