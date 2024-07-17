@@ -43,9 +43,8 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
   });
 
   const onValidationsButtonClick = () => {
-    const name = getValues('name');
-    const type = getValues('type');
-    onValidationsClick({ name, key: name, type });
+    const values = getValues();
+    onValidationsClick({ ...values, key: values.key || values.name });
   };
 
   return (
