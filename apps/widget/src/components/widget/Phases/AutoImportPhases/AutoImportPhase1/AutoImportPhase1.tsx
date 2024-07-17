@@ -48,11 +48,6 @@ export function AutoImportPhase1({ onNextClick }: IAutoImportPhase1Props) {
             {...register('rssUrl', validateRssUrl)}
             error={errors.rssUrl && errors.rssUrl.message}
           />
-          {errors.rssUrl && (
-            <Text color="red" size="sm" mt="xs" ml="md">
-              {errors.rssUrl.message}
-            </Text>
-          )}
         </form>
 
         <AutoImportFooter
