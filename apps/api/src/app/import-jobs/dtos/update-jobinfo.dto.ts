@@ -1,4 +1,4 @@
-import { IsArray, IsDate, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsOptional, IsString } from 'class-validator';
 
 export class UpdateJobInfoDto {
   @IsString()
@@ -16,8 +16,4 @@ export class UpdateJobInfoDto {
   @IsArray()
   @IsOptional()
   headings: string[];
-
-  @IsDate()
-  @IsOptional()
-  createdOn: Date;
 }
