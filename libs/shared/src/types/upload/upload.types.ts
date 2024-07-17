@@ -25,6 +25,7 @@ export enum FileMimeTypesEnum {
   'EXCELX' = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   'EXCELM' = 'application/vnd.ms-excel.sheet.macroenabled.12',
   'JSON' = 'application/json',
+  'XML' = 'application/rss+xml',
 }
 
 export enum FileEncodingsEnum {
