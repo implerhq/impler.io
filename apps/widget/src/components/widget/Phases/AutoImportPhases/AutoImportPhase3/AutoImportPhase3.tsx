@@ -78,7 +78,7 @@ export function AutoImportPhase3({ onNextClick }: IAutoImportPhase3Props) {
             <CronScheduleInputTextBox name="Days" control={control} />
           </Group>
           <Text color={cronDescription.isError ? colors.red : ''} size="xl" fw="bolder" align="center">
-            {cronDescription.description || 'Every minute'}
+            {cronDescription.description}
           </Text>
           <Flex gap="lg" justify="center" wrap="wrap">
             {cronExampleBadges.map((badgeInfo, index) => (
