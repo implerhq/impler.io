@@ -3,6 +3,5 @@ export interface IUserJob {
   url: string;
   _templateId: string;
   headings: string[];
-  createdOn: string;
   cron: string;
 }
