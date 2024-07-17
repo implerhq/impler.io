@@ -67,10 +67,48 @@ export const defaultCronValues: ScheduleFormValues = {
   Days: '0',
 };
 
-export const fieldAllowedValues = {
-  Minute: '0-59, *, /, -',
-  Hour: '0-23, *, /, -',
-  Day: '1-31, *, /, -, ?',
-  Month: '1-12, JAN-DEC, *, /, -',
-  Days: '0-7, SUN-SAT, *, /, -, ?',
-};
+export const cronFieldDefinitions = [
+  {
+    Minute: {
+      values: ['*', '/', '-', '0-59'],
+      description: ['Any value', 'Step values', 'Range of values', 'Range of allowed values'],
+    },
+  },
+  {
+    Hour: {
+      values: ['*', '/', '-', '0-23'],
+      description: ['Any value', 'Step values', 'Range of values', 'Range of allowed values'],
+    },
+  },
+  {
+    Day: {
+      values: ['*', '/', '-', '?', '1-31'],
+      description: ['Any value', 'Step values', 'Range of values', 'No specific value', 'Range of allowed values'],
+    },
+  },
+  {
+    Month: {
+      values: ['*', '/', '-', '1-12', 'JAN-DEC'],
+      description: [
+        'Any value',
+        'Step values',
+        'Range of values',
+        'Range of allowed values',
+        'Alternative single values',
+      ],
+    },
+  },
+  {
+    Days: {
+      values: ['*', '/', '-', '?', '0-7', 'SUN-SAT'],
+      description: [
+        'Any value',
+        'Step values',
+        'Range of values',
+        'No specific value',
+        'Range of allowed values (0-7)',
+        'Alternative single values',
+      ],
+    },
+  },
+];
