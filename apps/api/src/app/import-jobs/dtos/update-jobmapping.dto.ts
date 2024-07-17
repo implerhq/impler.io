@@ -2,9 +2,11 @@ import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class UpdateJobMappingDto {
   @IsString()
+  @IsOptional()
   key: string;
 
   @IsString()
+  @IsOptional()
   name: string;
 
   @IsBoolean()
@@ -15,5 +17,6 @@ export class UpdateJobMappingDto {
   path: string;
 
   @IsString()
+  @IsOptional()
   jobId: string;
 }
