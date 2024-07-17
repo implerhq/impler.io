@@ -60,9 +60,9 @@ export type ScheduleFormValues = {
 };
 
 export const defaultCronValues: ScheduleFormValues = {
-  Minute: '*',
-  Hour: '*',
+  Minute: '45',
+  Hour: '23',
   Day: '*',
   Month: '*',
-  Days: '*',
+  Days: '0',
 };
