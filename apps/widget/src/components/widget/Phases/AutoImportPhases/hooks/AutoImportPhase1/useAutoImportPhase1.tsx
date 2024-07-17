@@ -4,6 +4,7 @@ import { IErrorObject } from '@impler/shared';
 import { IUserJob } from '@impler/shared';
 import { useImplerState } from '@store/impler.context';
 import { useJobsInfo } from '@store/jobinfo.context';
+import { notifier } from '@util';
 
 interface IUseAutoImportPhase1Props {
   goNext: () => void;
@@ -22,6 +23,9 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
       onSuccess(data) {
         setJobsInfo(data);
         goNext();
+      },
+      onError(error) {
+        notifier.showError({ message: error.message, title: error.error });
       },
     }
   );
