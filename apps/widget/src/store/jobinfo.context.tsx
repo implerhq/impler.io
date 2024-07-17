@@ -3,7 +3,7 @@ import { IUserJob } from '@impler/shared';
 
 interface JobsInfoContextType {
   jobsInfo: IUserJob;
-  setJobsInfo: (info: IUserJob) => void;
+  setJobsInfo: (jobInfo) => void;
 }
 
 const JobsInfoContext = createContext<JobsInfoContextType | null>(null);
