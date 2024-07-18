@@ -46,7 +46,7 @@ export function AutoImportPhase2({ onNextClick }: IAutoImportPhase2Props) {
             {Array.isArray(mappings) &&
               mappings.map((column, index) => (
                 <Controller
-                  key={column._id}
+                  key={`${column._id}-${index}`}
                   name={`mappings.${index}.path`}
                   control={control}
                   render={({ field }) => (
