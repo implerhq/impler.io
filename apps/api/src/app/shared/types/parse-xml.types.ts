@@ -8,5 +8,5 @@ export interface IMapping {
 }
 
 export interface IMappedResult {
-  [key: string]: string | undefined;
+  [key: string]: string | undefined | any;
 }
