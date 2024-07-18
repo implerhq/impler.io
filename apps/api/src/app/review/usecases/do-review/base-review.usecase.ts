@@ -418,7 +418,10 @@ export class BaseReview {
       keyword: 'emptyCheck',
       schema: false,
       compile: () => {
-        return (data) => (data === undefined || data === null || data === '' ? false : true);
+        return (data) =>
+          data === undefined || data === null || data === '' || (Array.isArray(data) && data.length === 0)
+            ? false
+            : true;
       },
     });
 

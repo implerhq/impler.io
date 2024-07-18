@@ -23,7 +23,7 @@ interface ColumnsTableProps {
 }
 
 export function ColumnsTable({ templateId }: ColumnsTableProps) {
-  const SelectRef = useRef(false);
+  const ValidationRef = useRef(false);
 
   const {
     columns,
@@ -52,7 +52,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
       onSubmit={(e) => {
         handleSubmit();
         e.preventDefault();
-        SelectRef.current = false;
+        ValidationRef.current = false;
       }}
       id="columns"
     >
@@ -128,19 +128,29 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                           placeholder="Select Type"
                           variant="default"
                           register={field}
-                          autoFocus={SelectRef.current}
-                          onFocus={() => (SelectRef.current = true)}
                         />
                       )}
                     />
-                    <Button size="xs" color="green" onClick={onValidationsButtonClick}>
+                    <Button
+                      size="xs"
+                      color="green"
+                      onClick={() => {
+                        ValidationRef.current = true;
+                        onValidationsButtonClick();
+                      }}
+                    >
                       Validations
                     </Button>
                   </Flex>
                 </td>
                 <td style={{ borderLeft: 'none' }}>
                   <Flex justify={'end'}>
-                    <ActionIcon color="blue" type="submit" loading={isColumnCreateLoading}>
+                    <ActionIcon
+                      color="blue"
+                      type="submit"
+                      autoFocus={ValidationRef.current}
+                      loading={isColumnCreateLoading}
+                    >
                       <CheckIcon color={colors.blue} />
                     </ActionIcon>
                     <ActionIcon color="red" onClick={() => setShowAddRow(false)}>
