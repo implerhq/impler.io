@@ -175,6 +175,24 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                   )}
                 />
               ) : null}
+              {typeValue === ColumnTypesEnum.REGEX && (
+                <>
+                  <Input
+                    required
+                    {...register('regex')}
+                    label="Regular expression"
+                    error={errors.regex?.message}
+                    placeholder="Regular expression"
+                  />
+                  <Textarea
+                    autosize
+                    minRows={2}
+                    label="Regular expression description"
+                    placeholder="Regular expression description"
+                    register={register('regexDescription')}
+                  />
+                </>
+              )}
               <Controller
                 name="defaultValue"
                 control={control}
@@ -204,24 +222,6 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 register={register('isRequired')}
                 description="User have to map this column with uploaded column during map column step and value must be filled during review step."
               />
-              {typeValue === ColumnTypesEnum.REGEX && (
-                <>
-                  <Input
-                    required
-                    {...register('regex')}
-                    label="Regular expression"
-                    error={errors.regex?.message}
-                    placeholder="Regular expression"
-                  />
-                  <Textarea
-                    autosize
-                    minRows={2}
-                    label="Regular expression description"
-                    placeholder="Regular expression description"
-                    register={register('regexDescription')}
-                  />
-                </>
-              )}
               {typeValue === ColumnTypesEnum.SELECT ? (
                 <Checkbox
                   label="Multi Select Values"
