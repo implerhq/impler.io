@@ -111,13 +111,13 @@ export class BaseReview {
         break;
       case ColumnTypesEnum.NUMBER:
         property = {
-          allOf: [{ type: 'integer' }, ...(!column.isRequired ? [{ type: ['integer', 'null'] }] : [])],
+          allOf: [{ type: ['integer', 'null'] }],
           ...(!column.isRequired && { default: null }),
         };
         break;
       case ColumnTypesEnum.DOUBLE:
         property = {
-          allOf: [{ type: 'number' }, ...(!column.isRequired ? [{ type: ['number', 'null'] }] : [])],
+          allOf: [{ type: ['number', 'null'] }],
           ...(!column.isRequired && { default: null }),
         };
         break;
@@ -281,7 +281,7 @@ export class BaseReview {
         if (heading === '_') return acc;
         let val = record[index];
 
-        if (numberColumnHeadings.has(heading) && val !== '' && !isNaN(val)) val = Number(val);
+        if (numberColumnHeadings.has(heading)) val = val !== '' && !isNaN(val) ? Number(val) : null;
         if (typeof val === 'string') val = val.trim();
         if (multiSelectColumnHeadings[heading]) {
           if (val)
@@ -418,7 +418,10 @@ export class BaseReview {
       keyword: 'emptyCheck',
       schema: false,
       compile: () => {
-        return (data) => (data === undefined || data === null || data === '' ? false : true);
+        return (data) =>
+          data === undefined || data === null || data === '' || (Array.isArray(data) && data.length === 0)
+            ? false
+            : true;
       },
     });
 

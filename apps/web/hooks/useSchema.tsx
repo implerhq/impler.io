@@ -58,7 +58,22 @@ export function useSchema({ templateId }: UseSchemaProps) {
             hasExtraColumnKeys: boolean;
           },
         });
-        reset({});
+        reset({
+          name: undefined,
+          key: undefined,
+          type: 'String',
+          alternateKeys: [],
+          isRequired: false,
+          isUnique: false,
+          isFrozen: false,
+          regex: undefined,
+          delimiter: undefined,
+          dateFormats: [],
+          defaultValue: undefined,
+          regexDescription: undefined,
+          selectValues: [],
+          allowMultiSelect: false,
+        });
         setFocus('name');
       },
       onError: (error: IErrorObject) => {

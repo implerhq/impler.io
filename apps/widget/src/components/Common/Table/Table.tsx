@@ -64,7 +64,8 @@ Handsontable.renderers.registerRenderer(
     TD.classList.add('custom-cell');
     TD.ariaLabel = '';
     const soureData = instance.getSourceDataAtRow(row) as IRecord;
-    let fieldValue = typeof soureData.record[name] === 'undefined' ? '' : soureData.record[name];
+    let fieldValue =
+      typeof soureData.record[name] === 'undefined' || soureData.record[name] === null ? null : soureData.record[name];
     if (typeof fieldValue === 'string' && fieldValue.length > name.length + 20)
       fieldValue = value.substring(0, name.length + 20) + '...';
 
@@ -91,7 +92,7 @@ Handsontable.renderers.registerRenderer(
     if (soureData.updated?.[name] || soureData.errors?.[name]) {
       valueSpan.classList.add('cell-value');
     }
-    valueSpan.appendChild(document.createTextNode(fieldValue));
+    if (fieldValue !== null) valueSpan.appendChild(document.createTextNode(fieldValue));
     TD.appendChild(valueSpan);
     if (soureData.updated && soureData.updated[name]) {
       errorSvg.setAttribute('style', 'vertical-align: middle;float: right;cursor: pointer;color:#795e00;');
