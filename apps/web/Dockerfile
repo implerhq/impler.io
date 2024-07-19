@@ -24,7 +24,7 @@ COPY libs/shared ./libs/shared
 COPY packages/react ./packages/react
 
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV NX_NO_CLOUD=true
+ENV NX_SKIP_NX_CACHE=true
 
 RUN pnpm i
 # RUN pnpm build
