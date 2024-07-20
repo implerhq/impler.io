@@ -26,6 +26,7 @@ export enum FileMimeTypesEnum {
   'EXCELM' = 'application/vnd.ms-excel.sheet.macroenabled.12',
   'JSON' = 'application/json',
   'XML' = 'application/rss+xml',
+  'TEXTXML' = 'text/xml',
 }
 
 export enum FileEncodingsEnum {
