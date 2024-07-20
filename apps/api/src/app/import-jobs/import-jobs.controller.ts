@@ -1,6 +1,7 @@
 import { ApiTags, ApiSecurity, ApiOperation } from '@nestjs/swagger';
-import { Body, Controller, Get, Param, ParseArrayPipe, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, UseGuards } from '@nestjs/common';
 import { CreateUserJob, GetJobMapping, CreateJobMapping, UpdateUserJob } from './usecase';
+import { CronJobService } from '../shared/services/cronjob.service';
 import { UpdateJobMappingDto } from './dtos/update-jobmapping.dto';
 import { UpdateJobInfoDto } from './dtos/update-jobinfo.dto';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
@@ -15,7 +16,8 @@ export class ImportJobsController {
     private createUserJob: CreateUserJob,
     private getJobMapping: GetJobMapping,
     private updateJobMapping: CreateJobMapping,
-    private updateUserJob: UpdateUserJob
+    private updateUserJob: UpdateUserJob,
+    private cronJobService: CronJobService
   ) {}
   @Post(':templateId')
   @ApiOperation({ summary: 'Create User Job' })
@@ -50,5 +52,33 @@ export class ImportJobsController {
   @UseGuards(JwtAuthGuard)
   async updateUserJobRoute(@Param('jobId') _jobId: string, @Body() userJobData: UpdateJobInfoDto) {
     return this.updateUserJob.execute(_jobId, userJobData);
+  }
+
+  @Get('/user/:id')
+  @ApiOperation({ summary: 'Get Import Jobs for a User' })
+  @UseGuards(JwtAuthGuard)
+  async getUserJobs(@Param('id') userId: string) {
+    return this.getJobMapping.getUserJobs(userId);
+  }
+
+  @Put('/user/:id/:jobId/pause')
+  @ApiOperation({ summary: 'Pause a Cron Job' })
+  @UseGuards(JwtAuthGuard)
+  async pauseCronJob(@Param('jobId') jobId: string) {
+    return this.cronJobService.pauseJob(jobId);
+  }
+
+  @Put('/user/:id/:jobId/start')
+  @ApiOperation({ summary: 'Start a Cron Job' })
+  @UseGuards(JwtAuthGuard)
+  async startCronJob(@Param('id') userId: string, @Param('jobId') jobId: string) {
+    return this.cronJobService.startJob(userId, jobId);
+  }
+
+  @Delete('/user/:id/:jobId/delete')
+  @ApiOperation({ summary: 'Delete a Job' })
+  @UseGuards(JwtAuthGuard)
+  async deleteJob(@Param('id') userId: string, @Param('jobId') jobId: string) {
+    return this.cronJobService.deleteJob(userId, jobId);
   }
 }
