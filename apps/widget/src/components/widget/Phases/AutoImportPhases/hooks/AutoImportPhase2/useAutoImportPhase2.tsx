@@ -6,6 +6,7 @@ import { IErrorObject, IUserJobMapping } from '@impler/shared';
 import { useAPIState } from '@store/api.context';
 import { useJobsInfo } from '@store/jobinfo.context';
 import { notifier } from '@util';
+import { keysToOmit } from '@config';
 
 interface IUseAutoImportPhase2Props {
   goNext: () => void;
@@ -25,20 +26,18 @@ export function useAutoImportPhase2({ goNext }: IUseAutoImportPhase2Props) {
     string[]
   >(['getUserJobMappings'], () => api.getUserJobMappings(jobsInfo?._id), {
     onSuccess(mappingsResponse) {
-      setHeadings(
-        jobsInfo.headings.map((heading) => ({
-          value: heading,
-          label: heading,
-          disabled: mappingsResponse.some((mapping) => mapping.path === heading),
-        }))
-      );
+      const allHeadings = jobsInfo.headings.map((heading) => ({ value: heading, label: heading, disabled: false }));
+      const filteredHeadings = allHeadings.filter((headingItem) => !keysToOmit.has(headingItem.value));
+
+      setHeadings(filteredHeadings);
+
       reset({
         mappings: mappingsResponse.map((mapping) => ({
           key: mapping.key,
           name: mapping.name,
           path: mapping.path,
           isRequired: mapping.isRequired,
-          jobId: mapping.jobId,
+          _jobId: mapping._jobId,
         })),
       });
     },
