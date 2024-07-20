@@ -8,8 +8,8 @@ export class GetJobMapping {
     private readonly columnRepository: ColumnRepository
   ) {}
 
-  async execute(jobId: string): Promise<JobMappingEntity[]> {
-    const userJob = await this.userJobRepository.findOne({ _id: jobId });
+  async execute(_jobId: string): Promise<JobMappingEntity[]> {
+    const userJob = await this.userJobRepository.findOne({ _id: _jobId });
 
     if (!userJob) {
       throw new Error('User job not found');
@@ -21,7 +21,7 @@ export class GetJobMapping {
       name: column.name,
       isRequired: column.isRequired,
       path: undefined,
-      jobId,
+      _jobId,
     }));
 
     return jobsMapping;
