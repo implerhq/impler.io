@@ -16,7 +16,7 @@ const jobMappingSchema = new Schema(
     path: {
       type: Schema.Types.String,
     },
-    _userJobId: {
+    _jobId: {
       type: Schema.Types.ObjectId,
       ref: 'UserJob',
     },
