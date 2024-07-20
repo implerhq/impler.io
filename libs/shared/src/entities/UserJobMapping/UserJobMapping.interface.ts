@@ -4,5 +4,5 @@ export interface IUserJobMapping {
   name: string;
   isRequired: boolean;
   path: string;
-  jobId: string;
+  _jobId: string;
 }
