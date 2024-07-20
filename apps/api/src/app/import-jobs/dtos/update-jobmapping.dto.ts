@@ -17,6 +17,5 @@ export class UpdateJobMappingDto {
   path: string;
 
   @IsString()
-  @IsOptional()
-  jobId: string;
+  _jobId: string;
 }
