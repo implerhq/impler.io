@@ -23,6 +23,7 @@ import { SchedulerRegistry } from '@nestjs/schedule';
 import { S3StorageService, StorageService } from '@impler/shared/dist/services/storage';
 import { CSVFileService2, ExcelFileService } from './services/file/file.service';
 import { EmailService, SESEmailService } from './services/email.service';
+import { CronJobService } from '@shared/services/cronjob.service';
 import { QueueService } from './services/queue.service';
 import { RSSService } from './services/rss.service';
 
@@ -64,6 +65,9 @@ function getQueueServiceClass() {
 function getRSSServiceClass() {
   return RSSService;
 }
+function getCronJobService() {
+  return CronJobService;
+}
 
 const PROVIDERS = [
   {
@@ -90,6 +94,10 @@ const PROVIDERS = [
   {
     provide: RSSService,
     useClass: getRSSServiceClass(),
+  },
+  {
+    provide: CronJobService,
+    useClass: getCronJobService(),
   },
   ...FILE_SERVICES,
   JwtService,
