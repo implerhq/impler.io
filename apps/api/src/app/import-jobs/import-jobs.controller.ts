@@ -32,24 +32,23 @@ export class ImportJobsController {
   @ApiOperation({ summary: 'Fetch the Import Job Information based on jobId' })
   @UseGuards(JwtAuthGuard)
   @ApiSecurity(ACCESS_KEY_NAME)
-  async getImportJobInfoRoute(@Param('jobId') jobId: string) {
-    return this.getJobMapping.execute(jobId);
+  async getImportJobInfoRoute(@Param('jobId') _jobId: string) {
+    return this.getJobMapping.execute(_jobId);
   }
 
   @Put(':jobId/mappings')
   @ApiOperation({ summary: 'Update Mappings Route' })
   @UseGuards(JwtAuthGuard)
   async updateMappingRoute(
-    @Param('jobId') jobId: string,
     @Body(new ParseArrayPipe({ items: UpdateJobMappingDto, optional: true })) body: UpdateJobMappingDto[]
   ) {
     return this.updateJobMapping.execute(body);
   }
 
   @Put(':jobId')
-  @ApiOperation({ summary: 'Update Fields' })
+  @ApiOperation({ summary: 'Update UserJob Fields' })
   @UseGuards(JwtAuthGuard)
-  async updateUserJobRoute(@Param('jobId') jobId: string, @Body() userJobData: UpdateJobInfoDto) {
-    return this.updateUserJob.execute(jobId, userJobData);
+  async updateUserJobRoute(@Param('jobId') _jobId: string, @Body() userJobData: UpdateJobInfoDto) {
+    return this.updateUserJob.execute(_jobId, userJobData);
   }
 }
