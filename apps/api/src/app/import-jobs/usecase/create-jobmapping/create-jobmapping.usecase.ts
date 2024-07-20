@@ -6,15 +6,15 @@ import { CreateJobMappingCommand } from './create-jobmapping.command';
 export class CreateJobMapping {
   constructor(private readonly jobMappingRepository: JobMappingRepository) {}
 
-  async execute(mappingCommands: CreateJobMappingCommand[]) {
-    mappingCommands.filter((command) => !!command.key).map((command) => command.key);
+  async execute(jobMappingCommand: CreateJobMappingCommand[]) {
+    jobMappingCommand.filter((command) => !!command.key).map((command) => command.key);
 
-    for (const mappingCommand of mappingCommands) {
+    for (const mappingCommand of jobMappingCommand) {
       if (mappingCommand.isRequired && !mappingCommand.path) {
         throw new BadRequestException(`${mappingCommand.name} is required`);
       }
     }
 
-    return this.jobMappingRepository.createMany(mappingCommands);
+    return this.jobMappingRepository.createMany(jobMappingCommand);
   }
 }
