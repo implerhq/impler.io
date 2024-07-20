@@ -19,9 +19,12 @@ import {
   JobMappingRepository,
 } from '@impler/dal';
 import { FileNameService } from '@impler/shared';
+import { SchedulerRegistry } from '@nestjs/schedule';
 import { S3StorageService, StorageService } from '@impler/shared/dist/services/storage';
 import { CSVFileService2, ExcelFileService } from './services/file/file.service';
 import { EmailService, SESEmailService } from './services/email.service';
+import { QueueService } from './services/queue.service';
+import { RSSService } from './services/rss.service';
 
 const DAL_MODELS = [
   ProjectRepository,
@@ -39,6 +42,8 @@ const DAL_MODELS = [
   BubbleDestinationRepository,
   UserJobRepository,
   JobMappingRepository,
+  UserJobRepository,
+  SchedulerRegistry,
 ];
 const FILE_SERVICES = [CSVFileService2, FileNameService, ExcelFileService];
 
@@ -50,6 +55,14 @@ function getStorageServiceClass() {
 
 function getEmailServiceClass() {
   return SESEmailService;
+}
+
+function getQueueServiceClass() {
+  return QueueService;
+}
+
+function getRSSServiceClass() {
+  return RSSService;
 }
 
 const PROVIDERS = [
@@ -69,6 +82,14 @@ const PROVIDERS = [
   {
     provide: EmailService,
     useClass: getEmailServiceClass(),
+  },
+  {
+    provide: QueueService,
+    useClass: getQueueServiceClass(),
+  },
+  {
+    provide: RSSService,
+    useClass: getRSSServiceClass(),
   },
   ...FILE_SERVICES,
   JwtService,
