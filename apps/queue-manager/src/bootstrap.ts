@@ -6,7 +6,7 @@ import { IAmqpConnectionManager } from 'amqp-connection-manager/dist/esm/AmqpCon
 
 import { QueuesEnum } from '@impler/shared';
 import { DalService } from '@impler/dal';
-import { SendWebhookDataConsumer, EndImportConsumer, SendBubbleDataConsumer } from './consumers';
+import { SendWebhookDataConsumer, EndImportConsumer, SendBubbleDataConsumer, ImportJobDataConsumer } from './consumers';
 
 let connection: IAmqpConnectionManager, chanelWrapper: ChannelWrapper;
 
@@ -39,6 +39,7 @@ export async function bootstrap() {
   const endImportConsumer = new EndImportConsumer();
   const sendBubbleDataConsumer = new SendBubbleDataConsumer();
   const sendWebhookdataConsumer = new SendWebhookDataConsumer();
+  const importJobbDataConsumer = new ImportJobDataConsumer();
 
   // add queues to channel
   chanelWrapper.addSetup((channel) => {
@@ -57,6 +58,12 @@ export async function bootstrap() {
         durable: false,
       }),
       channel.consume(QueuesEnum.SEND_BUBBLE_DATA, sendBubbleDataConsumer.message.bind(sendBubbleDataConsumer), {
+        noAck: true,
+      }),
+      channel.assertQueue(QueuesEnum.SEND_RSS_XML_DATA, {
+        durable: false,
+      }),
+      channel.consume(QueuesEnum.SEND_RSS_XML_DATA, importJobbDataConsumer.message.bind(importJobbDataConsumer), {
         noAck: true,
       }),
     ]);
