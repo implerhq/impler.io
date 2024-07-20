@@ -39,6 +39,7 @@ export enum QueuesEnum {
   'SEND_WEBHOOK_DATA' = 'SEND_WEBHOOK_DATA',
   'SEND_BUBBLE_DATA' = 'SEND_BUBBLE_DATA',
   'END_IMPORT' = 'END_IMPORT',
+  'SEND_RSS_XML_DATA' = 'SEND_RSS_XML_DATA',
 }
 
 export type SendWebhookCachedData = {
@@ -77,6 +78,10 @@ export type SendBubbleData = {
 export type SendWebhookData = {
   uploadId: string;
   cache?: SendWebhookCachedData;
+};
+
+export type SendRSSXMLData = {
+  _jobId: string;
 };
 export type PublishToQueueData = SendWebhookData;
 
