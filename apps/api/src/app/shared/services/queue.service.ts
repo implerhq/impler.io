@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import amqp from 'amqp-connection-manager';
-import { EndImportData, SendWebhookData, PublishToQueueData, QueuesEnum } from '@impler/shared';
+import { EndImportData, SendWebhookData, PublishToQueueData, QueuesEnum, SendRSSXMLData } from '@impler/shared';
 
 @Injectable()
 export class QueueService {
@@ -30,7 +30,9 @@ export class QueueService {
 
   publishToQueue(queueName: QueuesEnum.END_IMPORT, data: EndImportData): void;
   publishToQueue(queueName: QueuesEnum.SEND_WEBHOOK_DATA, data: SendWebhookData): void;
-  async publishToQueue(queueName: QueuesEnum, data: PublishToQueueData) {
+  publishToQueue(queueName: QueuesEnum.SEND_RSS_XML_DATA, data: SendRSSXMLData): void;
+
+  async publishToQueue(queueName: QueuesEnum, data: PublishToQueueData | SendRSSXMLData) {
     if (this.connection.isConnected()) {
       await this.chanelWrapper.sendToQueue(queueName, data, { durable: false });
     } else {
