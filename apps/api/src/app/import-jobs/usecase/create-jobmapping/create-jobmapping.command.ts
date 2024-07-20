@@ -7,5 +7,5 @@ export class CreateJobMappingCommand {
 
   path: string;
 
-  jobId: string;
+  _jobId: string;
 }
