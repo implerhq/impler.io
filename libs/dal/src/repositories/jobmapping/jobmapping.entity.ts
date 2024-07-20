@@ -9,5 +9,5 @@ export class JobMappingEntity {
 
   path: string;
 
-  jobId: string;
+  _jobId: string;
 }
