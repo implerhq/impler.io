@@ -12,9 +12,8 @@ export class CreateUserJob {
   ) {}
 
   async execute({ _templateId, url }: { url: string; _templateId: string }): Promise<UserJobEntity> {
-    if ((await this.rssService.getMimeType(url)) !== FileMimeTypesEnum.XML) {
-      throw new BadRequestException(APIMessages.INVALID_RSS_URL);
-    } else {
+    const mimeType = await this.rssService.getMimeType(url);
+    if (mimeType === FileMimeTypesEnum.XML || mimeType === FileMimeTypesEnum.TEXTXML) {
       const { rssKeyHeading } = await this.rssService.parseRssFeed(url);
 
       return await this.userJobRepository.create({
@@ -22,6 +21,8 @@ export class CreateUserJob {
         headings: rssKeyHeading,
         _templateId: _templateId,
       });
+    } else {
+      throw new BadRequestException(APIMessages.INVALID_RSS_URL);
     }
   }
 }
