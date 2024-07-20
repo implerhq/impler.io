@@ -8,4 +8,14 @@ export class UserJobEntity {
   cron: string;
 
   headings: string[];
+
+  extra: string;
+
+  userId: string;
+
+  customRecordFormat: string;
+
+  customChunkFormat: string;
+
+  customSchema: string;
 }
