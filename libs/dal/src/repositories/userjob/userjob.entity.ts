@@ -13,6 +13,8 @@ export class UserJobEntity {
 
   userId: string;
 
+  status: string;
+
   customRecordFormat: string;
 
   customChunkFormat: string;
