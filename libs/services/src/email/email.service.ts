@@ -17,6 +17,12 @@ interface IBubbleAlertEmailOptions {
   time: string;
   importId: string;
 }
+interface IExecutionErrorEmailOptions {
+  error: string;
+  importName: string;
+  time: string;
+  importId: string;
+}
 interface ISendMailOptions {
   to: string;
   from: string;
@@ -220,6 +226,88 @@ const EMAIL_CONTENTS = {
 </body>
 </html>
   `,
+  ERROR_EXECUTING_CODE: ({ error, importName, time, importId }: IExecutionErrorEmailOptions) => `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      body {
+          font-family: Arial, sans-serif;
+          background-color: #f5f5f5;
+          margin: 0;
+          padding: 20px;
+      }
+      .container {
+          max-width: 600px;
+          margin: 0 auto;
+          background-color: white;
+          padding: 30px;
+          border-radius: 8px;
+      }
+      .error-log {
+        background-color: #f9f2f4;
+        border: 1px solid #c9302c;
+        border-radius: 4px;
+        padding: 10px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+      .logo {
+          color: #333;
+          font-size: 24px;
+          font-weight: bold;
+          margin-bottom: 20px;
+      }
+      .logo span {
+          color: purple;
+      }
+      h1 {
+          color: #333;
+          font-size: 20px;
+      }
+      p, ul {
+          color: #555;
+          line-height: 1.6;
+      }
+      ul {
+          padding-left: 20px;
+      }
+      .details {
+          margin-top: 20px;
+      }
+      .contact {
+          margin-top: 30px;
+      }
+    </style>
+</head>
+<body>
+    <div class="container">
+      <div class="logo"><img src="https://impler.io/wp-content/uploads/2024/07/Logo-black.png" style="width: 150px;" alt="Impler Logo" /></div>
+      
+      <h1>Encountered error while executing validation code in ${importName} import</h1>
+      
+      <p>Validation code was failed to execute due to some error. You should pay attention to the issue.</p>
+
+      <ul>
+        <li><strong>Import Name:</strong> ${importName}</li>
+        <li><strong>Import Id:</strong> ${importId}</li>
+        <li><strong>Time of Error:</strong> ${time}</li>
+      </ul>
+      
+      <div class="details">
+          <p><strong>Error Details:<strong></p>
+          <div class="error-log">${error}</div>
+      </div>
+      
+      <div class="contact">
+          <p>Need any help? <a href="mailto:bhavik@impler.io">Contact us</a></p>
+      </div>
+</body>
+</html>
+  `,
 };
 
 type EmailContents =
@@ -234,48 +322,15 @@ type EmailContents =
   | {
       type: 'ERROR_SENDING_BUBBLE_DATA';
       data: IBubbleAlertEmailOptions;
+    }
+  | {
+      type: 'ERROR_EXECUTING_CODE';
+      data: IExecutionErrorEmailOptions;
     };
 
 export abstract class EmailService {
   abstract sendEmail(data: ISendMailOptions): Promise<{ messageId: string }>;
   abstract isConnected(): boolean;
-  parseJSONStrings(obj: Record<string, any>) {
-    for (const key in obj) {
-      if (typeof obj[key] === 'string') {
-        // Use regex to clean up escaped JSON strings
-        const cleaned = obj[key].replace(/\\"/g, '"').replace(/\\\\/g, '\\');
-        try {
-          // Attempt to parse the cleaned string
-          obj[key] = JSON.parse(cleaned);
-          // Recursively clean the newly parsed object
-          this.parseJSONStrings(obj[key]);
-        } catch (e) {
-          // If it's not valid JSON, use the cleaned string
-          obj[key] = cleaned;
-        }
-      } else if (typeof obj[key] === 'object') {
-        // If it's an object, recursively clean its properties
-        this.parseJSONStrings(obj[key]);
-      }
-    }
-  }
-
-  cleanAndFormatJSON(jsonString: string) {
-    try {
-      // Parse the outer JSON
-      const parsed = JSON.parse(jsonString);
-
-      // Apply the recursive parsing
-      this.parseJSONStrings(parsed);
-
-      // Re-stringify with proper formatting
-      return JSON.stringify(parsed, null, 2);
-    } catch (e) {
-      // If parsing fails, return the original string
-      return jsonString;
-    }
-  }
-
   getEmailContent({ type, data }: EmailContents) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore

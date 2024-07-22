@@ -5,9 +5,9 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { APIMessages } from '@shared/constants';
 import { BaseReview } from './base-review.usecase';
 import { BATCH_LIMIT } from '@shared/services/sandbox';
-import { StorageService, PaymentAPIService } from '@impler/services';
+import { StorageService, PaymentAPIService, EmailService } from '@impler/services';
 import { ColumnTypesEnum, UploadStatusEnum, ITemplateSchemaItem, ColumnDelimiterEnum } from '@impler/shared';
-import { UploadRepository, ValidatorRepository, FileRepository, DalService } from '@impler/dal';
+import { UploadRepository, ValidatorRepository, FileRepository, DalService, TemplateEntity } from '@impler/dal';
 
 interface ISaveResults {
   uploadId: string;
@@ -26,6 +26,7 @@ export class DoReview extends BaseReview {
     private validatorRepository: ValidatorRepository,
     private fileRepository: FileRepository,
     private dalService: DalService,
+    private emailService: EmailService,
     private paymentAPIService: PaymentAPIService
   ) {
     super();
@@ -33,11 +34,9 @@ export class DoReview extends BaseReview {
 
   async execute(_uploadId: string) {
     this._modal = await this.dalService.createRecordCollection(_uploadId);
+    const userEmail = await this.uploadRepository.getUserEmailFromUploadId(_uploadId);
 
-    const uploadInfo = await this.uploadRepository.findById(
-      _uploadId,
-      'customSchema _uploadedFileId _templateId extra headings'
-    );
+    const uploadInfo = await this.uploadRepository.getUploadWithTemplate(_uploadId, ['name']);
     if (!uploadInfo) {
       throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
     }
@@ -62,7 +61,7 @@ export class DoReview extends BaseReview {
 
     const uploadedFileInfo = await this.fileRepository.findById(uploadInfo._uploadedFileId, 'path');
     const validations = await this.validatorRepository.findOne(
-      { _templateId: uploadInfo._templateId },
+      { _templateId: (uploadInfo._templateId as unknown as TemplateEntity)._id },
       'onBatchInitialize'
     );
 
@@ -72,6 +71,10 @@ export class DoReview extends BaseReview {
     const { dataStream } = this.getStreams({
       recordsModal: this._modal,
     });
+    const errorEmailContents: {
+      subject: string;
+      content: string;
+    }[] = [];
 
     if (validations && validations.onBatchInitialize) {
       const batches = await this.batchRun({
@@ -106,6 +109,23 @@ export class DoReview extends BaseReview {
             response.invalidRecords++;
           }
         },
+        onError: async (error) => {
+          const emailContent = this.emailService.getEmailContent({
+            type: 'ERROR_EXECUTING_CODE',
+            data: {
+              error: JSON.stringify(error.output, null, 2).replace(/\\+"/g, '"'),
+              importId: _uploadId,
+              importName: (uploadInfo._templateId as unknown as TemplateEntity).name,
+              time: new Date().toString(),
+            },
+          });
+          errorEmailContents.push({
+            subject: `🛑 Encountered error while executing validation code in ${
+              (uploadInfo._templateId as unknown as TemplateEntity).name
+            }`,
+            content: emailContent,
+          });
+        },
       });
     } else {
       response = await this.normalRun({
@@ -118,6 +138,15 @@ export class DoReview extends BaseReview {
         dateFormats,
         numberColumnHeadings,
         multiSelectColumnHeadings,
+      });
+    }
+    for (const errorEmailContent of errorEmailContents) {
+      await this.emailService.sendEmail({
+        from: process.env.ALERT_EMAIL_FROM,
+        html: errorEmailContent.content,
+        subject: errorEmailContent.subject,
+        to: userEmail,
+        senderName: process.env.EMAIL_FROM_NAME,
       });
     }
 
