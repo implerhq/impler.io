@@ -1,6 +1,6 @@
 import { Model } from 'mongoose';
 import { Writable } from 'stream';
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 
 import { APIMessages } from '@shared/constants';
 import { BaseReview } from './base-review.usecase';
@@ -148,6 +148,9 @@ export class DoReview extends BaseReview {
         to: userEmail,
         senderName: process.env.EMAIL_FROM_NAME,
       });
+    }
+    if (errorEmailContents.length) {
+      throw new InternalServerErrorException(APIMessages.ERROR_DURING_VALIDATION);
     }
 
     await this.saveResults(response);

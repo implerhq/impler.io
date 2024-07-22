@@ -1,7 +1,7 @@
 import { Model } from 'mongoose';
 import { Writable } from 'stream';
 import { ValidateFunction } from 'ajv';
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 
 import { ColumnDelimiterEnum, ColumnTypesEnum, ITemplateSchemaItem, UploadStatusEnum } from '@impler/shared';
 import { UploadRepository, ValidatorRepository, DalService, TemplateEntity } from '@impler/dal';
@@ -301,6 +301,10 @@ export class DoReReview extends BaseReview {
         to: userEmail,
         senderName: process.env.EMAIL_FROM_NAME,
       });
+    }
+
+    if (errorEmailContents.length) {
+      throw new InternalServerErrorException(APIMessages.ERROR_DURING_VALIDATION);
     }
 
     return result;
