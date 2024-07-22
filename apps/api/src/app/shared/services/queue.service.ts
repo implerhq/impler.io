@@ -30,7 +30,7 @@ export class QueueService {
 
   publishToQueue(queueName: QueuesEnum.END_IMPORT, data: EndImportData): void;
   publishToQueue(queueName: QueuesEnum.SEND_WEBHOOK_DATA, data: SendWebhookData): void;
-  publishToQueue(queueName: QueuesEnum.SEND_RSS_XML_DATA, data: SendRSSXMLData): void;
+  publishToQueue(queueName: QueuesEnum.GET_IMPORT_JOB_DATA, data: SendRSSXMLData): void;
 
   async publishToQueue(queueName: QueuesEnum, data: PublishToQueueData | SendRSSXMLData) {
     if (this.connection.isConnected()) {
