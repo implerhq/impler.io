@@ -1,7 +1,8 @@
 import axios, { AxiosError } from 'axios';
 import { Injectable } from '@nestjs/common';
+import { BubbleBaseService } from '@impler/services';
 import { BubbleDestinationEntity } from '@impler/dal';
-import { BubbleBaseService, ColumnTypesEnum, IColumn } from '@impler/shared';
+import { ColumnTypesEnum, IColumn } from '@impler/shared';
 
 interface IThingsResponse {
   response: {

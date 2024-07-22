@@ -5,3 +5,9 @@ export type PaginationResult<T = any> = {
   totalPages: number;
   totalRecords: number;
 };
+
+export interface IErrorObject {
+  error: string;
+  message: string;
+  statusCode: number;
+}

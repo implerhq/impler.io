@@ -5,12 +5,11 @@ import {
   UploadStatusEnum,
   QueuesEnum,
   replaceVariablesInObject,
-  FileNameService,
   ITemplateSchemaItem,
   ColumnTypesEnum,
   ColumnDelimiterEnum,
 } from '@impler/shared';
-import { StorageService } from '@impler/shared/dist/services/storage';
+import { FileNameService, StorageService } from '@impler/services';
 import {
   FileEntity,
   UploadRepository,

@@ -19,9 +19,8 @@
     "test": "cross-env TZ=UTC NODE_ENV=test E2E_RUNNER=true mocha --timeout 10000 --require ts-node/register --exit src/**/**/*.spec.ts"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.185.0",
-    "@aws-sdk/client-ses": "^3.354.0",
     "@impler/dal": "^0.21.1",
+    "@impler/services": "^0.21.1",
     "@impler/shared": "^0.21.1",
     "@nestjs/common": "^9.1.2",
     "@nestjs/core": "^9.1.2",
@@ -52,7 +51,6 @@
     "exceljs": "^4.3.0",
     "hat": "^0.0.3",
     "jsonwebtoken": "^9.0.0",
-    "nodemailer": "^6.9.3",
     "papaparse": "^5.4.1",
     "passport": "^0.6.0",
     "passport-github2": "^0.1.12",

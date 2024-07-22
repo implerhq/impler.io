@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { differenceInHours, differenceInSeconds, parseISO } from 'date-fns';
 
-import { EmailService } from '@shared/services/email.service';
+import { EmailService } from '@impler/services';
 import { UserRepository, UserEntity, IUserResetTokenCount } from '@impler/dal';
 import { RequestForgotPasswordCommand } from './request-forgot-pasword.command';
 

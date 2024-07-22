@@ -1,13 +1,6 @@
 import { DalService, UploadRepository } from '@impler/dal';
-import { StorageService } from '@impler/shared/dist/services/storage';
-import {
-  EndImportData,
-  FileNameService,
-  FileMimeTypesEnum,
-  QueuesEnum,
-  DestinationsEnum,
-  PaymentAPIService,
-} from '@impler/shared';
+import { QueuesEnum, EndImportData, FileMimeTypesEnum, DestinationsEnum } from '@impler/shared';
+import { FileNameService, PaymentAPIService, StorageService } from '@impler/services';
 
 import { BaseConsumer } from './base.consumer';
 import { publishToQueue } from '../bootstrap';

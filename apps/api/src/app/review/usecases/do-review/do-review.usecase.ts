@@ -5,14 +5,8 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { APIMessages } from '@shared/constants';
 import { BaseReview } from './base-review.usecase';
 import { BATCH_LIMIT } from '@shared/services/sandbox';
-import { StorageService } from '@impler/shared/dist/services/storage';
-import {
-  PaymentAPIService,
-  ColumnTypesEnum,
-  UploadStatusEnum,
-  ITemplateSchemaItem,
-  ColumnDelimiterEnum,
-} from '@impler/shared';
+import { StorageService, PaymentAPIService } from '@impler/services';
+import { ColumnTypesEnum, UploadStatusEnum, ITemplateSchemaItem, ColumnDelimiterEnum } from '@impler/shared';
 import { UploadRepository, ValidatorRepository, FileRepository, DalService } from '@impler/dal';
 
 interface ISaveResults {

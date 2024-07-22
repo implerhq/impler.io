@@ -2,8 +2,8 @@ import '../../config';
 import { AppModule } from '../../app.module';
 
 import { NestFactory } from '@nestjs/core';
-import { PaymentAPIService } from '@impler/shared';
 import { UserRepository } from '@impler/dal';
+import { PaymentAPIService } from '@impler/services';
 
 export async function run() {
   // eslint-disable-next-line no-console

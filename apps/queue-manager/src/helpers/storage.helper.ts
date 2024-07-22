@@ -1,4 +1,4 @@
-import { S3StorageService, StorageService } from '@impler/shared/dist/services/storage';
+import { S3StorageService, StorageService } from '@impler/services';
 
 let storageService: StorageService;
 

@@ -28,6 +28,7 @@
     "build:client": "npx nx build @impler/client",
     "build:demo": "npx nx build @impler/demo",
     "build:web": "npx nx build @impler/web",
+    "build:services": "npx nx build @impler/services",
     "build:queue-manager": "npx nx build @impler/queue-manager",
     "docker:build:api": "docker build -t api -f apps/api/Dockerfile .",
     "docker:build:embed": "docker build -t embed -f libs/embed/Dockerfile .",

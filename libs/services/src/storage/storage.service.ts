@@ -8,9 +8,8 @@ import {
   DeleteObjectCommand,
   ListBucketsCommand,
 } from '@aws-sdk/client-s3';
-import { FileNotExistError } from '../../errors/file-not-exist.error';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { Defaults } from '../../utils';
+import { FileNotExistError, Defaults } from '@impler/shared';
 
 export interface IFilePath {
   path: string;

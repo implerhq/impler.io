@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { StorageService } from '@impler/shared/dist/services/storage';
+import { StorageService } from '@impler/services';
 
 @Injectable()
 export class GetSignedUrl {

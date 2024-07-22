@@ -1,6 +1,5 @@
 import axios from 'axios';
-import { ISubscriptionData } from '../../types';
-import { constructQueryString } from '../../utils';
+import { ISubscriptionData, constructQueryString } from '@impler/shared';
 
 interface ICheckData {
   uploadId: string;

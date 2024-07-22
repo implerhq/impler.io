@@ -3,7 +3,7 @@ import { USE_CASES } from './usecases';
 import { UploadRepository } from '@impler/dal';
 import { CommonController } from './common.controller';
 import { SharedModule } from '@shared/shared.module';
-import { PaymentAPIService } from '@impler/shared';
+import { PaymentAPIService } from '@impler/services';
 
 @Module({
   imports: [SharedModule, UploadRepository],

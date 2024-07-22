@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { ACCESS_KEY_NAME } from '../../config';
+import { ACCESS_KEY_NAME } from '@impler/shared/src/config';
 
 export interface IParamObject {
   [key: string]: string | string[] | number | boolean;
@@ -36,9 +36,11 @@ export class HttpClient {
     url: string,
     body = {},
     headers: Record<string, string | number> = {},
-    responseType?: XMLHttpRequestResponseType
+    responseType?: XMLHttpRequestResponseType,
   ) {
-    return this.callWrapper(this.axiosClient.post.bind(this, url, body, { headers, responseType }));
+    return this.callWrapper(
+      this.axiosClient.post.bind(this, url, body, { headers, responseType }),
+    );
   }
 
   async put(url: string, body = {}) {

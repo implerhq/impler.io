@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@impler/dal": "^0.21.1",
+    "@impler/services": "^0.21.1",
     "@impler/shared": "^0.21.1",
     "@sentry/node": "^7.112.2",
     "axios": "1.6.2",

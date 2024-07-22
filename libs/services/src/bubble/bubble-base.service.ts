@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios';
-import { BubbleDestinationEnvironmentEnum, IBubbleData } from '../../types/destination/destination.types';
+import { BubbleDestinationEnvironmentEnum, IBubbleData } from '@impler/shared';
 
 export class BubbleBaseService {
   createBubbleIoUrl(data: IBubbleData, type: 'single' | 'bulk' = 'single'): string {

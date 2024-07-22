@@ -4,7 +4,6 @@ import {
   UploadStatusEnum,
   Defaults,
   ISchemaItem,
-  FileNameService,
   ITemplateSchemaItem,
   ColumnTypesEnum,
   getRecordFormat,
@@ -19,10 +18,11 @@ import {
   TemplateRepository,
   UploadRepository,
 } from '@impler/dal';
+import { FileNameService } from '@impler/services';
 
+import { StorageService } from '@impler/services';
 import { AddUploadEntryCommand } from './add-upload-entry.command';
 import { MakeUploadEntryCommand } from './make-upload-entry.command';
-import { StorageService } from '@impler/shared/dist/services/storage';
 import { FileParseException } from '@shared/exceptions/file-parse-issue.exception';
 import { CSVFileService2, ExcelFileService } from '@shared/services/file';
 

@@ -1,15 +1,13 @@
 import {
   FileEncodingsEnum,
-  BubbleBaseService,
   SendBubbleData,
   UploadStatusEnum,
   QueuesEnum,
-  FileNameService,
   SendBubbleCachedData,
   ITemplateSchemaItem,
   replaceVariablesInObject,
 } from '@impler/shared';
-import { StorageService } from '@impler/shared/dist/services/storage';
+import { BubbleBaseService, FileNameService, StorageService } from '@impler/services';
 import { UploadRepository, WebhookLogEntity, WebhookLogRepository, BubbleDestinationRepository } from '@impler/dal';
 
 import { BaseConsumer } from './base.consumer';
