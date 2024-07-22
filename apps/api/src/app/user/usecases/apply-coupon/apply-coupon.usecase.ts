@@ -1,5 +1,5 @@
-import { PaymentAPIService } from '@impler/shared';
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { PaymentAPIService } from '@impler/services';
 
 @Injectable()
 export class ApplyCoupon {

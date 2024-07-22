@@ -1,7 +1,7 @@
 {
-  "name": "@impler/shared",
+  "name": "@impler/services",
   "version": "0.21.1",
-  "description": "Reusable types and classes to shared between apps and libraries",
+  "description": "Reusable services to shared between backend api and queue-manager",
   "license": "MIT",
   "author": "implerhq",
   "repository": "https://github.com/implerhq/impler.io",
@@ -19,9 +19,6 @@
     "lint": "eslint src",
     "lint:fix": "pnpm lint -- --fix"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "devDependencies": {
     "@types/node": "^18.7.18",
     "@types/uuid": "^9.0.2",
@@ -30,8 +27,12 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.185.0",
+    "@aws-sdk/client-ses": "^3.616.0",
     "@aws-sdk/lib-storage": "^3.360.0",
     "@aws-sdk/s3-request-presigner": "^3.276.0",
+    "@impler/shared": "^0.21.1",
+    "axios": "1.6.2",
+    "nodemailer": "^6.9.14",
     "uuid": "^9.0.0"
   },
   "lint-staged": {

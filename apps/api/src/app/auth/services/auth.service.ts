@@ -1,13 +1,15 @@
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
-import { IJwtPayload, PaymentAPIService } from '@impler/shared';
-import { CONSTANTS } from '@shared/constants';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+
+import { IJwtPayload } from '@impler/shared';
+import { CONSTANTS } from '@shared/constants';
+import { PaymentAPIService } from '@impler/services';
+import { LeadService } from '@shared/services/lead.service';
 import { UserEntity, UserRepository, EnvironmentRepository } from '@impler/dal';
 import { UserNotFoundException } from '@shared/exceptions/user-not-found.exception';
 import { IAuthenticationData, IStrategyResponse } from '@shared/types/auth.types';
 import { IncorrectLoginCredentials } from '@shared/exceptions/incorrect-login-credentials.exception';
-import { LeadService } from '@shared/services/lead.service';
 
 @Injectable()
 export class AuthService {

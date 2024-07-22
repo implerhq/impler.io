@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { ColumnTypesEnum, FileNameService, FileMimeTypesEnum, ColumnDelimiterEnum } from '@impler/shared';
-import { StorageService } from '@impler/shared/dist/services/storage';
+import { ColumnTypesEnum, FileMimeTypesEnum, ColumnDelimiterEnum } from '@impler/shared';
+import { StorageService, FileNameService } from '@impler/services';
 import { ColumnEntity, TemplateRepository } from '@impler/dal';
 import { IExcelFileHeading } from '@shared/types/file.types';
 import { ExcelFileService } from '@shared/services/file';

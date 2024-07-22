@@ -5,12 +5,12 @@ import {
   UploadStatusEnum,
   QueuesEnum,
   replaceVariablesInObject,
-  FileNameService,
   ITemplateSchemaItem,
   ColumnTypesEnum,
   ColumnDelimiterEnum,
+  StatusEnum,
 } from '@impler/shared';
-import { StorageService } from '@impler/shared/dist/services/storage';
+import { FileNameService, StorageService, EmailService } from '@impler/services';
 import {
   FileEntity,
   UploadRepository,
@@ -22,8 +22,8 @@ import {
 
 import { BaseConsumer } from './base.consumer';
 import { publishToQueue } from '../bootstrap';
-import { getStorageServiceClass } from '../helpers/storage.helper';
 import { IBuildSendDataParameters } from '../types/file-processing.types';
+import { getEmailServiceClass, getStorageServiceClass } from '../helpers/serivces.helper';
 
 const MIN_LIMIT = 0;
 const DEFAULT_PAGE = 1;
@@ -35,6 +35,7 @@ export class SendWebhookDataConsumer extends BaseConsumer {
   private webhookLogRepository: WebhookLogRepository = new WebhookLogRepository();
   private webhookDestinationRepository: WebhookDestinationRepository = new WebhookDestinationRepository();
   private storageService: StorageService = getStorageServiceClass();
+  private emailService: EmailService = getEmailServiceClass();
 
   async message(message: { content: string }) {
     const data = JSON.parse(message.content) as SendWebhookData;
@@ -81,7 +82,7 @@ export class SendWebhookDataConsumer extends BaseConsumer {
         headers,
       });
 
-      this.makeResponseEntry(response);
+      await this.makeResponseEntry(response, cachedData.name, cachedData.callbackUrl, cachedData.email);
 
       const nextPageNumber = this.getNextPageNumber({
         totalRecords: allDataJson.length,
@@ -161,6 +162,8 @@ export class SendWebhookDataConsumer extends BaseConsumer {
     const uploadata = await this.uploadRepository.getUploadProcessInformation(_uploadId);
     if (uploadata._allDataFileId) return null;
 
+    const userEmail = await this.uploadRepository.getUserEmailFromUploadId(_uploadId);
+
     // Get template information
     const templateData = await this.templateRepository.findById(uploadata._templateId, 'name _projectId code');
 
@@ -192,10 +195,32 @@ export class SendWebhookDataConsumer extends BaseConsumer {
       recordFormat: uploadata.customRecordFormat,
       chunkFormat: uploadata.customChunkFormat,
       multiSelectHeadings,
+      email: userEmail,
     };
   }
 
-  private async makeResponseEntry(data: Partial<WebhookLogEntity>) {
+  private async makeResponseEntry(data: Partial<WebhookLogEntity>, importName: string, url: string, userEmail: string) {
+    if (data.status === StatusEnum.FAILED) {
+      const emailContents = this.emailService.getEmailContent({
+        type: 'ERROR_SENDING_WEBHOOK_DATA',
+        data: {
+          error: JSON.stringify(data.error, null, 2),
+          importName: importName,
+          time: data.callDate.toString(),
+          webhookUrl: url,
+          importId: data._uploadId,
+        },
+      });
+
+      await this.emailService.sendEmail({
+        to: userEmail,
+        subject: `🛑 Encountered error while sending webhook data in ${importName}`,
+        html: emailContents,
+        from: process.env.ALERT_EMAIL_FROM,
+        senderName: process.env.EMAIL_FROM_NAME,
+      });
+    }
+
     return await this.webhookLogRepository.create(data);
   }
 

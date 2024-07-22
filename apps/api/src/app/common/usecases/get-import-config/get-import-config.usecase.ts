@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UserRepository } from '@impler/dal';
-import { IImportConfig, PaymentAPIService } from '@impler/shared';
+import { IImportConfig } from '@impler/shared';
+import { PaymentAPIService } from '@impler/services';
 
 @Injectable()
 export class GetImportConfig {

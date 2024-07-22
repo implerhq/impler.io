@@ -1,7 +1,7 @@
 import * as dayjs from 'dayjs';
 import { Injectable } from '@nestjs/common';
-import { PaymentAPIService } from '@impler/shared';
 import { DATE_FORMATS } from '@shared/constants';
+import { PaymentAPIService } from '@impler/services';
 
 @Injectable()
 export class CancelSubscription {

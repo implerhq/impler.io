@@ -1,8 +1,7 @@
 import { Readable } from 'stream';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UploadRepository } from '@impler/dal';
-import { FileNameService } from '@impler/shared';
-import { StorageService } from '@impler/shared/dist/services/storage';
+import { StorageService, FileNameService } from '@impler/services';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
 
 @Injectable()
