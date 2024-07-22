@@ -3,11 +3,7 @@ export class ImportJobHistoryEntity {
 
   _jobId: string;
 
-  validFileId: string;
-
-  invalidFileId: string;
-
-  allDataFileId: string;
+  allDataFilePath: string;
 
   fetchStatus: string;
 
