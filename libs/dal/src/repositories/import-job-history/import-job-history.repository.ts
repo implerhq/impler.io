@@ -6,4 +6,7 @@ export class ImportJobHistoryRepository extends BaseRepository<ImportJobHistoryE
   constructor() {
     super(ImportJobHistory, ImportJobHistoryEntity);
   }
+  async getHistoryWithJob(importJobHistoryId: string, fields: string[]): Promise<ImportJobHistoryEntity> {
+    return await ImportJobHistory.findById(importJobHistoryId).populate('_jobId', fields.join(' '));
+  }
 }
