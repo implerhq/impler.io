@@ -40,10 +40,11 @@ export enum QueuesEnum {
   'SEND_WEBHOOK_DATA' = 'SEND_WEBHOOK_DATA',
   'SEND_BUBBLE_DATA' = 'SEND_BUBBLE_DATA',
   'END_IMPORT' = 'END_IMPORT',
-  'SEND_RSS_XML_DATA' = 'SEND_RSS_XML_DATA',
+  'GET_IMPORT_JOB_DATA' = 'GET_IMPORT_JOB_DATA',
+  SEND_IMPORT_JOB_DATA = 'SEND_IMPORT_JOB_DATA',
 }
 
-export type SendWebhookCachedData = {
+export type CommonCachedData = {
   page: number;
   callbackUrl: string;
   chunkSize: number;
@@ -53,12 +54,17 @@ export type SendWebhookCachedData = {
   authHeaderValue: string;
   _templateId: string;
   allDataFilePath?: string;
-  fileName: string;
   recordFormat?: string;
   chunkFormat?: string;
   defaultValues: string;
   multiSelectHeadings?: string[];
 };
+
+export type SendWebhookCachedData = {
+  fileName: string;
+} & CommonCachedData;
+
+export type SendImportJobCachedData = CommonCachedData;
 
 export type SendBubbleCachedData = {
   page: number;
@@ -79,6 +85,11 @@ export type SendBubbleData = {
 export type SendWebhookData = {
   uploadId: string;
   cache?: SendWebhookCachedData;
+};
+
+export type SendImportJobData = {
+  importJobHistoryId: string;
+  cache?: SendImportJobCachedData;
 };
 
 export type SendRSSXMLData = {
