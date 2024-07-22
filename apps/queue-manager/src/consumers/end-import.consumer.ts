@@ -4,7 +4,7 @@ import { FileNameService, PaymentAPIService, StorageService } from '@impler/serv
 
 import { BaseConsumer } from './base.consumer';
 import { publishToQueue } from '../bootstrap';
-import { getStorageServiceClass } from '../helpers/storage.helper';
+import { getStorageServiceClass } from '../helpers/serivces.helper';
 
 export class EndImportConsumer extends BaseConsumer {
   private dalService: DalService = new DalService();

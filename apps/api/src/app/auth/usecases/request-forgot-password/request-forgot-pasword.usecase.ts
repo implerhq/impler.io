@@ -32,7 +32,7 @@ export class RequestForgotPassword {
       const resetPasswordUrl = `${process.env.WEB_BASE_URL}/auth/reset/${token}`;
       const resetPasswordContent = this.emailService.getEmailContent({
         type: 'REQUEST_FORGOT_PASSWORD',
-        link: resetPasswordUrl,
+        data: { link: resetPasswordUrl },
       });
       this.emailService.sendEmail({
         to: user.email,

@@ -5,7 +5,8 @@ interface IWebhookAlertEmailOptions {
   importName: string;
   webhookUrl: string;
   time: string;
-  error: JSON;
+  error: string;
+  importId: string;
 }
 interface IBubbleAlertEmailOptions {
   datatype: string;
@@ -14,6 +15,7 @@ interface IBubbleAlertEmailOptions {
   error: string;
   importName: string;
   time: string;
+  importId: string;
 }
 interface ISendMailOptions {
   to: string;
@@ -22,9 +24,12 @@ interface ISendMailOptions {
   subject: string;
   senderName: string;
 }
+interface IForgotPasswordEmailOptions {
+  link: string;
+}
 
-const EMAIL_CONTENT = {
-  REQUEST_FORGOT_PASSWORD: ({ link }: { link: string }) => `
+const EMAIL_CONTENTS = {
+  REQUEST_FORGOT_PASSWORD: ({ link }: IForgotPasswordEmailOptions) => `
 		<p>Hi,</p>
 		<p>You have requested to reset your password. Please click on the link below to reset your password.</p>
 		<p><a href="${link}">
@@ -34,141 +39,247 @@ const EMAIL_CONTENT = {
 		<p>Thanks,</p>
 		<p>Impler Team</p>
 	`,
-  ERROR_SENDING_WEBHOOK_DATA: ({ importName, webhookUrl, time, error }: IWebhookAlertEmailOptions) => `
-  <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Error Sending Data</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        h1 {
-            color: #d9534f;
-        }
-        .error-log {
-            background-color: #f9f2f4;
-            border: 1px solid #c9302c;
-            border-radius: 4px;
-            padding: 10px;
-            font-family: monospace;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-        .details {
-            margin-top: 20px;
-        }
-        .details p {
-            margin: 5px 0;
-        }
-    </style>
-</head>
-<body>
-    <h1>⚠️ Error while sending data via webhook</h1>
-    
-    <p>An error occurred while sending data to your webhook. Please find the details below:</p>
-    
-    <div class="details">
-        <p><strong>Import Name:</strong> ${importName}</p>
-        <p><strong>Webhook Url:</strong> ${webhookUrl}</p>
-        <p><strong>Time of Error:</strong> ${time}</p>
-    </div>
-    
-    <h2>Error Log:</h2>
-    <div class="error-log">
-    ${error}
-    </div>
-    
-    <p>Please review the error log and take necessary actions to resolve the issue. If you need assistance, please contact our support team.</p>
-    
-    <p>Thank you for your attention to this matter.</p>
-    
-    <p>Best regards,<br>Impler</p>
-</body>
-</html>
-  `,
-  ERROR_SENDING_BUBBLE_DATA: ({ datatype, environment, error, importName, time, url }: IBubbleAlertEmailOptions) => `
+  ERROR_SENDING_WEBHOOK_DATA: ({ importName, webhookUrl, time, importId, error }: IWebhookAlertEmailOptions) => `
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Error Sending Data</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 600px;
-            margin: 0 auto;
+            background-color: #f5f5f5;
+            margin: 0;
             padding: 20px;
         }
-        h1 {
-            color: #d9534f;
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
         }
         .error-log {
-            background-color: #f9f2f4;
-            border: 1px solid #c9302c;
-            border-radius: 4px;
-            padding: 10px;
-            font-family: monospace;
-            white-space: pre-wrap;
-            word-wrap: break-word;
+          background-color: #f9f2f4;
+          border: 1px solid #c9302c;
+          border-radius: 4px;
+          padding: 10px;
+          font-family: monospace;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+        }
+        .logo {
+            color: #333;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .logo span {
+            color: purple;
+        }
+        h1 {
+            color: #333;
+            font-size: 20px;
+        }
+        p, ul {
+            color: #555;
+            line-height: 1.6;
+        }
+        ul {
+            padding-left: 20px;
         }
         .details {
             margin-top: 20px;
         }
-        .details p {
-            margin: 5px 0;
+        .contact {
+            margin-top: 30px;
         }
     </style>
 </head>
 <body>
-    <h1>⚠️ </h1>
-    
-    <p>An error occurred while sending data to Bubble. Please find the details below:</p>
-    
-    <div class="details">
-        <p><strong>Import Name:</strong> ${importName}</p>
-        <p><strong>URL:</strong> ${url}</p>
-        <p><strong>Data Type:</strong> ${datatype}</p>
-        <p><strong>Environment:</strong> ${environment}</p>
-        <p><strong>Error:</strong> ${error}</p>
-        <p><strong>Time of Error:</strong> ${time}</p>
+    <div class="container">
+        <div class="logo"><img src="https://impler.io/wp-content/uploads/2024/07/Logo-black.png" style="width: 150px;" alt="Impler Logo" /></div>
+        
+        <h1>Encountered error while sending webhook data in ${importName} import</h1>
+        
+        <p>Your import ${importName} webhook has encountered an error.</p>
+        
+        <p>Impler has failed to send data the webhook you provided in ${importName} import. You should pay attention to the issue.</p>
+        
+        <ul>
+            <li><strong>Import Name:</strong> ${importName}</li>
+            <li><strong>Webhook Url:</strong> ${webhookUrl}</li>
+            <li><strong>Time:</strong> ${time}</li>
+            <li><strong>Import Id:</strong> ${importId}</li>
+        </ul>
+        
+        <div class="details">
+            <p><strong>Error Details:<strong></p>
+            <div class="error-log">${error}</div>
+        </div>
+        
+        <div class="contact">
+            <p>Need any help? <a href="mailto:bhavik@impler.io">Contact us</a></p>
+        </div>
     </div>
-    
-    <h2>Error Log:</h2>
-    <div class="error-log">
-    ${error}
-    </div>
-    
-    <p>Please review the error log and take necessary actions to resolve the issue. If you need assistance, please contact our support team.</p>
-    
-    <p>Thank you for your attention to this matter.</p>
-    
-    <p>Best regards,<br>Impler</p>
+</body>
+</html>
+  `,
+  ERROR_SENDING_BUBBLE_DATA: ({
+    datatype,
+    environment,
+    error,
+    importName,
+    time,
+    url,
+    importId,
+  }: IBubbleAlertEmailOptions) => `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      body {
+          font-family: Arial, sans-serif;
+          background-color: #f5f5f5;
+          margin: 0;
+          padding: 20px;
+      }
+      .container {
+          max-width: 600px;
+          margin: 0 auto;
+          background-color: white;
+          padding: 30px;
+          border-radius: 8px;
+      }
+      .error-log {
+        background-color: #f9f2f4;
+        border: 1px solid #c9302c;
+        border-radius: 4px;
+        padding: 10px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+      .logo {
+          color: #333;
+          font-size: 24px;
+          font-weight: bold;
+          margin-bottom: 20px;
+      }
+      .logo span {
+          color: purple;
+      }
+      h1 {
+          color: #333;
+          font-size: 20px;
+      }
+      p, ul {
+          color: #555;
+          line-height: 1.6;
+      }
+      ul {
+          padding-left: 20px;
+      }
+      .details {
+          margin-top: 20px;
+      }
+      .contact {
+          margin-top: 30px;
+      }
+    </style>
+</head>
+<body>
+    <div class="container">
+      <div class="logo"><img src="https://impler.io/wp-content/uploads/2024/07/Logo-black.png" style="width: 150px;" alt="Impler Logo" /></div>
+      
+      <h1>Encountered error while sending webhook data in ${importName} import</h1>
+      
+      <p>Your import ${importName} webhook has encountered an error.</p>
+      
+      <p>Impler has failed to send data to Bubble.io in ${importName} import. You should pay attention to the issue.</p>
+
+      <ul>
+        <li><strong>Import Name:</strong> ${importName}</li>
+        <li><strong>URL:</strong> ${url}</li>
+        <li><strong>Data Type:</strong> ${datatype}</li>
+        <li><strong>Environment:</strong> ${environment}</li>
+        <li><strong>Import Id:</strong> ${importId}</li>
+        <li><strong>Time of Error:</strong> ${time}</li>
+      </ul>
+      
+      <div class="details">
+          <p><strong>Error Details:<strong></p>
+          <div class="error-log">${error}</div>
+      </div>
+      
+      <div class="contact">
+          <p>Need any help? <a href="mailto:bhavik@impler.io">Contact us</a></p>
+      </div>
 </body>
 </html>
   `,
 };
 
-type EmailContents = {
-  type: 'REQUEST_FORGOT_PASSWORD';
-  link: string;
-};
+type EmailContents =
+  | {
+      type: 'REQUEST_FORGOT_PASSWORD';
+      data: IForgotPasswordEmailOptions;
+    }
+  | {
+      type: 'ERROR_SENDING_WEBHOOK_DATA';
+      data: IWebhookAlertEmailOptions;
+    }
+  | {
+      type: 'ERROR_SENDING_BUBBLE_DATA';
+      data: IBubbleAlertEmailOptions;
+    };
 
 export abstract class EmailService {
   abstract sendEmail(data: ISendMailOptions): Promise<{ messageId: string }>;
   abstract isConnected(): boolean;
-  getEmailContent({ type, ...args }: EmailContents) {
-    return EMAIL_CONTENT[type](args);
+  parseJSONStrings(obj: Record<string, any>) {
+    for (const key in obj) {
+      if (typeof obj[key] === 'string') {
+        // Use regex to clean up escaped JSON strings
+        const cleaned = obj[key].replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+        try {
+          // Attempt to parse the cleaned string
+          obj[key] = JSON.parse(cleaned);
+          // Recursively clean the newly parsed object
+          this.parseJSONStrings(obj[key]);
+        } catch (e) {
+          // If it's not valid JSON, use the cleaned string
+          obj[key] = cleaned;
+        }
+      } else if (typeof obj[key] === 'object') {
+        // If it's an object, recursively clean its properties
+        this.parseJSONStrings(obj[key]);
+      }
+    }
+  }
+
+  cleanAndFormatJSON(jsonString: string) {
+    try {
+      // Parse the outer JSON
+      const parsed = JSON.parse(jsonString);
+
+      // Apply the recursive parsing
+      this.parseJSONStrings(parsed);
+
+      // Re-stringify with proper formatting
+      return JSON.stringify(parsed, null, 2);
+    } catch (e) {
+      // If parsing fails, return the original string
+      return jsonString;
+    }
+  }
+
+  getEmailContent({ type, data }: EmailContents) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return EMAIL_CONTENTS[type](data);
   }
 }
 
