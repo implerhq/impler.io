@@ -1,20 +1,14 @@
-import { model, models, Schema } from 'mongoose';
+import { model, models, Schema, Model } from 'mongoose';
 import { schemaOptions } from '../schema-default.options';
 import { ImportJobHistoryEntity } from './import-job-history.entity';
 
 const importJobHistorySchema = new Schema(
   {
-    _fileId: {
+    _jobId: {
       type: Schema.Types.ObjectId,
-      ref: 'File',
+      ref: 'UserJob',
     },
-    validFileId: {
-      type: Schema.Types.String,
-    },
-    invalidFileId: {
-      type: Schema.Types.String,
-    },
-    allDataFileId: {
+    allDataFilePath: {
       type: Schema.Types.String,
     },
     fetchStatus: {
@@ -25,18 +19,16 @@ const importJobHistorySchema = new Schema(
     },
     runOn: {
       type: Schema.Types.Date,
-    },
-    _jobId: {
-      type: Schema.Types.ObjectId,
-      ref: 'UserJob',
+      default: Date.now,
     },
   },
   { ...schemaOptions }
 );
 
-interface IImportJobHistory extends ImportJobHistoryEntity, Document {
+interface IImportJobHistoryDocument extends ImportJobHistoryEntity, Document {
   _id: never;
 }
 
 export const ImportJobHistory =
-  models.ImportJobHistory || model<IImportJobHistory>('ImportJobHistory', importJobHistorySchema);
+  (models.ImportJobHistory as Model<IImportJobHistoryDocument>) ||
+  model<IImportJobHistoryDocument>('ImportJobHistory', importJobHistorySchema);
