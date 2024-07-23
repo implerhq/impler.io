@@ -29,7 +29,7 @@ export function AutoImportPhase3({ onNextClick }: IAutoImportPhase3Props) {
     const cronExpression = `${scheduleData.Minute} ${scheduleData.Hour} ${scheduleData.Day} ${scheduleData.Month} ${scheduleData.Days}`;
     const result = getCronDescriptionfromCronExpression(cronExpression);
     setCronDescription(result);
-  }, [scheduleData]);
+  }, []);
 
   const handleBadgeClick = (cronExpression: string) => {
     const [minute, hour, day, month, days] = cronExpression.split(' ');
