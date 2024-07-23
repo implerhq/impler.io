@@ -6,10 +6,6 @@ export class CreateUserJobDto {
   url: string;
 
   @IsString()
-  @IsNotEmpty()
-  _templateId: string;
-
-  @IsString()
   @IsOptional()
   externalUserId?: string;
 
