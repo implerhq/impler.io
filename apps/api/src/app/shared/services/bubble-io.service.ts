@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios';
 import { Injectable } from '@nestjs/common';
 import { BubbleBaseService } from '@impler/services';
 import { BubbleDestinationEntity } from '@impler/dal';
-import { ColumnTypesEnum, IColumn } from '@impler/shared';
+import { ColumnTypesEnum, DEFAULT_KEYS_OBJ, IColumn } from '@impler/shared';
 
 interface IThingsResponse {
   response: {
@@ -47,6 +47,7 @@ export class BubbleIoService extends BubbleBaseService {
             isRequired: false,
             isUnique: false,
             _templateId,
+            defaultValue: DEFAULT_KEYS_OBJ.null,
             selectValues: columnType.selectValues,
             dateFormats: columnType.dateFormats,
           });
