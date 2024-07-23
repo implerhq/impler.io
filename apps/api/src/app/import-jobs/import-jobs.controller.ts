@@ -54,31 +54,31 @@ export class ImportJobsController {
     return this.updateUserJob.execute(_jobId, userJobData);
   }
 
-  @Get('/user/:id')
+  @Get('/user/:externalUserId')
   @ApiOperation({ summary: 'Get Import Jobs for a User' })
   @UseGuards(JwtAuthGuard)
-  async getUserJobs(@Param('id') userId: string) {
-    return this.getJobMapping.getUserJobs(userId);
+  async getUserJobs(@Param('externalUserId') externalUserId: string) {
+    return this.getJobMapping.getUserJobs(externalUserId);
   }
 
-  @Put('/user/:id/:jobId/pause')
+  @Put('/user/:jobId/pause')
   @ApiOperation({ summary: 'Pause a Cron Job' })
   @UseGuards(JwtAuthGuard)
   async pauseCronJob(@Param('jobId') jobId: string) {
     return this.cronJobService.pauseJob(jobId);
   }
 
-  @Put('/user/:id/:jobId/start')
+  @Put('/user/:externalUserId/:jobId/start')
   @ApiOperation({ summary: 'Start a Cron Job' })
   @UseGuards(JwtAuthGuard)
-  async startCronJob(@Param('id') userId: string, @Param('jobId') jobId: string) {
-    return this.cronJobService.startJob(userId, jobId);
+  async startCronJob(@Param('externalUserId') externalUserId: string, @Param('jobId') jobId: string) {
+    return this.cronJobService.startJob(externalUserId, jobId);
   }
 
-  @Delete('/user/:id/:jobId/delete')
+  @Delete('/user/:externalUserId/:jobId/delete')
   @ApiOperation({ summary: 'Delete a Job' })
   @UseGuards(JwtAuthGuard)
-  async deleteJob(@Param('id') userId: string, @Param('jobId') jobId: string) {
-    return this.cronJobService.deleteJob(userId, jobId);
+  async deleteJob(@Param('externalUserId') externalUserId: string, @Param('jobId') jobId: string) {
+    return this.cronJobService.deleteJob(externalUserId, jobId);
   }
 }
