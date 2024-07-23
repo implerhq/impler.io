@@ -3,6 +3,7 @@ import { FileMimeTypesEnum } from '@impler/shared';
 import { APIMessages } from '@shared/constants';
 import { UserJobEntity, UserJobRepository } from '@impler/dal';
 import { RSSService } from '@shared/services';
+import { CreateUserJobCommand } from './create-userjob.command';
 
 @Injectable()
 export class CreateUserJob {
@@ -11,7 +12,7 @@ export class CreateUserJob {
     private readonly rssService: RSSService
   ) {}
 
-  async execute({ _templateId, url }: { url: string; _templateId: string }): Promise<UserJobEntity> {
+  async execute({ _templateId, url }: CreateUserJobCommand): Promise<UserJobEntity> {
     const mimeType = await this.rssService.getMimeType(url);
     if (mimeType === FileMimeTypesEnum.XML || mimeType === FileMimeTypesEnum.TEXTXML) {
       const { rssKeyHeading } = await this.rssService.parseRssFeed(url);
