@@ -16,7 +16,7 @@ export abstract class BaseConsumer {
     totalRecords: number;
     chunkSize;
   }): number | null {
-    if (totalRecords >= currentPage * chunkSize) {
+    if (totalRecords > currentPage * chunkSize) {
       return currentPage + this.DEFAULT_PAGE;
     }
 
