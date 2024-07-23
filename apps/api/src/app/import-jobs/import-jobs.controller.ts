@@ -6,6 +6,7 @@ import { UpdateJobMappingDto } from './dtos/update-jobmapping.dto';
 import { UpdateJobInfoDto } from './dtos/update-jobinfo.dto';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { ACCESS_KEY_NAME } from '@impler/shared';
+import { CreateUserJobDto } from './dtos/create-userjob.dto';
 
 @ApiTags('Import-Jobs')
 @Controller('/import-jobs')
@@ -21,12 +22,11 @@ export class ImportJobsController {
   ) {}
   @Post(':templateId')
   @ApiOperation({ summary: 'Create User Job' })
-  @UseGuards(JwtAuthGuard)
   @ApiSecurity(ACCESS_KEY_NAME)
-  async createUserJobRoute(@Param('templateId') templateId: string, @Body() body: { url: string }) {
+  async createUserJobRoute(@Param('templateId') templateId: string, @Body() createUserJobData: CreateUserJobDto) {
     return this.createUserJob.execute({
       _templateId: templateId,
-      url: body.url,
+      url: createUserJobData.url,
     });
   }
 
