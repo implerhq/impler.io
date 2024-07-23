@@ -11,7 +11,7 @@ export class UserJobEntity {
 
   extra: string;
 
-  userId: string;
+  externalUserId: string;
 
   status: string;
 
