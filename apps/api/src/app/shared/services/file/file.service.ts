@@ -135,14 +135,15 @@ export class ExcelFileService {
       }
     });
     const headingNames = headings.map((heading) => heading.key);
-    const endColumnPosition = this.getExcelColumnNameFromIndex(headings.length + 1) + '2';
-    const range = workbook.sheet(0).range(`A2:${endColumnPosition}`);
+    const endColumnPosition = this.getExcelColumnNameFromIndex(headings.length + 1);
     if (Array.isArray(data) && data.length > 0) {
       const rows: string[][] = data.reduce<string[][]>((acc: string[][], rowItem: Record<string, any>) => {
         acc.push(headingNames.map((headingKey) => rowItem[headingKey]));
 
         return acc;
       }, []);
+      const rangeKey = `A2:${endColumnPosition}${rows.length + 1}`;
+      const range = workbook.sheet(0).range(rangeKey);
       range.value(rows);
     }
     const buffer = await workbook.outputAsync();
