@@ -17,11 +17,21 @@ const userJobSchema = new Schema(
     headings: {
       type: [Schema.Types.String],
     },
-    extra: String,
-    userId: String,
-    customRecordFormat: String,
-    customChunkFormat: String,
-    customSchema: String,
+    extra: {
+      type: Schema.Types.String,
+    },
+    externalUserId: {
+      type: Schema.Types.String,
+    },
+    customRecordFormat: {
+      type: Schema.Types.String,
+    },
+    customChunkFormat: {
+      type: Schema.Types.String,
+    },
+    customSchema: {
+      type: Schema.Types.String,
+    },
   },
   { ...schemaOptions }
 );
