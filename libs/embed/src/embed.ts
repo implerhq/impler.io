@@ -3,7 +3,7 @@
 /* eslint-disable */
 //
 
-import { EventTypesEnum } from './shared/eventTypes';
+import { EventTypesEnum, WidgetEventTypesEnum } from './shared/eventTypes';
 import { UnmountedError } from './shared/errors';
 import { IFRAME_URL } from './shared/resources';
 
@@ -83,7 +83,7 @@ class Impler {
 
     this.iframe?.contentWindow?.postMessage(
       {
-        type: EventTypesEnum.SHOW_WIDGET,
+        type: WidgetEventTypesEnum.SHOW_WIDGET,
         value: {
           projectId: this.projectId,
           ...(this.initPayload || {}),
@@ -94,6 +94,16 @@ class Impler {
       '*'
     );
   };
+
+  closeWidget = () => {
+    this.ensureMounted();
+    this.iframe?.contentWindow?.postMessage(
+      {
+        type: WidgetEventTypesEnum.CLOSE_WIDGET,
+      },
+      '*'
+    );
+  }
 
   isReady = () => this.isWidgetReady;
 
@@ -190,5 +200,6 @@ export default ((window: any) => {
   (window as any).impler.init = impler.init;
   (window as any).impler.on = impler.on;
   (window as any).impler.show = impler.showWidget;
+  (window as any).impler.close = impler.closeWidget;
   (window as any).impler.isReady = impler.isReady;
 })(window);
