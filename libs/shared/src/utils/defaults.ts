@@ -58,3 +58,13 @@ export const DEFAULT_VALUES_OBJ = {
   '<<false>>': false,
   '<<uuid>>': uuidv4,
 };
+
+export const DEFAULT_KEYS_OBJ = {
+  null: '<<null>>',
+  undefined: '<<undefined>>',
+  'Empty String': '<<>>',
+  'Empty Array ([])': '<<[]>>',
+  'Boolean true': '<<true>>',
+  'Boolean false': '<<false>>',
+  'UUID v4': '<<uuid>>',
+};
