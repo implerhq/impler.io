@@ -16,4 +16,12 @@ export class UpdateJobInfoDto {
   @IsArray()
   @IsOptional()
   headings: string[];
+
+  @IsString()
+  @IsOptional()
+  status: string;
+
+  @IsString()
+  @IsOptional()
+  externalUserId: string;
 }
