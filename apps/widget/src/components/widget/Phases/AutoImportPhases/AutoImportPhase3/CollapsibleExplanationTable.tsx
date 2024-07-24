@@ -5,7 +5,7 @@ import { colors, cronFieldDefinitions } from '@config';
 interface CollapsibleExplanationTableProps {
   opened: boolean;
   toggle: () => void;
-  cronExamples: { expression: string; schedule: string }[];
+  cronExamples: { expression: string; description: string }[];
   focusedField: string | null;
 }
 
@@ -53,7 +53,7 @@ export function CollapsibleExplanationTable({
               ? cronExamples.map((example, index) => (
                   <tr key={index}>
                     <td style={{ textAlign: 'center' }}>{example.expression}</td>
-                    <td style={{ textAlign: 'center' }}>{example.schedule}</td>
+                    <td style={{ textAlign: 'center' }}>{example.description}</td>
                   </tr>
                 ))
               : fieldData[focusedField].values.map((value, index) => (
