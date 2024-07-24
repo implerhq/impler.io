@@ -37,11 +37,11 @@ export function AutoImportFooter({ active, onNextClick, primaryButtonLoading, pr
     [PhasesEnum.SCHEDULE]: (
       <>
         <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
-          {TEXTS.AUTOIMPORTPHASES.BUTTONTEXT.CONFORM}
+          {TEXTS.AUTOIMPORTPHASES.BUTTONTEXT.CONFIRM}
         </Button>
       </>
     ),
-    [PhasesEnum.CONFORM]: (
+    [PhasesEnum.CONFIRM]: (
       <>
         <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
           {TEXTS.AUTOIMPORTPHASES.BUTTONTEXT.CLOSE}
