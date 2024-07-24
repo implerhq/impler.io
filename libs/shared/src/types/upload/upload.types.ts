@@ -111,4 +111,5 @@ export interface IFileInformation {
 export interface IImportConfig {
   showBranding: boolean;
   mode: string;
+  title: string;
 }
