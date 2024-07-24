@@ -3,7 +3,7 @@ import { SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob } from 'cron';
 import { QueueService } from '@shared/services/queue.service';
 import { UserJobRepository } from '@impler/dal';
-import { QueuesEnum } from '@impler/shared';
+import { QueuesEnum, UserJobImportStatusEnum } from '@impler/shared';
 
 @Injectable()
 export class CronJobService {
@@ -13,29 +13,36 @@ export class CronJobService {
     private queueService: QueueService
   ) {}
 
-  async pauseJob(jobId: string) {
-    const job = this.schedulerRegistry.getCronJob(`${jobId}_rss_import`);
-    job.stop();
+  async pauseJob(_jobId: string) {
+    const userJob = this.schedulerRegistry.getCronJob(`${_jobId}_rss_import`);
+    if (userJob) {
+      userJob.stop();
+    } else {
+      throw new Error(`Job ${_jobId}_rss_import not found`);
+    }
 
-    return { message: `Job ${jobId} paused successfully` };
+    await this.userJobRepository.update({ _id: _jobId }, { $set: { status: UserJobImportStatusEnum.PAUSED } });
+
+    return { message: `Job ${_jobId} paused successfully` };
   }
 
-  async startJob(userId: string, jobId: string) {
-    const userJob = await this.userJobRepository.findOne({ _id: jobId, userId });
+  async startJob(externalUserId: string, _jobId: string) {
+    const userJob = await this.userJobRepository.findOne({ _id: _jobId, externalUserId });
     if (!userJob) {
-      throw new Error(`Job ${jobId} not found for user ${userId}`);
+      throw new Error(`Job ${_jobId} not found for user ${externalUserId}`);
     }
 
     const cronExpression = userJob.cron;
-    const job = new CronJob(cronExpression, () => this.triggerImportJob(jobId));
-    this.schedulerRegistry.addCronJob(`${jobId}_rss_import`, job);
+    await this.userJobRepository.update({ _id: _jobId }, { $set: { status: UserJobImportStatusEnum.RUNNING } });
+    const job = new CronJob(cronExpression, () => this.triggerImportJob(_jobId));
+    this.schedulerRegistry.addCronJob(`${_jobId}_rss_import`, job);
     job.start();
 
-    return { message: `Job ${jobId} started successfully with schedule: ${cronExpression}` };
+    return { message: `Job ${_jobId} started successfully with schedule: ${cronExpression}` };
   }
 
-  async deleteJob(userId: string, jobId: string) {
-    await this.userJobRepository.delete({ _id: jobId, userId });
+  async deleteJob(externalUserId: string, jobId: string) {
+    await this.userJobRepository.delete({ _id: jobId, externalUserId });
     this.schedulerRegistry.deleteCronJob(`${jobId}_rss_import`);
 
     return { message: `Job ${jobId} deleted successfully` };
@@ -43,10 +50,9 @@ export class CronJobService {
 
   async triggerImportJob(_jobId: string) {
     try {
-      this.queueService.publishToQueue(QueuesEnum.SEND_RSS_XML_DATA, { _jobId });
-      console.log(`Import job triggered for job ${_jobId}`);
+      this.queueService.publishToQueue(QueuesEnum.GET_IMPORT_JOB_DATA, { _jobId });
     } catch (error) {
-      console.error(`Error triggering import job for ${_jobId}:`, error);
+      throw error;
     }
   }
 }
