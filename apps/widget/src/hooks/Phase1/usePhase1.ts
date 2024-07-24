@@ -8,9 +8,17 @@ import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { IFormvalues, IUploadValues } from '@types';
 import { useImplerState } from '@store/impler.context';
-import { ColumnTypesEnum, IErrorObject, IOption, ISchemaItem, ITemplate, IUpload } from '@impler/shared';
-import { FileMimeTypesEnum, IImportConfig, downloadFile } from '@impler/shared';
 import { downloadFileFromURL, getFileNameFromUrl, notifier, ParentWindow } from '@util';
+import {
+  ColumnTypesEnum,
+  IErrorObject,
+  IOption,
+  ISchemaItem,
+  ITemplate,
+  IUpload,
+  FileMimeTypesEnum,
+  downloadFile,
+} from '@impler/shared';
 
 interface IUsePhase1Props {
   goNext: () => void;
@@ -22,20 +30,8 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
   const [excelSheetNames, setExcelSheetNames] = useState<string[]>([]);
   const { projectId, templateId, authHeaderValue, extra } = useImplerState();
   const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
-  const { setUploadInfo, setTemplateInfo, setImportConfig, output, schema, data } = useAppState();
+  const { setUploadInfo, setTemplateInfo, output, schema, data } = useAppState();
 
-  const { isFetched: isImportConfigLoaded, isLoading: isImportConfigLoading } = useQuery<
-    IImportConfig,
-    IErrorObject,
-    IImportConfig
-  >(['importConfig'], () => api.getImportConfig(projectId), {
-    onSuccess(importConfigResponse) {
-      setImportConfig(importConfigResponse);
-    },
-    onError(error: IErrorObject) {
-      notifier.showError({ message: error.message, title: error.error });
-    },
-  });
   const {
     data: dataTemplates,
     isFetched,
@@ -225,6 +221,6 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     onSelectSheetModalReset,
     showSelectTemplate: !templateId,
     onSelectExcelSheet: handleSubmit(uploadFile),
-    isInitialDataLoaded: isFetched && !isLoading && isImportConfigLoaded && !isImportConfigLoading,
+    isInitialDataLoaded: isFetched && !isLoading,
   };
 }
