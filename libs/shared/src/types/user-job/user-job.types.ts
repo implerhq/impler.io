@@ -3,4 +3,5 @@ export enum UserJobImportStatusEnum {
   'RUNNING' = 'RUNNING',
   'MAPPING' = 'MAPPING',
   'SCHEDULING' = 'SCHEDULING',
+  'TERMINATED' = 'TERMINATED',
 }
