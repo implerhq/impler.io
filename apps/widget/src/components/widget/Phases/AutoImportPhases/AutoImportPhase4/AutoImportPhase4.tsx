@@ -40,7 +40,7 @@ export function AutoImportPhase4({ onCloseClick }: IAutoImportPhase4Props) {
         onNextClick={onCloseClick}
         primaryButtonLoading={false}
         onPrevClick={() => {}}
-        active={PhasesEnum.CONFORM}
+        active={PhasesEnum.CONFIRM}
       />
     </>
   );
