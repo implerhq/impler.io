@@ -24,11 +24,11 @@ import { AutoImportPhase4 } from './Phases/AutoImportPhases/AutoImportPhase4';
 
 export function Widget() {
   const defaultDataCount = 0;
+  const { importConfig } = useAppState();
   const { terminateUpload, phase, setPhase } = useWidget();
   const [dataCount, setDataCount] = useState<number>(defaultDataCount);
   const [promptContinueAction, setPromptContinueAction] = useState<PromptModalTypesEnum>();
   const { showWidget, setShowWidget, reset: resetAppState, uploadInfo, templateInfo, title } = useAppState();
-  const { importConfig } = useAppState();
 
   const onUploadResetClick = () => {
     logAmplitudeEvent('RESET');
@@ -65,12 +65,16 @@ export function Widget() {
     ParentWindow.UploadCompleted(uploadData);
   };
 
-  importConfig.mode = TemplateModeEnum.AUTOMATIC;
-
   const PhaseView = {
     [PhasesEnum.VALIDATE]: <Phase0 onValidationSuccess={() => setPhase(PhasesEnum.UPLOAD)} />,
-    ...(importConfig.mode === TemplateModeEnum.MANUAL
+    ...(importConfig.mode === TemplateModeEnum.AUTOMATIC
       ? {
+          [PhasesEnum.CONFIGURE]: <AutoImportPhase1 onNextClick={() => setPhase(PhasesEnum.MAPCOLUMNS)} />,
+          [PhasesEnum.MAPCOLUMNS]: <AutoImportPhase2 onNextClick={() => setPhase(PhasesEnum.SCHEDULE)} />,
+          [PhasesEnum.SCHEDULE]: <AutoImportPhase3 onNextClick={() => setPhase(PhasesEnum.CONFIRM)} />,
+          [PhasesEnum.CONFIRM]: <AutoImportPhase4 onCloseClick={onClose} />,
+        }
+      : {
           [PhasesEnum.UPLOAD]: <Phase1 onNextClick={() => setPhase(PhasesEnum.MAPPING)} />,
           [PhasesEnum.MAPPING]: (
             <Phase2 onNextClick={() => setPhase(PhasesEnum.REVIEW)} onPrevClick={onUploadResetClick} />
@@ -79,12 +83,6 @@ export function Widget() {
           [PhasesEnum.COMPLETE]: (
             <Phase4 rowsCount={dataCount} onUploadAgainClick={resetProgress} onCloseClick={onClose} />
           ),
-        }
-      : {
-          [PhasesEnum.CONFIGURE]: <AutoImportPhase1 onNextClick={() => setPhase(PhasesEnum.MAPCOLUMNS)} />,
-          [PhasesEnum.MAPCOLUMNS]: <AutoImportPhase2 onNextClick={() => setPhase(PhasesEnum.SCHEDULE)} />,
-          [PhasesEnum.SCHEDULE]: <AutoImportPhase3 onNextClick={() => setPhase(PhasesEnum.CONFORM)} />,
-          [PhasesEnum.CONFORM]: <AutoImportPhase4 onCloseClick={onClose} />,
         }),
   };
 
@@ -94,8 +92,8 @@ export function Widget() {
   };
 
   return (
-    <Modal title={title || templateInfo?.name} opened={showWidget} onClose={onClose}>
-      <Layout active={phase} title={title || templateInfo?.name}>
+    <Modal title={title || importConfig?.title || templateInfo?.name} opened={showWidget} onClose={onClose}>
+      <Layout active={phase} title={title || importConfig?.title || templateInfo?.name}>
         {PhaseView[phase]}
 
         <ConfirmModal
