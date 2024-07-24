@@ -3,7 +3,14 @@ import { Injectable } from '@nestjs/common';
 import { parseStringPromise } from 'xml2js';
 
 import { FileMimeTypesEnum, FileNameService, ImportJobHistoryStatusEnum, QueuesEnum } from '@impler/shared';
-import { UserJobRepository, JobMappingRepository, ImportJobHistoryRepository, CommonRepository } from '@impler/dal';
+import {
+  UserJobRepository,
+  JobMappingRepository,
+  ImportJobHistoryRepository,
+  CommonRepository,
+  UserJobEntity,
+  WebhookDestinationRepository,
+} from '@impler/dal';
 import { BaseConsumer } from './base.consumer';
 import { publishToQueue } from '../bootstrap';
 import { StorageService } from 'libs/shared/dist/services/storage';
@@ -15,6 +22,7 @@ export class GetImportJobDataConsumer extends BaseConsumer {
   private userJobRepository: UserJobRepository = new UserJobRepository();
   private importJobHistoryRepository: ImportJobHistoryRepository = new ImportJobHistoryRepository();
   private jobMappingRepository: JobMappingRepository = new JobMappingRepository();
+  private webhookDestinationRepository: WebhookDestinationRepository = new WebhookDestinationRepository();
 
   private storageService: StorageService = getStorageServiceClass();
   private fileNameService: FileNameService = new FileNameService();
@@ -30,7 +38,16 @@ export class GetImportJobDataConsumer extends BaseConsumer {
       allDataFilePath: this.fileNameService.getAllJsonDataFilePath(importJobHistoryId),
       status: ImportJobHistoryStatusEnum.PROCESSING,
     });
-    publishToQueue(QueuesEnum.SEND_IMPORT_JOB_DATA, { importJobHistoryId });
+
+    const webhookDestination = await this.webhookDestinationRepository.findOne({
+      _templateId: (data._jobId as unknown as UserJobEntity)._templateId,
+    });
+
+    if (webhookDestination?.callbackUrl) {
+      publishToQueue(QueuesEnum.SEND_IMPORT_JOB_DATA, { importJobHistoryId });
+    }
+
+    return;
   }
 
   getXMLJsonValueByPath(obj: Record<string, any>, path: string | undefined): string | number | undefined | any {
