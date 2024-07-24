@@ -15,7 +15,7 @@ export const TEXTS = {
     CONFIGURE: 'Configure',
     MAPCOLUMNS: 'Map Columns',
     SCHEDULE: 'Schedule',
-    CONFORM: 'Conform',
+    CONFIRM: 'Confirm',
   },
 
   DROPZONE: {
@@ -54,7 +54,7 @@ export const TEXTS = {
     BUTTONTEXT: {
       MAPCOLUMN: 'Map Column',
       SCHEDULE: 'Schedule',
-      CONFORM: 'Conform',
+      CONFIRM: 'Confirm',
       CLOSE: 'Close',
     },
   },
