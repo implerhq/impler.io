@@ -47,10 +47,11 @@ export class ApiService {
     });
   }
 
-  async getImportConfig(projectId: string) {
-    return this.httpClient.get(
-      `/common/import-config?projectId=${projectId}`,
-    ) as Promise<IImportConfig>;
+  async getImportConfig(projectId: string, templateId?: string) {
+    return this.httpClient.get(`/common/import-config`, {
+      projectId,
+      templateId,
+    }) as Promise<IImportConfig>;
   }
 
   async getExcelSheetNames(data: { file: File }) {
@@ -194,9 +195,20 @@ export class ApiService {
     );
   }
 
-  async getRssXmlMappingHeading(_templateId: string, url: string) {
-    return this.httpClient.post(`/import-jobs/${_templateId}`, {
-      url,
+  async getRssXmlMappingHeading(data: {
+    templateId: string;
+    url: string;
+    authHeaderValue?: string;
+    extra?: string;
+    schema?: string;
+    output?: string;
+  }) {
+    return this.httpClient.post(`/import-jobs/${data.templateId}`, {
+      url: data.url,
+      authHeaderValue: data.authHeaderValue,
+      extra: data.extra,
+      schema: data.schema,
+      output: data.output,
     });
   }
 
