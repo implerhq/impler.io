@@ -44,11 +44,10 @@ export const cronExampleBadges = [
 ];
 
 export const cronExamples = [
-  { expression: '* * * * *', schedule: 'Every minute' },
-  { expression: '0 * * * *', schedule: 'Every hour' },
-  { expression: '0 0 * * *', schedule: 'Every day at 12:00 AM' },
-  { expression: '0 0 * * FRI', schedule: 'At 12:00 AM, only on Friday' },
-  { expression: '0 0 1 * *', schedule: 'At 12:00 AM, on day 1 of the month' },
+  { expression: '*', description: 'Any value' },
+  { expression: ',', description: 'Value list separator' },
+  { expression: '-', description: 'Range of values' },
+  { expression: '/', description: 'Step values' },
 ];
 
 export type ScheduleFormValues = {
