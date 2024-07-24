@@ -41,11 +41,19 @@ export class CronJobService {
     return { message: `Job ${_jobId} started successfully with schedule: ${cronExpression}` };
   }
 
-  async deleteJob(externalUserId: string, jobId: string) {
-    await this.userJobRepository.delete({ _id: jobId, externalUserId });
-    this.schedulerRegistry.deleteCronJob(`${jobId}_rss_import`);
+  async deleteJob(externalUserId: string, _jobId: string) {
+    await this.userJobRepository.delete({ _id: _jobId, externalUserId });
 
-    return { message: `Job ${jobId} deleted successfully` };
+    this.schedulerRegistry.deleteCronJob(`${_jobId}_rss_import`);
+
+    return { message: `Job ${_jobId} deleted successfully` };
+  }
+
+  async deleteUserJob(_jobId: string) {
+    return await this.userJobRepository.update(
+      { _id: _jobId },
+      { $set: { status: UserJobImportStatusEnum.TERMINATED } }
+    );
   }
 
   async triggerImportJob(_jobId: string) {
