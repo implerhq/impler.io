@@ -1,18 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { ColumnRepository, UserJobRepository, JobMappingEntity, JobMappingRepository } from '@impler/dal';
+import { ColumnRepository, UserJobRepository, JobMappingEntity } from '@impler/dal';
 import { UserJobImportStatusEnum } from '@impler/shared';
 
 @Injectable()
-export class GetJobMapping {
+export class GetColumnSchemaMapping {
   constructor(
     private readonly userJobRepository: UserJobRepository,
-    private readonly columnRepository: ColumnRepository,
-    private readonly jobMappingRepository: JobMappingRepository
+    private readonly columnRepository: ColumnRepository
   ) {}
-
-  async getUserJobs(userId: string) {
-    return this.userJobRepository.find({ userId });
-  }
 
   async execute(_jobId: string): Promise<JobMappingEntity[]> {
     const userJob = await this.userJobRepository.findOne({ _id: _jobId });
@@ -23,7 +18,6 @@ export class GetJobMapping {
 
     await this.userJobRepository.update({ _id: _jobId }, { $set: { status: UserJobImportStatusEnum.MAPPING } });
 
-    await this.jobMappingRepository.find({ _id: _jobId });
     const columns = await this.columnRepository.find({ _templateId: userJob._templateId });
     const jobsMapping = columns.map((column) => ({
       key: column.key,
