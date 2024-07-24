@@ -9,12 +9,15 @@ interface IPhase0Props {
 
 export function Phase0(props: IPhase0Props) {
   const { onValidationSuccess: goNext } = props;
-  const { isLoading, error, handleValidate, isWidgetOpened } = usePhase0({
+  const { isLoading, error, handleValidate, isWidgetOpened, refetch } = usePhase0({
     goNext,
   });
 
   useEffect(() => {
-    if (isWidgetOpened) handleValidate();
+    if (isWidgetOpened) {
+      handleValidate();
+      refetch();
+    }
   }, [isWidgetOpened]);
 
   if (isLoading) return <LoadingOverlay visible={isLoading} />;
