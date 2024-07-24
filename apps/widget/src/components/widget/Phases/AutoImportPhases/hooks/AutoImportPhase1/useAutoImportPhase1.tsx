@@ -1,24 +1,35 @@
 import { useMutation } from '@tanstack/react-query';
-import { useAPIState } from '@store/api.context';
-import { IErrorObject } from '@impler/shared';
-import { IUserJob } from '@impler/shared';
-import { useImplerState } from '@store/impler.context';
-import { useJobsInfo } from '@store/jobinfo.context';
+import { useForm, SubmitHandler } from 'react-hook-form';
+
 import { notifier } from '@util';
+import { useAPIState } from '@store/api.context';
+import { useJobsInfo } from '@store/jobinfo.context';
+import { useImplerState } from '@store/impler.context';
+import { IUserJob, IErrorObject } from '@impler/shared';
+import { IAutoImportValues } from '@types';
+import { useAppState } from '@store/app.context';
 
 interface IUseAutoImportPhase1Props {
   goNext: () => void;
 }
+interface FormValues {
+  rssUrl: string;
+}
 
 export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
   const { api } = useAPIState();
-  const { templateId } = useImplerState();
   const { setJobsInfo } = useJobsInfo();
+  const { output, schema } = useAppState();
+  const { templateId, extra, authHeaderValue } = useImplerState();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>();
 
-  const { isLoading, mutate: getRssXmlHeading } = useMutation<IUserJob, IErrorObject, string, [string]>(
+  const { isLoading, mutate: getRssXmlHeading } = useMutation<IUserJob, IErrorObject, IAutoImportValues, [string]>(
     ['getRssXmlHeading'],
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    (url: string) => api.getRssXmlMappingHeading(templateId!, url) as Promise<IUserJob>,
+    (importData) => api.getRssXmlMappingHeading(importData) as Promise<IUserJob>,
     {
       onSuccess(data) {
         setJobsInfo(data);
@@ -30,8 +41,22 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
     }
   );
 
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
+    getRssXmlHeading({
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      templateId: templateId!,
+      url: data.rssUrl,
+      authHeaderValue,
+      extra,
+      output,
+      schema,
+    });
+  };
+
   return {
+    errors,
+    register,
     isLoading,
-    getRssXmlHeading,
+    onSubmit: handleSubmit(onSubmit),
   };
 }
