@@ -37,7 +37,7 @@ const autoImportSteps = [
     label: TEXTS.AUTOIMPORTSTEPS.SCHEDULE,
   },
   {
-    label: TEXTS.AUTOIMPORTSTEPS.CONFORM,
+    label: TEXTS.AUTOIMPORTSTEPS.CONFIRM,
   },
 ];
 
