@@ -25,7 +25,7 @@ export enum PhasesEnum {
   CONFIGURE = 1,
   MAPCOLUMNS = 2,
   SCHEDULE = 3,
-  CONFORM = 4,
+  CONFIRM = 4,
 }
 
 export interface IFormvalues {
@@ -35,6 +35,15 @@ export interface IFormvalues {
 }
 
 export interface IUploadValues extends IFormvalues {
+  authHeaderValue?: string;
+  extra?: string;
+  schema?: string;
+  output?: string;
+}
+
+export interface IAutoImportValues {
+  url: string;
+  templateId: string;
   authHeaderValue?: string;
   extra?: string;
   schema?: string;
