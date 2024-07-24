@@ -1,14 +1,16 @@
 import { CreateUserJob } from './create-userjob/create-userjob.usecase';
-import { GetJobMapping } from './get-jobmapping/get-jobmapping.usecase';
+import { GetColumnSchemaMapping } from './get-columnschema-mapping/get-columnschema-mapping.usecase';
 import { CreateJobMapping } from './create-jobmapping/create-jobmapping.usecase';
 import { UpdateUserJob } from './update-userjob/update-userjob.usecase';
+import { GetUserJob } from './get-userjob/get-userjob.usecase';
 
 export const USECASES = [
   CreateUserJob,
-  GetJobMapping,
+  GetColumnSchemaMapping,
   CreateJobMapping,
   UpdateUserJob,
+  GetUserJob,
   //
 ];
 
-export { CreateUserJob, GetJobMapping, CreateJobMapping, UpdateUserJob };
+export { CreateUserJob, GetColumnSchemaMapping, CreateJobMapping, UpdateUserJob, GetUserJob };
