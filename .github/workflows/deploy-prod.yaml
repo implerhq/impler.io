@@ -76,19 +76,19 @@ jobs:
     uses: ./.github/workflows/publish-prod-packages.yml
     secrets: inherit
 
-  deploy_with_ssh:
-    runs-on: ubuntu-latest
-    needs:
-      - publish_npm
-    if: |
-      always() && 
-      (needs.publish_npm.result == 'success')
-    steps:
-      - name: Set up SSH and Run Docker Compose Up
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_QA }}
-      - name: Run Docker Compose Up
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME_QA }}@${{ secrets.SSH_HOST_QA }} \
-            "cd ${{ secrets.SSH_PATH_QA }} && sudo docker compose up --pull always -d && sudo docker image prune -a -f"
+  # deploy_with_ssh:
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - publish_npm
+  #   if: |
+  #     always() && 
+  #     (needs.publish_npm.result == 'success')
+  #   steps:
+  #     - name: Set up SSH and Run Docker Compose Up
+  #       uses: webfactory/ssh-agent@v0.5.3
+  #       with:
+  #         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_QA }}
+  #     - name: Run Docker Compose Up
+  #       run: |
+  #         ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME_QA }}@${{ secrets.SSH_HOST_QA }} \
+  #           "cd ${{ secrets.SSH_PATH_QA }} && sudo docker compose up --pull always -d && sudo docker image prune -a -f"
