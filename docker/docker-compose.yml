@@ -17,7 +17,7 @@ services:
       - impler
   api:
     privileged: true
-    image: "ghcr.io/implerhq/impler/api:0.21.1"
+    image: "ghcr.io/implerhq/impler/api:0.22.0"
     depends_on:
       - mongodb
       - rabbitmq
@@ -44,12 +44,13 @@ services:
       SES_SECRET_ACCESS_KEY: ${SES_SECRET_ACCESS_KEY}
       EMAIL_FROM: ${EMAIL_FROM}
       EMAIL_FROM_NAME: ${EMAIL_FROM_NAME}
+      ALERT_EMAIL_FROM: ${ALERT_EMAIL_FROM}
     ports:
       - "3000:3000"
     networks:
       - impler
   queue-manager:
-    image: "ghcr.io/implerhq/impler/queue-manager:0.21.1"
+    image: "ghcr.io/implerhq/impler/queue-manager:0.22.0"
     depends_on:
       - api
       - rabbitmq
@@ -63,10 +64,16 @@ services:
       S3_BUCKET_NAME: ${S3_BUCKET_NAME}
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      SES_REGION: ${SES_REGION}
+      SES_ACCESS_KEY_ID: ${SES_ACCESS_KEY_ID}
+      SES_SECRET_ACCESS_KEY: ${SES_SECRET_ACCESS_KEY}
+      EMAIL_FROM: ${EMAIL_FROM}
+      EMAIL_FROM_NAME: ${EMAIL_FROM_NAME}
+      ALERT_EMAIL_FROM: ${ALERT_EMAIL_FROM}
     networks:
       - impler
   widget:
-    image: "ghcr.io/implerhq/impler/widget:0.21.1"
+    image: "ghcr.io/implerhq/impler/widget:0.22.0"
     depends_on:
       - api
     container_name: widget
@@ -82,7 +89,7 @@ services:
   embed:
     depends_on:
       - widget
-    image: "ghcr.io/implerhq/impler/embed:0.21.1"
+    image: "ghcr.io/implerhq/impler/embed:0.22.0"
     container_name: embed
     environment:
       WIDGET_URL: ${WIDGET_BASE_URL}
@@ -93,7 +100,7 @@ services:
   web:
     depends_on:
       - api
-    image: "ghcr.io/implerhq/impler/web:0.21.1"
+    image: "ghcr.io/implerhq/impler/web:0.22.0"
     container_name: web
     environment:
       NEXT_PUBLIC_API_BASE_URL: ${API_ROOT_URL}
