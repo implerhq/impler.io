@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
   ColumnTypesEnum,
-  PaymentAPIService,
   ITemplateSchemaItem,
   QueuesEnum,
   UploadStatusEnum,
@@ -9,6 +8,7 @@ import {
   DestinationsEnum,
   ColumnDelimiterEnum,
 } from '@impler/shared';
+import { PaymentAPIService } from '@impler/services';
 import { QueueService } from '@shared/services/queue.service';
 import { DalService, TemplateEntity, UploadRepository } from '@impler/dal';
 

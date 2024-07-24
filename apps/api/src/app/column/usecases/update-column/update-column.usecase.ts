@@ -21,9 +21,10 @@ export class UpdateColumn {
     }
 
     const columns = await this.columnRepository.find({ _templateId: column._templateId });
-    const sameKeyColumns = columns
-      .map((columnItem) => (columnItem._id === _id ? { ...command, ...columnItem } : columnItem))
-      .filter((columnItem) => columnItem.key === command.key);
+    const updatedColumns = columns.map((columnItem) =>
+      columnItem._id === _id ? { ...command, _templateId: columnItem._templateId } : columnItem
+    );
+    const sameKeyColumns = updatedColumns.filter((columnItem) => columnItem.key === command.key);
     if (sameKeyColumns.length > 1) {
       throw new UniqueColumnException();
     }
@@ -34,12 +35,13 @@ export class UpdateColumn {
     const isFieldConditionUpdated =
       JSON.stringify(column.selectValues) !== JSON.stringify(command.selectValues) ||
       JSON.stringify(column.dateFormats) !== JSON.stringify(command.dateFormats) ||
-      column.isRequired !== command.isRequired;
+      column.isRequired !== command.isRequired ||
+      column.delimiter !== command.delimiter;
 
     column = await this.columnRepository.findOneAndUpdate({ _id }, command);
 
     if (isKeyUpdated || isTypeUpdated || isFieldConditionUpdated) {
-      await this.saveSampleFile.execute(columns, column._templateId);
+      await this.saveSampleFile.execute(updatedColumns, column._templateId);
     }
 
     if (isKeyUpdated) {

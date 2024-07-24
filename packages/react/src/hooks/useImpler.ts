@@ -113,8 +113,14 @@ export function useImpler({
         }
       }
       window.impler.show(payload);
-    }
+    } else logError('IMPLER_UNDEFINED_ERROR');
   };
 
-  return { isImplerInitiated, showWidget };
+  const closeWidget = () => {
+    if (window.impler) {
+      window.impler.close();
+    } else logError('IMPLER_UNDEFINED_ERROR');
+  };
+
+  return { isImplerInitiated, showWidget, closeWidget };
 }

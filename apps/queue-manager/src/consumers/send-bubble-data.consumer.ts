@@ -1,20 +1,25 @@
 import {
   FileEncodingsEnum,
-  BubbleBaseService,
   SendBubbleData,
   UploadStatusEnum,
   QueuesEnum,
-  FileNameService,
   SendBubbleCachedData,
   ITemplateSchemaItem,
   replaceVariablesInObject,
+  StatusEnum,
 } from '@impler/shared';
-import { StorageService } from '@impler/shared/dist/services/storage';
-import { UploadRepository, WebhookLogEntity, WebhookLogRepository, BubbleDestinationRepository } from '@impler/dal';
+import { BubbleBaseService, EmailService, FileNameService, StorageService } from '@impler/services';
+import {
+  UploadRepository,
+  WebhookLogEntity,
+  WebhookLogRepository,
+  BubbleDestinationRepository,
+  TemplateRepository,
+} from '@impler/dal';
 
 import { BaseConsumer } from './base.consumer';
 import { publishToQueue } from '../bootstrap';
-import { getStorageServiceClass } from '../helpers/storage.helper';
+import { getEmailServiceClass, getStorageServiceClass } from '../helpers/serivces.helper';
 import { IBaseSendDataParameters } from '../types/file-processing.types';
 
 const MIN_LIMIT = 0;
@@ -24,9 +29,11 @@ export class SendBubbleDataConsumer extends BaseConsumer {
   private bubbleBaseService: BubbleBaseService = new BubbleBaseService();
   private fileNameService: FileNameService = new FileNameService();
   private uploadRepository: UploadRepository = new UploadRepository();
+  private templateRepository: TemplateRepository = new TemplateRepository();
   private webhookLogRepository: WebhookLogRepository = new WebhookLogRepository();
   private bubbleDestinationRepository: BubbleDestinationRepository = new BubbleDestinationRepository();
   private storageService: StorageService = getStorageServiceClass();
+  private emailService: EmailService = getEmailServiceClass();
 
   async message(message: { content: string }) {
     const data = JSON.parse(message.content) as SendBubbleData;
@@ -65,7 +72,12 @@ export class SendBubbleDataConsumer extends BaseConsumer {
         },
       });
 
-      this.makeResponseEntry(response);
+      await this.makeResponseEntry(
+        response,
+        { datatype: cachedData.datatype, environment: cachedData.environment, url: cachedData.bubbleUrl },
+        cachedData.name,
+        cachedData.email
+      );
 
       const nextPageNumber = this.getNextPageNumber({
         currentPage: page,
@@ -122,6 +134,11 @@ export class SendBubbleDataConsumer extends BaseConsumer {
     const uploadata = await this.uploadRepository.getUploadProcessInformation(_uploadId);
     if (uploadata._allDataFileId) return null;
 
+    const userEmail = await this.uploadRepository.getUserEmailFromUploadId(_uploadId);
+
+    // Get template information
+    const templateData = await this.templateRepository.findById(uploadata._templateId, 'name');
+
     const bubbleDestination = await this.bubbleDestinationRepository.findOne({ _templateId: uploadata._templateId });
     const bubbleUrl = this.bubbleBaseService.createBubbleIoUrl(bubbleDestination, 'bulk');
 
@@ -146,6 +163,10 @@ export class SendBubbleDataConsumer extends BaseConsumer {
       page: 1,
       bubbleUrl,
       chunkSize: 500,
+      email: userEmail,
+      datatype: bubbleDestination.datatype,
+      name: templateData.name,
+      environment: bubbleDestination.environment,
       _templateId: uploadata._templateId,
       recordFormat: uploadata.customRecordFormat,
       defaultValues: JSON.stringify(defaultValueObj),
@@ -154,7 +175,35 @@ export class SendBubbleDataConsumer extends BaseConsumer {
     };
   }
 
-  private async makeResponseEntry(data: Partial<WebhookLogEntity>) {
+  private async makeResponseEntry(
+    data: Partial<WebhookLogEntity>,
+    bubbleData: { datatype: string; environment: string; url: string },
+    importName: string,
+    userEmail: string
+  ) {
+    if (data.status === StatusEnum.FAILED) {
+      const emailContents = this.emailService.getEmailContent({
+        type: 'ERROR_SENDING_BUBBLE_DATA',
+        data: {
+          error: JSON.stringify(data.error, null, 2).replace(/\\+"/g, '"'),
+          importName,
+          time: data.callDate.toString(),
+          datatype: bubbleData.datatype,
+          environment: bubbleData.environment,
+          url: bubbleData.url,
+          importId: data._uploadId,
+        },
+      });
+
+      await this.emailService.sendEmail({
+        to: userEmail,
+        subject: `🛑 Encountered error while sending data to Bubble in ${importName}`,
+        html: emailContents,
+        from: process.env.ALERT_EMAIL_FROM,
+        senderName: process.env.EMAIL_FROM_NAME,
+      });
+    }
+
     return await this.webhookLogRepository.create(data);
   }
 

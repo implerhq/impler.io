@@ -1,5 +1,5 @@
-import { PaymentAPIService } from '@impler/shared';
 import { Injectable } from '@nestjs/common';
+import { PaymentAPIService } from '@impler/services';
 
 @Injectable()
 export class Checkout {

@@ -58,14 +58,17 @@ export abstract class BaseConsumer {
       baseResponse.status = StatusEnum.FAILED;
       if (axios.isAxiosError(error)) {
         if (error.response) {
+          const formattedError = error.toJSON() as any;
           baseResponse.error = {
-            error: error.toJSON(),
-            data: JSON.stringify(error.response.data),
+            error: formattedError.message || formattedError,
+            data: error.response.data,
           };
           baseResponse.failedReason = 'Application Error';
           baseResponse.responseStatusCode = error.response.status;
         } else if (error.request) {
-          baseResponse.error = error.toJSON();
+          baseResponse.error = {
+            error: `Cannot connect to ${url}`,
+          };
           baseResponse.failedReason = 'Network Error';
           baseResponse.responseStatusCode = error.request.status;
         } else {

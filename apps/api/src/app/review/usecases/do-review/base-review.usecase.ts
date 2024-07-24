@@ -9,7 +9,7 @@ import Ajv, { AnySchemaObject, ErrorObject, ValidateFunction } from 'ajv';
 
 import { ColumnTypesEnum, Defaults, ITemplateSchemaItem } from '@impler/shared';
 
-import { SManager, BATCH_LIMIT, MAIN_CODE } from '@shared/services/sandbox';
+import { SManager, BATCH_LIMIT, MAIN_CODE, ExecuteIsolateResult } from '@shared/services/sandbox';
 
 dayjs.extend(customParseFormat);
 
@@ -527,6 +527,7 @@ export class BaseReview {
   async processBatches({
     batches,
     forItem,
+    onError,
     dataStream,
     onBatchInitialize,
   }: {
@@ -534,6 +535,7 @@ export class BaseReview {
     dataStream: Writable;
     batches: IBatchItem[];
     onBatchInitialize: string;
+    onError?: (error: ExecuteIsolateResult) => void;
     forItem?: (item: any) => void;
   }): Promise<void> {
     return new Promise(async (resolve) => {
@@ -565,6 +567,7 @@ export class BaseReview {
           });
         } else {
           console.log(processData);
+          onError?.(processData);
         }
       }
       dataStream.end();

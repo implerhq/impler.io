@@ -1,5 +1,4 @@
 import {
-  HttpClient,
   IUpload,
   IMapping,
   IMappingFinalize,
@@ -11,6 +10,7 @@ import {
   IRecord,
   constructQueryString,
 } from '@impler/shared';
+import { HttpClient } from './api.client';
 
 export class ApiService {
   private httpClient: HttpClient;

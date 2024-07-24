@@ -1,5 +1,5 @@
 import { FileEncodingsEnum } from '@impler/shared';
-import { StorageService } from '@impler/shared/dist/services/storage';
+import { StorageService } from '@impler/services';
 import { Injectable } from '@nestjs/common';
 import { paginateRecords } from '@shared/helpers/common.helper';
 

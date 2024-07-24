@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PaymentAPIService } from '@impler/shared';
+import { PaymentAPIService } from '@impler/services';
 
 @Injectable()
 export class RetrievePaymentMethods {

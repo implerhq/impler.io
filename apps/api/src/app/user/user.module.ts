@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { USE_CASES } from './usecases';
 import { UserController } from './user.controller';
 import { SharedModule } from '@shared/shared.module';
-import { PaymentAPIService } from '@impler/shared';
+import { PaymentAPIService } from '@impler/services';
 
 @Module({
   imports: [SharedModule],

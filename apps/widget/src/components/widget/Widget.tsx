@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Modal } from '@ui/Modal';
 import { TEXTS, variables } from '@config';
@@ -70,6 +70,12 @@ export function Widget() {
     [PromptModalTypesEnum.CLOSE]: TEXTS.PROMPT.SUBTITLE_CLOSE,
     [PromptModalTypesEnum.UPLOAD_AGAIN]: TEXTS.PROMPT.SUBTITLE_RESET,
   };
+
+  useEffect(() => {
+    if (!showWidget) {
+      setPhase(PhasesEnum.VALIDATE);
+    }
+  }, [showWidget]);
 
   return (
     <Modal title={title || templateInfo?.name} opened={showWidget} onClose={onClose}>
