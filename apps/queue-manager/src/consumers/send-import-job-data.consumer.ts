@@ -154,6 +154,10 @@ export class SendImportJobDataConsumer extends BaseConsumer {
       _templateId: (userJob._jobId as unknown as UserJobEntity)._templateId,
     });
 
+    if (!webhookDestination || !webhookDestination.callbackUrl) {
+      return null;
+    }
+
     const defaultValueObj = {};
     const multiSelectHeadings = [];
     if (Array.isArray(columns)) {
