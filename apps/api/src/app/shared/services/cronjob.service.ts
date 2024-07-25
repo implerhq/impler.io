@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob, CronTime } from 'cron';
 import { QueueService } from '@shared/services/queue.service';
-import { UserJobRepository, JobMappingRepository } from '@impler/dal';
+import { UserJobRepository } from '@impler/dal';
 import { QueuesEnum, UserJobImportStatusEnum } from '@impler/shared';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
 
@@ -11,7 +11,6 @@ export class CronJobService {
   constructor(
     private readonly schedulerRegistry: SchedulerRegistry,
     private readonly userJobRepository: UserJobRepository,
-    private readonly jobMappingRepository: JobMappingRepository,
     private queueService: QueueService
   ) {}
 
