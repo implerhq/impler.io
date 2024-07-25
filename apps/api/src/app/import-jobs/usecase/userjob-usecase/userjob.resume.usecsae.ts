@@ -1,4 +1,3 @@
-// ResumeJobUseCase.ts
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { UserJobEntity, UserJobRepository } from '@impler/dal';
