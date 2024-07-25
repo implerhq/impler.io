@@ -8,6 +8,9 @@ export class UserJobRepository extends BaseRepository<UserJobEntity> {
   constructor() {
     super(UserJob, UserJobEntity);
   }
+  async getUserJobWithTemplate(userJobId: string, fields: string[] = []): Promise<UserJobEntity> {
+    return UserJob.findById(userJobId).populate('_templateId', fields.join(' '));
+  }
   async getUserEmailFromJobId(jobId: string): Promise<string> {
     const uploadInfoWithTemplate = await UserJob.findById(jobId).populate([
       {
