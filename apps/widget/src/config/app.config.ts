@@ -1,5 +1,4 @@
-import { isBrowser, ENVTypesEnum } from '@impler/shared';
-import { getContextPath, ImplerComponentEnum } from '@impler/shared';
+import { isBrowser } from '@impler/shared';
 
 export const API_URL =
   isBrowser() && (window as any).Cypress
@@ -10,11 +9,11 @@ export const SENTRY_DSN = window._env_?.REACT_APP_SENTRY_DSN || process.env.REAC
 
 export const AMPLITUDE_ID = window._env_?.REACT_APP_AMPLITUDE_ID || process.env.REACT_APP_AMPLITUDE_ID || undefined;
 
-export const ENV: ENVTypesEnum = window._env_?.REACT_APP_ENVIRONMENT || process.env.REACT_APP_ENVIRONMENT || 'local';
+export const ENV = window._env_?.REACT_APP_ENVIRONMENT || process.env.REACT_APP_ENVIRONMENT || 'local';
 
 export const HANDSONTABLE_LICENSE_KEY =
   window._env_?.REACT_APP_HANDSONTABLE_LICENSE_KEY ||
   process.env.REACT_APP_HANDSONTABLE_LICENSE_KEY ||
   'non-commercial-and-evaluation';
 
-export const CONTEXT_PATH = getContextPath(ImplerComponentEnum.WIDGET);
+export const CONTEXT_PATH = '';

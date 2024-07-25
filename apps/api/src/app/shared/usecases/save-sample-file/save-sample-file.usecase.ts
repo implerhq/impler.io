@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { ColumnTypesEnum, FileNameService, FileMimeTypesEnum } from '@impler/shared';
-import { StorageService } from '@impler/shared/dist/services/storage';
+import { ColumnTypesEnum, FileMimeTypesEnum, ColumnDelimiterEnum } from '@impler/shared';
+import { StorageService, FileNameService } from '@impler/services';
 import { ColumnEntity, TemplateRepository } from '@impler/dal';
 import { IExcelFileHeading } from '@shared/types/file.types';
 import { ExcelFileService } from '@shared/services/file';
@@ -21,6 +21,7 @@ export class SaveSampleFile {
         type: columnItem.type as ColumnTypesEnum,
         selectValues: columnItem.selectValues,
         isFrozen: columnItem.isFrozen,
+        delimiter: columnItem.delimiter || ColumnDelimiterEnum.COMMA,
         isRequired: columnItem.isRequired,
         dateFormats: columnItem.dateFormats,
         allowMultiSelect: columnItem.allowMultiSelect,

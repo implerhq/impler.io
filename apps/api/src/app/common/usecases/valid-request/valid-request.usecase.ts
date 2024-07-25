@@ -1,11 +1,13 @@
-import { Injectable, HttpStatus, HttpException, UnauthorizedException } from '@nestjs/common';
-import { ProjectRepository, TemplateRepository } from '@impler/dal';
-import { ValidRequestCommand } from './valid-request.command';
-import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
-import { APIMessages } from '@shared/constants';
-import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
+import { plainToClass } from 'class-transformer';
+import { Injectable, HttpStatus, HttpException, UnauthorizedException } from '@nestjs/common';
+
+import { APIMessages } from '@shared/constants';
 import { SchemaDto } from 'app/common/dtos/Schema.dto';
+import { ValidRequestCommand } from './valid-request.command';
+import { ProjectRepository, TemplateRepository } from '@impler/dal';
+import { UniqueColumnException } from '@shared/exceptions/unique-column.exception';
+import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
 
 @Injectable()
 export class ValidRequest {
@@ -48,6 +50,11 @@ export class ValidRequest {
             command.schema,
             'Invalid schema input. An array of schema object columns is expected.'
           );
+        }
+
+        const columnKeysSet = new Set(parsedSchema.map((column) => column.key));
+        if (columnKeysSet.size !== parsedSchema.length) {
+          throw new UniqueColumnException(APIMessages.COLUMN_KEY_TAKEN);
         }
 
         for (const item of parsedSchema) {

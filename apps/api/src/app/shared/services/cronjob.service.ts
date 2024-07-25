@@ -9,9 +9,9 @@ import { DocumentNotFoundException } from '@shared/exceptions/document-not-found
 @Injectable()
 export class CronJobService {
   constructor(
+    private queueService: QueueService,
     private readonly schedulerRegistry: SchedulerRegistry,
-    private readonly userJobRepository: UserJobRepository,
-    private queueService: QueueService
+    private readonly userJobRepository: UserJobRepository
   ) {}
 
   async pauseJob(_jobId: string) {

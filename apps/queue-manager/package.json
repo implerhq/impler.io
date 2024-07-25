@@ -1,6 +1,6 @@
 {
   "name": "@impler/queue-manager",
-  "version": "0.20.4",
+  "version": "0.22.0",
   "author": "implerhq",
   "license": "MIT",
   "private": true,
@@ -16,8 +16,9 @@
     "lint:fix": "pnpm lint -- --fix"
   },
   "dependencies": {
-    "@impler/dal": "workspace:^",
-    "@impler/shared": "workspace:^",
+    "@impler/dal": "^0.22.0",
+    "@impler/services": "^0.22.0",
+    "@impler/shared": "^0.22.0",
     "@sentry/node": "^7.112.2",
     "axios": "1.6.2",
     "dotenv": "^16.0.2",

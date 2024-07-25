@@ -8,7 +8,7 @@ import { Provider } from '../Provider';
 import { ApiService } from '@impler/client';
 import { MessageHandlerDataType } from '@types';
 import { generateShades, ParentWindow } from '@util';
-import { IShowPayload, EventTypesEnum } from '@impler/shared';
+import { IShowPayload, WidgetEventTypesEnum } from '@impler/shared';
 import { API_URL, colors, mantineConfig, variables } from '@config';
 
 let api: ApiService;
@@ -41,12 +41,14 @@ export function Container({ children }: PropsWithChildren<{}>) {
   }, []);
 
   function messageEventHandler({ data }: { data?: MessageHandlerDataType }) {
-    if (data && data.type === EventTypesEnum.SHOW_WIDGET) {
+    if (data && data.type === WidgetEventTypesEnum.SHOW_WIDGET) {
       if (data.value.accessToken) {
         api.setAuthorizationToken(data.value.accessToken);
       }
       setShowWidget(true);
       setSecondaryPayload({ ...data.value, primaryColor: data.value.primaryColor || colors.primary });
+    } else if (data && data.type === WidgetEventTypesEnum.CLOSE_WIDGET) {
+      setShowWidget(false);
     }
   }
 

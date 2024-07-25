@@ -7,8 +7,9 @@ import {
   WebhookLogEntity,
   UploadRepository,
   WebhookLogRepository,
+  UserJobRepository,
 } from '@impler/dal';
-import { StorageService } from '@impler/shared/dist/services/storage';
+import { StorageService } from '@impler/services';
 import {
   ColumnTypesEnum,
   SendImportJobData,
@@ -17,11 +18,12 @@ import {
   FileEncodingsEnum,
   QueuesEnum,
   UploadStatusEnum,
+  ColumnDelimiterEnum,
 } from '@impler/shared';
 
-import { BaseConsumer } from './base.consumer';
-import { getStorageServiceClass } from '../helpers/storage.helper';
 import { publishToQueue } from '../bootstrap';
+import { BaseConsumer } from './base.consumer';
+import { getStorageServiceClass } from '../helpers/serivces.helper';
 
 const MIN_LIMIT = 0;
 const DEFAULT_PAGE = 1;
@@ -29,11 +31,12 @@ const DEFAULT_PAGE = 1;
 export class SendImportJobDataConsumer extends BaseConsumer {
   private columnRepository: ColumnRepository = new ColumnRepository();
   private uploadRepository: UploadRepository = new UploadRepository();
-  private webhookLogRepository: WebhookLogRepository = new WebhookLogRepository();
+  private userJobRepository: UserJobRepository = new UserJobRepository();
   private templateRepository: TemplateRepository = new TemplateRepository();
+  private webhookLogRepository: WebhookLogRepository = new WebhookLogRepository();
   private importJobHistoryRepository: ImportJobHistoryRepository = new ImportJobHistoryRepository();
-  private storageService: StorageService = getStorageServiceClass();
   private webhookDestinationRepository: WebhookDestinationRepository = new WebhookDestinationRepository();
+  private storageService: StorageService = getStorageServiceClass();
 
   async message(message: { content: string }) {
     const data = JSON.parse(message.content) as SendImportJobData;
@@ -142,16 +145,20 @@ export class SendImportJobDataConsumer extends BaseConsumer {
   }
 
   private async getInitialCachedData(_importJobHistoryId: string): Promise<SendImportJobCachedData> {
-    const userJob = await this.importJobHistoryRepository.getHistoryWithJob(_importJobHistoryId, ['_templateId']);
+    const importJobHistory = await this.importJobHistoryRepository.getHistoryWithJob(_importJobHistoryId, [
+      '_templateId',
+    ]);
+    const userJobEmail = await this.userJobRepository.getUserEmailFromJobId(importJobHistory._jobId);
+
     const columns = await this.columnRepository.find({
-      _templateId: (userJob._jobId as unknown as UserJobEntity)._templateId,
+      _templateId: (importJobHistory._jobId as unknown as UserJobEntity)._templateId,
     });
     const templateData = await this.templateRepository.findById(
-      (userJob._jobId as unknown as UserJobEntity)._templateId,
+      (importJobHistory._jobId as unknown as UserJobEntity)._templateId,
       'name _projectId code'
     );
     const webhookDestination = await this.webhookDestinationRepository.findOne({
-      _templateId: (userJob._jobId as unknown as UserJobEntity)._templateId,
+      _templateId: (importJobHistory._jobId as unknown as UserJobEntity)._templateId,
     });
 
     if (!webhookDestination || !webhookDestination.callbackUrl) {
@@ -159,31 +166,33 @@ export class SendImportJobDataConsumer extends BaseConsumer {
     }
 
     const defaultValueObj = {};
-    const multiSelectHeadings = [];
+    const multiSelectHeadings = {};
     if (Array.isArray(columns)) {
       columns.forEach((item) => {
         if (item.defaultValue) defaultValueObj[item.key] = item.defaultValue;
-        if (item.type === ColumnTypesEnum.SELECT && item.allowMultiSelect) multiSelectHeadings.push(item.key);
+        if (item.type === ColumnTypesEnum.SELECT && item.allowMultiSelect)
+          multiSelectHeadings[item.key] = item.delimiter || ColumnDelimiterEnum.COMMA;
       });
     }
 
     this.importJobHistoryRepository.create({
-      _jobId: userJob._id,
+      _jobId: importJobHistory._id,
     });
 
     return {
-      _templateId: (userJob._jobId as unknown as UserJobEntity)._templateId,
+      email: userJobEmail,
+      _templateId: (importJobHistory._jobId as unknown as UserJobEntity)._templateId,
       callbackUrl: webhookDestination?.callbackUrl,
       chunkSize: webhookDestination?.chunkSize,
       name: templateData.name,
       page: 1,
-      extra: (userJob._jobId as unknown as UserJobEntity).extra,
+      extra: (importJobHistory._jobId as unknown as UserJobEntity).extra,
       authHeaderName: webhookDestination.authHeaderName,
       authHeaderValue: '',
-      allDataFilePath: userJob.allDataFilePath,
+      allDataFilePath: importJobHistory.allDataFilePath,
       defaultValues: JSON.stringify(defaultValueObj),
-      recordFormat: (userJob._jobId as unknown as UserJobEntity).customRecordFormat,
-      chunkFormat: (userJob._jobId as unknown as UserJobEntity).customChunkFormat,
+      recordFormat: (importJobHistory._jobId as unknown as UserJobEntity).customRecordFormat,
+      chunkFormat: (importJobHistory._jobId as unknown as UserJobEntity).customChunkFormat,
       multiSelectHeadings,
     };
   }

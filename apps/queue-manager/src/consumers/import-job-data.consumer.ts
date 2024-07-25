@@ -2,7 +2,8 @@ import axios from 'axios';
 import { Injectable } from '@nestjs/common';
 import { parseStringPromise } from 'xml2js';
 
-import { FileMimeTypesEnum, FileNameService, ImportJobHistoryStatusEnum, QueuesEnum } from '@impler/shared';
+import { StorageService, FileNameService } from '@impler/services';
+import { FileMimeTypesEnum, ImportJobHistoryStatusEnum, QueuesEnum } from '@impler/shared';
 import {
   UserJobRepository,
   JobMappingRepository,
@@ -13,8 +14,7 @@ import {
 } from '@impler/dal';
 import { BaseConsumer } from './base.consumer';
 import { publishToQueue } from '../bootstrap';
-import { StorageService } from 'libs/shared/dist/services/storage';
-import { getStorageServiceClass } from '../helpers/storage.helper';
+import { getStorageServiceClass } from '../helpers/serivces.helper';
 
 @Injectable()
 export class GetImportJobDataConsumer extends BaseConsumer {

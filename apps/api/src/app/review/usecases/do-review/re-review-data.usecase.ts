@@ -1,12 +1,13 @@
 import { Model } from 'mongoose';
 import { Writable } from 'stream';
 import { ValidateFunction } from 'ajv';
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 
-import { ColumnTypesEnum, ITemplateSchemaItem, UploadStatusEnum } from '@impler/shared';
-import { UploadRepository, ValidatorRepository, DalService } from '@impler/dal';
+import { ColumnDelimiterEnum, ColumnTypesEnum, ITemplateSchemaItem, UploadStatusEnum } from '@impler/shared';
+import { UploadRepository, ValidatorRepository, DalService, TemplateEntity } from '@impler/dal';
 
 import { APIMessages } from '@shared/constants';
+import { EmailService } from '@impler/services';
 import { BATCH_LIMIT } from '@shared/services/sandbox';
 import { BaseReview } from './base-review.usecase';
 
@@ -37,6 +38,7 @@ export class DoReReview extends BaseReview {
 
   constructor(
     private dalService: DalService,
+    private emailService: EmailService,
     private uploadRepository: UploadRepository,
     private validatorRepository: ValidatorRepository
   ) {
@@ -46,10 +48,11 @@ export class DoReReview extends BaseReview {
   async execute(_uploadId: string) {
     this._modal = this.dalService.getRecordCollection(_uploadId);
 
-    const uploadInfo = await this.uploadRepository.findById(_uploadId);
+    const uploadInfo = await this.uploadRepository.getUploadWithTemplate(_uploadId, ['name']);
     if (!uploadInfo) {
       throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
     }
+    const userEmail = await this.uploadRepository.getUserEmailFromUploadId(_uploadId);
     const dateFormats: Record<string, string[]> = {};
     const uniqueItems: Record<string, Set<any>> = {};
     const schema = this.buildAJVSchema({
@@ -59,14 +62,17 @@ export class DoReReview extends BaseReview {
     });
     const ajv = this.getAjvValidator(dateFormats, uniqueItems);
     const validator = ajv.compile(schema);
-    const validations = await this.validatorRepository.findOne({ _templateId: uploadInfo._templateId });
+    const validations = await this.validatorRepository.findOne({
+      _templateId: (uploadInfo._templateId as unknown as TemplateEntity)._id,
+    });
 
     const columns = JSON.parse(uploadInfo.customSchema) as ITemplateSchemaItem[];
     const uniqueFields = columns.filter((column) => column.isUnique).map((column) => column.key);
     const uniqueFieldData = uniqueFields.length ? await this.dalService.getFieldData(_uploadId, uniqueFields) : [];
-    const multiSelectColumnHeadings = new Set<string>();
+    const multiSelectColumnHeadings: Record<string, string> = {};
     (columns as ITemplateSchemaItem[]).forEach((column) => {
-      if (column.type === ColumnTypesEnum.SELECT && column.allowMultiSelect) multiSelectColumnHeadings.add(column.key);
+      if (column.type === ColumnTypesEnum.SELECT && column.allowMultiSelect)
+        multiSelectColumnHeadings[column.key] = column.delimiter || ColumnDelimiterEnum.COMMA;
     });
 
     uniqueFieldData.forEach((item) => {
@@ -110,11 +116,13 @@ export class DoReReview extends BaseReview {
       result = await this.batchValidate({
         result,
         validator,
+        userEmail,
         dateFormats,
         uploadId: _uploadId,
         extra: uploadInfo.extra,
         multiSelectColumnHeadings,
         onBatchInitialize: validations.onBatchInitialize,
+        name: (uploadInfo._templateId as unknown as TemplateEntity).name,
       });
     } else {
       result = await this.normalValidate({
@@ -137,12 +145,12 @@ export class DoReReview extends BaseReview {
     headings?: string[];
     record: Record<string, any>;
     numberColumnHeadings?: Set<string>;
-    multiSelectColumnHeadings?: Set<string>;
+    multiSelectColumnHeadings?: Record<string, string>;
   }) {
-    return Array.from(multiSelectColumnHeadings).reduce(
+    return Object.keys(multiSelectColumnHeadings).reduce(
       (acc, heading) => {
         if (typeof record.record[heading] === 'string') {
-          acc[heading] = record.record[heading]?.split(',');
+          acc[heading] = record.record[heading]?.split(multiSelectColumnHeadings[heading]);
         }
 
         return acc;
@@ -160,7 +168,7 @@ export class DoReReview extends BaseReview {
     uploadId: string;
     result: ISaveResults;
     validator: ValidateFunction;
-    multiSelectColumnHeadings: Set<string>;
+    multiSelectColumnHeadings: Record<string, string>;
     dateFormats: Record<string, string[]>;
   }) {
     const bulkOp = this.dalService.getRecordBulkOp(uploadId);
@@ -219,20 +227,24 @@ export class DoReReview extends BaseReview {
   }
 
   private async batchValidate({
+    name,
     extra,
     result,
     uploadId,
     validator,
+    userEmail,
     dateFormats,
     onBatchInitialize,
     multiSelectColumnHeadings,
   }: {
     extra: any;
+    name: string;
     uploadId: string;
+    userEmail: string;
     result: ISaveResults;
     onBatchInitialize: string;
     validator: ValidateFunction;
-    multiSelectColumnHeadings: Set<string>;
+    multiSelectColumnHeadings: Record<string, string>;
     dateFormats: Record<string, string[]>;
   }) {
     const { dataStream } = this.getStreams({
@@ -245,6 +257,10 @@ export class DoReReview extends BaseReview {
       dateFormats,
       multiSelectColumnHeadings,
     });
+    const errorEmailContents: {
+      subject: string;
+      content: string;
+    }[] = [];
 
     await this.processBatches({
       batches,
@@ -260,7 +276,36 @@ export class DoReReview extends BaseReview {
           result.validRecords++;
         }
       },
+      onError: async (error) => {
+        const emailContent = this.emailService.getEmailContent({
+          type: 'ERROR_EXECUTING_CODE',
+          data: {
+            error: JSON.stringify(error.output, null, 2).replace(/\\+"/g, '"'),
+            importId: uploadId,
+            importName: name,
+            time: new Date().toString(),
+          },
+        });
+        errorEmailContents.push({
+          subject: `🛑 Encountered error while executing validation code in ${name}`,
+          content: emailContent,
+        });
+      },
     });
+
+    for (const errorEmailContent of errorEmailContents) {
+      await this.emailService.sendEmail({
+        from: process.env.ALERT_EMAIL_FROM,
+        html: errorEmailContent.content,
+        subject: errorEmailContent.subject,
+        to: userEmail,
+        senderName: process.env.EMAIL_FROM_NAME,
+      });
+    }
+
+    if (errorEmailContents.length) {
+      throw new InternalServerErrorException(APIMessages.ERROR_DURING_VALIDATION);
+    }
 
     return result;
   }
@@ -275,7 +320,7 @@ export class DoReReview extends BaseReview {
     extra: any;
     uploadId: string;
     validator: ValidateFunction;
-    multiSelectColumnHeadings: Set<string>;
+    multiSelectColumnHeadings: Record<string, string>;
     dateFormats: Record<string, string[]>;
   }) {
     let batchCount = 1;

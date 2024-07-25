@@ -28,6 +28,10 @@ export const APIMessages = {
   INCORRECT_KEYS_FOUND: 'Invalid keys found! Please check and correct them from web',
   INVALID_AUTH_TOKEN: 'Invalid authentication token',
   INVALID_RSS_URL: 'The Specified URL doesn`t contain any RSS XML Feed, Please enter a Valid RSS XML URL',
+  COLUMN_KEY_TAKEN: 'Column with the same key already exists. Please provide a unique key from "Validations".',
+  COLUMN_KEY_DUPLICATED: 'Column with the same key already exists. Please provide a unique key.',
+  ERROR_DURING_VALIDATION:
+    'Something went wrong while validating data. Data is not imported yet, but team is informed about issue. Please try again after sometime.',
 };
 
 export const CONSTANTS = {

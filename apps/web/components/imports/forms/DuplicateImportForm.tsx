@@ -3,8 +3,8 @@ import { useFocusTrap } from '@mantine/hooks';
 import { FocusTrap, SimpleGrid, Stack, TextInput as Input } from '@mantine/core';
 
 import { Button } from '@ui/button';
-import { Select } from '@ui/select';
 import { Checkbox } from '@ui/checkbox';
+import { NativeSelect } from '@ui/native-select';
 
 import { IProjectPayload } from '@impler/shared';
 
@@ -44,7 +44,7 @@ export function DuplicateImportForm({ onSubmit, profile, projects, originalName 
             placeholder="Import title"
             error={errors.name?.message}
           />
-          <Select
+          <NativeSelect
             required
             placeholder="Project"
             label="Project"

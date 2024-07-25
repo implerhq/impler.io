@@ -21,3 +21,6 @@ export function UploadTerminated(value: { uploadId: string }) {
 export function UploadCompleted(value: IUpload) {
   window.parent.postMessage({ type: EventTypesEnum.UPLOAD_COMPLETED, value }, '*');
 }
+export function DataImported(value: Record<string, any>[]) {
+  window.parent.postMessage({ type: EventTypesEnum.DATA_IMPORTED, value }, '*');
+}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Modal } from '@ui/Modal';
 import { TEXTS, variables } from '@config';
@@ -59,10 +59,11 @@ export function Widget() {
     resetAppState();
     setPhase(PhasesEnum.VALIDATE);
   };
-  const onComplete = (uploadData: IUpload) => {
+  const onComplete = (uploadData: IUpload, importedData?: Record<string, any>[]) => {
     setDataCount(uploadData.totalRecords);
     setPhase(PhasesEnum.COMPLETE);
     ParentWindow.UploadCompleted(uploadData);
+    if (importedData) ParentWindow.DataImported(importedData);
   };
 
   const PhaseView = {
@@ -90,6 +91,12 @@ export function Widget() {
     [PromptModalTypesEnum.CLOSE]: TEXTS.PROMPT.SUBTITLE_CLOSE,
     [PromptModalTypesEnum.UPLOAD_AGAIN]: TEXTS.PROMPT.SUBTITLE_RESET,
   };
+
+  useEffect(() => {
+    if (!showWidget) {
+      setPhase(PhasesEnum.VALIDATE);
+    }
+  }, [showWidget]);
 
   return (
     <Modal title={title || importConfig?.title || templateInfo?.name} opened={showWidget} onClose={onClose}>

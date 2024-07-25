@@ -11,6 +11,7 @@ COPY .npmrc .
 COPY apps/queue-manager ./apps/queue-manager
 COPY libs/dal ./libs/dal
 COPY libs/shared ./libs/shared
+COPY libs/services ./libs/services
 
 COPY tsconfig.json .
 COPY tsconfig.base.json .

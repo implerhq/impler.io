@@ -19,7 +19,7 @@ import { SegmentedControl } from '@ui/SegmentedControl';
 import { ConfirmModal } from 'components/widget/modals/ConfirmModal';
 
 interface IPhase3Props {
-  onNextClick: (uploadData: IUpload) => void;
+  onNextClick: (uploadData: IUpload, importedData?: Record<string, any>[]) => void;
   onPrevClick: () => void;
 }
 
@@ -111,12 +111,12 @@ export function Phase3(props: IPhase3Props) {
               currentData &&
               oldVal != newVal &&
               !(oldVal === '' && newVal === undefined) &&
-              !(newVal === '' && oldVal === undefined)
+              !(newVal === '' && (oldVal === undefined || oldVal === null))
             ) {
               if (!currentData[row].updated) {
                 currentData[row].updated = {};
               }
-              currentData[row].record[name] = newVal;
+              currentData[row].record[name] = newVal === '' ? null : newVal;
               currentData[row].updated[name] = true;
               setReviewData(currentData);
               updateRecord({

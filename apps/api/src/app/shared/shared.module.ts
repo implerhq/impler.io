@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { SchedulerRegistry } from '@nestjs/schedule';
 import {
   ColumnRepository,
   CommonRepository,
@@ -18,14 +19,8 @@ import {
   UserJobRepository,
   JobMappingRepository,
 } from '@impler/dal';
-import { FileNameService } from '@impler/shared';
-import { SchedulerRegistry } from '@nestjs/schedule';
-import { S3StorageService, StorageService } from '@impler/shared/dist/services/storage';
 import { CSVFileService2, ExcelFileService } from './services/file/file.service';
-import { EmailService, SESEmailService } from './services/email.service';
-import { CronJobService } from '@shared/services/cronjob.service';
-import { QueueService } from './services/queue.service';
-import { RSSService } from './services/rss.service';
+import { S3StorageService, StorageService, EmailService, SESEmailService, FileNameService } from '@impler/services';
 
 const DAL_MODELS = [
   ProjectRepository,
@@ -58,17 +53,6 @@ function getEmailServiceClass() {
   return SESEmailService;
 }
 
-function getQueueServiceClass() {
-  return QueueService;
-}
-
-function getRSSServiceClass() {
-  return RSSService;
-}
-function getCronJobService() {
-  return CronJobService;
-}
-
 const PROVIDERS = [
   {
     provide: DalService,
@@ -86,18 +70,6 @@ const PROVIDERS = [
   {
     provide: EmailService,
     useClass: getEmailServiceClass(),
-  },
-  {
-    provide: QueueService,
-    useClass: getQueueServiceClass(),
-  },
-  {
-    provide: RSSService,
-    useClass: getRSSServiceClass(),
-  },
-  {
-    provide: CronJobService,
-    useClass: getCronJobService(),
   },
   ...FILE_SERVICES,
   JwtService,

@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserRepository, TemplateRepository } from '@impler/dal';
-import { IImportConfig, PaymentAPIService } from '@impler/shared';
+import { IImportConfig } from '@impler/shared';
+import { PaymentAPIService } from '@impler/services';
 import { APIMessages } from '@shared/constants';
 
 @Injectable()

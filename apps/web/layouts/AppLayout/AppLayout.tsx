@@ -45,9 +45,9 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{pageProps.title ? `${pageProps.title} | Impler` : 'Impler'}</title>
         <link rel="icon" href={colorScheme === 'dark' ? '/favicon-dark.ico' : '/favicon-light.ico'} />
-        <meta name="description" content={TEXTS.DESCRIPTION} />
-        <meta name="og:title" content={TEXTS.TITLE} />
-        <meta name="og:description" content={TEXTS.DESCRIPTION} />
+        <meta name="description" content={TEXTS.SEO_DESCRIPTION} />
+        <meta name="og:title" content={TEXTS.SEO_TITLE} />
+        <meta name="og:description" content={TEXTS.SEO_DESCRIPTION} />
       </Head>
       <div className={classes.root}>
         <LoadingOverlay visible={isProjectsLoading || isProfileLoading} />

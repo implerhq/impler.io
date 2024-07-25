@@ -1,17 +1,10 @@
 import { DalService, UploadRepository } from '@impler/dal';
-import { StorageService } from '@impler/shared/dist/services/storage';
-import {
-  EndImportData,
-  FileNameService,
-  FileMimeTypesEnum,
-  QueuesEnum,
-  DestinationsEnum,
-  PaymentAPIService,
-} from '@impler/shared';
+import { QueuesEnum, EndImportData, FileMimeTypesEnum, DestinationsEnum } from '@impler/shared';
+import { FileNameService, PaymentAPIService, StorageService } from '@impler/services';
 
 import { BaseConsumer } from './base.consumer';
 import { publishToQueue } from '../bootstrap';
-import { getStorageServiceClass } from '../helpers/storage.helper';
+import { getStorageServiceClass } from '../helpers/serivces.helper';
 
 export class EndImportConsumer extends BaseConsumer {
   private dalService: DalService = new DalService();
