@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { Injectable } from '@nestjs/common';
 import { parseStringPromise } from 'xml2js';
 
 import { StorageService, FileNameService } from '@impler/services';
@@ -16,7 +15,6 @@ import { BaseConsumer } from './base.consumer';
 import { publishToQueue } from '../bootstrap';
 import { getStorageServiceClass } from '../helpers/serivces.helper';
 
-@Injectable()
 export class GetImportJobDataConsumer extends BaseConsumer {
   private commonRepository: CommonRepository = new CommonRepository();
   private userJobRepository: UserJobRepository = new UserJobRepository();
