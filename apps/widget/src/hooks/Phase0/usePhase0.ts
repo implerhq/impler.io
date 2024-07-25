@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { useAPIState } from '@store/api.context';
@@ -30,14 +31,10 @@ export function usePhase0({ goNext }: IUsePhase0Props) {
     }
   );
 
-  const { refetch } = useQuery<IImportConfig, IErrorObject, IImportConfig>(
+  const { data: importConfigData, refetch } = useQuery<IImportConfig, IErrorObject, IImportConfig>(
     ['importConfig', projectId, templateId],
     () => api.getImportConfig(projectId, templateId),
     {
-      onSuccess(importConfigResponse) {
-        console.log('IMPORTCONFIGRESPONSE', importConfigResponse);
-        setImportConfig(importConfigResponse);
-      },
       cacheTime: 0,
       enabled: false,
     }
@@ -46,6 +43,10 @@ export function usePhase0({ goNext }: IUsePhase0Props) {
   const handleValidate = async () => {
     return checkIsRequestvalid({ projectId, templateId, schema: schema });
   };
+
+  useEffect(() => {
+    if (importConfigData) setImportConfig(importConfigData);
+  }, [importConfigData]);
 
   return {
     error,
