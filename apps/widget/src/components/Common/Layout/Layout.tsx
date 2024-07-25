@@ -7,15 +7,16 @@ import { TemplateModeEnum } from '@impler/shared';
 interface ILayoutProps {
   active: PhasesEnum;
   title?: string;
+  mode?: TemplateModeEnum;
 }
 
 export function Layout(props: PropsWithChildren<ILayoutProps>) {
   const { classes } = useStyles();
-  const { children, active, title } = props;
+  const { children, active, title, mode } = props;
 
   return (
     <div className={classes.root}>
-      <Heading mode={TemplateModeEnum.AUTOMATIC} active={active} title={title} />
+      <Heading mode={mode} active={active} title={title} />
       <div className={classes.container}>{children}</div>
     </div>
   );
