@@ -66,7 +66,7 @@ export function Widget() {
     if (importedData) ParentWindow.DataImported(importedData);
   };
 
-  console.log('IMPORT CONFIG MODE>', importConfig.mode);
+  console.log('IMPORT CONFIG>', importConfig);
 
   const PhaseView = {
     [PhasesEnum.VALIDATE]: <Phase0 onValidationSuccess={() => setPhase(PhasesEnum.UPLOAD)} />,

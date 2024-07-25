@@ -35,6 +35,7 @@ export function usePhase0({ goNext }: IUsePhase0Props) {
     () => api.getImportConfig(projectId, templateId),
     {
       onSuccess(importConfigResponse) {
+        console.log('IMPORTCONFIGRESPONSE', importConfigResponse);
         setImportConfig(importConfigResponse);
       },
       cacheTime: 0,
