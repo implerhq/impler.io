@@ -8,8 +8,8 @@ import { CreateUserJobCommand } from './create-userjob.command';
 @Injectable()
 export class CreateUserJob {
   constructor(
-    private readonly userJobRepository: UserJobRepository,
-    private readonly rssService: RSSService
+    private readonly rssService: RSSService,
+    private readonly userJobRepository: UserJobRepository
   ) {}
 
   async execute({ _templateId, url, externalUserId, extra }: CreateUserJobCommand): Promise<UserJobEntity> {

@@ -3,6 +3,8 @@ import { GetColumnSchemaMapping } from './get-columnschema-mapping/get-columnsch
 import { CreateJobMapping } from './create-jobmapping/create-jobmapping.usecase';
 import { UpdateUserJob } from './update-userjob/update-userjob.usecase';
 import { GetUserJob } from './get-userjob/get-userjob.usecase';
+import { CronJobService, RSSService } from '@shared/services';
+import { QueueService } from '@shared/services/queue.service';
 
 export const USECASES = [
   CreateUserJob,
@@ -10,6 +12,9 @@ export const USECASES = [
   CreateJobMapping,
   UpdateUserJob,
   GetUserJob,
+  RSSService,
+  CronJobService,
+  QueueService,
   //
 ];
 
