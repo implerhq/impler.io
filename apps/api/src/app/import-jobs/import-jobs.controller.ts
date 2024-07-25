@@ -1,7 +1,17 @@
 import { ApiTags, ApiSecurity, ApiOperation } from '@nestjs/swagger';
 import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, UseGuards } from '@nestjs/common';
-import { CreateUserJob, GetColumnSchemaMapping, CreateJobMapping, UpdateUserJob, GetUserJob } from './usecase';
-import { CronJobService } from '../shared/services/cronjob.service';
+import {
+  CreateUserJob,
+  GetColumnSchemaMapping,
+  CreateJobMapping,
+  UpdateUserJob,
+  GetUserJob,
+  UserJobPause,
+  UserJobResume,
+  UserJobStart,
+  UserJobTerminate,
+  UserJobDelete,
+} from './usecase';
 import { UpdateJobMappingDto } from './dtos/update-jobmapping.dto';
 import { UpdateJobInfoDto } from './dtos/update-jobinfo.dto';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
@@ -19,7 +29,11 @@ export class ImportJobsController {
     private getUserJob: GetUserJob,
     private updateJobMapping: CreateJobMapping,
     private updateUserJob: UpdateUserJob,
-    private cronJobService: CronJobService
+    private userJobPause: UserJobPause,
+    private userJobResume: UserJobResume,
+    private userJobStart: UserJobStart,
+    private userJobTerminate: UserJobTerminate,
+    private userJobDelete: UserJobDelete
   ) {}
 
   @Post(':templateId')
@@ -67,34 +81,34 @@ export class ImportJobsController {
   @ApiOperation({ summary: 'Pause a Cron Job' })
   @UseGuards(JwtAuthGuard)
   async pauseCronJob(@Param('jobId') jobId: string) {
-    return await this.cronJobService.pauseJob(jobId);
+    return await this.userJobPause.execute(jobId);
   }
 
   @Put('/user/:jobId/start')
   @ApiOperation({ summary: 'Start a Cron Job' })
   @UseGuards(JwtAuthGuard)
   async startCronJob(@Param('jobId') jobId: string) {
-    return await this.cronJobService.startJob(jobId);
+    return await this.userJobStart.execute(jobId);
   }
 
   @Delete('/user/:externalUserId/:jobId')
   @ApiOperation({ summary: 'Delete a Job' })
   @UseGuards(JwtAuthGuard)
-  async deleteJob(@Param('externalUserId') externalUserId: string, @Param('jobId') jobId: string) {
-    return await this.cronJobService.deleteJob(externalUserId, jobId);
+  async deleteJob(@Param('externalUserId') externalUserId: string, @Param('jobId') _jobId: string) {
+    return await this.userJobDelete.execute({ externalUserId, _jobId });
   }
 
   @Delete(':jobId')
-  @ApiOperation({ summary: 'Delete and Update the status of UserJob' })
+  @ApiOperation({ summary: 'Terminate Userjob Update the status of UserJob to TERMINATED' })
   @UseGuards(JwtAuthGuard)
   async deleteJobRoute(@Param('jobId') _jobId: string) {
-    return await this.cronJobService.deleteUserJob(_jobId);
+    return await this.userJobTerminate.execute(_jobId);
   }
 
   @Put('/user/:jobId/resume')
   @ApiOperation({ summary: 'Resume the Paused UserJob' })
   @UseGuards(JwtAuthGuard)
   async resumeUserJobRoute(@Param('jobId') _jobId: string) {
-    return await this.cronJobService.resumeJob(_jobId);
+    return await this.userJobResume.execute(_jobId);
   }
 }
