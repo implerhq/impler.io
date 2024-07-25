@@ -8,7 +8,6 @@ import {
   JobMappingRepository,
   ImportJobHistoryRepository,
   CommonRepository,
-  UserJobEntity,
   WebhookDestinationRepository,
 } from '@impler/dal';
 import { BaseConsumer } from './base.consumer';
@@ -36,9 +35,10 @@ export class GetImportJobDataConsumer extends BaseConsumer {
       allDataFilePath: this.fileNameService.getAllJsonDataFilePath(importJobHistoryId),
       status: ImportJobHistoryStatusEnum.PROCESSING,
     });
+    const userJobInfo = await this.userJobRepository.getUserJobWithTemplate(data._jobId);
 
     const webhookDestination = await this.webhookDestinationRepository.findOne({
-      _templateId: (data._jobId as unknown as UserJobEntity)._templateId,
+      _templateId: userJobInfo._templateId,
     });
 
     if (webhookDestination?.callbackUrl) {
