@@ -3,8 +3,14 @@ import { GetColumnSchemaMapping } from './get-columnschema-mapping/get-columnsch
 import { CreateJobMapping } from './create-jobmapping/create-jobmapping.usecase';
 import { UpdateUserJob } from './update-userjob/update-userjob.usecase';
 import { GetUserJob } from './get-userjob/get-userjob.usecase';
-import { CronJobService, RSSService } from '@shared/services';
+import { RSSService } from '@shared/services';
 import { QueueService } from '@shared/services/queue.service';
+import { UserJobPause } from './userjob-usecase/userjob-pause.usecase';
+import { UserJobDelete } from './userjob-usecase/userjob-delete.usecase';
+import { UserJobStart } from './userjob-usecase/userjob-start.usecase';
+import { UserJobTerminate } from './userjob-usecase/userjob-terminate.usecase';
+import { UserJobTriggerService } from './userjob-usecase/userjob-trigger.usecase';
+import { UserJobResume } from './userjob-usecase/userjob.resume.usecsae';
 
 export const USECASES = [
   CreateUserJob,
@@ -13,9 +19,26 @@ export const USECASES = [
   UpdateUserJob,
   GetUserJob,
   RSSService,
-  CronJobService,
   QueueService,
+  UserJobResume,
+  UserJobPause,
+  UserJobDelete,
+  UserJobStart,
+  UserJobTerminate,
+  UserJobTriggerService,
   //
 ];
 
-export { CreateUserJob, GetColumnSchemaMapping, CreateJobMapping, UpdateUserJob, GetUserJob };
+export {
+  CreateUserJob,
+  GetColumnSchemaMapping,
+  CreateJobMapping,
+  UpdateUserJob,
+  GetUserJob,
+  UserJobResume,
+  UserJobPause,
+  UserJobDelete,
+  UserJobStart,
+  UserJobTerminate,
+  UserJobTriggerService,
+};
