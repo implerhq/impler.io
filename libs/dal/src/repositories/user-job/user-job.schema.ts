@@ -1,4 +1,4 @@
-import { model, models, Schema } from 'mongoose';
+import { model, models, Schema, Model } from 'mongoose';
 import { schemaOptions } from '../schema-default.options';
 import { UserJobEntity } from './user-job.entity';
 
@@ -43,4 +43,4 @@ interface IUserJobDocument extends UserJobEntity, Document {
   _id: never;
 }
 
-export const UserJob = models.UserJob || model<IUserJobDocument>('UserJob', userJobSchema);
+export const UserJob = (models.UserJob as Model<IUserJobDocument>) || model<IUserJobDocument>('UserJob', userJobSchema);
