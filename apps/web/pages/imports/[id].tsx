@@ -35,7 +35,6 @@ const Validator = dynamic(() => import('@components/imports/validator').then((mo
 
 export default function ImportDetails({}) {
   const router = useRouter();
-  // const [importMode, setImportMode] = useState<'manual' | 'automatic'>('manual');
   const [activeTab, setActiveTab] = useState<'schema' | 'destination' | 'snippet' | 'validator' | 'output'>();
   const { colorScheme } = useMantineTheme();
   const {
@@ -56,6 +55,9 @@ export default function ImportDetails({}) {
     projectId: templateData?._projectId,
     accessToken: profileInfo?.accessToken,
     onUploadComplete: onSpreadsheetImported,
+    extra: {
+      externalUserId: profileInfo?.email,
+    },
   });
   const onImportClick = () => {
     track({
@@ -89,7 +91,6 @@ export default function ImportDetails({}) {
               { label: 'Manual', value: TemplateModeEnum.MANUAL },
               { label: 'Automatic', value: TemplateModeEnum.AUTOMATIC },
             ]}
-            defaultValue={TemplateModeEnum.MANUAL}
             value={templateData?.mode}
             onChange={(mode) => updateImport({ mode: mode || undefined })}
           />
