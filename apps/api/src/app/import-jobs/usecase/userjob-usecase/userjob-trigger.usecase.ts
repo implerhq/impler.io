@@ -6,7 +6,7 @@ import { QueuesEnum } from '@impler/shared';
 export class UserJobTriggerService {
   constructor(private readonly queueService: QueueService) {}
 
-  async execute(_jobId: string): Promise<void> {
+  async execute(_jobId: string) {
     try {
       this.queueService.publishToQueue(QueuesEnum.GET_IMPORT_JOB_DATA, { _jobId });
     } catch (error) {
