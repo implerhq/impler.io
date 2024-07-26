@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
@@ -31,13 +31,9 @@ export function usePhase0({ goNext }: IUsePhase0Props) {
     }
   );
 
-  const { data: importConfigData, refetch } = useQuery<IImportConfig, IErrorObject, IImportConfig>(
+  const { data: importConfigData, mutate: fetchImportConfig } = useMutation<IImportConfig, IErrorObject, void>(
     ['importConfig', projectId, templateId],
-    () => api.getImportConfig(projectId, templateId),
-    {
-      cacheTime: 0,
-      enabled: false,
-    }
+    () => api.getImportConfig(projectId, templateId)
   );
 
   const handleValidate = async () => {
@@ -50,7 +46,7 @@ export function usePhase0({ goNext }: IUsePhase0Props) {
 
   return {
     error,
-    refetch,
+    fetchImportConfig,
     isLoading,
     handleValidate,
     isWidgetOpened: showWidget,

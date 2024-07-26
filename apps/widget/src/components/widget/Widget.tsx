@@ -105,7 +105,11 @@ export function Widget() {
 
   return (
     <Modal title={title || importConfig?.title || templateInfo?.name} opened={showWidget} onClose={onClose}>
-      <Layout active={phase} title={title || importConfig?.title || templateInfo?.name}>
+      <Layout
+        active={phase}
+        title={title || importConfig?.title || templateInfo?.name}
+        mode={importConfig.mode as TemplateModeEnum}
+      >
         {PhaseView[phase]}
 
         <ConfirmModal
