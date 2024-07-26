@@ -9,14 +9,13 @@ interface IPhase0Props {
 
 export function Phase0(props: IPhase0Props) {
   const { onValidationSuccess: goNext } = props;
-  const { isLoading, error, handleValidate, isWidgetOpened, fetchImportConfig } = usePhase0({
+  const { isLoading, error, handleValidate, isWidgetOpened } = usePhase0({
     goNext,
   });
 
   useEffect(() => {
     if (isWidgetOpened) {
       handleValidate();
-      fetchImportConfig();
     }
   }, [isWidgetOpened]);
 

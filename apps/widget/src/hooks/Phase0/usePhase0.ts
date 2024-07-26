@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
 
 import { useAPIState } from '@store/api.context';
@@ -15,6 +14,16 @@ export function usePhase0({ goNext }: IUsePhase0Props) {
   const { projectId, templateId } = useImplerState();
   const { schema, setImportConfig, showWidget } = useAppState();
 
+  const { mutate: fetchImportConfig } = useMutation<IImportConfig, IErrorObject, void>(
+    ['importConfig', projectId, templateId],
+    () => api.getImportConfig(projectId, templateId),
+    {
+      onSuccess(importConfigData) {
+        setImportConfig(importConfigData);
+        goNext();
+      },
+    }
+  );
   const {
     error,
     isLoading,
@@ -25,28 +34,18 @@ export function usePhase0({ goNext }: IUsePhase0Props) {
     {
       onSuccess(valid) {
         if (valid) {
-          goNext();
+          fetchImportConfig();
         }
       },
     }
-  );
-
-  const { data: importConfigData, mutate: fetchImportConfig } = useMutation<IImportConfig, IErrorObject, void>(
-    ['importConfig', projectId, templateId],
-    () => api.getImportConfig(projectId, templateId)
   );
 
   const handleValidate = async () => {
     return checkIsRequestvalid({ projectId, templateId, schema: schema });
   };
 
-  useEffect(() => {
-    if (importConfigData) setImportConfig(importConfigData);
-  }, [importConfigData]);
-
   return {
     error,
-    fetchImportConfig,
     isLoading,
     handleValidate,
     isWidgetOpened: showWidget,

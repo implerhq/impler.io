@@ -28,13 +28,13 @@ export function Widget() {
   const [dataCount, setDataCount] = useState<number>(defaultDataCount);
   const [promptContinueAction, setPromptContinueAction] = useState<PromptModalTypesEnum>();
   const {
+    title,
+    uploadInfo,
     showWidget,
+    templateInfo,
+    importConfig,
     setShowWidget,
     reset: resetAppState,
-    uploadInfo,
-    templateInfo,
-    title,
-    importConfig,
   } = useAppState();
 
   const onUploadResetClick = () => {
