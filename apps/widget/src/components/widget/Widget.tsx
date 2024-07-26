@@ -24,11 +24,18 @@ import { AutoImportPhase4 } from './Phases/AutoImportPhases/AutoImportPhase4';
 
 export function Widget() {
   const defaultDataCount = 0;
-  const { importConfig } = useAppState();
   const { terminateUpload, phase, setPhase } = useWidget();
   const [dataCount, setDataCount] = useState<number>(defaultDataCount);
   const [promptContinueAction, setPromptContinueAction] = useState<PromptModalTypesEnum>();
-  const { showWidget, setShowWidget, reset: resetAppState, uploadInfo, templateInfo, title } = useAppState();
+  const {
+    showWidget,
+    setShowWidget,
+    reset: resetAppState,
+    uploadInfo,
+    templateInfo,
+    title,
+    importConfig,
+  } = useAppState();
 
   const onUploadResetClick = () => {
     logAmplitudeEvent('RESET');
@@ -66,7 +73,7 @@ export function Widget() {
     if (importedData) ParentWindow.DataImported(importedData);
   };
 
-  console.log('IMPORT CONFIG>', importConfig);
+  console.log('IMPORT CONFIG>', importConfig, title, showWidget);
 
   const PhaseView = {
     [PhasesEnum.VALIDATE]: <Phase0 onValidationSuccess={() => setPhase(PhasesEnum.UPLOAD)} />,
