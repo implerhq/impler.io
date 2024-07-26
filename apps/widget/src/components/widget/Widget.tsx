@@ -73,8 +73,6 @@ export function Widget() {
     if (importedData) ParentWindow.DataImported(importedData);
   };
 
-  console.log('IMPORT CONFIG>', importConfig, title, showWidget);
-
   const PhaseView = {
     [PhasesEnum.VALIDATE]: <Phase0 onValidationSuccess={() => setPhase(PhasesEnum.UPLOAD)} />,
     ...(importConfig.mode === TemplateModeEnum.AUTOMATIC
@@ -95,9 +93,6 @@ export function Widget() {
           ),
         }),
   };
-
-  console.log('PHASE>', phase);
-  console.log('PHASEVIEW>', PhaseView);
 
   const subTitle = {
     [PromptModalTypesEnum.CLOSE]: TEXTS.PROMPT.SUBTITLE_CLOSE,
