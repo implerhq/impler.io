@@ -2,6 +2,7 @@
 import { forwardRef } from 'react';
 import { HotTable } from '@handsontable/react';
 import 'cooltipz-css/cooltipz.min.css';
+import 'tippy.js/dist/tippy.css';
 import {
   TextCellType,
   DateCellType,
@@ -41,6 +42,7 @@ registerValidator(dateValidator);
 
 import 'handsontable/dist/handsontable.full.min.css';
 import './HandsonTable.styles.min.css';
+import { addTippyToElement } from '@util';
 
 interface TableProps {
   headings: string[];
@@ -50,6 +52,8 @@ interface TableProps {
   width?: string | number;
   afterRender?: () => void;
   data: Record<string, any>[];
+  columnDescriptions?: string[];
+  primaryColor?: string;
   columnDefs: HotItemSchema[];
   onCheckAll?: (checked: boolean) => void;
   onValueChange?: (row: number, prop: string, oldVal: any, newVal: any) => void;
@@ -163,6 +167,8 @@ export const Table = forwardRef<HotTableClass, TableProps>(
       headings,
       columnDefs,
       data,
+      columnDescriptions,
+      primaryColor,
       allChecked,
       onRowCheck,
       onCheckAll,
@@ -204,12 +210,20 @@ export const Table = forwardRef<HotTableClass, TableProps>(
             if (changes[i] && changes[i]?.[3] === null) changes[i]![3] = undefined;
           }
         }}
-        afterGetColHeader={function (i, TH) {
+        afterGetColHeader={(i, TH) => {
           if (i === 0) {
             TH.classList.add('check-all-cell');
-            TH.innerHTML = `<div class="checkbox"><input type="checkbox" ${
-              allChecked ? 'checked' : ''
-            } class="checkbox__control"><svg class="checkbox__control-icon" xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 24 24"><path fill="currentColor" d="M 20.292969 5.2929688 L 9 16.585938 L 4.7070312 12.292969 L 3.2929688 13.707031 L 9 19.414062 L 21.707031 6.7070312 L 20.292969 5.2929688 z"></path></svg></div>`;
+            TH.innerHTML = `
+              <div class="checkbox">
+                <input type="checkbox" ${allChecked ? 'checked' : ''} class="checkbox__control">
+                <svg class="checkbox__control-icon" xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 24 24">
+                  <path fill="currentColor" d="M 20.292969 5.2929688 L 9 16.585938 L 4.7070312 12.292969 L 3.2929688 13.707031 L 9 19.414062 L 21.707031 6.7070312 L 20.292969 5.2929688 z"></path>
+                </svg>
+              </div>`;
+          } else {
+            if (columnDescriptions && columnDescriptions[i]) {
+              addTippyToElement(TH as HTMLElement, columnDescriptions[i], primaryColor as string);
+            }
           }
         }}
         renderAllColumns
