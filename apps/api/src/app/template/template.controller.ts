@@ -210,6 +210,7 @@ export class TemplateController {
           isUnique: columnData.isUnique,
           isFrozen: columnData.isFrozen,
           name: columnData.name,
+          description: columnData.description,
           regex: columnData.regex,
           regexDescription: columnData.regexDescription,
           selectValues: columnData.selectValues,
