@@ -1,5 +1,8 @@
-import axios from 'axios';
 import * as Sentry from '@sentry/react';
+import axios from 'axios';
+import tippy from 'tippy.js';
+import 'tippy.js/dist/tippy.css';
+import 'tippy.js/animations/shift-away.css';
 import { variables } from '@config';
 import { downloadFile } from '@impler/shared';
 
@@ -64,3 +67,55 @@ export function captureError(error: any) {
 
 export const getObjectId = (math = Math, date = Date, hr = 16, sec = (sp: number) => math.floor(sp).toString(hr)) =>
   sec(date.now() / 1000) + ' '.repeat(hr).replace(/./g, () => sec(math.random() * hr));
+export const validateRssUrl = {
+  required: 'RSS URL is required',
+  pattern: {
+    value: /^(https?:\/\/)?([\w-]+(\.[\w-]+)+\.?(:\d+)?)(\/[^\s]*)?$/,
+    message: 'Please Enter a valid RSS Feed URL',
+  },
+};
+
+export const createCustomTippyTheme = (color: string) => {
+  const themeId = 'custom-tippy-theme';
+  if (!document.getElementById(themeId)) {
+    const style = document.createElement('style');
+    style.id = themeId;
+    style.textContent = `
+      .tippy-box[data-theme~='custom'] {
+        background-color: ${color};
+        color: #fff;
+     }
+      .tippy-box[data-theme~='custom'][data-placement^='top'] > .tippy-arrow::before {
+        border-top-color: ${color};
+     }
+      .tippy-box[data-theme~='custom'][data-placement^='bottom'] > .tippy-arrow::before {
+        border-bottom-color: ${color};
+     }
+      .tippy-box[data-theme~='custom'][data-placement^='left'] > .tippy-arrow::before {
+        border-left-color: ${color};
+      }
+      .tippy-box[data-theme~='custom'][data-placement^='right'] > .tippy-arrow::before {
+        border-right-color: ${color};
+      }
+    `;
+    document.head.appendChild(style);
+  }
+};
+
+export const getColumnDescription = (columnIndex: number, descriptions: string[]): string | null => {
+  return descriptions[columnIndex] || null;
+};
+
+export const addTippyToElement = (element: HTMLElement, content: string, primaryColor: string) => {
+  if (!element || !content) return;
+
+  createCustomTippyTheme(primaryColor);
+  tippy(element, {
+    content,
+    placement: 'top',
+    arrow: true,
+    theme: 'custom',
+    animation: 'shift-away',
+    duration: 300,
+  });
+};
