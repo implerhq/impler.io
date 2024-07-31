@@ -16,10 +16,8 @@ import {
   WebhookDestinationRepository,
   BubbleDestinationRepository,
 } from '@impler/dal';
-import { FileNameService } from '@impler/shared';
-import { S3StorageService, StorageService } from '@impler/shared/dist/services/storage';
 import { CSVFileService2, ExcelFileService } from './services/file/file.service';
-import { EmailService, SESEmailService } from './services/email.service';
+import { S3StorageService, StorageService, EmailService, SESEmailService, FileNameService } from '@impler/services';
 
 const DAL_MODELS = [
   ProjectRepository,

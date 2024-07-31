@@ -16,7 +16,7 @@ export const DestinationItem = ({ title, subtitle, onClick, children, active }: 
   const { classes } = useStyles({ colorScheme });
 
   return (
-    <Stack className={classes.container} p="lg">
+    <Stack className={classes.container} p="lg" spacing={children ? 'sm' : 0}>
       <Flex justify="space-between" align="center">
         <Stack spacing={0}>
           <Title color={colorScheme === 'dark' ? colors.white : colors.black} order={4}>

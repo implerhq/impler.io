@@ -22,7 +22,7 @@ export interface IBuildSendDataParameters extends IBaseSendDataParameters {
   defaultValues: string;
   recordFormat?: string;
   chunkFormat?: string;
-  multiSelectHeadings?: string[];
+  multiSelectHeadings?: Record<string, string>;
   imageHeadings?: string[];
 }
 export interface ISendDataResponse {

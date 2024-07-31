@@ -1,5 +1,4 @@
 import {
-  HttpClient,
   IUpload,
   IMapping,
   IMappingFinalize,
@@ -11,6 +10,7 @@ import {
   IRecord,
   constructQueryString,
 } from '@impler/shared';
+import { HttpClient } from './api.client';
 
 export class ApiService {
   private httpClient: HttpClient;
@@ -128,9 +128,10 @@ export class ApiService {
   }
 
   async confirmReview(uploadId: string) {
-    return this.httpClient.post(
-      `/review/${uploadId}/confirm`,
-    ) as Promise<IUpload>;
+    return this.httpClient.post(`/review/${uploadId}/confirm`) as Promise<{
+      uploadInfo: IUpload;
+      importedData: Record<string, any>[];
+    }>;
   }
 
   async getUpload(uploadId: string) {

@@ -25,9 +25,8 @@ import { getAssetMimeType, validateNotFound } from '@shared/helpers/common.helpe
 import { validateUploadStatus } from '@shared/helpers/upload.helpers';
 import { PaginationResponseDto } from '@shared/dtos/pagination-response.dto';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
-import { ValidImportFile } from '@shared/validations/valid-import-file.validation';
-import { GetUploadCommand } from '@shared/usecases/get-upload/get-upload.command';
 import { ValidateTemplate } from '@shared/validations/valid-template.validation';
+import { ValidImportFile } from '@shared/validations/valid-import-file.validation';
 
 import { UploadRequestDto } from './dtos/upload-request.dto';
 import {
@@ -91,7 +90,7 @@ export class UploadController {
     summary: 'Get Upload information',
   })
   getUploadInformation(@Param('uploadId', ValidateMongoId) uploadId: string) {
-    return this.getUpload.execute(GetUploadCommand.create({ uploadId }));
+    return this.getUpload.execute({ uploadId });
   }
 
   @Get(':uploadId/headings')
@@ -99,12 +98,10 @@ export class UploadController {
     summary: 'Get headings for the uploaded file',
   })
   async getHeadings(@Param('uploadId', ValidateMongoId) uploadId: string): Promise<string[]> {
-    const uploadInfo = await this.getUpload.execute(
-      GetUploadCommand.create({
-        uploadId,
-        select: 'headings',
-      })
-    );
+    const uploadInfo = await this.getUpload.execute({
+      uploadId,
+      select: 'headings',
+    });
 
     return uploadInfo.headings;
   }

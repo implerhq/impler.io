@@ -1,0 +1,378 @@
+import * as nodemailer from 'nodemailer';
+import { SESClient, SendRawEmailCommand } from '@aws-sdk/client-ses';
+
+interface IWebhookAlertEmailOptions {
+  importName: string;
+  webhookUrl: string;
+  time: string;
+  error: string;
+  importId: string;
+}
+interface IBubbleAlertEmailOptions {
+  datatype: string;
+  environment: string;
+  url: string;
+  error: string;
+  importName: string;
+  time: string;
+  importId: string;
+}
+interface IExecutionErrorEmailOptions {
+  error: string;
+  importName: string;
+  time: string;
+  importId: string;
+}
+interface ISendMailOptions {
+  to: string;
+  from: string;
+  html: string;
+  subject: string;
+  senderName: string;
+}
+interface IForgotPasswordEmailOptions {
+  link: string;
+}
+
+const EMAIL_CONTENTS = {
+  REQUEST_FORGOT_PASSWORD: ({ link }: IForgotPasswordEmailOptions) => `
+		<p>Hi,</p>
+		<p>You have requested to reset your password. Please click on the link below to reset your password.</p>
+		<p><a href="${link}">
+			Reset Password
+		</a></p>
+		<p>If you did not request to reset your password, please ignore this email.</p>
+		<p>Thanks,</p>
+		<p>Impler Team</p>
+	`,
+  ERROR_SENDING_WEBHOOK_DATA: ({ importName, webhookUrl, time, importId, error }: IWebhookAlertEmailOptions) => `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+        }
+        .error-log {
+          background-color: #f9f2f4;
+          border: 1px solid #c9302c;
+          border-radius: 4px;
+          padding: 10px;
+          font-family: monospace;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+        }
+        .logo {
+            color: #333;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .logo span {
+            color: purple;
+        }
+        h1 {
+            color: #333;
+            font-size: 20px;
+        }
+        p, ul {
+            color: #555;
+            line-height: 1.6;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        .details {
+            margin-top: 20px;
+        }
+        .contact {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo"><img src="https://impler.io/wp-content/uploads/2024/07/Logo-black.png" style="width: 150px;" alt="Impler Logo" /></div>
+        
+        <h1>Encountered error while sending webhook data in ${importName} import</h1>
+        
+        <p>Your import ${importName} webhook has encountered an error.</p>
+        
+        <p>Impler has failed to send data the webhook you provided in ${importName} import. You should pay attention to the issue.</p>
+        
+        <ul>
+            <li><strong>Import Name:</strong> ${importName}</li>
+            <li><strong>Webhook Url:</strong> ${webhookUrl}</li>
+            <li><strong>Time:</strong> ${time}</li>
+            <li><strong>Import Id:</strong> ${importId}</li>
+        </ul>
+        
+        <div class="details">
+            <p><strong>Error Details:<strong></p>
+            <div class="error-log">${error}</div>
+        </div>
+        
+        <div class="contact">
+            <p>Need any help? <a href="mailto:bhavik@impler.io">Contact us</a></p>
+        </div>
+    </div>
+</body>
+</html>
+  `,
+  ERROR_SENDING_BUBBLE_DATA: ({
+    datatype,
+    environment,
+    error,
+    importName,
+    time,
+    url,
+    importId,
+  }: IBubbleAlertEmailOptions) => `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      body {
+          font-family: Arial, sans-serif;
+          background-color: #f5f5f5;
+          margin: 0;
+          padding: 20px;
+      }
+      .container {
+          max-width: 600px;
+          margin: 0 auto;
+          background-color: white;
+          padding: 30px;
+          border-radius: 8px;
+      }
+      .error-log {
+        background-color: #f9f2f4;
+        border: 1px solid #c9302c;
+        border-radius: 4px;
+        padding: 10px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+      .logo {
+          color: #333;
+          font-size: 24px;
+          font-weight: bold;
+          margin-bottom: 20px;
+      }
+      .logo span {
+          color: purple;
+      }
+      h1 {
+          color: #333;
+          font-size: 20px;
+      }
+      p, ul {
+          color: #555;
+          line-height: 1.6;
+      }
+      ul {
+          padding-left: 20px;
+      }
+      .details {
+          margin-top: 20px;
+      }
+      .contact {
+          margin-top: 30px;
+      }
+    </style>
+</head>
+<body>
+    <div class="container">
+      <div class="logo"><img src="https://impler.io/wp-content/uploads/2024/07/Logo-black.png" style="width: 150px;" alt="Impler Logo" /></div>
+      
+      <h1>Encountered error while sending webhook data in ${importName} import</h1>
+      
+      <p>Your import ${importName} webhook has encountered an error.</p>
+      
+      <p>Impler has failed to send data to Bubble.io in ${importName} import. You should pay attention to the issue.</p>
+
+      <ul>
+        <li><strong>Import Name:</strong> ${importName}</li>
+        <li><strong>URL:</strong> ${url}</li>
+        <li><strong>Data Type:</strong> ${datatype}</li>
+        <li><strong>Environment:</strong> ${environment}</li>
+        <li><strong>Import Id:</strong> ${importId}</li>
+        <li><strong>Time of Error:</strong> ${time}</li>
+      </ul>
+      
+      <div class="details">
+          <p><strong>Error Details:<strong></p>
+          <div class="error-log">${error}</div>
+      </div>
+      
+      <div class="contact">
+          <p>Need any help? <a href="mailto:bhavik@impler.io">Contact us</a></p>
+      </div>
+</body>
+</html>
+  `,
+  ERROR_EXECUTING_CODE: ({ error, importName, time, importId }: IExecutionErrorEmailOptions) => `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      body {
+          font-family: Arial, sans-serif;
+          background-color: #f5f5f5;
+          margin: 0;
+          padding: 20px;
+      }
+      .container {
+          max-width: 600px;
+          margin: 0 auto;
+          background-color: white;
+          padding: 30px;
+          border-radius: 8px;
+      }
+      .error-log {
+        background-color: #f9f2f4;
+        border: 1px solid #c9302c;
+        border-radius: 4px;
+        padding: 10px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+      .logo {
+          color: #333;
+          font-size: 24px;
+          font-weight: bold;
+          margin-bottom: 20px;
+      }
+      .logo span {
+          color: purple;
+      }
+      h1 {
+          color: #333;
+          font-size: 20px;
+      }
+      p, ul {
+          color: #555;
+          line-height: 1.6;
+      }
+      ul {
+          padding-left: 20px;
+      }
+      .details {
+          margin-top: 20px;
+      }
+      .contact {
+          margin-top: 30px;
+      }
+    </style>
+</head>
+<body>
+    <div class="container">
+      <div class="logo"><img src="https://impler.io/wp-content/uploads/2024/07/Logo-black.png" style="width: 150px;" alt="Impler Logo" /></div>
+      
+      <h1>Encountered error while executing validation code in ${importName} import</h1>
+      
+      <p>Validation code was failed to execute due to some error. You should pay attention to the issue.</p>
+
+      <ul>
+        <li><strong>Import Name:</strong> ${importName}</li>
+        <li><strong>Import Id:</strong> ${importId}</li>
+        <li><strong>Time of Error:</strong> ${time}</li>
+      </ul>
+      
+      <div class="details">
+          <p><strong>Error Details:<strong></p>
+          <div class="error-log">${error}</div>
+      </div>
+      
+      <div class="contact">
+          <p>Need any help? <a href="mailto:bhavik@impler.io">Contact us</a></p>
+      </div>
+</body>
+</html>
+  `,
+};
+
+type EmailContents =
+  | {
+      type: 'REQUEST_FORGOT_PASSWORD';
+      data: IForgotPasswordEmailOptions;
+    }
+  | {
+      type: 'ERROR_SENDING_WEBHOOK_DATA';
+      data: IWebhookAlertEmailOptions;
+    }
+  | {
+      type: 'ERROR_SENDING_BUBBLE_DATA';
+      data: IBubbleAlertEmailOptions;
+    }
+  | {
+      type: 'ERROR_EXECUTING_CODE';
+      data: IExecutionErrorEmailOptions;
+    };
+
+export abstract class EmailService {
+  abstract sendEmail(data: ISendMailOptions): Promise<{ messageId: string }>;
+  abstract isConnected(): boolean;
+  getEmailContent({ type, data }: EmailContents) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return EMAIL_CONTENTS[type](data);
+  }
+}
+
+export class SESEmailService extends EmailService {
+  private readonly ses: SESClient;
+  constructor() {
+    super();
+    if (process.env.SES_REGION && process.env.SES_ACCESS_KEY_ID && process.env.SES_SECRET_ACCESS_KEY)
+      this.ses = new SESClient({
+        region: process.env.SES_REGION,
+        credentials: {
+          accessKeyId: process.env.SES_ACCESS_KEY_ID,
+          secretAccessKey: process.env.SES_SECRET_ACCESS_KEY,
+        },
+      });
+  }
+  async sendEmail({ to, subject, html, from, senderName }: ISendMailOptions) {
+    if (!this.isConnected()) return;
+
+    const transporter = nodemailer.createTransport({
+      SES: { ses: this.ses, aws: { SendRawEmailCommand } },
+    });
+
+    const response = await transporter.sendMail({
+      to,
+      html,
+      subject,
+      from: {
+        address: from,
+        name: senderName,
+      },
+    });
+
+    return {
+      messageId: response.messageId,
+    };
+  }
+  isConnected(): boolean {
+    return !!this.ses;
+  }
+}

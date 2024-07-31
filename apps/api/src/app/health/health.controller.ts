@@ -4,7 +4,7 @@ import { DalService } from '@impler/dal';
 import { HealthCheck, HealthCheckService } from '@nestjs/terminus';
 import { version } from '../../../package.json';
 import { Defaults } from '@impler/shared';
-import { StorageService } from '@impler/shared/dist/services/storage';
+import { StorageService } from '@impler/services';
 import { QueueService } from '@shared/services/queue.service';
 
 @Controller('health-check')

@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { UpdateImageColumns } from '@shared/usecases';
+import { APIMessages } from '@shared/constants';
 import { ColumnRepository, TemplateRepository } from '@impler/dal';
+import { UpdateImageColumns, SaveSampleFile } from '@shared/usecases';
 import { AddColumnCommand } from 'app/column/commands/add-column.command';
-import { SaveSampleFile } from '@shared/usecases';
+import { UniqueColumnException } from '@shared/exceptions/unique-column.exception';
 import { UpdateCustomization } from '../update-customization/update-customization.usecase';
 
 @Injectable()
@@ -17,6 +18,10 @@ export class UpdateTemplateColumns {
   ) {}
 
   async execute(command: AddColumnCommand[], _templateId: string) {
+    const columnKeysSet = new Set(command.map((column) => column.key));
+    if (columnKeysSet.size !== command.length) {
+      throw new UniqueColumnException(APIMessages.COLUMN_KEY_TAKEN);
+    }
     await this.columnRepository.deleteMany({ _templateId });
     command.forEach((column, index) => {
       column.sequence = index;

@@ -4,7 +4,7 @@ import { cwd } from 'node:process';
 import * as xlsxPopulate from 'xlsx-populate';
 import { CONSTANTS } from '@shared/constants';
 import { ParseConfig, parse } from 'papaparse';
-import { ColumnTypesEnum, Defaults, FileEncodingsEnum } from '@impler/shared';
+import { ColumnDelimiterEnum, ColumnTypesEnum, Defaults, FileEncodingsEnum } from '@impler/shared';
 import { EmptyFileException } from '@shared/exceptions/empty-file.exception';
 import { InvalidFileException } from '@shared/exceptions/invalid-file.exception';
 import { IExcelFileHeading } from '@shared/types/file.types';
@@ -19,6 +19,7 @@ export class ExcelFileService {
           XLSX.utils.sheet_to_csv(ws, {
             blankrows: false,
             skipHidden: true,
+            forceQuotes: true,
             // rawNumbers: true, // was converting 12:12:12 to 1.3945645673
           })
         );
@@ -104,7 +105,9 @@ export class ExcelFileService {
       const columnName = this.getExcelColumnNameFromIndex(index + 1);
       const columnHeadingCellName = columnName + '1';
       if (heading.type === ColumnTypesEnum.SELECT && heading.allowMultiSelect)
-        worksheet.cell(columnHeadingCellName).value(heading.key + '#MULTI');
+        worksheet
+          .cell(columnHeadingCellName)
+          .value(heading.key + '#MULTI' + '#' + (heading.delimiter || ColumnDelimiterEnum.COMMA));
       else worksheet.cell(columnHeadingCellName).value(heading.key);
       worksheet.column(columnName).style('numberFormat', '@');
     });
@@ -132,14 +135,15 @@ export class ExcelFileService {
       }
     });
     const headingNames = headings.map((heading) => heading.key);
-    const endColumnPosition = this.getExcelColumnNameFromIndex(headings.length + 1) + '2';
-    const range = workbook.sheet(0).range(`A2:${endColumnPosition}`);
+    const endColumnPosition = this.getExcelColumnNameFromIndex(headings.length + 1);
     if (Array.isArray(data) && data.length > 0) {
       const rows: string[][] = data.reduce<string[][]>((acc: string[][], rowItem: Record<string, any>) => {
         acc.push(headingNames.map((headingKey) => rowItem[headingKey]));
 
         return acc;
       }, []);
+      const rangeKey = `A2:${endColumnPosition}${rows.length + 1}`;
+      const range = workbook.sheet(0).range(rangeKey);
       range.value(rows);
     }
     const buffer = await workbook.outputAsync();

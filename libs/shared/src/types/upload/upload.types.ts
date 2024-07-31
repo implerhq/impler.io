@@ -45,6 +45,7 @@ export enum QueuesEnum {
 
 export type SendWebhookCachedData = {
   page: number;
+  email: string;
   callbackUrl: string;
   chunkSize: number;
   name: string; // template name
@@ -57,12 +58,16 @@ export type SendWebhookCachedData = {
   recordFormat?: string;
   chunkFormat?: string;
   defaultValues: string;
-  multiSelectHeadings?: string[];
+  multiSelectHeadings?: Record<string, string>;
   imageHeadings?: string[];
 };
 
 export type SendBubbleCachedData = {
+  name: string;
   page: number;
+  email: string;
+  datatype: string;
+  environment: string;
   chunkSize: number;
   bubbleUrl: string;
   apiPrivateKey: string;

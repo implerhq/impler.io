@@ -217,6 +217,7 @@ export class TemplateController {
           sequence: columnData.sequence,
           _templateId,
           type: columnData.type,
+          delimiter: columnData.delimiter,
           allowMultiSelect: columnData.allowMultiSelect,
         })
       ),

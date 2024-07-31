@@ -10,6 +10,11 @@ export enum ColumnTypesEnum {
   'IMAGE' = 'Image',
 }
 
+export enum ColumnDelimiterEnum {
+  'COMMA' = ',',
+  'SEMICOLON' = ';',
+}
+
 export interface ISchemaItem {
   key: string;
   name: string;
@@ -22,6 +27,7 @@ export interface ISchemaItem {
   type?: ColumnTypesEnum;
   allowMultiSelect?: boolean;
   regex?: string;
+  delimiter?: ColumnDelimiterEnum;
   defaultValue?: string | number;
 }
 

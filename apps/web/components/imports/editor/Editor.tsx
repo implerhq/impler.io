@@ -30,6 +30,10 @@ const titles = {
     subtitle:
       'Following format represents the format of individual rows that will send to Bubble.io. You can mention dynamic properties too.',
   },
+  [DestinationsEnum.FRONTEND]: {
+    title: 'Customize how you want to get in Frontend',
+    subtitle: 'Following format represents the format of individual rows that will send to Frontend.',
+  },
 };
 
 export function OutputEditor({ templateId, switchToDestination }: OutputEditorProps) {

@@ -1,17 +1,15 @@
 import { useRef } from 'react';
 import { Controller } from 'react-hook-form';
-import { ActionIcon, Checkbox, Flex, Tooltip, TextInput as Input } from '@mantine/core';
+import { ActionIcon, Flex, Tooltip, TextInput as Input, Group, Badge } from '@mantine/core';
 
-import { colors } from '@config';
-import { COLUMN_TYPES } from '@config';
-import { DraggableTable } from '@ui/table';
 import { useSchema } from '@hooks/useSchema';
-import { DEFAULT_VALUES, IColumn } from '@impler/shared';
+import { colors, COLUMN_TYPES } from '@config';
+import { ColumnTypesEnum, IColumn } from '@impler/shared';
 
-import { Select } from '@ui/select';
+import { Button } from '@ui/button';
+import { DraggableTable } from '@ui/table';
 import { IconButton } from '@ui/icon-button';
-import { MultiSelect } from '@ui/multi-select';
-import { CustomSelect } from '@ui/custom-select';
+import { NativeSelect } from '@ui/native-select';
 
 import { AddIcon } from '@assets/icons/Add.icon';
 import { EditIcon } from '@assets/icons/Edit.icon';
@@ -25,33 +23,36 @@ interface ColumnsTableProps {
 }
 
 export function ColumnsTable({ templateId }: ColumnsTableProps) {
-  const SelectRef = useRef(false);
+  const ValidationRef = useRef(false);
 
   const {
-    register,
-    watch,
     columns,
     control,
+    register,
+    getValues,
     showAddRow,
     handleSubmit,
     onMoveColumns,
     setShowAddRow,
     onEditColumnClick,
+    onValidationsClick,
     onDeleteColumnClick,
     isColumnCreateLoading,
-    formState: { errors },
   } = useSchema({
     templateId,
   });
 
-  const typeValue = watch('type');
+  const onValidationsButtonClick = () => {
+    const values = getValues();
+    onValidationsClick({ ...values, key: values.key || values.name });
+  };
 
   return (
     <form
       onSubmit={(e) => {
-        e.preventDefault();
         handleSubmit();
-        SelectRef.current = false;
+        e.preventDefault();
+        ValidationRef.current = false;
       }}
       id="columns"
     >
@@ -61,24 +62,12 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
           {
             title: 'Name',
             key: 'name',
-            width: '50%',
+            width: '35%',
           },
           {
             title: 'Type',
             key: 'type',
             width: '15%',
-          },
-          {
-            title: 'Required?',
-            key: 'isRequired',
-            width: '10%',
-            Cell: (item) => item.isRequired && <CheckIcon color={colors.success} />,
-          },
-          {
-            title: 'Unique?',
-            key: 'isUnique',
-            width: '10%',
-            Cell: (item) => item.isUnique && <CheckIcon color={colors.success} />,
           },
           {
             title: 'Frozen?',
@@ -87,10 +76,30 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
             Cell: (item) => item.isFrozen && <CheckIcon color={colors.success} />,
           },
           {
-            title: '',
+            title: 'Validations',
+            key: 'validations',
+            width: '30%',
+            Cell: (item) => (
+              <Group spacing="xs">
+                {item.isRequired && <Badge variant="outline">Required</Badge>}
+                {item.type !== ColumnTypesEnum.SELECT && item.isUnique && (
+                  <Badge color="cyan" variant="outline">
+                    Unique
+                  </Badge>
+                )}
+                {item.type === ColumnTypesEnum.SELECT && item.allowMultiSelect && (
+                  <Badge color="green" variant="outline">
+                    Multi Select
+                  </Badge>
+                )}
+              </Group>
+            ),
+          },
+          {
+            title: 'Actions',
             key: 'actions',
             Cell: (item) => (
-              <Flex justify="flex-end" gap="xs">
+              <Flex gap="xs">
                 <IconButton label="Edit" onClick={() => onEditColumnClick(item._id)}>
                   <EditIcon color={colors.blue} />
                 </IconButton>
@@ -107,114 +116,41 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
           <tr>
             {showAddRow ? (
               <>
-                <td colSpan={5} style={{ borderRight: 'none' }}>
+                <td colSpan={4} style={{ borderRight: 'none' }}>
                   <Flex gap="xs" align={'center'}>
                     <Input autoFocus required placeholder="Column Name" {...register('name')} />
-                    <Input required placeholder="Column Key" {...register('key')} />
                     <Controller
                       control={control}
                       name="type"
                       render={({ field }) => (
-                        <Select
+                        <NativeSelect
                           data={COLUMN_TYPES}
                           placeholder="Select Type"
                           variant="default"
                           register={field}
-                          autoFocus={SelectRef.current}
-                          onFocus={() => (SelectRef.current = true)}
                         />
                       )}
                     />
-                    {typeValue === 'Regex' && (
-                      <Input
-                        required
-                        error={errors.regex?.message}
-                        placeholder="Regular expression"
-                        {...register('regex')}
-                      />
-                    )}
-                    {typeValue === 'Select' ? (
-                      <Controller
-                        name="selectValues"
-                        control={control}
-                        render={({ field: { value, onChange } }) => (
-                          <MultiSelect
-                            placeholder="Select Values"
-                            creatable
-                            clearable
-                            searchable
-                            getCreateLabel={(query) => `+ Add ${query}`}
-                            data={Array.isArray(value) ? value : []}
-                            value={value}
-                            onCreate={(newItem) => {
-                              onChange([...(Array.isArray(value) ? value : []), newItem]);
-
-                              return newItem;
-                            }}
-                            onChange={onChange}
-                          />
-                        )}
-                      />
-                    ) : null}
-                    {typeValue === 'Date' ? (
-                      <Controller
-                        name="dateFormats"
-                        control={control}
-                        render={({ field: { value, onChange } }) => (
-                          <MultiSelect
-                            creatable
-                            clearable
-                            searchable
-                            value={value}
-                            placeholder="Valid Date Formats, i.e. DD/MM/YYYY, DD/MM/YY"
-                            data={[
-                              'DD/MM/YYYY',
-                              'DD/MM/YY',
-                              'MM/DD/YYYY',
-                              'MM/DD/YY',
-                              ...(Array.isArray(value) ? value : []),
-                            ]}
-                            getCreateLabel={(query) => `Add "${query}"`}
-                            onCreate={(newItem) => {
-                              onChange([...(Array.isArray(value) ? value : []), newItem]);
-
-                              return newItem;
-                            }}
-                            onChange={onChange}
-                          />
-                        )}
-                      />
-                    ) : null}
-                    <Controller
-                      name="defaultValue"
-                      control={control}
-                      render={({ field: { value, onChange } }) => (
-                        <CustomSelect
-                          value={value}
-                          onChange={onChange}
-                          placeholder="Default Value"
-                          data={DEFAULT_VALUES}
-                        />
-                      )}
-                    />
-                    {typeValue === 'Select' ? (
-                      <Checkbox
-                        label="Multi Select?"
-                        title="Multi Select?"
-                        {...register('allowMultiSelect')}
-                        id="allowMultiSelect"
-                      />
-                    ) : null}
-                    <Checkbox label="Required?" title="Required?" {...register('isRequired')} id="isRequired" />
-                    {typeValue !== 'Select' ? (
-                      <Checkbox label="Unique?" title="Unique?" {...register('isUnique')} id="isUnique" />
-                    ) : null}
-                    <Checkbox label="Frozen?" title="Frozen?" {...register('isFrozen')} id="isFrozen" />
+                    <Button
+                      size="xs"
+                      color="green"
+                      onClick={() => {
+                        ValidationRef.current = true;
+                        onValidationsButtonClick();
+                      }}
+                    >
+                      Validations
+                    </Button>
                   </Flex>
                 </td>
                 <td style={{ borderLeft: 'none' }}>
                   <Flex justify={'end'}>
-                    <ActionIcon color="blue" type="submit" loading={isColumnCreateLoading}>
+                    <ActionIcon
+                      color="blue"
+                      type="submit"
+                      autoFocus={ValidationRef.current}
+                      loading={isColumnCreateLoading}
+                    >
                       <CheckIcon color={colors.blue} />
                     </ActionIcon>
                     <ActionIcon color="red" onClick={() => setShowAddRow(false)}>

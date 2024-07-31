@@ -16,12 +16,13 @@ import {
   IRecord,
   ReviewDataTypesEnum,
   numberFormatter,
+  ColumnDelimiterEnum,
 } from '@impler/shared';
 import { SelectEditor } from './SelectEditor';
 import { MultiSelectEditor } from './MultiSelectEditor';
 
 interface IUsePhase3Props {
-  onNext: (uploadData: IUpload) => void;
+  onNext: (uploadData: IUpload, importedData?: Record<string, any>[]) => void;
 }
 
 const defaultPage = 1;
@@ -93,6 +94,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
             case ColumnTypesEnum.IMAGE:
               columnItem.type = 'text';
               columnItem.renderer = 'custom';
+              columnItem.delimiter = column.delimiter || ColumnDelimiterEnum.COMMA;
               columnItem.selectOptions = column.selectValues;
               columnItem.editor = column.allowMultiSelect ? MultiSelectEditor : SelectEditor;
               break;
@@ -198,7 +200,10 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     },
   });
   const { isLoading: isConfirmReviewLoading, mutate: confirmReview } = useMutation<
-    IUpload,
+    {
+      uploadInfo: IUpload;
+      importedData: Record<string, any>[];
+    },
     IErrorObject,
     void,
     [string]
@@ -207,15 +212,15 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
       logAmplitudeEvent('RECORDS', {
         type: 'invalid',
         host,
-        records: uploadData.invalidRecords,
+        records: uploadData.uploadInfo.invalidRecords,
       });
       logAmplitudeEvent('RECORDS', {
         type: 'valid',
         host,
-        records: uploadData.totalRecords - uploadData.invalidRecords,
+        records: uploadData.uploadInfo.totalRecords - uploadData.uploadInfo.invalidRecords,
       });
-      setUploadInfo(uploadData);
-      onNext(uploadData);
+      setUploadInfo(uploadData.uploadInfo);
+      onNext(uploadData.uploadInfo, uploadData.importedData);
     },
     onError(error: IErrorObject) {
       notifier.showError({ message: error.message, title: error.error });

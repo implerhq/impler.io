@@ -1,13 +1,13 @@
 import * as JSZip from 'jszip';
 import { Injectable } from '@nestjs/common';
 import { ColumnRepository } from '@impler/dal';
-import { ColumnTypesEnum, FileMimeTypesEnum, FileNameService, ISchemaItem } from '@impler/shared';
+import { StorageService, FileNameService } from '@impler/services';
+import { ColumnTypesEnum, FileMimeTypesEnum, ISchemaItem } from '@impler/shared';
 
 import { ExcelFileService } from '@shared/services/file';
 import { IExcelFileHeading } from '@shared/types/file.types';
 import { getAssetMimeType } from '@shared/helpers/common.helper';
 import { DownloadSampleDataCommand } from './download-sample.command';
-import { StorageService } from '@impler/shared/dist/services/storage';
 
 @Injectable()
 export class DownloadSample {

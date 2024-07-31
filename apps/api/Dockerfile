@@ -24,6 +24,7 @@ COPY .npmrc .
 COPY apps/api ./apps/api
 COPY libs/dal ./libs/dal
 COPY libs/shared ./libs/shared
+COPY libs/services ./libs/services
 
 COPY tsconfig.json .
 COPY tsconfig.base.json .

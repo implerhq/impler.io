@@ -11,7 +11,7 @@ import {
   Validate,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ColumnTypesEnum, Defaults } from '@impler/shared';
+import { ColumnDelimiterEnum, ColumnTypesEnum, Defaults } from '@impler/shared';
 import { IsValidRegex } from '@shared/framework/is-valid-regex.validator';
 import { IsNumberOrString } from '@shared/framework/number-or-string.validator';
 
@@ -118,4 +118,14 @@ export class ColumnRequestDto {
   @IsBoolean()
   @IsOptional()
   allowMultiSelect?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Specify the delimiter for multi-select value',
+    enum: ColumnDelimiterEnum,
+  })
+  @IsOptional()
+  @IsEnum(ColumnDelimiterEnum, {
+    message: `Delimiter must be one of ${Object.values(ColumnDelimiterEnum).join(', ')}`,
+  })
+  delimiter?: ColumnDelimiterEnum;
 }

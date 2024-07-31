@@ -1,7 +1,7 @@
 import * as dayjs from 'dayjs';
 import { Injectable } from '@nestjs/common';
 import { DATE_FORMATS } from '@shared/constants';
-import { PaymentAPIService } from '@impler/shared';
+import { PaymentAPIService } from '@impler/services';
 
 @Injectable()
 export class GetTransactionHistory {

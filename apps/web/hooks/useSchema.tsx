@@ -1,16 +1,21 @@
-import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { modals } from '@mantine/modals';
 import { useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
+import { notify } from '@libs/notify';
 import { track } from '@libs/amplitude';
 import { IColumn, IErrorObject } from '@impler/shared';
-import { API_KEYS, MODAL_KEYS, MODAL_TITLES } from '@config';
+import { API_KEYS, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS } from '@config';
 
 import { useUpdateBulkColumns } from './useUpdateBulkColumns';
 import { ConfirmDelete } from '@components/imports/forms/ConfirmDelete';
-import { UpdateColumnForm } from '@components/imports/forms/UpdateColumnForm';
+
+const ColumnForm = dynamic(() => import('@components/imports/forms/ColumnForm').then((mod) => mod.ColumnForm), {
+  ssr: false,
+});
 
 interface UseSchemaProps {
   templateId: string;
@@ -19,7 +24,7 @@ interface UseSchemaProps {
 export function useSchema({ templateId }: UseSchemaProps) {
   const queryClient = useQueryClient();
   const [showAddRow, setShowAddRow] = useState(false);
-  const { register, control, watch, reset, setFocus, handleSubmit, formState } = useForm<IColumn>({
+  const { register, control, watch, reset, setFocus, handleSubmit, formState, getValues } = useForm<IColumn>({
     defaultValues: {
       type: 'String',
     },
@@ -53,8 +58,43 @@ export function useSchema({ templateId }: UseSchemaProps) {
             hasExtraColumnKeys: boolean;
           },
         });
-        reset();
+        reset({
+          name: undefined,
+          key: undefined,
+          type: 'String',
+          alternateKeys: [],
+          isRequired: false,
+          isUnique: false,
+          isFrozen: false,
+          regex: undefined,
+          delimiter: undefined,
+          dateFormats: [],
+          defaultValue: undefined,
+          regexDescription: undefined,
+          selectValues: [],
+          allowMultiSelect: false,
+        });
         setFocus('name');
+      },
+      onError: (error: IErrorObject) => {
+        notify(NOTIFICATION_KEYS.COLUMN_ERRROR, {
+          message: error.message,
+        });
+      },
+    }
+  );
+  const { mutate: updateColumn } = useMutation<IColumn, IErrorObject, { id: string; data: IColumn }, string[]>(
+    [API_KEYS.COLUMN_UPDATE],
+    ({ id, data }) => commonApi(API_KEYS.COLUMN_UPDATE as any, { parameters: [id], body: data }),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([API_KEYS.TEMPLATE_COLUMNS_LIST, templateId]);
+        modals.close(MODAL_KEYS.COLUMN_UPDATE);
+      },
+      onError: (error: IErrorObject) => {
+        notify(NOTIFICATION_KEYS.COLUMN_ERRROR, {
+          message: error.message,
+        });
       },
     }
   );
@@ -73,12 +113,29 @@ export function useSchema({ templateId }: UseSchemaProps) {
     const columnData = columns?.find((item) => item._id === columnId);
     if (columnData) {
       modals.open({
+        size: '70%',
+        trapFocus: true,
+        withCloseButton: false,
         modalId: MODAL_KEYS.COLUMN_UPDATE,
-        title: MODAL_TITLES.COLUMN_UPDATE,
+        children: <ColumnForm data={columnData} onSubmit={(data) => updateColumn({ id: columnId, data })} />,
+      });
+    }
+  }
+
+  function onValidationsClick(columnData: Partial<IColumn>) {
+    if (columnData) {
+      modals.open({
+        size: '70%',
+        trapFocus: true,
+        withCloseButton: false,
+        modalId: MODAL_KEYS.COLUMN_UPDATE,
         children: (
-          <UpdateColumnForm
+          <ColumnForm
             data={columnData}
-            refetchColumns={() => queryClient.invalidateQueries([API_KEYS.TEMPLATE_COLUMNS_LIST, templateId])}
+            onSubmit={(data) => {
+              reset(data);
+              modals.close(MODAL_KEYS.COLUMN_UPDATE);
+            }}
           />
         ),
       });
@@ -105,6 +162,7 @@ export function useSchema({ templateId }: UseSchemaProps) {
     });
   }
   function onAddColumnSubmit(data: IColumn) {
+    if (!data.key) data.key = data.name;
     createColumn(data);
   }
 
@@ -118,10 +176,12 @@ export function useSchema({ templateId }: UseSchemaProps) {
     columns,
     register,
     formState,
+    getValues,
     showAddRow,
     onMoveColumns,
     setShowAddRow,
     onEditColumnClick,
+    onValidationsClick,
     onDeleteColumnClick,
     isColumnCreateLoading,
     isLoading: isColumnListLoading,
