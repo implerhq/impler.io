@@ -15,7 +15,7 @@ import {
 } from '@mantine/core';
 
 import { ColumnTypesEnum, DEFAULT_VALUES, IColumn } from '@impler/shared';
-import { colors, COLUMN_TYPES, DELIMITERS, MODAL_KEYS, MODAL_TITLES } from '@config';
+import { colors, COLUMN_TYPES, DELIMITERS, MODAL_KEYS, MODAL_TITLES, documentationReferenceLinks } from '@config';
 
 import { Button } from '@ui/button';
 import { Textarea } from '@ui/textarea';
@@ -78,6 +78,12 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 placeholder="Column Key"
                 error={errors.key?.message}
               />
+              <Input
+                label="Column Description"
+                placeholder="Enter a description for this column"
+                description="This description will be shown as a tooltip in the review table"
+                {...register('description')}
+              />
               <Controller
                 name="alternateKeys"
                 control={control}
@@ -113,7 +119,18 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                     data-autofocus
                     onChange={onChange}
                     onBlur={onBlur}
-                    description="Primary validation to apply on column"
+                    description={
+                      <>
+                        Primary validation to apply on column.{' '}
+                        <Link
+                          href={documentationReferenceLinks.primaryValidation}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Read more
+                        </Link>
+                      </>
+                    }
                   />
                 )}
               />
@@ -205,8 +222,8 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                     description={
                       <>
                         Value used in response when cell is empty,{' '}
-                        <Link target="_blank" href="https://docs.impler.io/platform/default-value">
-                          read more
+                        <Link target="_blank" href={documentationReferenceLinks.defaultValue}>
+                          Read more
                         </Link>
                       </>
                     }
@@ -227,6 +244,8 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                   label="Multi Select Values"
                   register={register('allowMultiSelect')}
                   description="Users can pick multiple values from the list. Sample will also allow selecting multiple values."
+                  link={documentationReferenceLinks.multiSelectDropDown}
+                  linkLabel="Read more"
                 />
               ) : (
                 <Checkbox
@@ -257,6 +276,8 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 label="Freeze Column"
                 register={register('isFrozen')}
                 description="Will freeze column left side in generated sample and in Review section."
+                link={documentationReferenceLinks.freezeColumns}
+                linkLabel="Read more"
               />
             </Stack>
           </SimpleGrid>
