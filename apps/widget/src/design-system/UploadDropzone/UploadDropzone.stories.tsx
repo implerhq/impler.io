@@ -1,10 +1,10 @@
 import { MIME_TYPES } from '@mantine/dropzone';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { Dropzone } from './Dropzone';
+import { UploadDropzone } from './UploadDropzone';
 
 export default {
   title: 'Dropzone',
-  component: Dropzone,
+  component: UploadDropzone,
   argTypes: {
     accept: {
       control: {
@@ -19,9 +19,9 @@ export default {
       action: 'onClear',
     },
   },
-} as ComponentMeta<typeof Dropzone>;
+} as ComponentMeta<typeof UploadDropzone>;
 
-const Template: ComponentStory<typeof Dropzone> = (args) => <Dropzone {...args} />;
+const Template: ComponentStory<typeof UploadDropzone> = (args) => <UploadDropzone {...args} />;
 
 export const Default = Template.bind({});
 

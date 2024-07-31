@@ -56,6 +56,7 @@
 		"file-saver": "^2.0.5",
 		"handsontable": "^14.1.0",
 		"http-server": "^14.1.1",
+		"jszip": "^3.10.1",
 		"moment": "^2.29.4",
 		"react": "18.2.0",
 		"react-datepicker": "^4.21.0",

@@ -2,10 +2,10 @@ import '../../config';
 import { AppModule } from '../../app.module';
 
 import { NestFactory } from '@nestjs/core';
+import { SaveSampleFile } from '@shared/usecases';
 import { ExcelFileService } from '@shared/services';
 import { ColumnRepository, TemplateRepository } from '@impler/dal';
 import { S3StorageService, FileNameService } from '@impler/services';
-import { SaveSampleFile } from '@shared/usecases/save-sample-file/save-sample-file.usecase';
 
 export async function run() {
   // eslint-disable-next-line no-console

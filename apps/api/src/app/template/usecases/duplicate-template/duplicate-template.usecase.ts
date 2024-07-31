@@ -10,7 +10,7 @@ import {
 import { DestinationsEnum } from '@impler/shared';
 import { validateNotFound } from '@shared/helpers/common.helper';
 import { DuplicateTemplateCommand } from './duplicate-template.command';
-import { SaveSampleFile } from '@shared/usecases/save-sample-file/save-sample-file.usecase';
+import { SaveSampleFile } from '@shared/usecases';
 
 @Injectable()
 export class DuplicateTemplate {

@@ -194,6 +194,10 @@ export const COLUMN_TYPES = [
     value: 'Email',
   },
   {
+    label: 'Image',
+    value: 'Image',
+  },
+  {
     label: 'Any',
     value: 'Any',
   },

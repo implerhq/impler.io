@@ -65,6 +65,7 @@ export class SendWebhookDataConsumer extends BaseConsumer {
         recordFormat: cachedData.recordFormat,
         chunkFormat: cachedData.chunkFormat,
         totalRecords: allDataJson.length,
+        imageHeadings: cachedData.imageHeadings,
         multiSelectHeadings: cachedData.multiSelectHeadings,
       });
 
@@ -117,6 +118,7 @@ export class SendWebhookDataConsumer extends BaseConsumer {
     chunkFormat,
     recordFormat,
     extra = '',
+    imageHeadings,
     multiSelectHeadings,
   }: IBuildSendDataParameters): { sendData: Record<string, unknown>; page: number } {
     const defaultValuesObj = JSON.parse(defaultValues);
@@ -124,11 +126,18 @@ export class SendWebhookDataConsumer extends BaseConsumer {
       Math.max((page - DEFAULT_PAGE) * chunkSize, MIN_LIMIT),
       Math.min(page * chunkSize, data.length)
     );
-    if (multiSelectHeadings && Object.keys(multiSelectHeadings).length > 0) {
+    if ((Array.isArray(multiSelectHeadings) && multiSelectHeadings.length > 0) || imageHeadings?.length > 0) {
       slicedData = slicedData.map((obj) => {
         Object.keys(multiSelectHeadings).forEach((heading) => {
           obj.record[heading] = obj.record[heading] ? obj.record[heading].split(multiSelectHeadings[heading]) : [];
         });
+
+        if (imageHeadings?.length > 0)
+          imageHeadings.forEach((heading) => {
+            obj.record[heading] = obj.record[heading]
+              ? `${process.env.API_BASE_URL}/v1/upload/${uploadId}/asset/${obj.record[heading]}`
+              : '';
+          });
 
         return obj;
       });
@@ -171,12 +180,14 @@ export class SendWebhookDataConsumer extends BaseConsumer {
 
     const defaultValueObj = {};
     const multiSelectHeadings = {};
+    const imageHeadings = [];
     const customSchema = JSON.parse(uploadata.customSchema) as ITemplateSchemaItem[];
     if (Array.isArray(customSchema)) {
       customSchema.forEach((item: ITemplateSchemaItem) => {
         if (item.defaultValue) defaultValueObj[item.key] = item.defaultValue;
         if (item.type === ColumnTypesEnum.SELECT && item.allowMultiSelect)
           multiSelectHeadings[item.key] = item.delimiter || ColumnDelimiterEnum.COMMA;
+        if (item.type === ColumnTypesEnum.IMAGE) imageHeadings.push(item.key);
       });
     }
 
@@ -195,6 +206,7 @@ export class SendWebhookDataConsumer extends BaseConsumer {
       recordFormat: uploadata.customRecordFormat,
       chunkFormat: uploadata.customChunkFormat,
       multiSelectHeadings,
+      imageHeadings,
       email: userEmail,
     };
   }

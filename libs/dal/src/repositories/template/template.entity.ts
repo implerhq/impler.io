@@ -18,4 +18,6 @@ export class TemplateEntity {
   totalInvalidRecords: number;
 
   mode: string;
+
+  imageColumns: string[];
 }

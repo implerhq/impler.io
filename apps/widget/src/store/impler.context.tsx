@@ -1,7 +1,7 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { IImplerStore } from '../types';
 
-interface ImplerContextProviderProps extends React.PropsWithChildren, IImplerStore {}
+interface ImplerContextProviderProps extends React.PropsWithChildren, Omit<IImplerStore, 'setTemplateId'> {}
 
 const ImplerContext = createContext<IImplerStore | null>(null);
 
@@ -13,12 +13,15 @@ const ImplerContextProvider = ({
   // other
   children,
 }: ImplerContextProviderProps) => {
+  const [stateTemplateId, setTemplateId] = useState<string | undefined>();
+
   return (
     <ImplerContext.Provider
       value={{
         projectId,
-        templateId,
+        templateId: templateId || stateTemplateId,
         authHeaderValue,
+        setTemplateId,
         extra,
       }}
     >

@@ -1,14 +1,14 @@
-/* eslint-disable no-unused-vars */
 import { Group, MediaQuery, Title, useMantineTheme } from '@mantine/core';
+import { PhasesEnum } from '@types';
 import { Stepper } from '@ui/Stepper';
 import { TEXTS, variables } from '@config';
-import { PhasesEnum } from '@types';
 import { TemplateModeEnum } from '@impler/shared';
 
 interface IHeadingProps {
-  active: PhasesEnum;
   title?: string;
-  mode?: string;
+  active: PhasesEnum;
+  mode?: TemplateModeEnum;
+  hasImageUpload?: boolean;
 }
 
 const manualImportSteps = [
@@ -41,7 +41,7 @@ const autoImportSteps = [
   },
 ];
 
-export function Heading({ active, title, mode }: IHeadingProps) {
+export function Heading({ active, title, mode, hasImageUpload }: IHeadingProps) {
   const theme = useMantineTheme();
 
   return (
@@ -50,8 +50,19 @@ export function Heading({ active, title, mode }: IHeadingProps) {
         <Group style={{ justifyContent: 'space-between' }} mb="lg">
           <Title order={3}>{title}</Title>
           <Stepper
-            active={active - 1}
-            steps={mode === TemplateModeEnum.MANUAL ? manualImportSteps : autoImportSteps}
+            active={active - (hasImageUpload ? 1 : 2)}
+            steps={
+              mode === TemplateModeEnum.AUTOMATIC
+                ? autoImportSteps
+                : hasImageUpload
+                ? [
+                    {
+                      label: TEXTS.STEPS.IMAGE_TEMPLATE,
+                    },
+                    ...manualImportSteps,
+                  ]
+                : manualImportSteps
+            }
             primaryColor={theme.colors.primary[variables.colorIndex]}
           />
         </Group>

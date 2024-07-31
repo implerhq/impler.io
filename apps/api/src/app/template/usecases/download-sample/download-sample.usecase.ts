@@ -1,26 +1,38 @@
+import * as JSZip from 'jszip';
 import { Injectable } from '@nestjs/common';
 import { ColumnRepository } from '@impler/dal';
+import { StorageService, FileNameService } from '@impler/services';
 import { ColumnTypesEnum, FileMimeTypesEnum, ISchemaItem } from '@impler/shared';
 
 import { ExcelFileService } from '@shared/services/file';
 import { IExcelFileHeading } from '@shared/types/file.types';
-import { DownloadSampleCommand } from './download-sample.command';
+import { getAssetMimeType } from '@shared/helpers/common.helper';
+import { DownloadSampleDataCommand } from './download-sample.command';
 
 @Injectable()
 export class DownloadSample {
   constructor(
-    private columnsRepository: ColumnRepository,
-    private excelFileService: ExcelFileService
+    private storageService: StorageService,
+    private fileNameService: FileNameService,
+    private excelFileService: ExcelFileService,
+    private columnsRepository: ColumnRepository
   ) {}
 
-  async execute(
-    _templateId: string,
-    data: DownloadSampleCommand
-  ): Promise<{
+  async execute({
+    data,
+    images,
+    _templateId,
+  }: {
+    _templateId: string;
+    images?: Express.Multer.File;
+    data: DownloadSampleDataCommand;
+  }): Promise<{
     file: Buffer;
     type: string;
     ext: string;
   }> {
+    const isImageTemplate = images && data.importId && data.imageSchema;
+    const imageSchema = isImageTemplate ? JSON.parse(data.imageSchema) : undefined;
     const columns = await this.columnsRepository.find(
       {
         _templateId,
@@ -36,8 +48,11 @@ export class DownloadSample {
     if (Array.isArray(parsedSchema) && parsedSchema.length > 0) {
       columnKeys = parsedSchema.map((columnItem) => ({
         key: columnItem.key,
-        type: (columnItem.type as ColumnTypesEnum) || ColumnTypesEnum.STRING,
-        selectValues: columnItem.selectValues,
+        type:
+          columnItem.type === ColumnTypesEnum.IMAGE
+            ? ColumnTypesEnum.SELECT
+            : (columnItem.type as ColumnTypesEnum) || ColumnTypesEnum.STRING,
+        selectValues: imageSchema?.[columnItem.key] || columnItem.selectValues || [],
         isRequired: columnItem.isRequired,
         allowMultiSelect: columnItem.allowMultiSelect,
       }));
@@ -45,8 +60,8 @@ export class DownloadSample {
       // else create structure from existing defualt schema
       columnKeys = columns.map((columnItem) => ({
         key: columnItem.key,
-        type: columnItem.type as ColumnTypesEnum,
-        selectValues: columnItem.selectValues,
+        type: columnItem.type === ColumnTypesEnum.IMAGE ? ColumnTypesEnum.SELECT : (columnItem.type as ColumnTypesEnum),
+        selectValues: imageSchema?.[columnItem.key] || columnItem.selectValues || [],
         isRequired: columnItem.isRequired,
         allowMultiSelect: columnItem.allowMultiSelect,
       }));
@@ -55,6 +70,21 @@ export class DownloadSample {
       (columnItem) => columnItem.type === ColumnTypesEnum.SELECT && columnItem.allowMultiSelect
     );
     const buffer = await this.excelFileService.getExcelFileForHeadings(columnKeys, data.data);
+    if (images && data.importId) {
+      const zip = await JSZip.loadAsync(images.buffer);
+      await Promise.all(
+        Object.keys(zip.files).map(async (filename) => {
+          const file = zip.files[filename];
+          const fileData = await file.async('base64');
+          const storageFilename = this.fileNameService.getAssetFilePath(data.importId, filename);
+          await this.storageService.uploadFile(
+            storageFilename,
+            Buffer.from(fileData, 'base64'),
+            getAssetMimeType(filename)
+          );
+        })
+      );
+    }
 
     return {
       file: buffer,

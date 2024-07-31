@@ -7,9 +7,8 @@ interface IPhase0Props {
   onValidationSuccess: () => void;
 }
 
-export function Phase0(props: IPhase0Props) {
-  const { onValidationSuccess: goNext } = props;
-  const { isLoading, error, handleValidate, isWidgetOpened } = usePhase0({
+export function Phase0({ onValidationSuccess: goNext }: IPhase0Props) {
+  const { isLoading, error, isWidgetOpened, handleValidate } = usePhase0({
     goNext,
   });
 

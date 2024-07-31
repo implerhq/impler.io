@@ -27,6 +27,10 @@ export enum FileMimeTypesEnum {
   'JSON' = 'application/json',
   'XML' = 'application/rss+xml',
   'TEXTXML' = 'text/xml',
+  'PNG' = 'image/png',
+  'JPG' = 'image/jpeg',
+  'JPEG' = 'image/jpeg',
+  'WEBP',
 }
 
 export enum FileEncodingsEnum {
@@ -59,6 +63,7 @@ export type CommonCachedData = {
   chunkFormat?: string;
   defaultValues: string;
   multiSelectHeadings?: Record<string, string>;
+  imageHeadings?: string[];
 };
 
 export type SendWebhookCachedData = {

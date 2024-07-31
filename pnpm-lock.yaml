@@ -192,6 +192,12 @@ importers:
       jsonwebtoken:
         specifier: ^9.0.0
         version: 9.0.2
+      jszip:
+        specifier: ^3.10.1
+        version: 3.10.1
+      nodemailer:
+        specifier: ^6.9.3
+        version: 6.9.14
       papaparse:
         specifier: ^5.4.1
         version: 5.4.1
@@ -543,6 +549,9 @@ importers:
       http-server:
         specifier: ^14.1.1
         version: 14.1.1
+      jszip:
+        specifier: ^3.10.1
+        version: 3.10.1
       moment:
         specifier: ^2.29.4
         version: 2.30.1

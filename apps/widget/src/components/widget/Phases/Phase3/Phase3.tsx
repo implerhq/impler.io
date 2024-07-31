@@ -86,9 +86,11 @@ export function Phase3(props: IPhase3Props) {
           <SegmentedControl
             value={type}
             onChange={onTypeChange}
-            allDataLength={numberFormatter(totalRecords)}
-            invalidDataLength={numberFormatter(invalidRecords)}
-            validDataLength={numberFormatter(totalRecords - invalidRecords)}
+            items={[
+              { value: 'all', label: `All ${numberFormatter(totalRecords)}` },
+              { value: 'valid', label: `Valid ${numberFormatter(totalRecords - invalidRecords)}` },
+              { value: 'invalid', label: `Invalid ${numberFormatter(invalidRecords)}` },
+            ]}
           />
           <Button color="red" disabled={!selectedRowsRef.current.size} onClick={() => setShowDeleteConfirmModal(true)}>
             Delete

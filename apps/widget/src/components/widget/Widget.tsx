@@ -1,22 +1,23 @@
 import { useEffect, useState } from 'react';
 
 import { Modal } from '@ui/Modal';
-import { TEXTS, variables } from '@config';
 import { ParentWindow } from '@util';
-import { IUpload } from '@impler/shared';
+import { TEXTS, variables } from '@config';
+import { useWidget } from '@hooks/useWidget';
+import { useAppState } from '@store/app.context';
+import { Layout } from 'components/Common/Layout';
+import { ConfirmModal } from './modals/ConfirmModal';
+import { useTemplates } from '@hooks/useTemplates';
+import { PhasesEnum, PromptModalTypesEnum } from '@types';
+import { IUpload, TemplateModeEnum } from '@impler/shared';
+import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
+
 import { Phase0 } from './Phases/Phase0';
+import { Phase01 } from './Phases/Phase0-1';
 import { Phase1 } from './Phases/Phase1';
 import { Phase2 } from './Phases/Phase2';
 import { Phase3 } from './Phases/Phase3';
 import { Phase4 } from './Phases/Phase4';
-import { useWidget } from '@hooks/useWidget';
-import { useAppState } from '@store/app.context';
-import { Layout } from 'components/Common/Layout';
-import { TemplateModeEnum } from '@impler/shared';
-import { ConfirmModal } from './modals/ConfirmModal';
-import { PhasesEnum, PromptModalTypesEnum } from '@types';
-import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
-
 import { AutoImportPhase1 } from './Phases/AutoImportPhases/AutoImportPhase1';
 import { AutoImportPhase2 } from './Phases/AutoImportPhases/AutoImportPhase2';
 import { AutoImportPhase3 } from './Phases/AutoImportPhases/AutoImportPhase3';
@@ -24,6 +25,7 @@ import { AutoImportPhase4 } from './Phases/AutoImportPhases/AutoImportPhase4';
 
 export function Widget() {
   const defaultDataCount = 0;
+  const { hasImageUpload } = useTemplates();
   const { terminateUpload, phase, setPhase } = useWidget();
   const [dataCount, setDataCount] = useState<number>(defaultDataCount);
   const [promptContinueAction, setPromptContinueAction] = useState<PromptModalTypesEnum>();
@@ -44,19 +46,21 @@ export function Widget() {
   const onPromptConfirm = () => {
     terminateUpload();
     setPromptContinueAction(undefined);
-    ParentWindow.UploadTerminated({ uploadId: uploadInfo._id });
+    if (uploadInfo._id) ParentWindow.UploadTerminated({ uploadId: uploadInfo._id });
     if (promptContinueAction === PromptModalTypesEnum.CLOSE) closeWidget();
   };
   const onPromptCancel = () => {
     setPromptContinueAction(undefined);
   };
   const onClose = () => {
-    if ([PhasesEnum.VALIDATE, PhasesEnum.UPLOAD, PhasesEnum.COMPLETE].includes(phase)) closeWidget(true);
+    if ([PhasesEnum.VALIDATE, PhasesEnum.IMAGE_UPLOAD, PhasesEnum.UPLOAD, PhasesEnum.COMPLETE].includes(phase))
+      closeWidget(true);
     else setPromptContinueAction(PromptModalTypesEnum.CLOSE);
   };
   const closeWidget = (resetPhase?: boolean) => {
     setShowWidget(false);
     resetAmplitude();
+    resetAppState();
     if (resetPhase) setPhase(PhasesEnum.VALIDATE);
     setTimeout(() => {
       ParentWindow.Close();
@@ -74,7 +78,9 @@ export function Widget() {
   };
 
   const PhaseView = {
-    [PhasesEnum.VALIDATE]: <Phase0 onValidationSuccess={() => setPhase(PhasesEnum.UPLOAD)} />,
+    [PhasesEnum.VALIDATE]: (
+      <Phase0 onValidationSuccess={() => setPhase(hasImageUpload ? PhasesEnum.IMAGE_UPLOAD : PhasesEnum.UPLOAD)} />
+    ),
     ...(importConfig.mode === TemplateModeEnum.AUTOMATIC
       ? {
           [PhasesEnum.CONFIGURE]: <AutoImportPhase1 onNextClick={() => setPhase(PhasesEnum.MAPCOLUMNS)} />,
@@ -83,7 +89,14 @@ export function Widget() {
           [PhasesEnum.CONFIRM]: <AutoImportPhase4 onCloseClick={onClose} />,
         }
       : {
-          [PhasesEnum.UPLOAD]: <Phase1 onNextClick={() => setPhase(PhasesEnum.MAPPING)} />,
+          [PhasesEnum.IMAGE_UPLOAD]: <Phase01 goToUpload={() => setPhase(PhasesEnum.UPLOAD)} />,
+          [PhasesEnum.UPLOAD]: (
+            <Phase1
+              hasImageUpload={hasImageUpload}
+              onNextClick={() => setPhase(PhasesEnum.MAPPING)}
+              generateImageTemplate={() => setPhase(PhasesEnum.IMAGE_UPLOAD)}
+            />
+          ),
           [PhasesEnum.MAPPING]: (
             <Phase2 onNextClick={() => setPhase(PhasesEnum.REVIEW)} onPrevClick={onUploadResetClick} />
           ),
@@ -109,6 +122,7 @@ export function Widget() {
     <Modal title={title || importConfig?.title || templateInfo?.name} opened={showWidget} onClose={onClose}>
       <Layout
         active={phase}
+        hasImageUpload={hasImageUpload}
         title={title || importConfig?.title || templateInfo?.name}
         mode={importConfig.mode as TemplateModeEnum}
       >
