@@ -65,6 +65,7 @@
 		"react-router-dom": "^6.4.2",
 		"react-scripts": "5.0.1",
 		"rimraf": "^3.0.2",
+		"tippy.js": "^6.3.7",
 		"web-vitals": "^3.0.4",
 		"webfontloader": "^1.6.28",
 		"webpack-dev-server": "^4.11.1"
