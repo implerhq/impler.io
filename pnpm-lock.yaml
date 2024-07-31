@@ -564,6 +564,9 @@ importers:
       rimraf:
         specifier: ^3.0.2
         version: 3.0.2
+      tippy.js:
+        specifier: ^6.3.7
+        version: 6.3.7
       web-vitals:
         specifier: ^3.0.4
         version: 3.5.2
@@ -23768,6 +23771,12 @@ packages:
     requiresBuild: true
     dev: false
     optional: true
+
+  /tippy.js@6.3.7:
+    resolution: {integrity: sha512-E1d3oP2emgJ9dRQZdf3Kkn0qJgI6ZLpyS5z6ZkY1DF3kaQaBsGZsndEpHwx+eC+tYM41HaSNvNtLx8tU57FzTQ==}
+    dependencies:
+      '@popperjs/core': 2.11.8
+    dev: false
 
   /tmp@0.0.33:
     resolution: {integrity: sha512-jRCJlojKnZ3addtTOjdIqoRuPEKBvNXcGYqzO6zWZX8KfKEpnGY5jfggJQ3EjKuu8D4bJRr0y+cYJFmYbImXGw==}
