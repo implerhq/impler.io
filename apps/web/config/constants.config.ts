@@ -226,4 +226,5 @@ export const documentationReferenceLinks = {
   webhook: 'https://docs.impler.io/data-retrieval/using-webhook',
   bubbleIo: 'https://docs.impler.io/widget/bubble.io-embed',
   subscriptionInformation: 'https://docs.impler.io/platform/how-subscription-works',
+  customValidation: 'https://docs.impler.io/features/custom-validation',
 };
