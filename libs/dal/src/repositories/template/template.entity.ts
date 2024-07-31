@@ -16,4 +16,6 @@ export class TemplateEntity {
   totalRecords: number;
 
   totalInvalidRecords: number;
+
+  imageColumns: string[];
 }

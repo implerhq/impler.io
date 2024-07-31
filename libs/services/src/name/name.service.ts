@@ -67,4 +67,7 @@ export class FileNameService {
   getValidDataFilePath(uploadId: string): string {
     return `${uploadId}/${this.getValidDataFileName()}`;
   }
+  getAssetFilePath(uploadId: string, fileName: string): string {
+    return `${uploadId}/${fileName}`;
+  }
 }

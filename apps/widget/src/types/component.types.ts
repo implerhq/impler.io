@@ -20,6 +20,7 @@ export enum PromptModalTypesEnum {
 
 export enum PhasesEnum {
   VALIDATE,
+  IMAGE_UPLOAD,
   UPLOAD,
   MAPPING,
   REVIEW,
@@ -38,4 +39,6 @@ export interface IUploadValues extends IFormvalues {
   extra?: string;
   schema?: string;
   output?: string;
+  importId?: string;
+  imageSchema?: string;
 }

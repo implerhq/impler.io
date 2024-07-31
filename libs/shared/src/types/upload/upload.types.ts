@@ -25,6 +25,9 @@ export enum FileMimeTypesEnum {
   'EXCELX' = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   'EXCELM' = 'application/vnd.ms-excel.sheet.macroenabled.12',
   'JSON' = 'application/json',
+  'PNG' = 'image/png',
+  'JPG' = 'image/jpeg',
+  'JPEG' = 'image/jpeg',
 }
 
 export enum FileEncodingsEnum {
@@ -56,6 +59,7 @@ export type SendWebhookCachedData = {
   chunkFormat?: string;
   defaultValues: string;
   multiSelectHeadings?: Record<string, string>;
+  imageHeadings?: string[];
 };
 
 export type SendBubbleCachedData = {

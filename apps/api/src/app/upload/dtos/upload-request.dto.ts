@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsJSON, IsOptional, IsString } from 'class-validator';
+import { IsJSON, IsMongoId, IsOptional, IsString } from 'class-validator';
 
 export class UploadRequestDto {
   @ApiProperty({
@@ -46,4 +46,19 @@ export class UploadRequestDto {
   @IsOptional()
   @IsString()
   selectedSheetName: string;
+
+  @ApiProperty({
+    description: 'ID of the import if already created',
+  })
+  @IsOptional()
+  @IsMongoId()
+  importId: string;
+
+  @ApiProperty({
+    description: 'Image schema for importing excel with images',
+    required: false,
+  })
+  @IsOptional()
+  @IsJSON()
+  imageSchema: string;
 }

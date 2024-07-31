@@ -7,6 +7,7 @@ export enum ColumnTypesEnum {
   'SELECT' = 'Select',
   'ANY' = 'Any',
   'DOUBLE' = 'Double',
+  'IMAGE' = 'Image',
 }
 
 export enum ColumnDelimiterEnum {

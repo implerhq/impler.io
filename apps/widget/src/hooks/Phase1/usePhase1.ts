@@ -3,26 +3,40 @@ import { useForm } from 'react-hook-form';
 import { logAmplitudeEvent } from '@amplitude';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { variables } from '@config';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
-import { IFormvalues, IUploadValues } from '@types';
 import { useImplerState } from '@store/impler.context';
-import { ColumnTypesEnum, IErrorObject, IOption, ISchemaItem, ITemplate, IUpload } from '@impler/shared';
-import { FileMimeTypesEnum, IImportConfig, downloadFile } from '@impler/shared';
-import { downloadFileFromURL, getFileNameFromUrl, notifier, ParentWindow } from '@util';
+
+import { variables } from '@config';
+import { useSample } from '@hooks/useSample';
+import { notifier, ParentWindow } from '@util';
+import { useTemplates } from '@hooks/useTemplates';
+import { IFormvalues, IUploadValues } from '@types';
+import { IErrorObject, ITemplate, IUpload, FileMimeTypesEnum, IImportConfig } from '@impler/shared';
 
 interface IUsePhase1Props {
   goNext: () => void;
 }
 
 export function usePhase1({ goNext }: IUsePhase1Props) {
+  const {
+    control,
+    register,
+    trigger,
+    setValue,
+    setError,
+    getValues,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IFormvalues>();
   const { api } = useAPIState();
-  const [templates, setTemplates] = useState<IOption[]>([]);
+  const { templates } = useTemplates();
+  const { getSignedUrl, onDownload } = useSample({});
   const [excelSheetNames, setExcelSheetNames] = useState<string[]>([]);
   const { projectId, templateId, authHeaderValue, extra } = useImplerState();
   const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
-  const { setUploadInfo, setTemplateInfo, setImportConfig, output, schema, data } = useAppState();
+  const { setUploadInfo, setTemplateInfo, setImportConfig, output, schema, data, importId, imageSchema } =
+    useAppState();
 
   const { isFetched: isImportConfigLoaded, isLoading: isImportConfigLoading } = useQuery<
     IImportConfig,
@@ -36,28 +50,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
       notifier.showError({ message: error.message, title: error.error });
     },
   });
-  const {
-    data: dataTemplates,
-    isFetched,
-    isLoading,
-  } = useQuery<ITemplate[], IErrorObject, ITemplate[], string[]>(
-    ['templates', projectId],
-    () => api.getTemplates(projectId),
-    {
-      onSuccess(templatesResponse) {
-        setTemplates(
-          templatesResponse.map((item) => ({
-            label: item.name,
-            value: item._id,
-          }))
-        );
-      },
-      onError(error: IErrorObject) {
-        notifier.showError({ message: error.message, title: error.error });
-      },
-      refetchOnMount: 'always',
-    }
-  );
+
   const { isLoading: isUploadLoading, mutate: submitUpload } = useMutation<IUpload, IErrorObject, IUploadValues>(
     ['upload'],
     (values: any) => api.uploadFile(values),
@@ -72,33 +65,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
       },
     }
   );
-  const { mutate: getSignedUrl } = useMutation<string, IErrorObject, [string, string]>(
-    ['getSignedUrl'],
-    ([fileUrl]) => api.getSignedUrl(getFileNameFromUrl(fileUrl)),
-    {
-      onSuccess(signedUrl, queryVariables) {
-        downloadFileFromURL(signedUrl, queryVariables[variables.firstIndex]);
-      },
-      onError(error: IErrorObject) {
-        notifier.showError({ title: error.error, message: error.message });
-      },
-    }
-  );
-  const { mutate: downloadSample } = useMutation<ArrayBuffer, IErrorObject, [string, string, boolean]>(
-    ['downloadSample'],
-    ([providedTemplateId]) => api.downloadSample(providedTemplateId, data, schema),
-    {
-      onSuccess(excelFileData, queryVariables) {
-        const isMultiSelect = queryVariables[variables.secondIndex];
-        downloadFile(
-          new Blob([excelFileData], {
-            type: isMultiSelect ? FileMimeTypesEnum.EXCELM : FileMimeTypesEnum.EXCELX,
-          }),
-          queryVariables[variables.firstIndex] + ` (sample).${isMultiSelect ? 'xlsm' : 'xlsx'}`
-        );
-      },
-    }
-  );
+
   const { mutate: getExcelSheetNames } = useMutation<string[], IErrorObject, { file: File }>(
     ['getExcelSheetNames'],
     (file) => api.getExcelSheetNames(file),
@@ -114,32 +81,12 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
       },
     }
   );
-  const {
-    control,
-    register,
-    trigger,
-    setValue,
-    setError,
-    getValues,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<IFormvalues>();
-
-  useEffect(() => {
-    if (templateId) {
-      setValue('templateId', templateId);
-      const foundTemplate = dataTemplates?.find((templateItem) => templateItem._id === templateId);
-      if (foundTemplate) {
-        setTemplateInfo(foundTemplate);
-      }
-    }
-  }, [templateId, dataTemplates]);
 
   const findTemplate = (): ITemplate | undefined => {
     let foundTemplate: ITemplate | undefined;
     const selectedTemplateValue = getValues('templateId');
-    if (selectedTemplateValue && dataTemplates) {
-      foundTemplate = dataTemplates.find((templateItem) => templateItem._id === selectedTemplateValue);
+    if (selectedTemplateValue && templates) {
+      foundTemplate = templates.find((templateItem) => templateItem._id === selectedTemplateValue);
     }
     if (!foundTemplate) notifier.showError('TEMPLATE_NOT_FOUND');
     else if (foundTemplate.totalColumns === variables.baseIndex) notifier.showError('INCOMPLETE_TEMPLATE');
@@ -148,14 +95,14 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     return undefined;
   };
   const onTemplateChange = (newTemplateId: string) => {
-    const foundTemplate = dataTemplates?.find((templateItem) => templateItem._id === newTemplateId);
+    const foundTemplate = templates?.find((templateItem) => templateItem._id === newTemplateId);
     if (foundTemplate) {
       setTemplateInfo(foundTemplate);
       setValue('templateId', newTemplateId);
       trigger('templateId');
     }
   };
-  const onDownload = async () => {
+  const onDownloadClick = async () => {
     setIsDownloadInProgress(true);
     const isTemplateValid = await trigger('templateId');
     if (!isTemplateValid) {
@@ -165,16 +112,8 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     }
 
     const foundTemplate = findTemplate();
-    let parsedSchema: ISchemaItem[] | undefined = undefined;
-    try {
-      if (schema) parsedSchema = JSON.parse(schema);
-    } catch (error) {}
-
     if (foundTemplate && ((Array.isArray(data) && data.length > variables.baseIndex) || schema)) {
-      const isMultiSelect = Array.isArray(parsedSchema)
-        ? parsedSchema.some((schemaItem) => schemaItem.type === ColumnTypesEnum.SELECT && schemaItem.allowMultiSelect)
-        : foundTemplate.sampleFileUrl?.endsWith('xlsm');
-      downloadSample([foundTemplate._id, foundTemplate.name, !!isMultiSelect]);
+      onDownload({ template: foundTemplate });
     } else if (foundTemplate && foundTemplate.sampleFileUrl) {
       getSignedUrl([
         foundTemplate.sampleFileUrl,
@@ -194,6 +133,8 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
         extra,
         schema,
         output,
+        importId,
+        imageSchema,
       });
     }
   };
@@ -210,6 +151,12 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     setExcelSheetNames([]);
   };
 
+  useEffect(() => {
+    if (templateId) {
+      setValue('templateId', templateId);
+    }
+  }, [templateId]);
+
   return {
     control,
     errors,
@@ -217,7 +164,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     register,
     onSubmit,
     templates,
-    onDownload,
+    onDownloadClick,
     excelSheetNames,
     isUploadLoading,
     onTemplateChange,
@@ -225,6 +172,6 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     onSelectSheetModalReset,
     showSelectTemplate: !templateId,
     onSelectExcelSheet: handleSubmit(uploadFile),
-    isInitialDataLoaded: isFetched && !isLoading && isImportConfigLoaded && !isImportConfigLoading,
+    isInitialDataLoaded: isImportConfigLoaded && !isImportConfigLoading,
   };
 }

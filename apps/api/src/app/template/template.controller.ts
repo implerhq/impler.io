@@ -1,6 +1,20 @@
 import { Response } from 'express';
-import { ApiOperation, ApiTags, ApiOkResponse, ApiSecurity, ApiBody } from '@nestjs/swagger';
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Res, UseGuards } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiOperation, ApiTags, ApiOkResponse, ApiSecurity, ApiBody, ApiConsumes } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseArrayPipe,
+  Post,
+  Put,
+  Res,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 
 import { UploadEntity } from '@impler/dal';
 import { ACCESS_KEY_NAME } from '@impler/shared';
@@ -92,12 +106,19 @@ export class TemplateController {
   @ApiOperation({
     summary: 'Get Template Sample',
   })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('file'))
   async downloadSampleRoute(
-    @Param('templateId', ValidateMongoId) templateId: string,
+    @Param('templateId', ValidateMongoId) _templateId: string,
     @Body() data: DownloadSampleDto,
-    @Res() res: Response
+    @Res() res: Response,
+    @UploadedFile('file') images: Express.Multer.File
   ) {
-    const { ext, file, type } = await this.downloadSample.execute(templateId, data);
+    const { ext, file, type } = await this.downloadSample.execute({
+      data,
+      images,
+      _templateId,
+    });
     res.header(`Content-disposition', 'attachment; filename=sample.${ext}`);
     res.type(type);
 

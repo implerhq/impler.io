@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { APIMessages } from '@shared/constants';
 import { ColumnRepository, TemplateRepository } from '@impler/dal';
+import { UpdateImageColumns, SaveSampleFile } from '@shared/usecases';
 import { AddColumnCommand } from 'app/column/commands/add-column.command';
 import { UniqueColumnException } from '@shared/exceptions/unique-column.exception';
-import { SaveSampleFile } from '@shared/usecases/save-sample-file/save-sample-file.usecase';
 import { UpdateCustomization } from '../update-customization/update-customization.usecase';
-import { APIMessages } from '@shared/constants';
 
 @Injectable()
 export class UpdateTemplateColumns {
@@ -13,7 +13,8 @@ export class UpdateTemplateColumns {
     private saveSampleFile: SaveSampleFile,
     private columnRepository: ColumnRepository,
     private templateRepository: TemplateRepository,
-    private updateCustomization: UpdateCustomization
+    private updateCustomization: UpdateCustomization,
+    private updateImageTemplates: UpdateImageColumns
   ) {}
 
   async execute(command: AddColumnCommand[], _templateId: string) {
@@ -28,6 +29,7 @@ export class UpdateTemplateColumns {
     });
     const columns = await this.columnRepository.createMany(command);
     await this.saveSampleFile.execute(columns, _templateId);
+    await this.updateImageTemplates.execute(columns, _templateId);
 
     const template = await this.templateRepository.findById(_templateId, 'destination');
     await this.updateCustomization.createOrReset(_templateId, {

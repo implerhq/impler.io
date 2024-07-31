@@ -1,11 +1,12 @@
 import { Group, MediaQuery, Title, useMantineTheme } from '@mantine/core';
+import { PhasesEnum } from '@types';
 import { Stepper } from '@ui/Stepper';
 import { TEXTS, variables } from '@config';
-import { PhasesEnum } from '@types';
 
 interface IHeadingProps {
-  active: PhasesEnum;
   title?: string;
+  active: PhasesEnum;
+  hasImageUpload?: boolean;
 }
 
 const Steps = [
@@ -23,7 +24,7 @@ const Steps = [
   },
 ];
 
-export function Heading({ active, title }: IHeadingProps) {
+export function Heading({ active, title, hasImageUpload }: IHeadingProps) {
   const theme = useMantineTheme();
 
   return (
@@ -31,7 +32,20 @@ export function Heading({ active, title }: IHeadingProps) {
       {active ? (
         <Group style={{ justifyContent: 'space-between' }} mb="lg">
           <Title order={3}>{title}</Title>
-          <Stepper active={active - 1} steps={Steps} primaryColor={theme.colors.primary[variables.colorIndex]} />
+          <Stepper
+            active={active - (hasImageUpload ? 1 : 2)}
+            steps={[
+              ...(hasImageUpload
+                ? [
+                    {
+                      label: TEXTS.STEPS.IMAGE_TEMPLATE,
+                    },
+                  ]
+                : []),
+              ...Steps,
+            ]}
+            primaryColor={theme.colors.primary[variables.colorIndex]}
+          />
         </Group>
       ) : (
         <></>

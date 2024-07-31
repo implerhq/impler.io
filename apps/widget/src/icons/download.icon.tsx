@@ -1,6 +1,6 @@
 import { IIcon } from '@types';
 
-export function Download(props: IIcon) {
+export function DownloadIcon(props: IIcon) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

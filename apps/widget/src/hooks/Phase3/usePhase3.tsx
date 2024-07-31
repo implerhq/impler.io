@@ -91,6 +91,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
               columnItem.renderer = 'custom';
               break;
             case ColumnTypesEnum.SELECT:
+            case ColumnTypesEnum.IMAGE:
               columnItem.type = 'text';
               columnItem.renderer = 'custom';
               columnItem.delimiter = column.delimiter || ColumnDelimiterEnum.COMMA;

@@ -18,6 +18,8 @@ export const variables = {
   maxColorNumber: 255,
   closeDelayInMS: 100,
   implerWebsite: 'https://impler.io?utm_source=widget',
+  LIMIT_5_MB: 5 * 1024 * 1024,
+  SHOW_IMAGE_ALERT_STORAGE_KEY: 'showImageAlert',
 };
 
 export const AMPLITUDE = {

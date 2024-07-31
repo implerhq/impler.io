@@ -26,6 +26,10 @@ const templateSchema = new Schema(
       type: Schema.Types.Number,
       default: 0,
     },
+    imageColumns: {
+      type: [Schema.Types.String],
+      default: [],
+    },
     totalInvalidRecords: {
       type: Schema.Types.Number,
       default: 0,

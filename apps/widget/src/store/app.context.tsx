@@ -6,7 +6,17 @@ interface AppContextProviderProps
   extends React.PropsWithChildren,
     Omit<
       IAppStore,
-      'uploadInfo' | 'setUploadInfo' | 'reset' | 'templateInfo' | 'importConfig' | 'setTemplateInfo' | 'setImportConfig'
+      | 'uploadInfo'
+      | 'setUploadInfo'
+      | 'reset'
+      | 'templateInfo'
+      | 'importConfig'
+      | 'setTemplateInfo'
+      | 'setImportConfig'
+      | 'importId'
+      | 'setImportId'
+      | 'imageSchema'
+      | 'setImageSchema'
     > {}
 
 const AppContext = createContext<IAppStore | null>(null);
@@ -22,12 +32,16 @@ const AppContextProvider = ({
   showWidget,
   setShowWidget,
 }: AppContextProviderProps) => {
-  const [importConfig, setImportConfig] = useState<IImportConfig>({} as IImportConfig);
-  const [templateInfo, setTemplateInfo] = useState<ITemplate>({} as ITemplate);
+  const [importId, setImportId] = useState<string>();
+  const [imageSchema, setImageSchema] = useState<string>();
   const [uploadInfo, setUploadInfo] = useState<IUpload>({} as IUpload);
+  const [templateInfo, setTemplateInfo] = useState<ITemplate>({} as ITemplate);
+  const [importConfig, setImportConfig] = useState<IImportConfig>({} as IImportConfig);
 
   const reset = () => {
     setUploadInfo({} as IUpload);
+    setImportId(undefined);
+    setImageSchema(undefined);
   };
 
   return (
@@ -39,13 +53,17 @@ const AppContextProvider = ({
         data,
         schema,
         output,
+        importId,
         showWidget,
         uploadInfo,
+        setImportId,
+        imageSchema,
         templateInfo,
         importConfig,
         primaryColor,
         setShowWidget,
         setUploadInfo,
+        setImageSchema,
         setImportConfig,
         setTemplateInfo,
       }}

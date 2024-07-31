@@ -1,8 +1,10 @@
+import { useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+
 import { IErrorObject } from '@impler/shared';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { useImplerState } from '@store/impler.context';
-import { useMutation } from '@tanstack/react-query';
 
 interface IUsePhase0Props {
   goNext: () => void;
@@ -10,33 +12,24 @@ interface IUsePhase0Props {
 
 export function usePhase0({ goNext }: IUsePhase0Props) {
   const { api } = useAPIState();
-  const AppContext = useAppState();
+  const { schema, showWidget } = useAppState();
   const { projectId, templateId } = useImplerState();
 
-  const {
-    error,
-    isLoading,
-    mutate: checkIsRequestvalid,
-  } = useMutation<boolean, IErrorObject, any, string[]>(
-    ['valid'],
-    () => api.checkIsRequestvalid(projectId, templateId, AppContext.schema) as Promise<boolean>,
+  const { data, error, isLoading } = useQuery<unknown, IErrorObject, { success: boolean }, (string | undefined)[]>(
+    ['valid', projectId, templateId, schema],
+    () => api.checkIsRequestvalid(projectId, templateId, schema) as Promise<{ success: boolean }>,
     {
-      onSuccess(valid) {
-        if (valid) {
-          goNext();
-        }
-      },
+      refetchOnWindowFocus: true,
     }
   );
 
-  const handleValidate = async () => {
-    return checkIsRequestvalid({ projectId, templateId, schema: AppContext.schema });
-  };
+  useEffect(() => {
+    if (data?.success) goNext();
+  }, [data]);
 
   return {
     error,
     isLoading,
-    handleValidate,
-    isWidgetOpened: AppContext.showWidget,
+    isWidgetOpened: showWidget,
   };
 }
