@@ -17,6 +17,7 @@ export type HotItemSchema = {
   allowEmpty?: boolean;
   allowInvalid?: boolean;
   disableVisualSelection?: boolean;
+  description?: string;
   renderer?:
     | 'custom'
     | 'check'

@@ -5,6 +5,8 @@ export class ColumnEntity {
 
   key: string;
 
+  description?: string;
+
   alternateKeys?: string[];
 
   isRequired?: boolean;

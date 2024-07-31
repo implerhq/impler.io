@@ -2,6 +2,7 @@ export interface IColumn {
   _id: string;
   name: string;
   key: string;
+  description?: string;
   type: string;
   alternateKeys?: string[];
   isRequired?: boolean;
