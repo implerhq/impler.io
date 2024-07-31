@@ -104,48 +104,56 @@ export class ExcelFileService {
     headings.forEach((heading, index) => {
       const columnName = this.getExcelColumnNameFromIndex(index + 1);
       const columnHeadingCellName = columnName + '1';
-      if (heading.type === ColumnTypesEnum.SELECT && heading.allowMultiSelect)
+      const columnDescriptionCellName = columnName + '2';
+
+      // Set header
+      if (heading.type === ColumnTypesEnum.SELECT && heading.allowMultiSelect) {
         worksheet
           .cell(columnHeadingCellName)
           .value(heading.key + '#MULTI' + '#' + (heading.delimiter || ColumnDelimiterEnum.COMMA));
-      else worksheet.cell(columnHeadingCellName).value(heading.key);
+      } else {
+        worksheet.cell(columnHeadingCellName).value(heading.key);
+      }
+
+      // Set description
+      worksheet.cell(columnDescriptionCellName).value(heading.description || 'Description not provided');
       worksheet.column(columnName).style('numberFormat', '@');
     });
 
     const frozenColumns = headings.filter((heading) => heading.isFrozen).length;
-    if (frozenColumns) worksheet.freezePanes(frozenColumns, 1); // freeze panes (freeze first n column and first row)
-    else worksheet.freezePanes(0, 1); // freeze 0 column and first row
+    if (frozenColumns)
+      worksheet.freezePanes(frozenColumns, 2); // freeze panes (freeze first n column and first two rows)
+    else worksheet.freezePanes(0, 2); // freeze 0 column and first two rows
 
     headings.forEach((heading, index) => {
       if (heading.type === ColumnTypesEnum.SELECT) {
         const keyName = this.addSelectSheet(workbook, heading);
         const columnName = this.getExcelColumnNameFromIndex(index + 1);
-        worksheet.range(`${columnName}2:${columnName}9999`).dataValidation({
+        worksheet.range(`${columnName}3:${columnName}9999`).dataValidation({
           type: 'list',
           allowBlank: !heading.isRequired,
           formula1: `${keyName}!$A$2:$A$9999`,
-          ...(!heading.allowMultiSelect
-            ? {
-                showErrorMessage: true,
-                error: 'Please select from the list',
-                errorTitle: 'Invalid Value',
-              }
-            : {}),
+          showErrorMessage: !heading.allowMultiSelect,
+          error: 'Please select from the list',
+          errorTitle: 'Invalid Value',
         });
       }
     });
+
     const headingNames = headings.map((heading) => heading.key);
-    const endColumnPosition = this.getExcelColumnNameFromIndex(headings.length + 1);
+    const endColumnPosition = this.getExcelColumnNameFromIndex(headings.length);
+
     if (Array.isArray(data) && data.length > 0) {
       const rows: string[][] = data.reduce<string[][]>((acc: string[][], rowItem: Record<string, any>) => {
         acc.push(headingNames.map((headingKey) => rowItem[headingKey]));
 
         return acc;
       }, []);
-      const rangeKey = `A2:${endColumnPosition}${rows.length + 1}`;
-      const range = workbook.sheet(0).range(rangeKey);
+      const rangeKey = `A3:${endColumnPosition}${rows.length + 2}`;
+      const range = worksheet.range(rangeKey);
       range.value(rows);
     }
+
     const buffer = await workbook.outputAsync();
 
     return buffer as Promise<Buffer>;
