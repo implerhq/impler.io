@@ -17,6 +17,7 @@ import { Pagination } from '@ui/Pagination';
 import { LoadingOverlay } from '@ui/LoadingOverlay';
 import { SegmentedControl } from '@ui/SegmentedControl';
 import { ConfirmModal } from 'components/widget/modals/ConfirmModal';
+import { useAppState } from '@store/app.context';
 
 interface IPhase3Props {
   onNextClick: (uploadData: IUpload, importedData?: Record<string, any>[]) => void;
@@ -61,6 +62,8 @@ export function Phase3(props: IPhase3Props) {
     height: 200,
     width: 500,
   });
+  const { primaryColor } = useAppState();
+  const columnDescriptions = columnDefs.map((column) => column.description || '');
 
   useEffect(() => {
     //  setting wrapper height
@@ -172,6 +175,8 @@ export function Phase3(props: IPhase3Props) {
           headings={headings}
           columnDefs={columnDefs}
           allChecked={allChecked}
+          columnDescriptions={columnDescriptions}
+          primaryColor={primaryColor}
         />
       </Stack>
       <Pagination page={page} total={totalPages} onChange={onPageChange} />
