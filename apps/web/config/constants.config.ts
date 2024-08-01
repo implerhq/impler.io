@@ -1,3 +1,5 @@
+import { TemplateModeEnum } from '@impler/shared';
+
 export const CONSTANTS = {
   PLAN_CODE_QUERY_KEY: 'plan_code',
   GITHUB_LOGIN_URL: '/v1/auth/github',
@@ -220,3 +222,8 @@ export const TEXTS = {
     // eslint-disable-next-line max-len
     "Build the best CSV Excel Import Experience for SaaS in 10 Minutes. Onboard customers' data with a hassle-free data importer in your app.",
 };
+
+export const IMPORT_MODES = [
+  { label: 'Manual', value: TemplateModeEnum.MANUAL },
+  { label: 'Automatic', value: TemplateModeEnum.AUTOMATIC },
+];

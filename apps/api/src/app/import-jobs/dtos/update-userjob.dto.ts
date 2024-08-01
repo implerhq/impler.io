@@ -1,6 +1,6 @@
 import { IsArray, IsOptional, IsString } from 'class-validator';
 
-export class UpdateJobInfoDto {
+export class UpdateJobDto {
   @IsString()
   @IsOptional()
   url: string;

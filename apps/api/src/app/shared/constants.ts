@@ -21,6 +21,7 @@ export const APIMessages = {
   PROJECT_WITH_TEMPLATE_MISSING: 'Template not found with provided ProjectId and Template',
   PROJECT_NOT_ASSIGNED: 'Project is not assigned to you',
   USER_NOT_FOUND: 'User is not found',
+  USER_JOB_NOT_FOUND: 'User-Job is not found',
   UNIQUE_EMAIL: 'Email address already in use',
   INCORRECT_LOGIN_CREDENTIALS: 'Incorrect email or password provided',
   OPERATION_NOT_ALLOWED: `You're not allowed to perform this action.`,

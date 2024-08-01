@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';
-import { UserJobEntity, UserJobRepository } from '@impler/dal';
 import { BadRequestException } from '@nestjs/common';
+import { NameService } from '@impler/services';
+import { UserJobEntity, UserJobRepository } from '@impler/dal';
 
 @Injectable()
 export class UserJobDelete {
   constructor(
+    private readonly nameService: NameService,
     private readonly schedulerRegistry: SchedulerRegistry,
     private readonly userJobRepository: UserJobRepository
   ) {}
@@ -17,7 +19,7 @@ export class UserJobDelete {
       throw new BadRequestException(`Unable to Delete UserJob with id ${_jobId}`);
     }
 
-    this.schedulerRegistry.deleteCronJob(`${_jobId}_rss_import`);
+    this.schedulerRegistry.deleteCronJob(this.nameService.getCronName(_jobId));
 
     return deletedUserJob;
   }

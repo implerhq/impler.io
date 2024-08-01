@@ -1,14 +1,17 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
-import { SchedulerRegistry } from '@nestjs/schedule';
-import { UserJobEntity, UserJobRepository } from '@impler/dal';
-import { UserJobImportStatusEnum } from '@impler/shared';
-import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
 import { CronJob, CronTime } from 'cron';
+import { SchedulerRegistry } from '@nestjs/schedule';
+import { Injectable, BadRequestException } from '@nestjs/common';
+
+import { NameService } from '@impler/services';
+import { UserJobImportStatusEnum } from '@impler/shared';
+import { UserJobEntity, UserJobRepository } from '@impler/dal';
 import { UserJobTriggerService } from './userjob-trigger.usecase';
+import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
 
 @Injectable()
 export class UserJobResume {
   constructor(
+    private readonly nameService: NameService,
     private readonly schedulerRegistry: SchedulerRegistry,
     private readonly userJobRepository: UserJobRepository,
     private readonly userJobTriggerService: UserJobTriggerService
@@ -26,14 +29,14 @@ export class UserJobResume {
     }
 
     const cronExpression = userJob.cron;
-    const existingJob = this.schedulerRegistry.getCronJob(`${_jobId}_rss_import`);
+    const existingJob = this.schedulerRegistry.getCronJob(this.nameService.getCronName(_jobId));
 
     if (existingJob) {
       existingJob.setTime(new CronTime(cronExpression));
       existingJob.start();
     } else {
       const newJob = new CronJob(cronExpression, () => this.userJobTriggerService.execute(_jobId));
-      this.schedulerRegistry.addCronJob(`${_jobId}_rss_import`, newJob);
+      this.schedulerRegistry.addCronJob(this.nameService.getCronName(_jobId), newJob);
       newJob.start();
     }
 

@@ -8,15 +8,12 @@ import {
   GetUserJob,
   UserJobPause,
   UserJobResume,
-  UserJobStart,
   UserJobTerminate,
   UserJobDelete,
 } from './usecase';
-import { UpdateJobMappingDto } from './dtos/update-jobmapping.dto';
-import { UpdateJobInfoDto } from './dtos/update-jobinfo.dto';
-import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { ACCESS_KEY_NAME } from '@impler/shared';
-import { CreateUserJobDto } from './dtos/create-userjob.dto';
+import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
+import { UpdateJobDto, CreateUserJobDto, UpdateJobMappingDto } from './dtos';
 
 @ApiTags('Import-Jobs')
 @Controller('/import-jobs')
@@ -25,19 +22,18 @@ import { CreateUserJobDto } from './dtos/create-userjob.dto';
 export class ImportJobsController {
   constructor(
     private createUserJob: CreateUserJob,
+    private updateJobMapping: CreateJobMapping,
     private getColumnSchemaMapping: GetColumnSchemaMapping,
     private getUserJob: GetUserJob,
-    private updateJobMapping: CreateJobMapping,
     private updateUserJob: UpdateUserJob,
     private userJobPause: UserJobPause,
     private userJobResume: UserJobResume,
-    private userJobStart: UserJobStart,
-    private userJobTerminate: UserJobTerminate,
-    private userJobDelete: UserJobDelete
+    private userJobDelete: UserJobDelete,
+    private userJobTerminate: UserJobTerminate
   ) {}
 
   @Post(':templateId')
-  @ApiOperation({ summary: 'Create User Job' })
+  @ApiOperation({ summary: 'Create User-Job' })
   @ApiSecurity(ACCESS_KEY_NAME)
   async createUserJobRoute(@Param('templateId') templateId: string, @Body() createUserJobData: CreateUserJobDto) {
     return this.createUserJob.execute({
@@ -47,7 +43,7 @@ export class ImportJobsController {
   }
 
   @Get(':jobId/mappings')
-  @ApiOperation({ summary: 'Fetch the Import Job Information based on jobId' })
+  @ApiOperation({ summary: 'Fetch the User-Job Mapping Information based on jobId' })
   @UseGuards(JwtAuthGuard)
   @ApiSecurity(ACCESS_KEY_NAME)
   async getImportJobInfoRoute(@Param('jobId') _jobId: string) {
@@ -55,60 +51,51 @@ export class ImportJobsController {
   }
 
   @Put(':jobId/mappings')
-  @ApiOperation({ summary: 'Update Mappings Route' })
+  @ApiOperation({ summary: 'Update User-Job Mappings' })
   @UseGuards(JwtAuthGuard)
-  async updateJobMappingRoute(
-    @Body(new ParseArrayPipe({ items: UpdateJobMappingDto, optional: true })) body: UpdateJobMappingDto[]
-  ) {
+  async updateJobMappingRoute(@Body(new ParseArrayPipe({ items: UpdateJobMappingDto })) body: UpdateJobMappingDto[]) {
     return this.updateJobMapping.execute(body);
   }
 
   @Put(':jobId')
-  @ApiOperation({ summary: 'Update UserJob Fields' })
+  @ApiOperation({ summary: 'Update User-Job Fields' })
   @UseGuards(JwtAuthGuard)
-  async updateUserJobRoute(@Param('jobId') _jobId: string, @Body() userJobData: UpdateJobInfoDto) {
+  async updateUserJobRoute(@Param('jobId') _jobId: string, @Body() userJobData: UpdateJobDto) {
     return this.updateUserJob.execute(_jobId, userJobData);
   }
 
   @Get('/user/:externalUserId')
-  @ApiOperation({ summary: 'Get Import Jobs for a User' })
+  @ApiOperation({ summary: 'Get User Jobs' })
   @UseGuards(JwtAuthGuard)
   async getUserJobs(@Param('externalUserId') externalUserId: string) {
     return this.getUserJob.execute(externalUserId);
   }
 
   @Put('/user/:jobId/pause')
-  @ApiOperation({ summary: 'Pause a Cron Job' })
+  @ApiOperation({ summary: 'Pause User-Job from Running' })
   @UseGuards(JwtAuthGuard)
   async pauseCronJob(@Param('jobId') jobId: string) {
     return await this.userJobPause.execute(jobId);
   }
 
-  @Put('/user/:jobId/start')
-  @ApiOperation({ summary: 'Start a Cron Job' })
+  @Put('/user/:jobId/resume')
+  @ApiOperation({ summary: 'Resume stopped User-Job' })
   @UseGuards(JwtAuthGuard)
-  async startCronJob(@Param('jobId') jobId: string) {
-    return await this.userJobStart.execute(jobId);
+  async resumeUserJobRoute(@Param('jobId') _jobId: string) {
+    return await this.userJobResume.execute(_jobId);
   }
 
   @Delete('/user/:externalUserId/:jobId')
-  @ApiOperation({ summary: 'Delete a Job' })
+  @ApiOperation({ summary: 'Delete User-Job' })
   @UseGuards(JwtAuthGuard)
   async deleteJob(@Param('externalUserId') externalUserId: string, @Param('jobId') _jobId: string) {
     return await this.userJobDelete.execute({ externalUserId, _jobId });
   }
 
   @Delete(':jobId')
-  @ApiOperation({ summary: 'Terminate Userjob Update the status of UserJob to TERMINATED' })
+  @ApiOperation({ summary: 'Delete User-Job and Update the status of UserJob to TERMINATED' })
   @UseGuards(JwtAuthGuard)
   async deleteJobRoute(@Param('jobId') _jobId: string) {
     return await this.userJobTerminate.execute(_jobId);
-  }
-
-  @Put('/user/:jobId/resume')
-  @ApiOperation({ summary: 'Resume the Paused UserJob' })
-  @UseGuards(JwtAuthGuard)
-  async resumeUserJobRoute(@Param('jobId') _jobId: string) {
-    return await this.userJobResume.execute(_jobId);
   }
 }

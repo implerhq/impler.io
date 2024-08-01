@@ -65,7 +65,7 @@ export class CommonController {
       throw new BadRequestException();
     }
 
-    return await this.getImportConfig.execute(projectId, templateId);
+    return this.getImportConfig.execute(projectId, templateId);
   }
 
   @Post('/sheet-names')

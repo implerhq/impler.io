@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ColumnRepository, UserJobRepository, JobMappingEntity } from '@impler/dal';
 import { UserJobImportStatusEnum } from '@impler/shared';
+import { APIMessages } from '@shared/constants';
 
 @Injectable()
 export class GetColumnSchemaMapping {
@@ -13,7 +14,7 @@ export class GetColumnSchemaMapping {
     const userJob = await this.userJobRepository.findOne({ _id: _jobId });
 
     if (!userJob) {
-      throw new Error('User job not found');
+      throw new BadRequestException(APIMessages.USER_JOB_NOT_FOUND);
     }
 
     await this.userJobRepository.update({ _id: _jobId }, { $set: { status: UserJobImportStatusEnum.MAPPING } });

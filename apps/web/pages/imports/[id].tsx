@@ -5,10 +5,9 @@ import { useRouter } from 'next/router';
 import { ActionIcon, Flex, Group, LoadingOverlay, Title, useMantineTheme, Select } from '@mantine/core';
 
 import { track } from '@libs/amplitude';
-import { ROUTES, colors } from '@config';
 import { useImpler } from '@impler/react';
+import { IMPORT_MODES, ROUTES, colors } from '@config';
 import { useImportDetails } from '@hooks/useImportDetails';
-import { TemplateModeEnum } from '@impler/shared';
 
 import { Tabs } from '@ui/Tabs';
 import { Button } from '@ui/button';
@@ -55,9 +54,6 @@ export default function ImportDetails({}) {
     projectId: templateData?._projectId,
     accessToken: profileInfo?.accessToken,
     onUploadComplete: onSpreadsheetImported,
-    extra: {
-      externalUserId: profileInfo?.email,
-    },
   });
   const onImportClick = () => {
     track({
@@ -87,10 +83,7 @@ export default function ImportDetails({}) {
             size="sm"
             maw={125}
             placeholder="Mode"
-            data={[
-              { label: 'Manual', value: TemplateModeEnum.MANUAL },
-              { label: 'Automatic', value: TemplateModeEnum.AUTOMATIC },
-            ]}
+            data={IMPORT_MODES}
             value={templateData?.mode}
             onChange={(mode) => updateImport({ mode: mode || undefined })}
           />

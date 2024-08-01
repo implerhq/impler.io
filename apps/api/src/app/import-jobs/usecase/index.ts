@@ -7,7 +7,6 @@ import { RSSService } from '@shared/services';
 import { QueueService } from '@shared/services/queue.service';
 import { UserJobPause } from './userjob-usecase/userjob-pause.usecase';
 import { UserJobDelete } from './userjob-usecase/userjob-delete.usecase';
-import { UserJobStart } from './userjob-usecase/userjob-start.usecase';
 import { UserJobTerminate } from './userjob-usecase/userjob-terminate.usecase';
 import { UserJobTriggerService } from './userjob-usecase/userjob-trigger.usecase';
 import { UserJobResume } from './userjob-usecase/userjob.resume.usecsae';
@@ -23,7 +22,6 @@ export const USECASES = [
   UserJobResume,
   UserJobPause,
   UserJobDelete,
-  UserJobStart,
   UserJobTerminate,
   UserJobTriggerService,
   //
@@ -38,7 +36,6 @@ export {
   UserJobResume,
   UserJobPause,
   UserJobDelete,
-  UserJobStart,
   UserJobTerminate,
   UserJobTriggerService,
 };

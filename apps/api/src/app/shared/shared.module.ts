@@ -20,7 +20,14 @@ import {
   JobMappingRepository,
 } from '@impler/dal';
 import { CSVFileService2, ExcelFileService } from './services/file/file.service';
-import { S3StorageService, StorageService, EmailService, SESEmailService, FileNameService } from '@impler/services';
+import {
+  S3StorageService,
+  StorageService,
+  EmailService,
+  SESEmailService,
+  FileNameService,
+  NameService,
+} from '@impler/services';
 
 const DAL_MODELS = [
   ProjectRepository,
@@ -41,7 +48,7 @@ const DAL_MODELS = [
   UserJobRepository,
   SchedulerRegistry,
 ];
-const FILE_SERVICES = [CSVFileService2, FileNameService, ExcelFileService];
+const UTILITY_SERVICES = [CSVFileService2, FileNameService, NameService, ExcelFileService];
 
 const dalService = new DalService();
 
@@ -71,7 +78,7 @@ const PROVIDERS = [
     provide: EmailService,
     useClass: getEmailServiceClass(),
   },
-  ...FILE_SERVICES,
+  ...UTILITY_SERVICES,
   JwtService,
 ];
 
