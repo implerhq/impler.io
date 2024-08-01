@@ -13,6 +13,7 @@ import {
   Select,
   useMantineColorScheme,
   Tooltip,
+  Flex,
 } from '@mantine/core';
 
 import { ColumnTypesEnum, DEFAULT_VALUES, IColumn } from '@impler/shared';
@@ -269,11 +270,20 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                   )}
                 />
               ) : null}
+
               <Checkbox
-                label="Freeze Column"
+                label={
+                  <Flex gap="sm">
+                    <Text>Freeze Column</Text>
+                    <Tooltip label={'Read more'} withArrow>
+                      <Link href={documentationReferenceLinks.freezeColumns} target="_blank" rel="noopener noreferrer">
+                        <GuidePointIcon size="sm" color={colors.white} />
+                      </Link>
+                    </Tooltip>
+                  </Flex>
+                }
                 register={register('isFrozen')}
                 description="Will freeze column left side in generated sample and in Review section."
-                link={documentationReferenceLinks.freezeColumns}
               />
             </Stack>
           </SimpleGrid>
