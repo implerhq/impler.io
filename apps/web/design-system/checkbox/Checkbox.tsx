@@ -1,16 +1,17 @@
 import { Checkbox as MantineCheckbox, MantineNumberSize } from '@mantine/core';
 import useStyles from './Checkbox.styles';
 import Link from 'next/link'; // Import Link component
+import { ReactNode } from 'react';
 
 interface CheckboxProps {
-  label?: string;
+  label?: string | ReactNode;
   defaultChecked?: boolean;
   register?: any;
   checked?: boolean;
   description?: string;
   size?: MantineNumberSize;
-  link?: string; // Optional prop for the link URL
-  linkLabel?: string; // Optional prop for the link text
+  link?: string;
+  linkLabel?: string;
 }
 
 export function Checkbox({
@@ -28,7 +29,7 @@ export function Checkbox({
     <>
       {description}{' '}
       <Link href={link} target="_blank" rel="noopener noreferrer">
-        {linkLabel || 'Read more'}
+        {linkLabel}
       </Link>
     </>
   ) : (
