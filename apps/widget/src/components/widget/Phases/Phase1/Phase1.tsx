@@ -7,7 +7,6 @@ import { Button } from '@ui/Button';
 import { TEXTS, variables } from '@config';
 import { DownloadIcon, BackIcon } from '@icons';
 import { UploadDropzone } from '@ui/UploadDropzone';
-import { LoadingOverlay } from '@ui/LoadingOverlay';
 import { usePhase1 } from '@hooks/Phase1/usePhase1';
 
 import useStyles from './Styles';
@@ -33,7 +32,6 @@ export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTempl
     onTemplateChange,
     onSelectExcelSheet,
     showSelectTemplate,
-    isInitialDataLoaded,
     isDownloadInProgress,
     onSelectSheetModalReset,
   } = usePhase1({
@@ -46,7 +44,6 @@ export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTempl
 
   return (
     <>
-      <LoadingOverlay visible={!isInitialDataLoaded} />
       <Group className={classes.templateContainer} spacing="lg" noWrap>
         {showSelectTemplate && (
           <Controller

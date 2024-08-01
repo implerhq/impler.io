@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Modal } from '@ui/Modal';
 import { ParentWindow } from '@util';
@@ -9,7 +9,7 @@ import { Layout } from 'components/Common/Layout';
 import { ConfirmModal } from './modals/ConfirmModal';
 import { useTemplates } from '@hooks/useTemplates';
 import { PhasesEnum, PromptModalTypesEnum } from '@types';
-import { IUpload, TemplateModeEnum } from '@impler/shared';
+import { IImportConfig, IUpload, TemplateModeEnum } from '@impler/shared';
 import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
 
 import { Phase0 } from './Phases/Phase0';
@@ -36,6 +36,7 @@ export function Widget() {
     templateInfo,
     importConfig,
     setShowWidget,
+    setImportConfig,
     reset: resetAppState,
   } = useAppState();
 
@@ -76,11 +77,22 @@ export function Widget() {
     ParentWindow.UploadCompleted(uploadData);
     if (importedData) ParentWindow.DataImported(importedData);
   };
+  const onSuccess = useCallback(() => {
+    setImportConfig((configData: IImportConfig) => {
+      setPhase(
+        configData.mode === TemplateModeEnum.AUTOMATIC
+          ? PhasesEnum.CONFIGURE
+          : hasImageUpload
+          ? PhasesEnum.IMAGE_UPLOAD
+          : PhasesEnum.UPLOAD
+      );
+
+      return configData;
+    });
+  }, [importConfig, hasImageUpload]);
 
   const PhaseView = {
-    [PhasesEnum.VALIDATE]: (
-      <Phase0 onValidationSuccess={() => setPhase(hasImageUpload ? PhasesEnum.IMAGE_UPLOAD : PhasesEnum.UPLOAD)} />
-    ),
+    [PhasesEnum.VALIDATE]: <Phase0 onValidationSuccess={onSuccess} />,
     ...(importConfig.mode === TemplateModeEnum.AUTOMATIC
       ? {
           [PhasesEnum.CONFIGURE]: <AutoImportPhase1 onNextClick={() => setPhase(PhasesEnum.MAPCOLUMNS)} />,

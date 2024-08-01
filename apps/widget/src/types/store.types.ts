@@ -36,5 +36,5 @@ export interface IAppStore {
   setUploadInfo: (uploadInfo: IUpload) => void;
   setImageSchema: (imageSchema: string) => void;
   setTemplateInfo: (templateInfo: ITemplate) => void;
-  setImportConfig: (importConfig: IImportConfig) => void;
+  setImportConfig: React.Dispatch<React.SetStateAction<IImportConfig>>;
 }
