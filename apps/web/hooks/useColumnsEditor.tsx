@@ -44,11 +44,13 @@ export function useColumnsEditor({ templateId }: UseSchemaProps) {
             regexDescription,
             selectValues,
             defaultValue,
+            description,
             allowMultiSelect,
           }) => ({
             key,
             name,
             type,
+            description,
             alternateKeys,
             isRequired,
             isUnique,
