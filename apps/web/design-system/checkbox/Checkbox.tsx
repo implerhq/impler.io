@@ -1,6 +1,8 @@
-import { Checkbox as MantineCheckbox, MantineNumberSize } from '@mantine/core';
+import { Group, Checkbox as MantineCheckbox, MantineNumberSize, Text, Tooltip } from '@mantine/core';
 import useStyles from './Checkbox.styles';
 import Link from 'next/link'; // Import Link component
+import { GuidePointIcon } from '@assets/icons/GuidePoint.icon';
+import { colors } from '@config';
 
 interface CheckboxProps {
   label?: string;
@@ -9,30 +11,22 @@ interface CheckboxProps {
   checked?: boolean;
   description?: string;
   size?: MantineNumberSize;
-  link?: string; // Optional prop for the link URL
-  linkLabel?: string; // Optional prop for the link text
+  link?: string;
 }
 
-export function Checkbox({
-  label,
-  defaultChecked,
-  register,
-  checked,
-  description,
-  size,
-  link,
-  linkLabel,
-}: CheckboxProps) {
+export function Checkbox({ label, defaultChecked, register, checked, description, size, link }: CheckboxProps) {
   const { classes } = useStyles();
-  const combinedDescription = link ? (
-    <>
-      {description}{' '}
-      <Link href={link} target="_blank" rel="noopener noreferrer">
-        {linkLabel || 'Read more'}
-      </Link>
-    </>
-  ) : (
-    description
+  const combinedDescription = (
+    <Group spacing="xs" align="center">
+      <Text>{description}</Text>
+      {link && (
+        <Tooltip label={'Read more'} withArrow>
+          <Link href={link} target="_blank" rel="noopener noreferrer">
+            <GuidePointIcon size="sm" color={colors.white} />
+          </Link>
+        </Tooltip>
+      )}
+    </Group>
   );
 
   return (
