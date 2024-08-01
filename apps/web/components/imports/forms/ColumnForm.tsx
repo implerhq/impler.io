@@ -12,6 +12,7 @@ import {
   CloseButton,
   Select,
   useMantineColorScheme,
+  Tooltip,
 } from '@mantine/core';
 
 import { ColumnTypesEnum, DEFAULT_VALUES, IColumn } from '@impler/shared';
@@ -22,6 +23,7 @@ import { Textarea } from '@ui/textarea';
 import { Checkbox } from '@ui/checkbox';
 import { MultiSelect } from '@ui/multi-select';
 import { CustomSelect } from '@ui/custom-select';
+import { GuidePointIcon } from '@assets/icons/GuidePoint.icon';
 
 interface ColumnFormProps {
   data?: Partial<IColumn>;
@@ -112,25 +114,27 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 control={control}
                 render={({ field: { value, onChange, onBlur } }) => (
                   <Select
-                    label="Column Type"
+                    label={
+                      <Group spacing="xs">
+                        <Text>Column Type</Text>
+                        <Tooltip label={'Read more'} withArrow>
+                          <Link
+                            href={documentationReferenceLinks.primaryValidation}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <GuidePointIcon size="sm" color={colors.white} />
+                          </Link>
+                        </Tooltip>
+                      </Group>
+                    }
                     data={COLUMN_TYPES}
                     placeholder="Type"
                     value={value}
                     data-autofocus
                     onChange={onChange}
                     onBlur={onBlur}
-                    description={
-                      <>
-                        Primary validation to apply on column.{' '}
-                        <Link
-                          href={documentationReferenceLinks.primaryValidation}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Read more
-                        </Link>
-                      </>
-                    }
+                    description={'Primary validation to apply on column.'}
                   />
                 )}
               />
@@ -219,15 +223,9 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                     onChange={onChange}
                     label="Default Value"
                     placeholder="Default Value"
-                    description={
-                      <>
-                        Value used in response when cell is empty,{' '}
-                        <Link target="_blank" href={documentationReferenceLinks.defaultValue}>
-                          Read more
-                        </Link>
-                      </>
-                    }
+                    description="Value used in response when cell is empty"
                     data={DEFAULT_VALUES}
+                    link={documentationReferenceLinks.defaultValue}
                   />
                 )}
               />
@@ -245,7 +243,6 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                   register={register('allowMultiSelect')}
                   description="Users can pick multiple values from the list. Sample will also allow selecting multiple values."
                   link={documentationReferenceLinks.multiSelectDropDown}
-                  linkLabel="Read more"
                 />
               ) : (
                 <Checkbox
@@ -277,7 +274,6 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 register={register('isFrozen')}
                 description="Will freeze column left side in generated sample and in Review section."
                 link={documentationReferenceLinks.freezeColumns}
-                linkLabel="Read more"
               />
             </Stack>
           </SimpleGrid>
