@@ -30,7 +30,7 @@ export enum FileMimeTypesEnum {
   'PNG' = 'image/png',
   'JPG' = 'image/jpeg',
   'JPEG' = 'image/jpeg',
-  'WEBP',
+  'WEBP' = 'image/webp',
 }
 
 export enum FileEncodingsEnum {
