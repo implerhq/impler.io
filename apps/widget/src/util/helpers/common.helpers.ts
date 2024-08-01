@@ -75,47 +75,18 @@ export const validateRssUrl = {
   },
 };
 
-export const createCustomTippyTheme = (color: string) => {
-  const themeId = 'custom-tippy-theme';
-  if (!document.getElementById(themeId)) {
-    const style = document.createElement('style');
-    style.id = themeId;
-    style.textContent = `
-      .tippy-box[data-theme~='custom'] {
-        background-color: ${color};
-        color: #fff;
-     }
-      .tippy-box[data-theme~='custom'][data-placement^='top'] > .tippy-arrow::before {
-        border-top-color: ${color};
-     }
-      .tippy-box[data-theme~='custom'][data-placement^='bottom'] > .tippy-arrow::before {
-        border-bottom-color: ${color};
-     }
-      .tippy-box[data-theme~='custom'][data-placement^='left'] > .tippy-arrow::before {
-        border-left-color: ${color};
-      }
-      .tippy-box[data-theme~='custom'][data-placement^='right'] > .tippy-arrow::before {
-        border-right-color: ${color};
-      }
-    `;
-    document.head.appendChild(style);
-  }
-};
-
 export const getColumnDescription = (columnIndex: number, descriptions: string[]): string | null => {
   return descriptions[columnIndex] || null;
 };
 
-export const addTippyToElement = (element: HTMLElement, content: string, primaryColor: string) => {
+export const addTippyToElement = (element: SVGSVGElement | HTMLElement, content: string) => {
   if (!element || !content) return;
 
-  createCustomTippyTheme(primaryColor);
   tippy(element, {
     content,
-    placement: 'top',
     arrow: true,
+    duration: 300,
     theme: 'custom',
     animation: 'shift-away',
-    duration: 300,
   });
 };
