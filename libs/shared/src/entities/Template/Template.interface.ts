@@ -11,6 +11,7 @@ export interface ITemplate {
   totalRecords: number;
   imageColumns: string[];
   totalInvalidRecords: number;
+  mode: string;
 }
 
 export interface IImport {

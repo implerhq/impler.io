@@ -20,7 +20,7 @@ export function FileDropzone(props: IDropzoneProps) {
     onDrop,
     loading,
     onReject,
-    accept = [MIME_TYPES.png, MIME_TYPES.jpeg, MIME_TYPES.webp, MIME_TYPES.svg],
+    accept = [MIME_TYPES.png, MIME_TYPES.jpeg, MIME_TYPES.webp],
   } = props;
   const { classes } = useStyles();
 

@@ -3,6 +3,7 @@ import { ApiService } from '@impler/client';
 import ImplerContextProvider from '@store/impler.context';
 import APIContextProvider from '@store/api.context';
 import AppContextProvider from '@store/app.context';
+import { JobsInfoProvider } from '@store/jobinfo.context';
 
 interface IProviderProps {
   // app-context
@@ -48,20 +49,22 @@ export function Provider(props: PropsWithChildren<IProviderProps>) {
       extra={extra}
       authHeaderValue={authHeaderValue}
     >
-      <APIContextProvider api={api}>
-        <AppContextProvider
-          host={host}
-          data={data}
-          title={title}
-          output={output}
-          schema={schema}
-          showWidget={showWidget}
-          primaryColor={primaryColor}
-          setShowWidget={setShowWidget}
-        >
-          {children}
-        </AppContextProvider>
-      </APIContextProvider>
+      <JobsInfoProvider>
+        <APIContextProvider api={api}>
+          <AppContextProvider
+            host={host}
+            data={data}
+            title={title}
+            output={output}
+            schema={schema}
+            showWidget={showWidget}
+            primaryColor={primaryColor}
+            setShowWidget={setShowWidget}
+          >
+            {children}
+          </AppContextProvider>
+        </APIContextProvider>
+      </JobsInfoProvider>
     </ImplerContextProvider>
   );
 }

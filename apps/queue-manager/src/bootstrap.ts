@@ -6,7 +6,13 @@ import { IAmqpConnectionManager } from 'amqp-connection-manager/dist/esm/AmqpCon
 
 import { QueuesEnum } from '@impler/shared';
 import { DalService } from '@impler/dal';
-import { SendWebhookDataConsumer, EndImportConsumer, SendBubbleDataConsumer } from './consumers';
+import {
+  SendWebhookDataConsumer,
+  EndImportConsumer,
+  SendBubbleDataConsumer,
+  GetImportJobDataConsumer,
+  SendImportJobDataConsumer,
+} from './consumers';
 
 let connection: IAmqpConnectionManager, chanelWrapper: ChannelWrapper;
 
@@ -39,6 +45,8 @@ export async function bootstrap() {
   const endImportConsumer = new EndImportConsumer();
   const sendBubbleDataConsumer = new SendBubbleDataConsumer();
   const sendWebhookdataConsumer = new SendWebhookDataConsumer();
+  const getImportJobbDataConsumer = new GetImportJobDataConsumer();
+  const sendImportJobDataConsumer = new SendImportJobDataConsumer();
 
   // add queues to channel
   chanelWrapper.addSetup((channel) => {
@@ -59,6 +67,26 @@ export async function bootstrap() {
       channel.consume(QueuesEnum.SEND_BUBBLE_DATA, sendBubbleDataConsumer.message.bind(sendBubbleDataConsumer), {
         noAck: true,
       }),
+      channel.assertQueue(QueuesEnum.GET_IMPORT_JOB_DATA, {
+        durable: false,
+      }),
+      channel.consume(
+        QueuesEnum.GET_IMPORT_JOB_DATA,
+        getImportJobbDataConsumer.message.bind(getImportJobbDataConsumer),
+        {
+          noAck: true,
+        }
+      ),
+      channel.assertQueue(QueuesEnum.SEND_IMPORT_JOB_DATA, {
+        durable: false,
+      }),
+      channel.consume(
+        QueuesEnum.SEND_IMPORT_JOB_DATA,
+        sendImportJobDataConsumer.message.bind(sendImportJobDataConsumer),
+        {
+          noAck: true,
+        }
+      ),
     ]);
   });
 }

@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { logAmplitudeEvent } from '@amplitude';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 
+import { notifier, ParentWindow } from '@util';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { useImplerState } from '@store/impler.context';
+import { IErrorObject, ITemplate, IUpload, FileMimeTypesEnum } from '@impler/shared';
 
 import { variables } from '@config';
 import { useSample } from '@hooks/useSample';
-import { notifier, ParentWindow } from '@util';
 import { useTemplates } from '@hooks/useTemplates';
 import { IFormvalues, IUploadValues } from '@types';
-import { IErrorObject, ITemplate, IUpload, FileMimeTypesEnum, IImportConfig } from '@impler/shared';
 
 interface IUsePhase1Props {
   goNext: () => void;
@@ -33,23 +33,9 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
   const { templates } = useTemplates();
   const { getSignedUrl, onDownload } = useSample({});
   const [excelSheetNames, setExcelSheetNames] = useState<string[]>([]);
-  const { projectId, templateId, authHeaderValue, extra } = useImplerState();
+  const { templateId, authHeaderValue, extra } = useImplerState();
   const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
-  const { setUploadInfo, setTemplateInfo, setImportConfig, output, schema, data, importId, imageSchema } =
-    useAppState();
-
-  const { isFetched: isImportConfigLoaded, isLoading: isImportConfigLoading } = useQuery<
-    IImportConfig,
-    IErrorObject,
-    IImportConfig
-  >(['importConfig'], () => api.getImportConfig(projectId), {
-    onSuccess(importConfigResponse) {
-      setImportConfig(importConfigResponse);
-    },
-    onError(error: IErrorObject) {
-      notifier.showError({ message: error.message, title: error.error });
-    },
-  });
+  const { setUploadInfo, setTemplateInfo, output, schema, data, importId, imageSchema } = useAppState();
 
   const { isLoading: isUploadLoading, mutate: submitUpload } = useMutation<IUpload, IErrorObject, IUploadValues>(
     ['upload'],
@@ -172,6 +158,5 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     onSelectSheetModalReset,
     showSelectTemplate: !templateId,
     onSelectExcelSheet: handleSubmit(uploadFile),
-    isInitialDataLoaded: isImportConfigLoaded && !isImportConfigLoading,
   };
 }

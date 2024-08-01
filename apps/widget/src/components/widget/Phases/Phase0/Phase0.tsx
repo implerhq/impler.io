@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Alert } from '@mantine/core';
 import { LoadingOverlay } from '@ui/LoadingOverlay';
 import { usePhase0 } from '@hooks/Phase0/usePhase0';
@@ -7,9 +8,15 @@ interface IPhase0Props {
 }
 
 export function Phase0({ onValidationSuccess: goNext }: IPhase0Props) {
-  const { isLoading, error } = usePhase0({
+  const { isLoading, error, isWidgetOpened, handleValidate } = usePhase0({
     goNext,
   });
+
+  useEffect(() => {
+    if (isWidgetOpened) {
+      handleValidate();
+    }
+  }, [isWidgetOpened]);
 
   if (isLoading) return <LoadingOverlay visible={isLoading} />;
 

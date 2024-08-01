@@ -7,3 +7,5 @@ export * from './Customization';
 export * from './Activity';
 export * from './Validator';
 export * from './Record';
+export * from './UserJob';
+export * from './UserJobMapping';

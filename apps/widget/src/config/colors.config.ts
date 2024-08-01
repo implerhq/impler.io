@@ -12,4 +12,8 @@ export const colors = {
   light: '#F2F9FE',
   white: '#FFFFFF',
   gray: '#ebebeb',
+  lightBlue: '#5462ff',
+  softBlue: '#edf3ff',
+  faintGrey: '#f2f2f2',
+  softGrey: '#868e96',
 };

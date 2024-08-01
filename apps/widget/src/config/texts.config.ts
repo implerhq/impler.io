@@ -12,6 +12,12 @@ export const TEXTS = {
     REVIEW: 'Review',
     COMPLETE: 'Complete',
   },
+  AUTOIMPORTSTEPS: {
+    CONFIGURE: 'Configure',
+    MAPCOLUMNS: 'Map Columns',
+    SCHEDULE: 'Schedule',
+    CONFIRM: 'Confirm',
+  },
   FILE_DROPZONE: {
     TITLE: 'Drop and drop file here or ',
     BROWSE: 'Browse from computer',
@@ -52,6 +58,27 @@ export const TEXTS = {
   PHASE4: {
     CLOSE: 'Close',
   },
+
+  AUTOIMPORTPHASES: {
+    BUTTONTEXT: {
+      MAPCOLUMN: 'Map Column',
+      SCHEDULE: 'Schedule',
+      CONFIRM: 'Confirm',
+      CLOSE: 'Close',
+    },
+  },
+  AUTOIMPORTPHASE2: {
+    NAME_IN_SCHEMA_TITLE: 'Column in schema',
+    KEY_IN_FEED_TITLE: 'Key in your RSS feed ',
+  },
+
+  AUTOIMPORTPHASETITLE: {
+    CONFIGURE: 'Configure',
+  },
+  INVALID_CRON: {
+    MESSAGE: 'Expression values are incorrect. Please update values as per valid values below!',
+  },
+
   COMPLETE: {
     TITLE: 'Bravo! {count} rows have been uploaded',
     SUB_TITLE: '{count} rows have been uploaded successfully, and currently is in process, it will be ready shortly.',

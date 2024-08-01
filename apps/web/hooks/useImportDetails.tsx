@@ -106,5 +106,6 @@ export function useImportDetails({ templateId }: useImportDetailProps) {
     isColumnListLoading,
     isTemplateDataLoading,
     onSpreadsheetImported,
+    updateImport,
   };
 }

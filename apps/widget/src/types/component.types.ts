@@ -19,13 +19,17 @@ export enum PromptModalTypesEnum {
 }
 
 export enum PhasesEnum {
-  VALIDATE,
-  IMAGE_UPLOAD,
-  UPLOAD,
-  MAPPING,
-  REVIEW,
-  CONFIRMATION,
-  COMPLETE,
+  VALIDATE = 0,
+  IMAGE_UPLOAD = 1,
+  UPLOAD = 2,
+  MAPPING = 3,
+  REVIEW = 4,
+  COMPLETE = 5,
+
+  CONFIGURE = 1,
+  MAPCOLUMNS = 2,
+  SCHEDULE = 3,
+  CONFIRM = 4,
 }
 
 export interface IFormvalues {
@@ -41,4 +45,13 @@ export interface IUploadValues extends IFormvalues {
   output?: string;
   importId?: string;
   imageSchema?: string;
+}
+
+export interface IAutoImportValues {
+  url: string;
+  templateId: string;
+  authHeaderValue?: string;
+  extra?: string;
+  schema?: string;
+  output?: string;
 }

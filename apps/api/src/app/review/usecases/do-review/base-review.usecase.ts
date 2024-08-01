@@ -282,7 +282,7 @@ export class BaseReview {
         if (heading === '_') return acc;
         let val = record[index];
 
-        if (numberColumnHeadings.has(heading)) val = val !== '' && !isNaN(val) ? Number(val) : null;
+        if (numberColumnHeadings.has(heading)) val = val !== '' && !isNaN(val) ? Number(val) : val;
         if (typeof val === 'string') val = val.trim();
         if (multiSelectColumnHeadings[heading]) {
           if (val)

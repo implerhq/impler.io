@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { SchedulerRegistry } from '@nestjs/schedule';
 import {
   ColumnRepository,
   CommonRepository,
@@ -15,9 +16,18 @@ import {
   ValidatorRepository,
   WebhookDestinationRepository,
   BubbleDestinationRepository,
+  UserJobRepository,
+  JobMappingRepository,
 } from '@impler/dal';
 import { CSVFileService2, ExcelFileService } from './services/file/file.service';
-import { S3StorageService, StorageService, EmailService, SESEmailService, FileNameService } from '@impler/services';
+import {
+  S3StorageService,
+  StorageService,
+  EmailService,
+  SESEmailService,
+  FileNameService,
+  NameService,
+} from '@impler/services';
 
 const DAL_MODELS = [
   ProjectRepository,
@@ -33,8 +43,12 @@ const DAL_MODELS = [
   ValidatorRepository,
   WebhookDestinationRepository,
   BubbleDestinationRepository,
+  UserJobRepository,
+  JobMappingRepository,
+  UserJobRepository,
+  SchedulerRegistry,
 ];
-const FILE_SERVICES = [CSVFileService2, FileNameService, ExcelFileService];
+const UTILITY_SERVICES = [CSVFileService2, FileNameService, NameService, ExcelFileService];
 
 const dalService = new DalService();
 
@@ -64,7 +78,7 @@ const PROVIDERS = [
     provide: EmailService,
     useClass: getEmailServiceClass(),
   },
-  ...FILE_SERVICES,
+  ...UTILITY_SERVICES,
   JwtService,
 ];
 

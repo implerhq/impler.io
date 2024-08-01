@@ -25,9 +25,12 @@ export enum FileMimeTypesEnum {
   'EXCELX' = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   'EXCELM' = 'application/vnd.ms-excel.sheet.macroenabled.12',
   'JSON' = 'application/json',
+  'XML' = 'application/rss+xml',
+  'TEXTXML' = 'text/xml',
   'PNG' = 'image/png',
   'JPG' = 'image/jpeg',
   'JPEG' = 'image/jpeg',
+  'WEBP' = 'image/webp',
 }
 
 export enum FileEncodingsEnum {
@@ -41,9 +44,11 @@ export enum QueuesEnum {
   'SEND_WEBHOOK_DATA' = 'SEND_WEBHOOK_DATA',
   'SEND_BUBBLE_DATA' = 'SEND_BUBBLE_DATA',
   'END_IMPORT' = 'END_IMPORT',
+  'GET_IMPORT_JOB_DATA' = 'GET_IMPORT_JOB_DATA',
+  'SEND_IMPORT_JOB_DATA' = 'SEND_IMPORT_JOB_DATA',
 }
 
-export type SendWebhookCachedData = {
+export type CommonCachedData = {
   page: number;
   email: string;
   callbackUrl: string;
@@ -54,13 +59,18 @@ export type SendWebhookCachedData = {
   authHeaderValue: string;
   _templateId: string;
   allDataFilePath?: string;
-  fileName: string;
   recordFormat?: string;
   chunkFormat?: string;
   defaultValues: string;
   multiSelectHeadings?: Record<string, string>;
   imageHeadings?: string[];
 };
+
+export type SendWebhookCachedData = {
+  fileName: string;
+} & CommonCachedData;
+
+export type SendImportJobCachedData = CommonCachedData;
 
 export type SendBubbleCachedData = {
   name: string;
@@ -86,6 +96,15 @@ export type SendWebhookData = {
   uploadId: string;
   cache?: SendWebhookCachedData;
 };
+
+export type SendImportJobData = {
+  importJobHistoryId: string;
+  cache?: SendImportJobCachedData;
+};
+
+export type SendRSSXMLData = {
+  _jobId: string;
+};
 export type PublishToQueueData = SendWebhookData;
 
 export type EndImportData = {
@@ -101,4 +120,6 @@ export interface IFileInformation {
 
 export interface IImportConfig {
   showBranding: boolean;
+  mode: string;
+  title: string;
 }
