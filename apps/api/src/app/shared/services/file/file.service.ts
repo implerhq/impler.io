@@ -1,5 +1,4 @@
 import * as XLSX from 'xlsx';
-import * as ExcelJS from 'exceljs';
 import { cwd } from 'node:process';
 import * as xlsxPopulate from 'xlsx-populate';
 import { CONSTANTS } from '@shared/constants';
@@ -34,7 +33,7 @@ export class ExcelFileService {
       name
         .replace(/[^a-zA-Z0-9]/g, '')
         .toLowerCase()
-        .slice(0, 25) // exceljs don't allow heading more than 30 characters
+        .slice(0, 25) // excel don't allow heading more than 30 characters
     );
   }
   addSelectSheet(wb: any, heading: IExcelFileHeading): string {
@@ -44,28 +43,6 @@ export class ExcelFileService {
     heading.selectValues.forEach((value, index) => addedSheet.cell(`A${index + 2}`).value(value));
 
     return name;
-  }
-  addSelectValidation({
-    ws,
-    range,
-    keyName,
-    isRequired,
-  }: {
-    ws: ExcelJS.Worksheet;
-    range: string;
-    keyName: string;
-    isRequired: boolean;
-  }) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    ws.dataValidations.add(range, {
-      type: 'list',
-      allowBlank: !isRequired,
-      formulae: [`${keyName}!$A$2:$A$9999`],
-      showErrorMessage: true,
-      errorTitle: 'Invalid Value',
-      error: 'Please select from the list',
-    });
   }
   getExcelColumnNameFromIndex(columnNumber: number) {
     // To store result (Excel column name)
@@ -104,8 +81,6 @@ export class ExcelFileService {
     headings.forEach((heading, index) => {
       const columnName = this.getExcelColumnNameFromIndex(index + 1);
       const columnHeadingCellName = columnName + '1';
-      const columnDescriptionCellName = columnName + '2';
-
       // Set header
       if (heading.type === ColumnTypesEnum.SELECT && heading.allowMultiSelect) {
         worksheet
@@ -114,16 +89,13 @@ export class ExcelFileService {
       } else {
         worksheet.cell(columnHeadingCellName).value(heading.key);
       }
-
-      // Set description
-      worksheet.cell(columnDescriptionCellName).value(heading.description || 'Description not provided');
       worksheet.column(columnName).style('numberFormat', '@');
     });
 
     const frozenColumns = headings.filter((heading) => heading.isFrozen).length;
     if (frozenColumns)
-      worksheet.freezePanes(frozenColumns, 2); // freeze panes (freeze first n column and first two rows)
-    else worksheet.freezePanes(0, 2); // freeze 0 column and first two rows
+      worksheet.freezePanes(frozenColumns, 1); // freeze panes (freeze first n column and first two rows)
+    else worksheet.freezePanes(0, 1); // freeze 0 column and first two rows
 
     headings.forEach((heading, index) => {
       if (heading.type === ColumnTypesEnum.SELECT) {
