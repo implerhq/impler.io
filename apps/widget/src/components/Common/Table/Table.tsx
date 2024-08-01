@@ -53,7 +53,6 @@ interface TableProps {
   afterRender?: () => void;
   data: Record<string, any>[];
   columnDescriptions?: string[];
-  primaryColor?: string;
   columnDefs: HotItemSchema[];
   onCheckAll?: (checked: boolean) => void;
   onValueChange?: (row: number, prop: string, oldVal: any, newVal: any) => void;
@@ -168,7 +167,6 @@ export const Table = forwardRef<HotTableClass, TableProps>(
       columnDefs,
       data,
       columnDescriptions,
-      primaryColor,
       allChecked,
       onRowCheck,
       onCheckAll,
@@ -243,7 +241,7 @@ export const Table = forwardRef<HotTableClass, TableProps>(
               infoIcon.appendChild(infoIconPath);
               TH.appendChild(infoIcon);
 
-              addTippyToElement(infoIcon as unknown as HTMLElement, columnDescriptions[i], primaryColor as string);
+              addTippyToElement(infoIcon as unknown as HTMLElement, columnDescriptions[i]);
             }
           }
         }}
