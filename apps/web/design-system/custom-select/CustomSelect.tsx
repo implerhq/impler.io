@@ -1,13 +1,17 @@
 import { FormEvent, ReactNode, useEffect, useRef, useState } from 'react';
-import { MantineSize, Popover, SelectItem, UnstyledButton } from '@mantine/core';
+import { Group, MantineSize, Popover, SelectItem, Tooltip, UnstyledButton } from '@mantine/core';
 
 import useStyles from './CustomSelect.styles';
 import { ChevronDownIcon } from '@assets/icons';
 import { SelectedValue } from './SelectedValue';
 import { CloseIcon } from '@assets/icons/Close.icon';
+import { GuidePointIcon } from '@assets/icons/GuidePoint.icon';
+import Link from 'next/link';
+import { colors } from '@config';
 
 interface MultiSelectProps {
   label?: string;
+  link?: string;
   size?: MantineSize;
   data: SelectItem[];
   placeholder?: string;
@@ -18,6 +22,7 @@ interface MultiSelectProps {
 
 export function CustomSelect({
   label,
+  link,
   value,
   placeholder,
   data,
@@ -77,7 +82,18 @@ export function CustomSelect({
     <Popover width="target" opened={popoverOpened} onClose={() => setPopoverOpened(false)} withinPortal>
       <Popover.Target>
         <div className={classes.root}>
-          {label ? <label className={classes.label}>{label}</label> : null}
+          {label ? (
+            <label className={classes.label}>
+              <Group spacing="xs" align="center">
+                {label}
+                <Tooltip label={'Read more'} withArrow>
+                  <Link href={link as string} target="_blank" rel="noopener noreferrer">
+                    <GuidePointIcon size="sm" color={colors.white} />
+                  </Link>
+                </Tooltip>
+              </Group>
+            </label>
+          ) : null}
           {description ? <p className={classes.description}>{description}</p> : null}
           <div className={classes.inputWrapper} data-haslabel={!!label}>
             <p
