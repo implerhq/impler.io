@@ -56,7 +56,7 @@ export class DuplicateTemplate {
           _templateId,
         },
         // eslint-disable-next-line max-len
-        '-_id name key alternateKeys isRequired isUnique type regex regexDescription selectValues dateFormats sequence defaultValue allowMultiSelect'
+        '-_id name key alternateKeys isRequired isUnique type regex regexDescription selectValues dateFormats sequence defaultValue allowMultiSelect description'
       );
 
       await this.columnRepository.createMany(
