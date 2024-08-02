@@ -8,10 +8,12 @@ import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
 import { track } from '@libs/amplitude';
 import { IColumn, IErrorObject } from '@impler/shared';
-import { API_KEYS, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS } from '@config';
+import { API_KEYS, COLUMN_TYPES, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS } from '@config';
 
 import { useUpdateBulkColumns } from './useUpdateBulkColumns';
 import { ConfirmDelete } from '@components/imports/forms/ConfirmDelete';
+import { usePlanMetaData } from 'store/planmeta.store.context';
+import { SelectItem } from '@mantine/core';
 
 const ColumnForm = dynamic(() => import('@components/imports/forms/ColumnForm').then((mod) => mod.ColumnForm), {
   ssr: false,
@@ -22,6 +24,7 @@ interface UseSchemaProps {
 }
 
 export function useSchema({ templateId }: UseSchemaProps) {
+  const { meta } = usePlanMetaData();
   const queryClient = useQueryClient();
   const [showAddRow, setShowAddRow] = useState(false);
   const { register, control, watch, reset, setFocus, handleSubmit, formState, getValues } = useForm<IColumn>({
@@ -166,6 +169,18 @@ export function useSchema({ templateId }: UseSchemaProps) {
     createColumn(data);
   }
 
+  function getColumnTypes(): SelectItem[] {
+    if (!meta) return COLUMN_TYPES;
+
+    return COLUMN_TYPES.map((item) => {
+      if (item.label === 'Image' && item.value === 'Image' && !meta.IMAGE_UPLOAD) {
+        return { ...item, disabled: true, label: 'Image Premium Feature' };
+      }
+
+      return item;
+    });
+  }
+
   useEffect(() => {
     if (showAddRow) setFocus('name');
   }, [setFocus, showAddRow]);
@@ -183,6 +198,7 @@ export function useSchema({ templateId }: UseSchemaProps) {
     onEditColumnClick,
     onValidationsClick,
     onDeleteColumnClick,
+    getColumnTypes,
     isColumnCreateLoading,
     isLoading: isColumnListLoading,
     handleSubmit: handleSubmit(onAddColumnSubmit),
