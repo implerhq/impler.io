@@ -12,6 +12,7 @@ import {
   CloseButton,
   Select,
   useMantineColorScheme,
+  SelectItem,
 } from '@mantine/core';
 
 import { ColumnTypesEnum, DEFAULT_VALUES, IColumn } from '@impler/shared';
@@ -23,6 +24,7 @@ import { Checkbox } from '@ui/checkbox';
 import { MultiSelect } from '@ui/multi-select';
 import { CustomSelect } from '@ui/custom-select';
 import { useSchema } from '@hooks/useSchema';
+import { useEffect, useState } from 'react';
 
 interface ColumnFormProps {
   data?: Partial<IColumn>;
@@ -32,6 +34,7 @@ interface ColumnFormProps {
 
 export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
   const { getColumnTypes } = useSchema({ templateId: data?._templateId as string });
+  const [columnType, setColumnType] = useState<readonly (string | SelectItem)[]>([]);
   const { colorScheme } = useMantineColorScheme();
   const {
     watch,
@@ -48,6 +51,10 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
   const onClose = () => {
     modals.close(MODAL_KEYS.COLUMN_UPDATE);
   };
+
+  useEffect(() => {
+    setColumnType(getColumnTypes());
+  }, []);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -109,7 +116,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 render={({ field: { value, onChange, onBlur } }) => (
                   <Select
                     label="Column Type"
-                    data={getColumnTypes()}
+                    data={columnType as readonly (string | SelectItem)[]}
                     placeholder="Type"
                     value={value}
                     data-autofocus
