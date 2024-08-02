@@ -24,6 +24,7 @@ import { FourIcon } from '@assets/icons/Four.icon';
 import { ThreeIcon } from '@assets/icons/Three.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
 import { LeftArrowIcon } from '@assets/icons/LeftArrow.icon';
+import { TemplateModeEnum } from '@impler/shared';
 
 const Editor = dynamic(() => import('@components/imports/editor').then((mod) => mod.OutputEditor), {
   ssr: false,
@@ -45,6 +46,7 @@ export default function ImportDetails({}) {
     isTemplateDataLoading,
     onSpreadsheetImported,
     updateImport,
+    meta,
   } = useImportDetails({
     templateId: router.query.id as string,
   });
@@ -62,6 +64,7 @@ export default function ImportDetails({}) {
     });
     showWidget({ colorScheme });
   };
+  console.log(templateData?.mode);
 
   return (
     <Flex gap="sm" direction="column" h="100%" style={{ position: 'relative' }}>
@@ -83,8 +86,11 @@ export default function ImportDetails({}) {
             size="sm"
             maw={125}
             placeholder="Mode"
-            data={IMPORT_MODES}
-            value={templateData?.mode}
+            data={IMPORT_MODES.map((mode) => ({
+              ...mode,
+              disabled: mode.value === TemplateModeEnum.AUTOMATIC && !meta?.AUTOMATIC_IMPORTS ? true : false,
+            }))}
+            value={templateData?.mode || TemplateModeEnum.MANUAL}
             onChange={(mode) => updateImport({ mode: mode || undefined })}
           />
           <Button
