@@ -15,13 +15,14 @@ import {
 } from '@mantine/core';
 
 import { ColumnTypesEnum, DEFAULT_VALUES, IColumn } from '@impler/shared';
-import { colors, COLUMN_TYPES, DELIMITERS, MODAL_KEYS, MODAL_TITLES } from '@config';
+import { colors, DELIMITERS, MODAL_KEYS, MODAL_TITLES } from '@config';
 
 import { Button } from '@ui/button';
 import { Textarea } from '@ui/textarea';
 import { Checkbox } from '@ui/checkbox';
 import { MultiSelect } from '@ui/multi-select';
 import { CustomSelect } from '@ui/custom-select';
+import { useSchema } from '@hooks/useSchema';
 
 interface ColumnFormProps {
   data?: Partial<IColumn>;
@@ -30,6 +31,7 @@ interface ColumnFormProps {
 }
 
 export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
+  const { getColumnTypes } = useSchema({ templateId: data?._templateId as string });
   const { colorScheme } = useMantineColorScheme();
   const {
     watch,
@@ -107,7 +109,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 render={({ field: { value, onChange, onBlur } }) => (
                   <Select
                     label="Column Type"
-                    data={COLUMN_TYPES}
+                    data={getColumnTypes()}
                     placeholder="Type"
                     value={value}
                     data-autofocus
