@@ -64,7 +64,6 @@ export default function ImportDetails({}) {
     });
     showWidget({ colorScheme });
   };
-  console.log(templateData?.mode);
 
   return (
     <Flex gap="sm" direction="column" h="100%" style={{ position: 'relative' }}>
