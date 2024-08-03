@@ -42,17 +42,12 @@ export class AuthController {
     private requestForgotPassword: RequestForgotPassword
   ) {}
 
-  @Get('/github')
-  githubAuth() {
-    if (!process.env.GITHUB_OAUTH_CLIENT_ID || !process.env.GITHUB_OAUTH_CLIENT_SECRET) {
-      throw new ApiException(
-        'GitHub auth is not configured, please provide GITHUB_OAUTH_CLIENT_ID and GITHUB_OAUTH_CLIENT_SECRET as env variables'
-      );
-    }
-
-    return {
-      success: true,
-    };
+ @Post('/github')
+async githubAuth(@Body() body: RegisterUserDto, @Res() response: Response) {
+  if (process.env.DISABLE_USER_REGISTRATION === 'true') {
+    response.status(403).send({ message: 'Account creation is disabled' });
+    return;
+  }
   }
 
   @Get('/github/callback')
