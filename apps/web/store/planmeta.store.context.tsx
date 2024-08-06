@@ -21,7 +21,7 @@ export const usePlanMetaData = () => {
   const context = useContext(PlanMetaContext);
 
   if (!context) {
-    return;
+    throw new Error('usePlanMetaData must be used within a PlanMetaProvider');
   }
 
   return context;
