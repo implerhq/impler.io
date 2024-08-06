@@ -5,7 +5,7 @@ import { Injectable, HttpStatus, HttpException, UnauthorizedException } from '@n
 import { APIMessages } from '@shared/constants';
 import { SchemaDto } from 'app/common/dtos/Schema.dto';
 import { ValidRequestCommand } from './valid-request.command';
-import { ProjectRepository, TemplateRepository } from '@impler/dal';
+import { ProjectRepository, TemplateRepository, UserEntity } from '@impler/dal';
 import { UniqueColumnException } from '@shared/exceptions/unique-column.exception';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
 import { PaymentAPIService } from '@impler/services';
@@ -42,12 +42,10 @@ export class ValidRequest {
         }
       }
       if (command.schema) {
-        const user = await this.projectRepository.getUserOfProject(command.projectId);
+        const project = await this.projectRepository.getUserOfProject(command.projectId);
 
         const isBillableMetricAvailable = await this.paymentAPIService.checkEvent({
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          email: user._userId.email,
+          email: (project._userId as unknown as UserEntity).email,
           billableMetricCode: AVAILABLE_BILLABLEMETRIC_CODE_ENUM.IMAGE_UPLOAD,
         });
 
