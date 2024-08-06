@@ -1,4 +1,4 @@
-import { colors, documentationReferenceLinks } from '@config';
+import { colors, DOCUMENTATION_REFERENCE_LINKS } from '@config';
 import { Controller } from 'react-hook-form';
 import {
   Group,
@@ -11,7 +11,6 @@ import {
   List,
   Code,
   LoadingOverlay,
-  Tooltip,
 } from '@mantine/core';
 
 import { Button } from '@ui/button';
@@ -20,8 +19,7 @@ import { VarLabel } from '../editor/VarLabel';
 import { useValidator } from '@hooks/useValidator';
 import { VarItemWrapper } from '../editor/VarItemWrapper';
 import { InformationIcon } from '@assets/icons/Information.icon';
-import { GuidePointIcon } from '@assets/icons/GuidePoint.icon';
-import Link from 'next/link';
+import TooltipLink from '@components/TooltipLink/TooltipLink';
 
 interface ValidatorProps {
   templateId: string;
@@ -52,11 +50,7 @@ export function Validator({ templateId }: ValidatorProps) {
               <Title color={colorScheme === 'dark' ? colors.white : colors.black} order={4}>
                 Validate data in batch
               </Title>
-              <Tooltip label="Read More" withArrow>
-                <Link href={documentationReferenceLinks.customValidation} target="_blank" passHref>
-                  <GuidePointIcon size="lg" color={colorScheme === 'dark' ? colors.white : colors.black} />
-                </Link>
-              </Tooltip>
+              <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.customValidation} />
             </Flex>
             <Text fw="normal" color={colors.TXTSecondaryDark}>
               Use this space to apply some custom validator in data like, validating data against data in your database.
