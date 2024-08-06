@@ -2,20 +2,18 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { modals } from '@mantine/modals';
-import { Title, Text, Flex, Button, Skeleton, Stack, Tooltip, useMantineColorScheme } from '@mantine/core';
+import { Title, Text, Flex, Button, Skeleton, Stack } from '@mantine/core';
 
 import { useApp } from '@hooks/useApp';
 import { SelectCardModal } from '@components/settings';
 import { usePlanDetails } from '@hooks/usePlanDetails';
 import { PlansModal } from '@components/UpgradePlan/PlansModal';
-import { CONSTANTS, MODAL_KEYS, ROUTES, colors, documentationReferenceLinks } from '@config';
+import { CONSTANTS, MODAL_KEYS, ROUTES, colors, DOCUMENTATION_REFERENCE_LINKS } from '@config';
 import { numberFormatter } from '@impler/shared/dist/utils/helpers';
 import { ConfirmationModal } from '@components/ConfirmationModal';
-import { GuidePointIcon } from '@assets/icons/GuidePoint.icon';
+import TooltipLink from '@components/TooltipLink/TooltipLink';
 
 export function PlanDetails() {
-  const { colorScheme } = useMantineColorScheme();
-
   const router = useRouter();
   const status = router.query?.status;
   const planName = router.query?.plan;
@@ -176,11 +174,7 @@ export function PlanDetails() {
           </Text>
         </Flex>
       </Flex>
-      <Tooltip label="Read More" withArrow>
-        <Link href={documentationReferenceLinks.subscriptionInformation} target="_blank">
-          <GuidePointIcon size="lg" color={colorScheme === 'dark' ? colors.white : colors.black} />
-        </Link>
-      </Tooltip>
+      <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.subscriptionInformation} iconSize="md" />
     </Flex>
   );
 }
