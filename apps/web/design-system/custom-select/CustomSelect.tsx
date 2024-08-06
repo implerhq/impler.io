@@ -1,13 +1,11 @@
 import { FormEvent, ReactNode, useEffect, useRef, useState } from 'react';
-import { Group, MantineSize, Popover, SelectItem, Tooltip, UnstyledButton } from '@mantine/core';
+import { Group, MantineSize, Popover, SelectItem, UnstyledButton } from '@mantine/core';
 
 import useStyles from './CustomSelect.styles';
 import { ChevronDownIcon } from '@assets/icons';
 import { SelectedValue } from './SelectedValue';
 import { CloseIcon } from '@assets/icons/Close.icon';
-import { GuidePointIcon } from '@assets/icons/GuidePoint.icon';
-import Link from 'next/link';
-import { colors } from '@config';
+import TooltipLink from '@components/TooltipLink/TooltipLink';
 
 interface MultiSelectProps {
   label?: string;
@@ -86,11 +84,7 @@ export function CustomSelect({
             <label className={classes.label}>
               <Group spacing="xs" align="center">
                 {label}
-                <Tooltip label={'Read more'} withArrow>
-                  <Link href={link as string} target="_blank" rel="noopener noreferrer">
-                    <GuidePointIcon size="sm" color={colors.white} />
-                  </Link>
-                </Tooltip>
+                <TooltipLink link={link as string} />
               </Group>
             </label>
           ) : null}
