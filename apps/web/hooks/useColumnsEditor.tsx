@@ -6,6 +6,7 @@ import { API_KEYS } from '@config';
 import { commonApi } from '@libs/api';
 import { IColumn, IErrorObject } from '@impler/shared';
 import { useUpdateBulkColumns } from './useUpdateBulkColumns';
+import { usePlanMetaData } from 'store/planmeta.store.context';
 
 interface UseSchemaProps {
   templateId: string;
@@ -16,6 +17,7 @@ interface ColumnsData {
 }
 
 export function useColumnsEditor({ templateId }: UseSchemaProps) {
+  const { meta } = usePlanMetaData();
   const [columnErrors, setColumnErrors] = useState<Record<number, string[]>>();
   const {
     control,
@@ -68,13 +70,26 @@ export function useColumnsEditor({ templateId }: UseSchemaProps) {
   );
   const onSaveColumnsClick = (data: ColumnsData) => {
     setColumnErrors(undefined);
+    let parsedColumns;
+
     try {
-      JSON.parse(data.columns);
+      parsedColumns = JSON.parse(data.columns);
     } catch (error) {
       return setError('columns', { type: 'JSON', message: 'Provided JSON is invalid!' });
     }
 
-    updateColumns(JSON.parse(data.columns));
+    if (!meta?.IMAGE_UPLOAD) {
+      const imageColumnExists = parsedColumns.some((column: IColumn) => column.type === 'Image');
+
+      if (imageColumnExists) {
+        return setError('columns', {
+          type: 'Object',
+          message: 'Image column type is not allowed in your current plan.',
+        });
+      }
+    }
+
+    updateColumns(parsedColumns);
   };
   const onColumnUpdateError = (error: IErrorObject) => {
     if (error.error && Array.isArray(error.message)) {
