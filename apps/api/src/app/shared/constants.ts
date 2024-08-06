@@ -34,7 +34,7 @@ export const APIMessages = {
   ERROR_DURING_VALIDATION:
     'Something went wrong while validating data. Data is not imported yet, but team is informed about issue. Please try again after sometime.',
   ERROR_ACCESSING_FEATURE: {
-    IMAGE_UPLOAD: 'You do not have access to Image Upload Functionality, please make sure you purchased a plan',
+    IMAGE_UPLOAD: 'You do not have access to Image Upload Functionality.',
   },
 };
 
