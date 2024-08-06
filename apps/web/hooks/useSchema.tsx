@@ -174,7 +174,7 @@ export function useSchema({ templateId }: UseSchemaProps) {
 
     return COLUMN_TYPES.map((item) => {
       if (item.label === 'Image' && item.value === 'Image' && !meta.IMAGE_UPLOAD) {
-        return { ...item, disabled: true, label: 'Image Premium Feature' };
+        return { ...item, disabled: true, label: 'Image - Scale Plan Feature' };
       }
 
       return item;
