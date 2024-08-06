@@ -25,7 +25,7 @@ interface ColumnsTableProps {
 export function ColumnsTable({ templateId }: ColumnsTableProps) {
   const ValidationRef = useRef(false);
   const { getColumnTypes } = useSchema({ templateId });
-  const [columnType, setColumnType] = useState<SelectItem[]>(getColumnTypes());
+  const [columnTypes, setColumnType] = useState<SelectItem[]>(getColumnTypes());
 
   const {
     columns,
@@ -129,7 +129,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                       control={control}
                       name="type"
                       render={({ field }) => (
-                        <NativeSelect data={columnType} placeholder="Select Type" variant="default" register={field} />
+                        <NativeSelect data={columnTypes} placeholder="Select Type" variant="default" register={field} />
                       )}
                     />
                     <Button
