@@ -1,8 +1,10 @@
+import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
+
 import { modals } from '@mantine/modals';
 import { useForm } from 'react-hook-form';
-import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { SelectItem } from '@mantine/core';
 
 import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
@@ -13,8 +15,6 @@ import { API_KEYS, COLUMN_TYPES, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS } f
 import { useUpdateBulkColumns } from './useUpdateBulkColumns';
 import { ConfirmDelete } from '@components/imports/forms/ConfirmDelete';
 import { usePlanMetaData } from 'store/planmeta.store.context';
-import { SelectItem } from '@mantine/core';
-
 const ColumnForm = dynamic(() => import('@components/imports/forms/ColumnForm').then((mod) => mod.ColumnForm), {
   ssr: false,
 });
