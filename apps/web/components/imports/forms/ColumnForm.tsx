@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { modals } from '@mantine/modals';
 import { Controller, useForm } from 'react-hook-form';
 import {
@@ -12,19 +11,18 @@ import {
   CloseButton,
   Select,
   useMantineColorScheme,
-  Tooltip,
   Flex,
 } from '@mantine/core';
 
 import { ColumnTypesEnum, DEFAULT_VALUES, IColumn } from '@impler/shared';
-import { colors, COLUMN_TYPES, DELIMITERS, MODAL_KEYS, MODAL_TITLES, documentationReferenceLinks } from '@config';
+import { colors, COLUMN_TYPES, DELIMITERS, MODAL_KEYS, MODAL_TITLES, DOCUMENTATION_REFERENCE_LINKS } from '@config';
 
 import { Button } from '@ui/button';
 import { Textarea } from '@ui/textarea';
 import { Checkbox } from '@ui/checkbox';
 import { MultiSelect } from '@ui/multi-select';
 import { CustomSelect } from '@ui/custom-select';
-import { GuidePointIcon } from '@assets/icons/GuidePoint.icon';
+import TooltipLink from '@components/TooltipLink/TooltipLink';
 
 interface ColumnFormProps {
   data?: Partial<IColumn>;
@@ -118,15 +116,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                     label={
                       <Group spacing="xs">
                         <Text>Column Type</Text>
-                        <Tooltip label={'Read more'} withArrow>
-                          <Link
-                            href={documentationReferenceLinks.primaryValidation}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <GuidePointIcon size="sm" color={colors.white} />
-                          </Link>
-                        </Tooltip>
+                        <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.primaryValidation} />
                       </Group>
                     }
                     data={COLUMN_TYPES}
@@ -226,7 +216,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                     placeholder="Default Value"
                     description="Value used in response when cell is empty"
                     data={DEFAULT_VALUES}
-                    link={documentationReferenceLinks.defaultValue}
+                    link={DOCUMENTATION_REFERENCE_LINKS.defaultValue}
                   />
                 )}
               />
@@ -243,7 +233,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                   label="Multi Select Values"
                   register={register('allowMultiSelect')}
                   description="Users can pick multiple values from the list. Sample will also allow selecting multiple values."
-                  link={documentationReferenceLinks.multiSelectDropDown}
+                  link={DOCUMENTATION_REFERENCE_LINKS.multiSelectDropDown}
                 />
               ) : (
                 <Checkbox
@@ -275,11 +265,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 label={
                   <Flex gap="sm">
                     <Text>Freeze Column</Text>
-                    <Tooltip label={'Read more'} withArrow>
-                      <Link href={documentationReferenceLinks.freezeColumns} target="_blank" rel="noopener noreferrer">
-                        <GuidePointIcon size="sm" color={colors.white} />
-                      </Link>
-                    </Tooltip>
+                    <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.freezeColumns} />
                   </Flex>
                 }
                 register={register('isFrozen')}
