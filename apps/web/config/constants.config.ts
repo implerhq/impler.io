@@ -217,7 +217,7 @@ export const TEXTS = {
     "Build the best CSV Excel Import Experience for SaaS in 10 Minutes. Onboard customers' data with a hassle-free data importer in your app.",
 };
 
-export const documentationReferenceLinks = {
+export const DOCUMENTATION_REFERENCE_LINKS = {
   defaultValue: 'https://docs.impler.io/platform/default-value',
   primaryValidation: 'https://docs.impler.io/platform/validators',
   multiSelectDropDown: 'https://docs.impler.io/features/multiselect-dropdown',
