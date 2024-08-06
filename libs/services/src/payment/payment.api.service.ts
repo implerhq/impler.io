@@ -21,11 +21,15 @@ interface ICustomer {
   id: string;
   currency: 'USD' | 'INR';
 }
+interface ICheckEvent {
+  email: string;
+  // eslint-disable-next-line prettier/prettier
+  billableMetricCode?: AVAILABLE_BILLABLEMETRIC_CODE_ENUM;
+}
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 
 export class PaymentAPIService {
-  private CODE: AVAILABLE_BILLABLEMETRIC_CODE_ENUM.IMPORTED_ROWS;
   private AUTH_KEY: string;
   private AUTH_VALUE: string;
   private PAYMENT_API_BASE_URL: string;
@@ -41,7 +45,7 @@ export class PaymentAPIService {
 
     const createEventAPIBody = {
       customerId: userExternalIdOrEmail,
-      billableMetricCode: this.CODE,
+      billableMetricCode: AVAILABLE_BILLABLEMETRIC_CODE_ENUM.IMPORTED_ROWS,
       timestamp: new Date(),
       metadata: {
         units: resultData.totalRecords,
@@ -56,7 +60,10 @@ export class PaymentAPIService {
     });
   }
 
-  async checkEvent(email: string, billableMetricCode: AVAILABLE_BILLABLEMETRIC_CODE_ENUM): Promise<boolean> {
+  async checkEvent({
+    email,
+    billableMetricCode = AVAILABLE_BILLABLEMETRIC_CODE_ENUM.IMPORTED_ROWS,
+  }: ICheckEvent): Promise<boolean> {
     if (!this.PAYMENT_API_BASE_URL) return true;
 
     let url = `${this.PAYMENT_API_BASE_URL}/api/v1/check`;
@@ -66,7 +73,6 @@ export class PaymentAPIService {
         [this.AUTH_KEY]: this.AUTH_VALUE,
       },
     });
-    console.log('ISTHIS AVAILABLE?', billableMetricCode, response.data.available);
 
     return response.data.available;
   }
