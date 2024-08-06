@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { modals } from '@mantine/modals';
 import { Controller, useForm } from 'react-hook-form';
@@ -24,7 +25,6 @@ import { Checkbox } from '@ui/checkbox';
 import { MultiSelect } from '@ui/multi-select';
 import { CustomSelect } from '@ui/custom-select';
 import { useSchema } from '@hooks/useSchema';
-import { useEffect, useState } from 'react';
 
 interface ColumnFormProps {
   data?: Partial<IColumn>;
@@ -34,7 +34,7 @@ interface ColumnFormProps {
 
 export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
   const { getColumnTypes } = useSchema({ templateId: data?._templateId as string });
-  const [columnType, setColumnType] = useState<readonly (string | SelectItem)[]>([]);
+  const [columnTypes, setColumnType] = useState<SelectItem[]>(getColumnTypes());
   const { colorScheme } = useMantineColorScheme();
   const {
     watch,
@@ -116,7 +116,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 render={({ field: { value, onChange, onBlur } }) => (
                   <Select
                     label="Column Type"
-                    data={columnType as readonly (string | SelectItem)[]}
+                    data={columnTypes}
                     placeholder="Type"
                     value={value}
                     data-autofocus
