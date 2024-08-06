@@ -230,10 +230,14 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
               />
               {typeValue === ColumnTypesEnum.SELECT ? (
                 <Checkbox
-                  label="Multi Select Values"
+                  label={
+                    <Flex gap="sm">
+                      <Text>Multi Select Values</Text>
+                      <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.multiSelectDropDown} />
+                    </Flex>
+                  }
                   register={register('allowMultiSelect')}
                   description="Users can pick multiple values from the list. Sample will also allow selecting multiple values."
-                  link={DOCUMENTATION_REFERENCE_LINKS.multiSelectDropDown}
                 />
               ) : (
                 <Checkbox
