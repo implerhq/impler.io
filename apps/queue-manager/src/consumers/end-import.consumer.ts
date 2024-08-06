@@ -18,7 +18,9 @@ export class EndImportConsumer extends BaseConsumer {
     await this.convertRecordsToJsonFile(data.uploadId);
     const userEmail = await this.uploadRepository.getUserEmailFromUploadId(data.uploadId);
 
-    const dataProcessingAllowed = await this.paymentAPIService.checkEvent(userEmail);
+    const dataProcessingAllowed = await this.paymentAPIService.checkEvent({
+      email: userEmail,
+    });
 
     if (dataProcessingAllowed) {
       if (data.destination === DestinationsEnum.WEBHOOK) {
