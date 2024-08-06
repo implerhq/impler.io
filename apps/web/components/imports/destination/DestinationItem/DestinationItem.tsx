@@ -1,9 +1,9 @@
 import { PropsWithChildren } from 'react';
-import { Title, useMantineColorScheme, Flex, Stack, Switch, Collapse, Tooltip, Group, Box } from '@mantine/core';
+import { Title, useMantineColorScheme, Flex, Stack, Switch, Collapse, Group } from '@mantine/core';
 
 import useStyles from './DestinationItem.styles';
 import { colors } from '@config';
-import { GuidePointIcon } from '@assets/icons/GuidePoint.icon';
+import TooltipLink from '@components/TooltipLink/TooltipLink';
 
 interface DestinationItemProps extends PropsWithChildren {
   title: string;
@@ -25,21 +25,13 @@ export const DestinationItem = ({ title, subtitle, onClick, children, active, to
             <Title color={colorScheme === 'dark' ? colors.white : colors.black} order={4}>
               {title}
             </Title>
-            {tooltipLink && (
-              <Tooltip label="Read more" position="top" withArrow>
-                <Box component="a" href={tooltipLink} target="_blank" rel="noopener noreferrer">
-                  <GuidePointIcon size="lg" color={colorScheme === 'dark' ? colors.white : colors.black} />
-                </Box>
-              </Tooltip>
-            )}
+            {tooltipLink && <TooltipLink link={tooltipLink} iconSize="md" />}
           </Group>
           <Title order={5} fw="normal" color={colors.TXTSecondaryDark}>
             {subtitle}
           </Title>
         </Stack>
-        <Flex align="center" gap="md">
-          <Switch color={colors.blue} checked={!!active} onClick={onClick} />
-        </Flex>
+        <Switch color={colors.blue} checked={!!active} onClick={onClick} />
       </Flex>
       <Collapse in={!!active}>{children}</Collapse>
     </Stack>
