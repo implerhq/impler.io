@@ -5,7 +5,7 @@ import { Stack, TextInput as Input, Group } from '@mantine/core';
 import { Button } from '@ui/button';
 import { NumberInput } from '@ui/number-input';
 import { DoaminInput } from '@ui/domain-input';
-import { documentationReferenceLinks, REGULAR_EXPRESSIONS } from '@config';
+import { DOCUMENTATION_REFERENCE_LINKS, REGULAR_EXPRESSIONS } from '@config';
 import { NativeSelect } from '@ui/native-select';
 import { useDestination } from '@hooks/useDestination';
 import { DestinationItem } from './DestinationItem';
@@ -54,14 +54,14 @@ export function Destination({ template }: DestinationProps) {
         subtitle="User imported data will be sent to frontend"
         active={destination === DestinationsEnum.FRONTEND}
         onClick={() => swithDestination(DestinationsEnum.FRONTEND)}
-        tooltipLink={documentationReferenceLinks.frontendEndCallback}
+        tooltipLink={DOCUMENTATION_REFERENCE_LINKS.frontendEndCallback}
       />
       <DestinationItem
         title="Webhook"
         subtitle="Provide webhook to receive data"
         active={destination === DestinationsEnum.WEBHOOK}
         onClick={() => swithDestination(DestinationsEnum.WEBHOOK)}
-        tooltipLink={documentationReferenceLinks.webhook}
+        tooltipLink={DOCUMENTATION_REFERENCE_LINKS.webhook}
       >
         <form onSubmit={onSubmit}>
           <Stack spacing="xs">
@@ -104,7 +104,7 @@ export function Destination({ template }: DestinationProps) {
         subtitle="Send Imported data to bubble.io"
         active={destination === DestinationsEnum.BUBBLEIO}
         onClick={() => swithDestination(DestinationsEnum.BUBBLEIO)}
-        tooltipLink={documentationReferenceLinks.bubbleIo}
+        tooltipLink={DOCUMENTATION_REFERENCE_LINKS.bubbleIo}
       >
         <form onSubmit={onSubmit}>
           <Stack spacing="xs">
