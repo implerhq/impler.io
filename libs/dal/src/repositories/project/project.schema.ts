@@ -1,4 +1,4 @@
-import { Schema, Document, model, models } from 'mongoose';
+import { Schema, Document, model, models, Model } from 'mongoose';
 import { schemaOptions } from '../schema-default.options';
 import { ProjectEntity } from './project.entity';
 
@@ -23,4 +23,4 @@ interface IProjectDocument extends ProjectEntity, Document {
   _id: never;
 }
 
-export const Project = models.Project || model<IProjectDocument>('Project', projectSchema);
+export const Project = (models.Project as Model<IProjectDocument>) || model<IProjectDocument>('Project', projectSchema);
