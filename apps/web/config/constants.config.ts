@@ -1,3 +1,5 @@
+import { TemplateModeEnum } from '@impler/shared';
+
 export const CONSTANTS = {
   PLAN_CODE_QUERY_KEY: 'plan_code',
   GITHUB_LOGIN_URL: '/v1/auth/github',
@@ -194,6 +196,10 @@ export const COLUMN_TYPES = [
     value: 'Email',
   },
   {
+    label: 'Image',
+    value: 'Image',
+  },
+  {
     label: 'Any',
     value: 'Any',
   },
@@ -227,4 +233,9 @@ export const DOCUMENTATION_REFERENCE_LINKS = {
   bubbleIo: 'https://docs.impler.io/widget/bubble.io-embed',
   subscriptionInformation: 'https://docs.impler.io/platform/how-subscription-works',
   customValidation: 'https://docs.impler.io/features/custom-validation',
-};
+}
+
+export const IMPORT_MODES = [
+  { label: 'Manual', value: TemplateModeEnum.MANUAL },
+  { label: 'Automatic', value: TemplateModeEnum.AUTOMATIC },
+];

@@ -62,5 +62,6 @@ export function getAssetMimeType(name: string): string {
   if (name.endsWith('.png')) return FileMimeTypesEnum.PNG;
   else if (name.endsWith('.jpg')) return FileMimeTypesEnum.JPEG;
   else if (name.endsWith('.jpeg')) return FileMimeTypesEnum.JPEG;
+  else if (name.endsWith('.webp')) return FileMimeTypesEnum.WEBP;
   throw new Error('Unsupported file type');
 }

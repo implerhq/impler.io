@@ -11,4 +11,8 @@ export class UpdateTemplateCommand extends BaseCommand {
   })
   @IsOptional()
   _projectId?: string;
+
+  @IsString()
+  @IsOptional()
+  mode?: string;
 }

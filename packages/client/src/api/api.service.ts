@@ -9,6 +9,8 @@ import {
   ISchemaColumn,
   IRecord,
   constructQueryString,
+  IUserJobMapping,
+  IUserJob,
 } from '@impler/shared';
 import { HttpClient } from './api.client';
 
@@ -45,10 +47,11 @@ export class ApiService {
     });
   }
 
-  async getImportConfig(projectId: string) {
-    return this.httpClient.get(
-      `/common/import-config?projectId=${projectId}`,
-    ) as Promise<IImportConfig>;
+  async getImportConfig(projectId: string, templateId?: string) {
+    return this.httpClient.get(`/common/import-config`, {
+      projectId,
+      templateId,
+    }) as Promise<IImportConfig>;
   }
 
   async getExcelSheetNames(data: { file: File }) {
@@ -188,5 +191,42 @@ export class ApiService {
     return this.httpClient.delete(
       `/review/${uploadId}/record?indexes=${indexes}&valid=${valid}&invalid=${invalid}`,
     );
+  }
+
+  async getRssXmlMappingHeading(data: {
+    templateId: string;
+    url: string;
+    authHeaderValue?: string;
+    extra?: string;
+    schema?: string;
+    output?: string;
+  }) {
+    return this.httpClient.post(`/import-jobs/${data.templateId}`, {
+      url: data.url,
+      authHeaderValue: data.authHeaderValue,
+      extra: data.extra,
+      schema: data.schema,
+      output: data.output,
+    });
+  }
+
+  async getUserJobMappings(jobId: string) {
+    return this.httpClient.get(`/import-jobs/${jobId}/mappings`) as Promise<
+      IUserJobMapping[]
+    >;
+  }
+
+  async createUserJobMapings(jobId: string, mappings: IUserJobMapping[]) {
+    return this.httpClient.put(
+      `/import-jobs/${jobId}/mappings`,
+      mappings,
+    ) as Promise<IUserJobMapping[]>;
+  }
+
+  async updateUserJob(jobId: string, userJobData: Partial<IUserJob>) {
+    return this.httpClient.put(
+      `/import-jobs/${jobId}`,
+      userJobData,
+    ) as Promise<IUserJob>;
   }
 }

@@ -34,6 +34,9 @@ const templateSchema = new Schema(
       type: Schema.Types.Number,
       default: 0,
     },
+    mode: {
+      type: Schema.Types.String,
+    },
   },
   { ...schemaOptions }
 );

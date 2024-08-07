@@ -2,11 +2,11 @@ import Link from 'next/link';
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import { ActionIcon, Flex, Group, LoadingOverlay, Title, useMantineTheme } from '@mantine/core';
+import { ActionIcon, Flex, Group, LoadingOverlay, Title, useMantineTheme, Select } from '@mantine/core';
 
 import { track } from '@libs/amplitude';
-import { ROUTES, colors } from '@config';
 import { useImpler } from '@impler/react';
+import { IMPORT_MODES, ROUTES, colors } from '@config';
 import { useImportDetails } from '@hooks/useImportDetails';
 
 import { Tabs } from '@ui/Tabs';
@@ -44,6 +44,7 @@ export default function ImportDetails({}) {
     onDeleteClick,
     isTemplateDataLoading,
     onSpreadsheetImported,
+    updateImport,
   } = useImportDetails({
     templateId: router.query.id as string,
   });
@@ -78,6 +79,14 @@ export default function ImportDetails({}) {
           </Group>
         </Group>
         <Group spacing="xs">
+          <Select
+            size="sm"
+            maw={125}
+            placeholder="Mode"
+            data={IMPORT_MODES}
+            value={templateData?.mode}
+            onChange={(mode) => updateImport({ mode: mode || undefined })}
+          />
           <Button
             color="green"
             id="import"

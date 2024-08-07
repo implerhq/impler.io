@@ -64,7 +64,20 @@ export function captureError(error: any) {
   // eslint-disable-next-line no-console
   else console.error(error);
 }
+export function isValidCronCharacter(value: string): boolean {
+  //const cronCharacterRegex = /^[0-9*,/\-?]+$/; // This will not accept the letters like for example FRI
+  const cronCharacterRegex = /^[0-9*,/\-?A-Za-z]+$/;
 
+  return cronCharacterRegex.test(value);
+}
+
+export const validateRssUrl = {
+  required: 'RSS URL is required',
+  pattern: {
+    value: /^(https?:\/\/)?([\w-]+(\.[\w-]+)+\.?(:\d+)?)(\/[^\s]*)?$/,
+    message: 'Please Enter a valid RSS Feed URL',
+  },
+};
 export const getObjectId = (math = Math, date = Date, hr = 16, sec = (sp: number) => math.floor(sp).toString(hr)) =>
   sec(date.now() / 1000) + ' '.repeat(hr).replace(/./g, () => sec(math.random() * hr));
 export const validateRssUrl = {
