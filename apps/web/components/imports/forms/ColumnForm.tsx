@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { modals } from '@mantine/modals';
 import { Controller, useForm } from 'react-hook-form';
 import {
@@ -8,20 +9,22 @@ import {
   SimpleGrid,
   Title,
   Group,
+  Flex,
   CloseButton,
   Select,
   useMantineColorScheme,
-  Flex,
+  SelectItem,
 } from '@mantine/core';
 
 import { ColumnTypesEnum, DEFAULT_VALUES, IColumn } from '@impler/shared';
-import { colors, COLUMN_TYPES, DELIMITERS, MODAL_KEYS, MODAL_TITLES, DOCUMENTATION_REFERENCE_LINKS } from '@config';
+import { colors, DELIMITERS, MODAL_KEYS, MODAL_TITLES, DOCUMENTATION_REFERENCE_LINKS } from '@config';
 
 import { Button } from '@ui/button';
 import { Textarea } from '@ui/textarea';
 import { Checkbox } from '@ui/checkbox';
 import { MultiSelect } from '@ui/multi-select';
 import { CustomSelect } from '@ui/custom-select';
+import { useSchema } from '@hooks/useSchema';
 import TooltipLink from '@components/TooltipLink/TooltipLink';
 
 interface ColumnFormProps {
@@ -31,6 +34,8 @@ interface ColumnFormProps {
 }
 
 export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
+  const { getColumnTypes } = useSchema({ templateId: data?._templateId as string });
+  const [columnTypes, setColumnType] = useState<SelectItem[]>(getColumnTypes());
   const { colorScheme } = useMantineColorScheme();
   const {
     watch,
@@ -47,6 +52,10 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
   const onClose = () => {
     modals.close(MODAL_KEYS.COLUMN_UPDATE);
   };
+
+  useEffect(() => {
+    setColumnType(getColumnTypes());
+  }, []);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -113,13 +122,8 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 control={control}
                 render={({ field: { value, onChange, onBlur } }) => (
                   <Select
-                    label={
-                      <Group spacing="xs">
-                        <Text>Column Type</Text>
-                        <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.primaryValidation} />
-                      </Group>
-                    }
-                    data={COLUMN_TYPES}
+                    label="Column Type"
+                    data={columnTypes}
                     placeholder="Type"
                     value={value}
                     data-autofocus

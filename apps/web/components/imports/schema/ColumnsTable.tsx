@@ -1,9 +1,9 @@
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Controller } from 'react-hook-form';
-import { ActionIcon, Flex, Tooltip, TextInput as Input, Group, Badge } from '@mantine/core';
+import { ActionIcon, Flex, Tooltip, TextInput as Input, Group, Badge, SelectItem } from '@mantine/core';
 
 import { useSchema } from '@hooks/useSchema';
-import { colors, COLUMN_TYPES } from '@config';
+import { colors } from '@config';
 import { ColumnTypesEnum, IColumn } from '@impler/shared';
 
 import { Button } from '@ui/button';
@@ -24,6 +24,8 @@ interface ColumnsTableProps {
 
 export function ColumnsTable({ templateId }: ColumnsTableProps) {
   const ValidationRef = useRef(false);
+  const { getColumnTypes } = useSchema({ templateId });
+  const [columnTypes, setColumnType] = useState<SelectItem[]>(getColumnTypes());
 
   const {
     columns,
@@ -46,6 +48,10 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
     const values = getValues();
     onValidationsClick({ ...values, key: values.key || values.name });
   };
+
+  useEffect(() => {
+    setColumnType(getColumnTypes());
+  }, []);
 
   return (
     <form
@@ -123,12 +129,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                       control={control}
                       name="type"
                       render={({ field }) => (
-                        <NativeSelect
-                          data={COLUMN_TYPES}
-                          placeholder="Select Type"
-                          variant="default"
-                          register={field}
-                        />
+                        <NativeSelect data={columnTypes} placeholder="Select Type" variant="default" register={field} />
                       )}
                     />
                     <Button

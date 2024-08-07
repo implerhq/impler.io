@@ -33,6 +33,9 @@ export const APIMessages = {
   COLUMN_KEY_DUPLICATED: 'Column with the same key already exists. Please provide a unique key.',
   ERROR_DURING_VALIDATION:
     'Something went wrong while validating data. Data is not imported yet, but team is informed about issue. Please try again after sometime.',
+  ERROR_ACCESSING_FEATURE: {
+    IMAGE_UPLOAD: 'You do not have access to Image Upload Functionality.',
+  },
 };
 
 export const CONSTANTS = {

@@ -233,7 +233,7 @@ export const DOCUMENTATION_REFERENCE_LINKS = {
   bubbleIo: 'https://docs.impler.io/widget/bubble.io-embed',
   subscriptionInformation: 'https://docs.impler.io/platform/how-subscription-works',
   customValidation: 'https://docs.impler.io/features/custom-validation',
-}
+};
 
 export const IMPORT_MODES = [
   { label: 'Manual', value: TemplateModeEnum.MANUAL },

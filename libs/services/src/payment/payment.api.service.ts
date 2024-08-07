@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ISubscriptionData, constructQueryString } from '@impler/shared';
+import { ISubscriptionData, AVAILABLE_BILLABLEMETRIC_CODE_ENUM, constructQueryString } from '@impler/shared';
 
 interface ICheckData {
   uploadId: string;
@@ -21,11 +21,15 @@ interface ICustomer {
   id: string;
   currency: 'USD' | 'INR';
 }
+interface ICheckEvent {
+  email: string;
+  // eslint-disable-next-line prettier/prettier
+  billableMetricCode?: AVAILABLE_BILLABLEMETRIC_CODE_ENUM;
+}
 
-type AVAILABLE_CODES = 'IMPORTED_ROWS' | 'REMOVE_BRANDING';
+// eslint-disable-next-line @typescript-eslint/naming-convention
 
 export class PaymentAPIService {
-  private CODE: AVAILABLE_CODES = 'IMPORTED_ROWS';
   private AUTH_KEY: string;
   private AUTH_VALUE: string;
   private PAYMENT_API_BASE_URL: string;
@@ -41,7 +45,7 @@ export class PaymentAPIService {
 
     const createEventAPIBody = {
       customerId: userExternalIdOrEmail,
-      billableMetricCode: this.CODE,
+      billableMetricCode: AVAILABLE_BILLABLEMETRIC_CODE_ENUM.IMPORTED_ROWS,
       timestamp: new Date(),
       metadata: {
         units: resultData.totalRecords,
@@ -56,11 +60,14 @@ export class PaymentAPIService {
     });
   }
 
-  async checkEvent(email: string, type: AVAILABLE_CODES = 'IMPORTED_ROWS'): Promise<boolean> {
+  async checkEvent({
+    email,
+    billableMetricCode = AVAILABLE_BILLABLEMETRIC_CODE_ENUM.IMPORTED_ROWS,
+  }: ICheckEvent): Promise<boolean> {
     if (!this.PAYMENT_API_BASE_URL) return true;
 
     let url = `${this.PAYMENT_API_BASE_URL}/api/v1/check`;
-    url += constructQueryString({ externalId: email, billableMetricCode: type });
+    url += constructQueryString({ externalId: email, billableMetricCode });
     const response = await axios.get(url, {
       headers: {
         [this.AUTH_KEY]: this.AUTH_VALUE,

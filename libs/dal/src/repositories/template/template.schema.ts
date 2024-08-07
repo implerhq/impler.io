@@ -36,6 +36,7 @@ const templateSchema = new Schema(
     },
     mode: {
       type: Schema.Types.String,
+      default: 'manual',
     },
   },
   { ...schemaOptions }

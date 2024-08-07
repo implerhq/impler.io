@@ -92,44 +92,44 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <QueryClientProvider client={client}>
         <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
-          <MantineProvider
-            theme={{ ...mantineConfig, colorScheme, fontFamily: poppinsFont.style.fontFamily }}
-            withGlobalStyles
-            withNormalizeCSS
-          >
-            <Notifications />
-            <ModalsProvider
-              modalProps={{
-                styles: {
-                  title: {
-                    color: colorScheme === 'dark' ? colors.white : colors.black,
-                  },
-                  content: {
-                    backgroundColor: colorScheme === 'dark' ? colors.black : colors.white,
-                    borderRadius: 0,
-                    boxShadow: 'none',
-                    // flex: `0 0 40rem !important`,
-                  },
-                  header: {
-                    backgroundColor: colorScheme === 'dark' ? colors.black : colors.white,
-                  },
-                  overlay: {
-                    // eslint-disable-next-line no-magic-numbers
-                    backgroundColor: addOpacityToHex(colorScheme === 'dark' ? colors.white : colors.black, 0.2),
-                    backdropFilter: 'blur(5px)',
-                  },
-                },
-              }}
+          <StoreWrapper>
+            <MantineProvider
+              theme={{ ...mantineConfig, colorScheme, fontFamily: poppinsFont.style.fontFamily }}
+              withGlobalStyles
+              withNormalizeCSS
             >
-              <StoreWrapper>
+              <Notifications />
+              <ModalsProvider
+                modalProps={{
+                  styles: {
+                    title: {
+                      color: colorScheme === 'dark' ? colors.white : colors.black,
+                    },
+                    content: {
+                      backgroundColor: colorScheme === 'dark' ? colors.black : colors.white,
+                      borderRadius: 0,
+                      boxShadow: 'none',
+                      // flex: `0 0 40rem !important`,
+                    },
+                    header: {
+                      backgroundColor: colorScheme === 'dark' ? colors.black : colors.white,
+                    },
+                    overlay: {
+                      // eslint-disable-next-line no-magic-numbers
+                      backgroundColor: addOpacityToHex(colorScheme === 'dark' ? colors.white : colors.black, 0.2),
+                      backdropFilter: 'blur(5px)',
+                    },
+                  },
+                }}
+              >
                 {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
                 {/* @ts-ignore */}
                 <Layout {...(Component.Layout ? { pageProps } : {})}>
                   <Component {...pageProps} />
                 </Layout>
-              </StoreWrapper>
-            </ModalsProvider>
-          </MantineProvider>
+              </ModalsProvider>
+            </MantineProvider>
+          </StoreWrapper>
         </ColorSchemeProvider>
       </QueryClientProvider>
     </>

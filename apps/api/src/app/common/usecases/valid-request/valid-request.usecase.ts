@@ -5,15 +5,18 @@ import { Injectable, HttpStatus, HttpException, UnauthorizedException } from '@n
 import { APIMessages } from '@shared/constants';
 import { SchemaDto } from 'app/common/dtos/Schema.dto';
 import { ValidRequestCommand } from './valid-request.command';
-import { ProjectRepository, TemplateRepository } from '@impler/dal';
+import { ProjectRepository, TemplateRepository, UserEntity } from '@impler/dal';
 import { UniqueColumnException } from '@shared/exceptions/unique-column.exception';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
+import { PaymentAPIService } from '@impler/services';
+import { AVAILABLE_BILLABLEMETRIC_CODE_ENUM } from '@impler/shared';
 
 @Injectable()
 export class ValidRequest {
   constructor(
     private projectRepository: ProjectRepository,
-    private templateRepository: TemplateRepository
+    private templateRepository: TemplateRepository,
+    private paymentAPIService: PaymentAPIService
   ) {}
 
   async execute(command: ValidRequestCommand): Promise<{ success: boolean }> {
@@ -36,6 +39,22 @@ export class ValidRequest {
 
         if (!templateCount) {
           throw new DocumentNotFoundException('Template', command.templateId, APIMessages.INCORRECT_KEYS_FOUND);
+        }
+      }
+      if (command.schema) {
+        const project = await this.projectRepository.getUserOfProject(command.projectId);
+
+        const isBillableMetricAvailable = await this.paymentAPIService.checkEvent({
+          email: (project._userId as unknown as UserEntity).email,
+          billableMetricCode: AVAILABLE_BILLABLEMETRIC_CODE_ENUM.IMAGE_UPLOAD,
+        });
+
+        if (!isBillableMetricAvailable) {
+          throw new DocumentNotFoundException(
+            'Schema',
+            command.schema,
+            APIMessages.ERROR_ACCESSING_FEATURE.IMAGE_UPLOAD
+          );
         }
       }
 
