@@ -3,12 +3,17 @@ import * as envalid from 'envalid';
 import { ENVTypesEnum } from '@impler/shared';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const validators: { [K in keyof any]: ValidatorSpec<any[K]> } = {
+export const validators: { [K in keyof any]: ValidatorSpec<any[K]> } = {
   JWT_SECRET: str(),
   NODE_ENV: str({
     choices: [ENVTypesEnum.LOCAL, ENVTypesEnum.TEST, ENVTypesEnum.PROD, ENVTypesEnum.CI, ENVTypesEnum.LOCAL],
     default: ENVTypesEnum.LOCAL,
   }),
+  DISABLE_USER_REGISTRATION: bool({
+    default: false,
+    desc: 'Flag to disable user registration',
+  }),
+};
   S3_LOCAL_STACK: str(),
   S3_BUCKET_NAME: str(),
   S3_REGION: str(),
