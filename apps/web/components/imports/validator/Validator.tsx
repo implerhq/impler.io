@@ -1,4 +1,4 @@
-import { colors } from '@config';
+import { colors, DOCUMENTATION_REFERENCE_LINKS } from '@config';
 import { Controller } from 'react-hook-form';
 import {
   Group,
@@ -19,6 +19,7 @@ import { VarLabel } from '../editor/VarLabel';
 import { useValidator } from '@hooks/useValidator';
 import { VarItemWrapper } from '../editor/VarItemWrapper';
 import { InformationIcon } from '@assets/icons/Information.icon';
+import TooltipLink from '@components/TooltipLink/TooltipLink';
 
 interface ValidatorProps {
   templateId: string;
@@ -45,9 +46,12 @@ export function Validator({ templateId }: ValidatorProps) {
       <Stack spacing="sm">
         <Group position="apart">
           <div>
-            <Title color={colorScheme === 'dark' ? colors.white : colors.black} order={4}>
-              Validate data in batch
-            </Title>
+            <Flex gap="sm" align="center">
+              <Title color={colorScheme === 'dark' ? colors.white : colors.black} order={4}>
+                Validate data in batch
+              </Title>
+              <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.customValidation} />
+            </Flex>
             <Text fw="normal" color={colors.TXTSecondaryDark}>
               Use this space to apply some custom validator in data like, validating data against data in your database.
             </Text>

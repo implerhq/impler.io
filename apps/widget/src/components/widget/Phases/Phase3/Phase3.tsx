@@ -61,6 +61,7 @@ export function Phase3(props: IPhase3Props) {
     height: 200,
     width: 500,
   });
+  const columnDescriptions = columnDefs.map((column) => column.description || '');
 
   useEffect(() => {
     //  setting wrapper height
@@ -172,6 +173,7 @@ export function Phase3(props: IPhase3Props) {
           headings={headings}
           columnDefs={columnDefs}
           allChecked={allChecked}
+          columnDescriptions={columnDescriptions}
         />
       </Stack>
       <Pagination page={page} total={totalPages} onChange={onPageChange} />

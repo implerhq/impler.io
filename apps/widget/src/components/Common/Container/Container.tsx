@@ -86,6 +86,25 @@ export function Container({ children }: PropsWithChildren<{}>) {
               colorScheme: secondaryPayload.colorScheme,
             },
           }),
+          '.tippy-box[data-theme~="custom"]': {
+            color: 'black',
+            backgroundColor: 'white',
+            border: `2px solid ${secondaryPayload.primaryColor}`,
+            boxShadow: '0 0 10px rgba(0,0,0,0.2)',
+            borderRadius: 5,
+          },
+          '.tippy-box[data-theme~="custom"][data-placement^="top"] > .tippy-arrow::before': {
+            borderTopColor: secondaryPayload.primaryColor,
+          },
+          '.tippy-box[data-theme~="custom"][data-placement^="bottom"] > .tippy-arrow::before': {
+            borderBottomColor: secondaryPayload.primaryColor,
+          },
+          '.tippy-box[data-theme~="custom"][data-placement^="left"] > .tippy-arrow::before': {
+            borderLeftColor: secondaryPayload.primaryColor,
+          },
+          '.tippy-box[data-theme~="custom"][data-placement^="right"] > .tippy-arrow::before': {
+            borderRightColor: secondaryPayload.primaryColor,
+          },
         }}
       />
       <MantineProvider

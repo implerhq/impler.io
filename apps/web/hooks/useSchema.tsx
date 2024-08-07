@@ -64,6 +64,7 @@ export function useSchema({ templateId }: UseSchemaProps) {
         reset({
           name: undefined,
           key: undefined,
+          description: undefined,
           type: 'String',
           alternateKeys: [],
           isRequired: false,
