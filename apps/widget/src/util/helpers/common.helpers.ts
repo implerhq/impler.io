@@ -80,13 +80,6 @@ export const validateRssUrl = {
 };
 export const getObjectId = (math = Math, date = Date, hr = 16, sec = (sp: number) => math.floor(sp).toString(hr)) =>
   sec(date.now() / 1000) + ' '.repeat(hr).replace(/./g, () => sec(math.random() * hr));
-export const validateRssUrl = {
-  required: 'RSS URL is required',
-  pattern: {
-    value: /^(https?:\/\/)?([\w-]+(\.[\w-]+)+\.?(:\d+)?)(\/[^\s]*)?$/,
-    message: 'Please Enter a valid RSS Feed URL',
-  },
-};
 
 export const getColumnDescription = (columnIndex: number, descriptions: string[]): string | null => {
   return descriptions[columnIndex] || null;
