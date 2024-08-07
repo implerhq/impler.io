@@ -8,9 +8,10 @@ import { useApp } from '@hooks/useApp';
 import { SelectCardModal } from '@components/settings';
 import { usePlanDetails } from '@hooks/usePlanDetails';
 import { PlansModal } from '@components/UpgradePlan/PlansModal';
-import { CONSTANTS, MODAL_KEYS, ROUTES, colors } from '@config';
+import { CONSTANTS, MODAL_KEYS, ROUTES, colors, DOCUMENTATION_REFERENCE_LINKS } from '@config';
 import { numberFormatter } from '@impler/shared/dist/utils/helpers';
 import { ConfirmationModal } from '@components/ConfirmationModal';
+import TooltipLink from '@components/TooltipLink/TooltipLink';
 
 export function PlanDetails() {
   const router = useRouter();
@@ -173,6 +174,7 @@ export function PlanDetails() {
           </Text>
         </Flex>
       </Flex>
+      <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.subscriptionInformation} iconSize="md" />
     </Flex>
   );
 }

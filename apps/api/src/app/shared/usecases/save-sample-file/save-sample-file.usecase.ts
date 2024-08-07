@@ -25,12 +25,14 @@ export class SaveSampleFile {
         isRequired: columnItem.isRequired,
         dateFormats: columnItem.dateFormats,
         allowMultiSelect: columnItem.allowMultiSelect,
+        description: columnItem.description,
       }))
       .sort((a, b) => (a.isFrozen === b.isFrozen ? 0 : a.isFrozen ? -1 : 1));
 
     const hasMultiSelect = columns.some(
       (columnItem) => columnItem.type === ColumnTypesEnum.SELECT && columnItem.allowMultiSelect
     );
+
     const fileName = this.fileNameService.getSampleFileName(templateId, hasMultiSelect);
     const sampleFileUrl = this.fileNameService.getSampleFileUrl(templateId, hasMultiSelect);
     const sampleExcelFile = await this.excelFileService.getExcelFileForHeadings(columnKeys);

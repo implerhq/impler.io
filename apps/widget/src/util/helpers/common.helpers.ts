@@ -1,5 +1,8 @@
-import axios from 'axios';
 import * as Sentry from '@sentry/react';
+import axios from 'axios';
+import tippy from 'tippy.js';
+import 'tippy.js/dist/tippy.css';
+import 'tippy.js/animations/shift-away.css';
 import { variables } from '@config';
 import { downloadFile } from '@impler/shared';
 
@@ -77,3 +80,19 @@ export const validateRssUrl = {
 };
 export const getObjectId = (math = Math, date = Date, hr = 16, sec = (sp: number) => math.floor(sp).toString(hr)) =>
   sec(date.now() / 1000) + ' '.repeat(hr).replace(/./g, () => sec(math.random() * hr));
+
+export const getColumnDescription = (columnIndex: number, descriptions: string[]): string | null => {
+  return descriptions[columnIndex] || null;
+};
+
+export const addTippyToElement = (element: SVGSVGElement | HTMLElement, content: string) => {
+  if (!element || !content) return;
+
+  tippy(element, {
+    content,
+    arrow: true,
+    duration: 300,
+    theme: 'custom',
+    animation: 'shift-away',
+  });
+};

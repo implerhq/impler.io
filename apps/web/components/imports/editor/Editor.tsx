@@ -1,7 +1,7 @@
 import { Controller } from 'react-hook-form';
 import { Group, Title, Text, useMantineColorScheme, Flex, Code, Stack, LoadingOverlay } from '@mantine/core';
 
-import { colors } from '@config';
+import { colors, DOCUMENTATION_REFERENCE_LINKS } from '@config';
 import { Button } from '@ui/button';
 import { Editor } from '@ui/editor/Editor';
 import { useEditor } from '@hooks/useEditor';
@@ -13,6 +13,7 @@ import { VarItemWrapper } from './VarItemWrapper';
 import { WarningIcon } from '@assets/icons/Warning.icon';
 import { InformationIcon } from '@assets/icons/Information.icon';
 import { PossibleJSONErrors } from '@components/common/PossibleJsonErrors';
+import TooltipLink from '@components/TooltipLink/TooltipLink';
 
 interface OutputEditorProps {
   templateId: string;
@@ -59,9 +60,12 @@ export function OutputEditor({ templateId, switchToDestination }: OutputEditorPr
         <Stack spacing="sm">
           <Group position="apart">
             <div>
-              <Title color={colorScheme === 'dark' ? colors.white : colors.black} order={4}>
-                {titles[destination.destination].title}
-              </Title>
+              <Flex gap="sm" align="center">
+                <Title color={colorScheme === 'dark' ? colors.white : colors.black} order={4}>
+                  {titles[destination.destination].title}
+                </Title>
+                <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.customValidation} />
+              </Flex>
               <Text fw="normal" color={colors.TXTSecondaryDark}>
                 {titles[destination.destination].subtitle}
               </Text>

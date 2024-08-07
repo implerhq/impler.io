@@ -1,5 +1,4 @@
 import * as XLSX from 'xlsx';
-import * as ExcelJS from 'exceljs';
 import { cwd } from 'node:process';
 import * as xlsxPopulate from 'xlsx-populate';
 import { CONSTANTS } from '@shared/constants';
@@ -45,28 +44,7 @@ export class ExcelFileService {
 
     return name;
   }
-  addSelectValidation({
-    ws,
-    range,
-    keyName,
-    isRequired,
-  }: {
-    ws: ExcelJS.Worksheet;
-    range: string;
-    keyName: string;
-    isRequired: boolean;
-  }) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    ws.dataValidations.add(range, {
-      type: 'list',
-      allowBlank: !isRequired,
-      formulae: [`${keyName}!$A$2:$A$9999`],
-      showErrorMessage: true,
-      errorTitle: 'Invalid Value',
-      error: 'Please select from the list',
-    });
-  }
+
   getExcelColumnNameFromIndex(columnNumber: number) {
     // To store result (Excel column name)
     const columnName = [];
