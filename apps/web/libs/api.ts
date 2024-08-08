@@ -47,7 +47,7 @@ const routes: Record<string, Route> = {
     method: 'DELETE',
   },
   [API_KEYS.ONBOARD_USER]: {
-    url: () => '/v1/user/onboard',
+    url: () => '/v1/auth/onboard',
     method: 'POST',
   },
 
