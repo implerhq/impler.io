@@ -1,72 +1,132 @@
-import Image from 'next/image';
-import { useRouter } from 'next/router';
-import { useForm } from 'react-hook-form';
-import { Title, Stack, TextInput as Input } from '@mantine/core';
-import { useMutation } from '@tanstack/react-query';
-
+import { Controller, useForm } from 'react-hook-form';
+import { Title, Text, Stack, TextInput, Select, Radio, Group, Container, Flex, Box } from '@mantine/core';
 import { Button } from '@ui/button';
+import { colors, COMPANY_SIZES, HOW_HEARD_ABOUT_US, ROLES } from '@config';
 
-import { commonApi } from '@libs/api';
-import { track } from '@libs/amplitude';
-import { API_KEYS, VARIABLES } from '@config';
-import DarkLogo from '@assets/images/logo-dark.png';
-import { IProjectPayload, IErrorObject, IEnvironmentData } from '@impler/shared';
-import { useAppState } from 'store/app.context';
+import { useState } from 'react';
+import { useOnboardUserProjectForm } from '@hooks/useOnboardUserProjectForm';
+import { useApp } from '@hooks/useApp';
 
 export default function CreateProjectForm() {
-  const { push } = useRouter();
-  const { profileInfo, setProfileInfo } = useAppState();
+  const [role] = useState(ROLES);
+  const [about, setAbout] = useState(HOW_HEARD_ABOUT_US);
+  const { profile } = useApp();
+
+  const { onboardUser, isUserOnboardLoading } = useOnboardUserProjectForm();
+
   const {
-    register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ICreateProjectData>();
-  const { mutate: createProject, isLoading: isCreateProjectLoading } = useMutation<
-    { project: IProjectPayload; environment: IEnvironmentData },
-    IErrorObject,
-    ICreateProjectData,
-    string[]
-  >(
-    [API_KEYS.PROJECT_CREATE],
-    (data) => commonApi(API_KEYS.PROJECT_CREATE as any, { body: { ...data, onboarding: true } }),
-    {
-      onSuccess: (data) => {
-        if (profileInfo) {
-          setProfileInfo({
-            ...profileInfo,
-            _projectId: data.project._id,
-            accessToken: data.environment.apiKeys[VARIABLES.ZERO].key,
-          });
-        }
-        track({
-          name: 'PROJECT CREATE',
-          properties: {
-            duringOnboard: true,
-          },
-        });
-        push('/');
-      },
-    }
-  );
+    control,
+  } = useForm<IOnboardUserData>();
 
-  const onProjectFormSubmit = (data: ICreateProjectData) => {
-    createProject(data);
+  const onSubmit = (formData: IOnboardUserData) => {
+    onboardUser(formData);
   };
 
   return (
-    <>
-      <Image src={DarkLogo} width={100} alt="Impler Logo" />
-      <Title order={2} color="white" mt="sm">
-        Let&apos;s Create your first project
+    <Container size="md" p="md">
+      <Title mb="md">
+        <Group position="left">
+          <span style={{ fontSize: '30px' }}>👋</span>
+          <span>Welcome, {profile?.firstName}</span>
+        </Group>
       </Title>
-      <form onSubmit={handleSubmit(onProjectFormSubmit)} style={{ width: '100%' }}>
-        <Stack spacing="sm" pt="sm">
-          <Input placeholder="First Project" error={errors.name?.message} required {...register('name')} />
-          <Button type="submit" fullWidth loading={isCreateProjectLoading}>
-            Create
+      <Text size="md" color="dimmed" align="left" mb="lg">
+        We just need to confirm a couple of details, it&lsquo;s only take a minute.
+      </Text>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Stack spacing="md" align="left">
+          <Controller
+            name="projectName"
+            control={control}
+            defaultValue=""
+            rules={{ required: 'Project name is required' }}
+            render={({ field }) => (
+              <TextInput
+                label="Project Name"
+                placeholder="Enter Your Project Name"
+                description="E.g. your company name or workspace name."
+                error={errors.projectName?.message}
+                {...field}
+              />
+            )}
+          />
+
+          <Controller
+            name="companySize"
+            control={control}
+            rules={{ required: 'Company size is required' }}
+            render={({ field }) => (
+              <Radio.Group
+                label="Company Size"
+                error={errors.companySize && errors.companySize.message}
+                value={field.value}
+                onChange={(value) => field.onChange(value as string)}
+                onBlur={field.onBlur}
+              >
+                <Flex gap="sm">
+                  {COMPANY_SIZES.map((companySize) => (
+                    <Box
+                      key={companySize.value}
+                      p="xs"
+                      sx={() => ({
+                        border: `1px solid ${colors.darkGrey}`,
+                      })}
+                    >
+                      <Radio size="xs" value={companySize.value} label={companySize.label} />
+                    </Box>
+                  ))}
+                </Flex>
+              </Radio.Group>
+            )}
+          />
+          <Controller
+            name="role"
+            control={control}
+            rules={{ required: 'Role is required' }}
+            render={({ field }) => (
+              <Select
+                label="Role"
+                placeholder="Engineer, Manager, Founder..."
+                data={role}
+                value={field.value}
+                onChange={field.onChange}
+                error={errors.role?.message}
+              />
+            )}
+          />
+
+          <Controller
+            name="source"
+            control={control}
+            rules={{ required: 'How you heard about us is required' }}
+            render={({ field }) => (
+              <Select
+                label="How did you hear about us first?"
+                data={about}
+                placeholder="Google Search, Colleague"
+                searchable
+                creatable
+                value={field.value}
+                onChange={field.onChange}
+                getCreateLabel={(query) => `+Other ${query} `}
+                error={errors.source?.message}
+                onCreate={(query) => {
+                  const item = { value: query, label: query };
+                  setAbout((current) => [...current, item]);
+
+                  return item;
+                }}
+              />
+            )}
+          />
+
+          <Button type="submit" fullWidth loading={isUserOnboardLoading}>
+            Continue
           </Button>
         </Stack>
       </form>
-    </>
+    </Container>
   );
 }
