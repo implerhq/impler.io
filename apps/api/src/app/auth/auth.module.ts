@@ -1,16 +1,17 @@
-import { Global, MiddlewareConsumer, Module, NestModule, Provider, RequestMethod } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
 import * as passport from 'passport';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+import { Global, MiddlewareConsumer, Module, NestModule, Provider, RequestMethod } from '@nestjs/common';
+
 import { USE_CASES } from './usecases';
 import { CONSTANTS } from '@shared/constants';
-import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './auth.controller';
+import { PaymentAPIService } from '@impler/services';
 import { AuthService } from './services/auth.service';
 import { SharedModule } from '../shared/shared.module';
-import { GitHubStrategy } from './services/passport/github.strategy';
-import { JwtStrategy } from './services/passport/jwt.strategy';
 import { LeadService } from '@shared/services/lead.service';
-import { PaymentAPIService } from '@impler/services';
+import { JwtStrategy } from './services/passport/jwt.strategy';
+import { GitHubStrategy } from './services/passport/github.strategy';
 
 const AUTH_STRATEGIES: Provider[] = [JwtStrategy];
 
@@ -33,7 +34,7 @@ if (process.env.GITHUB_OAUTH_CLIENT_ID) {
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, ...AUTH_STRATEGIES, ...USE_CASES, LeadService, PaymentAPIService],
+  providers: [AuthService, LeadService, ...AUTH_STRATEGIES, ...USE_CASES, PaymentAPIService],
   exports: [AuthService],
 })
 export class AuthModule implements NestModule {
