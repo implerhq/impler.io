@@ -11,6 +11,7 @@ const userSchema = new Schema(
     password: String,
     profilePicture: Schema.Types.String,
     showOnBoarding: Schema.Types.Boolean,
+    signupMethod: Schema.Types.String,
     tokens: [
       {
         providerId: Schema.Types.String,
@@ -24,6 +25,9 @@ const userSchema = new Schema(
     },
     resetToken: Schema.Types.String,
     resetTokenDate: Schema.Types.Date,
+    companySize: Schema.Types.String,
+    role: Schema.Types.String,
+    source: Schema.Types.String,
   },
   schemaOptions
 );

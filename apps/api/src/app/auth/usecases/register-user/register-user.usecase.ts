@@ -6,14 +6,13 @@ import { PaymentAPIService } from '@impler/services';
 import { AuthService } from '../../services/auth.service';
 import { RegisterUserCommand } from './register-user.command';
 import { UniqueEmailException } from '@shared/exceptions/unique-email.exception';
-import { LeadService } from '@shared/services/lead.service';
+import { LEAD_SIGNUP_USING } from '@shared/constants';
 
 @Injectable()
 export class RegisterUser {
   constructor(
     private userRepository: UserRepository,
     private authService: AuthService,
-    private leadService: LeadService,
     private paymentAPIService: PaymentAPIService
   ) {}
 
@@ -31,13 +30,7 @@ export class RegisterUser {
       firstName: command.firstName.toLowerCase(),
       lastName: command.lastName?.toLowerCase(),
       password: passwordHash,
-    });
-
-    await this.leadService.createLead({
-      'First Name': user.firstName,
-      'Last Name': user.lastName,
-      'Lead Email': user.email,
-      'Lead Source': 'Website Signup',
+      signupMethod: LEAD_SIGNUP_USING.EMAIL,
     });
 
     const userData = {

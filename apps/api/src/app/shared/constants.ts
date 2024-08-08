@@ -82,3 +82,9 @@ export const VARIABLES = {
 export const DATE_FORMATS = {
   COMMON: 'DD MMM YYYY',
 };
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export enum LEAD_SIGNUP_USING {
+  GITHUB = 'Github',
+  EMAIL = 'Email',
+}

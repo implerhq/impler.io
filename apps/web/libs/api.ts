@@ -46,6 +46,10 @@ const routes: Record<string, Route> = {
     url: () => `/v1/user/subscription`,
     method: 'DELETE',
   },
+  [API_KEYS.ONBOARD_USER]: {
+    url: () => '/v1/auth/onboard',
+    method: 'POST',
+  },
 
   [API_KEYS.PROJECTS_LIST]: {
     url: () => '/v1/project',

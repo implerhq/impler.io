@@ -20,7 +20,6 @@ const getContentContainerStyles = (theme: MantineTheme): Record<string, any> => 
   display: 'flex',
   alignItems: 'center',
   flexDirection: 'column',
-  textAlign: 'center',
   padding: theme.spacing.sm,
   width: '100%',
   [`@media (min-width: ${theme.breakpoints.sm}px)`]: {
@@ -28,8 +27,7 @@ const getContentContainerStyles = (theme: MantineTheme): Record<string, any> => 
   },
   [`@media (min-width: ${theme.breakpoints.md}px)`]: {
     alignItems: 'flex-start',
-    textAlign: 'left',
-    width: '60%',
+    width: '65%',
   },
 });
 const getSlideImageStyles = (): CSSObject => ({

@@ -5,7 +5,7 @@ import { Stack, TextInput as Input, FocusTrap } from '@mantine/core';
 import { Button } from '@ui/button';
 
 interface CreateImportFormProps {
-  onSubmit: (data: ICreateTemplateData) => void;
+  onSubmit: (data: IUpdateTemplateData) => void;
 }
 
 export function CreateImportForm({ onSubmit }: CreateImportFormProps) {
@@ -14,7 +14,7 @@ export function CreateImportForm({ onSubmit }: CreateImportFormProps) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ICreateTemplateData>();
+  } = useForm<IUpdateTemplateData>();
 
   return (
     <FocusTrap active>
