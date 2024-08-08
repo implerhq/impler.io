@@ -1,5 +1,3 @@
-import { TemplateModeEnum } from '@impler/shared';
-
 export const CONSTANTS = {
   PLAN_CODE_QUERY_KEY: 'plan_code',
   GITHUB_LOGIN_URL: '/v1/auth/github',
@@ -59,6 +57,8 @@ export const MODAL_TITLES = {
 };
 
 export const API_KEYS = {
+  ONBOARD_USER: 'ONBOARD_USER',
+
   CHECKOUT: 'CHECKOUT',
 
   APPLY_COUPON_CODE: 'APPLY_COUPON_CODE',
@@ -223,6 +223,11 @@ export const TEXTS = {
     "Build the best CSV Excel Import Experience for SaaS in 10 Minutes. Onboard customers' data with a hassle-free data importer in your app.",
 };
 
+export const IMPORT_MODES = [
+  { value: 'manual', label: 'Manual' },
+  { value: 'automatic', label: 'Automatic' },
+];
+
 export const DOCUMENTATION_REFERENCE_LINKS = {
   defaultValue: 'https://docs.impler.io/platform/default-value',
   primaryValidation: 'https://docs.impler.io/platform/validators',
@@ -235,7 +240,29 @@ export const DOCUMENTATION_REFERENCE_LINKS = {
   customValidation: 'https://docs.impler.io/features/custom-validation',
 };
 
-export const IMPORT_MODES = [
-  { label: 'Manual', value: TemplateModeEnum.MANUAL },
-  { label: 'Automatic', value: TemplateModeEnum.AUTOMATIC },
+export const COMPANY_SIZES = [
+  { value: 'only_me', label: 'Only me' },
+  { value: '1-5', label: '1-5' },
+  { value: '6-10', label: '6-10' },
+  { value: '11-100+', label: '11-100+' },
+];
+
+export const ROLES = [
+  { value: 'engineer', label: 'Engineer' },
+  { value: 'engineering_manager', label: 'Engineering Manager' },
+  { value: 'architect', label: 'Architect' },
+  { value: 'product_manager', label: 'Product Manager' },
+  { value: 'designer', label: 'Designer' },
+  { value: 'founder', label: 'Founder' },
+  { value: 'marketing_manager', label: 'Marketing Manager' },
+  { value: 'student', label: 'Student' },
+  { value: 'cx', label: 'CXO (CTO/CEO/Other...)' },
+];
+
+export const HOW_HEARD_ABOUT_US = [
+  { value: 'recommendation', label: 'Recommendation' },
+  { value: 'social_media', label: 'Social Media' },
+  { value: 'google_search', label: 'Google Search' },
+  { value: 'bubble_io', label: 'Bubble.io' },
+  { value: 'colleague', label: 'Colleague' },
 ];
