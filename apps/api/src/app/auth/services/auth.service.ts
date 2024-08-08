@@ -3,9 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { IJwtPayload } from '@impler/shared';
-import { CONSTANTS } from '@shared/constants';
+import { CONSTANTS, LEAD_SIGNUP_USING } from '@shared/constants';
 import { PaymentAPIService } from '@impler/services';
-import { LeadService } from '@shared/services/lead.service';
 import { UserEntity, UserRepository, EnvironmentRepository } from '@impler/dal';
 import { UserNotFoundException } from '@shared/exceptions/user-not-found.exception';
 import { IAuthenticationData, IStrategyResponse } from '@shared/types/auth.types';
@@ -15,7 +14,6 @@ import { IncorrectLoginCredentials } from '@shared/exceptions/incorrect-login-cr
 export class AuthService {
   constructor(
     private jwtService: JwtService,
-    private leadService: LeadService,
     private userRepository: UserRepository,
     private environmentRepository: EnvironmentRepository,
     private paymentAPIService: PaymentAPIService
@@ -32,16 +30,11 @@ export class AuthService {
         email: profile.email,
         firstName: profile.firstName,
         lastName: profile.lastName,
+        signupMethod: LEAD_SIGNUP_USING.GITHUB,
         profilePicture: profile.avatar_url,
         ...(provider ? { tokens: [provider] } : {}),
       };
       user = await this.userRepository.create(userObj);
-      await this.leadService.createLead({
-        'First Name': user.firstName,
-        'Last Name': user.lastName,
-        'Lead Email': user.email,
-        'Lead Source': 'Github Signup',
-      });
       userCreated = true;
 
       const userData = {
