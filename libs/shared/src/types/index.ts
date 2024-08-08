@@ -12,4 +12,5 @@ export * from './subscription';
 export * from './template';
 export * from './import-job/import-job.types';
 export * from './user-job/user-job.types';
-export * from './bilablemetriccode/billablemetriccode.types';
+export * from './bilablemetric-code/billablemetriccode.types';
+export * from './onboard-user/onboard-user.types';
