@@ -44,4 +44,6 @@ export class UserEntity {
   role?: string | null;
 
   source?: string | null;
+
+  signupMethod?: string;
 }
