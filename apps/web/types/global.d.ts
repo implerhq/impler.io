@@ -80,6 +80,7 @@ interface IOnboardUserData {
   companySize: string;
   role: string;
   source: string;
+  onboarding: boolean;
 }
 
 interface ICstringemplateData {
