@@ -38,4 +38,10 @@ export class UserEntity {
   resetTokenDate?: string;
 
   resetTokenCount?: IUserResetTokenCount;
+
+  companySize?: string | null;
+
+  role?: string | null;
+
+  source?: string | null;
 }
