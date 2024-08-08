@@ -1,6 +1,6 @@
+import axios from 'axios';
 import { Injectable } from '@nestjs/common';
 import { LEAD_SIGNUP_USING } from '@shared/constants';
-import axios from 'axios';
 
 interface ILeadInformation {
   'First Name': string;
