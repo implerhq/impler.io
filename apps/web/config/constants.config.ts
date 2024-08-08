@@ -241,28 +241,31 @@ export const DOCUMENTATION_REFERENCE_LINKS = {
 };
 
 export const COMPANY_SIZES = [
-  { value: 'only_me', label: 'Only me' },
+  { value: 'Only me', label: 'Only me' },
   { value: '1-5', label: '1-5' },
   { value: '6-10', label: '6-10' },
-  { value: '11-100+', label: '11-100+' },
+  { value: '50-99', label: '50-99' },
+  { value: '100+', label: '100+' },
 ];
 
 export const ROLES = [
-  { value: 'engineer', label: 'Engineer' },
-  { value: 'engineering_manager', label: 'Engineering Manager' },
-  { value: 'architect', label: 'Architect' },
-  { value: 'product_manager', label: 'Product Manager' },
-  { value: 'designer', label: 'Designer' },
-  { value: 'founder', label: 'Founder' },
-  { value: 'marketing_manager', label: 'Marketing Manager' },
-  { value: 'student', label: 'Student' },
-  { value: 'cx', label: 'CXO (CTO/CEO/Other...)' },
+  { value: 'Engineer', label: 'Engineer' },
+  { value: 'Engineering Manager', label: 'Engineering Manager' },
+  { value: 'Architect', label: 'Architect' },
+  { value: 'Product Manager', label: 'Product Manager' },
+  { value: 'Designer', label: 'Designer' },
+  { value: 'Founder', label: 'Founder' },
+  { value: 'Marketing Manager', label: 'Marketing Manager' },
+  { value: 'Student', label: 'Student' },
+  { value: 'CXO (CTO/CEO/Other...)', label: 'CXO (CTO/CEO/Other...)' },
 ];
 
 export const HOW_HEARD_ABOUT_US = [
-  { value: 'recommendation', label: 'Recommendation' },
-  { value: 'social_media', label: 'Social Media' },
-  { value: 'google_search', label: 'Google Search' },
-  { value: 'bubble_io', label: 'Bubble.io' },
-  { value: 'colleague', label: 'Colleague' },
+  { value: 'Apollo', label: 'Apollo' },
+  { value: 'Recommendation', label: 'Recommendation' },
+  { value: 'Social Media', label: 'Social Media' },
+  { value: 'Google Search', label: 'Google Search' },
+  { value: 'Bubble.io', label: 'Bubble.io' },
+  { value: 'Colleague', label: 'Colleague' },
+  { value: 'Linkdin', label: 'Linkdin' },
 ];
