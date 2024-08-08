@@ -25,6 +25,9 @@ interface IProfileData {
   lastName: string;
   email: string;
   profilePicture: string;
+  companySize: string;
+  role: string;
+  source: string;
   _projectId: string;
   accessToken: string;
 }
@@ -72,7 +75,14 @@ interface ICreateProjectData {
   name: string;
 }
 
-interface ICreateTemplateData {
+interface IOnboardUserData {
+  projectName: string;
+  companySize: string;
+  role: string;
+  source: string;
+}
+
+interface ICstringemplateData {
   name: string;
 }
 interface IDuplicateTemplateData {
