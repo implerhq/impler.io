@@ -24,6 +24,9 @@ const userSchema = new Schema(
     },
     resetToken: Schema.Types.String,
     resetTokenDate: Schema.Types.Date,
+    companySize: Schema.Types.String,
+    role: Schema.Types.String,
+    source: Schema.Types.String,
   },
   schemaOptions
 );
