@@ -1,6 +1,6 @@
 {
   "name": "@impler/api",
-  "version": "0.22.0",
+  "version": "0.23.0",
   "author": "implerhq",
   "license": "MIT",
   "private": true,
@@ -19,9 +19,9 @@
     "test": "cross-env TZ=UTC NODE_ENV=test E2E_RUNNER=true mocha --timeout 10000 --require ts-node/register --exit src/**/**/*.spec.ts"
   },
   "dependencies": {
-    "@impler/dal": "^0.22.0",
-    "@impler/services": "^0.22.0",
-    "@impler/shared": "^0.22.0",
+    "@impler/dal": "^0.23.0",
+    "@impler/services": "^0.23.0",
+    "@impler/shared": "^0.23.0",
     "@nestjs/common": "^9.1.2",
     "@nestjs/core": "^9.1.2",
     "@nestjs/jwt": "^10.0.1",
