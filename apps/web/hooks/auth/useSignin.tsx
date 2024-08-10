@@ -7,7 +7,7 @@ import { useMutation } from '@tanstack/react-query';
 import { commonApi } from '@libs/api';
 import { track } from '@libs/amplitude';
 import { API_KEYS, ROUTES } from '@config';
-import { IErrorObject, ILoginResponse } from '@impler/shared';
+import { IErrorObject, ILoginResponse, SCREENS } from '@impler/shared';
 
 export function useSignin() {
   const { push } = useRouter();
@@ -29,7 +29,7 @@ export function useSignin() {
           id: profileData._id,
         },
       });
-      if (data.showAddProject) {
+      if (data.screen === SCREENS.ONBOARD) {
         push(ROUTES.SIGNIN_ONBOARDING);
       } else push(ROUTES.HOME);
     },
