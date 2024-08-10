@@ -6,11 +6,13 @@ export enum AuthProviderEnum {
 export interface IJwtPayload {
   _id: string;
   _projectId?: string;
-  role?: string;
   email?: string;
   firstName?: string;
   lastName?: string;
   profilePicture?: string;
+  companySize?: string;
+  role?: string;
+  source?: string;
 }
 
 export interface ILoginResponse {

@@ -28,7 +28,7 @@ export function useImports() {
   const { mutate: createImport, isLoading: isCreateImportLoading } = useMutation<
     ITemplate,
     IErrorObject,
-    ICreateTemplateData,
+    IUpdateTemplateData,
     (string | undefined)[]
   >(
     [API_KEYS.TEMPLATES_CREATE, profileInfo?._projectId],

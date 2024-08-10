@@ -1,11 +1,15 @@
-import { Injectable } from '@nestjs/common';
 import axios from 'axios';
+import { Injectable } from '@nestjs/common';
+import { LEAD_SIGNUP_USING } from '@shared/constants';
 
 interface ILeadInformation {
   'First Name': string;
   'Last Name': string;
   'Lead Email': string;
-  'Lead Source': 'Website Signup' | 'Github Signup';
+  'Signup Method': LEAD_SIGNUP_USING;
+  'Mentioned Role': string;
+  'Lead Source': string;
+  'Company Size': string;
 }
 
 @Injectable()
@@ -68,10 +72,14 @@ export class LeadService {
   public async createLead(data: ILeadInformation): Promise<any> {
     const maAccessToken = await this.getMaAccessToken();
     if (maAccessToken) {
+      const leadData = JSON.stringify({
+        'First Name': data['First Name'],
+        'Last Name': data['Last Name'],
+        'Lead Email': data['Lead Email'],
+      });
       // Add Lead to marketing automation
-      const maUrl = `https://marketingautomation.zoho.com/api/v1/json/listsubscribe?listkey=${
-        process.env.LEAD_LIST_KEY
-      }&leadinfo=${JSON.stringify(data)}&topic_id=${process.env.LEAD_TOPIC_ID}`;
+      // eslint-disable-next-line max-len
+      const maUrl = `https://marketingautomation.zoho.com/api/v1/json/listsubscribe?listkey=${process.env.LEAD_LIST_KEY}&leadinfo=${leadData}&topic_id=${process.env.LEAD_TOPIC_ID}`;
       if (this.log) console.log(maUrl);
 
       const maResponse = await axios.post(
@@ -100,6 +108,9 @@ export class LeadService {
               First_Name: data['First Name'],
               Email: data['Lead Email'],
               Lead_Source: data['Lead Source'],
+              Signup_Method: data['Signup Method'],
+              Mentioned_Role: data['Mentioned Role'],
+              Company_Size: data['Company Size'],
             },
           ],
         },
