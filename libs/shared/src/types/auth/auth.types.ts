@@ -1,3 +1,5 @@
+import { SCREENS } from '../../utils/defaults';
+
 export enum AuthProviderEnum {
   'GOOGLE' = 'google',
   'GITHUB' = 'github',
@@ -17,5 +19,9 @@ export interface IJwtPayload {
 
 export interface ILoginResponse {
   token: string;
-  showAddProject?: boolean;
+  screen?: SCREENS;
+}
+
+export interface IScreenResponse {
+  screen: SCREENS;
 }
