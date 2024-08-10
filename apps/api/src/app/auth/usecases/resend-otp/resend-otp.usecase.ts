@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { EmailService } from '@impler/services';
 import { UserRepository } from '@impler/dal';
-import { EMAIL_SUBJECT, generateVerificationCode } from '@impler/shared';
+import { EMAIL_SUBJECT } from '@impler/shared';
+import { generateVerificationCode } from '@shared/helpers/common.helper';
 
 @Injectable()
 export class ResendOTP {

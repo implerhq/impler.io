@@ -2,7 +2,8 @@ import * as bcrypt from 'bcryptjs';
 import { Injectable } from '@nestjs/common';
 
 import { UserRepository } from '@impler/dal';
-import { generateVerificationCode } from '@impler/shared';
+
+import { generateVerificationCode } from '@shared/helpers/common.helper';
 import { EmailService } from '@impler/services';
 import { AuthService } from '../../services/auth.service';
 import { RegisterUserCommand } from './register-user.command';
