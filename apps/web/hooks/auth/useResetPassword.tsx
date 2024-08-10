@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 
 import { API_KEYS, ROUTES } from '@config';
 import { commonApi } from '@libs/api';
-import { IErrorObject, ILoginResponse } from '@impler/shared';
+import { IErrorObject, ILoginResponse, SCREENS } from '@impler/shared';
 import { track } from '@libs/amplitude';
 
 interface IResetPasswordFormData {
@@ -38,7 +38,7 @@ export function useResetPassword() {
             id: profileData._id,
           },
         });
-        if (data.showAddProject) {
+        if (data.screen === SCREENS.ONBOARD) {
           push(ROUTES.SIGNIN_ONBOARDING);
         } else push(ROUTES.HOME);
       },
