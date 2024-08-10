@@ -2,13 +2,13 @@ import * as bcrypt from 'bcryptjs';
 import { Injectable } from '@nestjs/common';
 
 import { UserRepository } from '@impler/dal';
+import { generateVerificationCode } from '@impler/shared';
 import { EmailService } from '@impler/services';
 import { AuthService } from '../../services/auth.service';
 import { RegisterUserCommand } from './register-user.command';
 import { LEAD_SIGNUP_USING } from '@shared/constants';
 import { SCREENS, EMAIL_SUBJECT } from '@impler/shared';
 import { UniqueEmailException } from '@shared/exceptions/unique-email.exception';
-import { generateVerificationCode } from '@shared/helpers/common.helper';
 
 @Injectable()
 export class RegisterUser {
@@ -28,6 +28,7 @@ export class RegisterUser {
 
     const passwordHash = await bcrypt.hash(command.password, 10);
     const verificationCode = generateVerificationCode();
+    console.log(verificationCode);
 
     const user = await this.userRepository.create({
       email: command.email,
@@ -51,6 +52,7 @@ export class RegisterUser {
         type: 'VERIFICATION_EMAIL',
         data: {
           otp: verificationCode,
+          firstName: user.firstName,
         },
       });
 
