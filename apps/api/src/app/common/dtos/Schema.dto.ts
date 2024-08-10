@@ -60,7 +60,8 @@ export class SchemaDto {
   @IsEnum(ColumnTypesEnum, {
     message: `entered type must be one of ${Object.values(ColumnTypesEnum).join(', ')}`,
   })
-  type: ColumnTypesEnum;
+  @IsOptional()
+  type: ColumnTypesEnum = ColumnTypesEnum.STRING;
 
   @ApiPropertyOptional({
     description: 'Regex if type is Regex',
