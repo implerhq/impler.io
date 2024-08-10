@@ -1,6 +1,6 @@
 {
   "name": "@impler/services",
-  "version": "0.23.0",
+  "version": "0.23.1",
   "description": "Reusable services to shared between backend api and queue-manager",
   "license": "MIT",
   "author": "implerhq",
@@ -30,7 +30,7 @@
     "@aws-sdk/client-ses": "^3.616.0",
     "@aws-sdk/lib-storage": "^3.360.0",
     "@aws-sdk/s3-request-presigner": "^3.276.0",
-    "@impler/shared": "^0.23.0",
+    "@impler/shared": "^0.23.1",
     "axios": "1.6.2",
     "nodemailer": "^6.9.14",
     "uuid": "^9.0.0"
