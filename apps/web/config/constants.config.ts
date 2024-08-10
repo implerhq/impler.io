@@ -57,6 +57,7 @@ export const MODAL_TITLES = {
 };
 
 export const API_KEYS = {
+  RESEND_OTP: 'RESEND_OTP',
   VERIFY_EMAIL: 'VERIFY_EMAIL',
 
   ONBOARD_USER: 'ONBOARD_USER',
