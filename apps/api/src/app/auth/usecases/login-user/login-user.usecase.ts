@@ -4,6 +4,7 @@ import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/
 import { LoginUserCommand } from './login-user.command';
 import { AuthService } from '../../services/auth.service';
 import { EnvironmentRepository, UserRepository } from '@impler/dal';
+import { SCREENS } from '@impler/shared';
 
 @Injectable()
 export class LoginUser {
@@ -29,8 +30,12 @@ export class LoginUser {
 
     const apiKey = await this.environmentRepository.getApiKeyForUserId(user._id);
 
+    if (!user.isEmailVerified) {
+      // send verification cod
+    }
+
     return {
-      showAddProject: !apiKey,
+      screen: !user.isEmailVerified ? SCREENS.VERIFY : apiKey ? SCREENS.HOME : SCREENS.ONBOARD,
       token: this.authService.getSignedToken(
         {
           _id: user._id,
