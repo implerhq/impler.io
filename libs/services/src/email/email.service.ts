@@ -35,10 +35,11 @@ interface IForgotPasswordEmailOptions {
 }
 interface IVerificationEmailOptions {
   otp: string;
+  firstName: string;
 }
 
 const EMAIL_CONTENTS = {
-  VERIFICATION_EMAIL: ({ otp }: IVerificationEmailOptions) => `
+  VERIFICATION_EMAIL: ({ otp, firstName }: IVerificationEmailOptions) => `
   <!DOCTYPE html>
   <html lang="en">
   <head>
@@ -69,7 +70,7 @@ const EMAIL_CONTENTS = {
           }
           .header h1 {
               font-size: 24px;
-              color: #333;
+              color: white;
           }
           .content {
               color: #555;
@@ -104,7 +105,7 @@ const EMAIL_CONTENTS = {
           </div>
           
           <div class="content">
-              <p>Hi SomeUser,</p>
+              <p>Hi ${firstName},</p>
               <p>Your OTP code is <span class="otp-code">${otp}</span>. Please enter this code to verify your identity.</p>
               <p>If you did not request this code, please ignore this email.</p>
               <p>Thank you,</p>
