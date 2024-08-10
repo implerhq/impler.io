@@ -3,5 +3,5 @@
   "npmClient": "pnpm",
   "useNx": true,
   "packages": ["apps/*", "libs/*", "packages/*"],
-  "version": "0.23.0"
+  "version": "0.23.1"
 }
