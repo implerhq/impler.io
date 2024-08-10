@@ -30,10 +30,6 @@ export class LoginUser {
 
     const apiKey = await this.environmentRepository.getApiKeyForUserId(user._id);
 
-    if (!user.isEmailVerified) {
-      // send verification cod
-    }
-
     return {
       screen: !user.isEmailVerified ? SCREENS.VERIFY : apiKey ? SCREENS.HOME : SCREENS.ONBOARD,
       token: this.authService.getSignedToken(
