@@ -8,4 +8,11 @@ export class UpdateTemplateRequestDto {
   })
   @IsOptional()
   name?: string;
+
+  @ApiProperty({
+    description: 'Import Mode of the template',
+    nullable: false,
+  })
+  @IsOptional()
+  mode?: string;
 }

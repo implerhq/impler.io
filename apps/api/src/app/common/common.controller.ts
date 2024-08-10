@@ -35,7 +35,7 @@ export class CommonController {
     summary: 'Check if request is valid (Checks Auth)',
   })
   async isRequestValid(@Body() body: ValidRequestDto): Promise<{ success: boolean }> {
-    return this.validRequest.execute(
+    return await this.validRequest.execute(
       ValidRequestCommand.create({
         projectId: body.projectId,
         templateId: body.templateId,
@@ -57,12 +57,15 @@ export class CommonController {
   @ApiOperation({
     summary: 'Get import config',
   })
-  async getImportConfigRoute(@Query('projectId') projectId: string): Promise<ImportConfigResponseDto> {
+  async getImportConfigRoute(
+    @Query('projectId') projectId: string,
+    @Query('templateId') templateId: string
+  ): Promise<ImportConfigResponseDto> {
     if (!projectId) {
       throw new BadRequestException();
     }
 
-    return this.getImportConfig.execute(projectId);
+    return this.getImportConfig.execute(projectId, templateId);
   }
 
   @Post('/sheet-names')

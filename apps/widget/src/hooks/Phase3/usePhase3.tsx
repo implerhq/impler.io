@@ -77,12 +77,15 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
         data.forEach((column: ISchemaColumn) => {
           if (column.isFrozen) updatedFrozenColumns++;
           newHeadings.push(column.name);
+
           const columnItem: HotItemSchema = {
             className: 'htCenter',
             data: `record.${column.key}`,
             allowEmpty: !column.isRequired,
             allowDuplicate: !column.isUnique,
+            description: column.description,
           };
+
           switch (column.type) {
             case ColumnTypesEnum.STRING:
             case ColumnTypesEnum.EMAIL:
@@ -91,6 +94,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
               columnItem.renderer = 'custom';
               break;
             case ColumnTypesEnum.SELECT:
+            case ColumnTypesEnum.IMAGE:
               columnItem.type = 'text';
               columnItem.renderer = 'custom';
               columnItem.delimiter = column.delimiter || ColumnDelimiterEnum.COMMA;

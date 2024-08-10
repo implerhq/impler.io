@@ -50,4 +50,11 @@ export class TemplateResponseDto {
   @IsNumber()
   @IsDefined()
   totalInvalidRecords: number;
+
+  @ApiProperty({
+    description: 'Import Mode',
+  })
+  @IsString()
+  @IsDefined()
+  mode: string;
 }

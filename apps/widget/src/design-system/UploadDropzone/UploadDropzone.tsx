@@ -1,6 +1,6 @@
 import { Group, Text } from '@mantine/core';
 import { Dropzone as MantineDropzone, FileWithPath, MIME_TYPES } from '@mantine/dropzone';
-import useStyles from './Dropzone.style';
+import useStyles from './UploadDropzone.styles';
 import { TEXTS } from '../../config/texts.config';
 import { FileIcon, CheckIcon } from '../../icons';
 import { File as FileCMP } from '../File';
@@ -17,7 +17,7 @@ interface IDropzoneProps {
   className?: string;
 }
 
-export function Dropzone(props: IDropzoneProps) {
+export function UploadDropzone(props: IDropzoneProps) {
   const {
     loading,
     accept = [MIME_TYPES.csv, MIME_TYPES.xlsx, 'application/vnd.ms-excel.sheet.macroenabled.12'],
@@ -44,7 +44,7 @@ export function Dropzone(props: IDropzoneProps) {
               <CheckIcon className={classes.checkIcon} />
             </Group>
             <Text size="lg" mb="sm" align="center">
-              {TEXTS.DROPZONE.FILE_SELECTION}
+              {TEXTS.FILE_DROPZONE.FILE_SELECTION}
             </Text>
             {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
             <FileCMP name={file!.name} size={file!.size} onClear={onClear} />
@@ -60,9 +60,9 @@ export function Dropzone(props: IDropzoneProps) {
         <Group position="center">
           <div>
             <Text align="center" weight="bold">
-              {TEXTS.DROPZONE.TITLE}{' '}
+              {TEXTS.FILE_DROPZONE.TITLE}{' '}
               <Text component="span" className={classes.browseText}>
-                {TEXTS.DROPZONE.BROWSE}
+                {TEXTS.FILE_DROPZONE.BROWSE}
               </Text>
             </Text>
             <MantineDropzone.Idle>
@@ -71,7 +71,7 @@ export function Dropzone(props: IDropzoneProps) {
               </Group>
             </MantineDropzone.Idle>
             <Text color="dimmed" size="sm" mt="md" align="center">
-              {TEXTS.DROPZONE.SUBTITLE}
+              {TEXTS.FILE_DROPZONE.SUBTITLE}
             </Text>
           </div>
         </Group>

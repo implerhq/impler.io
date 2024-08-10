@@ -6,16 +6,31 @@ export const TEXTS = {
     COMPLETE: 'Complete',
   },
   STEPS: {
+    IMAGE_TEMPLATE: 'Generate Template',
     UPLOAD: 'Upload',
     MAPPING: 'Map Columns',
     REVIEW: 'Review',
     COMPLETE: 'Complete',
   },
-  DROPZONE: {
-    TITLE: 'Drop your file here or ',
-    BROWSE: 'Browse',
+  AUTOIMPORTSTEPS: {
+    CONFIGURE: 'Configure',
+    MAPCOLUMNS: 'Map Columns',
+    SCHEDULE: 'Schedule',
+    CONFIRM: 'Confirm',
+  },
+  FILE_DROPZONE: {
+    TITLE: 'Drop and drop file here or ',
+    BROWSE: 'Browse from computer',
+    FILE_SIZE: 'Image size should be less than 5 MB. Supported formats are PNG, JPG and JPEG.',
     SUBTITLE: 'Bring any .csv or .xlsx file here to start Import',
     FILE_SELECTION: 'File selected successfully',
+  },
+  'PHASE0-1': {
+    IMPORT_FILE: 'Import File',
+    GENERATE_TEMPLATE: 'Generate Template',
+    ALERT_TITLE: 'Generate template with images',
+    ALERT_SUBTITLE:
+      'Drag and drop images below for image columns and generate a template file containing names of uploaded images.',
   },
   PHASE1: {
     SELECT_TITLE: 'Template',
@@ -24,6 +39,7 @@ export const TEXTS = {
     SELECT_PLACEHOLDER: 'Select Template',
     DOWNLOAD_SAMPLE_TITLE: 'Download sample csv file',
     DOWNLOAD_SAMPLE: 'Download sample',
+    GENERATE_TEMPLATE: 'Generate Template',
     SEE_MAPPING: 'See Mapping',
     SELECT_FILE: 'Select a file',
   },
@@ -42,6 +58,27 @@ export const TEXTS = {
   PHASE4: {
     CLOSE: 'Close',
   },
+
+  AUTOIMPORTPHASES: {
+    BUTTONTEXT: {
+      MAPCOLUMN: 'Map Column',
+      SCHEDULE: 'Schedule',
+      CONFIRM: 'Confirm',
+      CLOSE: 'Close',
+    },
+  },
+  AUTOIMPORTPHASE2: {
+    NAME_IN_SCHEMA_TITLE: 'Column in schema',
+    KEY_IN_FEED_TITLE: 'Key in your RSS feed ',
+  },
+
+  AUTOIMPORTPHASETITLE: {
+    CONFIGURE: 'Configure',
+  },
+  INVALID_CRON: {
+    MESSAGE: 'Expression values are incorrect. Please update values as per valid values below!',
+  },
+
   COMPLETE: {
     TITLE: 'Bravo! {count} rows have been uploaded',
     SUB_TITLE: '{count} rows have been uploaded successfully, and currently is in process, it will be ready shortly.',

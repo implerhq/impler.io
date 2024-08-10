@@ -21,16 +21,21 @@ export const APIMessages = {
   PROJECT_WITH_TEMPLATE_MISSING: 'Template not found with provided ProjectId and Template',
   PROJECT_NOT_ASSIGNED: 'Project is not assigned to you',
   USER_NOT_FOUND: 'User is not found',
+  USER_JOB_NOT_FOUND: 'User-Job is not found',
   UNIQUE_EMAIL: 'Email address already in use',
   INCORRECT_LOGIN_CREDENTIALS: 'Incorrect email or password provided',
   OPERATION_NOT_ALLOWED: `You're not allowed to perform this action.`,
   EMAIL_ALREADY_EXISTS: 'Email already exists',
   INCORRECT_KEYS_FOUND: 'Invalid keys found! Please check and correct them from web',
   INVALID_AUTH_TOKEN: 'Invalid authentication token',
+  INVALID_RSS_URL: 'The Specified URL doesn`t contain any RSS XML Feed, Please enter a Valid RSS XML URL',
   COLUMN_KEY_TAKEN: 'Column with the same key already exists. Please provide a unique key from "Validations".',
   COLUMN_KEY_DUPLICATED: 'Column with the same key already exists. Please provide a unique key.',
   ERROR_DURING_VALIDATION:
     'Something went wrong while validating data. Data is not imported yet, but team is informed about issue. Please try again after sometime.',
+  ERROR_ACCESSING_FEATURE: {
+    IMAGE_UPLOAD: 'You do not have access to Image Upload Functionality.',
+  },
 };
 
 export const CONSTANTS = {

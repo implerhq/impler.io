@@ -1,4 +1,8 @@
+import * as Sentry from '@sentry/react';
 import axios from 'axios';
+import tippy from 'tippy.js';
+import 'tippy.js/dist/tippy.css';
+import 'tippy.js/animations/shift-away.css';
 import { variables } from '@config';
 import { downloadFile } from '@impler/shared';
 
@@ -54,3 +58,41 @@ export function getFileNameFromUrl(url: string) {
 
   return pathArr.join('/');
 }
+
+export function captureError(error: any) {
+  if (Sentry.isInitialized()) Sentry.captureException(error);
+  // eslint-disable-next-line no-console
+  else console.error(error);
+}
+export function isValidCronCharacter(value: string): boolean {
+  //const cronCharacterRegex = /^[0-9*,/\-?]+$/; // This will not accept the letters like for example FRI
+  const cronCharacterRegex = /^[0-9*,/\-?A-Za-z]+$/;
+
+  return cronCharacterRegex.test(value);
+}
+
+export const validateRssUrl = {
+  required: 'RSS URL is required',
+  pattern: {
+    value: /^(https?:\/\/)?([\w-]+(\.[\w-]+)+\.?(:\d+)?)(\/[^\s]*)?$/,
+    message: 'Please Enter a valid RSS Feed URL',
+  },
+};
+export const getObjectId = (math = Math, date = Date, hr = 16, sec = (sp: number) => math.floor(sp).toString(hr)) =>
+  sec(date.now() / 1000) + ' '.repeat(hr).replace(/./g, () => sec(math.random() * hr));
+
+export const getColumnDescription = (columnIndex: number, descriptions: string[]): string | null => {
+  return descriptions[columnIndex] || null;
+};
+
+export const addTippyToElement = (element: SVGSVGElement | HTMLElement, content: string) => {
+  if (!element || !content) return;
+
+  tippy(element, {
+    content,
+    arrow: true,
+    duration: 300,
+    theme: 'custom',
+    animation: 'shift-away',
+  });
+};

@@ -11,8 +11,8 @@ interface IFooterProps {
   secondaryButtonDisabled?: boolean;
   primaryButtonLoading?: boolean;
   secondaryButtonLoading?: boolean;
-  onPrevClick: () => void;
-  onNextClick: () => void;
+  onPrevClick?: () => void;
+  onNextClick?: () => void;
 }
 
 export function Footer({
@@ -28,6 +28,13 @@ export function Footer({
   const { classes } = useStyles();
 
   const FooterActions = {
+    [PhasesEnum.IMAGE_UPLOAD]: (
+      <>
+        <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
+          {TEXTS['PHASE0-1'].GENERATE_TEMPLATE}
+        </Button>
+      </>
+    ),
     [PhasesEnum.UPLOAD]: (
       <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
         {TEXTS.PHASE1.SEE_MAPPING}

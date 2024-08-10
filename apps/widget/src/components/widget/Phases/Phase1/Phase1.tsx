@@ -1,13 +1,12 @@
 import { Group } from '@mantine/core';
 import { Controller } from 'react-hook-form';
 
-import { Download } from '@icons';
 import { PhasesEnum } from '@types';
 import { Select } from '@ui/Select';
 import { Button } from '@ui/Button';
-import { Dropzone } from '@ui/Dropzone';
 import { TEXTS, variables } from '@config';
-import { LoadingOverlay } from '@ui/LoadingOverlay';
+import { DownloadIcon, BackIcon } from '@icons';
+import { UploadDropzone } from '@ui/UploadDropzone';
 import { usePhase1 } from '@hooks/Phase1/usePhase1';
 
 import useStyles from './Styles';
@@ -16,32 +15,35 @@ import { SheetSelectModal } from './SheetSelectModal';
 
 interface IPhase1Props {
   onNextClick: () => void;
+  hasImageUpload: boolean;
+  generateImageTemplate: () => void;
 }
 
-export function Phase1(props: IPhase1Props) {
+export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTemplate }: IPhase1Props) {
   const { classes } = useStyles();
-  const { onNextClick: goNext } = props;
   const {
     onSubmit,
     control,
     setError,
     templates,
-    onDownload,
+    onDownloadClick,
     excelSheetNames,
     isUploadLoading,
     onTemplateChange,
     onSelectExcelSheet,
     showSelectTemplate,
-    isInitialDataLoaded,
     isDownloadInProgress,
     onSelectSheetModalReset,
   } = usePhase1({
     goNext,
   });
+  const onDownload = () => {
+    if (hasImageUpload) generateImageTemplate();
+    else onDownloadClick();
+  };
 
   return (
     <>
-      <LoadingOverlay visible={!isInitialDataLoaded} />
       <Group className={classes.templateContainer} spacing="lg" noWrap>
         {showSelectTemplate && (
           <Controller
@@ -52,21 +54,25 @@ export function Phase1(props: IPhase1Props) {
             }}
             render={({ field, fieldState }) => (
               <Select
+                width="50%"
+                ref={field.ref}
+                value={field.value}
+                onChange={onTemplateChange}
+                error={fieldState.error?.message}
                 title={TEXTS.PHASE1.SELECT_TITLE}
                 placeholder={TEXTS.PHASE1.SELECT_PLACEHOLDER}
-                data={templates}
-                width="50%"
-                error={fieldState.error?.message}
-                onChange={onTemplateChange}
-                value={field.value}
-                ref={field.ref}
+                data={templates?.map((template) => ({ value: template._id, label: template.name })) || []}
               />
             )}
           />
         )}
         <div className={classes.download}>
-          <Button loading={isDownloadInProgress} leftIcon={<Download />} onClick={onDownload}>
-            {TEXTS.PHASE1.DOWNLOAD_SAMPLE}
+          <Button
+            onClick={onDownload}
+            loading={isDownloadInProgress}
+            leftIcon={hasImageUpload ? <BackIcon /> : <DownloadIcon />}
+          >
+            {hasImageUpload ? TEXTS.PHASE1.GENERATE_TEMPLATE : TEXTS.PHASE1.DOWNLOAD_SAMPLE}
           </Button>
         </div>
       </Group>
@@ -78,7 +84,7 @@ export function Phase1(props: IPhase1Props) {
           required: TEXTS.VALIDATION.FILE_REQUIRED,
         }}
         render={({ field, fieldState }) => (
-          <Dropzone
+          <UploadDropzone
             loading={isUploadLoading}
             onReject={() => {
               setError('file', {

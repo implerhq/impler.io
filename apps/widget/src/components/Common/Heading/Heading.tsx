@@ -1,14 +1,17 @@
 import { Group, MediaQuery, Title, useMantineTheme } from '@mantine/core';
+import { PhasesEnum } from '@types';
 import { Stepper } from '@ui/Stepper';
 import { TEXTS, variables } from '@config';
-import { PhasesEnum } from '@types';
+import { TemplateModeEnum } from '@impler/shared';
 
 interface IHeadingProps {
-  active: PhasesEnum;
   title?: string;
+  active: PhasesEnum;
+  mode?: TemplateModeEnum;
+  hasImageUpload?: boolean;
 }
 
-const Steps = [
+const manualImportSteps = [
   {
     label: TEXTS.STEPS.UPLOAD,
   },
@@ -23,7 +26,22 @@ const Steps = [
   },
 ];
 
-export function Heading({ active, title }: IHeadingProps) {
+const autoImportSteps = [
+  {
+    label: TEXTS.AUTOIMPORTSTEPS.CONFIGURE,
+  },
+  {
+    label: TEXTS.AUTOIMPORTSTEPS.MAPCOLUMNS,
+  },
+  {
+    label: TEXTS.AUTOIMPORTSTEPS.SCHEDULE,
+  },
+  {
+    label: TEXTS.AUTOIMPORTSTEPS.CONFIRM,
+  },
+];
+
+export function Heading({ active, title, mode, hasImageUpload }: IHeadingProps) {
   const theme = useMantineTheme();
 
   return (
@@ -31,7 +49,22 @@ export function Heading({ active, title }: IHeadingProps) {
       {active ? (
         <Group style={{ justifyContent: 'space-between' }} mb="lg">
           <Title order={3}>{title}</Title>
-          <Stepper active={active - 1} steps={Steps} primaryColor={theme.colors.primary[variables.colorIndex]} />
+          <Stepper
+            active={active - (mode === TemplateModeEnum.AUTOMATIC ? 1 : hasImageUpload ? 1 : 2)}
+            steps={
+              mode === TemplateModeEnum.AUTOMATIC
+                ? autoImportSteps
+                : hasImageUpload
+                ? [
+                    {
+                      label: TEXTS.STEPS.IMAGE_TEMPLATE,
+                    },
+                    ...manualImportSteps,
+                  ]
+                : manualImportSteps
+            }
+            primaryColor={theme.colors.primary[variables.colorIndex]}
+          />
         </Group>
       ) : (
         <></>

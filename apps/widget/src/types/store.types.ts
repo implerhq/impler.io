@@ -6,6 +6,7 @@ export interface IImplerStore {
   templateId?: string;
   extra?: string;
   authHeaderValue?: string;
+  setTemplateId: (templateId: string) => void;
 }
 
 export interface ITableStore {
@@ -18,6 +19,8 @@ export interface IApiStore {
 
 export interface IAppStore {
   title?: string;
+  importId?: string;
+  imageSchema?: string;
   data?: Record<string, string | number>[];
   templateInfo: ITemplate;
   uploadInfo: IUpload;
@@ -28,8 +31,10 @@ export interface IAppStore {
   output?: string;
   showWidget: boolean;
   importConfig: IImportConfig;
+  setImportId: (importId: string) => void;
   setShowWidget: (status: boolean) => void;
   setUploadInfo: (uploadInfo: IUpload) => void;
+  setImageSchema: (imageSchema: string) => void;
   setTemplateInfo: (templateInfo: ITemplate) => void;
-  setImportConfig: (importConfig: IImportConfig) => void;
+  setImportConfig: React.Dispatch<React.SetStateAction<IImportConfig>>;
 }

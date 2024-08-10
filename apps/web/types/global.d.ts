@@ -44,7 +44,7 @@ interface ISubscriptionData {
         code: string;
         name: string;
       };
-      chargeModal: 'FIXED' | 'VOLUME_BASED';
+      chargeModal: 'FIXED' | 'VOLUME_BASED' | 'BINARY';
       properties: Record<string, string | number>;
     }[];
     charge: number;
@@ -56,7 +56,15 @@ interface ISubscriptionData {
   };
   expiryDate: Date;
   meta: {
-    IMPORTED_ROWS: number;
+    IMAGE_UPLOAD: boolean;
+    IMPORTED_ROWS: Array<{
+      flat_fee: number;
+      per_unit: number;
+      last_unit: number | string;
+      first_unit: number;
+    }>;
+    REMOVE_BRANDING: boolean;
+    AUTOMATIC_IMPORTS: boolean;
   };
 }
 
@@ -76,7 +84,8 @@ interface IDuplicateTemplateData {
   duplicateValidator?: boolean;
 }
 interface IUpdateTemplateData {
-  name: string;
+  mode?: string;
+  name?: string;
 }
 
 interface Window {

@@ -1,3 +1,5 @@
+import { TemplateModeEnum } from '@impler/shared';
+
 export const CONSTANTS = {
   PLAN_CODE_QUERY_KEY: 'plan_code',
   GITHUB_LOGIN_URL: '/v1/auth/github',
@@ -194,6 +196,10 @@ export const COLUMN_TYPES = [
     value: 'Email',
   },
   {
+    label: 'Image',
+    value: 'Image',
+  },
+  {
     label: 'Any',
     value: 'Any',
   },
@@ -216,3 +222,20 @@ export const TEXTS = {
     // eslint-disable-next-line max-len
     "Build the best CSV Excel Import Experience for SaaS in 10 Minutes. Onboard customers' data with a hassle-free data importer in your app.",
 };
+
+export const DOCUMENTATION_REFERENCE_LINKS = {
+  defaultValue: 'https://docs.impler.io/platform/default-value',
+  primaryValidation: 'https://docs.impler.io/platform/validators',
+  multiSelectDropDown: 'https://docs.impler.io/features/multiselect-dropdown',
+  freezeColumns: 'https://docs.impler.io/features/freeze-columns',
+  frontendEndCallback: 'https://docs.impler.io/data-retrieval/using-frontend-callback',
+  webhook: 'https://docs.impler.io/data-retrieval/using-webhook',
+  bubbleIo: 'https://docs.impler.io/widget/bubble.io-embed',
+  subscriptionInformation: 'https://docs.impler.io/platform/how-subscription-works',
+  customValidation: 'https://docs.impler.io/features/custom-validation',
+};
+
+export const IMPORT_MODES = [
+  { label: 'Manual', value: TemplateModeEnum.MANUAL },
+  { label: 'Automatic', value: TemplateModeEnum.AUTOMATIC },
+];

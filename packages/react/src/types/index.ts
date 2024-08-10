@@ -18,6 +18,7 @@ export interface ButtonProps {
 export interface ISchemaItem {
   key: string;
   name: string;
+  description: string;
   alternateKeys?: string[];
   isRequired?: boolean;
   isUnique?: boolean;
@@ -25,7 +26,7 @@ export interface ISchemaItem {
   defaultValue?: string | '<<null>>' | '<<undefined>>' | '<<>>' | '<<[]>>' | '<<true>>' | '<<false>>';
   selectValues?: string[];
   dateFormats?: string[];
-  type?: 'String' | 'Number' | 'Double' | 'Date' | 'Email' | 'Regex' | 'Select' | 'Any';
+  type?: 'String' | 'Number' | 'Double' | 'Date' | 'Email' | 'Regex' | 'Select' | 'Any' | 'Image';
   regex?: string;
   allowMultiSelect?: boolean;
 }

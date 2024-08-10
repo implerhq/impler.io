@@ -1,6 +1,11 @@
 import { PropsWithChildren } from 'react';
 import AppContextProvider from './app.context';
+import { PlanMetaProvider } from './planmeta.store.context';
 
 export function StoreWrapper({ children }: PropsWithChildren) {
-  return <AppContextProvider>{children}</AppContextProvider>;
+  return (
+    <PlanMetaProvider>
+      <AppContextProvider>{children}</AppContextProvider>
+    </PlanMetaProvider>
+  );
 }

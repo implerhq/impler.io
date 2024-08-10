@@ -61,6 +61,7 @@ export function Phase3(props: IPhase3Props) {
     height: 200,
     width: 500,
   });
+  const columnDescriptions = columnDefs.map((column) => column.description || '');
 
   useEffect(() => {
     //  setting wrapper height
@@ -86,9 +87,11 @@ export function Phase3(props: IPhase3Props) {
           <SegmentedControl
             value={type}
             onChange={onTypeChange}
-            allDataLength={numberFormatter(totalRecords)}
-            invalidDataLength={numberFormatter(invalidRecords)}
-            validDataLength={numberFormatter(totalRecords - invalidRecords)}
+            items={[
+              { value: 'all', label: `All ${numberFormatter(totalRecords)}` },
+              { value: 'valid', label: `Valid ${numberFormatter(totalRecords - invalidRecords)}` },
+              { value: 'invalid', label: `Invalid ${numberFormatter(invalidRecords)}` },
+            ]}
           />
           <Button color="red" disabled={!selectedRowsRef.current.size} onClick={() => setShowDeleteConfirmModal(true)}>
             Delete
@@ -170,6 +173,7 @@ export function Phase3(props: IPhase3Props) {
           headings={headings}
           columnDefs={columnDefs}
           allChecked={allChecked}
+          columnDescriptions={columnDescriptions}
         />
       </Stack>
       <Pagination page={page} total={totalPages} onChange={onPageChange} />

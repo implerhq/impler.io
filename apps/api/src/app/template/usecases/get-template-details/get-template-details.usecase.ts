@@ -8,7 +8,10 @@ export class GetTemplateDetails {
   constructor(private templateRepository: TemplateRepository) {}
 
   async execute(_id: string): Promise<TemplateResponseDto> {
-    const template = await this.templateRepository.findOne({ _id });
+    const template = await this.templateRepository.findOne(
+      { _id },
+      '_projectId name sampleFileUrl _id totalUploads totalInvalidRecords totalRecords mode'
+    );
     if (!template) {
       throw new DocumentNotFoundException('Template', _id);
     }
@@ -21,6 +24,7 @@ export class GetTemplateDetails {
       totalUploads: template.totalUploads,
       totalInvalidRecords: template.totalInvalidRecords,
       totalRecords: template.totalRecords,
+      mode: template.mode,
     };
   }
 }

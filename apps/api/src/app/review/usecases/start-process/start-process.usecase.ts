@@ -26,7 +26,9 @@ export class StartProcess {
     let importedData;
     const destination = (uploadInfo._templateId as unknown as TemplateEntity)?.destination;
     const userEmail = await this.uploadRepository.getUserEmailFromUploadId(_uploadId);
-    const dataProcessingAllowed = await this.paymentAPIService.checkEvent(userEmail);
+    const dataProcessingAllowed = await this.paymentAPIService.checkEvent({
+      email: userEmail,
+    });
 
     if (
       dataProcessingAllowed &&

@@ -9,3 +9,7 @@ export * from './environment/environment.types';
 export * from './destination/destination.types';
 export * from './review';
 export * from './subscription';
+export * from './template';
+export * from './import-job/import-job.types';
+export * from './user-job/user-job.types';
+export * from './bilablemetriccode/billablemetriccode.types';

@@ -30,6 +30,13 @@ export class ColumnRequestDto {
   key: string;
 
   @ApiProperty({
+    description: 'Description of the column',
+  })
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @ApiProperty({
     description: 'Alternative possible keys of the column',
     type: Array<string>,
   })

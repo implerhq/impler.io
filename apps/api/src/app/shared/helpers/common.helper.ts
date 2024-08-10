@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { APIMessages } from '../constants';
-import { PaginationResult, Defaults } from '@impler/shared';
+import { PaginationResult, Defaults, FileMimeTypesEnum } from '@impler/shared';
 
 export function validateNotFound(data: any, entityName: 'upload' | 'template'): boolean {
   if (data) return true;
@@ -56,4 +56,12 @@ export function isDateString(date: string | number): boolean {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   return new Date(date) != 'Invalid Date' && !isNaN(new Date(date));
+}
+
+export function getAssetMimeType(name: string): string {
+  if (name.endsWith('.png')) return FileMimeTypesEnum.PNG;
+  else if (name.endsWith('.jpg')) return FileMimeTypesEnum.JPEG;
+  else if (name.endsWith('.jpeg')) return FileMimeTypesEnum.JPEG;
+  else if (name.endsWith('.webp')) return FileMimeTypesEnum.WEBP;
+  throw new Error('Unsupported file type');
 }

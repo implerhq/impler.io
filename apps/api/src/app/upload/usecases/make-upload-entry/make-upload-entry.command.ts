@@ -1,31 +1,11 @@
-import { IsDefined, IsString, IsOptional, IsJSON } from 'class-validator';
-import { BaseCommand } from '@shared/commands/base.command';
-
-export class MakeUploadEntryCommand extends BaseCommand {
-  @IsDefined()
+export class MakeUploadEntryCommand {
   file: Express.Multer.File;
-
-  @IsDefined()
-  @IsString()
   templateId: string;
-
-  @IsOptional()
-  @IsJSON()
   extra?: string;
-
-  @IsOptional()
-  @IsString()
   schema?: string;
-
-  @IsOptional()
-  @IsString()
   output?: string;
-
-  @IsOptional()
-  @IsString()
+  importId?: string;
+  imageSchema?: string;
   authHeaderValue?: string;
-
-  @IsString()
-  @IsOptional()
   selectedSheetName?: string;
 }

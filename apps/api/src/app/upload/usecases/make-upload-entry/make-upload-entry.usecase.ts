@@ -46,6 +46,8 @@ export class MakeUploadEntry {
     authHeaderValue,
     schema,
     output,
+    importId,
+    imageSchema,
     selectedSheetName,
   }: MakeUploadEntryCommand) {
     const fileOriginalName = file.originalname;
@@ -72,11 +74,12 @@ export class MakeUploadEntry {
         _templateId: templateId,
       },
       // eslint-disable-next-line max-len
-      'name key isRequired isUnique isFrozen selectValues dateFormats defaultValue type regex sequence allowMultiSelect alternateKeys delimiter',
+      'name key isRequired isUnique isFrozen selectValues dateFormats defaultValue type regex sequence allowMultiSelect alternateKeys delimiter description',
       {
         sort: 'sequence',
       }
     );
+    const parsedImageSchema = imageSchema ? JSON.parse(imageSchema) : undefined;
     let parsedSchema: ISchemaItem[], combinedSchema: string, customRecordFormat: string, customChunkFormat: string;
     try {
       if (schema) parsedSchema = JSON.parse(schema);
@@ -92,10 +95,7 @@ export class MakeUploadEntry {
           key: schemaItem.key,
           type: schemaItem.type || ColumnTypesEnum.STRING,
           regex: schemaItem.regex,
-          selectValues:
-            schemaItem.type == ColumnTypesEnum.SELECT && Array.isArray(schemaItem.selectValues)
-              ? schemaItem.selectValues
-              : [],
+          selectValues: parsedImageSchema?.[schemaItem.key] || schemaItem.selectValues || [],
           dateFormats: Array.isArray(schemaItem.dateFormats)
             ? schemaItem.dateFormats.map((format) => format.toUpperCase())
             : Defaults.DATE_FORMATS,
@@ -103,6 +103,7 @@ export class MakeUploadEntry {
           isUnique: schemaItem.isUnique || false,
           defaultValue: schemaItem.defaultValue,
           allowMultiSelect: schemaItem.allowMultiSelect,
+          description: schemaItem.description,
           alternateKeys: Array.isArray(schemaItem.alternateKeys) ? schemaItem.alternateKeys : [],
 
           sequence: Object.keys(formattedColumns).length,
@@ -118,7 +119,11 @@ export class MakeUploadEntry {
         }
       }
     } else {
-      combinedSchema = JSON.stringify(columns);
+      const formattedColumns = columns.map((columnItem) => ({
+        ...columnItem,
+        selectValues: parsedImageSchema?.[columnItem.key] || columnItem.selectValues || [],
+      }));
+      combinedSchema = JSON.stringify(formattedColumns);
       const defaultCustomization = await this.customizationRepository.findOne(
         {
           _templateId: templateId,
@@ -131,7 +136,7 @@ export class MakeUploadEntry {
 
     const fileService = new CSVFileService2();
     const fileHeadings = await fileService.getFileHeaders(csvFile);
-    const uploadId = this.commonRepository.generateMongoId().toString();
+    const uploadId = importId || this.commonRepository.generateMongoId().toString();
     const fileEntity = await this.makeFileEntry(uploadId, csvFile, fileOriginalName);
 
     const originalFileName = this.fileNameService.getOriginalFileName(fileOriginalName);

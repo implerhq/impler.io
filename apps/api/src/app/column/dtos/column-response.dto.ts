@@ -14,6 +14,11 @@ export class ColumnResponseDto {
   key: string;
 
   @ApiProperty({
+    description: 'Description of the column',
+  })
+  description?: string;
+
+  @ApiProperty({
     description: 'Alternative possible keys of the column',
     type: Array<string>,
   })
