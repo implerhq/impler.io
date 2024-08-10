@@ -38,6 +38,7 @@ import {
   ResetPasswordCommand,
   RequestForgotPassword,
   RequestForgotPasswordCommand,
+  ResendOTP,
 } from './usecases';
 
 @ApiTags('Auth')
@@ -52,7 +53,8 @@ export class AuthController {
     private authService: AuthService,
     private registerUser: RegisterUser,
     private resetPassword: ResetPassword,
-    private requestForgotPassword: RequestForgotPassword
+    private requestForgotPassword: RequestForgotPassword,
+    private resendOTP: ResendOTP
   ) {}
 
   @Get('/github')
@@ -194,5 +196,10 @@ export class AuthController {
     });
 
     response.send(resetPassword);
+  }
+
+  @Get('verify/resend')
+  async resendOTPRoute(@UserSession() user: IJwtPayload) {
+    return await this.resendOTP.execute(user._id);
   }
 }
