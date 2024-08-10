@@ -65,15 +65,3 @@ export function getAssetMimeType(name: string): string {
   else if (name.endsWith('.webp')) return FileMimeTypesEnum.WEBP;
   throw new Error('Unsupported file type');
 }
-
-export function generateVerificationCode(): string {
-  let otp = '';
-
-  for (let i = 0; i < 2; i++) {
-    const group = Math.floor(Math.random() * 900) + 100;
-    otp += group.toString();
-  }
-  console.log(otp);
-
-  return otp;
-}
