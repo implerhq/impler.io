@@ -135,7 +135,7 @@ export class SendWebhookDataConsumer extends BaseConsumer {
         if (imageHeadings?.length > 0)
           imageHeadings.forEach((heading) => {
             obj.record[heading] = obj.record[heading]
-              ? `${process.env.API_BASE_URL}/v1/upload/${uploadId}/asset/${obj.record[heading]}`
+              ? `${process.env.API_ROOT_URL}/v1/upload/${uploadId}/asset/${obj.record[heading]}`
               : '';
           });
 
