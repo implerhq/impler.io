@@ -9,7 +9,7 @@ import { ProjectRepository, TemplateRepository, UserEntity } from '@impler/dal';
 import { UniqueColumnException } from '@shared/exceptions/unique-column.exception';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
 import { PaymentAPIService } from '@impler/services';
-import { AVAILABLE_BILLABLEMETRIC_CODE_ENUM } from '@impler/shared';
+import { AVAILABLE_BILLABLEMETRIC_CODE_ENUM, ColumnTypesEnum } from '@impler/shared';
 
 @Injectable()
 export class ValidRequest {
@@ -39,22 +39,6 @@ export class ValidRequest {
 
         if (!templateCount) {
           throw new DocumentNotFoundException('Template', command.templateId, APIMessages.INCORRECT_KEYS_FOUND);
-        }
-      }
-      if (command.schema) {
-        const project = await this.projectRepository.getUserOfProject(command.projectId);
-
-        const isBillableMetricAvailable = await this.paymentAPIService.checkEvent({
-          email: (project._userId as unknown as UserEntity).email,
-          billableMetricCode: AVAILABLE_BILLABLEMETRIC_CODE_ENUM.IMAGE_UPLOAD,
-        });
-
-        if (!isBillableMetricAvailable) {
-          throw new DocumentNotFoundException(
-            'Schema',
-            command.schema,
-            APIMessages.ERROR_ACCESSING_FEATURE.IMAGE_UPLOAD
-          );
         }
       }
 
@@ -91,6 +75,24 @@ export class ValidRequest {
             );
 
             throw new DocumentNotFoundException('Schema', command.schema, errors.toString());
+          }
+        }
+
+        const hasImageColumns = parsedSchema.some((column) => column.type === ColumnTypesEnum.IMAGE);
+        if (hasImageColumns) {
+          const project = await this.projectRepository.getUserOfProject(command.projectId);
+
+          const isBillableMetricAvailable = await this.paymentAPIService.checkEvent({
+            email: (project._userId as unknown as UserEntity).email,
+            billableMetricCode: AVAILABLE_BILLABLEMETRIC_CODE_ENUM.IMAGE_UPLOAD,
+          });
+
+          if (!isBillableMetricAvailable) {
+            throw new DocumentNotFoundException(
+              'Schema',
+              command.schema,
+              APIMessages.ERROR_ACCESSING_FEATURE.IMAGE_UPLOAD
+            );
           }
         }
       }
