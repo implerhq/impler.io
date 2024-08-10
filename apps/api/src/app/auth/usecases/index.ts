@@ -15,6 +15,7 @@ import { CreateProject } from 'app/project/usecases';
 import { SaveSampleFile, UpdateImageColumns } from '@shared/usecases';
 import { CreateEnvironment, GenerateUniqueApiKey } from 'app/environment/usecases';
 import { CreateTemplate, UpdateCustomization, UpdateTemplateColumns } from 'app/template/usecases';
+import { ResendOTP } from './resend-otp/resend-otp.usecase';
 
 export const USE_CASES = [
   Verify,
@@ -31,10 +32,11 @@ export const USE_CASES = [
   GenerateUniqueApiKey,
   UpdateTemplateColumns,
   RequestForgotPassword,
+  ResendOTP,
   //
 ];
 
-export { Verify, RegisterUser, LoginUser, RequestForgotPassword, ResetPassword, OnboardUser };
+export { Verify, RegisterUser, LoginUser, RequestForgotPassword, ResetPassword, OnboardUser, ResendOTP };
 export {
   LoginUserCommand,
   OnboardUserCommand,
