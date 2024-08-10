@@ -28,7 +28,6 @@ export class RegisterUser {
 
     const passwordHash = await bcrypt.hash(command.password, 10);
     const verificationCode = generateVerificationCode();
-    console.log(verificationCode);
 
     const user = await this.userRepository.create({
       email: command.email,
