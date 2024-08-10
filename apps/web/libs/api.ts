@@ -92,6 +92,14 @@ const routes: Record<string, Route> = {
     url: () => `/v1/auth/forgot-password/reset`,
     method: 'POST',
   },
+  [API_KEYS.RESEND_OTP]: {
+    url: () => `/v1/auth/verify/resend`,
+    method: 'GET',
+  },
+  [API_KEYS.RESET_PASSWORD]: {
+    url: () => `/v1/auth/forgot-password/reset`,
+    method: 'POST',
+  },
   [API_KEYS.ME]: {
     url: () => `/v1/auth/me`,
     method: 'GET',
