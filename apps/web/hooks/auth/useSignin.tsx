@@ -29,8 +29,8 @@ export function useSignin() {
           id: profileData._id,
         },
       });
-      if (data.screen === SCREENS.ONBOARD) {
-        push(ROUTES.SIGNIN_ONBOARDING);
+      if (data.screen === SCREENS.VERIFY) {
+        push(ROUTES.OTP_VERIFY);
       } else push(ROUTES.HOME);
     },
     onError(error) {
