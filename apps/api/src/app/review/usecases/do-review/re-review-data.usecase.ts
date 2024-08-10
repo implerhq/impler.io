@@ -7,6 +7,7 @@ import { ColumnDelimiterEnum, ColumnTypesEnum, ITemplateSchemaItem, UploadStatus
 import { UploadRepository, ValidatorRepository, DalService, TemplateEntity } from '@impler/dal';
 
 import { APIMessages } from '@shared/constants';
+import { EMAIL_SUBJECT } from '@impler/shared';
 import { EmailService } from '@impler/services';
 import { BATCH_LIMIT } from '@shared/services/sandbox';
 import { BaseReview } from './base-review.usecase';
@@ -287,7 +288,7 @@ export class DoReReview extends BaseReview {
           },
         });
         errorEmailContents.push({
-          subject: `🛑 Encountered error while executing validation code in ${name}`,
+          subject: `${EMAIL_SUBJECT.ERROR_EXECUTING_VALIDATION_CODE} ${name}`,
           content: emailContent,
         });
       },
