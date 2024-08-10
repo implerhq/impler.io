@@ -7,7 +7,7 @@ import { useMutation } from '@tanstack/react-query';
 import { commonApi } from '@libs/api';
 import { track } from '@libs/amplitude';
 import { API_KEYS, ROUTES } from '@config';
-import { IErrorObject, ILoginResponse } from '@impler/shared';
+import { IErrorObject, ILoginResponse, SCREENS } from '@impler/shared';
 
 interface ISignupFormData {
   fullName: string;
@@ -31,6 +31,7 @@ export function useSignup() {
     (string | undefined)[]
   >([API_KEYS.SIGNUP], (body) => commonApi<ILoginResponse>(API_KEYS.SIGNUP as any, { body }), {
     onSuccess: (data) => {
+      console.log('data from the register usecase', data);
       if (!data) return;
       const profileData = jwt<IProfileData>(data.token as string);
       track({
@@ -42,8 +43,8 @@ export function useSignup() {
           id: profileData._id,
         },
       });
-      if (data.showAddProject) {
-        push(ROUTES.SIGNIN_ONBOARDING);
+      if (data.screen === SCREENS.VERIFY) {
+        push(ROUTES.OTP_VERIFY);
       } else push(ROUTES.HOME);
     },
     onError(error) {
