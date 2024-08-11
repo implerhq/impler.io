@@ -41,19 +41,23 @@ export class StartProcess {
       });
     }
 
-    // if template destination has callbackUrl then start sending data to the callbackUrl
-    if (destination) {
-      uploadInfo = await this.uploadRepository.findOneAndUpdate(
-        { _id: _uploadId },
-        { status: UploadStatusEnum.PROCESSING }
-      );
-    } else {
-      // else complete the upload process
+    // if destination is frontend or not defined then complete the upload process
+    if (
+      !destination ||
+      (uploadInfo._templateId as unknown as TemplateEntity).destination === DestinationsEnum.FRONTEND
+    ) {
       uploadInfo = await this.uploadRepository.findOneAndUpdate(
         { _id: _uploadId },
         { status: UploadStatusEnum.COMPLETED }
       );
+    } else {
+      // if template destination has callbackUrl then start sending data to the callbackUrl
+      uploadInfo = await this.uploadRepository.findOneAndUpdate(
+        { _id: _uploadId },
+        { status: UploadStatusEnum.PROCESSING }
+      );
     }
+
     this.queueService.publishToQueue(QueuesEnum.END_IMPORT, {
       uploadId: _uploadId,
       destination: destination,
