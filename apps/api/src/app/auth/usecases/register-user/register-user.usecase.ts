@@ -68,11 +68,11 @@ export class RegisterUser {
         screen: SCREENS.VERIFY,
         token,
       };
+    } else if (!!this.emailService.isConnected) {
+      return {
+        screen: SCREENS.ONBOARD,
+        token,
+      };
     }
-
-    return {
-      screen: SCREENS.ONBOARD,
-      token,
-    };
   }
 }
