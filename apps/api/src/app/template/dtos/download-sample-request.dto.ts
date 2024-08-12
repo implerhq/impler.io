@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsArray, IsJSON } from 'class-validator';
+import { IsOptional, IsJSON } from 'class-validator';
 
 export class DownloadSampleDto {
-  @IsArray()
+  @IsJSON()
   @IsOptional()
-  data: Record<string, unknown>[];
+  data?: string;
 
   @IsJSON()
   @IsOptional()

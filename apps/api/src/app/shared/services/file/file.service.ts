@@ -69,7 +69,7 @@ export class ExcelFileService {
 
     return columnName.reverse().join('');
   }
-  async getExcelFileForHeadings(headings: IExcelFileHeading[], data?: Record<string, any>[]): Promise<Buffer> {
+  async getExcelFileForHeadings(headings: IExcelFileHeading[], data?: string): Promise<Buffer> {
     const currentDir = cwd();
     const isMultiSelect = headings.some(
       (heading) => heading.type === ColumnTypesEnum.SELECT && heading.allowMultiSelect
@@ -114,8 +114,13 @@ export class ExcelFileService {
     });
     const headingNames = headings.map((heading) => heading.key);
     const endColumnPosition = this.getExcelColumnNameFromIndex(headings.length + 1);
-    if (Array.isArray(data) && data.length > 0) {
-      const rows: string[][] = data.reduce<string[][]>((acc: string[][], rowItem: Record<string, any>) => {
+
+    let parsedData = [];
+    try {
+      if (data) parsedData = JSON.parse(data);
+    } catch (error) {}
+    if (Array.isArray(parsedData) && parsedData.length > 0) {
+      const rows: string[][] = parsedData.reduce<string[][]>((acc: string[][], rowItem: Record<string, any>) => {
         acc.push(headingNames.map((headingKey) => rowItem[headingKey]));
 
         return acc;

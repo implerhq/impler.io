@@ -1,6 +1,6 @@
 {
 	"name": "@impler/widget",
-	"version": "0.22.0",
+	"version": "0.23.1",
 	"author": "implerhq",
 	"license": "MIT",
 	"private": true,
@@ -40,8 +40,8 @@
 		"@craco/craco": "^6.4.5",
 		"@emotion/react": "^11.10.5",
 		"@handsontable/react": "^14.1.0",
-		"@impler/client": "^0.22.0",
-		"@impler/shared": "^0.22.0",
+		"@impler/client": "^0.23.1",
+		"@impler/shared": "^0.23.1",
 		"@mantine/core": "6.0.21",
 		"@mantine/dropzone": "6.0.21",
 		"@mantine/hooks": "6.0.21",
