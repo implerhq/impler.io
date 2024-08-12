@@ -4,8 +4,9 @@ import { useForm } from 'react-hook-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
-import { API_KEYS, ROUTES } from '@config';
+import { API_KEYS } from '@config';
 import { IErrorObject, IScreenResponse, SCREENS } from '@impler/shared';
+import { handleRouteBasedOnScreenResponse } from '@shared/helpers';
 
 interface IVerifyFormData {
   otp: string;
@@ -31,9 +32,7 @@ export function useVerify() {
     onSuccess: (data) => {
       if (!data) return;
 
-      if (data.screen === SCREENS.ONBOARD) {
-        push(ROUTES.SIGNIN_ONBOARDING);
-      } else return 0;
+      handleRouteBasedOnScreenResponse(data.screen as SCREENS, push);
     },
     onError: (errorObject: IErrorObject) => {
       if (errorObject.error === 'OTPVerificationFalid') {
