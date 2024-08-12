@@ -1,5 +1,5 @@
 export class DownloadSampleDataCommand {
-  data: Record<string, unknown>[];
+  data?: string;
   schema?: string;
   importId: string;
   imageSchema?: string;

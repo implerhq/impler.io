@@ -1,8 +1,9 @@
 import { Checkbox as MantineCheckbox, MantineNumberSize } from '@mantine/core';
 import useStyles from './Checkbox.styles';
+import { ReactNode } from 'react';
 
 interface CheckboxProps {
-  label?: string;
+  label?: string | ReactNode;
   defaultChecked?: boolean;
   register?: any;
   checked?: boolean;

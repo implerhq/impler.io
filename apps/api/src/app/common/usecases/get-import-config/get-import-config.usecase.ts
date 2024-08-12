@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserRepository, TemplateRepository, TemplateEntity } from '@impler/dal';
-import { IImportConfig } from '@impler/shared';
+import { AVAILABLE_BILLABLEMETRIC_CODE_ENUM, IImportConfig } from '@impler/shared';
 import { PaymentAPIService } from '@impler/services';
 import { APIMessages } from '@shared/constants';
 
@@ -15,7 +15,10 @@ export class GetImportConfig {
   async execute(projectId: string, templateId?: string): Promise<IImportConfig> {
     const userEmail = await this.userRepository.findUserEmailFromProjectId(projectId);
 
-    const removeBrandingAvailable = await this.paymentAPIService.checkEvent(userEmail, 'REMOVE_BRANDING');
+    const removeBrandingAvailable = await this.paymentAPIService.checkEvent({
+      email: userEmail,
+      billableMetricCode: AVAILABLE_BILLABLEMETRIC_CODE_ENUM.REMOVE_BRANDING,
+    });
 
     let template: TemplateEntity;
     if (templateId) {

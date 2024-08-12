@@ -2,6 +2,7 @@
 import { forwardRef } from 'react';
 import { HotTable } from '@handsontable/react';
 import 'cooltipz-css/cooltipz.min.css';
+import 'tippy.js/dist/tippy.css';
 import {
   TextCellType,
   DateCellType,
@@ -41,6 +42,7 @@ registerValidator(dateValidator);
 
 import 'handsontable/dist/handsontable.full.min.css';
 import './HandsonTable.styles.min.css';
+import { addTippyToElement } from '@util';
 
 interface TableProps {
   headings: string[];
@@ -50,6 +52,7 @@ interface TableProps {
   width?: string | number;
   afterRender?: () => void;
   data: Record<string, any>[];
+  columnDescriptions?: string[];
   columnDefs: HotItemSchema[];
   onCheckAll?: (checked: boolean) => void;
   onValueChange?: (row: number, prop: string, oldVal: any, newVal: any) => void;
@@ -163,6 +166,7 @@ export const Table = forwardRef<HotTableClass, TableProps>(
       headings,
       columnDefs,
       data,
+      columnDescriptions,
       allChecked,
       onRowCheck,
       onCheckAll,
@@ -204,12 +208,41 @@ export const Table = forwardRef<HotTableClass, TableProps>(
             if (changes[i] && changes[i]?.[3] === null) changes[i]![3] = undefined;
           }
         }}
-        afterGetColHeader={function (i, TH) {
+        afterGetColHeader={(i, TH) => {
+          TH.innerHTML = '';
+          TH.innerHTML = headings[i];
+
           if (i === 0) {
             TH.classList.add('check-all-cell');
-            TH.innerHTML = `<div class="checkbox"><input type="checkbox" ${
-              allChecked ? 'checked' : ''
-            } class="checkbox__control"><svg class="checkbox__control-icon" xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 24 24"><path fill="currentColor" d="M 20.292969 5.2929688 L 9 16.585938 L 4.7070312 12.292969 L 3.2929688 13.707031 L 9 19.414062 L 21.707031 6.7070312 L 20.292969 5.2929688 z"></path></svg></div>`;
+            TH.innerHTML = `
+              <div class="checkbox">
+                <input type="checkbox" ${allChecked ? 'checked' : ''} class="checkbox__control">
+                <svg class="checkbox__control-icon" xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 24 24">
+                  <path fill="currentColor" d="M 20.292969 5.2929688 L 9 16.585938 L 4.7070312 12.292969 L 3.2929688 13.707031 L 9 19.414062 L 21.707031 6.7070312 L 20.292969 5.2929688 z"></path>
+                </svg>
+              </div>`;
+          } else {
+            if (columnDescriptions && columnDescriptions[i]) {
+              // Create the SVG icon element
+              const infoIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+              infoIcon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+              infoIcon.setAttribute('viewBox', '-2 -2 24 24');
+              infoIcon.setAttribute('width', '20');
+              infoIcon.setAttribute('fill', 'currentColor');
+              infoIcon.setAttribute(
+                'style',
+                'vertical-align: middle;float: right;cursor: pointer;color:#fffff; margin-right:4px;'
+              );
+              const infoIconPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+              infoIconPath.setAttribute(
+                'd',
+                'M10 20C4.477 20 0 15.523 0 10S4.477 0 10 0s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-10a1 1 0 0 1 1 1v5a1 1 0 0 1-2 0V9a1 1 0 0 1 1-1zm0-1a1 1 0 1 1 0-2 1 1 0 0 1 0 2z'
+              );
+              infoIcon.appendChild(infoIconPath);
+              TH.appendChild(infoIcon);
+
+              addTippyToElement(infoIcon as unknown as HTMLElement, columnDescriptions[i]);
+            }
           }
         }}
         renderAllColumns

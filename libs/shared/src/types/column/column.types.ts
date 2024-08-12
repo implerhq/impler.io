@@ -18,6 +18,7 @@ export enum ColumnDelimiterEnum {
 export interface ISchemaItem {
   key: string;
   name: string;
+  description?: string;
   alternateKeys?: string[];
   isRequired?: boolean;
   isUnique?: boolean;

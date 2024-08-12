@@ -41,14 +41,14 @@ export class UpdateColumn {
       column.delimiter !== command.delimiter;
 
     column = await this.columnRepository.findOneAndUpdate({ _id }, command);
-    await this.updateImageTemplates.execute(columns, column._templateId);
+    await this.updateImageTemplates.execute(updatedColumns, column._templateId);
 
     if (isKeyUpdated || isTypeUpdated || isFieldConditionUpdated) {
       await this.saveSampleFile.execute(updatedColumns, column._templateId);
     }
 
     if (isKeyUpdated) {
-      const variables = columns.map((columnItem) => columnItem.key);
+      const variables = updatedColumns.map((columnItem) => columnItem.key);
       await this.updateCustomization.execute(column._templateId, {
         recordVariables: variables,
         internal: true,

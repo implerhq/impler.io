@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { modals } from '@mantine/modals';
 import { Controller, useForm } from 'react-hook-form';
 import {
@@ -9,19 +9,23 @@ import {
   SimpleGrid,
   Title,
   Group,
+  Flex,
   CloseButton,
   Select,
   useMantineColorScheme,
+  SelectItem,
 } from '@mantine/core';
 
 import { ColumnTypesEnum, DEFAULT_VALUES, IColumn } from '@impler/shared';
-import { colors, COLUMN_TYPES, DELIMITERS, MODAL_KEYS, MODAL_TITLES } from '@config';
+import { colors, DELIMITERS, MODAL_KEYS, MODAL_TITLES, DOCUMENTATION_REFERENCE_LINKS } from '@config';
 
 import { Button } from '@ui/button';
 import { Textarea } from '@ui/textarea';
 import { Checkbox } from '@ui/checkbox';
 import { MultiSelect } from '@ui/multi-select';
 import { CustomSelect } from '@ui/custom-select';
+import { useSchema } from '@hooks/useSchema';
+import TooltipLink from '@components/TooltipLink/TooltipLink';
 
 interface ColumnFormProps {
   data?: Partial<IColumn>;
@@ -30,6 +34,8 @@ interface ColumnFormProps {
 }
 
 export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
+  const { getColumnTypes } = useSchema({ templateId: data?._templateId as string });
+  const [columnTypes, setColumnType] = useState<SelectItem[]>(getColumnTypes());
   const { colorScheme } = useMantineColorScheme();
   const {
     watch,
@@ -46,6 +52,10 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
   const onClose = () => {
     modals.close(MODAL_KEYS.COLUMN_UPDATE);
   };
+
+  useEffect(() => {
+    setColumnType(getColumnTypes());
+  }, []);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -78,6 +88,12 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 placeholder="Column Key"
                 error={errors.key?.message}
               />
+              <Input
+                label="Column Description"
+                placeholder="Enter a description for this column"
+                description="This description will be shown as a tooltip in the review table"
+                {...register('description')}
+              />
               <Controller
                 name="alternateKeys"
                 control={control}
@@ -107,13 +123,13 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 render={({ field: { value, onChange, onBlur } }) => (
                   <Select
                     label="Column Type"
-                    data={COLUMN_TYPES}
+                    data={columnTypes}
                     placeholder="Type"
                     value={value}
                     data-autofocus
                     onChange={onChange}
                     onBlur={onBlur}
-                    description="Primary validation to apply on column"
+                    description={'Primary validation to apply on column.'}
                   />
                 )}
               />
@@ -202,15 +218,9 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                     onChange={onChange}
                     label="Default Value"
                     placeholder="Default Value"
-                    description={
-                      <>
-                        Value used in response when cell is empty,{' '}
-                        <Link target="_blank" href="https://docs.impler.io/platform/default-value">
-                          read more
-                        </Link>
-                      </>
-                    }
+                    description="Value used in response when cell is empty"
                     data={DEFAULT_VALUES}
+                    link={DOCUMENTATION_REFERENCE_LINKS.defaultValue}
                   />
                 )}
               />
@@ -224,7 +234,12 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
               />
               {typeValue === ColumnTypesEnum.SELECT ? (
                 <Checkbox
-                  label="Multi Select Values"
+                  label={
+                    <Flex gap="sm">
+                      <Text>Multi Select Values</Text>
+                      <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.multiSelectDropDown} />
+                    </Flex>
+                  }
                   register={register('allowMultiSelect')}
                   description="Users can pick multiple values from the list. Sample will also allow selecting multiple values."
                 />
@@ -253,8 +268,14 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                   )}
                 />
               ) : null}
+
               <Checkbox
-                label="Freeze Column"
+                label={
+                  <Flex gap="sm">
+                    <Text>Freeze Column</Text>
+                    <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.freezeColumns} />
+                  </Flex>
+                }
                 register={register('isFrozen')}
                 description="Will freeze column left side in generated sample and in Review section."
               />

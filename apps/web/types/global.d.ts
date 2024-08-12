@@ -25,6 +25,9 @@ interface IProfileData {
   lastName: string;
   email: string;
   profilePicture: string;
+  companySize: string;
+  role: string;
+  source: string;
   _projectId: string;
   accessToken: string;
 }
@@ -44,7 +47,7 @@ interface ISubscriptionData {
         code: string;
         name: string;
       };
-      chargeModal: 'FIXED' | 'VOLUME_BASED';
+      chargeModal: 'FIXED' | 'VOLUME_BASED' | 'BINARY';
       properties: Record<string, string | number>;
     }[];
     charge: number;
@@ -56,7 +59,15 @@ interface ISubscriptionData {
   };
   expiryDate: Date;
   meta: {
-    IMPORTED_ROWS: number;
+    IMAGE_UPLOAD: boolean;
+    IMPORTED_ROWS: Array<{
+      flat_fee: number;
+      per_unit: number;
+      last_unit: number | string;
+      first_unit: number;
+    }>;
+    REMOVE_BRANDING: boolean;
+    AUTOMATIC_IMPORTS: boolean;
   };
 }
 
@@ -64,7 +75,15 @@ interface ICreateProjectData {
   name: string;
 }
 
-interface ICreateTemplateData {
+interface IOnboardUserData {
+  projectName: string;
+  companySize: string;
+  role: string;
+  source: string;
+  onboarding: boolean;
+}
+
+interface ICstringemplateData {
   name: string;
 }
 interface IDuplicateTemplateData {

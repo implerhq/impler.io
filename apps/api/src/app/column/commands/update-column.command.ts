@@ -13,6 +13,10 @@ export class UpdateColumnCommand extends BaseCommand {
   @IsDefined()
   key: string;
 
+  @IsString()
+  @IsOptional()
+  description?: string;
+
   @IsArray()
   @IsOptional()
   @Type(() => Array<string>)
