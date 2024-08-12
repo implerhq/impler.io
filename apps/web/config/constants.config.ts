@@ -157,7 +157,7 @@ export const ROUTES = {
   HOME: '/',
   SIGNUP: '/auth/signup',
   SIGNIN: '/auth/signin',
-  SIGNIN_ONBOARDING: '/auth/onboard',
+  SIGNUP_ONBOARDING: '/auth/onboard',
   OTP_VERIFY: '/auth/verify',
   REQUEST_FORGOT_PASSWORD: '/auth/reset/request',
   IMPORTS: '/imports',
