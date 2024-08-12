@@ -74,7 +74,7 @@ export function useImpler({
     });
   }
 
-  const showWidget = async ({ colorScheme, data, schema, output }: ShowWidgetProps) => {
+  const showWidget = async ({ colorScheme, data, schema, output }: ShowWidgetProps = {}) => {
     if (window.impler && isImplerInitiated) {
       const payload: IShowPayload = {
         uuid,

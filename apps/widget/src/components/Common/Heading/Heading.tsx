@@ -50,7 +50,7 @@ export function Heading({ active, title, mode, hasImageUpload }: IHeadingProps) 
         <Group style={{ justifyContent: 'space-between' }} mb="lg">
           <Title order={3}>{title}</Title>
           <Stepper
-            active={active - (hasImageUpload ? 1 : 2)}
+            active={active - (mode === TemplateModeEnum.AUTOMATIC ? 1 : hasImageUpload ? 1 : 2)}
             steps={
               mode === TemplateModeEnum.AUTOMATIC
                 ? autoImportSteps
