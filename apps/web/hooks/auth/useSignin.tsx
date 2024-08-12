@@ -6,8 +6,9 @@ import { useMutation } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
 import { track } from '@libs/amplitude';
-import { API_KEYS, ROUTES } from '@config';
+import { API_KEYS } from '@config';
 import { IErrorObject, ILoginResponse, SCREENS } from '@impler/shared';
+import { handleRouteBasedOnScreenResponse } from '@shared/helpers';
 
 export function useSignin() {
   const { push } = useRouter();
@@ -29,9 +30,7 @@ export function useSignin() {
           id: profileData._id,
         },
       });
-      if (data.screen === SCREENS.VERIFY) {
-        push(ROUTES.OTP_VERIFY);
-      } else push(ROUTES.HOME);
+      handleRouteBasedOnScreenResponse(data.screen as SCREENS, push);
     },
     onError(error) {
       setErrorMessage(error);
