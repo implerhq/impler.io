@@ -1,14 +1,15 @@
-import { colors, TEXTS, ENV, SENTRY_DSN } from '@config';
-import { NotificationContent } from '@types';
-import { showNotification } from '@mantine/notifications';
 import { captureMessage } from '@sentry/react';
-import { ENVTypesEnum } from '@impler/shared';
+import { showNotification } from '@mantine/notifications';
+
+import { colors, ENV, SENTRY_DSN } from '@config';
+import { ENVTypesEnum, WIDGET_TEXTS } from '@impler/shared';
+import { NotificationContent } from '@types';
 
 const autoCloseDuration = 5000;
-export function showError(data: NotificationContent | keyof typeof TEXTS.NOTIFICATIONS) {
+export function showError(data: NotificationContent | keyof typeof WIDGET_TEXTS.NOTIFICATIONS) {
   let notificationData: NotificationContent;
   if (typeof data === 'string') {
-    notificationData = TEXTS.NOTIFICATIONS[data];
+    notificationData = WIDGET_TEXTS.NOTIFICATIONS[data];
   } else {
     notificationData = data;
   }
