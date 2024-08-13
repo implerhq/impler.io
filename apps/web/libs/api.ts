@@ -94,7 +94,7 @@ const routes: Record<string, Route> = {
   },
   [API_KEYS.RESEND_OTP]: {
     url: () => `/v1/auth/verify/resend`,
-    method: 'GET',
+    method: 'POST',
   },
   [API_KEYS.RESET_PASSWORD]: {
     url: () => `/v1/auth/forgot-password/reset`,
