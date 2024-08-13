@@ -31,27 +31,27 @@ export function AutoImportFooter({
   const FooterActions = {
     [PhasesEnum.CONFIGURE]: (
       <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
-        {texts?.AUTOIMPORTPHASES?.BUTTONTEXT?.MAPCOLUMN}
+        {texts.AUTOIMPORTPHASES.BUTTONTEXT.MAPCOLUMN}
       </Button>
     ),
     [PhasesEnum.MAPCOLUMNS]: (
       <>
         <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
-          {texts?.AUTOIMPORTPHASES?.BUTTONTEXT?.SCHEDULE}
+          {texts.AUTOIMPORTPHASES.BUTTONTEXT.SCHEDULE}
         </Button>
       </>
     ),
     [PhasesEnum.SCHEDULE]: (
       <>
         <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
-          {texts?.AUTOIMPORTPHASES?.BUTTONTEXT?.CONFIRM}
+          {texts.AUTOIMPORTPHASES.BUTTONTEXT.CONFIRM}
         </Button>
       </>
     ),
     [PhasesEnum.CONFIRM]: (
       <>
         <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
-          {texts?.AUTOIMPORTPHASES?.BUTTONTEXT?.CLOSE}
+          {texts.AUTOIMPORTPHASES.BUTTONTEXT.CLOSE}
         </Button>
       </>
     ),
