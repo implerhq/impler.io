@@ -46,7 +46,14 @@ export default function OtpVerifyPage() {
               control={control}
               rules={{ required: 'OTP is required' }}
               render={({ field: { onChange, value } }) => (
-                <PinInput length={6} value={value} onChange={onChange} onComplete={(otp) => onChange(otp)} />
+                <PinInput
+                  autoFocus
+                  required
+                  length={6}
+                  value={value}
+                  onChange={onChange}
+                  onComplete={(otp) => onChange(otp)}
+                />
               )}
             />
           </Box>
