@@ -1,12 +1,11 @@
 import { useRouter } from 'next/router';
-import { useForm } from 'react-hook-form';
 import { useState, useEffect, useRef } from 'react';
 import { useMutation } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
 import { useApp } from '@hooks/useApp';
-import { API_KEYS, NOTIFICATION_KEYS } from '@config';
+import { API_KEYS, NOTIFICATION_KEYS, ROUTES } from '@config';
 import { IErrorObject, IScreenResponse, SCREENS } from '@impler/shared';
 import { handleRouteBasedOnScreenResponse } from '@shared/helpers';
 
@@ -14,24 +13,14 @@ interface IVerifyFormData {
   otp: string;
 }
 
-const RESEND_SECONDS = 120;
-const OTP_LENGTH = 6;
+const RESEND_SECONDS = 10;
 
 export function useVerify() {
   const { push } = useRouter();
+  const { profile } = useApp();
   const timerRef = useRef<any>();
-  const [formError, setFormError] = useState<string>();
   const [countdown, setCountdown] = useState(RESEND_SECONDS);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-  const [error, setError] = useState<IErrorObject | undefined>(undefined);
-
-  const {
-    control,
-    handleSubmit,
-    formState: {},
-  } = useForm<IVerifyFormData>();
-
-  const { profile } = useApp();
 
   const { mutate: verify, isLoading: isVerificationLoading } = useMutation<
     IScreenResponse,
@@ -42,9 +31,11 @@ export function useVerify() {
       handleRouteBasedOnScreenResponse(data.screen as SCREENS, push);
     },
     onError: (errorObject: IErrorObject) => {
-      if (errorObject.error === 'OTPVerificationFailed') {
-        setError(errorObject);
-      }
+      notify(NOTIFICATION_KEYS.OTP_CODE_RESENT_SUCCESSFULLY, {
+        color: 'red',
+        title: 'Verfication code is invalid!',
+        message: errorObject.message,
+      });
     },
   });
 
@@ -66,16 +57,6 @@ export function useVerify() {
     },
   });
 
-  const handleVerify = handleSubmit((otpFormData: IVerifyFormData) => {
-    if (!otpFormData.otp || otpFormData.otp.length !== OTP_LENGTH) {
-      setFormError('Please enter a valid 6-digit OTP');
-
-      return;
-    }
-    setFormError(undefined);
-    verify(otpFormData);
-  });
-
   const onCountDownProgress = () => {
     setCountdown((prevCountdown) => {
       if (prevCountdown === 0) {
@@ -95,15 +76,16 @@ export function useVerify() {
     };
   }, []);
 
+  useEffect(() => {
+    if (profile?.isEmailVerified) push(ROUTES.HOME);
+  }, [profile, push]);
+
   return {
-    control,
-    handleVerify,
+    verify,
+    profile,
     resendOTP,
-    error,
-    formError,
-    setFormError,
-    isVerificationLoading,
-    isButtonDisabled,
     countdown,
+    isButtonDisabled,
+    isVerificationLoading,
   };
 }

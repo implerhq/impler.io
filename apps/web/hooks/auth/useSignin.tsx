@@ -4,16 +4,19 @@ import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 
+import { API_KEYS } from '@config';
 import { commonApi } from '@libs/api';
 import { track } from '@libs/amplitude';
-import { API_KEYS } from '@config';
+import { useAppState } from 'store/app.context';
 import { IErrorObject, ILoginResponse, SCREENS } from '@impler/shared';
 import { handleRouteBasedOnScreenResponse } from '@shared/helpers';
 
 export function useSignin() {
   const { push } = useRouter();
+  const { setProfileInfo } = useAppState();
   const { register, handleSubmit } = useForm<ISigninData>();
   const [errorMessage, setErrorMessage] = useState<IErrorObject | undefined>(undefined);
+
   const { mutate: login, isLoading: isLoginLoading } = useMutation<
     ILoginResponse,
     IErrorObject,
@@ -30,6 +33,7 @@ export function useSignin() {
           id: profileData._id,
         },
       });
+      setProfileInfo(profileData);
       handleRouteBasedOnScreenResponse(data.screen as SCREENS, push);
     },
     onError(error) {

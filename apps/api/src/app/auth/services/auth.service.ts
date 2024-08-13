@@ -65,6 +65,7 @@ export class AuthService {
           lastName: user.lastName,
           profilePicture: user.profilePicture,
           accessToken: apiKey?.apiKey,
+          isEmailVerified: user.isEmailVerified,
         },
         apiKey?.projectId
       ),
@@ -98,6 +99,7 @@ export class AuthService {
           firstName: user.firstName,
           lastName: user.lastName,
           accessToken: apiKey?.apiKey,
+          isEmailVerified: user.isEmailVerified,
         },
         apiKey?.projectId
       ),
@@ -117,6 +119,7 @@ export class AuthService {
         firstName: user.firstName,
         lastName: user.lastName,
         accessToken: apiKey?.apiKey,
+        isEmailVerified: user.isEmailVerified,
       },
       apiKey?.projectId
     );
@@ -128,6 +131,7 @@ export class AuthService {
       firstName: string;
       lastName: string;
       email: string;
+      isEmailVerified: boolean;
       profilePicture?: string;
       accessToken?: string;
     },
@@ -190,6 +194,7 @@ export class AuthService {
         firstName: user.firstName,
         lastName: user.lastName,
         accessToken: apiKey,
+        isEmailVerified: user.isEmailVerified,
       },
       environment._projectId
     );
@@ -205,6 +210,7 @@ export class AuthService {
         firstName: user.firstName,
         lastName: user.lastName,
         accessToken: apiKey?.apiKey,
+        isEmailVerified: user.isEmailVerified,
       },
       apiKey?.projectId
     );

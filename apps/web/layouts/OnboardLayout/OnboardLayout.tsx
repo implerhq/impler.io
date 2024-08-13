@@ -3,13 +3,19 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { PropsWithChildren } from 'react';
 import { Carousel } from '@mantine/carousel';
+import { useQuery } from '@tanstack/react-query';
 import { Grid, Title, Text, Stack } from '@mantine/core';
 
-import { TEXTS } from '@config';
+import { commonApi } from '@libs/api';
+import { API_KEYS, TEXTS } from '@config';
+import { IErrorObject } from '@impler/shared';
+
 import useStyles from './OnboardLayout.styles';
+import { useAppState } from 'store/app.context';
 import WidgetSlideImage from '@assets/images/auth-carousel/widget.png';
 import PowerfullSlideImage from '@assets/images/auth-carousel/powerfull.png';
 import UncertainitySlideImage from '@assets/images/auth-carousel/uncertainity.png';
+import { useRouter } from 'next/router';
 
 const Support = dynamic(() => import('components/common/Support').then((mod) => mod.Support), {
   ssr: false,
@@ -38,7 +44,22 @@ const slides: {
 ];
 
 export function OnboardLayout({ children }: PropsWithChildren) {
+  const { route } = useRouter();
   const { classes } = useStyles();
+  console.log(route);
+  const { setProfileInfo } = useAppState();
+  useQuery<unknown, IErrorObject, IProfileData, [string]>(
+    [API_KEYS.ME],
+    () => commonApi<IProfileData>(API_KEYS.ME as any, {}),
+    {
+      onSuccess(profileData) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        window.usetifulTags = { userId: profileData?._id };
+        setProfileInfo(profileData);
+      },
+    }
+  );
 
   return (
     <>

@@ -30,6 +30,7 @@ interface IProfileData {
   source: string;
   _projectId: string;
   accessToken: string;
+  isEmailVerified: boolean;
 }
 
 interface ChargeItem {

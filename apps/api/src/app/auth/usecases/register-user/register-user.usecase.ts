@@ -5,7 +5,7 @@ import { UserRepository } from '@impler/dal';
 
 import { generateVerificationCode } from '@shared/helpers/common.helper';
 import { EmailService } from '@impler/services';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from 'app/auth/services/auth.service';
 import { RegisterUserCommand } from './register-user.command';
 import { LEAD_SIGNUP_USING } from '@shared/constants';
 import { SCREENS, EMAIL_SUBJECT } from '@impler/shared';
@@ -45,6 +45,7 @@ export class RegisterUser {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      isEmailVerified: user.isEmailVerified,
     });
 
     if (this.emailService.isConnected()) {

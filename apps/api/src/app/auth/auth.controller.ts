@@ -128,8 +128,14 @@ export class AuthController {
   }
 
   @Post('/verify')
-  async verifyRoute(@Body() body: VerifyDto, @UserSession() user: IJwtPayload) {
-    return await this.verify.execute(user._id, { code: body.otp });
+  async verifyRoute(@Body() body: VerifyDto, @UserSession() user: IJwtPayload, @Res() response: Response) {
+    const { token, screen } = await this.verify.execute(user._id, { code: body.otp });
+    response.cookie(CONSTANTS.AUTH_COOKIE_NAME, token, {
+      ...COOKIE_CONFIG,
+      domain: process.env.COOKIE_DOMAIN,
+    });
+
+    response.send({ screen });
   }
 
   @Post('/onboard')
@@ -152,6 +158,7 @@ export class AuthController {
         lastName: user.lastName,
         email: user.email,
         profilePicture: user.profilePicture,
+        isEmailVerified: user.isEmailVerified,
         accessToken: projectWithEnvironment.environment.apiKeys[0].key,
       },
       projectWithEnvironment.project._id
