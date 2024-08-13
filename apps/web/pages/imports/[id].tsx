@@ -52,11 +52,6 @@ export default function ImportDetails({}) {
   });
   const { showWidget, isImplerInitiated } = useImpler({
     primaryColor: colors.blue,
-    texts: {
-      PHASE1: {
-        DOWNLOAD_SAMPLE_TITLE: 'File Download',
-      },
-    },
     templateId: templateData?._id,
     projectId: templateData?._projectId,
     accessToken: profileInfo?.accessToken,
