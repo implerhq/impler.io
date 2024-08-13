@@ -15,8 +15,8 @@ interface IVerifyFormData {
 export function useVerify() {
   const { push } = useRouter();
   const [error, setError] = useState<IErrorObject | undefined>(undefined);
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-  const [countdown, setCountdown] = useState(0);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [countdown, setCountdown] = useState(120);
 
   const {
     control,
@@ -30,8 +30,6 @@ export function useVerify() {
     IVerifyFormData
   >((body) => commonApi<IScreenResponse>(API_KEYS.VERIFY_EMAIL as any, { body }), {
     onSuccess: (data) => {
-      if (!data) return;
-
       handleRouteBasedOnScreenResponse(data.screen as SCREENS, push);
     },
     onError: (errorObject: IErrorObject) => {
@@ -58,18 +56,22 @@ export function useVerify() {
   };
 
   useEffect(() => {
-    if (countdown === 0) {
-      setIsButtonDisabled(false);
-
-      return;
-    }
-
+    // Start the countdown immediately when the component mounts
     const timer = setInterval(() => {
-      setCountdown((prevCountdown) => prevCountdown - 1);
+      setCountdown((prevCountdown) => {
+        if (prevCountdown === 0) {
+          setIsButtonDisabled(false);
+          clearInterval(timer);
+
+          return 0;
+        }
+
+        return prevCountdown - 1;
+      });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [countdown]);
+  }, []);
 
   return {
     control,
