@@ -7,7 +7,9 @@ import {
   ITemplateSchemaItem,
   replaceVariablesInObject,
   StatusEnum,
+  EMAIL_SUBJECT,
 } from '@impler/shared';
+
 import { BubbleBaseService, EmailService, FileNameService, StorageService } from '@impler/services';
 import {
   UploadRepository,
@@ -197,7 +199,7 @@ export class SendBubbleDataConsumer extends BaseConsumer {
 
       await this.emailService.sendEmail({
         to: userEmail,
-        subject: `🛑 Encountered error while sending data to Bubble in ${importName}`,
+        subject: `${EMAIL_SUBJECT.ERROR_SENDING_BUBBLE_DATA} ${importName}`,
         html: emailContents,
         from: process.env.ALERT_EMAIL_FROM,
         senderName: process.env.EMAIL_FROM_NAME,

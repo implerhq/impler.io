@@ -46,4 +46,8 @@ export class UserEntity {
   source?: string | null;
 
   signupMethod?: string;
+
+  isEmailVerified: boolean;
+
+  verificationCode: string;
 }

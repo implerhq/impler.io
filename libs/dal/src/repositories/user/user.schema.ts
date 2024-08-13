@@ -28,6 +28,11 @@ const userSchema = new Schema(
     companySize: Schema.Types.String,
     role: Schema.Types.String,
     source: Schema.Types.String,
+    isEmailVerified: {
+      type: Schema.Types.Boolean,
+      default: false,
+    },
+    verificationCode: Schema.Types.String,
   },
   schemaOptions
 );

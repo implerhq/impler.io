@@ -19,8 +19,16 @@ import { CONSTANTS, COOKIE_CONFIG } from '@shared/constants';
 import { UserSession } from '@shared/framework/user.decorator';
 import { ApiException } from '@shared/exceptions/api.exception';
 import { StrategyUser } from './decorators/strategy-user.decorator';
-import { RegisterUserDto, LoginUserDto, RequestForgotPasswordDto, ResetPasswordDto, OnboardUserDto } from './dtos';
 import {
+  RegisterUserDto,
+  LoginUserDto,
+  RequestForgotPasswordDto,
+  ResetPasswordDto,
+  OnboardUserDto,
+  VerifyDto,
+} from './dtos';
+import {
+  Verify,
   RegisterUser,
   RegisterUserCommand,
   LoginUser,
@@ -30,6 +38,7 @@ import {
   ResetPasswordCommand,
   RequestForgotPassword,
   RequestForgotPasswordCommand,
+  ResendOTP,
 } from './usecases';
 
 @ApiTags('Auth')
@@ -38,12 +47,14 @@ import {
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
   constructor(
+    private verify: Verify,
     private loginUser: LoginUser,
     private onboardUser: OnboardUser,
     private authService: AuthService,
     private registerUser: RegisterUser,
     private resetPassword: ResetPassword,
-    private requestForgotPassword: RequestForgotPassword
+    private requestForgotPassword: RequestForgotPassword,
+    private resendOTP: ResendOTP
   ) {}
 
   @Get('/github')
@@ -116,6 +127,11 @@ export class AuthController {
     response.send(registeredUser);
   }
 
+  @Post('/verify')
+  async verifyRoute(@Body() body: VerifyDto, @UserSession() user: IJwtPayload) {
+    return await this.verify.execute(user._id, { code: body.otp });
+  }
+
   @Post('/onboard')
   async onboardUserRoute(
     @Body() body: OnboardUserDto,
@@ -180,5 +196,10 @@ export class AuthController {
     });
 
     response.send(resetPassword);
+  }
+
+  @Get('verify/resend')
+  async resendOTPRoute(@UserSession() user: IJwtPayload) {
+    return await this.resendOTP.execute(user._id);
   }
 }

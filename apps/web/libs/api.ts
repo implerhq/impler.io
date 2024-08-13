@@ -79,9 +79,22 @@ const routes: Record<string, Route> = {
     url: () => '/v1/auth/register',
     method: 'POST',
   },
+
+  [API_KEYS.VERIFY_EMAIL]: {
+    url: () => '/v1/auth/verify',
+    method: 'POST',
+  },
   [API_KEYS.REQUEST_FORGOT_PASSWORD]: {
     url: () => '/v1/auth/forgot-password/request',
     method: 'POST',
+  },
+  [API_KEYS.RESET_PASSWORD]: {
+    url: () => `/v1/auth/forgot-password/reset`,
+    method: 'POST',
+  },
+  [API_KEYS.RESEND_OTP]: {
+    url: () => `/v1/auth/verify/resend`,
+    method: 'GET',
   },
   [API_KEYS.RESET_PASSWORD]: {
     url: () => `/v1/auth/forgot-password/reset`,

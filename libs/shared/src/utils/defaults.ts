@@ -68,3 +68,19 @@ export const DEFAULT_KEYS_OBJ = {
   'Boolean false': '<<false>>',
   'UUID v4': '<<uuid>>',
 };
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export enum SCREENS {
+  VERIFY = 'verify',
+  ONBOARD = 'onboard',
+  HOME = 'home',
+}
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export enum EMAIL_SUBJECT {
+  ERROR_SENDING_BUBBLE_DATA = '🛑 Encountered error while sending data to Bubble in',
+  ERROR_EXECUTING_VALIDATION_CODE = '🛑 Encountered error while executing validation code in',
+  ERROR_SENDING_WEBHOOK_DATA = '🛑 Encountered error while sending webhook data in',
+  VERIFICATION_CODE = 'Your Verification Code for Impler',
+  RESET_PASSWORD = 'Reset Password | Impler',
+}

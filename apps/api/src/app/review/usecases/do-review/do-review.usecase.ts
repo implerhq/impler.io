@@ -3,6 +3,7 @@ import { Writable } from 'stream';
 import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 
 import { APIMessages } from '@shared/constants';
+import { EMAIL_SUBJECT } from '@impler/shared';
 import { BaseReview } from './base-review.usecase';
 import { BATCH_LIMIT } from '@shared/services/sandbox';
 import { StorageService, PaymentAPIService, EmailService } from '@impler/services';
@@ -120,7 +121,7 @@ export class DoReview extends BaseReview {
             },
           });
           errorEmailContents.push({
-            subject: `🛑 Encountered error while executing validation code in ${
+            subject: `${EMAIL_SUBJECT.ERROR_EXECUTING_VALIDATION_CODE} ${
               (uploadInfo._templateId as unknown as TemplateEntity).name
             }`,
             content: emailContent,
