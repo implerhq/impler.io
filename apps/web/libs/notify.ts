@@ -1,5 +1,6 @@
 import { NOTIFICATION_KEYS } from '@config';
 import { notifications } from '@mantine/notifications';
+import { ReactNode } from 'react';
 
 const Messages: Record<string, NotifyProps> = {
   [NOTIFICATION_KEYS.MEMBERSHIP_PURCHASED]: {
@@ -69,7 +70,7 @@ const Messages: Record<string, NotifyProps> = {
 
 interface NotifyProps {
   title?: string;
-  message: string;
+  message: string | ReactNode;
   withCloseButton?: boolean;
   autoClose?: number;
   color?: string;
