@@ -8,13 +8,15 @@ import { MappingItem } from '@ui/MappingItem';
 import { MappingHeading } from './MappingHeading';
 import { AutoImportFooter } from 'components/Common/Footer/AutoImportFooter';
 import { useAutoImportPhase2 } from '../hooks/AutoImportPhase2/useAutoImportPhase2';
+import { WIDGET_TEXTS } from '@impler/shared';
 
 interface IAutoImportPhase2Props {
   onNextClick: () => void;
+  texts: typeof WIDGET_TEXTS;
 }
 
 const defaulWrappertHeight = 200;
-export function AutoImportPhase2({ onNextClick }: IAutoImportPhase2Props) {
+export function AutoImportPhase2({ onNextClick, texts }: IAutoImportPhase2Props) {
   const { classes } = useStyles();
   const [wrapperHeight, setWrapperHeight] = useState(defaulWrappertHeight);
   const { control, mappings, onSubmit, onFieldSelect, headings } = useAutoImportPhase2({
@@ -35,7 +37,7 @@ export function AutoImportPhase2({ onNextClick }: IAutoImportPhase2Props) {
   return (
     <>
       <div style={{ flexGrow: 1 }} ref={wrapperRef}>
-        <MappingHeading ref={titlesRef} />
+        <MappingHeading texts={texts} ref={titlesRef} />
         <div
           className={classes.mappingWrapper}
           style={{
@@ -74,6 +76,7 @@ export function AutoImportPhase2({ onNextClick }: IAutoImportPhase2Props) {
         primaryButtonLoading={false}
         onPrevClick={() => {}}
         active={PhasesEnum.MAPCOLUMNS}
+        texts={texts}
       />
     </>
   );
