@@ -10,9 +10,17 @@ import { useApp } from '@hooks/useApp';
 
 export default function OtpVerifyPage() {
   const { profile } = useApp();
-  const { control, handleVerify, handleResendCode, error, isVerificationLoading, isButtonDisabled, countdown } =
-    useVerify();
-
+  const {
+    control,
+    handleVerify,
+    resendOTP,
+    error,
+    formError,
+    setFormError,
+    isVerificationLoading,
+    isButtonDisabled,
+    countdown,
+  } = useVerify();
   const commonStyles = {
     color: isButtonDisabled ? colors.white : colors.blue,
     cursor: isButtonDisabled ? 'not-allowed' : 'pointer',
@@ -25,38 +33,54 @@ export default function OtpVerifyPage() {
         Verification Contact Information
       </Text>
       <Text size="md" color="dimmed" align="left" mt="lg">
-        We just need to confirm a couple of details, it&lsquo;s only take a minute.
+        {`To continue, please enter the 6-digit verification code sent to your email `}
+        <Text component="span" color={colors.blue}>
+          {profile?.email}
+        </Text>
       </Text>
 
       <Divider my="lg" />
-      <Text size="xs" align="center" mb="xs" color="dimmed">
-        Enter the 6 digit verification code we just sent to {profile?.email}.
-      </Text>
 
       <form onSubmit={handleVerify}>
         <FocusTrap>
           <Box
             sx={{
               display: 'flex',
-              justifyContent: 'center',
+              flexDirection: 'column',
+              alignItems: 'center',
             }}
           >
             <Controller
               name="otp"
               control={control}
-              rules={{ required: 'OTP is required' }}
-              render={({ field: { onChange, value } }) => (
-                <PinInput
-                  autoFocus
-                  required
-                  length={6}
-                  value={value}
-                  onChange={onChange}
-                  onComplete={(otp) => onChange(otp)}
-                />
+              rules={{ required: 'Code is required' }}
+              render={({ field: { onChange, value }, fieldState: { error: fieldError } }) => (
+                <>
+                  <PinInput
+                    autoFocus
+                    required
+                    length={6}
+                    value={value}
+                    onChange={(val) => {
+                      onChange(val);
+                      if (formError) setFormError('');
+                    }}
+                    onComplete={(otp) => onChange(otp)}
+                  />
+                  {fieldError && (
+                    <Text color="red" size="sm" mt="sm" align="center">
+                      {fieldError.message}
+                    </Text>
+                  )}
+                </>
               )}
             />
           </Box>
+          {formError && (
+            <Text color="red" size="sm" mt="sm" align="center">
+              {formError}
+            </Text>
+          )}
           {error && (
             <Text color="red" size="sm" mt="sm" align="center">
               {error.message}
@@ -72,7 +96,7 @@ export default function OtpVerifyPage() {
       </form>
 
       <Flex justify="space-between" align="center" mt="sm">
-        <UnstyledButton style={commonStyles} onClick={handleResendCode} disabled={isButtonDisabled}>
+        <UnstyledButton style={commonStyles} onClick={() => resendOTP()} disabled={isButtonDisabled}>
           <Flex align="center">
             <RedoIcon size="md" />
             <Text ml="xs">Resend code</Text>
