@@ -56,7 +56,6 @@ export function useVerify() {
   };
 
   useEffect(() => {
-    // Start the countdown immediately when the component mounts
     const timer = setInterval(() => {
       setCountdown((prevCountdown) => {
         if (prevCountdown === 0) {
