@@ -1,8 +1,8 @@
 import { Group, Text } from '@mantine/core';
-import { TEXTS } from '@config';
 
 import useStyles from './Styles';
 import { variables } from '@config';
+import { WIDGET_TEXTS } from '@impler/shared';
 import { PhasesEnum } from '@types';
 import { Button } from '@ui/Button';
 import { useAppState } from '@store/app.context';
@@ -15,36 +15,43 @@ interface IFooterProps {
   secondaryButtonLoading?: boolean;
   onPrevClick: () => void;
   onNextClick: () => void;
+  texts: typeof WIDGET_TEXTS;
 }
 
-export function AutoImportFooter({ active, onNextClick, primaryButtonLoading, primaryButtonDisabled }: IFooterProps) {
+export function AutoImportFooter({
+  active,
+  onNextClick,
+  primaryButtonLoading,
+  primaryButtonDisabled,
+  texts,
+}: IFooterProps) {
   const { importConfig } = useAppState();
   const { classes } = useStyles();
 
   const FooterActions = {
     [PhasesEnum.CONFIGURE]: (
       <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
-        {TEXTS.AUTOIMPORTPHASES.BUTTONTEXT.MAPCOLUMN}
+        {texts.AUTOIMPORTPHASES.BUTTONTEXT.MAPCOLUMN}
       </Button>
     ),
     [PhasesEnum.MAPCOLUMNS]: (
       <>
         <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
-          {TEXTS.AUTOIMPORTPHASES.BUTTONTEXT.SCHEDULE}
+          {texts.AUTOIMPORTPHASES.BUTTONTEXT.SCHEDULE}
         </Button>
       </>
     ),
     [PhasesEnum.SCHEDULE]: (
       <>
         <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
-          {TEXTS.AUTOIMPORTPHASES.BUTTONTEXT.CONFIRM}
+          {texts.AUTOIMPORTPHASES.BUTTONTEXT.CONFIRM}
         </Button>
       </>
     ),
     [PhasesEnum.CONFIRM]: (
       <>
         <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
-          {TEXTS.AUTOIMPORTPHASES.BUTTONTEXT.CLOSE}
+          {texts.AUTOIMPORTPHASES.BUTTONTEXT.CLOSE}
         </Button>
       </>
     ),

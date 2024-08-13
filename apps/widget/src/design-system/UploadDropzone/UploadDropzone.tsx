@@ -1,7 +1,7 @@
 import { Group, Text } from '@mantine/core';
 import { Dropzone as MantineDropzone, FileWithPath, MIME_TYPES } from '@mantine/dropzone';
+import { WIDGET_TEXTS } from '@impler/shared';
 import useStyles from './UploadDropzone.styles';
-import { TEXTS } from '../../config/texts.config';
 import { FileIcon, CheckIcon } from '../../icons';
 import { File as FileCMP } from '../File';
 
@@ -15,6 +15,7 @@ interface IDropzoneProps {
   title?: string;
   error?: string;
   className?: string;
+  texts: typeof WIDGET_TEXTS;
 }
 
 export function UploadDropzone(props: IDropzoneProps) {
@@ -28,6 +29,7 @@ export function UploadDropzone(props: IDropzoneProps) {
     title,
     className,
     error,
+    texts,
   } = props;
   const { classes } = useStyles({ hasError: !!error });
   const wrapperClasses = [classes.wrapper];
@@ -44,7 +46,7 @@ export function UploadDropzone(props: IDropzoneProps) {
               <CheckIcon className={classes.checkIcon} />
             </Group>
             <Text size="lg" mb="sm" align="center">
-              {TEXTS.FILE_DROPZONE.FILE_SELECTION}
+              {texts.FILE_DROPZONE.FILE_SELECTION}
             </Text>
             {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
             <FileCMP name={file!.name} size={file!.size} onClear={onClear} />
@@ -60,9 +62,9 @@ export function UploadDropzone(props: IDropzoneProps) {
         <Group position="center">
           <div>
             <Text align="center" weight="bold">
-              {TEXTS.FILE_DROPZONE.TITLE}{' '}
+              {texts.FILE_DROPZONE.TITLE}{' '}
               <Text component="span" className={classes.browseText}>
-                {TEXTS.FILE_DROPZONE.BROWSE}
+                {texts.FILE_DROPZONE.BROWSE}
               </Text>
             </Text>
             <MantineDropzone.Idle>
@@ -71,7 +73,7 @@ export function UploadDropzone(props: IDropzoneProps) {
               </Group>
             </MantineDropzone.Idle>
             <Text color="dimmed" size="sm" mt="md" align="center">
-              {TEXTS.FILE_DROPZONE.SUBTITLE}
+              {texts.FILE_DROPZONE.SUBTITLE}
             </Text>
           </div>
         </Group>

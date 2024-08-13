@@ -7,9 +7,9 @@ import { useEffect, useState, PropsWithChildren } from 'react';
 import { Provider } from '../Provider';
 import { ApiService } from '@impler/client';
 import { MessageHandlerDataType } from '@types';
-import { generateShades, ParentWindow } from '@util';
-import { IShowPayload, WidgetEventTypesEnum } from '@impler/shared';
+import { generateShades, ParentWindow, deepMerge } from '@util';
 import { API_URL, colors, mantineConfig, variables } from '@config';
+import { IShowPayload, WidgetEventTypesEnum, WIDGET_TEXTS } from '@impler/shared';
 
 let api: ApiService;
 
@@ -18,6 +18,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
   const [secondaryPayload, setSecondaryPayload] = useState<IShowPayload>({
     uuid: '',
     host: '',
+    texts: WIDGET_TEXTS,
     projectId: '',
     accessToken: '',
     primaryColor: colors.primary,
@@ -46,7 +47,11 @@ export function Container({ children }: PropsWithChildren<{}>) {
         api.setAuthorizationToken(data.value.accessToken);
       }
       setShowWidget(true);
-      setSecondaryPayload({ ...data.value, primaryColor: data.value.primaryColor || colors.primary });
+      setSecondaryPayload({
+        ...data.value,
+        primaryColor: data.value.primaryColor || colors.primary,
+        texts: deepMerge(WIDGET_TEXTS, data.value.texts),
+      });
     } else if (data && data.type === WidgetEventTypesEnum.CLOSE_WIDGET) {
       setShowWidget(false);
     }
@@ -131,6 +136,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
           output={secondaryPayload?.output}
           schema={secondaryPayload?.schema}
           title={secondaryPayload?.title}
+          texts={secondaryPayload.texts as typeof WIDGET_TEXTS}
           // api
           api={api}
           // impler-context

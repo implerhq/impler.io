@@ -11,6 +11,7 @@ export function useImpler({
   accessToken,
   authHeaderValue,
   title,
+  texts,
   extra,
   onUploadComplete,
   onWidgetClose,
@@ -83,6 +84,7 @@ export function useImpler({
         host: '',
         projectId,
         accessToken,
+        texts,
       };
       if (Array.isArray(schema) && schema.length > 0) {
         payload.schema = JSON.stringify(schema);
@@ -96,6 +98,9 @@ export function useImpler({
         const preferColorScheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         payload.colorScheme = preferColorScheme;
       }
+
+      if (texts) payload.texts = texts;
+
       if (primaryColor) payload.primaryColor = primaryColor;
       if (extra) {
         if (typeof extra === 'object') payload.extra = JSON.stringify(extra);

@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { PropsWithChildren, useRef } from 'react';
 import { Flex, Group, LoadingOverlay, Select, Stack, Title, useMantineColorScheme } from '@mantine/core';
 
+import { TEXTS } from '@config';
 import useStyles from './AppLayout.styles';
 import { HomeIcon } from '@assets/icons/Home.icon';
 import { LogoutIcon } from '@assets/icons/Logout.icon';
@@ -20,7 +21,6 @@ import { NavItem } from '@ui/nav-item';
 import { UserMenu } from '@ui/user-menu';
 import { track } from '@libs/amplitude';
 import { ColorSchemeToggle } from '@ui/toggle-color-scheme';
-import { TEXTS } from '@config';
 
 const Support = dynamic(() => import('components/common/Support').then((mod) => mod.Support), {
   ssr: false,

@@ -3,6 +3,7 @@ import { Footer } from 'components/Common/Footer';
 import useStyles from './Styles';
 import { useEffect, useRef, useState } from 'react';
 import { usePhase2 } from '@hooks/Phase2/usePhase2';
+import { WIDGET_TEXTS } from '@impler/shared';
 import { PhasesEnum } from '@types';
 import { Controller } from 'react-hook-form';
 import { MappingHeading } from './MappingHeading';
@@ -11,12 +12,13 @@ import { LoadingOverlay } from '@ui/LoadingOverlay';
 interface IPhase2Props {
   onPrevClick: () => void;
   onNextClick: () => void;
+  texts: typeof WIDGET_TEXTS;
 }
 
 const defaulWrappertHeight = 200;
 export function Phase2(props: IPhase2Props) {
   const { classes } = useStyles();
-  const { onPrevClick, onNextClick } = props;
+  const { onPrevClick, onNextClick, texts } = props;
   const [wrapperHeight, setWrapperHeight] = useState(defaulWrappertHeight);
   const { headings, mappings, control, onSubmit, onFieldSelect, isInitialDataLoaded, isMappingFinalizing } = usePhase2({
     goNext: onNextClick,
@@ -36,7 +38,7 @@ export function Phase2(props: IPhase2Props) {
       <LoadingOverlay visible={!isInitialDataLoaded || isMappingFinalizing} />
       <div style={{ flexGrow: 1 }} ref={wrapperRef}>
         {/* Heading */}
-        <MappingHeading ref={titlesRef} />
+        <MappingHeading texts={texts} ref={titlesRef} />
         {/* Mapping Items */}
         <div
           className={classes.mappingWrapper}

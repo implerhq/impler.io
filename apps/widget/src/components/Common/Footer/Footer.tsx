@@ -1,6 +1,6 @@
 import { Group, Text } from '@mantine/core';
 import { Button } from '@ui/Button';
-import { TEXTS, variables } from '@config';
+import { variables } from '@config';
 import { PhasesEnum } from '@types';
 import useStyles from './Styles';
 import { useAppState } from '@store/app.context';
@@ -24,20 +24,20 @@ export function Footer({
   primaryButtonDisabled,
   secondaryButtonDisabled,
 }: IFooterProps) {
-  const { importConfig } = useAppState();
+  const { importConfig, texts } = useAppState();
   const { classes } = useStyles();
 
   const FooterActions = {
     [PhasesEnum.IMAGE_UPLOAD]: (
       <>
         <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
-          {TEXTS['PHASE0-1'].GENERATE_TEMPLATE}
+          {texts['PHASE0-1'].GENERATE_TEMPLATE}
         </Button>
       </>
     ),
     [PhasesEnum.UPLOAD]: (
       <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
-        {TEXTS.PHASE1.SEE_MAPPING}
+        {texts.PHASE1.SEE_MAPPING}
       </Button>
     ),
     [PhasesEnum.MAPPING]: (
@@ -48,10 +48,10 @@ export function Footer({
           onClick={onPrevClick}
           variant="outline"
         >
-          {TEXTS.PHASE2.UPLOAD_AGAIN}
+          {texts.PHASE2.UPLOAD_AGAIN}
         </Button>
         <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
-          {TEXTS.PHASE2.SEE_REVIEW}
+          {texts.PHASE2.SEE_REVIEW}
         </Button>
       </>
     ),
@@ -63,10 +63,10 @@ export function Footer({
           onClick={onPrevClick}
           variant="outline"
         >
-          {TEXTS.PHASE2.UPLOAD_AGAIN}
+          {texts.PHASE2.UPLOAD_AGAIN}
         </Button>
         <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
-          {TEXTS.PHASE3.RE_REVIEW_DATA}
+          {texts.PHASE3.RE_REVIEW_DATA}
         </Button>
       </>
     ),
@@ -78,10 +78,10 @@ export function Footer({
           onClick={onPrevClick}
           variant="outline"
         >
-          {TEXTS.PHASE4.CLOSE}
+          {texts.PHASE4.CLOSE}
         </Button>
         <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
-          {TEXTS.PHASE2.UPLOAD_AGAIN}
+          {texts.PHASE2.UPLOAD_AGAIN}
         </Button>
       </>
     ),

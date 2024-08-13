@@ -6,6 +6,7 @@ import { ActionIcon, Flex, Group, LoadingOverlay, Title, useMantineTheme, Select
 
 import { track } from '@libs/amplitude';
 import { useImpler } from '@impler/react';
+import { TemplateModeEnum } from '@impler/shared';
 import { IMPORT_MODES, ROUTES, colors } from '@config';
 import { useImportDetails } from '@hooks/useImportDetails';
 
@@ -24,7 +25,6 @@ import { FourIcon } from '@assets/icons/Four.icon';
 import { ThreeIcon } from '@assets/icons/Three.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
 import { LeftArrowIcon } from '@assets/icons/LeftArrow.icon';
-import { TemplateModeEnum } from '@impler/shared';
 
 const Editor = dynamic(() => import('@components/imports/editor').then((mod) => mod.OutputEditor), {
   ssr: false,

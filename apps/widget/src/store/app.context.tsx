@@ -25,6 +25,7 @@ const AppContextProvider = ({
   children,
   primaryColor,
   title,
+  texts,
   data,
   schema,
   output,
@@ -48,6 +49,7 @@ const AppContextProvider = ({
     <AppContext.Provider
       value={{
         title,
+        texts,
         host,
         reset,
         data,
