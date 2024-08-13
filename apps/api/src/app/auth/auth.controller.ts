@@ -198,7 +198,7 @@ export class AuthController {
     response.send(resetPassword);
   }
 
-  @Get('verify/resend')
+  @Post('verify/resend')
   async resendOTPRoute(@UserSession() user: IJwtPayload) {
     return await this.resendOTP.execute(user._id);
   }
