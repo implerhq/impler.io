@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Group, Text, Stack, Flex, Container } from '@mantine/core';
 const parseCronExpression = require('util/helpers/cronstrue');
-import { colors, cronExampleBadges, cronExamples, ScheduleFormValues, defaultCronValues, TEXTS } from '@config';
+import { colors, cronExampleBadges, cronExamples, ScheduleFormValues, defaultCronValues } from '@config';
+import { WIDGET_TEXTS } from '@impler/shared';
 import { PhasesEnum } from '@types';
 import { AutoImportFooter } from 'components/Common/Footer';
 import { CronScheduleInputTextBox } from './CronScheduleInputTextBox';
@@ -12,9 +13,10 @@ import { useAutoImportPhase3 } from '../hooks/AutoImportPhase3/useAutoImportPhas
 
 interface IAutoImportPhase3Props {
   onNextClick: () => void;
+  texts: typeof WIDGET_TEXTS;
 }
 
-export function AutoImportPhase3({ onNextClick }: IAutoImportPhase3Props) {
+export function AutoImportPhase3({ onNextClick, texts }: IAutoImportPhase3Props) {
   const [tableOpened, setTableOpened] = useState(false);
   const { control, watch, setValue } = useForm<ScheduleFormValues>({
     defaultValues: defaultCronValues,
@@ -47,13 +49,13 @@ export function AutoImportPhase3({ onNextClick }: IAutoImportPhase3Props) {
       }
       const description: string = parseCronExpression.toString(cronExpression);
       if (description.includes('undefined')) {
-        return { description: TEXTS.INVALID_CRON.MESSAGE, isError: true };
+        return { description: texts.INVALID_CRON.MESSAGE, isError: true };
       }
 
       return { description, isError: false };
     } catch (error) {
       return {
-        description: TEXTS.INVALID_CRON.MESSAGE,
+        description: texts.INVALID_CRON.MESSAGE,
         isError: true,
       };
     }
@@ -139,7 +141,12 @@ export function AutoImportPhase3({ onNextClick }: IAutoImportPhase3Props) {
           />
         </Stack>
       </Container>
-      <AutoImportFooter active={PhasesEnum.SCHEDULE} onPrevClick={() => {}} onNextClick={handleNextClick} />
+      <AutoImportFooter
+        texts={texts}
+        active={PhasesEnum.SCHEDULE}
+        onPrevClick={() => {}}
+        onNextClick={handleNextClick}
+      />
     </>
   );
 }
