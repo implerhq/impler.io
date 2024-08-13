@@ -4,7 +4,9 @@ import { Controller } from 'react-hook-form';
 import { PhasesEnum } from '@types';
 import { Select } from '@ui/Select';
 import { Button } from '@ui/Button';
-import { TEXTS, variables } from '@config';
+
+import { WIDGET_TEXTS } from '@impler/shared';
+import { variables } from '@config';
 import { DownloadIcon, BackIcon } from '@icons';
 import { UploadDropzone } from '@ui/UploadDropzone';
 import { usePhase1 } from '@hooks/Phase1/usePhase1';
@@ -17,9 +19,10 @@ interface IPhase1Props {
   onNextClick: () => void;
   hasImageUpload: boolean;
   generateImageTemplate: () => void;
+  texts: typeof WIDGET_TEXTS;
 }
 
-export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTemplate }: IPhase1Props) {
+export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTemplate, texts }: IPhase1Props) {
   const { classes } = useStyles();
   const {
     onSubmit,
@@ -50,7 +53,7 @@ export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTempl
             name={`templateId`}
             control={control}
             rules={{
-              required: TEXTS.VALIDATION.TEMPLATE_REQUIRED,
+              required: texts.VALIDATION.TEMPLATE_REQUIRED,
             }}
             render={({ field, fieldState }) => (
               <Select
@@ -59,8 +62,8 @@ export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTempl
                 value={field.value}
                 onChange={onTemplateChange}
                 error={fieldState.error?.message}
-                title={TEXTS.PHASE1.SELECT_TITLE}
-                placeholder={TEXTS.PHASE1.SELECT_PLACEHOLDER}
+                title={texts.PHASE1.SELECT_TITLE}
+                placeholder={texts.PHASE1.SELECT_PLACEHOLDER}
                 data={templates?.map((template) => ({ value: template._id, label: template.name })) || []}
               />
             )}
@@ -72,7 +75,7 @@ export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTempl
             loading={isDownloadInProgress}
             leftIcon={hasImageUpload ? <BackIcon /> : <DownloadIcon />}
           >
-            {hasImageUpload ? TEXTS.PHASE1.GENERATE_TEMPLATE : TEXTS.PHASE1.DOWNLOAD_SAMPLE}
+            {hasImageUpload ? texts.PHASE1.GENERATE_TEMPLATE : texts?.PHASE1?.DOWNLOAD_SAMPLE_TITLE}
           </Button>
         </div>
       </Group>
@@ -81,10 +84,11 @@ export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTempl
         control={control}
         name="file"
         rules={{
-          required: TEXTS.VALIDATION.FILE_REQUIRED,
+          required: texts.VALIDATION.FILE_REQUIRED,
         }}
         render={({ field, fieldState }) => (
           <UploadDropzone
+            texts={texts}
             loading={isUploadLoading}
             onReject={() => {
               setError('file', {
@@ -98,7 +102,7 @@ export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTempl
               setError('file', {});
             }}
             onClear={() => field.onChange(undefined)}
-            title={TEXTS.PHASE1.SELECT_FILE}
+            title={texts.PHASE1.SELECT_FILE}
             file={field.value}
             error={fieldState.error?.message}
           />
@@ -106,6 +110,7 @@ export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTempl
       />
 
       <SheetSelectModal
+        texts={texts}
         control={control}
         onSubmit={onSelectExcelSheet}
         excelSheetNames={excelSheetNames}
