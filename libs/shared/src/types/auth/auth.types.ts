@@ -15,6 +15,7 @@ export interface IJwtPayload {
   companySize?: string;
   role?: string;
   source?: string;
+  isEmailVerified: boolean;
 }
 
 export interface ILoginResponse {

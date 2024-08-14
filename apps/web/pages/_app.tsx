@@ -48,7 +48,7 @@ const client = new QueryClient({
             name: 'LOGOUT',
             properties: {},
           });
-          window.location.href = ROUTES.SIGNIN;
+          if (![ROUTES.SIGNIN, ROUTES.SIGNUP].includes(window.location.pathname)) window.location.href = ROUTES.SIGNIN;
         }
       },
     },
