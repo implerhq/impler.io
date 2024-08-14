@@ -36,7 +36,7 @@ export const APIMessages = {
   ERROR_ACCESSING_FEATURE: {
     IMAGE_UPLOAD: 'You do not have access to Image Upload Functionality.',
   },
-  INVALID_VERIFICATION_CODE: 'Verification Code is Invalid!',
+  INVALID_VERIFICATION_CODE: 'Code you entered is invalid! Please try again or request new verification code!',
 };
 
 export const CONSTANTS = {
