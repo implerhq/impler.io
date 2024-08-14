@@ -1,30 +1,26 @@
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useForm } from 'react-hook-form';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useState, useEffect, useRef } from 'react';
+import { useMutation } from '@tanstack/react-query';
 
-import { API_KEYS } from '@config';
 import { commonApi } from '@libs/api';
+import { notify } from '@libs/notify';
+import { useApp } from '@hooks/useApp';
+import { API_KEYS, NOTIFICATION_KEYS } from '@config';
 import { handleRouteBasedOnScreenResponse } from '@shared/helpers';
 import { IErrorObject, IScreenResponse, SCREENS } from '@impler/shared';
-import { useApp } from '@hooks/useApp';
 
 interface IVerifyFormData {
   otp: string;
 }
 
+const RESEND_SECONDS = 10;
+
 export function useVerify() {
   const { push } = useRouter();
   const { profile } = useApp();
-  const [countdown, setCountdown] = useState(0);
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-  const [error, setError] = useState<IErrorObject | undefined>(undefined);
-
-  const {
-    control,
-    handleSubmit,
-    formState: {},
-  } = useForm<IVerifyFormData>();
+  const timerRef = useRef<any>();
+  const [countdown, setCountdown] = useState(RESEND_SECONDS);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
   const { mutate: verify, isLoading: isVerificationLoading } = useMutation<
     IScreenResponse,
@@ -32,51 +28,59 @@ export function useVerify() {
     IVerifyFormData
   >((body) => commonApi<IScreenResponse>(API_KEYS.VERIFY_EMAIL as any, { body }), {
     onSuccess: (data) => {
-      if (!data) return;
-
       handleRouteBasedOnScreenResponse(data.screen as SCREENS, push);
     },
     onError: (errorObject: IErrorObject) => {
-      if (errorObject.error === 'OTPVerificationFalid') {
-        setError(errorObject);
-      }
+      notify(NOTIFICATION_KEYS.OTP_CODE_RESENT_SUCCESSFULLY, {
+        color: 'red',
+        title: 'Verfication code is invalid!',
+        message: errorObject.message,
+      });
     },
   });
 
-  const { refetch: resendOTP } = useQuery([API_KEYS.RESEND_OTP], () => commonApi(API_KEYS.RESEND_OTP as any, {}), {
-    enabled: false,
+  const { mutate: resendOTP } = useMutation([API_KEYS.RESEND_OTP], () => commonApi(API_KEYS.RESEND_OTP as any, {}), {
     onSuccess: () => {
-      setCountdown(120);
+      notify(NOTIFICATION_KEYS.OTP_CODE_RESENT_SUCCESSFULLY, {
+        color: 'green',
+        title: 'Verification code sent!',
+        message: (
+          <>
+            Verification code sent successully to <b>{profile?.email}</b>
+          </>
+        ),
+      });
+
+      setCountdown(RESEND_SECONDS);
       setIsButtonDisabled(true);
+      timerRef.current = setInterval(onCountDownProgress, 1000);
     },
   });
 
-  const handleVerify = handleSubmit((otpFormData: IVerifyFormData) => {
-    verify(otpFormData);
-  });
+  const onCountDownProgress = () => {
+    setCountdown((prevCountdown) => {
+      if (prevCountdown === 0) {
+        setIsButtonDisabled(false); // Enable the button when countdown reaches zero
+        clearInterval(timerRef.current);
+      }
+
+      return Math.max(0, prevCountdown - 1);
+    });
+  };
 
   useEffect(() => {
-    if (countdown === 0) {
-      setIsButtonDisabled(false);
+    timerRef.current = setInterval(onCountDownProgress, 1000);
 
-      return;
-    }
-
-    const timer = setInterval(() => {
-      setCountdown((prevCountdown) => prevCountdown - 1);
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [countdown]);
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, []);
 
   return {
-    error,
     verify,
     profile,
-    control,
     resendOTP,
     countdown,
-    handleVerify,
     isButtonDisabled,
     isVerificationLoading,
   };
