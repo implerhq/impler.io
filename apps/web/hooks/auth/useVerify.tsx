@@ -3,10 +3,11 @@ import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { commonApi } from '@libs/api';
 import { API_KEYS } from '@config';
-import { IErrorObject, IScreenResponse, SCREENS } from '@impler/shared';
+import { commonApi } from '@libs/api';
 import { handleRouteBasedOnScreenResponse } from '@shared/helpers';
+import { IErrorObject, IScreenResponse, SCREENS } from '@impler/shared';
+import { useApp } from '@hooks/useApp';
 
 interface IVerifyFormData {
   otp: string;
@@ -14,9 +15,10 @@ interface IVerifyFormData {
 
 export function useVerify() {
   const { push } = useRouter();
-  const [error, setError] = useState<IErrorObject | undefined>(undefined);
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const { profile } = useApp();
   const [countdown, setCountdown] = useState(0);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [error, setError] = useState<IErrorObject | undefined>(undefined);
 
   const {
     control,
@@ -53,10 +55,6 @@ export function useVerify() {
     verify(otpFormData);
   });
 
-  const handleResendCode = () => {
-    resendOTP();
-  };
-
   useEffect(() => {
     if (countdown === 0) {
       setIsButtonDisabled(false);
@@ -72,12 +70,14 @@ export function useVerify() {
   }, [countdown]);
 
   return {
-    control,
-    handleVerify,
-    handleResendCode,
     error,
-    isVerificationLoading,
-    isButtonDisabled,
+    verify,
+    profile,
+    control,
+    resendOTP,
     countdown,
+    handleVerify,
+    isButtonDisabled,
+    isVerificationLoading,
   };
 }
