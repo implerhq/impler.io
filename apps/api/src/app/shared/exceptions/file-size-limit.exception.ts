@@ -16,11 +16,9 @@ export class FileSizeException extends BadRequestException {
     isExcel?: boolean;
   }) {
     super(
-      `${isExcel ? `Excel sheet` : 'CSV file'} has ${numberFormatter(rows)} rows and ${numberFormatter(
-        columns
-      )} columns. Please split it into ${files} files of ${numberFormatter(
-        recordsToSplit
-      )} rows or less each and upload separately!`
+      `File too large: ${numberFormatter(rows)} rows and ${numberFormatter(columns)} columns detected. ` +
+        `Please split into ${files} ${isExcel ? 'Excel' : 'CSV'} file${files > 1 ? 's' : ''} ` +
+        `of ${numberFormatter(recordsToSplit)} rows or less each and upload separately!`
     );
   }
 }
