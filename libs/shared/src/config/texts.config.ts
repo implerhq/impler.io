@@ -1,4 +1,8 @@
-export const TEXTS = {
+type DeepPartial<T> = {
+  [P in keyof T]?: Partial<T[P]>;
+};
+
+export const WIDGET_TEXTS = {
   TITLES: {
     UPLOAD: 'Upload',
     MAPPING: 'Map Columns',
@@ -53,12 +57,12 @@ export const TEXTS = {
     EXPORT_DATA: 'Export Data',
     RE_REVIEW_DATA: 'Re-Review Data',
     COMPLETE: 'Complete',
+    ALL_RECORDS_VALID_CONFIRMATION: ' All records are found valid!',
     ALL_VALID_CONFIRMATION: 'All {total} row(s) found valid! Would you like to complete the Import?',
   },
   PHASE4: {
     CLOSE: 'Close',
   },
-
   AUTOIMPORTPHASES: {
     BUTTONTEXT: {
       MAPCOLUMN: 'Map Column',
@@ -117,3 +121,5 @@ export const TEXTS = {
     },
   },
 };
+
+export type CustomTexts = DeepPartial<typeof WIDGET_TEXTS>;

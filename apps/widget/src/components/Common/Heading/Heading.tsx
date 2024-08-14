@@ -1,48 +1,48 @@
 import { Group, MediaQuery, Title, useMantineTheme } from '@mantine/core';
 import { PhasesEnum } from '@types';
 import { Stepper } from '@ui/Stepper';
-import { TEXTS, variables } from '@config';
-import { TemplateModeEnum } from '@impler/shared';
+import { variables } from '@config';
+import { TemplateModeEnum, WIDGET_TEXTS } from '@impler/shared';
 
 interface IHeadingProps {
   title?: string;
+  texts: typeof WIDGET_TEXTS;
   active: PhasesEnum;
   mode?: TemplateModeEnum;
   hasImageUpload?: boolean;
 }
 
-const manualImportSteps = [
-  {
-    label: TEXTS.STEPS.UPLOAD,
-  },
-  {
-    label: TEXTS.STEPS.MAPPING,
-  },
-  {
-    label: TEXTS.STEPS.REVIEW,
-  },
-  {
-    label: TEXTS.STEPS.COMPLETE,
-  },
-];
-
-const autoImportSteps = [
-  {
-    label: TEXTS.AUTOIMPORTSTEPS.CONFIGURE,
-  },
-  {
-    label: TEXTS.AUTOIMPORTSTEPS.MAPCOLUMNS,
-  },
-  {
-    label: TEXTS.AUTOIMPORTSTEPS.SCHEDULE,
-  },
-  {
-    label: TEXTS.AUTOIMPORTSTEPS.CONFIRM,
-  },
-];
-
-export function Heading({ active, title, mode, hasImageUpload }: IHeadingProps) {
+export function Heading({ active, title, mode, hasImageUpload, texts }: IHeadingProps) {
   const theme = useMantineTheme();
+  const manualImportSteps = [
+    {
+      label: texts.STEPS?.UPLOAD,
+    },
+    {
+      label: texts.STEPS?.MAPPING,
+    },
+    {
+      label: texts.STEPS?.REVIEW,
+    },
+    {
+      label: texts.STEPS?.COMPLETE,
+    },
+  ];
+
+  const autoImportSteps = [
+    {
+      label: texts.AUTOIMPORTSTEPS?.CONFIGURE,
+    },
+    {
+      label: texts.AUTOIMPORTSTEPS?.MAPCOLUMNS,
+    },
+    {
+      label: texts.AUTOIMPORTSTEPS?.SCHEDULE,
+    },
+    {
+      label: texts.AUTOIMPORTSTEPS?.CONFIRM,
+    },
+  ];
 
   return (
     <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
@@ -57,7 +57,7 @@ export function Heading({ active, title, mode, hasImageUpload }: IHeadingProps) 
                 : hasImageUpload
                 ? [
                     {
-                      label: TEXTS.STEPS.IMAGE_TEMPLATE,
+                      label: texts.STEPS?.IMAGE_TEMPLATE,
                     },
                     ...manualImportSteps,
                   ]

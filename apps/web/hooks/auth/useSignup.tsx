@@ -6,8 +6,9 @@ import { useMutation } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
 import { track } from '@libs/amplitude';
-import { API_KEYS, ROUTES } from '@config';
-import { IErrorObject, ILoginResponse } from '@impler/shared';
+import { API_KEYS } from '@config';
+import { IErrorObject, ILoginResponse, SCREENS } from '@impler/shared';
+import { handleRouteBasedOnScreenResponse } from '@shared/helpers';
 
 interface ISignupFormData {
   fullName: string;
@@ -42,9 +43,7 @@ export function useSignup() {
           id: profileData._id,
         },
       });
-      if (data.showAddProject) {
-        push(ROUTES.SIGNIN_ONBOARDING);
-      } else push(ROUTES.HOME);
+      handleRouteBasedOnScreenResponse(data.screen as SCREENS, push);
     },
     onError(error) {
       if (error.error === 'EmailAlreadyExists') {

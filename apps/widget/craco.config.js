@@ -12,11 +12,30 @@ module.exports = {
       '@amplitude': path.resolve(__dirname, './src/util/amplitude/index.ts'),
     },
     configure: (config) => {
+      // Ensure ts-loader is used for .ts and .tsx files
+      config.module.rules.push({
+        test: /\.(ts|tsx)$/,
+        use: [
+          {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true,
+            },
+          },
+        ],
+        exclude: /node_modules/,
+      });
+
+      // Ensure that .ts and .tsx files are resolved
+      config.resolve.extensions.push('.ts', '.tsx');
+
+      // Optionally, handle source maps if necessary
       const fileLoaderRule = getFileLoaderRule(config.module.rules);
       if (!fileLoaderRule) {
         throw new Error('File loader not found');
       }
       fileLoaderRule.exclude.push(/\.cjs$/);
+
       return config;
     },
   },

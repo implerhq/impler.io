@@ -57,6 +57,9 @@ export const MODAL_TITLES = {
 };
 
 export const API_KEYS = {
+  RESEND_OTP: 'RESEND_OTP',
+  VERIFY_EMAIL: 'VERIFY_EMAIL',
+
   ONBOARD_USER: 'ONBOARD_USER',
 
   CHECKOUT: 'CHECKOUT',
@@ -154,7 +157,8 @@ export const ROUTES = {
   HOME: '/',
   SIGNUP: '/auth/signup',
   SIGNIN: '/auth/signin',
-  SIGNIN_ONBOARDING: '/auth/onboard',
+  SIGNUP_ONBOARDING: '/auth/onboard',
+  OTP_VERIFY: '/auth/verify',
   REQUEST_FORGOT_PASSWORD: '/auth/reset/request',
   IMPORTS: '/imports',
   SETTINGS: '/settings',

@@ -1,3 +1,5 @@
+import { CustomTexts } from '../../config/texts.config';
+
 export interface IShowPayload {
   host: string;
   extra?: string;
@@ -6,6 +8,7 @@ export interface IShowPayload {
   primaryColor?: string;
   colorScheme?: string;
   title?: string;
+  texts?: CustomTexts;
   schema?: string;
   data?: Record<string, string | any>[];
   output?: string;

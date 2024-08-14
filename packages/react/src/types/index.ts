@@ -1,4 +1,5 @@
-import { IUpload, EventTypesEnum } from '@impler/shared';
+import React from 'react';
+import { IUpload, EventTypesEnum, CustomTexts } from '@impler/shared';
 
 export interface ButtonProps {
   projectId: string;
@@ -70,6 +71,7 @@ export interface ShowWidgetProps {
 
 export interface UseImplerProps {
   title?: string;
+  texts?: CustomTexts;
   projectId?: string;
   templateId?: string;
   accessToken?: string;

@@ -4,7 +4,7 @@ import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/animations/shift-away.css';
 import { variables } from '@config';
-import { downloadFile } from '@impler/shared';
+import { CustomTexts, downloadFile, WIDGET_TEXTS } from '@impler/shared';
 
 // eslint-disable-next-line no-magic-numbers
 export function formatBytes(bytes, decimals = 2) {
@@ -96,3 +96,26 @@ export const addTippyToElement = (element: SVGSVGElement | HTMLElement, content:
     animation: 'shift-away',
   });
 };
+
+function isObject(value: any): boolean {
+  return value instanceof Object && value.constructor === Object;
+}
+
+// Utility function to deeply merge defaultTexts with user provided texts
+export function deepMerge(defaultTexts: typeof WIDGET_TEXTS, texts?: CustomTexts): typeof WIDGET_TEXTS {
+  if (!texts || !isObject(texts)) return defaultTexts;
+  else {
+    const mergedResult = { ...defaultTexts };
+    for (const sectionKey in texts) {
+      if (isObject(texts[sectionKey])) {
+        for (const textKey in texts[sectionKey]) {
+          if (mergedResult[sectionKey][textKey] && typeof texts[sectionKey][textKey] === 'string') {
+            mergedResult[sectionKey][textKey] = texts[sectionKey][textKey];
+          }
+        }
+      }
+    }
+
+    return mergedResult;
+  }
+}

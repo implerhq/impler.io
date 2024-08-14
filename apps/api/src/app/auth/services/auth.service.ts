@@ -28,6 +28,7 @@ export class AuthService {
     if (!user) {
       const userObj: Partial<UserEntity> = {
         email: profile.email,
+        isEmailVerified: true,
         firstName: profile.firstName,
         lastName: profile.lastName,
         signupMethod: LEAD_SIGNUP_USING.GITHUB,
