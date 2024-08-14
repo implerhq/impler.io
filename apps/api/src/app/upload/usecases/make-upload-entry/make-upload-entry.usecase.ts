@@ -25,6 +25,7 @@ import { AddUploadEntryCommand } from './add-upload-entry.command';
 import { MakeUploadEntryCommand } from './make-upload-entry.command';
 import { FileParseException } from '@shared/exceptions/file-parse-issue.exception';
 import { CSVFileService2, ExcelFileService } from '@shared/services/file';
+import { FileSizeException } from '@shared/exceptions/file-size-limit.exception';
 
 @Injectable()
 export class MakeUploadEntry {
@@ -50,6 +51,7 @@ export class MakeUploadEntry {
     imageSchema,
     selectedSheetName,
   }: MakeUploadEntryCommand) {
+    const csvFileService = new CSVFileService2();
     const fileOriginalName = file.originalname;
     let csvFile: string | Express.Multer.File = file;
     if (
@@ -59,11 +61,18 @@ export class MakeUploadEntry {
     ) {
       try {
         const fileService = new ExcelFileService();
+        const opts = await fileService.getExcelRowsColumnsCount(file, selectedSheetName);
+        this.analyzeLargeFile(opts, true);
         csvFile = await fileService.convertToCsv(file, selectedSheetName);
       } catch (error) {
+        if (error instanceof FileSizeException) {
+          throw error;
+        }
         throw new FileParseException();
       }
     } else if (file.mimetype === FileMimeTypesEnum.CSV) {
+      const opts = await csvFileService.getCSVMetaInfo(file);
+      this.analyzeLargeFile(opts, false);
       csvFile = file;
     } else {
       throw new Error('Invalid file type');
@@ -134,8 +143,7 @@ export class MakeUploadEntry {
       customRecordFormat = defaultCustomization?.recordFormat;
     }
 
-    const fileService = new CSVFileService2();
-    const fileHeadings = await fileService.getFileHeaders(csvFile);
+    const fileHeadings = await csvFileService.getFileHeaders(csvFile);
     const uploadId = importId || this.commonRepository.generateMongoId().toString();
     const fileEntity = await this.makeFileEntry(uploadId, csvFile, fileOriginalName);
 
@@ -166,7 +174,29 @@ export class MakeUploadEntry {
       originalFileType: file.mimetype,
     });
   }
+  roundToNiceNumber(num: number) {
+    const niceNumbers = [500, 1000, 5000, 10000, 50000, 100000, 500000, 1000000];
 
+    return niceNumbers.reduce((prev, curr) => (Math.abs(curr - num) < Math.abs(prev - num) ? curr : prev));
+  }
+  analyzeLargeFile(fileInfo: { rows: number; columns: number }, isExcel?: boolean, maxDataPoints = 5000000) {
+    const { columns, rows } = fileInfo;
+    const dataPoints = columns * rows;
+
+    if (dataPoints > maxDataPoints) {
+      let suggestedChunkSize = Math.floor(maxDataPoints / columns);
+      suggestedChunkSize = this.roundToNiceNumber(suggestedChunkSize);
+      const numberOfChunks = Math.ceil(rows / suggestedChunkSize);
+
+      throw new FileSizeException({
+        rows,
+        isExcel,
+        columns,
+        files: numberOfChunks,
+        recordsToSplit: suggestedChunkSize,
+      });
+    }
+  }
   private async makeFileEntry(
     uploadId: string,
     file: string | Express.Multer.File,

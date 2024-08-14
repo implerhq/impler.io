@@ -143,9 +143,78 @@ export class ExcelFileService {
       }
     });
   }
+  getExcelRowsColumnsCount(file: Express.Multer.File, sheetName?: string): Promise<{ rows: number; columns: number }> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const wb = XLSX.read(file.buffer);
+        const ws = sheetName && wb.SheetNames.includes(sheetName) ? wb.Sheets[sheetName] : wb.Sheets[wb.SheetNames[0]];
+        const range = ws['!ref'];
+        const regex = /([A-Z]+)(\d+):([A-Z]+)(\d+)/;
+        const match = range.match(regex);
+
+        if (!match) reject(new InvalidFileException());
+
+        const [, startCol, startRow, endCol, endRow] = match;
+
+        function columnToNumber(col: string) {
+          let num = 0;
+          for (let i = 0; i < col.length; i++) {
+            num = num * 26 + (col.charCodeAt(i) - 64);
+          }
+
+          return num;
+        }
+
+        const columns = columnToNumber(endCol) - columnToNumber(startCol) + 1;
+        const rows = parseInt(endRow) - parseInt(startRow) + 1;
+
+        resolve({
+          columns,
+          rows,
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
 }
 
 export class CSVFileService2 {
+  getCSVMetaInfo(file: string | Express.Multer.File, options?: ParseConfig) {
+    return new Promise<{ rows: number; columns: number }>((resolve, reject) => {
+      let fileContent = '';
+      if (typeof file === 'string') {
+        fileContent = file;
+      } else {
+        fileContent = file.buffer.toString(FileEncodingsEnum.CSV);
+      }
+      let rows = 0;
+      let columns = 0;
+
+      parse(fileContent, {
+        ...(options || {}),
+        dynamicTyping: false,
+        skipEmptyLines: true,
+        step: function (results) {
+          rows++;
+          if (Array.isArray(results.data)) {
+            columns = results.data.length;
+          }
+        },
+        complete: function () {
+          resolve({ rows, columns });
+        },
+        error: (error) => {
+          if (error.message.includes('Parse Error')) {
+            reject(new InvalidFileException());
+          } else {
+            reject(error);
+          }
+        },
+      });
+    });
+  }
+
   getFileHeaders(file: string | Express.Multer.File, options?: ParseConfig): Promise<string[]> {
     return new Promise((resolve, reject) => {
       let fileContent = '';

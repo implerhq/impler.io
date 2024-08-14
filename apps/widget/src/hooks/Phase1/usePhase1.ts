@@ -26,6 +26,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     setValue,
     setError,
     getValues,
+    resetField,
     handleSubmit,
     formState: { errors },
   } = useForm<IFormvalues>();
@@ -47,26 +48,27 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
         goNext();
       },
       onError(error: IErrorObject) {
-        notifier.showError({ title: error.error, message: error.message });
+        resetField('file');
+        setError('file', { type: 'file', message: error.message });
       },
     }
   );
 
-  const { mutate: getExcelSheetNames } = useMutation<string[], IErrorObject, { file: File }>(
-    ['getExcelSheetNames'],
-    (file) => api.getExcelSheetNames(file),
-    {
-      onSuccess(sheetNames) {
-        if (sheetNames.length <= 1) {
-          setValue('selectedSheetName', sheetNames[0]);
-          handleSubmit(uploadFile)();
-        } else setExcelSheetNames(sheetNames);
-      },
-      onError(error: IErrorObject) {
-        notifier.showError({ title: error.error, message: error.message });
-      },
-    }
-  );
+  const { mutate: getExcelSheetNames, isLoading: isExcelSheetNamesLoading } = useMutation<
+    string[],
+    IErrorObject,
+    { file: File }
+  >(['getExcelSheetNames'], (file) => api.getExcelSheetNames(file), {
+    onSuccess(sheetNames) {
+      if (sheetNames.length <= 1) {
+        setValue('selectedSheetName', sheetNames[0]);
+        handleSubmit(uploadFile)();
+      } else setExcelSheetNames(sheetNames);
+    },
+    onError(error: IErrorObject) {
+      notifier.showError({ title: error.error, message: error.message });
+    },
+  });
 
   const findTemplate = (): ITemplate | undefined => {
     let foundTemplate: ITemplate | undefined;
@@ -109,6 +111,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     setIsDownloadInProgress(false);
   };
   const uploadFile = async (submitData: IFormvalues) => {
+    setExcelSheetNames([]);
     const foundTemplate = findTemplate();
     if (foundTemplate) {
       submitData.templateId = foundTemplate._id;
@@ -156,6 +159,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     onTemplateChange,
     isDownloadInProgress,
     onSelectSheetModalReset,
+    isExcelSheetNamesLoading,
     showSelectTemplate: !templateId,
     onSelectExcelSheet: handleSubmit(uploadFile),
   };

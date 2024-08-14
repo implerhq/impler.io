@@ -4,6 +4,7 @@ import { WIDGET_TEXTS } from '@impler/shared';
 import useStyles from './UploadDropzone.styles';
 import { FileIcon, CheckIcon } from '../../icons';
 import { File as FileCMP } from '../File';
+import { colors } from '@config';
 
 interface IDropzoneProps {
   loading?: boolean;
@@ -84,13 +85,13 @@ export function UploadDropzone(props: IDropzoneProps) {
   return (
     <div className={wrapperClasses.join(' ')}>
       {title ? (
-        <Text weight="bold" size="sm" color="">
+        <Text weight="bold" size="sm">
           {title}
         </Text>
       ) : null}
       {isFileSelected ? <SelectedFileContent /> : <SelectFileContent />}
       {error ? (
-        <Text size="xs" mt={3} color="red">
+        <Text size="sm" mt={3} color={colors.red}>
           {error}
         </Text>
       ) : null}

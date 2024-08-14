@@ -41,7 +41,7 @@ export const WIDGET_TEXTS = {
     SELECT_EXCEL_SHEET: 'Select sheet to Import',
     SELECT_EXCEL_SHEET_PLACEHOLDER: 'Select Excel sheet',
     SELECT_PLACEHOLDER: 'Select Template',
-    DOWNLOAD_SAMPLE_TITLE: 'Download sample csv file',
+    DOWNLOAD_SAMPLE_TITLE: 'Download sample',
     DOWNLOAD_SAMPLE: 'Download sample',
     GENERATE_TEMPLATE: 'Generate Template',
     SEE_MAPPING: 'See Mapping',
