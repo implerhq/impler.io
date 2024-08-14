@@ -1,4 +1,4 @@
-import { port, str, url, ValidatorSpec } from 'envalid';
+import { port, str, url, ValidatorSpec, bool } from 'envalid';
 import * as envalid from 'envalid';
 import { ENVTypesEnum } from '@impler/shared';
 
@@ -13,7 +13,6 @@ export const validators: { [K in keyof any]: ValidatorSpec<any[K]> } = {
     default: false,
     desc: 'Flag to disable user registration',
   }),
-};
   S3_LOCAL_STACK: str(),
   S3_BUCKET_NAME: str(),
   S3_REGION: str(),
