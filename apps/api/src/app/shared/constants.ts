@@ -5,9 +5,6 @@ export const APIMessages = {
   FILE_IS_EMPTY: 'File is empty',
   FILE_CONTENT_INVALID: 'File content is invalid. Please check the file or upload new file.',
   FILE_HAS_ISSUE: 'Uploaded file has some issues. Please check the file or upload new file.',
-  FILE_SIZE_EXCEEDED:
-    `File contains {rows} rows and {columns} columns. ` +
-    `Please split it into {files} files of {records} rows each and upload separately!`,
   EMPTY_HEADING_PREFIX: 'Empty Heading',
   INVALID_TEMPLATE_ID_CODE_SUFFIX: 'is not valid TemplateId or CODE.',
   FILE_MAPPING_REMAINING: 'File mapping is not yet done, please finalize mapping before.',

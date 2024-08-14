@@ -180,6 +180,41 @@ export class ExcelFileService {
 }
 
 export class CSVFileService2 {
+  getCSVMetaInfo(file: string | Express.Multer.File, options?: ParseConfig) {
+    return new Promise<{ rows: number; columns: number }>((resolve, reject) => {
+      let fileContent = '';
+      if (typeof file === 'string') {
+        fileContent = file;
+      } else {
+        fileContent = file.buffer.toString(FileEncodingsEnum.CSV);
+      }
+      let rows = 0;
+      let columns = 0;
+
+      parse(fileContent, {
+        ...(options || {}),
+        dynamicTyping: false,
+        skipEmptyLines: true,
+        step: function (results) {
+          rows++;
+          if (Array.isArray(results.data)) {
+            columns = results.data.length;
+          }
+        },
+        complete: function () {
+          resolve({ rows, columns });
+        },
+        error: (error) => {
+          if (error.message.includes('Parse Error')) {
+            reject(new InvalidFileException());
+          } else {
+            reject(error);
+          }
+        },
+      });
+    });
+  }
+
   getFileHeaders(file: string | Express.Multer.File, options?: ParseConfig): Promise<string[]> {
     return new Promise((resolve, reject) => {
       let fileContent = '';

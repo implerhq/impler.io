@@ -1,6 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { APIMessages } from '../constants';
-import { numberFormatter, replaceVariablesInString } from '@impler/shared';
+import { numberFormatter } from '@impler/shared';
 
 export class FileSizeException extends BadRequestException {
   constructor({
@@ -8,19 +7,20 @@ export class FileSizeException extends BadRequestException {
     recordsToSplit,
     rows,
     files,
+    isExcel,
   }: {
     rows: number;
     columns: number;
     recordsToSplit: number;
     files: number;
+    isExcel?: boolean;
   }) {
     super(
-      replaceVariablesInString(APIMessages.FILE_SIZE_EXCEEDED, {
-        files: '' + files,
-        rows: numberFormatter(rows),
-        columns: numberFormatter(columns),
-        records: numberFormatter(recordsToSplit),
-      })
+      `${isExcel ? `Excel sheet` : 'CSV file'} has ${numberFormatter(rows)} rows and ${numberFormatter(
+        columns
+      )} columns. Please split it into ${files} files of ${numberFormatter(
+        recordsToSplit
+      )} rows or less each and upload separately!`
     );
   }
 }
