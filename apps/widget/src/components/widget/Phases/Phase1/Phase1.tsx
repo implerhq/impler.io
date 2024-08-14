@@ -37,6 +37,7 @@ export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTempl
     showSelectTemplate,
     isDownloadInProgress,
     onSelectSheetModalReset,
+    isExcelSheetNamesLoading,
   } = usePhase1({
     goNext,
   });
@@ -119,10 +120,10 @@ export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTempl
       />
 
       <Footer
-        primaryButtonLoading={isUploadLoading}
         onNextClick={onSubmit}
         onPrevClick={() => {}}
         active={PhasesEnum.UPLOAD}
+        primaryButtonLoading={isUploadLoading || isExcelSheetNamesLoading}
       />
     </>
   );

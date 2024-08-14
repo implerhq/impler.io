@@ -25,6 +25,7 @@ import { AddUploadEntryCommand } from './add-upload-entry.command';
 import { MakeUploadEntryCommand } from './make-upload-entry.command';
 import { FileParseException } from '@shared/exceptions/file-parse-issue.exception';
 import { CSVFileService2, ExcelFileService } from '@shared/services/file';
+import { FileSizeException } from '@shared/exceptions/file-size-limit.exception';
 
 @Injectable()
 export class MakeUploadEntry {
@@ -59,8 +60,13 @@ export class MakeUploadEntry {
     ) {
       try {
         const fileService = new ExcelFileService();
+        const opts = await fileService.getExcelRowsColumnsCount(file, selectedSheetName);
+        this.analyzeLargeFile(opts);
         csvFile = await fileService.convertToCsv(file, selectedSheetName);
       } catch (error) {
+        if (error instanceof FileSizeException) {
+          throw error;
+        }
         throw new FileParseException();
       }
     } else if (file.mimetype === FileMimeTypesEnum.CSV) {
@@ -166,7 +172,17 @@ export class MakeUploadEntry {
       originalFileType: file.mimetype,
     });
   }
+  analyzeLargeFile(fileInfo: { rows: number; columns: number }, maxDataPoints = 5000000) {
+    const { columns, rows } = fileInfo;
+    const dataPoints = columns * rows;
 
+    if (dataPoints > maxDataPoints) {
+      const suggestedChunkSize = Math.floor(maxDataPoints / columns);
+      const numberOfChunks = Math.ceil(rows / suggestedChunkSize);
+
+      throw new FileSizeException({ rows, columns, recordsToSplit: suggestedChunkSize, files: numberOfChunks });
+    }
+  }
   private async makeFileEntry(
     uploadId: string,
     file: string | Express.Multer.File,
