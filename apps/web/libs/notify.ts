@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { NOTIFICATION_KEYS } from '@config';
 import { notifications } from '@mantine/notifications';
 
@@ -69,7 +70,7 @@ const Messages: Record<string, NotifyProps> = {
 
 interface NotifyProps {
   title?: string;
-  message: string;
+  message: string | ReactNode;
   withCloseButton?: boolean;
   autoClose?: number;
   color?: string;
