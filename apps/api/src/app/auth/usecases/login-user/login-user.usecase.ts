@@ -40,6 +40,7 @@ export class LoginUser {
           lastName: user.lastName,
           profilePicture: user.profilePicture,
           accessToken: apiKey?.apiKey,
+          isEmailVerified: user.isEmailVerified,
         },
         apiKey?.projectId
       ),
