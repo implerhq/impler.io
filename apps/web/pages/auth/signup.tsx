@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Title, Text, Stack, Flex, TextInput as Input } from '@mantine/core';
+import { Title, Text, Stack, Flex, TextInput as Input, FocusTrap } from '@mantine/core';
 
 import { Button } from '@ui/button';
 import { PasswordInput } from '@ui/password-input';
@@ -29,30 +29,32 @@ export default function SignupPage({}) {
           Signup yourself
         </Title>
       </Flex>
-      <form onSubmit={signup} style={{ width: '100%' }}>
-        <Stack>
-          <Input
-            required
-            size="md"
-            placeholder="Full Name"
-            error={errors.fullName?.message}
-            {...register('fullName', {
-              pattern: {
-                value: /\s/gm,
-                message: 'Please enter your full name',
-              },
-            })}
-          />
-          <Input {...register('email')} size="md" placeholder="Email" required error={errors.email?.message} />
-          <PasswordInput register={register('password')} size="md" placeholder="Password" required />
-          <Button id="signup" loading={isSignupLoading} fullWidth type="submit" size="md">
-            Create an account
-          </Button>
-          <Text size="md" align="center">
-            Already have an account? <Link href={ROUTES.SIGNIN}>Sign In</Link>
-          </Text>
-        </Stack>
-      </form>
+      <FocusTrap>
+        <form onSubmit={signup} style={{ width: '100%' }}>
+          <Stack>
+            <Input
+              required
+              size="md"
+              placeholder="Full Name"
+              error={errors.fullName?.message}
+              {...register('fullName', {
+                pattern: {
+                  value: /\s/gm,
+                  message: 'Please enter your full name',
+                },
+              })}
+            />
+            <Input {...register('email')} size="md" placeholder="Email" required error={errors.email?.message} />
+            <PasswordInput register={register('password')} size="md" placeholder="Password" required />
+            <Button id="signup" loading={isSignupLoading} fullWidth type="submit" size="md">
+              Create an account
+            </Button>
+            <Text size="md" align="center">
+              Already have an account? <Link href={ROUTES.SIGNIN}>Sign In</Link>
+            </Text>
+          </Stack>
+        </form>
+      </FocusTrap>
     </>
   );
 }

@@ -3,12 +3,14 @@ import { Injectable } from '@nestjs/common';
 import { SCREENS } from '@impler/shared';
 import { VerifyCommand } from './verify.command';
 import { PaymentAPIService } from '@impler/services';
+import { AuthService } from 'app/auth/services/auth.service';
 import { UserRepository, EnvironmentRepository } from '@impler/dal';
 import { InvalidVerificationCodeException } from '@shared/exceptions/otp-verification.exception';
 
 @Injectable()
 export class Verify {
   constructor(
+    private authService: AuthService,
     private userRepository: UserRepository,
     private paymentAPIService: PaymentAPIService,
     private environmentRepository: EnvironmentRepository
@@ -42,10 +44,19 @@ export class Verify {
         },
       }
     );
-
     const apiKey = await this.environmentRepository.getApiKeyForUserId(user._id);
 
+    const token = this.authService.getSignedToken({
+      _id: user._id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      isEmailVerified: true,
+      accessToken: apiKey?.apiKey,
+    });
+
     return {
+      token,
       screen: apiKey ? SCREENS.HOME : SCREENS.ONBOARD,
     };
   }

@@ -3,12 +3,12 @@ import { Injectable } from '@nestjs/common';
 
 import { UserRepository } from '@impler/dal';
 
-import { generateVerificationCode } from '@shared/helpers/common.helper';
 import { EmailService } from '@impler/services';
-import { AuthService } from '../../services/auth.service';
-import { RegisterUserCommand } from './register-user.command';
 import { LEAD_SIGNUP_USING } from '@shared/constants';
 import { SCREENS, EMAIL_SUBJECT } from '@impler/shared';
+import { AuthService } from 'app/auth/services/auth.service';
+import { RegisterUserCommand } from './register-user.command';
+import { generateVerificationCode } from '@shared/helpers/common.helper';
 import { UniqueEmailException } from '@shared/exceptions/unique-email.exception';
 
 @Injectable()
@@ -45,6 +45,7 @@ export class RegisterUser {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      isEmailVerified: user.isEmailVerified,
     });
 
     if (this.emailService.isConnected()) {

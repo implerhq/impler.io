@@ -7,8 +7,8 @@ import { generateVerificationCode } from '@shared/helpers/common.helper';
 @Injectable()
 export class ResendOTP {
   constructor(
-    private userRepository: UserRepository,
-    private emailService: EmailService
+    private emailService: EmailService,
+    private userRepository: UserRepository
   ) {}
 
   async execute(_userId: string) {
@@ -36,5 +36,7 @@ export class ResendOTP {
         senderName: process.env.EMAIL_FROM_NAME,
       });
     }
+
+    return { success: true };
   }
 }

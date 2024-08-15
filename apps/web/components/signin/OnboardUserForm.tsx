@@ -41,7 +41,12 @@ export function OnboardUserForm() {
             <Controller
               name="projectName"
               control={control}
-              rules={{ required: 'Project name is required' }}
+              rules={{
+                required: 'Project name is required',
+                validate: {
+                  noSpaces: (value) => value.trim().length > 0 || 'Project name cannot be empty or contain only spaces',
+                },
+              }}
               render={({ field }) => (
                 <TextInput
                   label="Project Name"

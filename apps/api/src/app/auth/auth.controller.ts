@@ -7,6 +7,7 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Res,
   UseGuards,
   UseInterceptors,
@@ -26,19 +27,21 @@ import {
   ResetPasswordDto,
   OnboardUserDto,
   VerifyDto,
+  UpdateUserDto,
 } from './dtos';
 import {
   Verify,
-  RegisterUser,
-  RegisterUserCommand,
   LoginUser,
-  ResetPassword,
+  ResendOTP,
+  UpdateUser,
   OnboardUser,
+  RegisterUser,
+  ResetPassword,
   LoginUserCommand,
+  RegisterUserCommand,
   ResetPasswordCommand,
   RequestForgotPassword,
   RequestForgotPasswordCommand,
-  ResendOTP,
 } from './usecases';
 
 @ApiTags('Auth')
@@ -48,13 +51,14 @@ import {
 export class AuthController {
   constructor(
     private verify: Verify,
+    private resendOTP: ResendOTP,
     private loginUser: LoginUser,
+    private updateUser: UpdateUser,
     private onboardUser: OnboardUser,
     private authService: AuthService,
     private registerUser: RegisterUser,
     private resetPassword: ResetPassword,
-    private requestForgotPassword: RequestForgotPassword,
-    private resendOTP: ResendOTP
+    private requestForgotPassword: RequestForgotPassword
   ) {}
 
   @Get('/github')
@@ -103,6 +107,18 @@ export class AuthController {
     return user;
   }
 
+  @Put('/me')
+  async updateUserRoute(@UserSession() user: IJwtPayload, @Body() body: UpdateUserDto, @Res() response: Response) {
+    const { success, token } = await this.updateUser.execute(user._id, body);
+    if (token)
+      response.cookie(CONSTANTS.AUTH_COOKIE_NAME, token, {
+        ...COOKIE_CONFIG,
+        domain: process.env.COOKIE_DOMAIN,
+      });
+
+    response.send({ success });
+  }
+
   @Get('/logout')
   logout(@Res() response: Response) {
     response.clearCookie(CONSTANTS.AUTH_COOKIE_NAME, {
@@ -128,8 +144,14 @@ export class AuthController {
   }
 
   @Post('/verify')
-  async verifyRoute(@Body() body: VerifyDto, @UserSession() user: IJwtPayload) {
-    return await this.verify.execute(user._id, { code: body.otp });
+  async verifyRoute(@Body() body: VerifyDto, @UserSession() user: IJwtPayload, @Res() response: Response) {
+    const { token, screen } = await this.verify.execute(user._id, { code: body.otp });
+    response.cookie(CONSTANTS.AUTH_COOKIE_NAME, token, {
+      ...COOKIE_CONFIG,
+      domain: process.env.COOKIE_DOMAIN,
+    });
+
+    response.send({ screen });
   }
 
   @Post('/onboard')
@@ -152,6 +174,7 @@ export class AuthController {
         lastName: user.lastName,
         email: user.email,
         profilePicture: user.profilePicture,
+        isEmailVerified: user.isEmailVerified,
         accessToken: projectWithEnvironment.environment.apiKeys[0].key,
       },
       projectWithEnvironment.project._id
@@ -198,7 +221,7 @@ export class AuthController {
     response.send(resetPassword);
   }
 
-  @Get('verify/resend')
+  @Post('verify/resend')
   async resendOTPRoute(@UserSession() user: IJwtPayload) {
     return await this.resendOTP.execute(user._id);
   }

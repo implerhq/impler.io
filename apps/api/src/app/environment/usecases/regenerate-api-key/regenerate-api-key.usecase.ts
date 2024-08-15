@@ -7,9 +7,9 @@ import { GenerateUniqueApiKey } from '../generate-api-key/generate-api-key.useca
 @Injectable()
 export class RegenerateAPIKey {
   constructor(
+    private authService: AuthService,
     private generateUniqueApiKey: GenerateUniqueApiKey,
-    private environmentRepository: EnvironmentRepository,
-    private authService: AuthService
+    private environmentRepository: EnvironmentRepository
   ) {}
 
   async execute(userInfo: IJwtPayload) {
@@ -32,6 +32,7 @@ export class RegenerateAPIKey {
         firstName: userInfo.firstName,
         lastName: userInfo.lastName,
         profilePicture: userInfo.profilePicture,
+        isEmailVerified: userInfo.isEmailVerified,
         accessToken,
       },
       userInfo._projectId
