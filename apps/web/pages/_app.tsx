@@ -48,7 +48,12 @@ const client = new QueryClient({
             name: 'LOGOUT',
             properties: {},
           });
-          if (![ROUTES.SIGNIN, ROUTES.SIGNUP].includes(window.location.pathname)) window.location.href = ROUTES.SIGNIN;
+          const path = window.location.pathname;
+          if (
+            ![ROUTES.SIGNIN, ROUTES.SIGNUP, ROUTES.REQUEST_FORGOT_PASSWORD].includes(path) &&
+            !path.startsWith(ROUTES.RESET_PASSWORD)
+          )
+            window.location.href = ROUTES.SIGNIN;
         }
       },
     },

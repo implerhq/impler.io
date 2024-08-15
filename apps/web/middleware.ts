@@ -7,8 +7,11 @@ export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const cookie = request.cookies.get(CONSTANTS.AUTH_COOKIE_NAME);
   if (!cookie) {
-    if (path !== ROUTES.SIGNIN && path !== ROUTES.SIGNUP) {
-      return NextResponse.rewrite(new URL(ROUTES.SIGNIN, request.url));
+    if (
+      ![ROUTES.SIGNIN, ROUTES.SIGNUP, ROUTES.REQUEST_FORGOT_PASSWORD].includes(path) &&
+      !path.startsWith(ROUTES.RESET_PASSWORD)
+    ) {
+      return NextResponse.redirect(new URL(ROUTES.SIGNIN, request.url));
     } else return;
   }
   const token = cookie?.value.split(' ')[1];
