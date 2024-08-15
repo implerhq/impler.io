@@ -50,6 +50,12 @@ After cloning your fork, follow these steps to set up the project locally,
 4. **Do setup for projects by running:** 
       ```bash
       pnpm setup:project
+5. **In a terminal, start the dependencies (rabbitmq, mongodb and minio) as Docker containers by running the following command:**
+      ```bash
+      docker compose -f docker/dependencies.compose.yml up
+      ```
+    Now you can access the MinIO Console on http://localhost:9001/.
+
 ### Start the application by running the following commands.
 5. **Start backend API:**
       ```bash
