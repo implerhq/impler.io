@@ -25,7 +25,7 @@ export function useSignup() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ISignupFormData>();
+  } = useForm<ISignupFormData>({});
   const [errorMessage, setErrorMessage] = useState<IErrorObject | undefined>(undefined);
 
   const { mutate: signup, isLoading: isSignupLoading } = useMutation<

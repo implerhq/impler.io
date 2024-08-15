@@ -146,6 +146,7 @@ export class AuthService {
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
+          isEmailVerified: user.isEmailVerified,
           profilePicture: user.profilePicture,
           accessToken: user.accessToken,
         },

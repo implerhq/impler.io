@@ -5,9 +5,9 @@ import { useMutation } from '@tanstack/react-query';
 import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
 import { useApp } from '@hooks/useApp';
-import { API_KEYS, NOTIFICATION_KEYS, ROUTES } from '@config';
-import { IErrorObject, IScreenResponse, SCREENS } from '@impler/shared';
+import { API_KEYS, NOTIFICATION_KEYS } from '@config';
 import { handleRouteBasedOnScreenResponse } from '@shared/helpers';
+import { IErrorObject, IScreenResponse, SCREENS } from '@impler/shared';
 
 interface IVerifyFormData {
   otp: string;
@@ -75,10 +75,6 @@ export function useVerify() {
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, []);
-
-  useEffect(() => {
-    if (profile?.isEmailVerified) push(ROUTES.HOME);
-  }, [profile, push]);
 
   return {
     verify,
