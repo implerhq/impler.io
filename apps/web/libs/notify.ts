@@ -1,6 +1,6 @@
+import { ReactNode } from 'react';
 import { NOTIFICATION_KEYS } from '@config';
 import { notifications } from '@mantine/notifications';
-import { ReactNode } from 'react';
 
 const Messages: Record<string, NotifyProps> = {
   [NOTIFICATION_KEYS.MEMBERSHIP_PURCHASED]: {

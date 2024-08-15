@@ -41,7 +41,6 @@ const client = new QueryClient({
             },
           });
           notify(NOTIFICATION_KEYS.ERROR_OCCURED);
-          console.log('location', window.location);
           window.location.href = ROUTES.SIGNIN;
         } else if (err && err.statusCode === 401) {
           await commonApi(API_KEYS.LOGOUT as any, {});
@@ -49,7 +48,6 @@ const client = new QueryClient({
             name: 'LOGOUT',
             properties: {},
           });
-          console.log('location', window.location);
           window.location.href = ROUTES.SIGNIN;
         }
       },

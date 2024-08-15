@@ -15,7 +15,6 @@ import { useAppState } from 'store/app.context';
 import WidgetSlideImage from '@assets/images/auth-carousel/widget.png';
 import PowerfullSlideImage from '@assets/images/auth-carousel/powerfull.png';
 import UncertainitySlideImage from '@assets/images/auth-carousel/uncertainity.png';
-import { useRouter } from 'next/router';
 
 const Support = dynamic(() => import('components/common/Support').then((mod) => mod.Support), {
   ssr: false,
@@ -44,9 +43,7 @@ const slides: {
 ];
 
 export function OnboardLayout({ children }: PropsWithChildren) {
-  const { route } = useRouter();
   const { classes } = useStyles();
-  console.log(route);
   const { setProfileInfo } = useAppState();
   useQuery<unknown, IErrorObject, IProfileData, [string]>(
     [API_KEYS.ME],
