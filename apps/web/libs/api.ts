@@ -104,6 +104,10 @@ const routes: Record<string, Route> = {
     url: () => `/v1/auth/me`,
     method: 'GET',
   },
+  [API_KEYS.UPDATE_ME_INFO]: {
+    url: () => `/v1/auth/me`,
+    method: 'PUT',
+  },
   [API_KEYS.IMPORT_COUNT]: {
     url: () => `/v1/user/import-count`,
     method: 'GET',

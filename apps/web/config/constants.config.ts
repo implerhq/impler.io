@@ -116,6 +116,7 @@ export const API_KEYS = {
   ACTIVITY_SUMMARY: 'ACTIVITY_SUMMARY',
 
   ME: 'ME',
+  UPDATE_ME_INFO: 'UPDATE_ME_INFO',
   REGENERATE: 'REGENERATE',
   IMPORT_COUNT: 'IMPORT_COUNT',
   DONWLOAD_ORIGINAL_FILE: 'DOWNLOAD_ORIGINAL_FILE',
@@ -160,6 +161,7 @@ export const ROUTES = {
   SIGNIN: '/auth/signin',
   SIGNUP_ONBOARDING: '/auth/onboard',
   OTP_VERIFY: '/auth/verify',
+  RESET_PASSWORD: '/auth/reset',
   REQUEST_FORGOT_PASSWORD: '/auth/reset/request',
   IMPORTS: '/imports',
   SETTINGS: '/settings',
