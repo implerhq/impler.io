@@ -7,6 +7,7 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Res,
   UseGuards,
   UseInterceptors,
@@ -26,19 +27,21 @@ import {
   ResetPasswordDto,
   OnboardUserDto,
   VerifyDto,
+  UpdateUserDto,
 } from './dtos';
 import {
   Verify,
-  RegisterUser,
-  RegisterUserCommand,
   LoginUser,
-  ResetPassword,
+  ResendOTP,
+  UpdateUser,
   OnboardUser,
+  RegisterUser,
+  ResetPassword,
   LoginUserCommand,
+  RegisterUserCommand,
   ResetPasswordCommand,
   RequestForgotPassword,
   RequestForgotPasswordCommand,
-  ResendOTP,
 } from './usecases';
 
 @ApiTags('Auth')
@@ -48,13 +51,14 @@ import {
 export class AuthController {
   constructor(
     private verify: Verify,
+    private resendOTP: ResendOTP,
     private loginUser: LoginUser,
+    private updateUser: UpdateUser,
     private onboardUser: OnboardUser,
     private authService: AuthService,
     private registerUser: RegisterUser,
     private resetPassword: ResetPassword,
-    private requestForgotPassword: RequestForgotPassword,
-    private resendOTP: ResendOTP
+    private requestForgotPassword: RequestForgotPassword
   ) {}
 
   @Get('/github')
@@ -101,6 +105,18 @@ export class AuthController {
   @Get('/me')
   async user(@UserSession() user: IJwtPayload) {
     return user;
+  }
+
+  @Put('/me')
+  async updateUserRoute(@UserSession() user: IJwtPayload, @Body() body: UpdateUserDto, @Res() response: Response) {
+    const { success, token } = await this.updateUser.execute(user._id, body);
+    if (token)
+      response.cookie(CONSTANTS.AUTH_COOKIE_NAME, token, {
+        ...COOKIE_CONFIG,
+        domain: process.env.COOKIE_DOMAIN,
+      });
+
+    response.send({ success });
   }
 
   @Get('/logout')

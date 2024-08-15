@@ -44,6 +44,7 @@ export class Verify {
         },
       }
     );
+    const apiKey = await this.environmentRepository.getApiKeyForUserId(user._id);
 
     const token = this.authService.getSignedToken({
       _id: user._id,
@@ -51,9 +52,8 @@ export class Verify {
       firstName: user.firstName,
       lastName: user.lastName,
       isEmailVerified: true,
+      accessToken: apiKey?.apiKey,
     });
-
-    const apiKey = await this.environmentRepository.getApiKeyForUserId(user._id);
 
     return {
       token,
