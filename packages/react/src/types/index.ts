@@ -1,20 +1,4 @@
-import React from 'react';
 import { IUpload, EventTypesEnum, CustomTexts } from '@impler/shared';
-
-export interface ButtonProps {
-  projectId: string;
-  accessToken?: string;
-  templateId?: string;
-  authHeaderValue?: string | (() => string) | (() => Promise<string>);
-  extra?: string | Record<string, any>;
-  children?: React.ReactNode;
-  className?: string;
-  primaryColor?: string;
-  onUploadStart?: (value: UploadTemplateData) => void;
-  onUploadTerminate?: (value: UploadData) => void;
-  onUploadComplete?: (value: IUpload) => void;
-  onWidgetClose?: () => void;
-}
 
 export interface ISchemaItem {
   key: string;
