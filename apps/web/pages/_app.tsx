@@ -33,6 +33,10 @@ const client = new QueryClient({
       refetchOnWindowFocus: false,
       retry: false,
       onError: async (err: any) => {
+        const path = window.location.pathname;
+        const isApplicationPath =
+          ![ROUTES.SIGNIN, ROUTES.SIGNUP, ROUTES.REQUEST_FORGOT_PASSWORD].includes(path) &&
+          !path.startsWith(ROUTES.RESET_PASSWORD);
         if (err && err.message === 'Failed to fetch') {
           track({
             name: 'ERROR',
@@ -41,19 +45,14 @@ const client = new QueryClient({
             },
           });
           notify(NOTIFICATION_KEYS.ERROR_OCCURED);
-          window.location.href = ROUTES.SIGNIN;
+          if (isApplicationPath) window.location.href = ROUTES.SIGNIN;
         } else if (err && err.statusCode === 401) {
           await commonApi(API_KEYS.LOGOUT as any, {});
           track({
             name: 'LOGOUT',
             properties: {},
           });
-          const path = window.location.pathname;
-          if (
-            ![ROUTES.SIGNIN, ROUTES.SIGNUP, ROUTES.REQUEST_FORGOT_PASSWORD].includes(path) &&
-            !path.startsWith(ROUTES.RESET_PASSWORD)
-          )
-            window.location.href = ROUTES.SIGNIN;
+          if (isApplicationPath) window.location.href = ROUTES.SIGNIN;
         }
       },
     },
