@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node';
 import { BadRequestException } from '@nestjs/common';
 import { APIMessages } from '../constants';
 import { PaginationResult, Defaults, FileMimeTypesEnum } from '@impler/shared';
@@ -75,4 +76,10 @@ export function generateVerificationCode(): string {
   }
 
   return otp;
+}
+
+export function captureException(error: any) {
+  if (Sentry.isInitialized()) {
+    Sentry.captureException(error);
+  } else console.error(error);
 }

@@ -4,6 +4,7 @@ import { SCREENS } from '@impler/shared';
 import { VerifyCommand } from './verify.command';
 import { PaymentAPIService } from '@impler/services';
 import { AuthService } from 'app/auth/services/auth.service';
+import { captureException } from '@shared/helpers/common.helper';
 import { UserRepository, EnvironmentRepository } from '@impler/dal';
 import { InvalidVerificationCodeException } from '@shared/exceptions/otp-verification.exception';
 
@@ -32,7 +33,11 @@ export class Verify {
       externalId: user.email,
     };
 
-    await this.paymentAPIService.createUser(userData);
+    try {
+      await this.paymentAPIService.createUser(userData);
+    } catch (error) {
+      captureException(error);
+    }
 
     await this.userRepository.findOneAndUpdate(
       {

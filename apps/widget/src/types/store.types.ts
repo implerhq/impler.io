@@ -22,7 +22,7 @@ export interface IAppStore {
   texts: typeof WIDGET_TEXTS;
   importId?: string;
   imageSchema?: string;
-  data?: Record<string, string | number>[];
+  data?: string;
   templateInfo: ITemplate;
   uploadInfo: IUpload;
   reset: () => void;

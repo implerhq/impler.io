@@ -1,4 +1,4 @@
-import { IUpload, EventTypesEnum, WIDGET_TEXTS } from '@impler/shared';
+import { IUpload, EventTypesEnum, WIDGET_TEXTS, ColumnTypesEnum } from '@impler/shared';
 
 export interface ISchemaItem {
   key: string;
@@ -11,7 +11,7 @@ export interface ISchemaItem {
   defaultValue?: string | '<<null>>' | '<<undefined>>' | '<<>>' | '<<[]>>' | '<<true>>' | '<<false>>';
   selectValues?: string[];
   dateFormats?: string[];
-  type?: 'String' | 'Number' | 'Double' | 'Date' | 'Email' | 'Regex' | 'Select' | 'Any' | 'Image';
+  type?: ColumnTypesEnum;
   regex?: string;
   allowMultiSelect?: boolean;
 }

@@ -13,7 +13,7 @@ interface IProviderProps {
   primaryColor: string;
   output?: string;
   schema?: string;
-  data?: Record<string, string | number>[];
+  data?: string;
   host: string;
   showWidget: boolean;
   setShowWidget: (status: boolean) => void;

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { EventTypesEnum, IShowPayload } from '@impler/shared';
+import { EventTypesEnum, IUserShowPayload, isObject } from '@impler/shared';
 
 import { logError } from '../utils/logger';
 import { EventCalls, ShowWidgetProps, UseImplerProps } from '../types';
@@ -77,35 +77,25 @@ export function useImpler({
 
   const showWidget = async ({ colorScheme, data, schema, output }: ShowWidgetProps = {}) => {
     if (window.impler && isImplerInitiated) {
-      const payload: IShowPayload = {
+      const payload: IUserShowPayload = {
         uuid,
         templateId,
-        data,
         host: '',
         projectId,
         accessToken,
-        texts,
+        schema,
+        data,
+        output,
+        title,
+        extra,
+        colorScheme,
+        primaryColor,
       };
-      if (Array.isArray(schema) && schema.length > 0) {
-        payload.schema = JSON.stringify(schema);
-      }
-      if (typeof output === 'object' && !Array.isArray(output) && output !== null) {
-        payload.output = JSON.stringify(output);
-      }
-      if (title) payload.title = title;
-      if (colorScheme) payload.colorScheme = colorScheme;
-      else {
+      if (!colorScheme) {
         const preferColorScheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         payload.colorScheme = preferColorScheme;
       }
-
-      if (texts) payload.texts = texts;
-
-      if (primaryColor) payload.primaryColor = primaryColor;
-      if (extra) {
-        if (typeof extra === 'object') payload.extra = JSON.stringify(extra);
-        else payload.extra = extra;
-      }
+      if (isObject(texts)) payload.texts = JSON.stringify(texts);
       if (authHeaderValue) {
         if (typeof authHeaderValue === 'function' && authHeaderValue.constructor.name === 'AsyncFunction') {
           payload.authHeaderValue = await authHeaderValue();

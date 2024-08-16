@@ -9,7 +9,7 @@ import { ApiService } from '@impler/client';
 import { MessageHandlerDataType } from '@types';
 import { generateShades, ParentWindow, deepMerge } from '@util';
 import { API_URL, colors, mantineConfig, variables } from '@config';
-import { IWidgetShowPayload, WidgetEventTypesEnum, WIDGET_TEXTS } from '@impler/shared';
+import { IWidgetShowPayload, WidgetEventTypesEnum, WIDGET_TEXTS, isObject } from '@impler/shared';
 
 let api: ApiService;
 
@@ -48,9 +48,35 @@ export function Container({ children }: PropsWithChildren<{}>) {
       }
       setShowWidget(true);
       setSecondaryPayload({
-        ...data.value,
+        accessToken: data.value.accessToken,
+        host: data.value.host,
+        projectId: data.value.projectId,
+        uuid: data.value.uuid,
+        extra: isObject(data.value.extra) ? JSON.stringify(data.value.extra) : data.value.extra,
+        templateId: data.value.templateId,
+        authHeaderValue: data.value.authHeaderValue,
         primaryColor: data.value.primaryColor || colors.primary,
+        colorScheme: data.value.colorScheme,
+        title: data.value.title,
         texts: deepMerge(WIDGET_TEXTS, data.value.texts),
+        schema:
+          typeof data.value.schema === 'string'
+            ? data.value.schema
+            : Array.isArray(data.value.schema)
+            ? JSON.stringify(data.value.schema)
+            : undefined,
+        data:
+          typeof data.value.data === 'string'
+            ? data.value.data
+            : Array.isArray(data.value.data)
+            ? JSON.stringify(data.value.data)
+            : undefined,
+        output:
+          typeof data.value.output === 'string'
+            ? data.value.output
+            : isObject(data.value.output)
+            ? JSON.stringify(data.value.output)
+            : undefined,
       });
     } else if (data && data.type === WidgetEventTypesEnum.CLOSE_WIDGET) {
       setShowWidget(false);

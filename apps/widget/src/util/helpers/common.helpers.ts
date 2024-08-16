@@ -4,7 +4,7 @@ import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/animations/shift-away.css';
 import { variables } from '@config';
-import { downloadFile, WIDGET_TEXTS } from '@impler/shared';
+import { convertStringToJson, downloadFile, isObject, WIDGET_TEXTS } from '@impler/shared';
 
 // eslint-disable-next-line no-magic-numbers
 export function formatBytes(bytes, decimals = 2) {
@@ -97,20 +97,23 @@ export const addTippyToElement = (element: SVGSVGElement | HTMLElement, content:
   });
 };
 
-function isObject(value: any): boolean {
-  return value instanceof Object && value.constructor === Object;
-}
-
 // Utility function to deeply merge defaultTexts with user provided texts
-export function deepMerge(defaultTexts: typeof WIDGET_TEXTS, texts?: typeof WIDGET_TEXTS): typeof WIDGET_TEXTS {
-  if (!texts || !isObject(texts)) return defaultTexts;
+export function deepMerge(
+  defaultTexts: typeof WIDGET_TEXTS,
+  texts?: string | typeof WIDGET_TEXTS
+): typeof WIDGET_TEXTS {
+  if (!texts) return defaultTexts;
+  let newTexts: typeof WIDGET_TEXTS | undefined;
+  if (typeof texts === 'string') newTexts = convertStringToJson(texts);
+  else newTexts = texts;
+  if (newTexts && !isObject(newTexts)) return defaultTexts;
   else {
     const mergedResult = { ...defaultTexts };
-    for (const sectionKey in texts) {
-      if (isObject(texts[sectionKey])) {
-        for (const textKey in texts[sectionKey]) {
-          if (mergedResult[sectionKey][textKey] && typeof texts[sectionKey][textKey] === 'string') {
-            mergedResult[sectionKey][textKey] = texts[sectionKey][textKey];
+    for (const sectionKey in newTexts) {
+      if (isObject(newTexts[sectionKey])) {
+        for (const textKey in newTexts[sectionKey]) {
+          if (mergedResult[sectionKey][textKey] && typeof newTexts[sectionKey][textKey] === 'string') {
+            mergedResult[sectionKey][textKey] = newTexts[sectionKey][textKey];
           }
         }
       }
