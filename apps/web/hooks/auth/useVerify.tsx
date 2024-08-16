@@ -24,7 +24,7 @@ enum ScreenStatesEnum {
   UPDATE_EMAIL = 'updateEmail',
 }
 
-const RESEND_SECONDS = 10;
+const RESEND_SECONDS = 120;
 
 export function useVerify() {
   const { push } = useRouter();
