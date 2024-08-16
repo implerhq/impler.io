@@ -47,7 +47,7 @@ export function UploadDropzone(props: IDropzoneProps) {
               <CheckIcon className={classes.checkIcon} />
             </Group>
             <Text size="lg" mb="sm" align="center">
-              {texts.FILE_DROPZONE.FILE_SELECTION}
+              {texts.FILE_DROP_AREA.FILE_SELECTED}
             </Text>
             {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
             <FileCMP name={file!.name} size={file!.size} onClear={onClear} />
@@ -63,9 +63,9 @@ export function UploadDropzone(props: IDropzoneProps) {
         <Group position="center">
           <div>
             <Text align="center" weight="bold">
-              {texts.FILE_DROPZONE.TITLE}{' '}
+              {texts.FILE_DROP_AREA.DROP_FILE}{' '}
               <Text component="span" className={classes.browseText}>
-                {texts.FILE_DROPZONE.BROWSE}
+                {texts.FILE_DROP_AREA.BROWSE_FILE}
               </Text>
             </Text>
             <MantineDropzone.Idle>
@@ -74,7 +74,7 @@ export function UploadDropzone(props: IDropzoneProps) {
               </Group>
             </MantineDropzone.Idle>
             <Text color="dimmed" size="sm" mt="md" align="center">
-              {texts.FILE_DROPZONE.SUBTITLE}
+              {texts.FILE_DROP_AREA.BRING_FILE}
             </Text>
           </div>
         </Group>

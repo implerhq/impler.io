@@ -41,13 +41,13 @@ export function FileDropzone(props: IDropzoneProps) {
           <ImageIcon />
         </Group>
         <Text align="center">
-          {texts.FILE_DROPZONE.TITLE}{' '}
+          {texts.FILE_DROP_AREA.DROP_FILE}{' '}
           <Text component="span" className={classes.browseText}>
-            {texts.FILE_DROPZONE.BROWSE}
+            {texts.FILE_DROP_AREA.BROWSE_FILE}
           </Text>
         </Text>
         <Text size="xs" align="center">
-          {texts.FILE_DROPZONE.FILE_SIZE}
+          {texts.FILE_DROP_AREA.IMAGE_FILE_SIZE}
         </Text>
       </MantineDropzone>
     );

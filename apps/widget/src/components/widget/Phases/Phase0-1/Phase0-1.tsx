@@ -49,10 +49,10 @@ export function Phase01({ goToUpload, texts }: Phase01Props) {
               color="blue"
               withCloseButton
               onClose={() => setShowAlert(false)}
-              title={texts['PHASE0-1'].ALERT_TITLE}
+              title={texts['PHASE0-1'].IMAGE_INFO_TITLE}
               icon={<Warning fill={colors.primary} />}
             >
-              {texts['PHASE0-1'].ALERT_SUBTITLE}
+              {texts['PHASE0-1'].IMAGE_INFO_SUBTITLE}
             </Alert>
           )}
           <Controller

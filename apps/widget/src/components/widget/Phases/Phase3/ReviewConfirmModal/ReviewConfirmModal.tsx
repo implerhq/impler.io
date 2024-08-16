@@ -29,18 +29,18 @@ export function ReviewConfirmModal(props: IConfirmModalProps) {
           }}
         />
         <Title color={colors.success} order={3} mt="sm">
-          {texts.PHASE3?.ALL_RECORDS_VALID_CONFIRMATION}
+          {texts.PHASE3?.ALL_RECORDS_VALID_TITLE}
         </Title>
         <Text color="dimmed" mb="sm">
-          {replaceVariablesInString(texts.PHASE3.ALL_VALID_CONFIRMATION, {
+          {replaceVariablesInString(texts.PHASE3.ALL_RECORDS_VALID_DETAILS, {
             total: numberFormatter(totalRecords),
           })}
         </Text>
         <Group spacing="sm" style={{ flexDirection: 'row' }}>
           <Button onClick={onClose} color="gray" variant="outline">
-            {texts.PROMPT?.NO}
+            {texts.CLOSE_CONFIRMATION.CANCEL_CLOSE}
           </Button>
-          <Button onClick={onConfirm}>{texts.PROMPT?.YES}</Button>
+          <Button onClick={onConfirm}>{texts.CLOSE_CONFIRMATION.CONFIRM_CLOSE}</Button>
         </Group>
       </Group>
     </MantineModal>

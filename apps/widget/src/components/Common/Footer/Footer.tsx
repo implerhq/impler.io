@@ -48,10 +48,10 @@ export function Footer({
           onClick={onPrevClick}
           variant="outline"
         >
-          {texts.PHASE2.UPLOAD_AGAIN}
+          {texts.COMMON.UPLOAD_AGAIN}
         </Button>
         <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
-          {texts.PHASE2.SEE_REVIEW}
+          {texts.PHASE2.REVIEW_DATA}
         </Button>
       </>
     ),
@@ -63,7 +63,7 @@ export function Footer({
           onClick={onPrevClick}
           variant="outline"
         >
-          {texts.PHASE2.UPLOAD_AGAIN}
+          {texts.COMMON.UPLOAD_AGAIN}
         </Button>
         <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
           {texts.PHASE3.RE_REVIEW_DATA}
@@ -78,10 +78,10 @@ export function Footer({
           onClick={onPrevClick}
           variant="outline"
         >
-          {texts.PHASE4.CLOSE}
+          {texts.COMMON.CLOSE_WIDGET}
         </Button>
         <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
-          {texts.PHASE2.UPLOAD_AGAIN}
+          {texts.COMMON.UPLOAD_AGAIN}
         </Button>
       </>
     ),

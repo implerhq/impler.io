@@ -40,6 +40,7 @@ export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTempl
     isExcelSheetNamesLoading,
   } = usePhase1({
     goNext,
+    texts,
   });
   const onDownload = () => {
     if (hasImageUpload) generateImageTemplate();
@@ -54,7 +55,7 @@ export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTempl
             name={`templateId`}
             control={control}
             rules={{
-              required: texts.VALIDATION.TEMPLATE_REQUIRED,
+              required: texts.PHASE1.SELECT_SHEET_REQUIRED_MSG,
             }}
             render={({ field, fieldState }) => (
               <Select
@@ -63,8 +64,8 @@ export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTempl
                 value={field.value}
                 onChange={onTemplateChange}
                 error={fieldState.error?.message}
-                title={texts.PHASE1.SELECT_TITLE}
-                placeholder={texts.PHASE1.SELECT_PLACEHOLDER}
+                title={texts.PHASE1.SELECT_TEMPLATE_NAME}
+                placeholder={texts.PHASE1.SELECT_TEMPLATE_NAME_PLACEHOLDER}
                 data={templates?.map((template) => ({ value: template._id, label: template.name })) || []}
               />
             )}
@@ -76,7 +77,7 @@ export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTempl
             loading={isDownloadInProgress}
             leftIcon={hasImageUpload ? <BackIcon /> : <DownloadIcon />}
           >
-            {hasImageUpload ? texts.PHASE1.GENERATE_TEMPLATE : texts?.PHASE1?.DOWNLOAD_SAMPLE_TITLE}
+            {hasImageUpload ? texts.PHASE1.GENERATE_TEMPLATE : texts.PHASE1.DOWNLOAD_SAMPLE}
           </Button>
         </div>
       </Group>
@@ -85,7 +86,7 @@ export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTempl
         control={control}
         name="file"
         rules={{
-          required: texts.VALIDATION.FILE_REQUIRED,
+          required: texts.PHASE1.SELECT_FILE_REQUIRED_MSG,
         }}
         render={({ field, fieldState }) => (
           <UploadDropzone
@@ -93,7 +94,7 @@ export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTempl
             loading={isUploadLoading}
             onReject={() => {
               setError('file', {
-                message: `File type not supported! Please select a .csv or .xlsx file.`,
+                message: texts.PHASE1.SELECT_FILE_FORMAT_MSG,
                 type: 'manual',
               });
             }}
@@ -103,7 +104,7 @@ export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTempl
               setError('file', {});
             }}
             onClear={() => field.onChange(undefined)}
-            title={texts.PHASE1.SELECT_FILE}
+            title={texts.PHASE1.SELECT_FILE_NAME}
             file={field.value}
             error={fieldState.error?.message}
           />

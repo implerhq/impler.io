@@ -123,11 +123,6 @@ export function Widget() {
         }),
   };
 
-  const subTitle = {
-    [PromptModalTypesEnum.CLOSE]: texts.PROMPT.SUBTITLE_CLOSE,
-    [PromptModalTypesEnum.UPLOAD_AGAIN]: texts.PROMPT.SUBTITLE_RESET,
-  };
-
   useEffect(() => {
     if (!showWidget) {
       setPhase(PhasesEnum.VALIDATE);
@@ -147,13 +142,12 @@ export function Widget() {
 
         <ConfirmModal
           onCancel={onPromptCancel}
-          title={texts.PROMPT.TITLE}
+          title={texts.CLOSE_CONFIRMATION.TITLE}
           onConfirm={onPromptConfirm}
-          cancelLabel={texts.PROMPT.NO}
-          confirmLabel={texts.PROMPT.YES}
+          cancelLabel={texts.CLOSE_CONFIRMATION.CANCEL_CLOSE}
+          confirmLabel={texts.CLOSE_CONFIRMATION.CONFIRM_CLOSE}
           opened={!!promptContinueAction}
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          subTitle={subTitle[promptContinueAction!]}
+          subTitle={texts.CLOSE_CONFIRMATION.DETAILS}
         />
       </Layout>
     </Modal>

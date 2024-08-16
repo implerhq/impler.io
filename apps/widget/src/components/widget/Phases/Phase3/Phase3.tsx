@@ -193,7 +193,7 @@ export function Phase3(props: IPhase3Props) {
       />
       <ConfirmModal
         onCancel={() => setShowDeleteConfirmModal(false)}
-        title={replaceVariablesInString(texts.DELETE_CONFIRMATION.TITLE, {
+        title={replaceVariablesInString(texts.DELETE_RECORDS_CONFIRMATION.TITLE, {
           total: numberFormatter(selectedRowsRef.current.size),
         })}
         onConfirm={() => {
@@ -204,10 +204,10 @@ export function Phase3(props: IPhase3Props) {
             selectedRowsCountRef.current.invalid.size,
           ]);
         }}
-        cancelLabel={texts.DELETE_CONFIRMATION.NO}
-        confirmLabel={texts.DELETE_CONFIRMATION.YES}
+        cancelLabel={texts.DELETE_RECORDS_CONFIRMATION.CANCEL_DELETE}
+        confirmLabel={texts.DELETE_RECORDS_CONFIRMATION.CONFIRM_DELETE}
         opened={!!showDeleteConfirmModal}
-        subTitle={texts.DELETE_CONFIRMATION.SUBTITLE}
+        subTitle={texts.DELETE_RECORDS_CONFIRMATION.DETAILS}
       />
     </>
   );
