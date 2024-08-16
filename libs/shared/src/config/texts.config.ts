@@ -15,7 +15,7 @@ export const WIDGET_TEXTS = {
     CONFIRM_JOB: 'Confirm',
   },
   FILE_DROP_AREA: {
-    DROP_FILE: 'Drop and drop file here or ',
+    DROP_FILE: 'Drop and drop a file here or ',
     BROWSE_FILE: 'Browse from computer',
     IMAGE_FILE_SIZE: 'Image size should be less than 5 MB. Supported formats are PNG, JPG and JPEG.',
     BRING_FILE: 'Bring any .csv or .xlsx file here to start Import',
@@ -31,7 +31,7 @@ export const WIDGET_TEXTS = {
   PHASE1: {
     SELECT_TEMPLATE_NAME: 'Template',
     SELECT_TEMPLATE_NAME_PLACEHOLDER: 'Select Template',
-    SELECT_TEMPLATE_REQUIRED_MSG: 'Please select template from the list',
+    SELECT_TEMPLATE_REQUIRED_MSG: 'Please select a template from the list',
 
     SELECT_SHEET_NAME: 'Select sheet to Import',
     SELECT_SHEET_NAME_PLACEHOLDER: 'Select Excel sheet',
@@ -47,7 +47,7 @@ export const WIDGET_TEXTS = {
     SELECT_FILE_FORMAT_MSG: 'File type not supported! Please select a .csv or .xlsx file.',
 
     TEMPLATE_NOT_FOUND_MSG: "We couldn't find the template you're importing! Please check the passed parameters.",
-    INCOMPLETE_TEMPLATE_MSG: 'This import do not have any columns. Please try again after some time!',
+    INCOMPLETE_TEMPLATE_MSG: 'This import does not have any columns. Please try again after some time!',
   },
   PHASE2: {
     REVIEW_DATA: 'Review Data',
@@ -63,8 +63,8 @@ export const WIDGET_TEXTS = {
   },
   PHASE4: {
     TITLE: 'Bravo! {count} rows have been uploaded',
-    SUB_TITLE: '{count} rows have been uploaded successfully, and currently is in process, it will be ready shortly.',
-    UPLOAD_AGAIN: 'Upload new File',
+    SUB_TITLE: '{count} rows have been uploaded successfully and currently is in process, it will be ready shortly.',
+    UPLOAD_AGAIN: 'Upload New File',
   },
   AUTOIMPORT_PHASE1: {
     MAPCOLUMN: 'Map Column',
