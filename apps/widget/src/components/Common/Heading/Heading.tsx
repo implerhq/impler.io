@@ -16,31 +16,31 @@ export function Heading({ active, title, mode, hasImageUpload, texts }: IHeading
   const theme = useMantineTheme();
   const manualImportSteps = [
     {
-      label: texts.STEPS?.UPLOAD,
+      label: texts.STEPPER_TITLES.UPLOAD_FILE,
     },
     {
-      label: texts.STEPS?.MAPPING,
+      label: texts.STEPPER_TITLES.MAP_COLUMNS,
     },
     {
-      label: texts.STEPS?.REVIEW,
+      label: texts.STEPPER_TITLES.REVIEW_DATA,
     },
     {
-      label: texts.STEPS?.COMPLETE,
+      label: texts.STEPPER_TITLES.COMPLETE_IMPORT,
     },
   ];
 
   const autoImportSteps = [
     {
-      label: texts.AUTOIMPORTSTEPS?.CONFIGURE,
+      label: texts.STEPPER_TITLES.CONFIGURE_JOB,
     },
     {
-      label: texts.AUTOIMPORTSTEPS?.MAPCOLUMNS,
+      label: texts.STEPPER_TITLES.MAP_COLUMNS,
     },
     {
-      label: texts.AUTOIMPORTSTEPS?.SCHEDULE,
+      label: texts.STEPPER_TITLES.SCHEDULE_JOB,
     },
     {
-      label: texts.AUTOIMPORTSTEPS?.CONFIRM,
+      label: texts.STEPPER_TITLES.CONFIRM_JOB,
     },
   ];
 
@@ -57,7 +57,7 @@ export function Heading({ active, title, mode, hasImageUpload, texts }: IHeading
                 : hasImageUpload
                 ? [
                     {
-                      label: texts.STEPS?.IMAGE_TEMPLATE,
+                      label: texts.STEPPER_TITLES.GENERATE_TEMPLATE,
                     },
                     ...manualImportSteps,
                   ]

@@ -9,13 +9,13 @@ import { ApiService } from '@impler/client';
 import { MessageHandlerDataType } from '@types';
 import { generateShades, ParentWindow, deepMerge } from '@util';
 import { API_URL, colors, mantineConfig, variables } from '@config';
-import { IShowPayload, WidgetEventTypesEnum, WIDGET_TEXTS } from '@impler/shared';
+import { IWidgetShowPayload, WidgetEventTypesEnum, WIDGET_TEXTS } from '@impler/shared';
 
 let api: ApiService;
 
 export function Container({ children }: PropsWithChildren<{}>) {
   if (!api) api = new ApiService(API_URL);
-  const [secondaryPayload, setSecondaryPayload] = useState<IShowPayload>({
+  const [secondaryPayload, setSecondaryPayload] = useState<IWidgetShowPayload>({
     uuid: '',
     host: '',
     texts: WIDGET_TEXTS,

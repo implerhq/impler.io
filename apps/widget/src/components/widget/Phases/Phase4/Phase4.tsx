@@ -25,10 +25,10 @@ export function Phase4(props: IPhase4Props) {
       <Group className={classes.wrapper}>
         <CheckIcon className={classes.check} />
         <Title className={classes.title} color={primaryColor} order={2} mt="md">
-          {replaceVariablesInString(texts.COMPLETE.TITLE, { count: numberFormatter(rowsCount) })}
+          {replaceVariablesInString(texts.PHASE4.TITLE, { count: numberFormatter(rowsCount) })}
         </Title>
         <Text className={classes.subTitle} color="dimmed">
-          {replaceVariablesInString(texts.COMPLETE.SUB_TITLE, { count: numberFormatter(rowsCount) })}
+          {replaceVariablesInString(texts.PHASE4.SUB_TITLE, { count: numberFormatter(rowsCount) })}
         </Text>
       </Group>
 

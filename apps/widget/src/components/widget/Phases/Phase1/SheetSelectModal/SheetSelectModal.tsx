@@ -23,7 +23,7 @@ export function SheetSelectModal({ opened, onClose, onSubmit, excelSheetNames, c
           control={control}
           name="selectedSheetName"
           rules={{
-            required: texts.VALIDATION.REQUIRED_SELECT,
+            required: texts.PHASE1.SELECT_TEMPLATE_REQUIRED_MSG,
           }}
           render={({ field }) => (
             <Select
@@ -32,13 +32,13 @@ export function SheetSelectModal({ opened, onClose, onSubmit, excelSheetNames, c
               value={field.value}
               data={excelSheetNames}
               onChange={field.onChange}
-              title={texts.PHASE1.SELECT_EXCEL_SHEET}
-              placeholder={texts.PHASE1.SELECT_EXCEL_SHEET_PLACEHOLDER}
+              title={texts.PHASE1.SELECT_SHEET_NAME}
+              placeholder={texts.PHASE1.SELECT_SHEET_NAME_PLACEHOLDER}
             />
           )}
         />
         <Button onClick={onSubmit} fullWidth>
-          {texts.SELECT_SHEET_MODAL.SELECT}
+          {texts.PHASE1.SELECT_SHEET_CONFIRM}
         </Button>
       </Group>
     </MantineModal>

@@ -49,13 +49,13 @@ export function AutoImportPhase3({ onNextClick, texts }: IAutoImportPhase3Props)
       }
       const description: string = parseCronExpression.toString(cronExpression);
       if (description.includes('undefined')) {
-        return { description: texts.INVALID_CRON.MESSAGE, isError: true };
+        return { description: texts.AUTOIMPORT_PHASE3.INVALID_CRON_MESSAGE, isError: true };
       }
 
       return { description, isError: false };
     } catch (error) {
       return {
-        description: texts.INVALID_CRON.MESSAGE,
+        description: texts.AUTOIMPORT_PHASE3.INVALID_CRON_MESSAGE,
         isError: true,
       };
     }

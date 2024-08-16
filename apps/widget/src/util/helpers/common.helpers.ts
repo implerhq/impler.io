@@ -4,7 +4,7 @@ import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/animations/shift-away.css';
 import { variables } from '@config';
-import { CustomTexts, downloadFile, WIDGET_TEXTS } from '@impler/shared';
+import { downloadFile, WIDGET_TEXTS } from '@impler/shared';
 
 // eslint-disable-next-line no-magic-numbers
 export function formatBytes(bytes, decimals = 2) {
@@ -102,7 +102,7 @@ function isObject(value: any): boolean {
 }
 
 // Utility function to deeply merge defaultTexts with user provided texts
-export function deepMerge(defaultTexts: typeof WIDGET_TEXTS, texts?: CustomTexts): typeof WIDGET_TEXTS {
+export function deepMerge(defaultTexts: typeof WIDGET_TEXTS, texts?: typeof WIDGET_TEXTS): typeof WIDGET_TEXTS {
   if (!texts || !isObject(texts)) return defaultTexts;
   else {
     const mergedResult = { ...defaultTexts };

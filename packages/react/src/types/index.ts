@@ -1,20 +1,4 @@
-import React from 'react';
-import { IUpload, EventTypesEnum, CustomTexts } from '@impler/shared';
-
-export interface ButtonProps {
-  projectId: string;
-  accessToken?: string;
-  templateId?: string;
-  authHeaderValue?: string | (() => string) | (() => Promise<string>);
-  extra?: string | Record<string, any>;
-  children?: React.ReactNode;
-  className?: string;
-  primaryColor?: string;
-  onUploadStart?: (value: UploadTemplateData) => void;
-  onUploadTerminate?: (value: UploadData) => void;
-  onUploadComplete?: (value: IUpload) => void;
-  onWidgetClose?: () => void;
-}
+import { IUpload, EventTypesEnum, WIDGET_TEXTS } from '@impler/shared';
 
 export interface ISchemaItem {
   key: string;
@@ -68,6 +52,14 @@ export interface ShowWidgetProps {
   data?: Record<string, string | any>[];
   output?: Record<string, string | any>;
 }
+
+export type DeepPartial<T> = T extends object
+  ? {
+      [P in keyof T]?: DeepPartial<T[P]>;
+    }
+  : T;
+
+export type CustomTexts = DeepPartial<typeof WIDGET_TEXTS>;
 
 export interface UseImplerProps {
   title?: string;

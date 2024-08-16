@@ -1,125 +1,93 @@
-type DeepPartial<T> = {
-  [P in keyof T]?: Partial<T[P]>;
-};
-
 export const WIDGET_TEXTS = {
-  TITLES: {
-    UPLOAD: 'Upload',
-    MAPPING: 'Map Columns',
-    REVIEW: 'Review',
-    COMPLETE: 'Complete',
+  COMMON: {
+    SORRY: 'Sorry!',
+    CLOSE_WIDGET: 'Close',
+    UPLOAD_AGAIN: 'Upload Again',
   },
-  STEPS: {
-    IMAGE_TEMPLATE: 'Generate Template',
-    UPLOAD: 'Upload',
-    MAPPING: 'Map Columns',
-    REVIEW: 'Review',
-    COMPLETE: 'Complete',
+  STEPPER_TITLES: {
+    GENERATE_TEMPLATE: 'Generate Template',
+    UPLOAD_FILE: 'Upload',
+    MAP_COLUMNS: 'Map Columns',
+    REVIEW_DATA: 'Review',
+    COMPLETE_IMPORT: 'Complete',
+    CONFIGURE_JOB: 'Configure',
+    SCHEDULE_JOB: 'Schedule',
+    CONFIRM_JOB: 'Confirm',
   },
-  AUTOIMPORTSTEPS: {
-    CONFIGURE: 'Configure',
-    MAPCOLUMNS: 'Map Columns',
-    SCHEDULE: 'Schedule',
-    CONFIRM: 'Confirm',
-  },
-  FILE_DROPZONE: {
-    TITLE: 'Drop and drop file here or ',
-    BROWSE: 'Browse from computer',
-    FILE_SIZE: 'Image size should be less than 5 MB. Supported formats are PNG, JPG and JPEG.',
-    SUBTITLE: 'Bring any .csv or .xlsx file here to start Import',
-    FILE_SELECTION: 'File selected successfully',
+  FILE_DROP_AREA: {
+    DROP_FILE: 'Drop and drop file here or ',
+    BROWSE_FILE: 'Browse from computer',
+    IMAGE_FILE_SIZE: 'Image size should be less than 5 MB. Supported formats are PNG, JPG and JPEG.',
+    BRING_FILE: 'Bring any .csv or .xlsx file here to start Import',
+    FILE_SELECTED: 'File selected successfully',
   },
   'PHASE0-1': {
     IMPORT_FILE: 'Import File',
     GENERATE_TEMPLATE: 'Generate Template',
-    ALERT_TITLE: 'Generate template with images',
-    ALERT_SUBTITLE:
+    IMAGE_INFO_TITLE: 'Generate template with images',
+    IMAGE_INFO_SUBTITLE:
       'Drag and drop images below for image columns and generate a template file containing names of uploaded images.',
   },
   PHASE1: {
-    SELECT_TITLE: 'Template',
-    SELECT_EXCEL_SHEET: 'Select sheet to Import',
-    SELECT_EXCEL_SHEET_PLACEHOLDER: 'Select Excel sheet',
-    SELECT_PLACEHOLDER: 'Select Template',
-    DOWNLOAD_SAMPLE_TITLE: 'Download sample',
+    SELECT_TEMPLATE_NAME: 'Template',
+    SELECT_TEMPLATE_NAME_PLACEHOLDER: 'Select Template',
+    SELECT_TEMPLATE_REQUIRED_MSG: 'Please select template from the list',
+
+    SELECT_SHEET_NAME: 'Select sheet to Import',
+    SELECT_SHEET_NAME_PLACEHOLDER: 'Select Excel sheet',
+    SELECT_SHEET_CONFIRM: 'Select',
+    SELECT_SHEET_REQUIRED_MSG: 'Please select sheet from the list',
+
     DOWNLOAD_SAMPLE: 'Download sample',
     GENERATE_TEMPLATE: 'Generate Template',
     SEE_MAPPING: 'See Mapping',
-    SELECT_FILE: 'Select a file',
+
+    SELECT_FILE_NAME: 'Select a file',
+    SELECT_FILE_REQUIRED_MSG: 'Please select a file',
+    SELECT_FILE_FORMAT_MSG: 'File type not supported! Please select a .csv or .xlsx file.',
+
+    TEMPLATE_NOT_FOUND_MSG: "We couldn't find the template you're importing! Please check the passed parameters.",
+    INCOMPLETE_TEMPLATE_MSG: 'This import do not have any columns. Please try again after some time!',
   },
   PHASE2: {
-    UPLOAD_AGAIN: 'Upload Again',
-    SEE_REVIEW: 'Review Data',
-    NAME_IN_SCHEMA_TITLE: 'Column in schema',
-    NAME_IN_SHEET_TITLE: 'Column in your sheet',
+    REVIEW_DATA: 'Review Data',
+    IN_SCHEMA_TITLE: 'Column in schema',
+    IN_SHEET_TITLE: 'Column in your sheet',
   },
   PHASE3: {
     EXPORT_DATA: 'Export Data',
     RE_REVIEW_DATA: 'Re-Review Data',
     COMPLETE: 'Complete',
-    ALL_RECORDS_VALID_CONFIRMATION: ' All records are found valid!',
-    ALL_VALID_CONFIRMATION: 'All {total} row(s) found valid! Would you like to complete the Import?',
+    ALL_RECORDS_VALID_TITLE: ' All records are found valid!',
+    ALL_RECORDS_VALID_DETAILS: 'All {total} row(s) found valid! Would you like to complete the Import?',
   },
   PHASE4: {
-    CLOSE: 'Close',
-  },
-  AUTOIMPORTPHASES: {
-    BUTTONTEXT: {
-      MAPCOLUMN: 'Map Column',
-      SCHEDULE: 'Schedule',
-      CONFIRM: 'Confirm',
-      CLOSE: 'Close',
-    },
-  },
-  AUTOIMPORTPHASE2: {
-    NAME_IN_SCHEMA_TITLE: 'Column in schema',
-    KEY_IN_FEED_TITLE: 'Key in your RSS feed ',
-  },
-
-  AUTOIMPORTPHASETITLE: {
-    CONFIGURE: 'Configure',
-  },
-  INVALID_CRON: {
-    MESSAGE: 'Expression values are incorrect. Please update values as per valid values below!',
-  },
-
-  COMPLETE: {
     TITLE: 'Bravo! {count} rows have been uploaded',
     SUB_TITLE: '{count} rows have been uploaded successfully, and currently is in process, it will be ready shortly.',
     UPLOAD_AGAIN: 'Upload new File',
   },
-  SELECT_SHEET_MODAL: {
-    SELECT: 'Select',
+  AUTOIMPORT_PHASE1: {
+    MAPCOLUMN: 'Map Column',
   },
-  DELETE_CONFIRMATION: {
+  AUTOIMPORT_PHASE2: {
+    SCHEDULE: 'Schedule',
+    IN_SCHEMA_TITLE: 'Column in schema',
+    IN_FEED_TITLE: 'Key in your RSS feed ',
+  },
+  AUTOIMPORT_PHASE3: {
+    CONFIRM: 'Confirm',
+    INVALID_CRON_MESSAGE: 'Expression values are incorrect. Please update values as per valid values below!',
+  },
+  DELETE_RECORDS_CONFIRMATION: {
     TITLE: `{total} rows will be deleted. Are you sure?`,
-    SUBTITLE: 'This action cannot be undone.',
-    YES: 'Yes',
-    NO: 'Cancel',
+    DETAILS: 'This action cannot be undone.',
+    CONFIRM_DELETE: 'Yes',
+    CANCEL_DELETE: 'Cancel',
   },
-  PROMPT: {
+  CLOSE_CONFIRMATION: {
     TITLE: `Are you sure? You will lose your work in progress.`,
-    SUBTITLE_CLOSE: 'Your import is in progress, clicking <b>Yes</b> will reset it.',
-    SUBTITLE_RESET: 'Your import is in progress, clicking <b>Yes</b> will reset it.',
-    YES: 'Yes',
-    NO: 'No',
-  },
-  VALIDATION: {
-    REQUIRED_SELECT: 'Please select value from the list',
-    TEMPLATE_REQUIRED: 'Template is required',
-    FILE_REQUIRED: 'File is required',
-  },
-  NOTIFICATIONS: {
-    INCOMPLETE_TEMPLATE: {
-      title: 'Sorry!',
-      message: 'This import do not have any columns. Please try again after some time!',
-    },
-    TEMPLATE_NOT_FOUND: {
-      title: 'Sorry!',
-      message:
-        "We couldn't find the template you're importing, Our team is informed about it. Please try again after some time!",
-    },
+    DETAILS: 'Your import is in progress, clicking <b>Yes</b> will reset it.',
+    CONFIRM_CLOSE: 'Yes',
+    CANCEL_CLOSE: 'No',
   },
 };
-
-export type CustomTexts = DeepPartial<typeof WIDGET_TEXTS>;
