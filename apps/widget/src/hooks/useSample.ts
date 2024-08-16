@@ -65,9 +65,9 @@ export function useSample({ onDownloadComplete }: UseSampleProps) {
       isMultiSelect = parsedSchema.some(
         (schemaItem) => schemaItem.type === ColumnTypesEnum.SELECT && schemaItem.allowMultiSelect
       );
-      sampleData.append('schema', new Blob([schema || ''], { type: 'application/json' }));
+      sampleData.append('schema', JSON.stringify(parsedSchema));
     }
-    if (Array.isArray(data)) sampleData.append('data', new Blob([JSON.stringify(data)], { type: 'application/json' }));
+    if (data) sampleData.append('data', data);
     if (images && importId && imageSchema) {
       const imagesBlob = await images.generateAsync({ type: 'blob', compression: 'DEFLATE' });
       sampleData.append('file', imagesBlob);

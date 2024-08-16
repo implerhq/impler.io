@@ -4,14 +4,16 @@ import ImplerContextProvider from '@store/impler.context';
 import APIContextProvider from '@store/api.context';
 import AppContextProvider from '@store/app.context';
 import { JobsInfoProvider } from '@store/jobinfo.context';
+import { WIDGET_TEXTS } from '@impler/shared';
 
 interface IProviderProps {
   // app-context
   title?: string;
+  texts: typeof WIDGET_TEXTS;
   primaryColor: string;
   output?: string;
   schema?: string;
-  data?: Record<string, string | number>[];
+  data?: string;
   host: string;
   showWidget: boolean;
   setShowWidget: (status: boolean) => void;
@@ -29,6 +31,7 @@ export function Provider(props: PropsWithChildren<IProviderProps>) {
     api,
     data,
     title,
+    texts,
     output,
     projectId,
     templateId,
@@ -55,6 +58,7 @@ export function Provider(props: PropsWithChildren<IProviderProps>) {
             host={host}
             data={data}
             title={title}
+            texts={texts}
             output={output}
             schema={schema}
             showWidget={showWidget}

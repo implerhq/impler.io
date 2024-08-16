@@ -1,9 +1,10 @@
 import { Group, Text } from '@mantine/core';
 import { Dropzone as MantineDropzone, FileWithPath, MIME_TYPES } from '@mantine/dropzone';
+import { WIDGET_TEXTS } from '@impler/shared';
 import useStyles from './UploadDropzone.styles';
-import { TEXTS } from '../../config/texts.config';
 import { FileIcon, CheckIcon } from '../../icons';
 import { File as FileCMP } from '../File';
+import { colors } from '@config';
 
 interface IDropzoneProps {
   loading?: boolean;
@@ -15,6 +16,7 @@ interface IDropzoneProps {
   title?: string;
   error?: string;
   className?: string;
+  texts: typeof WIDGET_TEXTS;
 }
 
 export function UploadDropzone(props: IDropzoneProps) {
@@ -28,6 +30,7 @@ export function UploadDropzone(props: IDropzoneProps) {
     title,
     className,
     error,
+    texts,
   } = props;
   const { classes } = useStyles({ hasError: !!error });
   const wrapperClasses = [classes.wrapper];
@@ -44,7 +47,7 @@ export function UploadDropzone(props: IDropzoneProps) {
               <CheckIcon className={classes.checkIcon} />
             </Group>
             <Text size="lg" mb="sm" align="center">
-              {TEXTS.FILE_DROPZONE.FILE_SELECTION}
+              {texts.FILE_DROP_AREA.FILE_SELECTED}
             </Text>
             {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
             <FileCMP name={file!.name} size={file!.size} onClear={onClear} />
@@ -60,9 +63,9 @@ export function UploadDropzone(props: IDropzoneProps) {
         <Group position="center">
           <div>
             <Text align="center" weight="bold">
-              {TEXTS.FILE_DROPZONE.TITLE}{' '}
+              {texts.FILE_DROP_AREA.DROP_FILE}{' '}
               <Text component="span" className={classes.browseText}>
-                {TEXTS.FILE_DROPZONE.BROWSE}
+                {texts.FILE_DROP_AREA.BROWSE_FILE}
               </Text>
             </Text>
             <MantineDropzone.Idle>
@@ -71,7 +74,7 @@ export function UploadDropzone(props: IDropzoneProps) {
               </Group>
             </MantineDropzone.Idle>
             <Text color="dimmed" size="sm" mt="md" align="center">
-              {TEXTS.FILE_DROPZONE.SUBTITLE}
+              {texts.FILE_DROP_AREA.BRING_FILE}
             </Text>
           </div>
         </Group>
@@ -82,13 +85,13 @@ export function UploadDropzone(props: IDropzoneProps) {
   return (
     <div className={wrapperClasses.join(' ')}>
       {title ? (
-        <Text weight="bold" size="sm" color="">
+        <Text weight="bold" size="sm">
           {title}
         </Text>
       ) : null}
       {isFileSelected ? <SelectedFileContent /> : <SelectFileContent />}
       {error ? (
-        <Text size="xs" mt={3} color="red">
+        <Text size="sm" mt={3} color={colors.red}>
           {error}
         </Text>
       ) : null}

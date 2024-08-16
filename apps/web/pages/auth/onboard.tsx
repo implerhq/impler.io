@@ -1,8 +1,8 @@
 import { OnboardLayout } from '@layouts/OnboardLayout';
-import CreateProjectForm from '@components/signin/CreateProjectForm';
+import { OnboardUserForm } from '@components/signin/OnboardUserForm';
 
 export default function Onboard() {
-  return <CreateProjectForm />;
+  return <OnboardUserForm />;
 }
 
 Onboard.Layout = OnboardLayout;

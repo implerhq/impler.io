@@ -19,7 +19,7 @@ interface ICustomer {
   email: string;
   externalId: string;
   id: string;
-  currency: 'USD' | 'INR';
+  currency?: 'USD' | 'INR';
 }
 interface ICheckEvent {
   email: string;
@@ -88,6 +88,17 @@ export class PaymentAPIService {
 
     const url = `${this.PAYMENT_API_BASE_URL}/api/v1/customer`;
     const response = await axios.post(url, createUserAPIBodyData, {
+      headers: {
+        [this.AUTH_KEY]: this.AUTH_VALUE,
+      },
+    });
+
+    return response.data;
+  }
+
+  async getCustomer(externalId: string): Promise<ICustomer> {
+    const url = `${this.PAYMENT_API_BASE_URL}/api/v1/customer/${externalId}`;
+    const response = await axios.get(url, {
       headers: {
         [this.AUTH_KEY]: this.AUTH_VALUE,
       },

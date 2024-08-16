@@ -36,6 +36,7 @@ export const APIMessages = {
   ERROR_ACCESSING_FEATURE: {
     IMAGE_UPLOAD: 'You do not have access to Image Upload Functionality.',
   },
+  INVALID_VERIFICATION_CODE: 'Code you entered is invalid! Please try again or request new verification code!',
 };
 
 export const CONSTANTS = {
@@ -82,3 +83,9 @@ export const VARIABLES = {
 export const DATE_FORMATS = {
   COMMON: 'DD MMM YYYY',
 };
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export enum LEAD_SIGNUP_USING {
+  GITHUB = 'Github',
+  EMAIL = 'Email',
+}

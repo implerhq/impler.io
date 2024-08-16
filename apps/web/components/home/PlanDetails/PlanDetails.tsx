@@ -5,13 +5,13 @@ import { modals } from '@mantine/modals';
 import { Title, Text, Flex, Button, Skeleton, Stack } from '@mantine/core';
 
 import { useApp } from '@hooks/useApp';
+import { numberFormatter } from '@impler/shared';
 import { SelectCardModal } from '@components/settings';
 import { usePlanDetails } from '@hooks/usePlanDetails';
-import { PlansModal } from '@components/UpgradePlan/PlansModal';
-import { CONSTANTS, MODAL_KEYS, ROUTES, colors, DOCUMENTATION_REFERENCE_LINKS } from '@config';
-import { numberFormatter } from '@impler/shared/dist/utils/helpers';
-import { ConfirmationModal } from '@components/ConfirmationModal';
 import TooltipLink from '@components/TooltipLink/TooltipLink';
+import { PlansModal } from '@components/UpgradePlan/PlansModal';
+import { ConfirmationModal } from '@components/ConfirmationModal';
+import { CONSTANTS, MODAL_KEYS, ROUTES, colors, DOCUMENTATION_REFERENCE_LINKS } from '@config';
 
 export function PlanDetails() {
   const router = useRouter();

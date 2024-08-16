@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node';
 import { BadRequestException } from '@nestjs/common';
 import { APIMessages } from '../constants';
 import { PaginationResult, Defaults, FileMimeTypesEnum } from '@impler/shared';
@@ -64,4 +65,21 @@ export function getAssetMimeType(name: string): string {
   else if (name.endsWith('.jpeg')) return FileMimeTypesEnum.JPEG;
   else if (name.endsWith('.webp')) return FileMimeTypesEnum.WEBP;
   throw new Error('Unsupported file type');
+}
+
+export function generateVerificationCode(): string {
+  let otp = '';
+
+  for (let i = 0; i < 2; i++) {
+    const group = Math.floor(Math.random() * 900) + 100;
+    otp += group.toString();
+  }
+
+  return otp;
+}
+
+export function captureException(error: any) {
+  if (Sentry.isInitialized()) {
+    Sentry.captureException(error);
+  } else console.error(error);
 }

@@ -103,6 +103,7 @@ class Impler {
       },
       '*'
     );
+    this.hideWidget();
   }
 
   isReady = () => this.isWidgetReady;

@@ -1,19 +1,4 @@
-import { IUpload, EventTypesEnum } from '@impler/shared';
-
-export interface ButtonProps {
-  projectId: string;
-  accessToken?: string;
-  templateId?: string;
-  authHeaderValue?: string | (() => string) | (() => Promise<string>);
-  extra?: string | Record<string, any>;
-  children?: React.ReactNode;
-  className?: string;
-  primaryColor?: string;
-  onUploadStart?: (value: UploadTemplateData) => void;
-  onUploadTerminate?: (value: UploadData) => void;
-  onUploadComplete?: (value: IUpload) => void;
-  onWidgetClose?: () => void;
-}
+import { IUpload, EventTypesEnum, WIDGET_TEXTS, ColumnTypesEnum } from '@impler/shared';
 
 export interface ISchemaItem {
   key: string;
@@ -26,7 +11,7 @@ export interface ISchemaItem {
   defaultValue?: string | '<<null>>' | '<<undefined>>' | '<<>>' | '<<[]>>' | '<<true>>' | '<<false>>';
   selectValues?: string[];
   dateFormats?: string[];
-  type?: 'String' | 'Number' | 'Double' | 'Date' | 'Email' | 'Regex' | 'Select' | 'Any' | 'Image';
+  type?: ColumnTypesEnum;
   regex?: string;
   allowMultiSelect?: boolean;
 }
@@ -68,8 +53,17 @@ export interface ShowWidgetProps {
   output?: Record<string, string | any>;
 }
 
+export type DeepPartial<T> = T extends object
+  ? {
+      [P in keyof T]?: DeepPartial<T[P]>;
+    }
+  : T;
+
+export type CustomTexts = DeepPartial<typeof WIDGET_TEXTS>;
+
 export interface UseImplerProps {
   title?: string;
+  texts?: CustomTexts;
   projectId?: string;
   templateId?: string;
   accessToken?: string;

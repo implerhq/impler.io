@@ -9,6 +9,7 @@ import {
   ColumnTypesEnum,
   ColumnDelimiterEnum,
   StatusEnum,
+  EMAIL_SUBJECT,
 } from '@impler/shared';
 import { FileNameService, StorageService, EmailService } from '@impler/services';
 import {
@@ -135,7 +136,7 @@ export class SendWebhookDataConsumer extends BaseConsumer {
         if (imageHeadings?.length > 0)
           imageHeadings.forEach((heading) => {
             obj.record[heading] = obj.record[heading]
-              ? `${process.env.API_BASE_URL}/v1/upload/${uploadId}/asset/${obj.record[heading]}`
+              ? `${process.env.API_ROOT_URL}/v1/upload/${uploadId}/asset/${obj.record[heading]}`
               : '';
           });
 
@@ -226,7 +227,7 @@ export class SendWebhookDataConsumer extends BaseConsumer {
 
       await this.emailService.sendEmail({
         to: userEmail,
-        subject: `🛑 Encountered error while sending webhook data in ${importName}`,
+        subject: `${EMAIL_SUBJECT.ERROR_SENDING_WEBHOOK_DATA} ${importName}`,
         html: emailContents,
         from: process.env.ALERT_EMAIL_FROM,
         senderName: process.env.EMAIL_FROM_NAME,

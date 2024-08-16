@@ -1,5 +1,3 @@
-import { TemplateModeEnum } from '@impler/shared';
-
 export const CONSTANTS = {
   PLAN_CODE_QUERY_KEY: 'plan_code',
   GITHUB_LOGIN_URL: '/v1/auth/github',
@@ -59,6 +57,11 @@ export const MODAL_TITLES = {
 };
 
 export const API_KEYS = {
+  RESEND_OTP: 'RESEND_OTP',
+  VERIFY_EMAIL: 'VERIFY_EMAIL',
+
+  ONBOARD_USER: 'ONBOARD_USER',
+
   CHECKOUT: 'CHECKOUT',
 
   APPLY_COUPON_CODE: 'APPLY_COUPON_CODE',
@@ -113,12 +116,14 @@ export const API_KEYS = {
   ACTIVITY_SUMMARY: 'ACTIVITY_SUMMARY',
 
   ME: 'ME',
+  UPDATE_ME_INFO: 'UPDATE_ME_INFO',
   REGENERATE: 'REGENERATE',
   IMPORT_COUNT: 'IMPORT_COUNT',
   DONWLOAD_ORIGINAL_FILE: 'DOWNLOAD_ORIGINAL_FILE',
 };
 
 export const NOTIFICATION_KEYS = {
+  OTP_CODE_RESENT_SUCCESSFULLY: 'OTP_CODE_RESENT_SUCCESSFULLY',
   ERROR_ADDING_PAYMENT_METHOD: 'ERROR_ADDING_PAYMENT_METHOD',
   NO_PAYMENT_METHOD_FOUND: 'NO_PAYMENT_METHOD_FOUND',
 
@@ -154,7 +159,9 @@ export const ROUTES = {
   HOME: '/',
   SIGNUP: '/auth/signup',
   SIGNIN: '/auth/signin',
-  SIGNIN_ONBOARDING: '/auth/onboard',
+  SIGNUP_ONBOARDING: '/auth/onboard',
+  OTP_VERIFY: '/auth/verify',
+  RESET_PASSWORD: '/auth/reset',
   REQUEST_FORGOT_PASSWORD: '/auth/reset/request',
   IMPORTS: '/imports',
   SETTINGS: '/settings',
@@ -223,6 +230,11 @@ export const TEXTS = {
     "Build the best CSV Excel Import Experience for SaaS in 10 Minutes. Onboard customers' data with a hassle-free data importer in your app.",
 };
 
+export const IMPORT_MODES = [
+  { value: 'manual', label: 'Manual' },
+  { value: 'automatic', label: 'Automatic' },
+];
+
 export const DOCUMENTATION_REFERENCE_LINKS = {
   defaultValue: 'https://docs.impler.io/platform/default-value',
   primaryValidation: 'https://docs.impler.io/platform/validators',
@@ -235,7 +247,32 @@ export const DOCUMENTATION_REFERENCE_LINKS = {
   customValidation: 'https://docs.impler.io/features/custom-validation',
 };
 
-export const IMPORT_MODES = [
-  { label: 'Manual', value: TemplateModeEnum.MANUAL },
-  { label: 'Automatic', value: TemplateModeEnum.AUTOMATIC },
+export const COMPANY_SIZES = [
+  { value: 'Only me', label: 'Only me' },
+  { value: '1-5', label: '1-5' },
+  { value: '6-10', label: '6-10' },
+  { value: '50-99', label: '50-99' },
+  { value: '100+', label: '100+' },
+];
+
+export const ROLES = [
+  { value: 'Engineer', label: 'Engineer' },
+  { value: 'Engineering Manager', label: 'Engineering Manager' },
+  { value: 'Architect', label: 'Architect' },
+  { value: 'Product Manager', label: 'Product Manager' },
+  { value: 'Designer', label: 'Designer' },
+  { value: 'Founder', label: 'Founder' },
+  { value: 'Marketing Manager', label: 'Marketing Manager' },
+  { value: 'Student', label: 'Student' },
+  { value: 'CXO (CTO/CEO/Other...)', label: 'CXO (CTO/CEO/Other...)' },
+];
+
+export const HOW_HEARD_ABOUT_US = [
+  { value: 'Apollo', label: 'Apollo' },
+  { value: 'Recommendation', label: 'Recommendation' },
+  { value: 'Social Media', label: 'Social Media' },
+  { value: 'Google Search', label: 'Google Search' },
+  { value: 'Bubble.io', label: 'Bubble.io' },
+  { value: 'Colleague', label: 'Colleague' },
+  { value: 'Linkdin', label: 'Linkdin' },
 ];

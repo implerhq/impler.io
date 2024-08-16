@@ -37,5 +37,24 @@ export class UserEntity {
   @Exclude({ toPlainOnly: true })
   resetTokenDate?: string;
 
+  @Exclude({ toPlainOnly: true })
   resetTokenCount?: IUserResetTokenCount;
+
+  @Exclude({ toPlainOnly: true })
+  companySize?: string | null;
+
+  @Exclude({ toPlainOnly: true })
+  role?: string | null;
+
+  @Exclude({ toPlainOnly: true })
+  source?: string | null;
+
+  @Exclude({ toPlainOnly: true })
+  signupMethod?: string;
+
+  @Exclude({ toPlainOnly: true })
+  isEmailVerified: boolean;
+
+  @Exclude({ toPlainOnly: true })
+  verificationCode: string;
 }

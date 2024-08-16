@@ -1,6 +1,6 @@
 {
 	"name": "@impler/widget",
-	"version": "0.23.1",
+	"version": "0.24.0",
 	"author": "implerhq",
 	"license": "MIT",
 	"private": true,
@@ -40,8 +40,8 @@
 		"@craco/craco": "^6.4.5",
 		"@emotion/react": "^11.10.5",
 		"@handsontable/react": "^14.1.0",
-		"@impler/client": "^0.23.1",
-		"@impler/shared": "^0.23.1",
+		"@impler/client": "^0.24.0",
+		"@impler/shared": "^0.24.0",
 		"@mantine/core": "6.0.21",
 		"@mantine/dropzone": "6.0.21",
 		"@mantine/hooks": "6.0.21",
@@ -57,9 +57,7 @@
 		"handsontable": "^14.1.0",
 		"http-server": "^14.1.1",
 		"jszip": "^3.10.1",
-		"moment": "^2.29.4",
 		"react": "18.2.0",
-		"react-datepicker": "^4.21.0",
 		"react-dom": "18.2.0",
 		"react-hook-form": "^7.39.1",
 		"react-router-dom": "^6.4.2",
@@ -67,14 +65,15 @@
 		"rimraf": "^3.0.2",
 		"tippy.js": "^6.3.7",
 		"web-vitals": "^3.0.4",
-		"webfontloader": "^1.6.28",
-		"webpack-dev-server": "^4.11.1"
+		"webfontloader": "^1.6.28"
 	},
 	"devDependencies": {
+		"@babel/preset-typescript": "^7.24.7",
 		"@types/file-saver": "^2.0.5",
 		"@types/react": "^18.2.0",
 		"@types/react-datepicker": "^4.19.1",
 		"@types/react-dom": "^18.2.0",
+		"ts-loader": "^9.4.1",
 		"typescript": "^4.8.3"
 	}
 }

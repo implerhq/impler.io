@@ -1,8 +1,9 @@
 import { Group, Text } from '@mantine/core';
 import { Dropzone as MantineDropzone, FileWithPath, MIME_TYPES } from '@mantine/dropzone';
 import { ImageIcon } from '../../icons';
+import { WIDGET_TEXTS } from '@impler/shared';
 import useStyles from './FileDropdown.styles';
-import { TEXTS, variables } from '../../config';
+import { variables } from '../../config';
 
 interface IDropzoneProps {
   loading?: boolean;
@@ -11,6 +12,7 @@ interface IDropzoneProps {
   onDrop: (files: FileWithPath[]) => void;
   title?: string;
   error?: string;
+  texts: typeof WIDGET_TEXTS;
 }
 
 export function FileDropzone(props: IDropzoneProps) {
@@ -21,6 +23,7 @@ export function FileDropzone(props: IDropzoneProps) {
     loading,
     onReject,
     accept = [MIME_TYPES.png, MIME_TYPES.jpeg, MIME_TYPES.webp],
+    texts,
   } = props;
   const { classes } = useStyles();
 
@@ -38,13 +41,13 @@ export function FileDropzone(props: IDropzoneProps) {
           <ImageIcon />
         </Group>
         <Text align="center">
-          {TEXTS.FILE_DROPZONE.TITLE}{' '}
+          {texts.FILE_DROP_AREA.DROP_FILE}{' '}
           <Text component="span" className={classes.browseText}>
-            {TEXTS.FILE_DROPZONE.BROWSE}
+            {texts.FILE_DROP_AREA.BROWSE_FILE}
           </Text>
         </Text>
         <Text size="xs" align="center">
-          {TEXTS.FILE_DROPZONE.FILE_SIZE}
+          {texts.FILE_DROP_AREA.IMAGE_FILE_SIZE}
         </Text>
       </MantineDropzone>
     );

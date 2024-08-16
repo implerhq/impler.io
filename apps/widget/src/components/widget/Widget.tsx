@@ -2,15 +2,15 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { Modal } from '@ui/Modal';
 import { ParentWindow } from '@util';
-import { TEXTS, variables } from '@config';
+import { variables } from '@config';
 import { useWidget } from '@hooks/useWidget';
 import { useAppState } from '@store/app.context';
 import { Layout } from 'components/Common/Layout';
 import { ConfirmModal } from './modals/ConfirmModal';
 import { useTemplates } from '@hooks/useTemplates';
 import { PhasesEnum, PromptModalTypesEnum } from '@types';
-import { IImportConfig, IUpload, TemplateModeEnum } from '@impler/shared';
 import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
+import { IImportConfig, IUpload, TemplateModeEnum } from '@impler/shared';
 
 import { Phase0 } from './Phases/Phase0';
 import { Phase01 } from './Phases/Phase0-1';
@@ -38,6 +38,7 @@ export function Widget() {
     setShowWidget,
     setImportConfig,
     reset: resetAppState,
+    texts,
   } = useAppState();
 
   const onUploadResetClick = () => {
@@ -95,33 +96,31 @@ export function Widget() {
     [PhasesEnum.VALIDATE]: <Phase0 onValidationSuccess={onSuccess} />,
     ...(importConfig.mode === TemplateModeEnum.AUTOMATIC
       ? {
-          [PhasesEnum.CONFIGURE]: <AutoImportPhase1 onNextClick={() => setPhase(PhasesEnum.MAPCOLUMNS)} />,
-          [PhasesEnum.MAPCOLUMNS]: <AutoImportPhase2 onNextClick={() => setPhase(PhasesEnum.SCHEDULE)} />,
-          [PhasesEnum.SCHEDULE]: <AutoImportPhase3 onNextClick={() => setPhase(PhasesEnum.CONFIRM)} />,
-          [PhasesEnum.CONFIRM]: <AutoImportPhase4 onCloseClick={onClose} />,
+          [PhasesEnum.CONFIGURE]: (
+            <AutoImportPhase1 texts={texts} onNextClick={() => setPhase(PhasesEnum.MAPCOLUMNS)} />
+          ),
+          [PhasesEnum.MAPCOLUMNS]: <AutoImportPhase2 texts={texts} onNextClick={() => setPhase(PhasesEnum.SCHEDULE)} />,
+          [PhasesEnum.SCHEDULE]: <AutoImportPhase3 onNextClick={() => setPhase(PhasesEnum.CONFIRM)} texts={texts} />,
+          [PhasesEnum.CONFIRM]: <AutoImportPhase4 texts={texts} onCloseClick={onClose} />,
         }
       : {
-          [PhasesEnum.IMAGE_UPLOAD]: <Phase01 goToUpload={() => setPhase(PhasesEnum.UPLOAD)} />,
+          [PhasesEnum.IMAGE_UPLOAD]: <Phase01 texts={texts} goToUpload={() => setPhase(PhasesEnum.UPLOAD)} />,
           [PhasesEnum.UPLOAD]: (
             <Phase1
+              texts={texts}
               hasImageUpload={hasImageUpload}
               onNextClick={() => setPhase(PhasesEnum.MAPPING)}
               generateImageTemplate={() => setPhase(PhasesEnum.IMAGE_UPLOAD)}
             />
           ),
           [PhasesEnum.MAPPING]: (
-            <Phase2 onNextClick={() => setPhase(PhasesEnum.REVIEW)} onPrevClick={onUploadResetClick} />
+            <Phase2 texts={texts} onNextClick={() => setPhase(PhasesEnum.REVIEW)} onPrevClick={onUploadResetClick} />
           ),
-          [PhasesEnum.REVIEW]: <Phase3 onNextClick={onComplete} onPrevClick={onUploadResetClick} />,
+          [PhasesEnum.REVIEW]: <Phase3 texts={texts} onNextClick={onComplete} onPrevClick={onUploadResetClick} />,
           [PhasesEnum.COMPLETE]: (
-            <Phase4 rowsCount={dataCount} onUploadAgainClick={resetProgress} onCloseClick={onClose} />
+            <Phase4 texts={texts} rowsCount={dataCount} onUploadAgainClick={resetProgress} onCloseClick={onClose} />
           ),
         }),
-  };
-
-  const subTitle = {
-    [PromptModalTypesEnum.CLOSE]: TEXTS.PROMPT.SUBTITLE_CLOSE,
-    [PromptModalTypesEnum.UPLOAD_AGAIN]: TEXTS.PROMPT.SUBTITLE_RESET,
   };
 
   useEffect(() => {
@@ -134,21 +133,21 @@ export function Widget() {
     <Modal title={title || importConfig?.title || templateInfo?.name} opened={showWidget} onClose={onClose}>
       <Layout
         active={phase}
+        texts={texts}
         hasImageUpload={hasImageUpload}
-        title={title || importConfig?.title || templateInfo?.name}
         mode={importConfig.mode as TemplateModeEnum}
+        title={title || importConfig?.title || templateInfo?.name}
       >
         {PhaseView[phase]}
 
         <ConfirmModal
           onCancel={onPromptCancel}
-          title={TEXTS.PROMPT.TITLE}
+          title={texts.CLOSE_CONFIRMATION.TITLE}
           onConfirm={onPromptConfirm}
-          cancelLabel={TEXTS.PROMPT.NO}
-          confirmLabel={TEXTS.PROMPT.YES}
+          cancelLabel={texts.CLOSE_CONFIRMATION.CANCEL_CLOSE}
+          confirmLabel={texts.CLOSE_CONFIRMATION.CONFIRM_CLOSE}
           opened={!!promptContinueAction}
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          subTitle={subTitle[promptContinueAction!]}
+          subTitle={texts.CLOSE_CONFIRMATION.DETAILS}
         />
       </Layout>
     </Modal>

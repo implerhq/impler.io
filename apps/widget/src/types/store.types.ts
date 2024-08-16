@@ -1,5 +1,5 @@
 import { ApiService } from '@impler/client';
-import { IUpload, ITemplate, IImportConfig } from '@impler/shared';
+import { IUpload, ITemplate, IImportConfig, WIDGET_TEXTS } from '@impler/shared';
 
 export interface IImplerStore {
   projectId: string;
@@ -19,9 +19,10 @@ export interface IApiStore {
 
 export interface IAppStore {
   title?: string;
+  texts: typeof WIDGET_TEXTS;
   importId?: string;
   imageSchema?: string;
-  data?: Record<string, string | number>[];
+  data?: string;
   templateInfo: ITemplate;
   uploadInfo: IUpload;
   reset: () => void;

@@ -2,19 +2,21 @@ import * as bcrypt from 'bcryptjs';
 import { Injectable } from '@nestjs/common';
 
 import { UserRepository } from '@impler/dal';
-import { PaymentAPIService } from '@impler/services';
-import { AuthService } from '../../services/auth.service';
+
+import { EmailService } from '@impler/services';
+import { LEAD_SIGNUP_USING } from '@shared/constants';
+import { SCREENS, EMAIL_SUBJECT } from '@impler/shared';
+import { AuthService } from 'app/auth/services/auth.service';
 import { RegisterUserCommand } from './register-user.command';
+import { generateVerificationCode } from '@shared/helpers/common.helper';
 import { UniqueEmailException } from '@shared/exceptions/unique-email.exception';
-import { LeadService } from '@shared/services/lead.service';
 
 @Injectable()
 export class RegisterUser {
   constructor(
-    private userRepository: UserRepository,
     private authService: AuthService,
-    private leadService: LeadService,
-    private paymentAPIService: PaymentAPIService
+    private emailService: EmailService,
+    private userRepository: UserRepository
   ) {}
 
   async execute(command: RegisterUserCommand) {
@@ -26,37 +28,51 @@ export class RegisterUser {
     }
 
     const passwordHash = await bcrypt.hash(command.password, 10);
+    const verificationCode = generateVerificationCode();
+
     const user = await this.userRepository.create({
       email: command.email,
       firstName: command.firstName.toLowerCase(),
       lastName: command.lastName?.toLowerCase(),
       password: passwordHash,
+      signupMethod: LEAD_SIGNUP_USING.EMAIL,
+      verificationCode,
+      isEmailVerified: this.emailService.isConnected() ? false : true,
     });
-
-    await this.leadService.createLead({
-      'First Name': user.firstName,
-      'Last Name': user.lastName,
-      'Lead Email': user.email,
-      'Lead Source': 'Website Signup',
-    });
-
-    const userData = {
-      name: user.firstName + ' ' + user.lastName,
-      email: user.email,
-      externalId: user.email,
-    };
-
-    await this.paymentAPIService.createUser(userData);
 
     const token = this.authService.getSignedToken({
       _id: user._id,
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      isEmailVerified: user.isEmailVerified,
     });
 
+    if (this.emailService.isConnected()) {
+      const emailContents = this.emailService.getEmailContent({
+        type: 'VERIFICATION_EMAIL',
+        data: {
+          otp: verificationCode,
+          firstName: user.firstName,
+        },
+      });
+
+      await this.emailService.sendEmail({
+        to: command.email,
+        subject: EMAIL_SUBJECT.VERIFICATION_CODE,
+        html: emailContents,
+        from: process.env.ALERT_EMAIL_FROM,
+        senderName: process.env.EMAIL_FROM_NAME,
+      });
+
+      return {
+        screen: SCREENS.VERIFY,
+        token,
+      };
+    }
+
     return {
-      showAddProject: true,
+      screen: SCREENS.ONBOARD,
       token,
     };
   }

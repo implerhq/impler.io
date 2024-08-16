@@ -33,8 +33,93 @@ interface ISendMailOptions {
 interface IForgotPasswordEmailOptions {
   link: string;
 }
+interface IVerificationEmailOptions {
+  otp: string;
+  firstName: string;
+}
 
 const EMAIL_CONTENTS = {
+  VERIFICATION_EMAIL: ({ otp, firstName }: IVerificationEmailOptions) => `
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <style>
+          body {
+              font-family: Arial, sans-serif;
+              background-color: #f5f5f5;
+              margin: 0;
+              padding: 20px;
+          }
+          .container {
+              max-width: 600px;
+              margin: 0 auto;
+              background-color: white;
+              padding: 30px;
+              border-radius: 8px;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          }
+          .header {
+              text-align: center;
+              margin-bottom: 20px;
+          }
+          .header img {
+              width: 150px;
+              margin-bottom: 10px;
+          }
+          .header h1 {
+              font-size: 24px;
+              color: white;
+          }
+          .content {
+              color: #555;
+              line-height: 1.6;
+          }
+          .otp-code {
+              display: inline-block;
+              font-size: 24px;
+              font-weight: bold;
+              color: #4caf50;
+              background-color: #e8f5e9;
+              padding: 5px 10px;
+              border-radius: 4px;
+              margin: 10px 0;
+          }
+          .footer {
+              margin-top: 20px;
+              text-align: center;
+              color: #777;
+          }
+          .footer a {
+              color: #1e88e5;
+              text-decoration: none;
+          }
+      </style>
+  </head>
+  <body>
+      <div class="container">
+          <div class="header">
+              <img src="https://impler.io/wp-content/uploads/2024/07/Logo-black.png" alt="Impler Logo" />
+              <h1>Verification Code</h1>
+          </div>
+          
+          <div class="content">
+              <p>Hi ${firstName},</p>
+              <p>Your OTP code is <span class="otp-code">${otp}</span>. Please enter this code to verify your identity.</p>
+              <p>If you did not request this code, please ignore this email.</p>
+              <p>Thank you,</p>
+              <p>The Impler Team</p>
+          </div>
+          
+          <div class="footer">
+              <p>If you need help, feel free to <a href="mailto:bhavik@impler.io">contact us</a>.</p>
+          </div>
+      </div>
+  </body>
+  </html>
+    `,
+
   REQUEST_FORGOT_PASSWORD: ({ link }: IForgotPasswordEmailOptions) => `
 		<p>Hi,</p>
 		<p>You have requested to reset your password. Please click on the link below to reset your password.</p>
@@ -326,6 +411,10 @@ type EmailContents =
   | {
       type: 'ERROR_EXECUTING_CODE';
       data: IExecutionErrorEmailOptions;
+    }
+  | {
+      type: 'VERIFICATION_EMAIL';
+      data: IVerificationEmailOptions;
     };
 
 export abstract class EmailService {

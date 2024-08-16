@@ -5,13 +5,12 @@ import HotTableClass from '@handsontable/react/hotTableClass';
 import { PhasesEnum } from '@types';
 import { logAmplitudeEvent } from '@amplitude';
 import { usePhase3 } from '@hooks/Phase3/usePhase3';
-import { IUpload, numberFormatter, replaceVariablesInString } from '@impler/shared';
+import { WIDGET_TEXTS, IUpload, numberFormatter, replaceVariablesInString } from '@impler/shared';
 
 import { ReviewConfirmModal } from './ReviewConfirmModal';
 import { Table } from 'components/Common/Table';
 import { Footer } from 'components/Common/Footer';
 
-import { TEXTS } from '@config';
 import { Button } from '@ui/Button';
 import { Pagination } from '@ui/Pagination';
 import { LoadingOverlay } from '@ui/LoadingOverlay';
@@ -21,11 +20,12 @@ import { ConfirmModal } from 'components/widget/modals/ConfirmModal';
 interface IPhase3Props {
   onNextClick: (uploadData: IUpload, importedData?: Record<string, any>[]) => void;
   onPrevClick: () => void;
+  texts: typeof WIDGET_TEXTS;
 }
 
 export function Phase3(props: IPhase3Props) {
   const tableRef = useRef<HotTableClass>(null);
-  const { onNextClick, onPrevClick } = props;
+  const { onNextClick, onPrevClick, texts } = props;
   const {
     page,
     type,
@@ -185,6 +185,7 @@ export function Phase3(props: IPhase3Props) {
         onPrevClick={onPrevClick}
       />
       <ReviewConfirmModal
+        texts={texts}
         opened={!!showAllDataValidModal}
         onClose={() => setShowAllDataValidModal(false)}
         onConfirm={onReviewConfirmed}
@@ -192,7 +193,7 @@ export function Phase3(props: IPhase3Props) {
       />
       <ConfirmModal
         onCancel={() => setShowDeleteConfirmModal(false)}
-        title={replaceVariablesInString(TEXTS.DELETE_CONFIRMATION.TITLE, {
+        title={replaceVariablesInString(texts.DELETE_RECORDS_CONFIRMATION.TITLE, {
           total: numberFormatter(selectedRowsRef.current.size),
         })}
         onConfirm={() => {
@@ -203,10 +204,10 @@ export function Phase3(props: IPhase3Props) {
             selectedRowsCountRef.current.invalid.size,
           ]);
         }}
-        cancelLabel={TEXTS.DELETE_CONFIRMATION.NO}
-        confirmLabel={TEXTS.DELETE_CONFIRMATION.YES}
+        cancelLabel={texts.DELETE_RECORDS_CONFIRMATION.CANCEL_DELETE}
+        confirmLabel={texts.DELETE_RECORDS_CONFIRMATION.CONFIRM_DELETE}
         opened={!!showDeleteConfirmModal}
-        subTitle={TEXTS.DELETE_CONFIRMATION.SUBTITLE}
+        subTitle={texts.DELETE_RECORDS_CONFIRMATION.DETAILS}
       />
     </>
   );

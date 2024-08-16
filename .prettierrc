@@ -7,5 +7,5 @@
   "quoteProps": "as-needed",
   "jsxSingleQuote": false,
   "arrowParens": "always",
-  "endOfLine": "lf"
+  "endOfLine": "auto"
 }

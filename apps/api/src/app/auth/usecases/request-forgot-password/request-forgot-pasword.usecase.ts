@@ -5,6 +5,7 @@ import { differenceInHours, differenceInSeconds, parseISO } from 'date-fns';
 import { EmailService } from '@impler/services';
 import { UserRepository, UserEntity, IUserResetTokenCount } from '@impler/dal';
 import { RequestForgotPasswordCommand } from './request-forgot-pasword.command';
+import { EMAIL_SUBJECT } from '@impler/shared';
 
 @Injectable()
 export class RequestForgotPassword {
@@ -39,7 +40,7 @@ export class RequestForgotPassword {
         from: process.env.EMAIL_FROM,
         html: resetPasswordContent,
         senderName: process.env.EMAIL_FROM_NAME,
-        subject: 'Reset Password | Impler',
+        subject: EMAIL_SUBJECT.RESET_PASSWORD,
       });
     }
 

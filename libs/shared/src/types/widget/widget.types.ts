@@ -1,18 +1,32 @@
-export interface IShowPayload {
+import { WIDGET_TEXTS } from '../../config/texts.config';
+import { ISchemaItem } from '../column';
+
+export interface ICommonShowPayload {
   host: string;
-  extra?: string;
+  extra?: string | any;
   templateId?: string;
   authHeaderValue?: string;
   primaryColor?: string;
   colorScheme?: string;
   title?: string;
-  schema?: string;
-  data?: Record<string, string | any>[];
-  output?: string;
   projectId: string;
   accessToken: string;
   uuid: string;
 }
+export interface IWidgetShowPayload extends ICommonShowPayload {
+  texts?: typeof WIDGET_TEXTS;
+  data?: string;
+  schema?: string;
+  output?: string;
+}
+
+export interface IUserShowPayload extends ICommonShowPayload {
+  texts?: string | typeof WIDGET_TEXTS;
+  data?: string | Record<string, string | number>[];
+  schema?: string | ISchemaItem[];
+  output?: string | Record<string, string | number>;
+}
+
 export interface IOption {
   value: string;
   label: string;

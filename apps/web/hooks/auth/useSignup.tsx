@@ -4,10 +4,12 @@ import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 
+import { API_KEYS } from '@config';
 import { commonApi } from '@libs/api';
 import { track } from '@libs/amplitude';
-import { API_KEYS, ROUTES } from '@config';
-import { IErrorObject, ILoginResponse } from '@impler/shared';
+import { useAppState } from 'store/app.context';
+import { handleRouteBasedOnScreenResponse } from '@shared/helpers';
+import { IErrorObject, ILoginResponse, SCREENS } from '@impler/shared';
 
 interface ISignupFormData {
   fullName: string;
@@ -16,14 +18,16 @@ interface ISignupFormData {
 }
 
 export function useSignup() {
+  const { setProfileInfo } = useAppState();
   const { push } = useRouter();
   const {
     setError,
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ISignupFormData>();
+  } = useForm<ISignupFormData>({});
   const [errorMessage, setErrorMessage] = useState<IErrorObject | undefined>(undefined);
+
   const { mutate: signup, isLoading: isSignupLoading } = useMutation<
     ILoginResponse,
     IErrorObject,
@@ -33,6 +37,7 @@ export function useSignup() {
     onSuccess: (data) => {
       if (!data) return;
       const profileData = jwt<IProfileData>(data.token as string);
+      setProfileInfo(profileData);
       track({
         name: 'SIGNUP',
         properties: {
@@ -42,9 +47,7 @@ export function useSignup() {
           id: profileData._id,
         },
       });
-      if (data.showAddProject) {
-        push(ROUTES.SIGNIN_ONBOARDING);
-      } else push(ROUTES.HOME);
+      handleRouteBasedOnScreenResponse(data.screen as SCREENS, push);
     },
     onError(error) {
       if (error.error === 'EmailAlreadyExists') {

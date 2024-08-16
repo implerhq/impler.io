@@ -128,6 +128,7 @@ export class ProjectController {
         lastName: user.lastName,
         email: user.email,
         profilePicture: user.profilePicture,
+        isEmailVerified: user.isEmailVerified,
         accessToken: projectWithEnvironment.environment.apiKeys[0].key,
       },
       projectWithEnvironment.project._id
@@ -156,6 +157,7 @@ export class ProjectController {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        isEmailVerified: user.isEmailVerified,
         profilePicture: user.profilePicture,
         accessToken: projectEnvironment.apiKeys[0].key,
       },

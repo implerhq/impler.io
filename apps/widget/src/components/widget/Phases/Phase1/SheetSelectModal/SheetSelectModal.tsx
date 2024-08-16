@@ -1,7 +1,7 @@
 import { Control, Controller } from 'react-hook-form';
 import { Group, Modal as MantineModal } from '@mantine/core';
 
-import { TEXTS } from '@config';
+import { WIDGET_TEXTS } from '@impler/shared';
 import { Button } from '@ui/Button';
 import { Select } from '@ui/Select';
 import { IFormvalues } from '@types';
@@ -12,9 +12,10 @@ interface IConfirmModalProps {
   onSubmit: () => void;
   excelSheetNames: string[];
   control: Control<IFormvalues>;
+  texts: typeof WIDGET_TEXTS;
 }
 
-export function SheetSelectModal({ opened, onClose, onSubmit, excelSheetNames, control }: IConfirmModalProps) {
+export function SheetSelectModal({ opened, onClose, onSubmit, excelSheetNames, control, texts }: IConfirmModalProps) {
   return (
     <MantineModal withCloseButton={false} centered size="lg" padding="xl" opened={opened} onClose={onClose}>
       <Group spacing="sm">
@@ -22,7 +23,7 @@ export function SheetSelectModal({ opened, onClose, onSubmit, excelSheetNames, c
           control={control}
           name="selectedSheetName"
           rules={{
-            required: TEXTS.VALIDATION.REQUIRED_SELECT,
+            required: texts.PHASE1.SELECT_TEMPLATE_REQUIRED_MSG,
           }}
           render={({ field }) => (
             <Select
@@ -31,13 +32,13 @@ export function SheetSelectModal({ opened, onClose, onSubmit, excelSheetNames, c
               value={field.value}
               data={excelSheetNames}
               onChange={field.onChange}
-              title={TEXTS.PHASE1.SELECT_EXCEL_SHEET}
-              placeholder={TEXTS.PHASE1.SELECT_EXCEL_SHEET_PLACEHOLDER}
+              title={texts.PHASE1.SELECT_SHEET_NAME}
+              placeholder={texts.PHASE1.SELECT_SHEET_NAME_PLACEHOLDER}
             />
           )}
         />
         <Button onClick={onSubmit} fullWidth>
-          {TEXTS.SELECT_SHEET_MODAL.SELECT}
+          {texts.PHASE1.SELECT_SHEET_CONFIRM}
         </Button>
       </Group>
     </MantineModal>

@@ -1,17 +1,12 @@
-import { colors, TEXTS, ENV, SENTRY_DSN } from '@config';
-import { NotificationContent } from '@types';
-import { showNotification } from '@mantine/notifications';
 import { captureMessage } from '@sentry/react';
+import { showNotification } from '@mantine/notifications';
+
+import { colors, ENV, SENTRY_DSN } from '@config';
 import { ENVTypesEnum } from '@impler/shared';
+import { NotificationContent } from '@types';
 
 const autoCloseDuration = 5000;
-export function showError(data: NotificationContent | keyof typeof TEXTS.NOTIFICATIONS) {
-  let notificationData: NotificationContent;
-  if (typeof data === 'string') {
-    notificationData = TEXTS.NOTIFICATIONS[data];
-  } else {
-    notificationData = data;
-  }
+export function showError(notificationData: NotificationContent) {
   showNotification({
     color: '#FFFFFF',
     autoClose: autoCloseDuration,
@@ -28,5 +23,5 @@ export function showError(data: NotificationContent | keyof typeof TEXTS.NOTIFIC
       },
     }),
   });
-  if (ENV === ENVTypesEnum.PROD && SENTRY_DSN) captureMessage(typeof data === 'string' ? data : data.message);
+  if (ENV === ENVTypesEnum.PROD && SENTRY_DSN) captureMessage(notificationData.message);
 }

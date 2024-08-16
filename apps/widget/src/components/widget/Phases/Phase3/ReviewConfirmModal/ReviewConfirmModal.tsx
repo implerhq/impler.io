@@ -1,18 +1,19 @@
-import { CheckIcon } from '@icons';
-import { colors, TEXTS } from '@config';
 import { Button } from '@ui/Button';
 import { Group, Modal as MantineModal, Text, Title } from '@mantine/core';
-import { replaceVariablesInString, numberFormatter } from '@impler/shared';
+import { CheckIcon } from '@icons';
+import { colors } from '@config';
+import { replaceVariablesInString, numberFormatter, WIDGET_TEXTS } from '@impler/shared';
 
 interface IConfirmModalProps {
   opened: boolean;
   onClose: () => void;
   totalRecords: number;
   onConfirm: () => void;
+  texts: typeof WIDGET_TEXTS;
 }
 
 export function ReviewConfirmModal(props: IConfirmModalProps) {
-  const { opened, onClose, onConfirm, totalRecords } = props;
+  const { opened, onClose, onConfirm, totalRecords, texts } = props;
 
   return (
     <MantineModal centered opened={opened} onClose={onClose} withCloseButton={false} padding="xl" size="lg">
@@ -28,18 +29,18 @@ export function ReviewConfirmModal(props: IConfirmModalProps) {
           }}
         />
         <Title color={colors.success} order={3} mt="sm">
-          All records are found valid!
+          {texts.PHASE3?.ALL_RECORDS_VALID_TITLE}
         </Title>
         <Text color="dimmed" mb="sm">
-          {replaceVariablesInString(TEXTS.PHASE3.ALL_VALID_CONFIRMATION, {
+          {replaceVariablesInString(texts.PHASE3.ALL_RECORDS_VALID_DETAILS, {
             total: numberFormatter(totalRecords),
           })}
         </Text>
         <Group spacing="sm" style={{ flexDirection: 'row' }}>
           <Button onClick={onClose} color="gray" variant="outline">
-            {TEXTS.PROMPT.NO}
+            {texts.CLOSE_CONFIRMATION.CANCEL_CLOSE}
           </Button>
-          <Button onClick={onConfirm}>{TEXTS.PROMPT.YES}</Button>
+          <Button onClick={onConfirm}>{texts.CLOSE_CONFIRMATION.CONFIRM_CLOSE}</Button>
         </Group>
       </Group>
     </MantineModal>

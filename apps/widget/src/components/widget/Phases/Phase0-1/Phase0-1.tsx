@@ -6,7 +6,8 @@ import { ReactNode, useEffect, useRef, useState } from 'react';
 import { Warning } from '@icons';
 import { Select } from '@ui/Select';
 import { PhasesEnum } from '@types';
-import { colors, TEXTS, variables } from '@config';
+import { WIDGET_TEXTS } from '@impler/shared';
+import { colors, variables } from '@config';
 import { FileDropzone } from '@ui/FileDropzone';
 import { Footer } from 'components/Common/Footer';
 import { usePhase01 } from '@hooks/Phase0-1/usePhase01';
@@ -14,9 +15,10 @@ import { ImageWithIndicator } from '@ui/ImageWithIndicator';
 
 interface Phase01Props {
   goToUpload: () => void;
+  texts: typeof WIDGET_TEXTS;
 }
 
-export function Phase01({ goToUpload }: Phase01Props) {
+export function Phase01({ goToUpload, texts }: Phase01Props) {
   const [showAlert, setShowAlert] = useLocalStorage<boolean>({
     key: variables.SHOW_IMAGE_ALERT_STORAGE_KEY,
     defaultValue: true,
@@ -47,10 +49,10 @@ export function Phase01({ goToUpload }: Phase01Props) {
               color="blue"
               withCloseButton
               onClose={() => setShowAlert(false)}
-              title={TEXTS['PHASE0-1'].ALERT_TITLE}
+              title={texts['PHASE0-1'].IMAGE_INFO_TITLE}
               icon={<Warning fill={colors.primary} />}
             >
-              {TEXTS['PHASE0-1'].ALERT_SUBTITLE}
+              {texts['PHASE0-1'].IMAGE_INFO_SUBTITLE}
             </Alert>
           )}
           <Controller
@@ -67,7 +69,7 @@ export function Phase01({ goToUpload }: Phase01Props) {
             )}
           />
         </Flex>
-        <FileDropzone title="Upload Image" onDrop={onImageSelect} error={errors.image?.message} />
+        <FileDropzone texts={texts} title="Upload Image" onDrop={onImageSelect} error={errors.image?.message} />
         <Stack ref={wrapperRef} style={{ flexGrow: 1, overflow: 'auto' }} h={containerHeight}>
           {Object.entries(
             fields.reduce((acc, field, index) => {

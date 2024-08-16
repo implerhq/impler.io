@@ -7,24 +7,38 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Res,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 
 import { IJwtPayload } from '@impler/shared';
+import { AuthService } from './services/auth.service';
 import { IStrategyResponse } from '@shared/types/auth.types';
 import { CONSTANTS, COOKIE_CONFIG } from '@shared/constants';
 import { UserSession } from '@shared/framework/user.decorator';
 import { ApiException } from '@shared/exceptions/api.exception';
 import { StrategyUser } from './decorators/strategy-user.decorator';
-import { RegisterUserDto, LoginUserDto, RequestForgotPasswordDto, ResetPasswordDto } from './dtos';
 import {
-  RegisterUser,
-  RegisterUserCommand,
+  RegisterUserDto,
+  LoginUserDto,
+  RequestForgotPasswordDto,
+  ResetPasswordDto,
+  OnboardUserDto,
+  VerifyDto,
+  UpdateUserDto,
+} from './dtos';
+import {
+  Verify,
   LoginUser,
+  ResendOTP,
+  UpdateUser,
+  OnboardUser,
+  RegisterUser,
   ResetPassword,
   LoginUserCommand,
+  RegisterUserCommand,
   ResetPasswordCommand,
   RequestForgotPassword,
   RequestForgotPasswordCommand,
@@ -36,8 +50,13 @@ import {
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
   constructor(
-    private registerUser: RegisterUser,
+    private verify: Verify,
+    private resendOTP: ResendOTP,
     private loginUser: LoginUser,
+    private updateUser: UpdateUser,
+    private onboardUser: OnboardUser,
+    private authService: AuthService,
+    private registerUser: RegisterUser,
     private resetPassword: ResetPassword,
     private requestForgotPassword: RequestForgotPassword
   ) {}
@@ -88,6 +107,18 @@ export class AuthController {
     return user;
   }
 
+  @Put('/me')
+  async updateUserRoute(@UserSession() user: IJwtPayload, @Body() body: UpdateUserDto, @Res() response: Response) {
+    const { success, token } = await this.updateUser.execute(user._id, body);
+    if (token)
+      response.cookie(CONSTANTS.AUTH_COOKIE_NAME, token, {
+        ...COOKIE_CONFIG,
+        domain: process.env.COOKIE_DOMAIN,
+      });
+
+    response.send({ success });
+  }
+
   @Get('/logout')
   logout(@Res() response: Response) {
     response.clearCookie(CONSTANTS.AUTH_COOKIE_NAME, {
@@ -110,6 +141,50 @@ export class AuthController {
     });
 
     response.send(registeredUser);
+  }
+
+  @Post('/verify')
+  async verifyRoute(@Body() body: VerifyDto, @UserSession() user: IJwtPayload, @Res() response: Response) {
+    const { token, screen } = await this.verify.execute(user._id, { code: body.otp });
+    response.cookie(CONSTANTS.AUTH_COOKIE_NAME, token, {
+      ...COOKIE_CONFIG,
+      domain: process.env.COOKIE_DOMAIN,
+    });
+
+    response.send({ screen });
+  }
+
+  @Post('/onboard')
+  async onboardUserRoute(
+    @Body() body: OnboardUserDto,
+    @UserSession() user: IJwtPayload,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    const projectWithEnvironment = await this.onboardUser.execute({
+      _userId: user._id,
+      projectName: body.projectName,
+      role: body.role,
+      companySize: body.companySize,
+      source: body.source,
+    });
+    const token = this.authService.getSignedToken(
+      {
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        profilePicture: user.profilePicture,
+        isEmailVerified: user.isEmailVerified,
+        accessToken: projectWithEnvironment.environment.apiKeys[0].key,
+      },
+      projectWithEnvironment.project._id
+    );
+    res.cookie(CONSTANTS.AUTH_COOKIE_NAME, token, {
+      ...COOKIE_CONFIG,
+      domain: process.env.COOKIE_DOMAIN,
+    });
+
+    return projectWithEnvironment;
   }
 
   @Post('/login')
@@ -144,5 +219,10 @@ export class AuthController {
     });
 
     response.send(resetPassword);
+  }
+
+  @Post('verify/resend')
+  async resendOTPRoute(@UserSession() user: IJwtPayload) {
+    return await this.resendOTP.execute(user._id);
   }
 }

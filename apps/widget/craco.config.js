@@ -12,11 +12,13 @@ module.exports = {
       '@amplitude': path.resolve(__dirname, './src/util/amplitude/index.ts'),
     },
     configure: (config) => {
+      // Optionally, handle source maps if necessary
       const fileLoaderRule = getFileLoaderRule(config.module.rules);
       if (!fileLoaderRule) {
         throw new Error('File loader not found');
       }
       fileLoaderRule.exclude.push(/\.cjs$/);
+
       return config;
     },
   },

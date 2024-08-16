@@ -7,7 +7,7 @@ import { notifier, ParentWindow } from '@util';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { useImplerState } from '@store/impler.context';
-import { IErrorObject, ITemplate, IUpload, FileMimeTypesEnum } from '@impler/shared';
+import { IErrorObject, ITemplate, IUpload, FileMimeTypesEnum, WIDGET_TEXTS } from '@impler/shared';
 
 import { variables } from '@config';
 import { useSample } from '@hooks/useSample';
@@ -16,9 +16,10 @@ import { IFormvalues, IUploadValues } from '@types';
 
 interface IUsePhase1Props {
   goNext: () => void;
+  texts: typeof WIDGET_TEXTS;
 }
 
-export function usePhase1({ goNext }: IUsePhase1Props) {
+export function usePhase1({ goNext, texts }: IUsePhase1Props) {
   const {
     control,
     register,
@@ -26,6 +27,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     setValue,
     setError,
     getValues,
+    resetField,
     handleSubmit,
     formState: { errors },
   } = useForm<IFormvalues>();
@@ -47,26 +49,27 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
         goNext();
       },
       onError(error: IErrorObject) {
-        notifier.showError({ title: error.error, message: error.message });
+        resetField('file');
+        setError('file', { type: 'file', message: error.message });
       },
     }
   );
 
-  const { mutate: getExcelSheetNames } = useMutation<string[], IErrorObject, { file: File }>(
-    ['getExcelSheetNames'],
-    (file) => api.getExcelSheetNames(file),
-    {
-      onSuccess(sheetNames) {
-        if (sheetNames.length <= 1) {
-          setValue('selectedSheetName', sheetNames[0]);
-          handleSubmit(uploadFile)();
-        } else setExcelSheetNames(sheetNames);
-      },
-      onError(error: IErrorObject) {
-        notifier.showError({ title: error.error, message: error.message });
-      },
-    }
-  );
+  const { mutate: getExcelSheetNames, isLoading: isExcelSheetNamesLoading } = useMutation<
+    string[],
+    IErrorObject,
+    { file: File }
+  >(['getExcelSheetNames'], (file) => api.getExcelSheetNames(file), {
+    onSuccess(sheetNames) {
+      if (sheetNames.length <= 1) {
+        setValue('selectedSheetName', sheetNames[0]);
+        handleSubmit(uploadFile)();
+      } else setExcelSheetNames(sheetNames);
+    },
+    onError(error: IErrorObject) {
+      notifier.showError({ title: error.error, message: error.message });
+    },
+  });
 
   const findTemplate = (): ITemplate | undefined => {
     let foundTemplate: ITemplate | undefined;
@@ -74,8 +77,9 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     if (selectedTemplateValue && templates) {
       foundTemplate = templates.find((templateItem) => templateItem._id === selectedTemplateValue);
     }
-    if (!foundTemplate) notifier.showError('TEMPLATE_NOT_FOUND');
-    else if (foundTemplate.totalColumns === variables.baseIndex) notifier.showError('INCOMPLETE_TEMPLATE');
+    if (!foundTemplate) notifier.showError({ title: texts.COMMON.SORRY, message: texts.PHASE1.TEMPLATE_NOT_FOUND_MSG });
+    else if (foundTemplate.totalColumns === variables.baseIndex)
+      notifier.showError({ title: texts.COMMON.SORRY, message: texts.PHASE1.INCOMPLETE_TEMPLATE_MSG });
     else return foundTemplate;
 
     return undefined;
@@ -109,6 +113,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     setIsDownloadInProgress(false);
   };
   const uploadFile = async (submitData: IFormvalues) => {
+    setExcelSheetNames([]);
     const foundTemplate = findTemplate();
     if (foundTemplate) {
       submitData.templateId = foundTemplate._id;
@@ -156,6 +161,7 @@ export function usePhase1({ goNext }: IUsePhase1Props) {
     onTemplateChange,
     isDownloadInProgress,
     onSelectSheetModalReset,
+    isExcelSheetNamesLoading,
     showSelectTemplate: !templateId,
     onSelectExcelSheet: handleSubmit(uploadFile),
   };

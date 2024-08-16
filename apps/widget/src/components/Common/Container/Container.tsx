@@ -7,17 +7,18 @@ import { useEffect, useState, PropsWithChildren } from 'react';
 import { Provider } from '../Provider';
 import { ApiService } from '@impler/client';
 import { MessageHandlerDataType } from '@types';
-import { generateShades, ParentWindow } from '@util';
-import { IShowPayload, WidgetEventTypesEnum } from '@impler/shared';
+import { generateShades, ParentWindow, deepMerge } from '@util';
 import { API_URL, colors, mantineConfig, variables } from '@config';
+import { IWidgetShowPayload, WidgetEventTypesEnum, WIDGET_TEXTS, isObject } from '@impler/shared';
 
 let api: ApiService;
 
 export function Container({ children }: PropsWithChildren<{}>) {
   if (!api) api = new ApiService(API_URL);
-  const [secondaryPayload, setSecondaryPayload] = useState<IShowPayload>({
+  const [secondaryPayload, setSecondaryPayload] = useState<IWidgetShowPayload>({
     uuid: '',
     host: '',
+    texts: WIDGET_TEXTS,
     projectId: '',
     accessToken: '',
     primaryColor: colors.primary,
@@ -46,7 +47,37 @@ export function Container({ children }: PropsWithChildren<{}>) {
         api.setAuthorizationToken(data.value.accessToken);
       }
       setShowWidget(true);
-      setSecondaryPayload({ ...data.value, primaryColor: data.value.primaryColor || colors.primary });
+      setSecondaryPayload({
+        accessToken: data.value.accessToken,
+        host: data.value.host,
+        projectId: data.value.projectId,
+        uuid: data.value.uuid,
+        extra: isObject(data.value.extra) ? JSON.stringify(data.value.extra) : data.value.extra,
+        templateId: data.value.templateId,
+        authHeaderValue: data.value.authHeaderValue,
+        primaryColor: data.value.primaryColor || colors.primary,
+        colorScheme: data.value.colorScheme,
+        title: data.value.title,
+        texts: deepMerge(WIDGET_TEXTS, data.value.texts),
+        schema:
+          typeof data.value.schema === 'string'
+            ? data.value.schema
+            : Array.isArray(data.value.schema)
+            ? JSON.stringify(data.value.schema)
+            : undefined,
+        data:
+          typeof data.value.data === 'string'
+            ? data.value.data
+            : Array.isArray(data.value.data)
+            ? JSON.stringify(data.value.data)
+            : undefined,
+        output:
+          typeof data.value.output === 'string'
+            ? data.value.output
+            : isObject(data.value.output)
+            ? JSON.stringify(data.value.output)
+            : undefined,
+      });
     } else if (data && data.type === WidgetEventTypesEnum.CLOSE_WIDGET) {
       setShowWidget(false);
     }
@@ -131,6 +162,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
           output={secondaryPayload?.output}
           schema={secondaryPayload?.schema}
           title={secondaryPayload?.title}
+          texts={secondaryPayload.texts as typeof WIDGET_TEXTS}
           // api
           api={api}
           // impler-context

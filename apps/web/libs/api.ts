@@ -46,6 +46,10 @@ const routes: Record<string, Route> = {
     url: () => `/v1/user/subscription`,
     method: 'DELETE',
   },
+  [API_KEYS.ONBOARD_USER]: {
+    url: () => '/v1/auth/onboard',
+    method: 'POST',
+  },
 
   [API_KEYS.PROJECTS_LIST]: {
     url: () => '/v1/project',
@@ -75,8 +79,21 @@ const routes: Record<string, Route> = {
     url: () => '/v1/auth/register',
     method: 'POST',
   },
+
+  [API_KEYS.VERIFY_EMAIL]: {
+    url: () => '/v1/auth/verify',
+    method: 'POST',
+  },
   [API_KEYS.REQUEST_FORGOT_PASSWORD]: {
     url: () => '/v1/auth/forgot-password/request',
+    method: 'POST',
+  },
+  [API_KEYS.RESET_PASSWORD]: {
+    url: () => `/v1/auth/forgot-password/reset`,
+    method: 'POST',
+  },
+  [API_KEYS.RESEND_OTP]: {
+    url: () => `/v1/auth/verify/resend`,
     method: 'POST',
   },
   [API_KEYS.RESET_PASSWORD]: {
@@ -86,6 +103,10 @@ const routes: Record<string, Route> = {
   [API_KEYS.ME]: {
     url: () => `/v1/auth/me`,
     method: 'GET',
+  },
+  [API_KEYS.UPDATE_ME_INFO]: {
+    url: () => `/v1/auth/me`,
+    method: 'PUT',
   },
   [API_KEYS.IMPORT_COUNT]: {
     url: () => `/v1/user/import-count`,
