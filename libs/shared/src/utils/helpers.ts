@@ -73,3 +73,15 @@ export function constructQueryString(obj: Record<string, string | number>): stri
 
   return query ? `?${query}` : '';
 }
+
+export const isObject = (value: any) =>
+  typeof value === 'object' && !Array.isArray(value) && value !== null && Object.keys(value).length > 0;
+
+export const convertStringToJson = (value: any) => {
+  if (isObject(value)) return value;
+  try {
+    return JSON.parse(value);
+  } catch (e) {
+    return undefined;
+  }
+};

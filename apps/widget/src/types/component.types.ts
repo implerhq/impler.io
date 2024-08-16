@@ -1,4 +1,4 @@
-import { IWidgetShowPayload } from '@impler/shared';
+import { IUserShowPayload } from '@impler/shared';
 import { EventTypesEnum, WidgetEventTypesEnum } from '@impler/shared';
 
 export type MessageHandlerDataType =
@@ -7,7 +7,7 @@ export type MessageHandlerDataType =
     }
   | {
       type: WidgetEventTypesEnum.SHOW_WIDGET;
-      value: IWidgetShowPayload;
+      value: IUserShowPayload;
     }
   | {
       type: WidgetEventTypesEnum.CLOSE_WIDGET;

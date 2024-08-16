@@ -67,7 +67,7 @@ export function useSample({ onDownloadComplete }: UseSampleProps) {
       );
       sampleData.append('schema', JSON.stringify(parsedSchema));
     }
-    if (Array.isArray(data)) sampleData.append('data', JSON.stringify(data));
+    if (data) sampleData.append('data', data);
     if (images && importId && imageSchema) {
       const imagesBlob = await images.generateAsync({ type: 'blob', compression: 'DEFLATE' });
       sampleData.append('file', imagesBlob);
