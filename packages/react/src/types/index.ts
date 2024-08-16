@@ -1,4 +1,4 @@
-import { IUpload, EventTypesEnum, CustomTexts } from '@impler/shared';
+import { IUpload, EventTypesEnum, WIDGET_TEXTS } from '@impler/shared';
 
 export interface ISchemaItem {
   key: string;
@@ -52,6 +52,14 @@ export interface ShowWidgetProps {
   data?: Record<string, string | any>[];
   output?: Record<string, string | any>;
 }
+
+export type DeepPartial<T> = T extends object
+  ? {
+      [P in keyof T]?: DeepPartial<T[P]>;
+    }
+  : T;
+
+export type CustomTexts = DeepPartial<typeof WIDGET_TEXTS>;
 
 export interface UseImplerProps {
   title?: string;

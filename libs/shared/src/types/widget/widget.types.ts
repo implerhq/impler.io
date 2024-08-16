@@ -1,6 +1,6 @@
-import { CustomTexts } from '../../config/texts.config';
+import { WIDGET_TEXTS } from '../../config/texts.config';
 
-export interface IShowPayload {
+export interface ICommonShowPayload {
   host: string;
   extra?: string;
   templateId?: string;
@@ -8,7 +8,6 @@ export interface IShowPayload {
   primaryColor?: string;
   colorScheme?: string;
   title?: string;
-  texts?: CustomTexts;
   schema?: string;
   data?: Record<string, string | any>[];
   output?: string;
@@ -16,6 +15,10 @@ export interface IShowPayload {
   accessToken: string;
   uuid: string;
 }
+export interface IWidgetShowPayload extends ICommonShowPayload {
+  texts?: typeof WIDGET_TEXTS;
+}
+
 export interface IOption {
   value: string;
   label: string;
