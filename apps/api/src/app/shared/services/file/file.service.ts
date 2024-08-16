@@ -78,15 +78,17 @@ export class ExcelFileService {
       `${currentDir}/src/config/${isMultiSelect ? 'Excel Multi Select Template.xlsm' : 'Excel Template.xlsx'}`
     );
     const worksheet = workbook.sheet('Data');
+    const multiSelectHeadings = {};
 
     headings.forEach((heading, index) => {
       const columnName = this.getExcelColumnNameFromIndex(index + 1);
       const columnHeadingCellName = columnName + '1';
-      if (heading.type === ColumnTypesEnum.SELECT && heading.allowMultiSelect)
+      if (heading.type === ColumnTypesEnum.SELECT && heading.allowMultiSelect) {
         worksheet
           .cell(columnHeadingCellName)
           .value(heading.key + '#MULTI' + '#' + (heading.delimiter || ColumnDelimiterEnum.COMMA));
-      else worksheet.cell(columnHeadingCellName).value(heading.key);
+        multiSelectHeadings[heading.key] = heading.delimiter || ColumnDelimiterEnum.COMMA;
+      } else worksheet.cell(columnHeadingCellName).value(heading.key);
       worksheet.column(columnName).style('numberFormat', '@');
     });
 
@@ -121,7 +123,13 @@ export class ExcelFileService {
     } catch (error) {}
     if (Array.isArray(parsedData) && parsedData.length > 0) {
       const rows: string[][] = parsedData.reduce<string[][]>((acc: string[][], rowItem: Record<string, any>) => {
-        acc.push(headingNames.map((headingKey) => rowItem[headingKey]));
+        acc.push(
+          headingNames.map((headingKey) =>
+            multiSelectHeadings[headingKey] && Array.isArray(rowItem[headingKey])
+              ? rowItem[headingKey].join(multiSelectHeadings[headingKey])
+              : rowItem[headingKey]
+          )
+        );
 
         return acc;
       }, []);
