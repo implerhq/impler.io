@@ -3,7 +3,7 @@ const fs = require('fs');
 
 (async () => {
   const appsEnvInSrc = ['api', 'queue-manager'];
-  const appsEnvInRoot = ['widget'];
+  const appsEnvInRoot = ['widget', 'web'];
 
   console.log('----------------------------------------');
   console.log('Pre-populating .env files from .example.env');

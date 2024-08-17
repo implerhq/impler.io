@@ -1,5 +1,6 @@
 version: "3"
 services:
+
   mongodb:
     image: mongo
     container_name: mongodb
@@ -15,6 +16,7 @@ services:
     restart: unless-stopped
     networks:
       - impler
+
   api:
     privileged: true
     image: "ghcr.io/implerhq/impler/api:0.24.0"
@@ -49,6 +51,7 @@ services:
       - "3000:3000"
     networks:
       - impler
+
   queue-manager:
     image: "ghcr.io/implerhq/impler/queue-manager:0.24.0"
     depends_on:
@@ -73,6 +76,7 @@ services:
       ALERT_EMAIL_FROM: ${ALERT_EMAIL_FROM}
     networks:
       - impler
+
   widget:
     image: "ghcr.io/implerhq/impler/widget:0.24.0"
     depends_on:
@@ -87,6 +91,7 @@ services:
       - 3500:3500
     networks:
       - impler
+
   embed:
     depends_on:
       - widget
@@ -98,6 +103,7 @@ services:
       - 4701:4701
     networks:
       - impler
+
   web:
     depends_on:
       - api
@@ -126,7 +132,37 @@ services:
       retries: 1
     networks:
       - impler
+
+  minio:
+    image: minio/minio
+    volumes:
+      - minio_data:/data
+    environment:
+      MINIO_ROOT_USER: impler
+      MINIO_ROOT_PASSWORD: implers3cr3t
+    ports:
+      - 9000:9000
+      - 9001:9001
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set myminio http://minio:9000 impler implers3cr3t;
+      /usr/bin/mc mb myminio/impler;
+      exit 0;
+      "
+
 volumes:
   mongodb: ~
+
 networks:
   impler:
