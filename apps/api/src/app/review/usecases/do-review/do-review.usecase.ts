@@ -8,10 +8,18 @@ import { BaseReview } from './base-review.usecase';
 import { BATCH_LIMIT } from '@shared/services/sandbox';
 import { StorageService, PaymentAPIService, EmailService } from '@impler/services';
 import { ColumnTypesEnum, UploadStatusEnum, ITemplateSchemaItem, ColumnDelimiterEnum } from '@impler/shared';
-import { UploadRepository, ValidatorRepository, FileRepository, DalService, TemplateEntity } from '@impler/dal';
+import {
+  UploadRepository,
+  ValidatorRepository,
+  FileRepository,
+  DalService,
+  TemplateEntity,
+  TemplateRepository,
+} from '@impler/dal';
 
 interface ISaveResults {
   uploadId: string;
+  _templateId: string;
   totalRecords: number;
   validRecords: number;
   invalidRecords: number;
@@ -22,6 +30,7 @@ export class DoReview extends BaseReview {
   private _modal: Model<unknown>;
 
   constructor(
+    private templateRepository: TemplateRepository,
     private storageService: StorageService,
     private uploadRepository: UploadRepository,
     private validatorRepository: ValidatorRepository,
@@ -66,7 +75,13 @@ export class DoReview extends BaseReview {
       'onBatchInitialize'
     );
 
-    let response: ISaveResults;
+    const response: ISaveResults = {
+      _templateId: (uploadInfo._templateId as unknown as TemplateEntity)._id,
+      uploadId: _uploadId,
+      totalRecords: 0,
+      validRecords: 0,
+      invalidRecords: 0,
+    };
 
     const csvFileStream = await this.storageService.getFileStream(uploadedFileInfo.path);
     const { dataStream } = this.getStreams({
@@ -89,13 +104,6 @@ export class DoReview extends BaseReview {
         numberColumnHeadings,
         multiSelectColumnHeadings,
       });
-
-      response = {
-        uploadId: _uploadId,
-        totalRecords: 0,
-        validRecords: 0,
-        invalidRecords: 0,
-      };
 
       await this.processBatches({
         batches,
@@ -129,7 +137,7 @@ export class DoReview extends BaseReview {
         },
       });
     } else {
-      response = await this.normalRun({
+      const { invalidRecords, totalRecords, uploadId, validRecords } = await this.normalRun({
         csvFileStream,
         dataStream,
         extra: uploadInfo.extra,
@@ -140,6 +148,10 @@ export class DoReview extends BaseReview {
         numberColumnHeadings,
         multiSelectColumnHeadings,
       });
+      response.invalidRecords = invalidRecords;
+      response.totalRecords = totalRecords;
+      response.uploadId = uploadId;
+      response.validRecords = validRecords;
     }
     for (const errorEmailContent of errorEmailContents) {
       await this.emailService.sendEmail({
@@ -183,7 +195,7 @@ export class DoReview extends BaseReview {
     };
   }
 
-  private async saveResults({ uploadId, totalRecords, validRecords, invalidRecords }: ISaveResults) {
+  private async saveResults({ uploadId, totalRecords, validRecords, invalidRecords, _templateId }: ISaveResults) {
     await this.uploadRepository.update(
       { _id: uploadId },
       {
@@ -191,6 +203,18 @@ export class DoReview extends BaseReview {
         totalRecords,
         validRecords,
         invalidRecords,
+      }
+    );
+    await this.templateRepository.findOneAndUpdate(
+      {
+        _id: _templateId,
+      },
+      {
+        $inc: {
+          totalUploads: 1,
+          totalRecords: totalRecords,
+          totalInvalidRecords: invalidRecords,
+        },
       }
     );
     const userExternalIdOrEmail = await this.uploadRepository.getUserEmailFromUploadId(uploadId);
