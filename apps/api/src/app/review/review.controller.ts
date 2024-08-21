@@ -6,17 +6,7 @@ import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { validateUploadStatus } from '@shared/helpers/upload.helpers';
 import { Defaults, ACCESS_KEY_NAME, UploadStatusEnum, ReviewDataTypesEnum } from '@impler/shared';
 
-import {
-  DoReview,
-  GetUpload,
-  DoReReview,
-  UpdateRecord,
-  StartProcess,
-  DeleteRecord,
-  GetUploadData,
-  UpdateImportCount,
-  UpdateImportCountCommand,
-} from './usecases';
+import { DoReview, GetUpload, DoReReview, UpdateRecord, StartProcess, DeleteRecord, GetUploadData } from './usecases';
 
 import { UpdateCellDto } from './dtos/update-cell.dto';
 import { validateNotFound } from '@shared/helpers/common.helper';
@@ -35,7 +25,6 @@ export class ReviewController {
     private deleteRecord: DeleteRecord,
     private startProcess: StartProcess,
     private updateRecord: UpdateRecord,
-    private updateImportCount: UpdateImportCount,
     private getFileInvalidData: GetUploadData
   ) {}
 
@@ -123,14 +112,6 @@ export class ReviewController {
 
     // upload files with status reviewing can only be confirmed
     validateUploadStatus(uploadInformation.status as UploadStatusEnum, [UploadStatusEnum.REVIEWING]);
-
-    await this.updateImportCount.execute(
-      uploadInformation._templateId,
-      UpdateImportCountCommand.create({
-        totalRecords: uploadInformation.totalRecords,
-        totalInvalidRecords: uploadInformation.invalidRecords,
-      })
-    );
 
     return this.startProcess.execute(_uploadId);
   }
