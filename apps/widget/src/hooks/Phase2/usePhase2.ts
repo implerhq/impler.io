@@ -54,6 +54,7 @@ export function usePhase2({ goNext }: IUsePhase2Props) {
       onError(error: IErrorObject) {
         notifier.showError({ message: error.message, title: error.error });
       },
+      enabled: !!uploadInfo?._id,
     }
   );
   const { isLoading: isMappingFinalizing, mutate: finalizeMapping } = useMutation<
