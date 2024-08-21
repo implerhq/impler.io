@@ -41,6 +41,7 @@ export function useAutoImportPhase2({ goNext }: IUseAutoImportPhase2Props) {
         })),
       });
     },
+    enabled: !!jobsInfo?._id,
   });
 
   const { mutate: createJobMapping } = useMutation<IUserJobMapping[], IErrorObject, IUserJobMapping[]>(
