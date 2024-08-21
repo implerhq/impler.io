@@ -44,6 +44,8 @@ export class LeadService {
 
       return response.data.access_token;
     }
+
+    return undefined;
   }
   private async getCRMAccessToken(): Promise<string> {
     if (
@@ -68,6 +70,8 @@ export class LeadService {
 
       return response.data.access_token;
     }
+
+    return undefined;
   }
 
   public async createLead(data: ILeadInformation): Promise<any> {
