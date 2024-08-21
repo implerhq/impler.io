@@ -4,7 +4,6 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { IJwtPayload } from '@impler/shared';
 import { CONSTANTS, LEAD_SIGNUP_USING } from '@shared/constants';
-import { PaymentAPIService } from '@impler/services';
 import { UserEntity, UserRepository, EnvironmentRepository } from '@impler/dal';
 import { UserNotFoundException } from '@shared/exceptions/user-not-found.exception';
 import { IAuthenticationData, IStrategyResponse } from '@shared/types/auth.types';
@@ -15,8 +14,7 @@ export class AuthService {
   constructor(
     private jwtService: JwtService,
     private userRepository: UserRepository,
-    private environmentRepository: EnvironmentRepository,
-    private paymentAPIService: PaymentAPIService
+    private environmentRepository: EnvironmentRepository
   ) {}
 
   async authenticate({ profile, provider }: IAuthenticationData): Promise<IStrategyResponse> {
@@ -37,13 +35,6 @@ export class AuthService {
       };
       user = await this.userRepository.create(userObj);
       userCreated = true;
-
-      const userData = {
-        name: user.firstName + ' ' + user.lastName,
-        email: user.email,
-        externalId: user.email,
-      };
-      this.paymentAPIService.createUser(userData);
     }
     if (!user) {
       throw new UserNotFoundException();
