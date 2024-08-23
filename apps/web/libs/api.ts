@@ -38,6 +38,11 @@ const routes: Record<string, Route> = {
     method: 'PUT',
   },
 
+  [API_KEYS.SUBSCRIBE]: {
+    url: () => `/v1/user/subscribe`,
+    method: 'GET',
+  },
+
   [API_KEYS.FETCH_ACTIVE_SUBSCRIPTION]: {
     url: () => `/v1/user/subscription`,
     method: 'GET',
