@@ -34,8 +34,8 @@ export function usePhase1({ goNext, texts }: IUsePhase1Props) {
   const { api } = useAPIState();
   const { templates } = useTemplates();
   const { getSignedUrl, onDownload } = useSample({});
-  const [excelSheetNames, setExcelSheetNames] = useState<string[]>([]);
   const { templateId, authHeaderValue, extra } = useImplerState();
+  const [excelSheetNames, setExcelSheetNames] = useState<string[]>([]);
   const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
   const { setUploadInfo, setTemplateInfo, output, schema, data, importId, imageSchema } = useAppState();
 
@@ -117,7 +117,12 @@ export function usePhase1({ goNext, texts }: IUsePhase1Props) {
     const foundTemplate = findTemplate();
     if (foundTemplate) {
       submitData.templateId = foundTemplate._id;
-      logAmplitudeEvent('UPLOAD', { fileSize: submitData.file.size, fileType: submitData.file.type });
+      logAmplitudeEvent('UPLOAD', {
+        fileSize: submitData.file.size,
+        fileType: submitData.file.type,
+        hasData: !!data,
+        hasExtra: !!extra,
+      });
       submitUpload({
         ...submitData,
         authHeaderValue,

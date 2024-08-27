@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 
 import { useSample } from '@hooks/useSample';
+import { logAmplitudeEvent } from '@amplitude';
 import { useAppState } from '@store/app.context';
 import { captureError, getObjectId } from '@util';
 import { useTemplates } from '@hooks/useTemplates';
@@ -46,6 +47,9 @@ export function usePhase01({ goToUpload }: UsePhase01Props) {
     clearErrors('image');
     images.forEach((image) => {
       const reader = new FileReader();
+      logAmplitudeEvent('IMAGE_SELECTED', {
+        type: image.type,
+      });
       reader.onload = function (e) {
         if (typeof e.target?.result === 'string' && !imageSchemaRef.current.get(key)?.has(image.name)) {
           append({
