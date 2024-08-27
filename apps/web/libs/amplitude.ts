@@ -141,6 +141,16 @@ type TrackData =
   | {
       name: 'IMPORT CLICK';
       properties: Record<string, never>;
+    }
+  | {
+      name: 'VIEW PLANS';
+      properties: Record<string, never>;
+    }
+  | {
+      name: 'PLAN TOGGLE DURATION';
+      properties: {
+        yearly: boolean;
+      };
     };
 
 export function track({ name, properties }: TrackData) {
