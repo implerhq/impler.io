@@ -25,7 +25,7 @@ import { Checkbox } from '@ui/checkbox';
 import { MultiSelect } from '@ui/multi-select';
 import { CustomSelect } from '@ui/custom-select';
 import { useSchema } from '@hooks/useSchema';
-import TooltipLink from '@components/TooltipLink/TooltipLink';
+import { TooltipLink } from '@components/TooltipLink';
 
 interface ColumnFormProps {
   data?: Partial<IColumn>;

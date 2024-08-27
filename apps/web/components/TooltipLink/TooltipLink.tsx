@@ -1,8 +1,9 @@
 import React from 'react';
-import { Tooltip, useMantineColorScheme } from '@mantine/core';
 import Link from 'next/link';
-import { GuidePointIcon } from '@assets/icons/GuidePoint.icon';
+import { Tooltip, useMantineColorScheme } from '@mantine/core';
+
 import { colors } from '@config';
+import { GuidePointIcon } from '@assets/icons/GuidePoint.icon';
 
 interface TooltipLinkProps {
   label?: string;
@@ -25,5 +26,3 @@ export function TooltipLink({ label = 'Read More', link, iconSize = 'sm' }: Tool
     </Tooltip>
   );
 }
-
-export default TooltipLink;
