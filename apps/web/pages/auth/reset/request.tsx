@@ -1,14 +1,15 @@
+import Link from 'next/link';
 import Image from 'next/image';
 import { Title, Stack, Flex, Text, TextInput as Input } from '@mantine/core';
 
-import { colors } from '@config';
+import { colors, ROUTES } from '@config';
 import { Button } from '@ui/button';
 import DarkLogo from '@assets/images/logo-dark.png';
 import { OnboardLayout } from '@layouts/OnboardLayout';
 import { useRequestForgotPassword } from '@hooks/auth/useRequestForgotPassword';
 
 export default function RequestForgotPasswordPage() {
-  const { register, requestSent, isForgotPasswordRequesting, request, goToLogin } = useRequestForgotPassword();
+  const { register, requestSent, isForgotPasswordRequesting, request } = useRequestForgotPassword();
 
   return (
     <>
@@ -31,9 +32,9 @@ export default function RequestForgotPasswordPage() {
           <Text color={colors.TXTSecondaryDark}>
             We have sent you an email with a link to reset your password. Please check your inbox!
           </Text>
-          <Button fullWidth size="sm" onClick={goToLogin}>
-            Back to login
-          </Button>
+          <Text align="center">
+            Back to <Link href={ROUTES.SIGNIN}>Signin</Link>
+          </Text>
         </Stack>
       ) : (
         <form style={{ width: '100%' }} onSubmit={request}>
@@ -50,6 +51,9 @@ export default function RequestForgotPasswordPage() {
             <Button fullWidth type="submit" size="md" disabled={requestSent} loading={isForgotPasswordRequesting}>
               Send password reset link
             </Button>
+            <Text align="center">
+              Back to <Link href={ROUTES.SIGNIN}>Signin</Link>
+            </Text>
           </Stack>
         </form>
       )}

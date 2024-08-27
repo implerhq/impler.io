@@ -41,7 +41,7 @@ export default function ResetPasswordPage({}) {
             Update password
           </Button>
           <Text align="center">
-            <Link href={ROUTES.SIGNIN}>Sign In</Link>
+            Back to <Link href={ROUTES.SIGNIN}>Signin</Link>
           </Text>
         </Stack>
         {isError && (

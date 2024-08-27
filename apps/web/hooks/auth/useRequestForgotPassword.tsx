@@ -2,10 +2,9 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 
-import { API_KEYS, ROUTES } from '@config';
+import { API_KEYS } from '@config';
 import { commonApi } from '@libs/api';
 import { IErrorObject } from '@impler/shared';
-import { useRouter } from 'next/router';
 
 interface IRequestForgotPasswordData {
   email: string;
@@ -16,7 +15,6 @@ interface IRequestForgotPasswordResponse {
 }
 
 export function useRequestForgotPassword() {
-  const { push } = useRouter();
   const { register, handleSubmit } = useForm<IRequestForgotPasswordData>();
   const [requestSent, setRequestSent] = useState<boolean>(false);
   const { mutate: requestForgotPassword, isLoading: isForgotPasswordRequesting } = useMutation<
@@ -35,17 +33,12 @@ export function useRequestForgotPassword() {
     }
   );
 
-  const goToLogin = () => {
-    push(ROUTES.SIGNIN);
-  };
-
   const onLogin = (data: IRequestForgotPasswordData) => {
     requestForgotPassword(data);
   };
 
   return {
     register,
-    goToLogin,
     requestSent,
     isForgotPasswordRequesting,
     request: handleSubmit(onLogin),
