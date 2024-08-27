@@ -52,7 +52,7 @@ export default function OtpVerifyPage() {
         </Title>
         <Stack mt="xs">
           <Text size="md" color="dimmed" align="left">
-            To continue, please enter the 6-digit verification code sent to your email{' '}
+            Please enter the 6-digit verification code sent to your email{' '}
             <UnstyledButton onClick={() => setState(ScreenStatesEnum.UPDATE_EMAIL)} disabled={isUpdateEmailLoading}>
               <Text mr={5} component="span" fw="bold" color={colors.blue}>
                 {profile?.email}
@@ -95,11 +95,16 @@ export default function OtpVerifyPage() {
               <form onSubmit={updateEmail}>
                 <Stack spacing="xs">
                   <Input
-                    {...register('email')}
-                    size="md"
-                    placeholder="new@email.com"
-                    type="email"
+                    {...register('email', {
+                      validate: {
+                        notSame: (value) => value !== profile?.email || 'Email cannot be the same as the current email',
+                      },
+                    })}
                     required
+                    size="md"
+                    type="email"
+                    label="New Email"
+                    placeholder="new@email.com"
                     error={errors.email?.message}
                     disabled={isUpdateEmailLoading}
                   />

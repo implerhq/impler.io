@@ -59,8 +59,8 @@ export const Signin = ({ API_URL, error }: SigninProps) => {
               {errorMessage.message}
             </Alert>
           ) : null}
-          <Input {...register('email')} size="md" placeholder="Email" type="email" required />
-          <PasswordInput register={register('password')} size="md" placeholder="Password" required />
+          <Input label="Email" {...register('email')} size="md" placeholder="Email" type="email" required />
+          <PasswordInput label="Password" register={register('password')} size="md" placeholder="Password" required />
           <Link href={ROUTES.REQUEST_FORGOT_PASSWORD}>
             <Text size="md" align="right">
               Forgot password?

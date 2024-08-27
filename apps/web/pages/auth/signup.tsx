@@ -2,13 +2,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Title, Text, Stack, Flex, TextInput as Input, FocusTrap } from '@mantine/core';
 
+import { ROUTES } from '@config';
 import { Button } from '@ui/button';
 import { PasswordInput } from '@ui/password-input';
 
 import { useSignup } from '@hooks/auth/useSignup';
 import DarkLogo from '@assets/images/logo-dark.png';
 import { OnboardLayout } from '@layouts/OnboardLayout';
-import { ROUTES } from '@config';
 
 export default function SignupPage({}) {
   const { register, isSignupLoading, signup, errors } = useSignup();
@@ -35,6 +35,7 @@ export default function SignupPage({}) {
             <Input
               required
               size="md"
+              label="Full Name"
               placeholder="Full Name"
               error={errors.fullName?.message}
               {...register('fullName', {
@@ -44,8 +45,16 @@ export default function SignupPage({}) {
                 },
               })}
             />
-            <Input {...register('email')} size="md" placeholder="Email" required error={errors.email?.message} />
-            <PasswordInput register={register('password')} size="md" placeholder="Password" required />
+            <Input
+              size="md"
+              required
+              label="Email"
+              placeholder="Email"
+              {...register('email')}
+              error={errors.email?.message}
+              description="Verification code will be sent to your email!"
+            />
+            <PasswordInput label="Password" register={register('password')} size="md" placeholder="Password" required />
             <Button id="signup" loading={isSignupLoading} fullWidth type="submit" size="md">
               Create an account
             </Button>

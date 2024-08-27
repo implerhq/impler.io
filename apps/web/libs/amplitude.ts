@@ -25,6 +25,10 @@ type TrackData =
       };
     }
   | {
+      name: 'VERIFY';
+      properties: Record<string, never>;
+    }
+  | {
       name: 'SIGNIN';
       properties: {
         id: string;

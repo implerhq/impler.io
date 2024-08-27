@@ -29,7 +29,7 @@ export default function RequestForgotPasswordPage() {
       {requestSent ? (
         <Stack>
           <Text color={colors.TXTSecondaryDark}>
-            We have sent you an email with a link to reset your password. Please check your inbox.
+            We have sent you an email with a link to reset your password. Please check your inbox!
           </Text>
           <Button fullWidth size="sm" onClick={goToLogin}>
             Back to login
@@ -38,7 +38,15 @@ export default function RequestForgotPasswordPage() {
       ) : (
         <form style={{ width: '100%' }} onSubmit={request}>
           <Stack w="100%">
-            <Input {...register('email')} size="md" placeholder="Email" type="email" required />
+            <Input
+              required
+              size="md"
+              type="email"
+              label="Email"
+              placeholder="Email"
+              {...register('email')}
+              description="Password reset link will be sent to the email!"
+            />
             <Button fullWidth type="submit" size="md" disabled={requestSent} loading={isForgotPasswordRequesting}>
               Send password reset link
             </Button>

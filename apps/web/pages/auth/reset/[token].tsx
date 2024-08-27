@@ -30,9 +30,15 @@ export default function ResetPasswordPage({}) {
       </Flex>
       <form style={{ width: '100%' }} onSubmit={resetPassword}>
         <Stack w="100%">
-          <PasswordInput register={register('password')} size="md" placeholder="New Password" required />
+          <PasswordInput
+            required
+            size="md"
+            label="New Password"
+            placeholder="New Password here"
+            register={register('password')}
+          />
           <Button fullWidth type="submit" size="md">
-            Save new password
+            Update password
           </Button>
           <Text align="center">
             <Link href={ROUTES.SIGNIN}>Sign In</Link>
