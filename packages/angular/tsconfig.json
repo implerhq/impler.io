@@ -1,0 +1,22 @@
+{
+  "include": ["src"],
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "ignoreDeprecations": "5.0",
+    "forceConsistentCasingInFileNames": true,
+    "target": "ES2015",
+    "strict": true,
+    "typeRoots": ["./node_modules/@types"],
+    "module": "ESNext",
+    "declarationDir": "types",
+    "sourceMap": true,
+    "outDir": "dist",
+    "emitDeclarationOnly": true,
+    "declaration": true, // Ensures declaration files are generated
+    "skipLibCheck": true, // Speeds up compilation by skipping type checks on libraries.
+    "moduleResolution": "node", // Node module resolution strategy, recommended for Angular
+    "experimentalDecorators": true, // Needed for Angular decorators
+    "emitDecoratorMetadata": true, // Required by Angular's DI system
+    "lib": ["es2015", "dom"] // Ensures DOM types and ES2015 features are available
+  }
+}
