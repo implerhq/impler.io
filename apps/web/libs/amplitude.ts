@@ -26,6 +26,16 @@ type TrackData =
     }
   | {
       name: 'VERIFY';
+      properties: {
+        valid: boolean;
+      };
+    }
+  | {
+      name: 'RESEND VERIFICATION CODE';
+      properties: Record<string, never>;
+    }
+  | {
+      name: 'UPDATE EMAIL';
       properties: Record<string, never>;
     }
   | {
@@ -45,7 +55,9 @@ type TrackData =
     }
   | {
       name: 'SIGNUP DUPLICATE EMAIL';
-      properties: Record<string, never>;
+      properties: {
+        onVerify?: boolean;
+      };
     }
   | {
       name: 'PROJECT CREATE';

@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
 import { useApp } from '@hooks/useApp';
+import { track } from '@libs/amplitude';
 import { API_KEYS, NOTIFICATION_KEYS } from '@config';
 import { handleRouteBasedOnScreenResponse } from '@shared/helpers';
 import { IErrorObject, IScreenResponse, SCREENS } from '@impler/shared';
@@ -48,9 +49,21 @@ export function useVerify() {
     IVerifyFormData
   >((body) => commonApi<IScreenResponse>(API_KEYS.VERIFY_EMAIL as any, { body }), {
     onSuccess: (data) => {
+      track({
+        name: 'VERIFY',
+        properties: {
+          valid: true,
+        },
+      });
       handleRouteBasedOnScreenResponse(data.screen as SCREENS, push);
     },
     onError: (errorObject: IErrorObject) => {
+      track({
+        name: 'VERIFY',
+        properties: {
+          valid: false,
+        },
+      });
       notify(NOTIFICATION_KEYS.OTP_CODE_RESENT_SUCCESSFULLY, {
         color: 'red',
         title: 'Verfication code is invalid!',
@@ -70,7 +83,10 @@ export function useVerify() {
           </>
         ),
       });
-
+      track({
+        name: 'RESEND VERIFICATION CODE',
+        properties: {},
+      });
       setCountdown(RESEND_SECONDS);
       setIsButtonDisabled(true);
       timerRef.current = setInterval(onCountDownProgress, 1000);
@@ -84,6 +100,10 @@ export function useVerify() {
   >([API_KEYS.UPDATE_ME_INFO], (data) => commonApi(API_KEYS.UPDATE_ME_INFO as any, { body: data }), {
     onSuccess: (_response, data) => {
       reset();
+      track({
+        name: 'UPDATE EMAIL',
+        properties: {},
+      });
       setState(ScreenStatesEnum.VERIFY);
       queryClient.invalidateQueries([API_KEYS.ME]);
       notify(NOTIFICATION_KEYS.OTP_CODE_RESENT_SUCCESSFULLY, {
@@ -97,6 +117,10 @@ export function useVerify() {
       });
     },
     onError(error) {
+      track({
+        name: 'SIGNUP DUPLICATE EMAIL',
+        properties: { onVerify: true },
+      });
       setError('email', {
         type: 'manual',
         message: error.message,
