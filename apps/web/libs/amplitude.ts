@@ -40,6 +40,10 @@ type TrackData =
       properties: Record<string, never>;
     }
   | {
+      name: 'SIGNUP DUPLICATE EMAIL';
+      properties: Record<string, never>;
+    }
+  | {
       name: 'PROJECT CREATE';
       properties: {
         duringOnboard: boolean;
