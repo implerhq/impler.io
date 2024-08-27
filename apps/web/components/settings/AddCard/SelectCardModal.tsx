@@ -11,10 +11,10 @@ import { commonApi } from '@libs/api';
 import { useCheckout } from '@hooks/useCheckout';
 import { CheckoutDetails } from '../Checkout/CheckoutDetails';
 
+import { Coupon } from './Coupon';
 import { ICardData, IErrorObject } from '@impler/shared';
-import { API_KEYS, CONSTANTS, NOTIFICATION_KEYS, ROUTES } from '@config';
 import { PaymentMethods } from './PaymentMethods/PaymentMethods';
-import Coupon from './Coupon/Coupon';
+import { API_KEYS, CONSTANTS, NOTIFICATION_KEYS, ROUTES } from '@config';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -27,7 +27,6 @@ interface SelectCardModalProps {
 
 export function SelectCardModal({ email, planCode, onClose, paymentMethodId }: SelectCardModalProps) {
   const router = useRouter();
-  // const theme = useMantineTheme();
 
   const gatewayURL = publicRuntimeConfig.NEXT_PUBLIC_PAYMENT_GATEWAY_URL;
   const isCouponFeatureEnabled = publicRuntimeConfig.NEXT_PUBLIC_COUPON_ENABLED;
@@ -42,17 +41,16 @@ export function SelectCardModal({ email, planCode, onClose, paymentMethodId }: S
     () => commonApi<ICardData[]>(API_KEYS.PAYMENT_METHOD_LIST as any, {}),
     {
       onSuccess(data) {
-        if (data?.length === 0) {
-          notify(NOTIFICATION_KEYS.NO_PAYMENT_METHOD_FOUND, {
-            title: 'No Cards Found!',
-            message: 'Please Add your Card first. Redirecting you to cards!',
-            color: 'red',
-          });
-          modals.closeAll();
-          router.push(ROUTES.ADD_CARD + `&${CONSTANTS.PLAN_CODE_QUERY_KEY}=${planCode}`);
-        } else {
-          setSelectedPaymentMethod(data[0].paymentMethodId);
+        if (Array.isArray(data) && data.length) {
+          return setSelectedPaymentMethod(data[0].paymentMethodId);
         }
+        notify(NOTIFICATION_KEYS.NO_PAYMENT_METHOD_FOUND, {
+          title: 'No Cards Found!',
+          message: 'Please Add your Card first. Redirecting you to cards!',
+          color: 'red',
+        });
+        modals.closeAll();
+        router.push(ROUTES.ADD_CARD + `&${CONSTANTS.PLAN_CODE_QUERY_KEY}=${planCode}`);
       },
     }
   );

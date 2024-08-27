@@ -10,7 +10,7 @@ interface CouponProps {
   setAppliedCouponCode: (couponCode?: string) => void;
 }
 
-const Coupon = ({ planCode, couponCode, setAppliedCouponCode }: CouponProps) => {
+export const Coupon = ({ planCode, couponCode, setAppliedCouponCode }: CouponProps) => {
   const { register, errors, applyCouponSubmit, handleSubmit, isApplyCouponLoading } = useCoupon({
     planCode,
     setAppliedCouponCode,
@@ -47,5 +47,3 @@ const Coupon = ({ planCode, couponCode, setAppliedCouponCode }: CouponProps) => 
     </div>
   );
 };
-
-export default Coupon;
