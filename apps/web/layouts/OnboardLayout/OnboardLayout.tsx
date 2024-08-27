@@ -31,14 +31,14 @@ const slides: {
     subtitle: 'Within few minutes add scalable and production ready import widget to your application.',
   },
   {
-    image: PowerfullSlideImage,
-    title: 'Stay Powerful',
-    subtitle: `Don't let old and buggy data import cross your way to scale and making your users happy.`,
-  },
-  {
     image: UncertainitySlideImage,
     title: 'Remove Uncertainity from Data',
     subtitle: 'Missing values, invalid format, empty rows and unknown column names gets handled automatically.',
+  },
+  {
+    image: PowerfullSlideImage,
+    title: 'Stay Powerful',
+    subtitle: `Don't let old and buggy data import cross your way to scale and making your users happy.`,
   },
 ];
 
