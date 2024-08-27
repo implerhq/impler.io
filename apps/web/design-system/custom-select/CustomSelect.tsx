@@ -5,7 +5,7 @@ import useStyles from './CustomSelect.styles';
 import { ChevronDownIcon } from '@assets/icons';
 import { SelectedValue } from './SelectedValue';
 import { CloseIcon } from '@assets/icons/Close.icon';
-import { TooltipLink } from '@components/TooltipLink';
+import { TooltipLink } from '@components/guide-point';
 
 interface MultiSelectProps {
   label?: string;

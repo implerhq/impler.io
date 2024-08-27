@@ -19,7 +19,7 @@ import { VarLabel } from '../editor/VarLabel';
 import { useValidator } from '@hooks/useValidator';
 import { VarItemWrapper } from '../editor/VarItemWrapper';
 import { InformationIcon } from '@assets/icons/Information.icon';
-import { TooltipLink } from '@components/TooltipLink';
+import { TooltipLink } from '@components/guide-point';
 
 interface ValidatorProps {
   templateId: string;

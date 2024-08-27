@@ -8,7 +8,7 @@ import { useApp } from '@hooks/useApp';
 import { numberFormatter } from '@impler/shared';
 import { SelectCardModal } from '@components/settings';
 import { usePlanDetails } from '@hooks/usePlanDetails';
-import { TooltipLink } from '@components/TooltipLink';
+import { TooltipLink } from '@components/guide-point';
 import { PlansModal } from '@components/UpgradePlan/PlansModal';
 import { ConfirmationModal } from '@components/ConfirmationModal';
 import { CONSTANTS, MODAL_KEYS, ROUTES, colors, DOCUMENTATION_REFERENCE_LINKS } from '@config';
