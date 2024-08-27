@@ -14,11 +14,11 @@ interface IMappingItem {
   required?: boolean;
   options: IOption[] | string[];
   value?: string;
-  placeholder?: string;
+  mappingPlaceholder: string;
   size?: 'sm' | 'md';
   searchable?: boolean;
-  mappingSucceedText?: string;
-  mappingFailedText?: string;
+  mappingDoneText: string;
+  mappingNotDoneText: string;
   onChange?: (value: any) => void;
 }
 
@@ -29,11 +29,11 @@ export const MappingItem = React.forwardRef<HTMLInputElement, IMappingItem>((pro
     required,
     value,
     onChange,
-    placeholder = 'Select field',
+    mappingPlaceholder,
     size = 'xs',
     searchable = true,
-    mappingFailedText = 'Not Mapped',
-    mappingSucceedText = 'Mapping Successfull',
+    mappingNotDoneText,
+    mappingDoneText,
   } = props;
   const defaultGroupHeight = 45;
   const [groupHeight, setGroupHeight] = useState<number>(defaultGroupHeight);
@@ -52,7 +52,7 @@ export const MappingItem = React.forwardRef<HTMLInputElement, IMappingItem>((pro
           {required ? <span className={classes.required}>&nbsp;*</span> : null}
         </Text>
         <Select
-          placeholder={placeholder}
+          placeholder={mappingPlaceholder}
           value={value}
           data={options}
           classNames={{ root: classes.selectRoot, input: classes.select }}
@@ -66,7 +66,7 @@ export const MappingItem = React.forwardRef<HTMLInputElement, IMappingItem>((pro
       </Group>
       <Text size={size} color={value ? 'black' : 'gray'} className={classes.statusText}>
         {value ? <GreenCheck /> : null}
-        {value ? mappingSucceedText : mappingFailedText}
+        {value ? mappingDoneText : mappingNotDoneText}
       </Text>
     </Group>
   );

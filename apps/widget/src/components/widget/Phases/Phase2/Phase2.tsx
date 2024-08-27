@@ -1,13 +1,14 @@
-import { MappingItem } from '@ui/MappingItem';
-import { Footer } from 'components/Common/Footer';
-import useStyles from './Styles';
-import { useEffect, useRef, useState } from 'react';
-import { usePhase2 } from '@hooks/Phase2/usePhase2';
-import { WIDGET_TEXTS } from '@impler/shared';
-import { PhasesEnum } from '@types';
 import { Controller } from 'react-hook-form';
+import { useEffect, useRef, useState } from 'react';
+
+import useStyles from './Styles';
+import { PhasesEnum } from '@types';
+import { MappingItem } from '@ui/MappingItem';
+import { WIDGET_TEXTS } from '@impler/shared';
 import { MappingHeading } from './MappingHeading';
+import { Footer } from 'components/Common/Footer';
 import { LoadingOverlay } from '@ui/LoadingOverlay';
+import { usePhase2 } from '@hooks/Phase2/usePhase2';
 
 interface IPhase2Props {
   onPrevClick: () => void;
@@ -16,9 +17,8 @@ interface IPhase2Props {
 }
 
 const defaulWrappertHeight = 200;
-export function Phase2(props: IPhase2Props) {
+export function Phase2({ onPrevClick, onNextClick, texts }: IPhase2Props) {
   const { classes } = useStyles();
-  const { onPrevClick, onNextClick, texts } = props;
   const [wrapperHeight, setWrapperHeight] = useState(defaulWrappertHeight);
   const { headings, mappings, control, onSubmit, onFieldSelect, isInitialDataLoaded, isMappingFinalizing } = usePhase2({
     goNext: onNextClick,
@@ -63,6 +63,9 @@ export function Phase2(props: IPhase2Props) {
                       field.onChange(value);
                       onFieldSelect();
                     }}
+                    mappingNotDoneText={texts.PHASE2.MAPPING_NOT_DONE_TEXT}
+                    mappingDoneText={texts.PHASE2.MAPPING_DONE_TEXT}
+                    mappingPlaceholder={texts.PHASE2.MAPPING_FIELD_PLACEHOLDER}
                     ref={field.ref}
                   />
                 )}
