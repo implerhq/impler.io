@@ -39,7 +39,7 @@ export default function SignupPage({}) {
               error={errors.fullName?.message}
               {...register('fullName', {
                 pattern: {
-                  value: /\s/gm,
+                  value: /\w+\s\w+/gm,
                   message: 'Please enter your full name',
                 },
               })}
