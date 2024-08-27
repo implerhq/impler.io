@@ -236,6 +236,7 @@ export const IMPORT_MODES = [
 ];
 
 export const DOCUMENTATION_REFERENCE_LINKS = {
+  columnDescription: 'https://docs.impler.io/features/column-description',
   defaultValue: 'https://docs.impler.io/platform/default-value',
   primaryValidation: 'https://docs.impler.io/platform/validators',
   multiSelectDropDown: 'https://docs.impler.io/features/multiselect-dropdown',
