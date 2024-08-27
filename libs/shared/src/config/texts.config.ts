@@ -54,7 +54,7 @@ export const WIDGET_TEXTS = {
     IN_SCHEMA_TITLE: 'Column in schema',
     IN_SHEET_TITLE: 'Column in your sheet',
     MAPPING_NOT_DONE_TEXT: 'Not Mapped',
-    MAPPING_DONE_TEXT: 'Mapping Successfull',
+    MAPPING_DONE_TEXT: 'Mapping Successful',
     MAPPING_FIELD_PLACEHOLDER: 'Select Field',
   },
   PHASE3: {
