@@ -134,7 +134,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                     />
                     <Button
                       size="xs"
-                      color="green"
+                      color="blue"
                       onClick={() => {
                         ValidationRef.current = true;
                         onValidationsButtonClick();
@@ -147,15 +147,15 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                 <td style={{ borderLeft: 'none' }}>
                   <Flex justify={'end'}>
                     <ActionIcon
-                      color="blue"
+                      color="green"
                       type="submit"
                       autoFocus={ValidationRef.current}
                       loading={isColumnCreateLoading}
                     >
-                      <CheckIcon color={colors.blue} />
+                      <CheckIcon color={colors.green} />
                     </ActionIcon>
                     <ActionIcon color="red" onClick={() => setShowAddRow(false)}>
-                      <CloseIcon />
+                      <CloseIcon color={colors.dangerDark} />
                     </ActionIcon>
                   </Flex>
                 </td>
