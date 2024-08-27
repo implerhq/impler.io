@@ -26,7 +26,7 @@ export default function SignupPage({}) {
       >
         <Image src={DarkLogo} width={80} alt="Impler Logo" />
         <Title order={1} color="white">
-          Signup yourself
+          Create your account
         </Title>
       </Flex>
       <FocusTrap>
