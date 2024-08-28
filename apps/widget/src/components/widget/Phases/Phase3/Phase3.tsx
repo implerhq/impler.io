@@ -88,9 +88,24 @@ export function Phase3(props: IPhase3Props) {
             value={type}
             onChange={onTypeChange}
             items={[
-              { value: 'all', label: `All ${numberFormatter(totalRecords)}` },
-              { value: 'valid', label: `Valid ${numberFormatter(totalRecords - invalidRecords)}` },
-              { value: 'invalid', label: `Invalid ${numberFormatter(invalidRecords)}` },
+              {
+                value: 'all',
+                label: replaceVariablesInString(texts.PHASE3.LABEL_ALL_RECORDS, {
+                  records: numberFormatter(totalRecords),
+                }),
+              },
+              {
+                value: 'valid',
+                label: replaceVariablesInString(texts.PHASE3.LABEL_VALID_RECORDS, {
+                  records: numberFormatter(totalRecords - invalidRecords),
+                }),
+              },
+              {
+                value: 'invalid',
+                label: replaceVariablesInString(texts.PHASE3.LABEL_INVALID_RECORDS, {
+                  records: numberFormatter(invalidRecords),
+                }),
+              },
             ]}
           />
           <Button color="red" disabled={!selectedRowsRef.current.size} onClick={() => setShowDeleteConfirmModal(true)}>
