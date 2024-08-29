@@ -51,6 +51,10 @@ export interface ShowWidgetProps {
   schema?: ISchemaItem[];
   data?: Record<string, string | any>[];
   output?: Record<string, string | any>;
+  projectId: string;
+  templateId: string;
+  accessToken: string;
+  texts?: CustomTexts;
 }
 
 export type DeepPartial<T> = T extends object

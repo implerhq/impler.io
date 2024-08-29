@@ -1,17 +1,19 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import { CustomTexts } from '../types';
+import { EventCalls, ShowWidgetProps } from '../types';
+import { logError } from '../utils/logger';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ImplerService {
+  private uuid: string;
   private isImplerReady = false;
-  public widgetEvents = new EventEmitter<any>();
+  private widgetEvents = new EventEmitter<EventCalls>(true);
 
-  public initializeImpler(): void {
-    const uuid = this.generateUuid();
+  initializeImpler(): void {
+    this.uuid = this.generateUuid();
     if (window.impler) {
-      window.impler.init(uuid);
+      window.impler.init(this.uuid);
       const intervalId = setInterval(() => {
         if (window.impler.isReady()) {
           this.isImplerReady = true;
@@ -21,27 +23,35 @@ export class ImplerService {
 
       window.impler.on(
         'message',
-        (eventData) => {
+        (eventData: EventCalls) => {
           this.widgetEvents.emit(eventData);
         },
-        uuid
+        this.uuid
       );
-    }
+    } else logError('IMPLER_UNDEFINED_ERROR');
   }
 
-  public show(options: { projectId: string; templateId: string; accessToken: string; texts?: CustomTexts }): void {
+  showWidget(options: ShowWidgetProps): void {
     if (this.isImplerReady) {
-      window.impler.show(options);
+      window.impler.show({ ...options, uuid: this.uuid });
     } else {
-      console.error('Impler is not ready yet.');
+      logError('IMPLER_UNDEFINED_ERROR');
     }
   }
 
-  public getReadyState(): boolean {
+  getReadyState(): boolean {
     return this.isImplerReady;
   }
 
   private generateUuid(): string {
     return window.crypto.getRandomValues(new Uint32Array(1))[0].toString();
+  }
+  closeWidget() {
+    if (window.impler) {
+      window.impler.close();
+    } else logError('IMPLER_UNDEFINED_ERROR');
+  }
+  subscribeToWidgetEvents(callback: (data: EventCalls) => void): void {
+    this.widgetEvents.subscribe(callback);
   }
 }
