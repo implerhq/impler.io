@@ -11,13 +11,10 @@ import { SelectCardModal } from '@components/settings';
 import { usePlanDetails } from '@hooks/usePlanDetails';
 import { TooltipLink } from '@components/guide-point';
 import { PlansModal } from '@components/UpgradePlan/PlansModal';
-import { ConfirmationModal } from '@components/ConfirmationModal';
 import { CONSTANTS, MODAL_KEYS, ROUTES, colors, DOCUMENTATION_REFERENCE_LINKS } from '@config';
 
 export function PlanDetails() {
   const router = useRouter();
-  const status = router.query?.status;
-  const planName = router.query?.plan;
 
   const { profile } = useApp();
   const { [CONSTANTS.PLAN_CODE_QUERY_KEY]: selectedPlan } = router.query;
@@ -46,18 +43,6 @@ export function PlanDetails() {
       withCloseButton: true,
     });
   };
-  useEffect(() => {
-    if (planName && status) {
-      modals.open({
-        title:
-          status === CONSTANTS.PAYMENT_SUCCCESS_CODE
-            ? CONSTANTS.SUBSCRIPTION_ACTIVATED_TITLE
-            : CONSTANTS.SUBSCRIPTION_FAILED_TITLE,
-        children: <ConfirmationModal status={status as string} />,
-      });
-      router.push(ROUTES.HOME, {}, { shallow: true });
-    }
-  }, [planName, status, router]);
 
   useEffect(() => {
     if (selectedPlan && profile) {

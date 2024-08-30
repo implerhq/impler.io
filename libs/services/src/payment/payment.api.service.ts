@@ -120,6 +120,49 @@ export class PaymentAPIService {
     return response.data;
   }
 
+  async subscribe({
+    planCode,
+    email,
+    selectedPaymentMethod,
+    couponCode,
+  }: {
+    planCode: string;
+    email: string;
+    selectedPaymentMethod: string;
+    couponCode?: string;
+  }) {
+    if (!this.PAYMENT_API_BASE_URL) return;
+
+    let url = `${this.PAYMENT_API_BASE_URL}/api/v1/plans/${planCode}/buy/${email}?paymentMethodId=${selectedPaymentMethod}`;
+    if (couponCode) {
+      url += `&couponCode=${couponCode}`;
+    }
+
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          [this.AUTH_KEY]: this.AUTH_VALUE,
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      const isAxios = axios.isAxiosError(error);
+      const errorDetails = isAxios
+        ? {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status,
+            headers: error.response?.headers,
+          }
+        : { message: error.message, stack: error.stack };
+
+      console.error('Error details:', errorDetails);
+
+      throw error;
+    }
+  }
+
   async cancelSubscription(email: string): Promise<ISubscriptionData> {
     if (!this.PAYMENT_API_BASE_URL) return;
 

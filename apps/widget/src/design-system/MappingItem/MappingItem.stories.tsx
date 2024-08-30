@@ -24,7 +24,7 @@ NotMapped.args = {
   searchable: true,
   heading: 'First Name',
   size: 'sm',
-  placeholder: 'Select Field',
+  mappingPlaceholder: 'Select Field',
 };
 
 export const Mapped = Template.bind({});
@@ -43,6 +43,6 @@ Mapped.args = {
   searchable: true,
   heading: 'First Name',
   size: 'sm',
-  placeholder: 'Select Field',
+  mappingPlaceholder: 'Select Field',
   value: '1',
 };

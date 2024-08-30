@@ -1,22 +1,11 @@
-import { useState } from 'react';
-import getConfig from 'next/config';
-import { useRouter } from 'next/router';
-import { modals } from '@mantine/modals';
-import { useQuery } from '@tanstack/react-query';
 import { Flex, Loader, Divider, Title, Stack } from '@mantine/core';
-
-import { notify } from '@libs/notify';
 import { Button } from '@ui/button';
-import { commonApi } from '@libs/api';
-import { useCheckout } from '@hooks/useCheckout';
-import { CheckoutDetails } from '../Checkout/CheckoutDetails';
 
 import { Coupon } from './Coupon';
-import { ICardData, IErrorObject } from '@impler/shared';
-import { PaymentMethods } from './PaymentMethods/PaymentMethods';
-import { API_KEYS, CONSTANTS, NOTIFICATION_KEYS, ROUTES } from '@config';
-
-const { publicRuntimeConfig } = getConfig();
+import { CheckoutDetails } from '../Checkout';
+import { PaymentMethods } from './PaymentMethods';
+import { useCheckout } from '@hooks/useCheckout';
+import { useSubscribe } from '@hooks/useSubscribe';
 
 interface SelectCardModalProps {
   email: string;
@@ -25,62 +14,28 @@ interface SelectCardModalProps {
   paymentMethodId?: string;
 }
 
-export function SelectCardModal({ email, planCode, onClose, paymentMethodId }: SelectCardModalProps) {
-  const router = useRouter();
-
-  const gatewayURL = publicRuntimeConfig.NEXT_PUBLIC_PAYMENT_GATEWAY_URL;
-  const isCouponFeatureEnabled = publicRuntimeConfig.NEXT_PUBLIC_COUPON_ENABLED;
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | undefined>(paymentMethodId);
-  const [appliedCouponCode, setAppliedCouponCode] = useState<string>();
+export function SelectCardModal({ email, planCode, paymentMethodId }: SelectCardModalProps) {
   const {
-    data: paymentMethods,
-    isLoading: isPaymentMethodsLoading,
-    isFetching: isPaymentMethodsFetching,
-  } = useQuery<unknown, IErrorObject, ICardData[], [string]>(
-    [API_KEYS.PAYMENT_METHOD_LIST],
-    () => commonApi<ICardData[]>(API_KEYS.PAYMENT_METHOD_LIST as any, {}),
-    {
-      onSuccess(data) {
-        if (Array.isArray(data) && data.length) {
-          return setSelectedPaymentMethod(data[0].paymentMethodId);
-        }
-        notify(NOTIFICATION_KEYS.NO_PAYMENT_METHOD_FOUND, {
-          title: 'No Cards Found!',
-          message: 'Please Add your Card first. Redirecting you to cards!',
-          color: 'red',
-        });
-        modals.closeAll();
-        router.push(ROUTES.ADD_CARD + `&${CONSTANTS.PLAN_CODE_QUERY_KEY}=${planCode}`);
-      },
-    }
-  );
+    appliedCouponCode,
+    setAppliedCouponCode,
+    handlePaymentMethodChange,
+    handleProceed,
+    isCouponFeatureEnabled,
+    isPaymentMethodsFetching,
+    isPaymentMethodsLoading,
+    selectedPaymentMethod,
+    paymentMethods,
+  } = useSubscribe({
+    email,
+    planCode,
+    paymentMethodId,
+  });
 
   const { checkoutData, isCheckoutDataLoading } = useCheckout({
     couponCode: appliedCouponCode,
     paymentMethodId: selectedPaymentMethod,
     planCode,
   });
-
-  const handleProceed = () => {
-    modals.closeAll();
-    onClose();
-    if (selectedPaymentMethod) {
-      let url =
-        `${gatewayURL}/api/v1/plans/${planCode}/buy/${email}/redirect?paymentMethodId=${selectedPaymentMethod}`.replaceAll(
-          '"',
-          ''
-        );
-
-      if (appliedCouponCode) {
-        url += `&couponCode=${appliedCouponCode}`;
-      }
-
-      window.location.href = url;
-    }
-  };
-  const handlePaymentMethodChange = (methodId: string) => {
-    setSelectedPaymentMethod(methodId);
-  };
 
   return (
     <>
