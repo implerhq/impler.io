@@ -30,33 +30,69 @@ Impler's goal is to help developers create an efficient and smooth data import e
 ## 📦 Install
 
 ```bash
-npm install @impler/react
+npm install @impler/angular
 ```
 
 ```bash
-yarn add @impler/react
+yarn add @impler/angular
 ```
 
 ## 🔨 Usage
 
 ### Add Script
-You copy this snippet to your code before the closing body tag.
+You copy this snippet to your code in `index.html` file in head tag.
 ```html
-<script type="text/javascript" src="https://localhost:4701/embed.umd.min.js" async></script>
+<script type="text/javascript" src="https://embed.impler.io/embed.umd.min.js" async></script>
 ```
 
 ### Add Import Button
 
 ```tsx
-import { Button as ImportButton } from '@impler/react';
+import { isPlatformBrowser } from '@angular/common';
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { EventCalls, EventTypesEnum, ImplerService } from '@impler/angular';
 
-<ImportButton
-    projectId="<PROJECT_ID>"
-    template="<CODE_OR_ID>" /* optional */
-    accessToken="<SECRET>" /* required if API is protected */
-/>
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [RouterOutlet],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.css',
+})
+export class AppComponent {
+  title = 'import-component';
+
+  constructor(
+    private implerService: ImplerService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    if (isPlatformBrowser(platformId)) {
+      this.implerService.initializeImpler();
+      this.implerService.subscribeToWidgetEvents((eventData: EventCalls) => {
+        switch (eventData.type) {
+          case EventTypesEnum.DATA_IMPORTED:
+            console.log('Data Imported', eventData.value);
+            break;
+          default:
+            console.log(eventData);
+            break;
+        }
+      });
+    }
+  }
+  public show(): void {
+    this.implerService.showWidget({
+      colorScheme: 'dark',
+      projectId: '...',
+      templateId: '...',
+      accessToken: '...',
+    });
+  }
+}
 ```
 
 ## 🔗 Links
 
 - [Home page](https://impler.io/)
+- [Documentation](https://docs.impler.io/widget/angular-embed)
