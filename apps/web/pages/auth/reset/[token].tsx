@@ -2,12 +2,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Title, Stack, Flex, Text } from '@mantine/core';
 
-import { ROUTES, colors } from '@config';
 import { Button } from '@ui/button';
 import { PasswordInput } from '@ui/password-input';
 import DarkLogo from '@assets/images/logo-dark.png';
 import { OnboardLayout } from '@layouts/OnboardLayout';
 import { useResetPassword } from '@hooks/auth/useResetPassword';
+import { PLACEHOLDERS, ROUTES, colors } from '@config';
 
 export default function ResetPasswordPage({}) {
   const { register, resetPassword, error, isError } = useResetPassword();
@@ -34,8 +34,8 @@ export default function ResetPasswordPage({}) {
             required
             size="md"
             label="New Password"
-            placeholder="New Password here"
             register={register('password')}
+            placeholder={PLACEHOLDERS.password}
           />
           <Button fullWidth type="submit" size="md">
             Update password

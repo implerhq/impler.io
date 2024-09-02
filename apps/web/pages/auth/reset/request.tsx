@@ -2,8 +2,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Title, Stack, Flex, Text, TextInput as Input } from '@mantine/core';
 
-import { colors, ROUTES } from '@config';
 import { Button } from '@ui/button';
+import { colors, PLACEHOLDERS, ROUTES } from '@config';
 import DarkLogo from '@assets/images/logo-dark.png';
 import { OnboardLayout } from '@layouts/OnboardLayout';
 import { useRequestForgotPassword } from '@hooks/auth/useRequestForgotPassword';
@@ -44,8 +44,8 @@ export default function RequestForgotPasswordPage() {
               size="md"
               type="email"
               label="Email"
-              placeholder="Email"
               {...register('email')}
+              placeholder={PLACEHOLDERS.email}
               description="Password reset link will be sent to the email!"
             />
             <Button fullWidth type="submit" size="md" disabled={requestSent} loading={isForgotPasswordRequesting}>

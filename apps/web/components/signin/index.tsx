@@ -5,7 +5,7 @@ import { Title, Text, Stack, Divider, Flex, Box, Alert, TextInput as Input } fro
 import { Button } from '@ui/button';
 import { useSignin } from '@hooks/auth/useSignin';
 import { PasswordInput } from '@ui/password-input';
-import { CONSTANTS, ROUTES, colors } from '@config';
+import { CONSTANTS, PLACEHOLDERS, ROUTES, colors } from '@config';
 
 import DarkLogo from '@assets/images/logo-dark.png';
 import { GithubIcon } from '@assets/icons/Github.icon';
@@ -59,8 +59,21 @@ export const Signin = ({ API_URL, error }: SigninProps) => {
               {errorMessage.message}
             </Alert>
           ) : null}
-          <Input label="Email" {...register('email')} size="md" placeholder="Email" type="email" required />
-          <PasswordInput label="Password" register={register('password')} size="md" placeholder="Password" required />
+          <Input
+            required
+            size="md"
+            type="email"
+            label="Email"
+            {...register('email')}
+            placeholder={PLACEHOLDERS.email}
+          />
+          <PasswordInput
+            required
+            size="md"
+            label="Password"
+            register={register('password')}
+            placeholder={PLACEHOLDERS.password}
+          />
           <Link href={ROUTES.REQUEST_FORGOT_PASSWORD}>
             <Text size="md" align="right">
               Forgot password?

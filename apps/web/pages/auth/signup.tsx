@@ -2,10 +2,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Title, Text, Stack, Flex, TextInput as Input, FocusTrap } from '@mantine/core';
 
-import { ROUTES } from '@config';
 import { Button } from '@ui/button';
 import { PasswordInput } from '@ui/password-input';
 
+import { PLACEHOLDERS, ROUTES } from '@config';
 import { useSignup } from '@hooks/auth/useSignup';
 import DarkLogo from '@assets/images/logo-dark.png';
 import { OnboardLayout } from '@layouts/OnboardLayout';
@@ -36,12 +36,12 @@ export default function SignupPage({}) {
               required
               size="md"
               label="Full Name"
-              placeholder="Full Name"
+              placeholder={PLACEHOLDERS.fullName}
               error={errors.fullName?.message}
               {...register('fullName', {
                 pattern: {
                   value: /\w+\s\w+/gm,
-                  message: 'Please enter your full name',
+                  message: 'Please enter your full name. E.g. John Doe',
                 },
               })}
             />
@@ -49,12 +49,18 @@ export default function SignupPage({}) {
               size="md"
               required
               label="Email"
-              placeholder="Email"
               {...register('email')}
               error={errors.email?.message}
+              placeholder={PLACEHOLDERS.email}
               description="Verification code will be sent to your email!"
             />
-            <PasswordInput label="Password" register={register('password')} size="md" placeholder="Password" required />
+            <PasswordInput
+              required
+              size="md"
+              label="Password"
+              register={register('password')}
+              placeholder={PLACEHOLDERS.password}
+            />
             <Button id="signup" loading={isSignupLoading} fullWidth type="submit" size="md">
               Create an account
             </Button>

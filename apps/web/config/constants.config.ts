@@ -279,3 +279,14 @@ export const HOW_HEARD_ABOUT_US = [
   { value: 'Colleague', label: 'Colleague' },
   { value: 'Linkdin', label: 'Linkdin' },
 ];
+
+export const PLACEHOLDERS = {
+  email: 'johndoe@company.org',
+  password: '********',
+  project: 'Acme Inc',
+  fullName: 'John Doe',
+  companySize: 'Only me',
+  role: 'Engineer',
+  source: 'Google Search, Recommendation...',
+  about: 'Google Search',
+};
