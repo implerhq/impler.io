@@ -3,6 +3,7 @@
   "version": "0.24.0",
   "description": "Reusable services to shared between backend api and queue-manager",
   "license": "MIT",
+  "private": true,
   "author": "implerhq",
   "repository": "https://github.com/implerhq/impler.io",
   "types": "dist/index.d.ts",
