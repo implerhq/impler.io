@@ -98,9 +98,9 @@ export function OnboardUserForm() {
                   searchable
                   required
                   data={role}
+                  label="Your Role"
                   value={field.value}
                   onChange={field.onChange}
-                  label={PLACEHOLDERS.role}
                   error={errors.role?.message}
                   placeholder={PLACEHOLDERS.role}
                 />
