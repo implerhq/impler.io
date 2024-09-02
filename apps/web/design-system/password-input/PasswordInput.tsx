@@ -10,6 +10,7 @@ interface PasswordInputProps {
   register?: any;
   icon?: React.ReactNode;
   size?: MantineSize;
+  label?: string;
 }
 
 export function PasswordInput({
@@ -20,12 +21,14 @@ export function PasswordInput({
   placeholder,
   dataAutoFocus,
   size,
+  label,
   register,
 }: PasswordInputProps) {
   const { classes } = useStyles();
 
   return (
     <MantineInput
+      label={label}
       icon={icon}
       size={size}
       error={error}

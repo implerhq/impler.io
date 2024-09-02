@@ -55,6 +55,7 @@ export function useSignup() {
           type: 'manual',
           message: 'Email already exists',
         });
+        track({ name: 'SIGNUP DUPLICATE EMAIL', properties: {} });
       } else {
         setErrorMessage(error);
       }

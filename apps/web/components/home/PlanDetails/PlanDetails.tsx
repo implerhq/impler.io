@@ -5,10 +5,11 @@ import { modals } from '@mantine/modals';
 import { Title, Text, Flex, Button, Skeleton, Stack } from '@mantine/core';
 
 import { useApp } from '@hooks/useApp';
+import { track } from '@libs/amplitude';
 import { numberFormatter } from '@impler/shared';
 import { SelectCardModal } from '@components/settings';
 import { usePlanDetails } from '@hooks/usePlanDetails';
-import TooltipLink from '@components/TooltipLink/TooltipLink';
+import { TooltipLink } from '@components/guide-point';
 import { PlansModal } from '@components/UpgradePlan/PlansModal';
 import { CONSTANTS, MODAL_KEYS, ROUTES, colors, DOCUMENTATION_REFERENCE_LINKS } from '@config';
 
@@ -22,7 +23,11 @@ export function PlanDetails() {
     email: profile?.email ?? '',
   });
 
-  const onUpgradeButtonClick = () => {
+  const onChoosePlanClick = () => {
+    track({
+      name: 'VIEW PLANS',
+      properties: {},
+    });
     modals.open({
       id: MODAL_KEYS.PAYMENT_PLANS,
       modalId: MODAL_KEYS.PAYMENT_PLANS,
@@ -72,7 +77,7 @@ export function PlanDetails() {
           </Text>
           .
         </Text>
-        <Button onClick={onUpgradeButtonClick} color={'red'}>
+        <Button onClick={onChoosePlanClick} color={'red'}>
           Choose Plan
         </Button>
       </Stack>
@@ -149,7 +154,7 @@ export function PlanDetails() {
         </Flex>
         <Flex direction="column" gap={5} align="center">
           <Button
-            onClick={onUpgradeButtonClick}
+            onClick={onChoosePlanClick}
             color={isLessThanZero || activePlanDetails.usage.IMPORTED_ROWS > numberOfRecords ? 'red' : 'blue'}
           >
             Choose Plan

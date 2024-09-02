@@ -1,11 +1,11 @@
 import { Radio } from '@mantine/core';
 import { useRouter } from 'next/router';
 import { modals } from '@mantine/modals';
-import { MODAL_KEYS, ROUTES } from '@config';
-import { ICardData } from '@impler/shared';
 import { Button } from '@ui/button';
+import { ICardData } from '@impler/shared';
+import { MODAL_KEYS, ROUTES } from '@config';
 
-import PaymentMethodOption from './PaymentMethodOption';
+import { PaymentMethodOption } from './PaymentMethodOption';
 
 interface PaymentMethodsProps {
   paymentMethods: ICardData[] | undefined;

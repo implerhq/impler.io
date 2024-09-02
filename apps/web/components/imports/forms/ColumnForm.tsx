@@ -9,7 +9,6 @@ import {
   SimpleGrid,
   Title,
   Group,
-  Flex,
   CloseButton,
   Select,
   useMantineColorScheme,
@@ -22,10 +21,10 @@ import { colors, DELIMITERS, MODAL_KEYS, MODAL_TITLES, DOCUMENTATION_REFERENCE_L
 import { Button } from '@ui/button';
 import { Textarea } from '@ui/textarea';
 import { Checkbox } from '@ui/checkbox';
+import { useSchema } from '@hooks/useSchema';
 import { MultiSelect } from '@ui/multi-select';
 import { CustomSelect } from '@ui/custom-select';
-import { useSchema } from '@hooks/useSchema';
-import TooltipLink from '@components/TooltipLink/TooltipLink';
+import { TooltipLabel } from '@components/guide-point';
 
 interface ColumnFormProps {
   data?: Partial<IColumn>;
@@ -75,24 +74,26 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
               <Input
                 required
                 label="Column Name"
-                description="Name of the column, visible in mapping step"
                 {...register('name')}
                 error={errors.name?.message}
-                placeholder="Name of the column*"
+                placeholder="Name of the column"
+                description="Name of the column, visible in mapping step"
               />
               <Input
                 required
                 label="Column Key"
                 {...register('key')}
-                description="Primary key and key to use while generating a sample file"
                 placeholder="Column Key"
                 error={errors.key?.message}
+                description="Primary key and key to use while generating a sample file"
               />
               <Input
-                label="Column Description"
+                label={
+                  <TooltipLabel label="Column Description" link={DOCUMENTATION_REFERENCE_LINKS.columnDescription} />
+                }
+                {...register('description')}
                 placeholder="Enter a description for this column"
                 description="This description will be shown as a tooltip in the review table"
-                {...register('description')}
               />
               <Controller
                 name="alternateKeys"
@@ -104,9 +105,9 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                     searchable
                     value={value}
                     onChange={onChange}
-                    description="Suggested keys to find appropriate column from the file"
                     label="Alternative column keys"
                     placeholder="Alternative column keys"
+                    description="Suggested keys to find appropriate column from the file"
                     getCreateLabel={(query) => `+ ${query}`}
                     data={Array.isArray(value) ? value : []}
                     onCreate={(newItem) => {
@@ -235,10 +236,10 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
               {typeValue === ColumnTypesEnum.SELECT ? (
                 <Checkbox
                   label={
-                    <Flex gap="sm">
-                      <Text>Multi Select Values</Text>
-                      <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.multiSelectDropDown} />
-                    </Flex>
+                    <TooltipLabel
+                      label="Multi Select Values"
+                      link={DOCUMENTATION_REFERENCE_LINKS.multiSelectDropDown}
+                    />
                   }
                   register={register('allowMultiSelect')}
                   description="Users can pick multiple values from the list. Sample will also allow selecting multiple values."
@@ -270,12 +271,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
               ) : null}
 
               <Checkbox
-                label={
-                  <Flex gap="sm">
-                    <Text>Freeze Column</Text>
-                    <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.freezeColumns} />
-                  </Flex>
-                }
+                label={<TooltipLabel label="Freeze Column" link={DOCUMENTATION_REFERENCE_LINKS.freezeColumns} />}
                 register={register('isFrozen')}
                 description="Will freeze column left side in generated sample and in Review section."
               />

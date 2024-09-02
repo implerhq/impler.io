@@ -1,11 +1,11 @@
 import { Flex, Loader, Divider, Title, Stack } from '@mantine/core';
 import { Button } from '@ui/button';
 
-import Coupon from './Coupon/Coupon';
+import { Coupon } from './Coupon';
+import { CheckoutDetails } from '../Checkout';
+import { PaymentMethods } from './PaymentMethods';
 import { useCheckout } from '@hooks/useCheckout';
-import { CheckoutDetails } from '../Checkout/CheckoutDetails';
 import { useSubscribe } from '@hooks/useSubscribe';
-import { PaymentMethods } from './PaymentMethods/PaymentMethods';
 
 interface SelectCardModalProps {
   email: string;

@@ -3,7 +3,7 @@ import { Title, useMantineColorScheme, Flex, Stack, Switch, Collapse, Group } fr
 
 import useStyles from './DestinationItem.styles';
 import { colors } from '@config';
-import TooltipLink from '@components/TooltipLink/TooltipLink';
+import { TooltipLink } from '@components/guide-point';
 
 interface DestinationItemProps extends PropsWithChildren {
   title: string;

@@ -13,7 +13,7 @@ import { VarItemWrapper } from './VarItemWrapper';
 import { WarningIcon } from '@assets/icons/Warning.icon';
 import { InformationIcon } from '@assets/icons/Information.icon';
 import { PossibleJSONErrors } from '@components/common/PossibleJsonErrors';
-import TooltipLink from '@components/TooltipLink/TooltipLink';
+import { TooltipLink } from '@components/guide-point';
 
 interface OutputEditorProps {
   templateId: string;

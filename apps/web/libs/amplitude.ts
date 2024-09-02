@@ -25,6 +25,20 @@ type TrackData =
       };
     }
   | {
+      name: 'VERIFY';
+      properties: {
+        valid: boolean;
+      };
+    }
+  | {
+      name: 'RESEND VERIFICATION CODE';
+      properties: Record<string, never>;
+    }
+  | {
+      name: 'UPDATE EMAIL';
+      properties: Record<string, never>;
+    }
+  | {
       name: 'SIGNIN';
       properties: {
         id: string;
@@ -38,6 +52,12 @@ type TrackData =
   | {
       name: 'OUTPUT FORMAT UPDATED';
       properties: Record<string, never>;
+    }
+  | {
+      name: 'SIGNUP DUPLICATE EMAIL';
+      properties: {
+        onVerify?: boolean;
+      };
     }
   | {
       name: 'PROJECT CREATE';
@@ -121,6 +141,16 @@ type TrackData =
   | {
       name: 'IMPORT CLICK';
       properties: Record<string, never>;
+    }
+  | {
+      name: 'VIEW PLANS';
+      properties: Record<string, never>;
+    }
+  | {
+      name: 'PLAN TOGGLE DURATION';
+      properties: {
+        yearly: boolean;
+      };
     };
 
 export function track({ name, properties }: TrackData) {

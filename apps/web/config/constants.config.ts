@@ -238,6 +238,7 @@ export const IMPORT_MODES = [
 ];
 
 export const DOCUMENTATION_REFERENCE_LINKS = {
+  columnDescription: 'https://docs.impler.io/features/column-description',
   defaultValue: 'https://docs.impler.io/platform/default-value',
   primaryValidation: 'https://docs.impler.io/platform/validators',
   multiSelectDropDown: 'https://docs.impler.io/features/multiselect-dropdown',
@@ -278,3 +279,14 @@ export const HOW_HEARD_ABOUT_US = [
   { value: 'Colleague', label: 'Colleague' },
   { value: 'Linkdin', label: 'Linkdin' },
 ];
+
+export const PLACEHOLDERS = {
+  email: 'johndoe@company.org',
+  password: '********',
+  project: 'Acme Inc',
+  fullName: 'John Doe',
+  companySize: 'Only me',
+  role: 'Engineer',
+  source: 'Google Search, Recommendation...',
+  about: 'Google Search',
+};

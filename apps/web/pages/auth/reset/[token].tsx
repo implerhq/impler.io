@@ -2,12 +2,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Title, Stack, Flex, Text } from '@mantine/core';
 
-import { ROUTES, colors } from '@config';
 import { Button } from '@ui/button';
 import { PasswordInput } from '@ui/password-input';
 import DarkLogo from '@assets/images/logo-dark.png';
 import { OnboardLayout } from '@layouts/OnboardLayout';
 import { useResetPassword } from '@hooks/auth/useResetPassword';
+import { PLACEHOLDERS, ROUTES, colors } from '@config';
 
 export default function ResetPasswordPage({}) {
   const { register, resetPassword, error, isError } = useResetPassword();
@@ -30,12 +30,18 @@ export default function ResetPasswordPage({}) {
       </Flex>
       <form style={{ width: '100%' }} onSubmit={resetPassword}>
         <Stack w="100%">
-          <PasswordInput register={register('password')} size="md" placeholder="New Password" required />
+          <PasswordInput
+            required
+            size="md"
+            label="New Password"
+            register={register('password')}
+            placeholder={PLACEHOLDERS.password}
+          />
           <Button fullWidth type="submit" size="md">
-            Save new password
+            Update password
           </Button>
           <Text align="center">
-            <Link href={ROUTES.SIGNIN}>Sign In</Link>
+            Back to <Link href={ROUTES.SIGNIN}>Signin</Link>
           </Text>
         </Stack>
         {isError && (
