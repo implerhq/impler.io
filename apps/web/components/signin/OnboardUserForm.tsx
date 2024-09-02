@@ -98,6 +98,7 @@ export function OnboardUserForm() {
                   searchable
                   required
                   data={role}
+                  name="Your Role"
                   value={field.value}
                   onChange={field.onChange}
                   label={PLACEHOLDERS.role}

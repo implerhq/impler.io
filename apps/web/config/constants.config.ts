@@ -286,7 +286,7 @@ export const PLACEHOLDERS = {
   project: 'Acme Inc',
   fullName: 'John Doe',
   companySize: 'Only me',
-  role: 'Engineer',
+  role: 'Engineer, Manager, Founder...',
   source: 'Google Search, Recommendation...',
   about: 'Google Search',
 };
