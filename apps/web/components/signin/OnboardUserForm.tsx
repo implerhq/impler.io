@@ -4,7 +4,7 @@ import { Title, Text, Stack, TextInput, Select, Radio, Group, Container, Flex, B
 
 import { Button } from '@ui/button';
 import { useApp } from '@hooks/useApp';
-import { colors, COMPANY_SIZES, HOW_HEARD_ABOUT_US, ROLES } from '@config';
+import { colors, COMPANY_SIZES, HOW_HEARD_ABOUT_US, PLACEHOLDERS, ROLES } from '@config';
 import { useOnboardUserProjectForm } from '@hooks/useOnboardUserProjectForm';
 
 export function OnboardUserForm() {
@@ -29,11 +29,11 @@ export function OnboardUserForm() {
       <Title mb="md">
         <Group position="left">
           <span style={{ fontSize: '30px' }}>👋</span>
-          <span>Welcome, {profile?.firstName}</span>
+          <span>Welcome {profile?.firstName}</span>
         </Group>
       </Title>
       <Text size="md" color="dimmed" align="left" mb="lg">
-        We just need to confirm a couple of details, it&lsquo;s only take a minute.
+        Let&apos;s customize your experience. Your answers will decrease the time to get started.
       </Text>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FocusTrap active>
@@ -49,9 +49,9 @@ export function OnboardUserForm() {
               }}
               render={({ field }) => (
                 <TextInput
-                  label="Project Name"
                   required
-                  placeholder="Enter Your Project Name"
+                  label="Project Name"
+                  placeholder={PLACEHOLDERS.project}
                   description="E.g. your company name or workspace name."
                   error={errors.projectName?.message}
                   {...field}
@@ -102,7 +102,7 @@ export function OnboardUserForm() {
                   value={field.value}
                   onChange={field.onChange}
                   error={errors.role?.message}
-                  placeholder="Engineer, Manager, Founder..."
+                  placeholder={PLACEHOLDERS.role}
                 />
               )}
             />
@@ -116,7 +116,7 @@ export function OnboardUserForm() {
                   label="How did you hear about us first?"
                   required
                   data={about}
-                  placeholder="Google Search, Colleague"
+                  placeholder={PLACEHOLDERS.source}
                   searchable
                   creatable
                   value={field.value}

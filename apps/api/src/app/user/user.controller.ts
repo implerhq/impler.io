@@ -11,6 +11,7 @@ import {
   GetTransactionHistory,
   ApplyCoupon,
   Checkout,
+  Subscription,
 } from './usecases';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { IJwtPayload, ACCESS_KEY_NAME } from '@impler/shared';
@@ -32,7 +33,8 @@ export class UserController {
     private confirmIntentId: ConfirmIntentId,
     private getTransactionHistory: GetTransactionHistory,
     private retrivePaymentMethods: RetrievePaymentMethods,
-    private deleteUserPaymentMethod: DeleteUserPaymentMethod
+    private deleteUserPaymentMethod: DeleteUserPaymentMethod,
+    private subscription: Subscription
   ) {}
 
   @Get('/import-count')
@@ -71,7 +73,7 @@ export class UserController {
   @ApiOperation({
     summary: 'Setup User Payment Intent',
   })
-  async setupEMandateIntent(@UserSession() user: IJwtPayload, @Param('paymentId') paymentId: string) {
+  async setupEmandateIntent(@UserSession() user: IJwtPayload, @Param('paymentId') paymentId: string) {
     return this.updatePaymentMethod.execute(user.email, paymentId);
   }
 
@@ -135,6 +137,24 @@ export class UserController {
       externalId: user.email,
       paymentMethodId: paymentMethodId,
       couponCode: couponCode,
+    });
+  }
+
+  @Get('/subscribe')
+  @ApiOperation({
+    summary: 'Make successful Plan Purchase and begin subscription',
+  })
+  async newSubscriptionRoute(
+    @Query('planCode') planCode: string,
+    @UserSession() user: IJwtPayload,
+    @Query('paymentMethodId') paymentMethodId: string,
+    @Query('couponCode') couponCode?: string
+  ) {
+    return await this.subscription.execute({
+      email: user.email,
+      planCode,
+      selectedPaymentMethod: paymentMethodId,
+      couponCode,
     });
   }
 }

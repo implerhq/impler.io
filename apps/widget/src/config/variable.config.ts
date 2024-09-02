@@ -32,6 +32,9 @@ export const AMPLITUDE = {
   UPLOAD_AGAIN: 'upload again',
   RESET: 'reset',
   RECORDS: 'records',
+  IMAGE_PAYLOAD: 'Image payload',
+  IMAGE_SELECTED: 'Image selected',
+  HIDE_IMAGE_INFO: 'Hide image info',
   RECORDS_DELETED: 'Records deleted',
 };
 

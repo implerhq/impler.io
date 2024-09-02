@@ -1,28 +1,17 @@
 import { ApiOperation, ApiTags, ApiSecurity, ApiQuery, ApiOkResponse } from '@nestjs/swagger';
-import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 
 import { APIMessages } from '@shared/constants';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { validateUploadStatus } from '@shared/helpers/upload.helpers';
 import { Defaults, ACCESS_KEY_NAME, UploadStatusEnum, ReviewDataTypesEnum } from '@impler/shared';
 
-import {
-  DoReview,
-  GetUpload,
-  DoReReview,
-  UpdateRecord,
-  StartProcess,
-  DeleteRecord,
-  GetUploadData,
-  UpdateImportCount,
-  UpdateImportCountCommand,
-} from './usecases';
+import { DoReview, GetUpload, DoReReview, UpdateRecord, StartProcess, DeleteRecord, GetUploadData } from './usecases';
 
-import { UpdateCellDto } from './dtos/update-cell.dto';
+import { DeleteRecordsDto, UpdateCellDto } from './dtos';
 import { validateNotFound } from '@shared/helpers/common.helper';
 import { PaginationResponseDto } from '@shared/dtos/pagination-response.dto';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
-import { ValidateIndexes } from '@shared/validations/valid-indexes.validation';
 
 @Controller('/review')
 @ApiTags('Review')
@@ -35,7 +24,6 @@ export class ReviewController {
     private deleteRecord: DeleteRecord,
     private startProcess: StartProcess,
     private updateRecord: UpdateRecord,
-    private updateImportCount: UpdateImportCount,
     private getFileInvalidData: GetUploadData
   ) {}
 
@@ -124,14 +112,6 @@ export class ReviewController {
     // upload files with status reviewing can only be confirmed
     validateUploadStatus(uploadInformation.status as UploadStatusEnum, [UploadStatusEnum.REVIEWING]);
 
-    await this.updateImportCount.execute(
-      uploadInformation._templateId,
-      UpdateImportCountCommand.create({
-        totalRecords: uploadInformation.totalRecords,
-        totalInvalidRecords: uploadInformation.invalidRecords,
-      })
-    );
-
     return this.startProcess.execute(_uploadId);
   }
 
@@ -144,17 +124,15 @@ export class ReviewController {
     await this.updateRecord.execute(_uploadId, body);
   }
 
-  @Delete(':uploadId/record')
+  @Post(':uploadId/delete-records')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Delete review record for ongoing import',
   })
   async deleteReviewRecord(
-    @Query('valid') valid: number,
-    @Query('invalid') invalid: number,
-    @Query('indexes', ValidateIndexes) indexes: string,
+    @Body() { indexes, valid, invalid }: DeleteRecordsDto,
     @Param('uploadId', ValidateMongoId) _uploadId: string
   ) {
-    await this.deleteRecord.execute(_uploadId, indexes.split(',').map(Number), valid, invalid);
+    await this.deleteRecord.execute(_uploadId, indexes, valid, invalid);
   }
 }

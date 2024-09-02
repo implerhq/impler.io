@@ -322,8 +322,6 @@ export class BaseReview {
       let totalRecords = -1,
         invalidRecords = 0,
         validRecords = 0;
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       Papa.parse(csvFileStream, {
         dynamicTyping: false,
         skipEmptyLines: true,

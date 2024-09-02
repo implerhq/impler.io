@@ -2,9 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { SCREENS } from '@impler/shared';
 import { VerifyCommand } from './verify.command';
-import { PaymentAPIService } from '@impler/services';
 import { AuthService } from 'app/auth/services/auth.service';
-import { captureException } from '@shared/helpers/common.helper';
 import { UserRepository, EnvironmentRepository } from '@impler/dal';
 import { InvalidVerificationCodeException } from '@shared/exceptions/otp-verification.exception';
 
@@ -13,7 +11,6 @@ export class Verify {
   constructor(
     private authService: AuthService,
     private userRepository: UserRepository,
-    private paymentAPIService: PaymentAPIService,
     private environmentRepository: EnvironmentRepository
   ) {}
 
@@ -25,18 +22,6 @@ export class Verify {
 
     if (!user) {
       throw new InvalidVerificationCodeException();
-    }
-
-    const userData = {
-      name: user.firstName + ' ' + user.lastName,
-      email: user.email,
-      externalId: user.email,
-    };
-
-    try {
-      await this.paymentAPIService.createUser(userData);
-    } catch (error) {
-      captureException(error);
     }
 
     await this.userRepository.findOneAndUpdate(

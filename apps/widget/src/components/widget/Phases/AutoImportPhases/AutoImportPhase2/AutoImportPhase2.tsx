@@ -63,6 +63,9 @@ export function AutoImportPhase2({ onNextClick, texts }: IAutoImportPhase2Props)
                         onFieldSelect();
                       }}
                       ref={field.ref}
+                      mappingNotDoneText={texts.PHASE2.MAPPING_NOT_DONE_TEXT}
+                      mappingDoneText={texts.PHASE2.MAPPING_DONE_TEXT}
+                      mappingPlaceholder={texts.PHASE2.MAPPING_FIELD_PLACEHOLDER}
                     />
                   )}
                 />

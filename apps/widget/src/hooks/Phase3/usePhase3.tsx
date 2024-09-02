@@ -127,6 +127,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
         setColumnDefs(newColumnDefs);
         setFrozenColumns(updatedFrozenColumns);
       },
+      enabled: !!uploadInfo?._id,
     }
   );
   const { refetch: fetchUploadInfo } = useQuery<IUpload, IErrorObject, IUpload, [string]>(
@@ -192,6 +193,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
   >([`review`, uploadInfo._id], () => api.doReivewData(uploadInfo._id), {
     cacheTime: 0,
     staleTime: 0,
+    enabled: !!uploadInfo._id,
     onSuccess() {
       fetchUploadInfo();
       refetchReviewData([page, type]);

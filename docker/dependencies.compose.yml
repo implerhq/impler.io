@@ -1,0 +1,60 @@
+version: '3'
+services:
+
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    ports:
+      - 27017:27017
+    restart: unless-stopped
+    networks:
+      - impler
+
+  rabbitmq:
+    image: rabbitmq:3-alpine
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - 5672:5672
+      - 5671:5671
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "5672"]
+      interval: 5s
+      timeout: 15s
+      retries: 1
+    networks:
+      - impler
+
+  minio:
+    image: minio/minio
+    volumes:
+      - minio_data:/data
+    environment:
+      MINIO_ROOT_USER: impler
+      MINIO_ROOT_PASSWORD: implers3cr3t
+    ports:
+      - 9000:9000
+      - 9001:9001
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set myminio http://minio:9000 impler implers3cr3t;
+      /usr/bin/mc mb myminio/impler;
+      exit 0;
+      "
+
+volumes:
+  minio_data:
+
+networks:
+  impler:

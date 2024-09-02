@@ -1,8 +1,8 @@
-import Image from 'next/image';
-import { Flex, Radio, Stack, Text, useMantineTheme } from '@mantine/core';
-import { capitalizeFirstLetter } from '@shared/utils';
-import { colors } from '@config';
 import React from 'react';
+import Image from 'next/image';
+import { colors } from '@config';
+import { capitalizeFirstLetter } from '@shared/utils';
+import { Flex, Radio, Stack, Text, useMantineTheme } from '@mantine/core';
 
 interface PaymentMethodOptionProps {
   method: {
@@ -16,7 +16,7 @@ interface PaymentMethodOptionProps {
   onChange: (methodId: string) => void;
 }
 
-export default function PaymentMethodOption({ method, selected, onChange }: PaymentMethodOptionProps) {
+export function PaymentMethodOption({ method, selected, onChange }: PaymentMethodOptionProps) {
   const theme = useMantineTheme();
   const cardBrandsSrc = method.brand.toLowerCase().replaceAll(' ', '_') || 'default';
 

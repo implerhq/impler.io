@@ -8,6 +8,7 @@ import { Select } from '@ui/Select';
 import { PhasesEnum } from '@types';
 import { WIDGET_TEXTS } from '@impler/shared';
 import { colors, variables } from '@config';
+import { logAmplitudeEvent } from '@amplitude';
 import { FileDropzone } from '@ui/FileDropzone';
 import { Footer } from 'components/Common/Footer';
 import { usePhase01 } from '@hooks/Phase0-1/usePhase01';
@@ -36,6 +37,11 @@ export function Phase01({ goToUpload, texts }: Phase01Props) {
   const wrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
   const [containerHeight, setContainerHeight] = useState<number>(200);
 
+  const onImageAlertClose = () => {
+    setShowAlert(false);
+    logAmplitudeEvent('HIDE_IMAGE_INFO');
+  };
+
   useEffect(() => {
     setContainerHeight(wrapperRef.current.getBoundingClientRect().height);
   }, [showAlert]);
@@ -48,7 +54,7 @@ export function Phase01({ goToUpload, texts }: Phase01Props) {
             <Alert
               color="blue"
               withCloseButton
-              onClose={() => setShowAlert(false)}
+              onClose={onImageAlertClose}
               title={texts['PHASE0-1'].IMAGE_INFO_TITLE}
               icon={<Warning fill={colors.primary} />}
             >

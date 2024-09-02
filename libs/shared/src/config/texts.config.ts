@@ -53,6 +53,9 @@ export const WIDGET_TEXTS = {
     REVIEW_DATA: 'Review Data',
     IN_SCHEMA_TITLE: 'Column in schema',
     IN_SHEET_TITLE: 'Column in your sheet',
+    MAPPING_NOT_DONE_TEXT: 'Not Mapped',
+    MAPPING_DONE_TEXT: 'Mapping Successful',
+    MAPPING_FIELD_PLACEHOLDER: 'Select Field',
   },
   PHASE3: {
     EXPORT_DATA: 'Export Data',
@@ -60,6 +63,9 @@ export const WIDGET_TEXTS = {
     COMPLETE: 'Complete',
     ALL_RECORDS_VALID_TITLE: ' All records are found valid!',
     ALL_RECORDS_VALID_DETAILS: 'All {total} row(s) found valid! Would you like to complete the Import?',
+    LABEL_ALL_RECORDS: `All {records}`,
+    LABEL_VALID_RECORDS: `Valid {records}`,
+    LABEL_INVALID_RECORDS: `Invalid {records}`,
   },
   PHASE4: {
     TITLE: 'Bravo! {count} rows have been uploaded',

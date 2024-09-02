@@ -66,6 +66,7 @@ export const API_KEYS = {
 
   APPLY_COUPON_CODE: 'APPLY_COUPON_CODE',
 
+  SUBSCRIBE: 'SUBSCRIBE',
   TRANSACTION_HISTORY: 'TRANSACTION_HISTORY',
 
   PAYMENT_METHOD_DELETE: 'PAYMENT_METHOD_DELETE',
@@ -151,6 +152,7 @@ export const NOTIFICATION_KEYS = {
 
   CARD_ADDED: 'CARD_ADDED',
   CARD_REMOVED: 'CARD_REMOVED',
+  PURCHASE_FAILED: 'PURCHASE_FAILED',
 
   COLUMN_ERRROR: 'COLUMN_ERRROR',
 };
@@ -236,6 +238,7 @@ export const IMPORT_MODES = [
 ];
 
 export const DOCUMENTATION_REFERENCE_LINKS = {
+  columnDescription: 'https://docs.impler.io/features/column-description',
   defaultValue: 'https://docs.impler.io/platform/default-value',
   primaryValidation: 'https://docs.impler.io/platform/validators',
   multiSelectDropDown: 'https://docs.impler.io/features/multiselect-dropdown',
@@ -276,3 +279,14 @@ export const HOW_HEARD_ABOUT_US = [
   { value: 'Colleague', label: 'Colleague' },
   { value: 'Linkdin', label: 'Linkdin' },
 ];
+
+export const PLACEHOLDERS = {
+  email: 'johndoe@company.org',
+  password: '********',
+  project: 'Acme Inc',
+  fullName: 'John Doe',
+  companySize: 'Only me',
+  role: 'Engineer, Manager, Founder...',
+  source: 'Google Search, Recommendation...',
+  about: 'Google Search',
+};

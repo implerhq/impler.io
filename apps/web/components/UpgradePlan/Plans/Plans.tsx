@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
 import { modals } from '@mantine/modals';
+import React, { ChangeEvent, useState } from 'react';
 import { Switch, Stack, Table, Button, Text, Badge, Group, useMantineColorScheme } from '@mantine/core';
 
 import useStyles from './Plans.styles';
+import { track } from '@libs/amplitude';
 import { MODAL_KEYS, colors } from '@config';
 import { numberFormatter } from '@impler/shared';
 import { TickIcon } from '@assets/icons/Tick.icon';
@@ -106,7 +107,15 @@ export const Plans = ({ profile, activePlanCode, canceledOn, expiryDate }: Plans
       });
     }
   };
-
+  const onPlanDurationToggleClick = (event: ChangeEvent<HTMLInputElement>) => {
+    setShowYearly(event.currentTarget.checked);
+    track({
+      name: 'PLAN TOGGLE DURATION',
+      properties: {
+        yearly: event.currentTarget.checked,
+      },
+    });
+  };
   const getButtonTextContent = (planCode: string) => {
     if (canceledOn !== null && activePlanCode === planCode) {
       return (
@@ -125,11 +134,11 @@ export const Plans = ({ profile, activePlanCode, canceledOn, expiryDate }: Plans
         <Text weight={700} size="sm">
           Monthly
         </Text>
-        <Switch size="md" checked={showYearly} onChange={(event) => setShowYearly(event.currentTarget.checked)} />
+        <Switch size="md" checked={showYearly} onChange={onPlanDurationToggleClick} />
         <Text weight={700} size="sm">
           Yearly
         </Text>
-        <Badge color="cyan" size="lg" variant="filled">
+        <Badge color="cyan" size="lg" variant={showYearly ? 'filled' : 'light'}>
           <Text color={colors.BGPrimaryLight}>Save 20% </Text>
         </Badge>
       </Group>

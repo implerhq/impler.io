@@ -40,23 +40,30 @@ yarn add @impler/react
 ## 🔨 Usage
 
 ### Add Script
-You copy this snippet to your code before the closing body tag.
+You copy this snippet to your code before the in head tag.
 ```html
-<script type="text/javascript" src="https://localhost:4701/embed.umd.min.js" async></script>
+<script type="text/javascript" src="https://embed.impler.io/embed.umd.min.js" async></script>
 ```
 
 ### Add Import Button
 
 ```tsx
-import { Button as ImportButton } from '@impler/react';
 
-<ImportButton
-    projectId="<PROJECT_ID>"
-    template="<CODE_OR_ID>" /* optional */
-    accessToken="<SECRET>" /* required if API is protected */
-/>
+Copy
+import { useImpler } from '@impler/react';
+
+const { showWidget, isImplerInitiated } = useImpler({
+  projectId: "",
+  templateId: "",
+  accessToken: "",
+});
+
+<button disabled={!isImplerInitiated} onClick={showWidget}>
+  Import
+</button>
 ```
 
 ## 🔗 Links
 
 - [Home page](https://impler.io/)
+- [Documentation](https://docs.impler.io/widget/react-embed)

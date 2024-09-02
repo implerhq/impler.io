@@ -1,6 +1,6 @@
 {
   "name": "impler.io",
-  "version": "0.24.0",
+  "version": "0.24.1",
   "description": "Open source infrastructure to import data easily",
   "packageManager": "pnpm@8.9.0",
   "private": true,
@@ -20,6 +20,7 @@
     "build": "npx nx run-many --target=build --all",
     "build:api": "npx nx build @impler/api",
     "build:dal": "npx nx build @impler/dal",
+    "build:angular": "npx nx build @impler/angular",
     "build:react": "npx nx build @impler/react",
     "build:shared": "npx nx build @impler/shared",
     "build:widget": "npx nx build @impler/widget",

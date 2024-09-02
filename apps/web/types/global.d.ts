@@ -148,3 +148,9 @@ interface ICheckoutData {
   discount?: number;
   proratedRefund?: number;
 }
+
+interface ISubscribeData {
+  selectedPaymentMethod: string | undefined;
+  email: string;
+  planCode: string;
+}

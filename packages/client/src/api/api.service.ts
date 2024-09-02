@@ -188,9 +188,11 @@ export class ApiService {
     valid: number,
     invalid: number,
   ) {
-    return this.httpClient.delete(
-      `/review/${uploadId}/record?indexes=${indexes}&valid=${valid}&invalid=${invalid}`,
-    );
+    return this.httpClient.post(`/review/${uploadId}/delete-records`, {
+      indexes,
+      valid,
+      invalid,
+    });
   }
 
   async getRssXmlMappingHeading(data: {

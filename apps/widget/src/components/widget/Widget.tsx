@@ -55,15 +55,15 @@ export function Widget() {
     setPromptContinueAction(undefined);
   };
   const onClose = () => {
-    if ([PhasesEnum.VALIDATE, PhasesEnum.IMAGE_UPLOAD, PhasesEnum.UPLOAD, PhasesEnum.COMPLETE].includes(phase))
-      closeWidget(true);
-    else setPromptContinueAction(PromptModalTypesEnum.CLOSE);
+    if ([PhasesEnum.VALIDATE, PhasesEnum.IMAGE_UPLOAD, PhasesEnum.UPLOAD, PhasesEnum.COMPLETE].includes(phase)) {
+      setPhase(PhasesEnum.VALIDATE);
+      resetAppState();
+      closeWidget();
+    } else setPromptContinueAction(PromptModalTypesEnum.CLOSE);
   };
-  const closeWidget = (resetPhase?: boolean) => {
+  const closeWidget = () => {
     setShowWidget(false);
     resetAmplitude();
-    resetAppState();
-    if (resetPhase) setPhase(PhasesEnum.VALIDATE);
     setTimeout(() => {
       ParentWindow.Close();
     }, variables.closeDelayInMS);

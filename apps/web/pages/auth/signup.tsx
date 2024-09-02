@@ -5,10 +5,10 @@ import { Title, Text, Stack, Flex, TextInput as Input, FocusTrap } from '@mantin
 import { Button } from '@ui/button';
 import { PasswordInput } from '@ui/password-input';
 
+import { PLACEHOLDERS, ROUTES } from '@config';
 import { useSignup } from '@hooks/auth/useSignup';
 import DarkLogo from '@assets/images/logo-dark.png';
 import { OnboardLayout } from '@layouts/OnboardLayout';
-import { ROUTES } from '@config';
 
 export default function SignupPage({}) {
   const { register, isSignupLoading, signup, errors } = useSignup();
@@ -26,7 +26,7 @@ export default function SignupPage({}) {
       >
         <Image src={DarkLogo} width={80} alt="Impler Logo" />
         <Title order={1} color="white">
-          Signup yourself
+          Create your account
         </Title>
       </Flex>
       <FocusTrap>
@@ -35,17 +35,32 @@ export default function SignupPage({}) {
             <Input
               required
               size="md"
-              placeholder="Full Name"
+              label="Full Name"
+              placeholder={PLACEHOLDERS.fullName}
               error={errors.fullName?.message}
               {...register('fullName', {
                 pattern: {
-                  value: /\s/gm,
-                  message: 'Please enter your full name',
+                  value: /\w+\s\w+/gm,
+                  message: 'Please enter your full name. E.g. John Doe',
                 },
               })}
             />
-            <Input {...register('email')} size="md" placeholder="Email" required error={errors.email?.message} />
-            <PasswordInput register={register('password')} size="md" placeholder="Password" required />
+            <Input
+              size="md"
+              required
+              label="Email"
+              {...register('email')}
+              error={errors.email?.message}
+              placeholder={PLACEHOLDERS.email}
+              description="Verification code will be sent to your email!"
+            />
+            <PasswordInput
+              required
+              size="md"
+              label="Password"
+              register={register('password')}
+              placeholder={PLACEHOLDERS.password}
+            />
             <Button id="signup" loading={isSignupLoading} fullWidth type="submit" size="md">
               Create an account
             </Button>
