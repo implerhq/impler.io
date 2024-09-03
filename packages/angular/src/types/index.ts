@@ -55,6 +55,10 @@ export interface ShowWidgetProps {
   templateId: string;
   accessToken: string;
   texts?: CustomTexts;
+  title?: string;
+  primaryColor?: string;
+  extra?: string | Record<string, any>;
+  authHeaderValue?: string | (() => string) | (() => Promise<string>);
 }
 
 export type DeepPartial<T> = T extends object
@@ -64,19 +68,3 @@ export type DeepPartial<T> = T extends object
   : T;
 
 export type CustomTexts = DeepPartial<typeof WIDGET_TEXTS>;
-
-export interface UseImplerProps {
-  title?: string;
-  texts?: CustomTexts;
-  projectId?: string;
-  templateId?: string;
-  accessToken?: string;
-  primaryColor?: string;
-  extra?: string | Record<string, any>;
-  authHeaderValue?: string | (() => string) | (() => Promise<string>);
-  onUploadStart?: (value: UploadTemplateData) => void;
-  onUploadTerminate?: (value: UploadData) => void;
-  onUploadComplete?: (value: IUpload) => void;
-  onDataImported?: (importedData: Record<string, any>[]) => void;
-  onWidgetClose?: () => void;
-}
