@@ -1,4 +1,4 @@
-import { Badge, Flex, Stack } from '@mantine/core';
+import { Badge, Flex, Group, Stack } from '@mantine/core';
 import { useRef, useState, useEffect } from 'react';
 import HotTableClass from '@handsontable/react/hotTableClass';
 
@@ -16,6 +16,7 @@ import { Pagination } from '@ui/Pagination';
 import { LoadingOverlay } from '@ui/LoadingOverlay';
 import { SegmentedControl } from '@ui/SegmentedControl';
 import { ConfirmModal } from 'components/widget/modals/ConfirmModal';
+import { FindReplaceModal } from 'components/widget/modals/FindReplace';
 
 interface IPhase3Props {
   onNextClick: (uploadData: IUpload, importedData?: Record<string, any>[]) => void;
@@ -29,6 +30,7 @@ export function Phase3(props: IPhase3Props) {
   const {
     page,
     type,
+    columns,
     headings,
     columnDefs,
     totalPages,
@@ -49,10 +51,12 @@ export function Phase3(props: IPhase3Props) {
     isDoReviewLoading,
     isReviewDataLoading,
     selectedRowsCountRef,
+    showFindReplaceModal,
     showAllDataValidModal,
     isDeleteRecordLoading,
     isConfirmReviewLoading,
     showDeleteConfirmModal,
+    setShowFindReplaceModal,
     setShowAllDataValidModal,
     setShowDeleteConfirmModal,
   } = usePhase3({ onNext: onNextClick });
@@ -108,12 +112,19 @@ export function Phase3(props: IPhase3Props) {
               },
             ]}
           />
-          <Button color="red" disabled={!selectedRowsRef.current.size} onClick={() => setShowDeleteConfirmModal(true)}>
-            Delete
-            <Badge variant="light" ml="xs" color="red">
-              {numberFormatter(selectedRowsRef.current.size)}
-            </Badge>
-          </Button>
+          <Group spacing="xs">
+            <Button onClick={() => setShowFindReplaceModal(true)}>{texts.PHASE3.FIND_REPLACE}</Button>
+            <Button
+              color="red"
+              disabled={!selectedRowsRef.current.size}
+              onClick={() => setShowDeleteConfirmModal(true)}
+            >
+              Delete
+              <Badge variant="light" ml="xs" color="red">
+                {numberFormatter(selectedRowsRef.current.size)}
+              </Badge>
+            </Button>
+          </Group>
         </Flex>
         <Table
           ref={tableRef}
@@ -223,6 +234,14 @@ export function Phase3(props: IPhase3Props) {
         confirmLabel={texts.DELETE_RECORDS_CONFIRMATION.CONFIRM_DELETE}
         opened={!!showDeleteConfirmModal}
         subTitle={texts.DELETE_RECORDS_CONFIRMATION.DETAILS}
+      />
+      <FindReplaceModal
+        texts={texts}
+        columns={columns}
+        opened={!!showFindReplaceModal}
+        onClose={() => setShowFindReplaceModal(false)}
+        cancelLabel={texts.COMMON.CANCEL}
+        replaceLabel={texts.PHASE3.REPLACE}
       />
     </>
   );

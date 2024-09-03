@@ -36,6 +36,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
   const [page, setPage] = useState<number>(defaultPage);
   const [headings, setHeadings] = useState<string[]>([]);
   const selectedRowsRef = useRef<Set<number>>(new Set());
+  const [columns, setColumns] = useState<IOption[]>([]);
   const [frozenColumns, setFrozenColumns] = useState<number>(2);
   const selectedRowsCountRef = useRef<{ valid: Set<number>; invalid: Set<number> }>({
     valid: new Set(),
@@ -47,6 +48,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
   const [columnDefs, setColumnDefs] = useState<HotItemSchema[]>([]);
   const [totalPages, setTotalPages] = useState<number>(defaultPage);
   const [type, setType] = useState<ReviewDataTypesEnum>(ReviewDataTypesEnum.ALL);
+  const [showFindReplaceModal, setShowFindReplaceModal] = useState<boolean | undefined>(undefined);
   const [showAllDataValidModal, setShowAllDataValidModal] = useState<boolean | undefined>(undefined);
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState<boolean | undefined>(undefined);
 
@@ -56,6 +58,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     {
       onSuccess(data) {
         let updatedFrozenColumns = 2;
+        const dataColumns: IOption[] = [{ value: '', label: 'All columns' }];
         const newColumnDefs: HotItemSchema[] = [];
         const newHeadings: string[] = ['*', 'Sr. No.'];
         newColumnDefs.push({
@@ -77,6 +80,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
         data.forEach((column: ISchemaColumn) => {
           if (column.isFrozen) updatedFrozenColumns++;
           newHeadings.push(column.name);
+          dataColumns.push({ label: column.name, value: column.key });
 
           const columnItem: HotItemSchema = {
             className: 'htCenter',
@@ -123,6 +127,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
           }
           newColumnDefs.push(columnItem);
         });
+        setColumns(dataColumns);
         setHeadings(newHeadings);
         setColumnDefs(newColumnDefs);
         setFrozenColumns(updatedFrozenColumns);
@@ -285,6 +290,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
   return {
     page,
     type,
+    columns,
     headings,
     totalPages,
     columnDefs,
@@ -301,10 +307,12 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     isDoReviewLoading,
     isReviewDataLoading,
     selectedRowsCountRef,
+    showFindReplaceModal,
     showAllDataValidModal,
     isDeleteRecordLoading,
     isConfirmReviewLoading,
     showDeleteConfirmModal,
+    setShowFindReplaceModal,
     setShowAllDataValidModal,
     setShowDeleteConfirmModal,
     reviewData: reviewData || [],
