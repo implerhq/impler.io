@@ -62,16 +62,36 @@ export function useSignup() {
     },
   });
 
-  const onSignup = (data: ISignupFormData) => {
-    const signupData: ISignupData = {
-      firstName: data.fullName.split(' ')[0],
-      lastName: data.fullName.split(' ')[1],
-      email: data.email,
-      password: data.password,
-    };
-    signup(signupData);
+ /**
+   * Name formater to capitalize the first letter
+   * @param name string to capitalize
+   * @returns a string with the name with capital letter at char position 0
+   */
+ const formatName = (name: string): string => {
+  if (!name) return '';
+  return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+};
+
+
+/** 
+ * Now we can send the info in the right format to the back end
+*/
+const onSignup = (data: ISignupFormData) => {
+  const nameParts = data.fullName.trim().split(' ');// We save the name parts as an array with the fristName and the lastName
+
+  
+  const firstName = formatName(nameParts[0]);
+  const lastName = nameParts.length > 1 ? formatName(nameParts.slice(1).join(' ')) : '';
+
+  const signupData: ISignupData = {
+    firstName: firstName, 
+    lastName: lastName,   
+    email: data.email,
+    password: data.password,
   };
 
+  signup(signupData);
+};
   return {
     errors,
     register,
