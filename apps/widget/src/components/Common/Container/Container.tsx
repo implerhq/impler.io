@@ -4,8 +4,8 @@ import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { useEffect, useState, PropsWithChildren } from 'react';
 
+import { ApiService } from '@api';
 import { Provider } from '../Provider';
-import { ApiService } from '@impler/client';
 import { MessageHandlerDataType } from '@types';
 import { generateShades, ParentWindow, deepMerge } from '@util';
 import { API_URL, colors, mantineConfig, variables } from '@config';

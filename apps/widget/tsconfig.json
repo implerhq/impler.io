@@ -23,6 +23,7 @@
     "jsx": "react-jsx",
     "baseUrl": "src",
     "paths": {
+      "@api": ["util/api/index.ts"],
       "@store/*": ["store/*"],
       "@config": ["config/index.ts"],
       "@ui/*": ["design-system/*"],

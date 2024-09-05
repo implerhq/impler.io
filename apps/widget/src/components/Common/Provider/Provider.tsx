@@ -1,10 +1,10 @@
 import { PropsWithChildren } from 'react';
-import { ApiService } from '@impler/client';
-import ImplerContextProvider from '@store/impler.context';
+import { ApiService } from '@api';
+import { WIDGET_TEXTS } from '@impler/shared';
 import APIContextProvider from '@store/api.context';
 import AppContextProvider from '@store/app.context';
 import { JobsInfoProvider } from '@store/jobinfo.context';
-import { WIDGET_TEXTS } from '@impler/shared';
+import ImplerContextProvider from '@store/impler.context';
 
 interface IProviderProps {
   // app-context

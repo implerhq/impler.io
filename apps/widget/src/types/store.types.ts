@@ -1,4 +1,4 @@
-import { ApiService } from '@impler/client';
+import { ApiService } from '@api';
 import { IUpload, ITemplate, IImportConfig, WIDGET_TEXTS } from '@impler/shared';
 
 export interface IImplerStore {

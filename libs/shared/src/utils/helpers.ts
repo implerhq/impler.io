@@ -63,7 +63,7 @@ export function downloadFile(blob: Blob, name: string) {
   link.parentNode?.removeChild(link);
 }
 
-export function constructQueryString(obj: Record<string, string | number>): string {
+export function constructQueryString(obj: Record<string, string | number | undefined>): string {
   const arr = [];
   Object.keys(obj).forEach((key: string) => {
     if (obj[key] !== undefined && obj[key] !== null)
