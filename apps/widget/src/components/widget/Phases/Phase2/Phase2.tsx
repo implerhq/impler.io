@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import useStyles from './Styles';
 import { PhasesEnum } from '@types';
 import { MappingItem } from '@ui/MappingItem';
-import { WIDGET_TEXTS } from '@impler/shared';
+import { WIDGET_TEXTS } from '@impler/client';
 import { MappingHeading } from './MappingHeading';
 import { Footer } from 'components/Common/Footer';
 import { LoadingOverlay } from '@ui/LoadingOverlay';

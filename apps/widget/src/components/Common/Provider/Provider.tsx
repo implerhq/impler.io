@@ -1,6 +1,6 @@
 import { PropsWithChildren } from 'react';
 import { ApiService } from '@api';
-import { WIDGET_TEXTS } from '@impler/shared';
+import { WIDGET_TEXTS } from '@impler/client';
 import APIContextProvider from '@store/api.context';
 import AppContextProvider from '@store/app.context';
 import { JobsInfoProvider } from '@store/jobinfo.context';

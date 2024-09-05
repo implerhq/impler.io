@@ -1,6 +1,6 @@
 import { colors } from '@config';
 import { CheckIcon } from '@icons';
-import { WIDGET_TEXTS } from '@impler/shared';
+import { WIDGET_TEXTS } from '@impler/client';
 import { Text, Stack, Paper } from '@mantine/core';
 import { useJobsInfo } from '@store/jobinfo.context';
 const parseCronExpression = require('util/helpers/cronstrue');

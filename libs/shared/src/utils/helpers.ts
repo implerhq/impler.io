@@ -1,3 +1,5 @@
+import { isObject } from '@impler/client';
+
 export const changeToCode = (str = '') =>
   str
     ?.replace(/[^\s\w]/gi, '')
@@ -73,9 +75,6 @@ export function constructQueryString(obj: Record<string, string | number | undef
 
   return query ? `?${query}` : '';
 }
-
-export const isObject = (value: any) =>
-  typeof value === 'object' && !Array.isArray(value) && value !== null && Object.keys(value).length > 0;
 
 export const convertStringToJson = (value: any) => {
   if (isObject(value)) return value;

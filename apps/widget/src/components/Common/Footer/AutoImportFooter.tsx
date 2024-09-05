@@ -2,9 +2,9 @@ import { Group, Text } from '@mantine/core';
 
 import useStyles from './Styles';
 import { variables } from '@config';
-import { WIDGET_TEXTS } from '@impler/shared';
 import { PhasesEnum } from '@types';
 import { Button } from '@ui/Button';
+import { WIDGET_TEXTS } from '@impler/client';
 import { useAppState } from '@store/app.context';
 
 interface IFooterProps {

@@ -1,5 +1,4 @@
 import {
-  IUpload,
   IMapping,
   IReplaceData,
   IMappingFinalize,
@@ -13,6 +12,7 @@ import {
   IUserJobMapping,
   IUserJob,
 } from '@impler/shared';
+import { IUpload } from '@impler/client';
 import { HttpClient } from './api.client';
 
 export class ApiService {

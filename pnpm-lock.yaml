@@ -498,6 +498,9 @@ importers:
       '@handsontable/react':
         specifier: ^14.1.0
         version: 14.4.0(handsontable@14.4.0)
+      '@impler/client':
+        specifier: ^0.24.1
+        version: link:../../packages/client
       '@impler/shared':
         specifier: ^0.24.1
         version: link:../../libs/shared
@@ -738,6 +741,9 @@ importers:
 
   libs/shared:
     dependencies:
+      '@impler/client':
+        specifier: ^0.24.1
+        version: link:../../packages/client
       uuid:
         specifier: ^9.0.0
         version: 9.0.1
@@ -811,10 +817,6 @@ importers:
         version: 4.9.5
 
   packages/client:
-    dependencies:
-      '@impler/shared':
-        specifier: ^0.24.1
-        version: link:../../libs/shared
     devDependencies:
       '@types/node':
         specifier: ^18.11.9
@@ -834,9 +836,6 @@ importers:
       '@impler/client':
         specifier: ^0.24.1
         version: link:../client
-      '@impler/shared':
-        specifier: ^0.24.1
-        version: link:../../libs/shared
       react:
         specifier: '>=16.8.0'
         version: 18.2.0

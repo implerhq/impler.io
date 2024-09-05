@@ -4,7 +4,8 @@ import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/animations/shift-away.css';
 import { variables } from '@config';
-import { convertStringToJson, downloadFile, isObject, WIDGET_TEXTS } from '@impler/shared';
+import { WIDGET_TEXTS, isObject } from '@impler/client';
+import { convertStringToJson, downloadFile } from '@impler/shared';
 
 // eslint-disable-next-line no-magic-numbers
 export function formatBytes(bytes, decimals = 2) {

@@ -1,5 +1,6 @@
 import { ApiService } from '@api';
-import { IUpload, ITemplate, IImportConfig, WIDGET_TEXTS } from '@impler/shared';
+import { IUpload, WIDGET_TEXTS } from '@impler/client';
+import { ITemplate, IImportConfig } from '@impler/shared';
 
 export interface IImplerStore {
   projectId: string;

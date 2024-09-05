@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { Modal } from '@ui/Modal';
-import { ParentWindow } from '@util';
 import { variables } from '@config';
+import { ParentWindow } from '@util';
+import { IUpload } from '@impler/client';
 import { useWidget } from '@hooks/useWidget';
 import { useAppState } from '@store/app.context';
 import { Layout } from 'components/Common/Layout';
@@ -10,7 +11,7 @@ import { ConfirmModal } from './modals/ConfirmModal';
 import { useTemplates } from '@hooks/useTemplates';
 import { PhasesEnum, PromptModalTypesEnum } from '@types';
 import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
-import { IImportConfig, IUpload, TemplateModeEnum } from '@impler/shared';
+import { IImportConfig, TemplateModeEnum } from '@impler/shared';
 
 import { Phase0 } from './Phases/Phase0';
 import { Phase01 } from './Phases/Phase0-1';

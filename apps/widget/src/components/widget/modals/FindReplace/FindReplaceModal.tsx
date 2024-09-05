@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { IReplaceData, WIDGET_TEXTS } from '@impler/shared';
+import { WIDGET_TEXTS } from '@impler/client';
+import { IReplaceData } from '@impler/shared';
 import { Checkbox, Flex, FocusTrap, Modal as MantineModal, Stack, TextInput } from '@mantine/core';
 
 import { Button } from '@ui/Button';
