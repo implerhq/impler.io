@@ -1,8 +1,8 @@
 import { Stack, TextInput } from '@mantine/core';
 
 import { PhasesEnum } from '@types';
-import { WIDGET_TEXTS } from '@impler/shared';
 import { validateRssUrl } from '@util';
+import { WIDGET_TEXTS } from '@impler/client';
 import { AutoImportFooter } from 'components/Common/Footer/AutoImportFooter';
 import { useAutoImportPhase1 } from '../hooks/AutoImportPhase1/useAutoImportPhase1';
 

@@ -12,13 +12,13 @@ import {
   ISchemaColumn,
   IErrorObject,
   IReviewData,
-  IUpload,
   IRecord,
   ReviewDataTypesEnum,
   numberFormatter,
   ColumnDelimiterEnum,
   IReplaceData,
 } from '@impler/shared';
+import { IUpload } from '@impler/client';
 import { SelectEditor } from './SelectEditor';
 import { MultiSelectEditor } from './MultiSelectEditor';
 

@@ -41,10 +41,10 @@ jobs:
           version: 8.9.0
           run_install: true
 
-      - name: Publish @impler/shared package on NPM 📦
+      - name: Publish @impler/client package on NPM 📦
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        working-directory: libs/shared
+        working-directory: packages/client
         run: |
           npm config set --workspaces=false --include-workspace-root registry https://registry.npmjs.org/
           npm config set --workspaces=false --include-workspace-root //registry.npmjs.org/:_authToken=$NPM_TOKEN

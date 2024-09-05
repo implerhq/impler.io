@@ -1,10 +1,10 @@
 import { Control, Controller } from 'react-hook-form';
 import { Group, Modal as MantineModal } from '@mantine/core';
 
-import { WIDGET_TEXTS } from '@impler/shared';
 import { Button } from '@ui/Button';
 import { Select } from '@ui/Select';
 import { IFormvalues } from '@types';
+import { WIDGET_TEXTS } from '@impler/client';
 
 interface IConfirmModalProps {
   opened: boolean;

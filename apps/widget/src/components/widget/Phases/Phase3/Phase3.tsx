@@ -5,7 +5,8 @@ import HotTableClass from '@handsontable/react/hotTableClass';
 import { PhasesEnum } from '@types';
 import { logAmplitudeEvent } from '@amplitude';
 import { usePhase3 } from '@hooks/Phase3/usePhase3';
-import { WIDGET_TEXTS, IUpload, numberFormatter, replaceVariablesInString } from '@impler/shared';
+import { IUpload, WIDGET_TEXTS } from '@impler/client';
+import { numberFormatter, replaceVariablesInString } from '@impler/shared';
 
 import { ReviewConfirmModal } from './ReviewConfirmModal';
 import { Table } from 'components/Common/Table';

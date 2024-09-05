@@ -1,6 +1,6 @@
 import { Group, Text } from '@mantine/core';
 import { Dropzone as MantineDropzone, FileWithPath, MIME_TYPES } from '@mantine/dropzone';
-import { WIDGET_TEXTS } from '@impler/shared';
+import { WIDGET_TEXTS } from '@impler/client';
 import useStyles from './UploadDropzone.styles';
 import { FileIcon, CheckIcon } from '../../icons';
 import { File as FileCMP } from '../File';

@@ -1,8 +1,8 @@
-import axios, { AxiosInstance } from 'axios';
-import { ACCESS_KEY_NAME } from '@impler/shared/src/config';
+import axios, { AxiosInstance, ResponseType } from 'axios';
+import { ACCESS_KEY_NAME } from '@impler/shared';
 
 export interface IParamObject {
-  [key: string]: string | string[] | number | boolean;
+  [key: string]: string | string[] | number | boolean | undefined;
 }
 
 export interface IErrorObject {
@@ -32,15 +32,8 @@ export class HttpClient {
     return this.callWrapper(this.axiosClient.get.bind(this, url, { params }));
   }
 
-  async post(
-    url: string,
-    body = {},
-    headers: Record<string, string | number> = {},
-    responseType?: XMLHttpRequestResponseType,
-  ) {
-    return this.callWrapper(
-      this.axiosClient.post.bind(this, url, body, { headers, responseType }),
-    );
+  async post(url: string, body = {}, headers: Record<string, string | number> = {}, responseType?: ResponseType) {
+    return this.callWrapper(this.axiosClient.post.bind(this, url, body, { headers, responseType }));
   }
 
   async put(url: string, body = {}) {
@@ -61,7 +54,7 @@ export class HttpClient {
         const response = await axiosCall();
 
         resolve(response.data);
-      } catch (error) {
+      } catch (error: any) {
         if (error.response) {
           return reject(error.response.data as IErrorObject);
         } else if (error.request) {

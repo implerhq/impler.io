@@ -7,7 +7,8 @@ import { notifier, ParentWindow } from '@util';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { useImplerState } from '@store/impler.context';
-import { IErrorObject, ITemplate, IUpload, FileMimeTypesEnum, WIDGET_TEXTS } from '@impler/shared';
+import { IUpload, WIDGET_TEXTS } from '@impler/client';
+import { IErrorObject, ITemplate, FileMimeTypesEnum } from '@impler/shared';
 
 import { variables } from '@config';
 import { useSample } from '@hooks/useSample';

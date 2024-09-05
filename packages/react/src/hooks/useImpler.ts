@@ -1,8 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { EventTypesEnum, IUserShowPayload, isObject } from '@impler/shared';
-
-import { logError } from '../utils/logger';
-import { EventCalls, ShowWidgetProps, UseImplerProps } from '../types';
+import { isObject, EventTypes, logError, EventCalls, IShowWidgetProps, IUseImplerProps } from '@impler/client';
 
 export function useImpler({
   projectId,
@@ -18,26 +15,26 @@ export function useImpler({
   onUploadStart,
   onDataImported,
   onUploadTerminate,
-}: UseImplerProps) {
+}: IUseImplerProps) {
   const [uuid] = useState(generateUuid());
   const [isImplerInitiated, setIsImplerInitiated] = useState(false);
 
   const onEventHappen = useCallback(
     (eventData: EventCalls) => {
       switch (eventData.type) {
-        case EventTypesEnum.UPLOAD_STARTED:
+        case EventTypes.UPLOAD_STARTED:
           if (onUploadStart) onUploadStart(eventData.value);
           break;
-        case EventTypesEnum.UPLOAD_TERMINATED:
+        case EventTypes.UPLOAD_TERMINATED:
           if (onUploadTerminate) onUploadTerminate(eventData.value);
           break;
-        case EventTypesEnum.UPLOAD_COMPLETED:
+        case EventTypes.UPLOAD_COMPLETED:
           if (onUploadComplete) onUploadComplete(eventData.value);
           break;
-        case EventTypesEnum.DATA_IMPORTED:
+        case EventTypes.DATA_IMPORTED:
           if (onDataImported) onDataImported(eventData.value);
           break;
-        case EventTypesEnum.CLOSE_WIDGET:
+        case EventTypes.CLOSE_WIDGET:
           if (onWidgetClose) onWidgetClose();
           break;
       }
@@ -75,9 +72,14 @@ export function useImpler({
     });
   }
 
-  const showWidget = async ({ colorScheme, data, schema, output }: ShowWidgetProps = {}) => {
+  const showWidget = async ({
+    colorScheme,
+    data,
+    schema,
+    output,
+  }: Pick<IShowWidgetProps, 'colorScheme' | 'data' | 'schema' | 'output'> = {}) => {
     if (window.impler && isImplerInitiated) {
-      const payload: IUserShowPayload = {
+      const payload: IShowWidgetProps & { uuid: string; host: string } = {
         uuid,
         templateId,
         host: '',
@@ -95,6 +97,8 @@ export function useImpler({
         const preferColorScheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         payload.colorScheme = preferColorScheme;
       }
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       if (isObject(texts)) payload.texts = JSON.stringify(texts);
       if (authHeaderValue) {
         if (typeof authHeaderValue === 'function' && authHeaderValue.constructor.name === 'AsyncFunction') {
