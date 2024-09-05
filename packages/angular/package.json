@@ -1,7 +1,7 @@
 {
   "name": "@impler/angular",
   "version": "0.24.1",
-  "description": "React library to show widget in client applications",
+  "description": "Angular library to show CSV Excel Importer in angular applications",
   "license": "MIT",
   "author": "implerhq",
   "repository": "https://github.com/implerhq/impler.io",

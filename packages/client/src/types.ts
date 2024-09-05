@@ -1,9 +1,52 @@
-import {
-  IUpload,
-  EventTypesEnum,
-  WIDGET_TEXTS,
-  ColumnTypesEnum,
-} from '@impler/shared';
+import { WIDGET_TEXTS } from './config';
+
+export const ColumnTypes = {
+  STRING: 'String',
+  NUMBER: 'Number',
+  DATE: 'Date',
+  EMAIL: 'Email',
+  REGEX: 'Regex',
+  SELECT: 'Select',
+  ANY: 'Any',
+  DOUBLE: 'Double',
+  IMAGE: 'Image',
+} as const;
+
+export interface IUpload {
+  _id: string;
+  _templateId: string;
+  _uploadedFileId: string;
+  _allDataFileId: string;
+  _validDataFileId: string;
+  _invalidDataFileId: string;
+  invalidCSVDataFileUrl: string;
+  originalFileName: string;
+  originalFileType: string;
+  headings: string[];
+  uploadedDate: Date;
+  totalRecords: number;
+  validRecords: number;
+  invalidRecords: number;
+  authHeaderValue: string;
+  status: string;
+  extra: string;
+  __v: number;
+  processInvalidRecords: boolean;
+  customRecordFormat: string;
+  customChunkFormat: string;
+}
+
+export const EventTypes = {
+  INIT_IFRAME: 'INIT_IFRAME',
+  WIDGET_READY: 'WIDGET_READY',
+  CLOSE_WIDGET: 'CLOSE_WIDGET',
+  AUTHENTICATION_VALID: 'AUTHENTICATION_VALID',
+  AUTHENTICATION_ERROR: 'AUTHENTICATION_ERROR',
+  UPLOAD_STARTED: 'UPLOAD_STARTED',
+  UPLOAD_TERMINATED: 'UPLOAD_TERMINATED',
+  UPLOAD_COMPLETED: 'UPLOAD_COMPLETED',
+  DATA_IMPORTED: 'DATA_IMPORTED',
+} as const;
 
 export interface ISchemaItem {
   key: string;
@@ -23,7 +66,7 @@ export interface ISchemaItem {
     | '<<false>>';
   selectValues?: string[];
   dateFormats?: string[];
-  type?: ColumnTypesEnum;
+  type?: keyof typeof ColumnTypes;
   regex?: string;
   allowMultiSelect?: boolean;
 }
@@ -36,26 +79,26 @@ export type UploadData = { uploadId: string };
 
 export type EventCalls =
   | {
-      type: typeof EventTypesEnum.UPLOAD_STARTED;
+      type: typeof EventTypes.UPLOAD_STARTED;
       value: UploadTemplateData;
     }
   | {
-      type: typeof EventTypesEnum.UPLOAD_TERMINATED;
+      type: typeof EventTypes.UPLOAD_TERMINATED;
       value: UploadData;
     }
   | {
-      type: typeof EventTypesEnum.UPLOAD_COMPLETED;
+      type: typeof EventTypes.UPLOAD_COMPLETED;
       value: IUpload;
     }
   | {
-      type: typeof EventTypesEnum.DATA_IMPORTED;
+      type: typeof EventTypes.DATA_IMPORTED;
       value: Record<string, any>[];
     }
   | {
-      type: typeof EventTypesEnum.CLOSE_WIDGET;
+      type: typeof EventTypes.CLOSE_WIDGET;
     }
   | {
-      type: typeof EventTypesEnum.WIDGET_READY;
+      type: typeof EventTypes.WIDGET_READY;
     };
 
 export interface IShowWidgetProps {

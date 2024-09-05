@@ -1,3 +1,3 @@
 export * from './hooks';
-export type { ColumnTypesEnum } from '@impler/shared';
+export { ColumnTypes } from '@impler/client';
 export type { ISchemaItem, CustomTexts } from '@impler/client';

@@ -1,2 +1,3 @@
 export * from './services';
-export type { ColumnTypesEnum, EventTypesEnum, CustomTexts, ISchemaItem, EventCalls } from '@impler/client';
+export { ColumnTypes, EventTypes } from '@impler/client';
+export type { CustomTexts, ISchemaItem, EventCalls } from '@impler/client';
