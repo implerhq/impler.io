@@ -1,6 +1,7 @@
 export const WIDGET_TEXTS = {
   COMMON: {
     SORRY: 'Sorry!',
+    CANCEL: 'Cancel',
     CLOSE_WIDGET: 'Close',
     UPLOAD_AGAIN: 'Upload Again',
   },
@@ -58,14 +59,26 @@ export const WIDGET_TEXTS = {
     MAPPING_FIELD_PLACEHOLDER: 'Select Field',
   },
   PHASE3: {
+    COMPLETE: 'Complete',
     EXPORT_DATA: 'Export Data',
     RE_REVIEW_DATA: 'Re-Review Data',
-    COMPLETE: 'Complete',
     ALL_RECORDS_VALID_TITLE: ' All records are found valid!',
     ALL_RECORDS_VALID_DETAILS: 'All {total} row(s) found valid! Would you like to complete the Import?',
     LABEL_ALL_RECORDS: `All {records}`,
     LABEL_VALID_RECORDS: `Valid {records}`,
     LABEL_INVALID_RECORDS: `Invalid {records}`,
+
+    REPLACE: 'Replace',
+    FIND_REPLACE: 'Find and Replace',
+    ALL_COLUMNS_LABEL: 'All Columns',
+
+    FIND_LABEL: 'Find',
+    FIND_PLACEHOLDER: 'Empty Cell',
+
+    REPLACE_LABEL: 'Replace',
+    IN_COLUMN_LABEL: 'In Column',
+    CASE_SENSITIVE_LABEL: 'Case Sensitive',
+    MATCH_ENTIRE_LABEL: 'Match Entire Cell',
   },
   PHASE4: {
     TITLE: 'Bravo! {count} rows have been uploaded',

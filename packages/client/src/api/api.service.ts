@@ -1,6 +1,7 @@
 import {
   IUpload,
   IMapping,
+  IReplaceData,
   IMappingFinalize,
   IReviewData,
   ITemplate,
@@ -193,6 +194,10 @@ export class ApiService {
       valid,
       invalid,
     });
+  }
+
+  async replace(uploadId: string, data: IReplaceData) {
+    return this.httpClient.put(`/review/${uploadId}/replace`, data);
   }
 
   async getRssXmlMappingHeading(data: {

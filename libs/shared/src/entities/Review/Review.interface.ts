@@ -7,3 +7,11 @@ export interface IReviewData {
   totalRecords: number;
   data: IRecord[];
 }
+
+export interface IReplaceData {
+  find?: string;
+  replace?: string;
+  column: string;
+  caseSensitive?: boolean;
+  matchEntireCell?: boolean;
+}

@@ -10,3 +10,8 @@ declare interface Window {
   _env_: any;
   amplitude?: any;
 }
+
+interface IOption {
+  label: string;
+  value: string;
+}

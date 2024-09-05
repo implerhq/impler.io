@@ -6,9 +6,18 @@ import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { validateUploadStatus } from '@shared/helpers/upload.helpers';
 import { Defaults, ACCESS_KEY_NAME, UploadStatusEnum, ReviewDataTypesEnum } from '@impler/shared';
 
-import { DoReview, GetUpload, DoReReview, UpdateRecord, StartProcess, DeleteRecord, GetUploadData } from './usecases';
+import {
+  Replace,
+  DoReview,
+  GetUpload,
+  DoReReview,
+  UpdateRecord,
+  StartProcess,
+  DeleteRecord,
+  GetUploadData,
+} from './usecases';
 
-import { DeleteRecordsDto, UpdateCellDto } from './dtos';
+import { DeleteRecordsDto, UpdateCellDto, ReplaceDto } from './dtos';
 import { validateNotFound } from '@shared/helpers/common.helper';
 import { PaginationResponseDto } from '@shared/dtos/pagination-response.dto';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
@@ -18,6 +27,7 @@ import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 @ApiSecurity(ACCESS_KEY_NAME)
 export class ReviewController {
   constructor(
+    private replace: Replace,
     private doReview: DoReview,
     private getUpload: GetUpload,
     private doReReview: DoReReview,
@@ -134,5 +144,14 @@ export class ReviewController {
     @Param('uploadId', ValidateMongoId) _uploadId: string
   ) {
     await this.deleteRecord.execute(_uploadId, indexes, valid, invalid);
+  }
+
+  @Put(':uploadId/replace')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Replace review data for ongoing import',
+  })
+  async replaceReviewData(@Param('uploadId', ValidateMongoId) _uploadId: string, @Body() body: ReplaceDto) {
+    return await this.replace.execute(_uploadId, body);
   }
 }
