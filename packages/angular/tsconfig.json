@@ -1,5 +1,5 @@
 {
-  "include": ["src"],
+  "include": ["src", "../client/src/utils"],
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "ignoreDeprecations": "5.0",

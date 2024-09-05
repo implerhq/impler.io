@@ -52,6 +52,6 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "@impler/shared": "^0.24.1"
+    "@impler/client": "^0.24.1"
   }
 }

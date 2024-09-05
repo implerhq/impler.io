@@ -760,9 +760,9 @@ importers:
       '@angular/core':
         specifier: '>=12.0.0'
         version: 12.2.17(rxjs@7.8.1)(zone.js@0.11.8)
-      '@impler/shared':
+      '@impler/client':
         specifier: ^0.24.1
-        version: link:../../libs/shared
+        version: link:../client
     devDependencies:
       '@angular/compiler':
         specifier: ^12.0.0
@@ -815,9 +815,6 @@ importers:
       '@impler/shared':
         specifier: ^0.24.1
         version: link:../../libs/shared
-      axios:
-        specifier: 1.6.2
-        version: 1.6.2
     devDependencies:
       '@types/node':
         specifier: ^18.11.9
@@ -834,6 +831,9 @@ importers:
 
   packages/react:
     dependencies:
+      '@impler/client':
+        specifier: ^0.24.1
+        version: link:../client
       '@impler/shared':
         specifier: ^0.24.1
         version: link:../../libs/shared

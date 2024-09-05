@@ -1,4 +1,9 @@
-import { IUpload, EventTypesEnum, WIDGET_TEXTS, ColumnTypesEnum } from '@impler/shared';
+import {
+  IUpload,
+  EventTypesEnum,
+  WIDGET_TEXTS,
+  ColumnTypesEnum,
+} from '@impler/shared';
 
 export interface ISchemaItem {
   key: string;
@@ -8,7 +13,14 @@ export interface ISchemaItem {
   isRequired?: boolean;
   isUnique?: boolean;
   isFrozen?: boolean;
-  defaultValue?: string | '<<null>>' | '<<undefined>>' | '<<>>' | '<<[]>>' | '<<true>>' | '<<false>>';
+  defaultValue?:
+    | string
+    | '<<null>>'
+    | '<<undefined>>'
+    | '<<>>'
+    | '<<[]>>'
+    | '<<true>>'
+    | '<<false>>';
   selectValues?: string[];
   dateFormats?: string[];
   type?: ColumnTypesEnum;
@@ -24,33 +36,41 @@ export type UploadData = { uploadId: string };
 
 export type EventCalls =
   | {
-      type: EventTypesEnum.UPLOAD_STARTED;
+      type: typeof EventTypesEnum.UPLOAD_STARTED;
       value: UploadTemplateData;
     }
   | {
-      type: EventTypesEnum.UPLOAD_TERMINATED;
+      type: typeof EventTypesEnum.UPLOAD_TERMINATED;
       value: UploadData;
     }
   | {
-      type: EventTypesEnum.UPLOAD_COMPLETED;
+      type: typeof EventTypesEnum.UPLOAD_COMPLETED;
       value: IUpload;
     }
   | {
-      type: EventTypesEnum.DATA_IMPORTED;
+      type: typeof EventTypesEnum.DATA_IMPORTED;
       value: Record<string, any>[];
     }
   | {
-      type: EventTypesEnum.CLOSE_WIDGET;
+      type: typeof EventTypesEnum.CLOSE_WIDGET;
     }
   | {
-      type: EventTypesEnum.WIDGET_READY;
+      type: typeof EventTypesEnum.WIDGET_READY;
     };
 
-export interface ShowWidgetProps {
+export interface IShowWidgetProps {
   colorScheme?: 'light' | 'dark';
   schema?: ISchemaItem[];
   data?: Record<string, string | any>[];
   output?: Record<string, string | any>;
+  projectId: string;
+  templateId: string;
+  accessToken: string;
+  texts?: CustomTexts;
+  title?: string;
+  primaryColor?: string;
+  extra?: string | Record<string, any>;
+  authHeaderValue?: string | (() => string) | (() => Promise<string>);
 }
 
 export type DeepPartial<T> = T extends object
@@ -61,7 +81,7 @@ export type DeepPartial<T> = T extends object
 
 export type CustomTexts = DeepPartial<typeof WIDGET_TEXTS>;
 
-export interface UseImplerProps {
+export interface IUseImplerProps {
   title?: string;
   texts?: CustomTexts;
   projectId?: string;

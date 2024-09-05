@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { EventTypesEnum, IUserShowPayload, isObject } from '@impler/shared';
-
-import { logError } from '../utils/logger';
-import { EventCalls, ShowWidgetProps, UseImplerProps } from '../types';
+import { logError, EventCalls, IShowWidgetProps, IUseImplerProps } from '@impler/client';
 
 export function useImpler({
   projectId,
@@ -18,7 +16,7 @@ export function useImpler({
   onUploadStart,
   onDataImported,
   onUploadTerminate,
-}: UseImplerProps) {
+}: IUseImplerProps) {
   const [uuid] = useState(generateUuid());
   const [isImplerInitiated, setIsImplerInitiated] = useState(false);
 
@@ -75,7 +73,12 @@ export function useImpler({
     });
   }
 
-  const showWidget = async ({ colorScheme, data, schema, output }: ShowWidgetProps = {}) => {
+  const showWidget = async ({
+    colorScheme,
+    data,
+    schema,
+    output,
+  }: Pick<IShowWidgetProps, 'colorScheme' | 'data' | 'schema' | 'output'> = {}) => {
     if (window.impler && isImplerInitiated) {
       const payload: IUserShowPayload = {
         uuid,
