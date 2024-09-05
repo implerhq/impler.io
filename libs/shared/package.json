@@ -27,7 +27,7 @@
     "typescript": "^4.8.3"
   },
   "dependencies": {
-    "@impler/client": "^0.24.1",
+    "@impler/client": "workspace:^",
     "uuid": "^9.0.0"
   },
   "lint-staged": {

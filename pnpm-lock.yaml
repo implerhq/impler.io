@@ -742,7 +742,7 @@ importers:
   libs/shared:
     dependencies:
       '@impler/client':
-        specifier: ^0.24.1
+        specifier: workspace:^
         version: link:../../packages/client
       uuid:
         specifier: ^9.0.0
