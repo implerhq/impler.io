@@ -7,6 +7,7 @@
   "repository": "https://github.com/implerhq/impler.io",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
+  "private": true,
   "keywords": ["impler", "implerhq", "data-import", "excel-import", "csv-import"],
   "files": ["dist", "package.json"],
   "scripts": {
@@ -18,9 +19,6 @@
     "precommit": "lint-staged",
     "lint": "eslint src",
     "lint:fix": "pnpm lint -- --fix"
-  },
-  "publishConfig": {
-    "access": "public"
   },
   "devDependencies": {
     "@types/node": "^18.7.18",

@@ -7,7 +7,6 @@
   "repository": "https://github.com/implerhq/impler.io",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
-  "private": true,
   "keywords": [
     "impler",
     "implerhq",
@@ -19,6 +18,9 @@
     "dist",
     "package.json"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "start": "npm run start:dev",
     "prebuild": "rimraf dist",
