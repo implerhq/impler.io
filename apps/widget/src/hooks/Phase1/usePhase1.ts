@@ -84,9 +84,9 @@ export function usePhase1({ goNext, texts }: IUsePhase1Props) {
 
     return undefined;
   };
-  const onTemplateChange = (newTemplateId: string) => {
+  const onTemplateChange = (newTemplateId: string | null) => {
     const foundTemplate = templates?.find((templateItem) => templateItem._id === newTemplateId);
-    if (foundTemplate) {
+    if (foundTemplate && newTemplateId) {
       setTemplateInfo(foundTemplate);
       setValue('templateId', newTemplateId);
       trigger('templateId');

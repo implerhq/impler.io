@@ -17,6 +17,7 @@ import {
   ReviewDataTypesEnum,
   numberFormatter,
   ColumnDelimiterEnum,
+  IReplaceData,
 } from '@impler/shared';
 import { SelectEditor } from './SelectEditor';
 import { MultiSelectEditor } from './MultiSelectEditor';
@@ -189,7 +190,17 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
       },
     }
   );
-
+  const { mutate: replaceData, isLoading: isReplaceDataLoading } = useMutation<
+    unknown,
+    IErrorObject,
+    IReplaceData,
+    [string]
+  >(['replace'], (data) => api.replace(uploadInfo._id, data), {
+    onSuccess: () => {
+      refetchReviewData([page, type]);
+      setShowFindReplaceModal(false);
+    },
+  });
   const { refetch: reReviewData, isFetching: isDoReviewLoading } = useQuery<
     unknown,
     IErrorObject,
@@ -295,6 +306,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     totalPages,
     columnDefs,
     allChecked,
+    replaceData,
     reReviewData,
     updateRecord,
     onPageChange,
@@ -306,6 +318,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     selectedRowsRef,
     isDoReviewLoading,
     isReviewDataLoading,
+    isReplaceDataLoading,
     selectedRowsCountRef,
     showFindReplaceModal,
     showAllDataValidModal,

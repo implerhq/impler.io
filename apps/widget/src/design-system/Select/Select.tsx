@@ -19,7 +19,7 @@ export interface ISelectProps {
   defaultValue?: string;
   withinPortal?: boolean;
   style?: CSSProperties;
-  onChange?: (value: any) => void;
+  onChange?: (value: string | null) => void;
 }
 
 export const Select = React.forwardRef<HTMLInputElement, ISelectProps>((props: ISelectProps, ref) => {

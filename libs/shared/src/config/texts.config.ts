@@ -76,10 +76,7 @@ export const WIDGET_TEXTS = {
     FIND_PLACEHOLDER: 'Empty Cell',
 
     REPLACE_LABEL: 'Replace',
-    REPLACE_PLACEHOLDER: 'Empty Cell',
-
     IN_COLUMN_LABEL: 'In Column',
-
     CASE_SENSITIVE_LABEL: 'Case Sensitive',
     MATCH_ENTIRE_LABEL: 'Match Entire Cell',
   },
