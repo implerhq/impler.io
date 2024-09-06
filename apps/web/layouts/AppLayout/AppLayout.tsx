@@ -13,6 +13,7 @@ import { ImportIcon } from '@assets/icons/Import.icon';
 import { OutLinkIcon } from '@assets/icons/OutLink.icon';
 import { SettingsIcon } from '@assets/icons/Settings.icon';
 import { ActivitiesIcon } from '@assets/icons/Activities.icon';
+import { PeopleIcon } from '@assets/icons/People.icon';
 import LogoBlack from '@assets/images/full-logo-dark.png';
 import LogoWhite from '@assets/images/full-logo-light.png';
 
@@ -98,6 +99,13 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
               title="Documentation"
               href="https://docs.impler.io"
               icon={<OutLinkIcon size="lg" />}
+            />
+
+            <NavItem
+              active={router.pathname.includes('/team-members')}
+              href="/team-members"
+              icon={<PeopleIcon size="lg" />}
+              title="Team Members"
             />
           </Stack>
         </aside>
