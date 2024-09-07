@@ -175,6 +175,7 @@ export const ROUTES = {
 
 export const REGULAR_EXPRESSIONS = {
   URL: /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/gm,
+  EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
 };
 
 export const COLUMN_TYPES = [
@@ -237,6 +238,12 @@ export const TEXTS = {
 export const IMPORT_MODES = [
   { value: 'manual', label: 'Manual' },
   { value: 'automatic', label: 'Automatic' },
+];
+
+export const INVITATION_FORM_ROLES = [
+  { value: 'admin', label: 'Admin' },
+  { value: 'tech', label: 'Tech' },
+  { value: 'finance', label: 'Finance' },
 ];
 
 export const DOCUMENTATION_REFERENCE_LINKS = {
