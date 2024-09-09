@@ -1,5 +1,5 @@
 import { ApiTags, ApiOperation, ApiSecurity } from '@nestjs/swagger';
-import { Controller, Delete, Get, Param, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 
 import {
   GetImportCounts,
@@ -12,11 +12,13 @@ import {
   ApplyCoupon,
   Checkout,
   Subscription,
+  ProjectInvitation,
+  RetrievePaymentMethods,
 } from './usecases';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { IJwtPayload, ACCESS_KEY_NAME } from '@impler/shared';
 import { UserSession } from '@shared/framework/user.decorator';
-import { RetrievePaymentMethods } from './usecases/retrive-payment-methods/retrive-payment-methods.usecase';
+import { ProjectInvitationDto } from './dto/project-invtation.dto';
 
 @ApiTags('User')
 @Controller('/user')
@@ -34,7 +36,8 @@ export class UserController {
     private getTransactionHistory: GetTransactionHistory,
     private retrivePaymentMethods: RetrievePaymentMethods,
     private deleteUserPaymentMethod: DeleteUserPaymentMethod,
-    private subscription: Subscription
+    private subscription: Subscription,
+    private projectInvitation: ProjectInvitation
   ) {}
 
   @Get('/import-count')
@@ -155,6 +158,23 @@ export class UserController {
       planCode,
       selectedPaymentMethod: paymentMethodId,
       couponCode,
+    });
+  }
+
+  @Post('/invite')
+  @ApiOperation({
+    summary: 'Invite Other Team Members to the Project',
+  })
+  async projectInvitationRoute(@UserSession() user: IJwtPayload, @Body() projectInvitationDto: ProjectInvitationDto) {
+    console.log('DTO BODY>', projectInvitationDto);
+
+    return await this.projectInvitation.exec({
+      invitatedBy: user.email,
+      projectName: projectInvitationDto.projectName,
+      invitationEmails: projectInvitationDto.invitationEmails,
+      role: projectInvitationDto.role,
+      userName: user.firstName,
+      projectId: projectInvitationDto.projectId,
     });
   }
 }
