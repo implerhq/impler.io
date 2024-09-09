@@ -38,6 +38,14 @@ interface IVerificationEmailOptions {
   firstName: string;
 }
 
+interface IProjectInvitationEmailOptions {
+  invitationId: string;
+  token: string;
+  invitedBy: string;
+  projectName: string;
+  invitationUrl: string;
+}
+
 const EMAIL_CONTENTS = {
   VERIFICATION_EMAIL: ({ otp, firstName }: IVerificationEmailOptions) => `
   <!DOCTYPE html>
@@ -391,8 +399,82 @@ const EMAIL_CONTENTS = {
           <p>Need any help? <a href="mailto:bhavik@impler.io">Contact us</a></p>
       </div>
 </body>
-</html>
-  `,
+</html>`,
+  PROJECT_INVITATION_EMAIL: ({ invitedBy, projectName, invitationUrl }: IProjectInvitationEmailOptions) => `
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <style>
+          body {
+              font-family: Arial, sans-serif;
+              background-color: #f5f5f5;
+              margin: 0;
+              padding: 20px;
+          }
+          .container {
+              max-width: 600px;
+              margin: 0 auto;
+              background-color: white;
+              padding: 30px;
+              border-radius: 8px;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          }
+          .header {
+              text-align: center;
+              margin-bottom: 20px;
+          }
+          .header h1 {
+              font-size: 24px;
+              color: #333;
+          }
+          .content {
+              color: #555;
+              line-height: 1.6;
+          }
+          .button-container {
+              text-align: center;
+              margin-top: 20px;
+          }
+          .button {
+              background-color: #4caf50;
+              color: white;
+              padding: 10px 20px;
+              text-decoration: none;
+              border-radius: 5px;
+              font-size: 16px;
+          }
+          .footer {
+              margin-top: 20px;
+              text-align: center;
+              color: #777;
+          }
+      </style>
+  </head>
+  <body>
+      <div class="container">
+          <div class="header">
+              <h1>${invitedBy} invited you to join the project ${projectName}</h1>
+          </div>
+          
+          <div class="content">
+              <p>Hello,</p>
+              <p>You have been invited to join the project <strong>${projectName}</strong>. Please click the button below to accept the invitation.</p>
+              
+              <div class="button-container">
+                  <a href="${invitationUrl}" class="button">Accept Invitation</a>
+              </div>
+              
+              <p>If you did not expect this invitation, please ignore this email.</p>
+          </div>
+          
+          <div class="footer">
+              <p>Need help? Contact us.</p>
+          </div>
+      </div>
+  </body>
+  </html>`,
 };
 
 type EmailContents =
@@ -415,6 +497,10 @@ type EmailContents =
   | {
       type: 'VERIFICATION_EMAIL';
       data: IVerificationEmailOptions;
+    }
+  | {
+      type: 'PROJECT_INVITATION_EMAIL';
+      data: IProjectInvitationEmailOptions;
     };
 
 export abstract class EmailService {
