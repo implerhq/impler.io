@@ -7,15 +7,18 @@ import { SentInvitations } from './SentInvitations';
 import { InviteMembersModal } from './InviteMembersModal';
 import { InvitationRequests } from './InvitationRequests';
 import { OutlinedTabs } from '@ui/OutlinedTabs';
+import { useAppState } from 'store/app.context';
 
 export function TeamMembersTab() {
+  const { profileInfo } = useAppState();
   const openInviteModal = () => {
     modals.open({
       id: MODAL_KEYS.INVITE_MEMBERS,
       modalId: MODAL_KEYS.INVITE_MEMBERS,
       title: (
         <Text>
-          Invite new members in <span style={{ color: colors.yellow, fontWeight: 'bold' }}>Artha</span>
+          Invite new members in{' '}
+          <span style={{ color: colors.yellow, fontWeight: 'bold' }}>{profileInfo?.projectName}</span>
         </Text>
       ),
       children: <InviteMembersModal />,
@@ -49,7 +52,7 @@ export function TeamMembersTab() {
     <OutlinedTabs
       defaultValue="members"
       items={tabItems}
-      inviteButton={<Button onClick={openInviteModal}>Invite to Artha</Button>}
+      inviteButton={<Button onClick={openInviteModal}>Invite to {profileInfo?.projectName}</Button>}
     />
   );
 }
