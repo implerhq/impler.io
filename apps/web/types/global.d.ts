@@ -21,6 +21,7 @@ namespace NodeJS {
 
 interface IProfileData {
   _id: string;
+  projectName: string;
   firstName: string;
   lastName: string;
   email: string;
