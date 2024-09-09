@@ -62,6 +62,7 @@ export function useApp() {
           setProfileInfo({
             ...profileInfo,
             _projectId: project._id,
+            projectName: project.name,
             accessToken: environment.apiKeys[0].key,
           });
         }
@@ -81,6 +82,7 @@ export function useApp() {
       setProfileInfo({
         ...profileInfo,
         _projectId: id,
+        projectName: project.name,
       });
       switchProject(id);
       if (![ROUTES.SETTINGS, ROUTES.ACTIVITIES, ROUTES.IMPORTS].includes(pathname)) {
