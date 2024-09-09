@@ -1,6 +1,5 @@
 import { Tabs as MantineTabs, Flex, Badge } from '@mantine/core';
 import useStyles from './OutlinedTabs.style';
-import { colors } from '@config';
 
 interface OutlinedTabItem {
   id?: string;
@@ -47,7 +46,7 @@ export function OutlinedTabs({
             <MantineTabs.Tab key={item.value} value={item.value} icon={item.icon}>
               {item.title}
               {item.badgeCount !== undefined && (
-                <Badge radius="lg" size="lg" p={5} color={colors.grey}>
+                <Badge radius="lg" size="lg" p={5} color="gray">
                   {item.badgeCount}
                 </Badge>
               )}
