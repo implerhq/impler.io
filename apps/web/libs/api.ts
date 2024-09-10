@@ -67,8 +67,8 @@ const routes: Record<string, Route> = {
   },
 
   [API_KEYS.ACCEPT_PROJECT_INVITATION]: {
-    url: () => `/v1/user/accept-invitation`,
-    method: 'POST',
+    url: () => `/v1/user/invitation`,
+    method: 'GET',
   },
 
   [API_KEYS.PROJECTS_LIST]: {
