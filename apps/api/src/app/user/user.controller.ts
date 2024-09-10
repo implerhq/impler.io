@@ -13,6 +13,7 @@ import {
   Checkout,
   Subscription,
   ProjectInvitation,
+  SentProjectInvitations,
   RetrievePaymentMethods,
 } from './usecases';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
@@ -37,7 +38,8 @@ export class UserController {
     private retrivePaymentMethods: RetrievePaymentMethods,
     private deleteUserPaymentMethod: DeleteUserPaymentMethod,
     private subscription: Subscription,
-    private projectInvitation: ProjectInvitation
+    private projectInvitation: ProjectInvitation,
+    private sentProjectInvitations: SentProjectInvitations
   ) {}
 
   @Get('/import-count')
@@ -166,8 +168,6 @@ export class UserController {
     summary: 'Invite Other Team Members to the Project',
   })
   async projectInvitationRoute(@UserSession() user: IJwtPayload, @Body() projectInvitationDto: ProjectInvitationDto) {
-    console.log('DTO BODY>', projectInvitationDto);
-
     return await this.projectInvitation.exec({
       invitatedBy: user.email,
       projectName: projectInvitationDto.projectName,
@@ -176,5 +176,18 @@ export class UserController {
       userName: user.firstName,
       projectId: projectInvitationDto.projectId,
     });
+  }
+
+  @Get('/sent-invitation')
+  @ApiOperation({
+    summary: 'Invite Other Team Members to the Project',
+  })
+  async sentProjectInvitationRoute(@UserSession() user: IJwtPayload) {
+    const sentInviatation = await this.sentProjectInvitations.exec({
+      email: user.email,
+      projectId: user._projectId,
+    });
+
+    return sentInviatation;
   }
 }
