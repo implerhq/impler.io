@@ -86,6 +86,7 @@ export const API_KEYS = {
   PROJECT_ENVIRONMENT: 'PROJECT_ENVIRONMENT',
   PROJECT_INVITATION: 'PROJECT_INVITATION',
   SENT_PROJECT_INVITATION: 'SENT_PROJECT_INVITATION',
+  ACCEPT_PROJECT_INVITATION: 'ACCEPT_PROJECT_INVITATION',
 
   LOGOUT: 'LOGOUT',
   SIGNIN: 'SIGNIN',
@@ -247,6 +248,8 @@ export const INVITATION_FORM_ROLES = [
   { value: 'tech', label: 'Tech' },
   { value: 'finance', label: 'Finance' },
 ];
+
+export const MEMBER_ROLE = ['Admin', 'Tech', 'Finance'];
 
 export const DOCUMENTATION_REFERENCE_LINKS = {
   columnDescription: 'https://docs.impler.io/features/column-description',
