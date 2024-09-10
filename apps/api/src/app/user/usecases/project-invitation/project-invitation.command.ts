@@ -2,7 +2,7 @@ export class ProjectInvitationCommand {
   projectName: string;
   projectId: string;
   invitatedBy: string;
-  invitationEmails: string[];
+  invitationEmailsTo: string[];
   role: string;
   userName: string;
 }
