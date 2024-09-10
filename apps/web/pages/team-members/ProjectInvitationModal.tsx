@@ -22,29 +22,23 @@ export function ProjectInvitationModal() {
             data={emailOptions}
             placeholder="Select or add email addresses"
             nothingFound="Nothing found"
-            searchable
             creatable
             getCreateLabel={(query) => `+ Create ${query}`}
             onCreate={(query) => {
               const item = { value: query, label: query };
               setEmailOptions((current) => [...current, item]);
 
-              return item;
+              return query;
             }}
             {...field}
             error={errors.invitationEmails ? errors.invitationEmails.message : undefined}
-            value={field.value || []} // Ensure value is an array of { value: string; label: string }
+            value={field.value || []}
           />
         )}
         rules={{
           required: 'Email addresses are required',
           validate: (value) => {
-            /*
-             * console.log(value);
-             * Extract the email values from the objects and validate them
-             */
             const emailValues = value.map((item) => item);
-            console.log('EMAIL VALUES', emailValues);
 
             return validateEmails(emailValues);
           },
