@@ -1,16 +1,21 @@
+import { useState } from 'react';
 import { modals } from '@mantine/modals';
 import { Text } from '@mantine/core';
 import { Button } from '@ui/button';
-import { colors, MODAL_KEYS } from '@config';
+import { colors, MODAL_KEYS, TAB_KEYS, TAB_TITLES } from '@config';
 import { Members } from 'pages/team-members/Members';
 import { SentInvitations } from './SentInvitations';
-import { InviteMembersModal } from './InviteMembersModal';
-import { InvitationRequests } from './InvitationRequests';
+import { ProjectInvitationModal } from './ProjectInvitationModal';
+import { ProjectInvitationRequests } from './ProjectInvitationRequests';
 import { OutlinedTabs } from '@ui/OutlinedTabs';
 import { useAppState } from 'store/app.context';
+import { useSentProjectInvitations } from '@hooks/useSentProjectInvitations';
 
 export function TeamMembersTab() {
   const { profileInfo } = useAppState();
+  const { invitationsCount, refetchInvitations } = useSentProjectInvitations();
+  const [activeTab, setActiveTab] = useState(TAB_KEYS.MEMBERS);
+
   const openInviteModal = () => {
     modals.open({
       id: MODAL_KEYS.INVITE_MEMBERS,
@@ -21,36 +26,45 @@ export function TeamMembersTab() {
           <span style={{ color: colors.yellow, fontWeight: 'bold' }}>{profileInfo?.projectName}</span>
         </Text>
       ),
-      children: <InviteMembersModal />,
+      children: <ProjectInvitationModal />,
       size: 'lg',
       withCloseButton: true,
     });
   };
 
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    if (value === TAB_KEYS.SENT_INVITATIONS) {
+      refetchInvitations();
+    }
+  };
+
   const tabItems = [
     {
-      value: 'members',
-      title: 'Members',
+      value: TAB_KEYS.MEMBERS,
+      title: TAB_TITLES[TAB_KEYS.MEMBERS],
       badgeCount: 5,
       content: <Members />,
     },
     {
-      value: 'team',
-      title: 'Sent Invitations',
-      badgeCount: 3,
+      value: TAB_KEYS.SENT_INVITATIONS,
+      title: TAB_TITLES[TAB_KEYS.SENT_INVITATIONS],
+      badgeCount: invitationsCount,
       content: <SentInvitations />,
     },
     {
-      value: 'invitation-requests',
-      title: 'Invitation Requests',
+      value: TAB_KEYS.INVITATION_REQUESTS,
+      title: TAB_TITLES[TAB_KEYS.INVITATION_REQUESTS],
       badgeCount: 10,
-      content: <InvitationRequests />,
+      content: <ProjectInvitationRequests />,
     },
   ];
 
   return (
     <OutlinedTabs
-      defaultValue="members"
+      defaultValue={TAB_KEYS.MEMBERS}
+      value={activeTab}
+      onTabChange={handleTabChange}
       items={tabItems}
       inviteButton={<Button onClick={openInviteModal}>Invite to {profileInfo?.projectName}</Button>}
     />
