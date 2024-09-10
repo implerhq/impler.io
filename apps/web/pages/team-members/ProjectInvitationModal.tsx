@@ -26,7 +26,7 @@ export function ProjectInvitationModal() {
             creatable
             getCreateLabel={(query) => `+ Add Email ${query}`}
             onCreate={(query) => {
-              const item = { value: query, label: query };
+              const item: any = { value: query, label: query };
               setEmailOptions((current) => [...current, item]);
 
               return item;
@@ -40,7 +40,6 @@ export function ProjectInvitationModal() {
           required: 'Email addresses are required',
           validate: (value) => {
             const emailValues = value.map((item) => item);
-            console.log('EMAIL VALUES', emailValues);
 
             return validateEmails(emailValues);
           },
