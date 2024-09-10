@@ -14,6 +14,7 @@ export interface ISelectProps {
   data: string[] | IOption[];
   error?: string;
   required?: boolean;
+  searchable?: boolean;
   width?: string | number;
   value?: string;
   defaultValue?: string;
@@ -29,6 +30,7 @@ export const Select = React.forwardRef<HTMLInputElement, ISelectProps>((props: I
     data,
     error,
     defaultValue,
+    searchable,
     required = true,
     width = '100%',
     onChange,
@@ -48,6 +50,7 @@ export const Select = React.forwardRef<HTMLInputElement, ISelectProps>((props: I
       style={style}
       error={error}
       label={title}
+      searchable={searchable}
       defaultValue={defaultValue}
       rightSection={<ChevronDown />}
       classNames={{

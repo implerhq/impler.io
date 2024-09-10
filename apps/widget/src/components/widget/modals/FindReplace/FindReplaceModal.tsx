@@ -58,6 +58,7 @@ export function FindReplaceModal(props: IFindReplaceModalProps) {
               control={control}
               render={({ field }) => (
                 <Select
+                  searchable
                   withinPortal
                   data={columns}
                   ref={field.ref}
