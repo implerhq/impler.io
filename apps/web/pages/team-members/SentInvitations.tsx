@@ -1,61 +1,45 @@
-import { Group, Stack, Text } from '@mantine/core';
+import { LoadingOverlay, Stack, Text } from '@mantine/core';
 import { Table } from '@ui/table';
 import { AppLayout } from '@layouts/AppLayout';
 import { ExitIcon } from '@assets/icons/Exit.icon';
-
-interface SentInvitation {
-  _id?: string;
-  userName: string;
-  invitedOn?: string;
-  role: string;
-}
-
-const membersData: SentInvitation[] = [
-  {
-    userName: 'john@doe.com',
-    invitedOn: '2023-01-01',
-    role: 'Admin',
-  },
-  {
-    userName: 'jane@doe.com',
-    invitedOn: '2023-01-01',
-    role: 'Admin',
-  },
-];
+import { useSentProjectInvitations } from '@hooks/useSentProjectInvitations';
 
 export function SentInvitations() {
+  const { invitations, isInvitationsLoading, isInvitationsFetched, isError } = useSentProjectInvitations();
+
   return (
     <Stack spacing="xs">
-      <Stack spacing="sm">
-        <Table<SentInvitation>
-          headings={[
-            {
-              title: 'User',
-              key: 'user',
-              Cell: (member: SentInvitation) => (
-                <Group spacing="sm">
-                  <Text>{member.userName || 'No Name'}</Text>
-                </Group>
-              ),
-            },
-            {
-              title: 'Invited',
-              key: 'invitedOn',
-              Cell: (member: SentInvitation) => <Text size="sm">{member.invitedOn || 'N/A'}</Text>,
-            },
-            {
-              title: 'Role',
-              key: 'role',
-              Cell: (member: SentInvitation) => <Text size="sm">{member.role}</Text>,
-            },
-            {
-              title: 'Action',
-              key: 'action',
-              Cell: () => <ExitIcon style={{ fontWeight: 'bolder' }} size="xl" />,
-            },
-          ]}
-          data={membersData}
-        />
+      <Stack spacing="sm" style={{ position: 'relative' }}>
+        <LoadingOverlay visible={isInvitationsLoading} />
+        {isError && <Text color="red">Error fetching invitations</Text>}
+        {!isInvitationsLoading && isInvitationsFetched && invitations && (
+          <Table<SentProjectInvitation>
+            headings={[
+              {
+                title: 'User',
+                key: 'user',
+                Cell: (invitation) => <Text>{invitation.invitationToEmail}</Text>,
+              },
+              {
+                title: 'Invited On',
+                key: 'invitedOn',
+                Cell: (invitation) => <Text size="sm">{invitation.invitedOn || 'N/A'}</Text>,
+              },
+              {
+                title: 'Role',
+                key: 'role',
+                Cell: (invitation) => <Text size="sm">{invitation.role}</Text>,
+              },
+              {
+                title: 'Action',
+                key: 'action',
+                Cell: () => <ExitIcon size="xl" />,
+              },
+            ]}
+            data={invitations || []}
+          />
+        )}
+        {!isInvitationsLoading && !isError && !isInvitationsFetched && <Text>No data available</Text>}
       </Stack>
     </Stack>
   );
