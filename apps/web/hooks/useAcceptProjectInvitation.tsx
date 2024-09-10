@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { commonApi } from '@libs/api';
 import { API_KEYS } from '@config';
 import { IErrorObject } from '@impler/shared';
@@ -8,16 +8,15 @@ interface AcceptInvitationParams {
   token: string;
 }
 
-export function useAcceptProjectInvitation() {
+export function useAcceptProjectInvitation({ invitationId, token }: AcceptInvitationParams) {
   const {
-    mutate: acceptInvitation,
+    data: invitationEmail,
     isLoading,
     isError,
     error,
-    data,
-  } = useMutation<any, IErrorObject, AcceptInvitationParams>(
-    [API_KEYS.ACCEPT_PROJECT_INVITATION],
-    ({ invitationId, token }) =>
+  } = useQuery<any, IErrorObject, AcceptInvitationParams>(
+    [API_KEYS.ACCEPT_PROJECT_INVITATION, invitationId, token],
+    () =>
       commonApi(API_KEYS.ACCEPT_PROJECT_INVITATION as any, {
         query: {
           invitationId,
@@ -25,16 +24,20 @@ export function useAcceptProjectInvitation() {
         },
       }),
     {
-      onSuccess: () => {},
-      onError: () => {},
+      enabled: !!invitationId && !!token,
+      onSuccess: (data) => {
+        console.log('Accepted Invitation:', data);
+      },
+      onError: (err) => {
+        console.error('Error accepting invitation:', err);
+      },
     }
   );
 
   return {
-    acceptInvitation,
+    invitationEmail,
     isLoading,
     isError,
     error,
-    data,
   };
 }
