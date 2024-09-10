@@ -10,6 +10,7 @@ import { ApplyCoupon } from './apply-coupon/apply-coupon.usecase';
 import { Checkout } from './checkout/checkout.usecase';
 import { Subscription } from './subscription/subscription.usecase';
 import { ProjectInvitation } from './project-invitation/project-invitation.usecase';
+import { SentProjectInvitations } from './sent-project-invitation/sent-project-invitation.usecase';
 
 export const USE_CASES = [
   GetImportCounts,
@@ -24,6 +25,7 @@ export const USE_CASES = [
   Checkout,
   Subscription,
   ProjectInvitation,
+  SentProjectInvitations,
   //
 ];
 
@@ -40,4 +42,5 @@ export {
   Checkout,
   Subscription,
   ProjectInvitation,
+  SentProjectInvitations,
 };
