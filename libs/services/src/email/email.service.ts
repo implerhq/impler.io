@@ -39,6 +39,7 @@ interface IVerificationEmailOptions {
 }
 
 interface IProjectInvitationEmailOptions {
+  userName: string;
   invitationId: string;
   token: string;
   invitedBy: string;
@@ -399,8 +400,10 @@ const EMAIL_CONTENTS = {
           <p>Need any help? <a href="mailto:bhavik@impler.io">Contact us</a></p>
       </div>
 </body>
-</html>`,
-  PROJECT_INVITATION_EMAIL: ({ invitedBy, projectName, invitationUrl }: IProjectInvitationEmailOptions) => `
+</html>
+`,
+
+  PROJECT_INVITATION_EMAIL: ({ userName, invitedBy, projectName, invitationUrl }: IProjectInvitationEmailOptions) => `
   <!DOCTYPE html>
   <html lang="en">
   <head>
@@ -450,28 +453,26 @@ const EMAIL_CONTENTS = {
               text-align: center;
               color: #777;
           }
+          .centered-text {
+              text-align: center;
+          }
       </style>
   </head>
   <body>
       <div class="container">
           <div class="header">
-              <h1>${invitedBy} invited you to join the project ${projectName}</h1>
+              <h1>${invitedBy} invited you to join the project <b>"${projectName}"</b></h1>
           </div>
           
           <div class="content">
-              <p>Hello,</p>
               <p>You have been invited to join the project <strong>${projectName}</strong>. Please click the button below to accept the invitation.</p>
               
               <div class="button-container">
                   <a href="${invitationUrl}" class="button">Accept Invitation</a>
               </div>
               
-              <p>If you did not expect this invitation, please ignore this email.</p>
           </div>
-          
-          <div class="footer">
-              <p>Need help? Contact us.</p>
-          </div>
+       <p class="centered-text">If you don't know about this request, please ignore this email.</p>   
       </div>
   </body>
   </html>`,
