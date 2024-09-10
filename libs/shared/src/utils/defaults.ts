@@ -83,5 +83,5 @@ export enum EMAIL_SUBJECT {
   ERROR_SENDING_WEBHOOK_DATA = '🛑 Encountered error while sending webhook data in',
   VERIFICATION_CODE = 'Your Verification Code for Impler',
   RESET_PASSWORD = 'Reset Password | Impler',
-  PROJECT_INVITATION = 'New Project Invitation',
+  PROJECT_INVITATION = 'You Have Invited to',
 }
