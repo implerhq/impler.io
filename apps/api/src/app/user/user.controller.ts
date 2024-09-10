@@ -15,6 +15,7 @@ import {
   ProjectInvitation,
   SentProjectInvitations,
   RetrievePaymentMethods,
+  AcceptProjectInvitation,
 } from './usecases';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { IJwtPayload, ACCESS_KEY_NAME } from '@impler/shared';
@@ -39,7 +40,8 @@ export class UserController {
     private deleteUserPaymentMethod: DeleteUserPaymentMethod,
     private subscription: Subscription,
     private projectInvitation: ProjectInvitation,
-    private sentProjectInvitations: SentProjectInvitations
+    private sentProjectInvitations: SentProjectInvitations,
+    private acceptProjectInvitation: AcceptProjectInvitation
   ) {}
 
   @Get('/import-count')
@@ -171,7 +173,7 @@ export class UserController {
     return await this.projectInvitation.exec({
       invitatedBy: user.email,
       projectName: projectInvitationDto.projectName,
-      invitationEmails: projectInvitationDto.invitationEmails,
+      invitationEmailsTo: projectInvitationDto.invitationEmailsTo,
       role: projectInvitationDto.role,
       userName: user.firstName,
       projectId: projectInvitationDto.projectId,
@@ -189,5 +191,18 @@ export class UserController {
     });
 
     return sentInviatation;
+  }
+  @Post('/accept-invitation')
+  @ApiOperation({
+    summary: 'Accept an invitation and delete the entry of invitation from database',
+  })
+  async acceptProjectInvitationRoute(@Query('invitationId') invitationId: string, @Query('token') token: string) {
+    console.log(invitationId, token);
+    const acceptedInvitation = await this.acceptProjectInvitation.exec({
+      token,
+      invitationId,
+    });
+
+    return acceptedInvitation;
   }
 }
