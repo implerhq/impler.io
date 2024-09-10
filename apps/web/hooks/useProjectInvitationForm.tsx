@@ -9,9 +9,9 @@ import { IErrorObject } from '@impler/shared';
 import { useAppState } from 'store/app.context';
 
 interface ProjectInvitationData {
-  invitationEmails: string[];
+  invitationEmailsTo: string[];
   role: string;
-  projectName: string;
+  projectName?: string;
   projectId?: string;
 }
 
@@ -40,17 +40,19 @@ export function useProjectInvitationForm() {
       onSuccess: () => {
         modals.close(MODAL_KEYS.INVITE_MEMBERS);
       },
-      onError: () => {},
+      onError: (err) => {
+        console.log(err);
+      },
     }
   );
 
   const onSubmit = (data: ProjectInvitationData) => {
-    const isValid = validateEmails(data.invitationEmails);
+    const isValid = validateEmails(data.invitationEmailsTo);
     if (isValid) {
       projectInvitation({
-        invitationEmails: data.invitationEmails,
+        invitationEmailsTo: data.invitationEmailsTo,
         role: data.role,
-        projectName: profileInfo!.projectName,
+        projectName: profileInfo?.projectName,
         projectId: profileInfo?._projectId,
       });
     }
