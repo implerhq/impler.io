@@ -105,7 +105,7 @@ export class Replace {
             $cond: {
               if: { $ne: [`$record.${fieldName}`, `$_oldRecord.${fieldName}`] },
               then: true,
-              else: { $ifNull: [`$updated.${fieldName}`, false] },
+              else: '$$REMOVE',
             },
           },
         },
