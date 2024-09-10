@@ -18,7 +18,7 @@ export class ProjectInvitationDto {
     description: 'List of Emails that will recieve the invitation',
   })
   @IsArray()
-  invitationEmails: string[];
+  invitationEmailsTo: string[];
 
   @ApiProperty({
     description: 'The role that the invited members will be assigned to',
