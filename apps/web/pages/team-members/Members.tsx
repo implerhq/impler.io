@@ -3,10 +3,11 @@ import { Table } from '@ui/table';
 import { AppLayout } from '@layouts/AppLayout';
 import { ExitIcon } from '@assets/icons/Exit.icon';
 
+import { MEMBER_ROLE } from '@config';
+
 interface User {
   name: string;
   email: string;
-  image: string;
 }
 
 interface Member {
@@ -22,7 +23,6 @@ const membersData: Member[] = [
     user: {
       name: 'John Doe',
       email: 'john@example.com',
-      image: 'https://randomuser.me/api/portraits/men/1.jpg',
     },
     joinedDate: '2023-01-01',
     role: 'Admin',
@@ -32,7 +32,6 @@ const membersData: Member[] = [
     user: {
       name: 'Jane Smith',
       email: 'jane@example.com',
-      image: 'https://randomuser.me/api/portraits/women/2.jpg',
     },
     joinedDate: '2023-02-15',
     role: 'Admin',
@@ -42,7 +41,6 @@ const membersData: Member[] = [
     user: {
       name: 'Bob Johnson',
       email: 'bob@example.com',
-      image: 'https://randomuser.me/api/portraits/men/3.jpg',
     },
     joinedDate: '2023-03-10',
     role: 'Tech',
@@ -52,7 +50,6 @@ const membersData: Member[] = [
     user: {
       name: 'Alice Williams',
       email: 'alice@example.com',
-      image: 'https://randomuser.me/api/portraits/women/4.jpg',
     },
     joinedDate: '2023-04-22',
     role: 'Finance',
@@ -71,7 +68,7 @@ export function Members() {
               key: 'user',
               Cell: (member: Member) => (
                 <Group spacing="sm">
-                  <Avatar src={member.user.image} alt={member.user.name} />
+                  <Avatar style={{ border: '1px solid white', borderRadius: 0 }} size="md" />
                   <div>
                     <Text>{member.user.name}</Text>
                     <Text size="xs" color="dimmed">
@@ -90,11 +87,10 @@ export function Members() {
               key: 'role',
               Cell: (member: Member) => (
                 <Select
-                  data={['Admin', 'Tech', 'Finance']}
+                  data={MEMBER_ROLE}
                   maw={125}
                   value={member.role}
                   onChange={(value) => {
-                    console.log('Updated role:', value);
                     alert(value);
                   }}
                 />
