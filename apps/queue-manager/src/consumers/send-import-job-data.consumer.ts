@@ -115,10 +115,10 @@ export class SendImportJobDataConsumer extends BaseConsumer {
       Math.min(page * chunkSize, data.length)
     );
 
-    if (Array.isArray(multiSelectHeadings) && multiSelectHeadings.length > 0) {
+    if (multiSelectHeadings && Object.keys(multiSelectHeadings).length > 0) {
       slicedData = slicedData.map((obj) => {
-        multiSelectHeadings.forEach((heading) => {
-          obj[heading] = obj[heading] ? (Array.isArray(obj[heading]) ? obj[heading] : obj[heading].split(',')) : [];
+        Object.keys(multiSelectHeadings).forEach((heading) => {
+          obj.record[heading] = obj.record[heading] ? obj.record[heading].split(multiSelectHeadings[heading]) : [];
         });
 
         return obj;
