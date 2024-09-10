@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-
 import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
 import { track } from '@libs/amplitude';
@@ -12,7 +11,7 @@ export function useApp() {
   const { replace, pathname } = useRouter();
   const queryClient = useQueryClient();
   const { profileInfo, setProfileInfo } = useAppState();
-  const { isFetching: isProfileLoading } = useQuery<unknown, IErrorObject, IProfileData, [string]>(
+  const { isFetching: isProfileLoading } = useQuery<IProfileData, IErrorObject>(
     [API_KEYS.ME],
     () => commonApi<IProfileData>(API_KEYS.ME as any, {}),
     {
@@ -24,16 +23,26 @@ export function useApp() {
       },
     }
   );
-  const { data: projects, isLoading: isProjectsLoading } = useQuery<unknown, IErrorObject, IProjectPayload[], string[]>(
+
+  const { data: projects, isLoading: isProjectsLoading } = useQuery<IProjectPayload[], IErrorObject>(
     [API_KEYS.PROJECTS_LIST],
-    () => commonApi(API_KEYS.PROJECTS_LIST as any, {})
+    () => commonApi<IProjectPayload[]>(API_KEYS.PROJECTS_LIST as any, {}),
+    {
+      onSuccess(data) {
+        if (profileInfo && data.length) {
+          setProfileInfo({
+            ...profileInfo,
+            _projectId: data[0]._id,
+            projectName: data[0].name,
+          });
+        }
+      },
+    }
   );
-  const { mutate: logout } = useMutation([API_KEYS.LOGOUT], () => commonApi(API_KEYS.LOGOUT as any, {}), {
+
+  const { mutate: logout } = useMutation(() => commonApi(API_KEYS.LOGOUT as any, {}), {
     onSuccess: () => {
-      track({
-        name: 'LOGOUT',
-        properties: {},
-      });
+      track({ name: 'LOGOUT', properties: {} });
       replace(ROUTES.SIGNIN);
     },
   });
@@ -41,57 +50,50 @@ export function useApp() {
     [API_KEYS.PROJECT_SWITCH],
     (projectId) => commonApi(API_KEYS.PROJECT_SWITCH as any, { parameters: [projectId] })
   );
+
   const { mutate: createProject, isLoading: isCreateProjectLoading } = useMutation<
     { project: IProjectPayload; environment: IEnvironmentData },
     IErrorObject,
-    ICreateProjectData,
-    string[]
+    ICreateProjectData
   >([API_KEYS.PROJECT_CREATE], (data) => commonApi(API_KEYS.PROJECT_CREATE as any, { body: data }), {
     onSuccess: ({ project, environment }) => {
-      if (project) {
-        queryClient.setQueryData<IProjectPayload[]>([API_KEYS.PROJECTS_LIST], () => {
-          return [...(projects || []), project];
-        });
-        track({
-          name: 'PROJECT CREATE',
-          properties: {
-            duringOnboard: false,
-          },
-        });
-        if (profileInfo) {
-          setProfileInfo({
-            ...profileInfo,
-            _projectId: project._id,
-            projectName: project.name,
-            accessToken: environment.apiKeys[0].key,
-          });
-        }
-        if (![ROUTES.SETTINGS, ROUTES.ACTIVITIES, ROUTES.IMPORTS].includes(pathname)) {
-          replace(ROUTES.IMPORTS);
-        }
-        notify(NOTIFICATION_KEYS.PROJECT_CREATED, {
-          title: 'Project created',
-          message: `Project ${project.name} created successfully`,
+      queryClient.setQueryData<IProjectPayload[]>([API_KEYS.PROJECTS_LIST], () => {
+        return [...(projects || []), project];
+      });
+      track({ name: 'PROJECT CREATE', properties: { duringOnboard: false } });
+      if (profileInfo) {
+        setProfileInfo({
+          ...profileInfo,
+          _projectId: project._id,
+          projectName: project.name,
+          accessToken: environment.apiKeys[0].key,
         });
       }
+      if (![ROUTES.SETTINGS, ROUTES.ACTIVITIES, ROUTES.IMPORTS].includes(pathname)) {
+        replace(ROUTES.IMPORTS);
+      }
+      notify(NOTIFICATION_KEYS.PROJECT_CREATED, {
+        title: 'Project created',
+        message: `Project ${project.name} created successfully`,
+      });
     },
   });
+
   const onProjectIdChange = async (id: string) => {
     const project = projects?.find((projectItem) => projectItem._id === id);
     if (project && profileInfo) {
       setProfileInfo({
         ...profileInfo,
-        _projectId: id,
-        projectName: project.name,
+        _projectId: project._id,
+        projectName: project?.name,
       });
       switchProject(id);
+
       if (![ROUTES.SETTINGS, ROUTES.ACTIVITIES, ROUTES.IMPORTS].includes(pathname)) {
         replace(ROUTES.IMPORTS);
       }
-      track({
-        name: 'PROJECT SWITCH',
-        properties: {},
-      });
+
+      track({ name: 'PROJECT SWITCH', properties: {} });
     }
   };
 
