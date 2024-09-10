@@ -1,7 +1,7 @@
 export class ProjectInvitationEntity {
   _id: string;
 
-  invitationEmails: string[];
+  invitationToEmail: string;
 
   invitedOn: string;
 
