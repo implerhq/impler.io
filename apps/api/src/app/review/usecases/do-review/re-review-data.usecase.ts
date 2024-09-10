@@ -104,8 +104,9 @@ export class DoReReview extends BaseReview {
       }
       uniqueItems[key].clear();
     }
-    await this._modal.bulkWrite(bulkOperations);
-
+    await this._modal.bulkWrite(bulkOperations, {
+      ordered: false,
+    });
     let result: ISaveResults = {
       uploadId: _uploadId,
       totalRecords: uploadInfo.totalRecords,
@@ -172,7 +173,7 @@ export class DoReReview extends BaseReview {
     multiSelectColumnHeadings: Record<string, string>;
     dateFormats: Record<string, string[]>;
   }) {
-    const bulkOp = this.dalService.getRecordBulkOp(uploadId);
+    const bulkOp = [];
     const response: ISaveResults = {
       uploadId,
       totalRecords: 0,
@@ -197,26 +198,32 @@ export class DoReReview extends BaseReview {
         response.invalidRecords--;
         response.validRecords++;
       }
-      bulkOp.find({ index: record.index }).updateOne({ $set: { ...validationResult } });
+      bulkOp.push({ updateOne: { filter: { index: record.index }, update: { $set: validationResult } } });
     }
     if (response.totalRecords > 0) {
-      await bulkOp.execute();
+      await this._modal.bulkWrite(bulkOp, {
+        ordered: false,
+      });
     }
 
     return response;
   }
 
-  getStreams({ uploadId }: { uploadId: string }) {
-    const bulkOp = this.dalService.getRecordBulkOp(uploadId);
+  getStreams() {
+    const bulkOp = [];
     const dataStream = new Writable({
       objectMode: true,
       async write(record, encoding, callback) {
-        bulkOp.find({ index: record.index }).updateOne({ $set: record });
+        bulkOp.push({
+          updateOne: { filter: { index: record.index }, update: { $set: record, $unset: { updated: {} } } },
+        });
         callback();
       },
-      async final(callback) {
+      final: async (callback) => {
         try {
-          await bulkOp.execute();
+          await this._modal.bulkWrite(bulkOp, {
+            ordered: false,
+          });
         } catch (error) {}
         callback();
       },
@@ -248,9 +255,7 @@ export class DoReReview extends BaseReview {
     multiSelectColumnHeadings: Record<string, string>;
     dateFormats: Record<string, string[]>;
   }) {
-    const { dataStream } = this.getStreams({
-      uploadId,
-    });
+    const { dataStream } = this.getStreams();
     const { batches, resultObj } = await this.prepareBatches({
       extra,
       uploadId,
