@@ -56,6 +56,16 @@ const routes: Record<string, Route> = {
     method: 'POST',
   },
 
+  [API_KEYS.PROJECT_INVITATION]: {
+    url: () => `/v1/user/invite`,
+    method: 'POST',
+  },
+
+  [API_KEYS.SENT_PROJECT_INVITATION]: {
+    url: () => `/v1/user/sent-invitation`,
+    method: 'POST',
+  },
+
   [API_KEYS.PROJECTS_LIST]: {
     url: () => '/v1/project',
     method: 'GET',
@@ -72,6 +82,7 @@ const routes: Record<string, Route> = {
     url: (projectId) => `/v1/project/${projectId}/environment`,
     method: 'GET',
   },
+
   [API_KEYS.LOGOUT]: {
     url: () => '/v1/auth/logout',
     method: 'GET',
