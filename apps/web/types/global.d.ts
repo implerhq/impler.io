@@ -82,7 +82,7 @@ interface IOnboardUserData {
   companySize: string;
   role: string;
   source: string;
-  onboarding: boolean;
+  onboarding?: boolean;
 }
 
 interface ICstringemplateData {
@@ -154,4 +154,13 @@ interface ISubscribeData {
   selectedPaymentMethod: string | undefined;
   email: string;
   planCode: string;
+}
+
+interface SentProjectInvitation {
+  _id: string;
+  invitationEmails: string[];
+  invitedOn: string;
+  role: string;
+  invitedBy: string;
+  token: string;
 }
