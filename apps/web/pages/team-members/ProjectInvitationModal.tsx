@@ -8,13 +8,13 @@ import { useProjectInvitationForm } from '@hooks/useProjectInvitationForm';
 import { MultiSelect } from '@ui/multi-select';
 
 export function ProjectInvitationModal() {
-  const { control, handleSubmit, errors, onSubmit } = useProjectInvitationForm();
+  const { control, handleSubmit, errors, onSubmit, isProjectInvitationLoading } = useProjectInvitationForm();
   const [emailOptions, setEmailOptions] = useState<{ value: string; label: string }[]>([]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Controller
-        name="invitationEmails"
+        name="invitationEmailsTo"
         control={control}
         render={({ field }) => (
           <MultiSelect
@@ -22,16 +22,17 @@ export function ProjectInvitationModal() {
             data={emailOptions}
             placeholder="Select or add email addresses"
             nothingFound="Nothing found"
+            searchable
             creatable
-            getCreateLabel={(query) => `+ Create ${query}`}
+            getCreateLabel={(query) => `+ Add Email ${query}`}
             onCreate={(query) => {
               const item = { value: query, label: query };
               setEmailOptions((current) => [...current, item]);
 
-              return query;
+              return item;
             }}
             {...field}
-            error={errors.invitationEmails ? errors.invitationEmails.message : undefined}
+            error={errors.invitationEmailsTo ? errors.invitationEmailsTo.message : undefined}
             value={field.value || []}
           />
         )}
@@ -39,6 +40,7 @@ export function ProjectInvitationModal() {
           required: 'Email addresses are required',
           validate: (value) => {
             const emailValues = value.map((item) => item);
+            console.log('EMAIL VALUES', emailValues);
 
             return validateEmails(emailValues);
           },
@@ -66,7 +68,7 @@ export function ProjectInvitationModal() {
         <Button type="button" fullWidth variant="outline">
           Cancel
         </Button>
-        <Button type="submit" fullWidth color="blue">
+        <Button type="submit" fullWidth loading={isProjectInvitationLoading} color="blue">
           Send Invitation(s)
         </Button>
       </Flex>
