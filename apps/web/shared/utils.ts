@@ -15,8 +15,13 @@ export function capitalizeFirstLetter(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-export function validateEmails(value: string): string | true {
-  const emails = value.split(/[\s,]+/).map((email) => email.trim());
+export function validateEmails(emails: any): string | true {
+  if (!Array.isArray(emails)) {
+    console.error('Expected an array of emails, but received:', emails);
+
+    return 'Invalid email format';
+  }
+
   const invalidEmails = emails.filter((email) => !REGULAR_EXPRESSIONS.EMAIL.test(email));
   const duplicateEmails = emails.filter((email, index) => emails.indexOf(email) !== index);
 
