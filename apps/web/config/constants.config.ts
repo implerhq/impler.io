@@ -249,6 +249,18 @@ export const INVITATION_FORM_ROLES = [
   { value: 'finance', label: 'Finance' },
 ];
 
+export const TAB_KEYS = {
+  MEMBERS: 'members',
+  SENT_INVITATIONS: 'sentinvitation',
+  INVITATION_REQUESTS: 'invitation-requests',
+};
+
+export const TAB_TITLES = {
+  [TAB_KEYS.MEMBERS]: 'Members',
+  [TAB_KEYS.SENT_INVITATIONS]: 'Sent Invitations',
+  [TAB_KEYS.INVITATION_REQUESTS]: 'Invitation Requests',
+};
+
 export const MEMBER_ROLE = ['Admin', 'Tech', 'Finance'];
 
 export const DOCUMENTATION_REFERENCE_LINKS = {
