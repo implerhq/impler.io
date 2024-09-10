@@ -158,7 +158,7 @@ interface ISubscribeData {
 
 interface SentProjectInvitation {
   _id: string;
-  invitationEmails: string[];
+  invitationToEmail: string;
   invitedOn: string;
   role: string;
   invitedBy: string;
