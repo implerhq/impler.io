@@ -4,8 +4,8 @@ import { ProjectInvitationEntity } from './project-invitation.entity';
 
 const projectInvitationSchema = new Schema(
   {
-    invitationEmails: {
-      type: [Schema.Types.String],
+    invitationToEmail: {
+      type: Schema.Types.String,
     },
     invitedOn: {
       type: Schema.Types.String,
