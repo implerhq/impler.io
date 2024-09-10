@@ -1,17 +1,33 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Title, Text, Stack, Flex, TextInput as Input, FocusTrap } from '@mantine/core';
-
 import { Button } from '@ui/button';
 import { PasswordInput } from '@ui/password-input';
-
 import { PLACEHOLDERS, ROUTES } from '@config';
 import { useSignup } from '@hooks/auth/useSignup';
 import DarkLogo from '@assets/images/logo-dark.png';
 import { OnboardLayout } from '@layouts/OnboardLayout';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import { useAcceptProjectInvitation } from '@hooks/useAcceptProjectInvitation';
 
-export default function SignupPage({}) {
+export default function SignupPage() {
+  const router = useRouter();
   const { register, isSignupLoading, signup, errors } = useSignup();
+
+  const { invitationId, token } = router.query;
+
+  const { invitationEmail } = useAcceptProjectInvitation({
+    invitationId: invitationId as string,
+    token: token as string,
+  });
+
+  useEffect(() => {
+    if (router.isReady && invitationId && token) {
+      console.log(invitationId, token);
+      console.log(invitationEmail);
+    }
+  }, [router.isReady, invitationId, token]);
 
   return (
     <>
