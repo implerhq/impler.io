@@ -13,9 +13,9 @@ export class ProjectInvitation {
   ) {}
 
   async exec(command: ProjectInvitationCommand) {
-    for (const invitationEmail of command.invitationEmails) {
+    for (const invitationEmailTo of command.invitationEmailsTo) {
       const invitation = await this.projectInvitationRepository.create({
-        invitationToEmail: invitationEmail,
+        invitationToEmail: invitationEmailTo,
         invitedOn: new Date().toDateString(),
         role: command.role,
         invitedBy: command.invitatedBy,
@@ -42,7 +42,7 @@ export class ProjectInvitation {
           },
         });
         await this.emailService.sendEmail({
-          to: invitationEmail,
+          to: invitationEmailTo,
           subject: EMAIL_SUBJECT.PROJECT_INVITATION,
           html: emailContents,
           from: process.env.EMAIL_FROM,
