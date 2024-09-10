@@ -63,7 +63,7 @@ const routes: Record<string, Route> = {
 
   [API_KEYS.SENT_PROJECT_INVITATION]: {
     url: () => `/v1/user/sent-invitation`,
-    method: 'POST',
+    method: 'GET',
   },
 
   [API_KEYS.PROJECTS_LIST]: {
