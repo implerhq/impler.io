@@ -1,7 +1,6 @@
 import { Title } from '@mantine/core';
 import { AppLayout } from '@layouts/AppLayout';
-import { TeamMembersTab } from './TeamMembersTab';
-
+import { TeamMembersTab } from '@components/TeamMembers';
 export default function TeamMembers() {
   return (
     <>
