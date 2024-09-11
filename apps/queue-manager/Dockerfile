@@ -9,6 +9,7 @@ COPY package.json .
 COPY .npmrc .
 
 COPY apps/queue-manager ./apps/queue-manager
+COPY packages/client ./packages/client
 COPY libs/dal ./libs/dal
 COPY libs/shared ./libs/shared
 COPY libs/services ./libs/services
