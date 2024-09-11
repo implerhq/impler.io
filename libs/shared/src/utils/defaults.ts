@@ -10,6 +10,7 @@ export const Defaults = {
   CHUNK_SIZE: 100,
   DATE_FORMATS: ['DD/MM/YYYY'],
   DATE_FORMAT: 'DD/MM/YYYY',
+  FORMATTED_DATE: ['DD MMM YYYY'],
 };
 
 export const DEFAULT_VALUES = [
