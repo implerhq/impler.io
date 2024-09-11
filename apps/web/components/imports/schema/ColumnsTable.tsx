@@ -151,7 +151,13 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                       </Button>
                     </Group>
 
-                    <ActionIcon id="add-column" bg={appColors.danger} variant="transparent" onClick={onCancelAddColumn}>
+                    <ActionIcon
+                      radius={0}
+                      id="add-column"
+                      bg={appColors.danger}
+                      variant="transparent"
+                      onClick={onCancelAddColumn}
+                    >
                       <CloseIcon color={appColors.white} />
                     </ActionIcon>
                   </Flex>

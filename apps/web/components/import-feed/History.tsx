@@ -97,6 +97,7 @@ export function History() {
                 return item.originalFileName ? (
                   <Tooltip label="Download original file" withArrow>
                     <ActionIcon
+                      radius={0}
                       variant="transparent"
                       onClick={() => downloadOriginalFile([item._id, item.originalFileName])}
                     >
