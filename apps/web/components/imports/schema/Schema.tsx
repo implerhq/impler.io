@@ -19,7 +19,7 @@ export function Schema({ templateId }: SchemaProps) {
     <Flex gap="sm" direction="column">
       <Flex justify="flex-end">
         <Tooltip label="Edit JSON" withArrow>
-          <ActionIcon title="Edit JSON" variant="light" onClick={() => setShowJsonEditor(!showJsonEditor)}>
+          <ActionIcon radius={0} title="Edit JSON" variant="light" onClick={() => setShowJsonEditor(!showJsonEditor)}>
             <BracesIcon size="md" color={colors.yellow} />
           </ActionIcon>
         </Tooltip>

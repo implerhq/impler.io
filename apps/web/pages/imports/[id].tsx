@@ -75,7 +75,7 @@ export default function ImportDetails({}) {
           </Button>
           <Group spacing={0}>
             <Title order={2}>{templateData?.name}</Title>
-            <ActionIcon onClick={onUpdateClick} p={0}>
+            <ActionIcon radius={0} onClick={onUpdateClick} p={0}>
               <EditIcon color={colors.blue} size="sm" />
             </ActionIcon>
           </Group>

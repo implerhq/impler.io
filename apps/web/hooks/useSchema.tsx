@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
-
 import { modals } from '@mantine/modals';
 import { useForm } from 'react-hook-form';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { SelectItem } from '@mantine/core';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
@@ -12,9 +11,11 @@ import { track } from '@libs/amplitude';
 import { IColumn, IErrorObject } from '@impler/shared';
 import { API_KEYS, COLUMN_TYPES, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS } from '@config';
 
+import { useKeyboardEvent } from './useKeyboardEvent';
 import { useUpdateBulkColumns } from './useUpdateBulkColumns';
-import { ConfirmDelete } from '@components/imports/forms/ConfirmDelete';
 import { usePlanMetaData } from 'store/planmeta.store.context';
+import { ConfirmDelete } from '@components/imports/forms/ConfirmDelete';
+
 const ColumnForm = dynamic(() => import('@components/imports/forms/ColumnForm').then((mod) => mod.ColumnForm), {
   ssr: false,
 });
@@ -27,6 +28,7 @@ export function useSchema({ templateId }: UseSchemaProps) {
   const { meta } = usePlanMetaData();
   const queryClient = useQueryClient();
   const [showAddRow, setShowAddRow] = useState(false);
+  const validationRef = useRef<boolean | undefined>(undefined);
   const { register, control, watch, reset, setFocus, handleSubmit, formState, getValues } = useForm<IColumn>({
     defaultValues: {
       type: 'String',
@@ -125,7 +127,11 @@ export function useSchema({ templateId }: UseSchemaProps) {
       });
     }
   }
-
+  const onAddColumnSubmit = handleSubmit((data) => {
+    validationRef.current = false;
+    if (!data.key) data.key = data.name;
+    createColumn(data);
+  });
   function onValidationsClick(columnData: Partial<IColumn>) {
     if (columnData) {
       modals.open({
@@ -138,6 +144,7 @@ export function useSchema({ templateId }: UseSchemaProps) {
             data={columnData}
             onSubmit={(data) => {
               reset(data);
+              onAddColumnSubmit();
               modals.close(MODAL_KEYS.COLUMN_UPDATE);
             }}
           />
@@ -165,11 +172,10 @@ export function useSchema({ templateId }: UseSchemaProps) {
       children: <ConfirmDelete onConfirm={() => onConfirmDelete(columnId)} />,
     });
   }
-  function onAddColumnSubmit(data: IColumn) {
-    if (!data.key) data.key = data.name;
-    createColumn(data);
+  function onCancelAddColumn() {
+    setShowAddRow(false);
+    validationRef.current = false;
   }
-
   function getColumnTypes(): SelectItem[] {
     if (!meta) return COLUMN_TYPES;
 
@@ -186,6 +192,11 @@ export function useSchema({ templateId }: UseSchemaProps) {
     if (showAddRow) setFocus('name');
   }, [setFocus, showAddRow]);
 
+  useKeyboardEvent('Escape', () => {
+    if (!validationRef.current) onCancelAddColumn();
+    else validationRef.current = false;
+  });
+
   return {
     watch,
     control,
@@ -194,14 +205,16 @@ export function useSchema({ templateId }: UseSchemaProps) {
     formState,
     getValues,
     showAddRow,
+    validationRef,
     onMoveColumns,
     setShowAddRow,
+    getColumnTypes,
+    onAddColumnSubmit,
     onEditColumnClick,
+    onCancelAddColumn,
     onValidationsClick,
     onDeleteColumnClick,
-    getColumnTypes,
     isColumnCreateLoading,
     isLoading: isColumnListLoading,
-    handleSubmit: handleSubmit(onAddColumnSubmit),
   };
 }
