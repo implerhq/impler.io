@@ -97,7 +97,7 @@ export function Members() {
               ),
             },
             {
-              title: 'Action',
+              title: 'Actions',
               key: 'action',
               Cell: () => <ExitIcon style={{ fontWeight: 'bolder' }} size="xl" />,
             },
