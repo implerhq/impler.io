@@ -95,17 +95,16 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
               title="Settings"
             />
             <NavItem
-              target="_blank"
-              title="Documentation"
-              href="https://docs.impler.io"
-              icon={<OutLinkIcon size="lg" />}
-            />
-
-            <NavItem
               active={router.pathname.includes('/team-members')}
               href="/team-members"
               icon={<PeopleIcon size="lg" />}
               title="Team Members"
+            />
+            <NavItem
+              target="_blank"
+              title="Documentation"
+              href="https://docs.impler.io"
+              icon={<OutLinkIcon size="lg" />}
             />
           </Stack>
         </aside>
