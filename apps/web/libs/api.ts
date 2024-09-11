@@ -57,17 +57,17 @@ const routes: Record<string, Route> = {
   },
 
   [API_KEYS.PROJECT_INVITATION]: {
-    url: () => `/v1/user/invite`,
+    url: () => `/v1/invite`,
     method: 'POST',
   },
 
   [API_KEYS.SENT_PROJECT_INVITATION]: {
-    url: () => `/v1/user/sent-invitation`,
+    url: () => `/v1/invite/sent-invitation`,
     method: 'GET',
   },
 
   [API_KEYS.ACCEPT_PROJECT_INVITATION]: {
-    url: () => `/v1/user/invitation`,
+    url: () => `/v1/invite/invitation`,
     method: 'GET',
   },
 
