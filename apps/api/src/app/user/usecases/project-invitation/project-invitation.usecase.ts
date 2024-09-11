@@ -33,12 +33,9 @@ export class ProjectInvitation {
         const emailContents = this.emailService.getEmailContent({
           type: 'PROJECT_INVITATION_EMAIL',
           data: {
-            projectName: command.projectName,
-            invitationId: invitation._id,
-            invitationUrl,
             invitedBy: command.invitatedBy,
-            token: invitation.token,
-            userName: command.userName,
+            projectName: command.projectName,
+            invitationUrl,
           },
         });
         await this.emailService.sendEmail({
