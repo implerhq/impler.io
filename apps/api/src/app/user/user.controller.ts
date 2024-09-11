@@ -1,5 +1,5 @@
 import { ApiTags, ApiOperation, ApiSecurity } from '@nestjs/swagger';
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Put, Query, UseGuards } from '@nestjs/common';
 
 import {
   GetImportCounts,
@@ -12,18 +12,15 @@ import {
   ApplyCoupon,
   Checkout,
   Subscription,
-  ProjectInvitation,
-  SentProjectInvitations,
   RetrievePaymentMethods,
-  AcceptProjectInvitation,
 } from './usecases';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { IJwtPayload, ACCESS_KEY_NAME } from '@impler/shared';
 import { UserSession } from '@shared/framework/user.decorator';
-import { ProjectInvitationDto } from './dto/project-invtation.dto';
 
 @ApiTags('User')
 @Controller('/user')
+@UseGuards(JwtAuthGuard)
 @ApiSecurity(ACCESS_KEY_NAME)
 export class UserController {
   constructor(
@@ -37,10 +34,7 @@ export class UserController {
     private getTransactionHistory: GetTransactionHistory,
     private retrivePaymentMethods: RetrievePaymentMethods,
     private deleteUserPaymentMethod: DeleteUserPaymentMethod,
-    private subscription: Subscription,
-    private projectInvitation: ProjectInvitation,
-    private sentProjectInvitations: SentProjectInvitations,
-    private acceptProjectInvitation: AcceptProjectInvitation
+    private subscription: Subscription
   ) {}
 
   @Get('/import-count')
@@ -64,7 +58,6 @@ export class UserController {
   @ApiOperation({
     summary: 'Get Active Subscription Information',
   })
-  @UseGuards(JwtAuthGuard)
   async getActiveSubscriptionRoute(@UserSession() user: IJwtPayload) {
     return this.getActiveSubscription.execute(user.email);
   }
@@ -73,7 +66,6 @@ export class UserController {
   @ApiOperation({
     summary: 'Cancel active subscription for user',
   })
-  @UseGuards(JwtAuthGuard)
   async cancelSubscriptionRoute(@UserSession() user: IJwtPayload) {
     return this.cancelSubscription.execute(user.email);
   }
@@ -82,7 +74,6 @@ export class UserController {
   @ApiOperation({
     summary: 'Setup User Payment Intent',
   })
-  @UseGuards(JwtAuthGuard)
   async setupEmandateIntent(@UserSession() user: IJwtPayload, @Param('paymentId') paymentId: string) {
     return this.updatePaymentMethod.execute(user.email, paymentId);
   }
@@ -91,7 +82,6 @@ export class UserController {
   @ApiOperation({
     summary: 'Pass the Payment Intent Id If user cancels the E-Mandate Authorization',
   })
-  @UseGuards(JwtAuthGuard)
   async savePaymentIntentIdRoute(@UserSession() user: IJwtPayload, @Param('intentId') intentId: string) {
     return this.confirmIntentId.execute(user.email, intentId);
   }
@@ -100,7 +90,6 @@ export class UserController {
   @ApiOperation({
     summary: 'Retrieve the cards of the User',
   })
-  @UseGuards(JwtAuthGuard)
   async retriveUserPaymentMethods(@UserSession() user: IJwtPayload) {
     return this.retrivePaymentMethods.execute(user.email);
   }
@@ -109,7 +98,6 @@ export class UserController {
   @ApiOperation({
     summary: 'Detach or Delete the card of the User',
   })
-  @UseGuards(JwtAuthGuard)
   async deletePaymentMethodRoute(@Param('paymentMethodId') paymentMethodId: string) {
     return this.deleteUserPaymentMethod.execute(paymentMethodId);
   }
@@ -118,7 +106,6 @@ export class UserController {
   @ApiOperation({
     summary: 'Get Transaction History for User',
   })
-  @UseGuards(JwtAuthGuard)
   async getTransactionHistoryRoute(@UserSession() user: IJwtPayload) {
     return this.getTransactionHistory.execute(user.email);
   }
@@ -128,7 +115,6 @@ export class UserController {
     summary:
       'Check if a Particular coupon is available to apply for a particular plan and if the coupon is valid or not',
   })
-  @UseGuards(JwtAuthGuard)
   async applyCouponRoute(
     @UserSession() user: IJwtPayload,
     @Param('couponCode') couponCode: string,
@@ -141,7 +127,6 @@ export class UserController {
   @ApiOperation({
     summary: 'Make successfull checkout once the coupon is successfully applied',
   })
-  @UseGuards(JwtAuthGuard)
   async checkoutRoute(
     @Query('planCode') planCode: string,
     @UserSession() user: IJwtPayload,
@@ -160,7 +145,6 @@ export class UserController {
   @ApiOperation({
     summary: 'Make successful Plan Purchase and begin subscription',
   })
-  @UseGuards(JwtAuthGuard)
   async newSubscriptionRoute(
     @Query('planCode') planCode: string,
     @UserSession() user: IJwtPayload,
@@ -172,49 +156,6 @@ export class UserController {
       planCode,
       selectedPaymentMethod: paymentMethodId,
       couponCode,
-    });
-  }
-
-  @Post('/invite')
-  @ApiOperation({
-    summary: 'Invite Other Team Members to the Project',
-  })
-  @UseGuards(JwtAuthGuard)
-  async projectInvitationRoute(@UserSession() user: IJwtPayload, @Body() projectInvitationDto: ProjectInvitationDto) {
-    return await this.projectInvitation.exec({
-      invitatedBy: user.email,
-      projectName: projectInvitationDto.projectName,
-      invitationEmailsTo: projectInvitationDto.invitationEmailsTo,
-      role: projectInvitationDto.role,
-      userName: user.firstName,
-      projectId: projectInvitationDto.projectId,
-    });
-  }
-
-  @Get('/sent-invitation')
-  @ApiOperation({
-    summary: 'Fetch Team members details who have sent the invitation(s)',
-  })
-  @UseGuards(JwtAuthGuard)
-  async sentProjectInvitationRoute(@UserSession() user: IJwtPayload) {
-    const sentInviatation = await this.sentProjectInvitations.exec({
-      email: user.email,
-      projectId: user._projectId,
-    });
-
-    return sentInviatation;
-  }
-
-  @Get('/invitation')
-  @ApiOperation({
-    summary: 'Accept an invitation and delete the entry of invitation from database',
-  })
-  async acceptProjectInvitationRoute(@Query('invitationId') invitationId: string, @Query('token') token: string) {
-    console.log(invitationId, token);
-
-    return await this.acceptProjectInvitation.exec({
-      token,
-      invitationId,
     });
   }
 }
