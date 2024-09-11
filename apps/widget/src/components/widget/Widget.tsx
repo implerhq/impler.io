@@ -56,15 +56,18 @@ export function Widget() {
     setPromptContinueAction(undefined);
   };
   const onClose = () => {
-    if (
-      [
+    let isImportNotOnProgress = false;
+    if (importConfig.mode === TemplateModeEnum.AUTOMATIC)
+      isImportNotOnProgress = [PhasesEnum.CONFIGURE, PhasesEnum.CONFIRM].includes(phase);
+    else
+      isImportNotOnProgress = [
         PhasesEnum.VALIDATE,
         PhasesEnum.IMAGE_UPLOAD,
         PhasesEnum.UPLOAD,
         PhasesEnum.COMPLETE,
-        PhasesEnum.CONFIRM,
-      ].includes(phase)
-    ) {
+      ].includes(phase);
+
+    if (isImportNotOnProgress) {
       setPhase(PhasesEnum.VALIDATE);
       resetAppState();
       closeWidget();
