@@ -9,9 +9,6 @@ import { GetTransactionHistory } from './get-transaction-history/get-transaction
 import { ApplyCoupon } from './apply-coupon/apply-coupon.usecase';
 import { Checkout } from './checkout/checkout.usecase';
 import { Subscription } from './subscription/subscription.usecase';
-import { ProjectInvitation } from './project-invitation/project-invitation.usecase';
-import { SentProjectInvitations } from './sent-project-invitation/sent-project-invitation.usecase';
-import { AcceptProjectInvitation } from './accept-project-invitation/accept-project-invitation.usecase';
 
 export const USE_CASES = [
   GetImportCounts,
@@ -25,9 +22,6 @@ export const USE_CASES = [
   ApplyCoupon,
   Checkout,
   Subscription,
-  ProjectInvitation,
-  SentProjectInvitations,
-  AcceptProjectInvitation,
   //
 ];
 
@@ -43,7 +37,4 @@ export {
   ApplyCoupon,
   Checkout,
   Subscription,
-  ProjectInvitation,
-  SentProjectInvitations,
-  AcceptProjectInvitation,
 };
