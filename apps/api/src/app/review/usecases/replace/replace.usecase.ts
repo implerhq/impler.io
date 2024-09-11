@@ -64,11 +64,23 @@ export class Replace {
           },
         };
         replaceOperation = {
-          $toDouble: {
-            $replaceAll: {
-              input: { $toString: '$' + path },
-              find: find,
-              replacement: replace,
+          $cond: {
+            if: { $eq: [formattedReplace, ''] },
+            then: null,
+            else: {
+              $cond: {
+                if: { $eq: [{ $type: '$' + path }, 'number'] },
+                then: {
+                  $toDouble: {
+                    $replaceAll: {
+                      input: { $toString: '$' + path },
+                      find: find,
+                      replacement: formattedReplace,
+                    },
+                  },
+                },
+                else: formattedReplace,
+              },
             },
           },
         };
