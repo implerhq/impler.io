@@ -70,7 +70,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
   return (
     <form id="columns" onSubmit={onAddColumnSubmit}>
       <DraggableTable<IColumn>
-        emptyDataText='No columns found click on "+" to add new column'
+        emptyDataText='No columns found click on "+" to add a new column'
         headings={[
           {
             title: 'Name',
@@ -146,7 +146,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                           />
                         )}
                       />
-                      <Button size="xs" color="blue" onClick={onValidationsButtonClick}>
+                      <Button color="blue" onClick={onValidationsButtonClick}>
                         Validations
                       </Button>
                     </Group>
@@ -155,8 +155,20 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                       <CloseIcon color={appColors.white} />
                     </ActionIcon>
                   </Flex>
-                  <Text mt="xs" color={themeColors.gray[6]}>
-                    * Press ENTER to save, ESC to cancel or click on VALIDATIONS to configure column behavior
+                  <Text size="xs" mt="xs" color={themeColors.gray[6]}>
+                    * Press{' '}
+                    <Text size="sm" span>
+                      ENTER
+                    </Text>{' '}
+                    to save,{' '}
+                    <Text size="sm" span>
+                      ESC
+                    </Text>{' '}
+                    to cancel or click on{' '}
+                    <Text size="sm" span>
+                      VALIDATIONS
+                    </Text>{' '}
+                    to configure column behavior
                   </Text>
                 </td>
               </>
@@ -164,6 +176,7 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
               <td colSpan={6}>
                 <Tooltip label="Add new column" withArrow position="top-start">
                   <ActionIcon
+                    radius={0}
                     id="add-column"
                     bg={appColors.yellow}
                     variant="transparent"
