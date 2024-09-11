@@ -56,7 +56,15 @@ export function Widget() {
     setPromptContinueAction(undefined);
   };
   const onClose = () => {
-    if ([PhasesEnum.VALIDATE, PhasesEnum.IMAGE_UPLOAD, PhasesEnum.UPLOAD, PhasesEnum.COMPLETE].includes(phase)) {
+    if (
+      [
+        PhasesEnum.VALIDATE,
+        PhasesEnum.IMAGE_UPLOAD,
+        PhasesEnum.UPLOAD,
+        PhasesEnum.COMPLETE,
+        PhasesEnum.CONFIRM,
+      ].includes(phase)
+    ) {
       setPhase(PhasesEnum.VALIDATE);
       resetAppState();
       closeWidget();
