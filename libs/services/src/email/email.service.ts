@@ -39,9 +39,6 @@ interface IVerificationEmailOptions {
 }
 
 interface IProjectInvitationEmailOptions {
-  userName: string;
-  invitationId: string;
-  token: string;
   invitedBy: string;
   projectName: string;
   invitationUrl: string;
@@ -403,7 +400,7 @@ const EMAIL_CONTENTS = {
 </html>
 `,
 
-  PROJECT_INVITATION_EMAIL: ({ userName, invitedBy, projectName, invitationUrl }: IProjectInvitationEmailOptions) => `
+  PROJECT_INVITATION_EMAIL: ({ invitedBy, projectName, invitationUrl }: IProjectInvitationEmailOptions) => `
   <!DOCTYPE html>
   <html lang="en">
   <head>
@@ -465,6 +462,7 @@ const EMAIL_CONTENTS = {
           </div>
           
           <div class="content">
+            <p>Hello</p>
               <p>You have been invited to join the project <strong>${projectName}</strong>. Please click the button below to accept the invitation.</p>
               
               <div class="button-container">
