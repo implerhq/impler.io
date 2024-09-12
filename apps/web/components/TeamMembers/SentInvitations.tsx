@@ -1,9 +1,10 @@
 import { LoadingOverlay, Stack, Text } from '@mantine/core';
 import { Table } from '@ui/table';
 import { AppLayout } from '@layouts/AppLayout';
-import { ExitIcon } from '@assets/icons/Exit.icon';
+import dayjs from 'dayjs';
 import { useSentProjectInvitations } from '@hooks/useSentProjectInvitations';
-
+import { SentInvitationActions } from './SentInvitationActions';
+import { DATE_FORMATS } from '@config';
 export function SentInvitations() {
   const { invitations, isInvitationsLoading, isInvitationsFetched, isError } = useSentProjectInvitations();
 
@@ -23,7 +24,9 @@ export function SentInvitations() {
               {
                 title: 'Invited On',
                 key: 'invitedOn',
-                Cell: (invitation) => <Text size="sm">{invitation.invitedOn || 'N/A'}</Text>,
+                Cell: (invitation) => (
+                  <Text size="sm">{dayjs(invitation.invitedOn).format(DATE_FORMATS.LONG) || 'N/A'}</Text>
+                ),
               },
               {
                 title: 'Role',
@@ -31,9 +34,13 @@ export function SentInvitations() {
                 Cell: (invitation) => <Text size="sm">{invitation.role}</Text>,
               },
               {
-                title: 'Action',
+                title: 'Actions',
                 key: 'action',
-                Cell: () => <ExitIcon size="xl" />,
+                Cell: () => (
+                  <>
+                    <SentInvitationActions />
+                  </>
+                ),
               },
             ]}
             data={invitations || []}
