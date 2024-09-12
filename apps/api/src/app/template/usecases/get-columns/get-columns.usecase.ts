@@ -13,6 +13,7 @@ export class GetTemplateColumns {
       {
         sort: {
           isFrozen: -1,
+          sequence: 1,
         },
       }
     );
