@@ -16,7 +16,6 @@ import {
   ReviewDataTypesEnum,
   numberFormatter,
   ColumnDelimiterEnum,
-  IReplaceData,
 } from '@impler/shared';
 import { IUpload } from '@impler/client';
 import { SelectEditor } from './SelectEditor';
@@ -190,17 +189,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
       },
     }
   );
-  const { mutate: replaceData, isLoading: isReplaceDataLoading } = useMutation<
-    unknown,
-    IErrorObject,
-    IReplaceData,
-    [string]
-  >(['replace'], (data) => api.replace(uploadInfo._id, data), {
-    onSuccess: () => {
-      refetchReviewData([page, type]);
-      setShowFindReplaceModal(false);
-    },
-  });
+
   const { refetch: reReviewData, isFetching: isDoReviewLoading } = useQuery<
     unknown,
     IErrorObject,
@@ -306,7 +295,6 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     totalPages,
     columnDefs,
     allChecked,
-    replaceData,
     reReviewData,
     updateRecord,
     onPageChange,
@@ -318,7 +306,6 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     selectedRowsRef,
     isDoReviewLoading,
     isReviewDataLoading,
-    isReplaceDataLoading,
     selectedRowsCountRef,
     showFindReplaceModal,
     showAllDataValidModal,
@@ -332,5 +319,6 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     onConfirmReview: confirmReview,
     totalRecords: uploadInfo.totalRecords ?? undefined,
     invalidRecords: uploadInfo.invalidRecords ?? undefined,
+    refetchReviewData: () => refetchReviewData([page, type]),
   };
 }
