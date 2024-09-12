@@ -172,7 +172,7 @@ export class ApiService {
   }
 
   async replace(uploadId: string, data: IReplaceData) {
-    return this.httpClient.put(`/review/${uploadId}/replace`, data);
+    return this.httpClient.put(`/review/${uploadId}/replace`, data) as Promise<IReplaceResponse>;
   }
 
   async getRssXmlMappingHeading(data: {

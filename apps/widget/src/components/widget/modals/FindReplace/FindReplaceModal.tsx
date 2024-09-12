@@ -1,11 +1,15 @@
-import { useEffect } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { useState } from 'react';
 import { WIDGET_TEXTS } from '@impler/client';
-import { IReplaceData } from '@impler/shared';
-import { Checkbox, Flex, FocusTrap, Modal as MantineModal, Stack, TextInput } from '@mantine/core';
+import { useMutation } from '@tanstack/react-query';
+import { Controller, useForm } from 'react-hook-form';
+import { IErrorObject, IReplaceData } from '@impler/shared';
+import { Alert, Checkbox, Flex, FocusTrap, Modal as MantineModal, Stack, TextInput } from '@mantine/core';
 
+import { CheckIcon } from '@icons';
 import { Button } from '@ui/Button';
 import { Select } from '@ui/Select';
+import { useAPIState } from '@store/api.context';
+import { useAppState } from '@store/app.context';
 
 interface IFindReplaceModalProps {
   opened: boolean;
@@ -13,25 +17,44 @@ interface IFindReplaceModalProps {
   cancelLabel: string;
   onClose: () => void;
   replaceLabel: string;
-  isReplaceLoading: boolean;
   texts: typeof WIDGET_TEXTS;
-  onReplace: (data: IReplaceData) => void;
+  refetchReviewData: () => void;
 }
 
 export function FindReplaceModal(props: IFindReplaceModalProps) {
-  const { opened, onClose, replaceLabel, onReplace, cancelLabel, columns, texts, isReplaceLoading } = props;
+  const { api } = useAPIState();
+  const { uploadInfo } = useAppState();
+  const [modifiedCount, setModifiedCount] = useState<number | undefined>();
+  const { opened, onClose, replaceLabel, refetchReviewData, cancelLabel, columns, texts } = props;
   const { register, handleSubmit, control, reset } = useForm<IReplaceData>({
     defaultValues: {
       column: '',
     },
   });
 
-  useEffect(() => {
-    if (!opened)
-      reset({
-        column: '',
-      });
-  }, [opened]);
+  const { mutate: replaceData, isLoading: isReplaceDataLoading } = useMutation<
+    IReplaceResponse,
+    IErrorObject,
+    IReplaceData,
+    [string]
+  >(['replace'], (data) => api.replace(uploadInfo._id, data), {
+    onSuccess: (data) => {
+      refetchReviewData();
+      setModifiedCount(data.modifiedCount);
+    },
+  });
+
+  const onCloseModal = () => {
+    onClose();
+    reset({
+      column: '',
+      find: '',
+      caseSensitive: false,
+      matchEntireCell: false,
+      replace: '',
+    });
+    setModifiedCount(undefined);
+  };
 
   return (
     <MantineModal
@@ -39,12 +62,12 @@ export function FindReplaceModal(props: IFindReplaceModalProps) {
       size="lg"
       padding="xl"
       opened={opened}
-      onClose={onClose}
       keepMounted={false}
+      onClose={onCloseModal}
       title={texts.PHASE3.FIND_REPLACE}
     >
       <FocusTrap active>
-        <form onSubmit={handleSubmit(onReplace)}>
+        <form onSubmit={handleSubmit((data) => replaceData(data))}>
           <Stack spacing="xs">
             <TextInput
               data-autofocus
@@ -70,11 +93,16 @@ export function FindReplaceModal(props: IFindReplaceModalProps) {
             />
             <Checkbox label={texts.PHASE3.CASE_SENSITIVE_LABEL} {...register('caseSensitive')} />
             <Checkbox label={texts.PHASE3.MATCH_ENTIRE_LABEL} {...register('matchEntireCell')} />
+            {typeof modifiedCount === 'number' && (
+              <Alert color="green" icon={<CheckIcon />}>
+                {modifiedCount} cell values have been updated
+              </Alert>
+            )}
             <Flex direction="row" gap="xs" justify="flex-end">
-              <Button onClick={onClose} color="gray" variant="outline">
+              <Button onClick={onCloseModal} color="gray" variant="outline">
                 {cancelLabel}
               </Button>
-              <Button loading={isReplaceLoading} type="submit">
+              <Button loading={isReplaceDataLoading} type="submit">
                 {replaceLabel}
               </Button>
             </Flex>
