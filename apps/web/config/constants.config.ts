@@ -316,3 +316,8 @@ export const PLACEHOLDERS = {
   source: 'Google Search, Recommendation...',
   about: 'Google Search',
 };
+
+export const DATE_FORMATS = {
+  SHORT: 'DD/MM/YYYY',
+  LONG: 'DD MMM YYYY',
+};
