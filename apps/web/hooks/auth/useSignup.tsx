@@ -2,12 +2,13 @@ import jwt from 'jwt-decode';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { API_KEYS } from '@config';
+import { notify } from '@libs/notify';
 import { commonApi } from '@libs/api';
 import { track } from '@libs/amplitude';
 import { useAppState } from 'store/app.context';
+import { API_KEYS, NOTIFICATION_KEYS } from '@config';
 import { handleRouteBasedOnScreenResponse } from '@shared/helpers';
 import { IErrorObject, ILoginResponse, SCREENS } from '@impler/shared';
 
@@ -17,16 +18,51 @@ interface ISignupFormData {
   password: string;
 }
 
+interface ISignupData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+}
+
 export function useSignup() {
   const { setProfileInfo } = useAppState();
-  const { push } = useRouter();
+  const { push, query } = useRouter();
   const {
+    setValue,
     setError,
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<ISignupFormData>({});
   const [errorMessage, setErrorMessage] = useState<IErrorObject | undefined>(undefined);
+
+  const { invitationId, token } = query as { invitationId?: string; token?: string };
+  const isInvitationLink = !!invitationId && !!token;
+
+  const { isLoading: isGettingInvitation, isError } = useQuery<any, IErrorObject, { email: string }>(
+    [API_KEYS.GET_PROJECT_INVITATION, invitationId, token],
+    () =>
+      commonApi(API_KEYS.GET_PROJECT_INVITATION as any, {
+        query: {
+          invitationId,
+          token,
+        },
+      }),
+    {
+      enabled: isInvitationLink,
+      onSuccess: (data) => {
+        setValue('email', data.email);
+      },
+      onError: (error) => {
+        notify(NOTIFICATION_KEYS.ERROR_ACCEPTING_INVITATION, {
+          title: 'Error Accepting Invitation',
+          message: error?.message || 'Error while accepting invitation',
+          color: 'red',
+        });
+      },
+    }
+  );
 
   const { mutate: signup, isLoading: isSignupLoading } = useMutation<
     ILoginResponse,
@@ -47,6 +83,7 @@ export function useSignup() {
           id: profileData._id,
         },
       });
+
       handleRouteBasedOnScreenResponse(data.screen as SCREENS, push);
     },
     onError(error) {
@@ -77,6 +114,9 @@ export function useSignup() {
     register,
     errorMessage,
     isSignupLoading,
+    isGettingInvitation,
+    isError,
+    isInvitationLink,
     signup: handleSubmit(onSignup),
   };
 }
