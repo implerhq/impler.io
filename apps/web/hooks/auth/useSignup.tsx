@@ -5,10 +5,10 @@ import { useForm } from 'react-hook-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { notify } from '@libs/notify';
+import { API_KEYS, NOTIFICATION_KEYS } from '@config';
 import { commonApi } from '@libs/api';
 import { track } from '@libs/amplitude';
 import { useAppState } from 'store/app.context';
-import { API_KEYS, NOTIFICATION_KEYS } from '@config';
 import { handleRouteBasedOnScreenResponse } from '@shared/helpers';
 import { IErrorObject, ILoginResponse, SCREENS } from '@impler/shared';
 
@@ -40,10 +40,10 @@ export function useSignup() {
   const { invitationId, token } = query as { invitationId?: string; token?: string };
   const isInvitationLink = !!invitationId && !!token;
 
-  const { isLoading: isGettingInvitation, isError } = useQuery<any, IErrorObject, { email: string }>(
-    [API_KEYS.GET_PROJECT_INVITATION, invitationId, token],
+  const { isLoading: isAcceptingInvitation, isError } = useQuery<any, IErrorObject, { email: string }>(
+    [API_KEYS.ACCEPT_PROJECT_INVITATION, invitationId, token],
     () =>
-      commonApi(API_KEYS.GET_PROJECT_INVITATION as any, {
+      commonApi(API_KEYS.ACCEPT_PROJECT_INVITATION as any, {
         query: {
           invitationId,
           token,
@@ -114,7 +114,7 @@ export function useSignup() {
     register,
     errorMessage,
     isSignupLoading,
-    isGettingInvitation,
+    isAcceptingInvitation,
     isError,
     isInvitationLink,
     signup: handleSubmit(onSignup),
