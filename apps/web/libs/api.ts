@@ -66,9 +66,14 @@ const routes: Record<string, Route> = {
     method: 'GET',
   },
 
-  [API_KEYS.ACCEPT_PROJECT_INVITATION]: {
+  [API_KEYS.GET_PROJECT_INVITATION]: {
     url: () => `/v1/invite/invitation`,
     method: 'GET',
+  },
+
+  [API_KEYS.ACCEPT_PROJECT_INVITATION]: {
+    url: () => `/v1/invite/invitation-accept`,
+    method: 'POST',
   },
 
   [API_KEYS.PROJECTS_LIST]: {
