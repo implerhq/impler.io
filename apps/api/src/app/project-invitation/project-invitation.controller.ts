@@ -2,14 +2,14 @@ import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { IJwtPayload } from '@impler/shared';
 import { ProjectInvitationDto } from './dto/project-invtation.dto';
-import { ProjectInvitation, SentProjectInvitations, GetProjectInvitation, AcceptProjectInvitation } from './usecase';
+import { Invite, SentProjectInvitations, GetProjectInvitation, AcceptProjectInvitation } from './usecase';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { UserSession } from '@shared/framework/user.decorator';
 
 @Controller('invite')
 export class ProjectInvitationController {
   constructor(
-    private projectInvitation: ProjectInvitation,
+    private invite: Invite,
     private sentProjectInvitations: SentProjectInvitations,
     private getProjectInvitation: GetProjectInvitation,
     private acceptProjectInvitation: AcceptProjectInvitation
@@ -21,7 +21,7 @@ export class ProjectInvitationController {
   })
   @UseGuards(JwtAuthGuard)
   async projectInvitationRoute(@UserSession() user: IJwtPayload, @Body() projectInvitationDto: ProjectInvitationDto) {
-    return await this.projectInvitation.exec({
+    return await this.invite.exec({
       invitatedBy: user.email,
       projectName: projectInvitationDto.projectName,
       invitationEmailsTo: projectInvitationDto.invitationEmailsTo,
