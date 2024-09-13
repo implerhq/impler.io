@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
 import { Flex, Select } from '@mantine/core';
-import { Button } from '@ui/button';
 import { Controller } from 'react-hook-form';
-import { INVITATION_FORM_ROLES } from '@config';
+
+import { Button } from '@ui/button';
 import { validateEmails } from '@shared/utils';
-import { useProjectInvitationForm } from '@hooks/useProjectInvitationForm';
 import { MultiSelect } from '@ui/multi-select';
+import { INVITATION_FORM_ROLES } from '@config';
+import { useProjectInvitationForm } from '@hooks/useProjectInvitationForm';
+import { useSentProjectInvitations } from '@hooks/useSentProjectInvitations';
 
 export function ProjectInvitationModal() {
-  const { control, handleSubmit, errors, onSubmit, isProjectInvitationLoading } = useProjectInvitationForm();
+  const { refetchInvitations } = useSentProjectInvitations();
+  const { control, handleSubmit, errors, onSubmit, isProjectInvitationLoading } = useProjectInvitationForm({
+    refetchInvitations,
+  });
   const [emailOptions, setEmailOptions] = useState<{ value: string; label: string }[]>([]);
 
   return (
@@ -24,16 +29,16 @@ export function ProjectInvitationModal() {
             nothingFound="Nothing found"
             searchable
             creatable
-            getCreateLabel={(query) => `+ Add Email ${query}`}
+            getCreateLabel={(query) => `+ ${query}`}
             onCreate={(query) => {
               const item: any = { value: query, label: query };
               setEmailOptions((current) => [...current, item]);
 
               return item;
             }}
-            {...field}
             error={errors.invitationEmailsTo ? errors.invitationEmailsTo.message : undefined}
             value={field.value || []}
+            onChange={field.onChange}
           />
         )}
         rules={{
