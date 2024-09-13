@@ -15,7 +15,11 @@ interface ProjectInvitationData {
   projectId?: string;
 }
 
-export function useProjectInvitationForm() {
+interface UseProjectInvitationFormProps {
+  refetchInvitations: () => void;
+}
+
+export function useProjectInvitationForm({ refetchInvitations }: UseProjectInvitationFormProps) {
   const { profileInfo } = useAppState();
 
   const {
@@ -39,6 +43,7 @@ export function useProjectInvitationForm() {
     {
       onSuccess: () => {
         modals.close(MODAL_KEYS.INVITE_MEMBERS);
+        refetchInvitations();
       },
       onError: (err) => {
         console.log(err);
