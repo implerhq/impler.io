@@ -2,8 +2,8 @@ import { Group, Stack, Avatar, Text, Select } from '@mantine/core';
 import { Table } from '@ui/table';
 import { AppLayout } from '@layouts/AppLayout';
 import { ExitIcon } from '@assets/icons/Exit.icon';
-
-import { MEMBER_ROLE } from '@config';
+import dayjs from 'dayjs';
+import { DATE_FORMATS, MEMBER_ROLE } from '@config';
 
 interface User {
   name: string;
@@ -66,13 +66,13 @@ export function Members() {
             {
               title: 'User',
               key: 'user',
-              Cell: (member: Member) => (
+              Cell: (item) => (
                 <Group spacing="sm">
                   <Avatar style={{ border: '1px solid white', borderRadius: 0 }} size="md" />
                   <div>
-                    <Text>{member.user.name}</Text>
+                    <Text>{item.user.name}</Text>
                     <Text size="xs" color="dimmed">
-                      {member.user.email}
+                      {item.user.email}
                     </Text>
                   </div>
                 </Group>
@@ -81,15 +81,18 @@ export function Members() {
             {
               title: 'Joined Date',
               key: 'joinedDate',
+              Cell(item) {
+                return dayjs(item.joinedDate).format(DATE_FORMATS.LONG);
+              },
             },
             {
               title: 'Role',
               key: 'role',
-              Cell: (member: Member) => (
+              Cell: (item) => (
                 <Select
                   data={MEMBER_ROLE}
                   maw={125}
-                  value={member.role}
+                  value={item.role}
                   onChange={(value) => {
                     alert(value);
                   }}
@@ -102,7 +105,7 @@ export function Members() {
               Cell: () => <ExitIcon style={{ fontWeight: 'bolder' }} size="xl" />,
             },
           ]}
-          data={membersData}
+          data={membersData || []}
         />
       </Stack>
     </Stack>
