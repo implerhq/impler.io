@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { modals } from '@mantine/modals';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import {
   Stack,
   TextInput as Input,
@@ -9,13 +9,13 @@ import {
   SimpleGrid,
   Title,
   Group,
-  CloseButton,
   Select,
-  useMantineColorScheme,
   SelectItem,
+  CloseButton,
+  useMantineColorScheme,
 } from '@mantine/core';
 
-import { ColumnTypesEnum, DEFAULT_VALUES, IColumn } from '@impler/shared';
+import { ColumnTypesEnum, DEFAULT_VALUES, IColumn, ValidatorTypesEnum } from '@impler/shared';
 import { colors, DELIMITERS, MODAL_KEYS, MODAL_TITLES, DOCUMENTATION_REFERENCE_LINKS } from '@config';
 
 import { Button } from '@ui/button';
@@ -24,11 +24,12 @@ import { Checkbox } from '@ui/checkbox';
 import { useSchema } from '@hooks/useSchema';
 import { MultiSelect } from '@ui/multi-select';
 import { CustomSelect } from '@ui/custom-select';
+import { MinMaxValidator } from '@ui/min-max-validator';
 import { TooltipLabel } from '@components/guide-point';
 
 interface ColumnFormProps {
-  data?: Partial<IColumn>;
   isLoading?: boolean;
+  data?: Partial<IColumn>;
   onSubmit: (data: IColumn) => void;
 }
 
@@ -44,6 +45,10 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
     formState: { errors },
   } = useForm<IColumn>({
     defaultValues: data,
+  });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'validators',
   });
   const typeValue = watch('type');
   const multiSelectValue = watch('allowMultiSelect');
@@ -275,6 +280,45 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 register={register('isFrozen')}
                 description="Will freeze column left side in generated sample and in Review section."
               />
+              {typeValue === ColumnTypesEnum.NUMBER ? (
+                <MinMaxValidator
+                  errors={errors}
+                  control={control}
+                  minPlaceholder="Min"
+                  maxPlaceholder="Max"
+                  label="Range Validation"
+                  description="Specify the range the value should be in"
+                  errorMessagePlaceholder='Value must be between "Min" and "Max"'
+                  index={fields.findIndex((field) => field.validate === ValidatorTypesEnum.RANGE)}
+                  onCheckToggle={(status, index) => {
+                    if (status) {
+                      append({ validate: ValidatorTypesEnum.RANGE });
+                    } else {
+                      remove(index);
+                    }
+                  }}
+                />
+              ) : null}
+              {typeValue === ColumnTypesEnum.STRING ? (
+                <MinMaxValidator
+                  min={0}
+                  errors={errors}
+                  control={control}
+                  label="Length Validation"
+                  minPlaceholder="Min characters"
+                  maxPlaceholder="Max characters"
+                  description="Specify the range the string length should be in"
+                  errorMessagePlaceholder='Value must be between "Min" and "Max"'
+                  index={fields.findIndex((field) => field.validate === ValidatorTypesEnum.LENGTH)}
+                  onCheckToggle={(status, index) => {
+                    if (status) {
+                      append({ validate: ValidatorTypesEnum.LENGTH });
+                    } else {
+                      remove(index);
+                    }
+                  }}
+                />
+              ) : null}
             </Stack>
           </SimpleGrid>
         </div>

@@ -1,3 +1,24 @@
+export enum ValidatorTypesEnum {
+  RANGE = 'range',
+  LENGTH = 'length',
+}
+
+export type RangeValidator = {
+  validate: ValidatorTypesEnum.RANGE;
+  min?: number;
+  max?: number;
+  errorMessage?: string;
+};
+
+export type LengthValidator = {
+  validate: ValidatorTypesEnum.LENGTH;
+  min?: number;
+  max?: number;
+  errorMessage?: string;
+};
+
+export type ValidatorType = RangeValidator | LengthValidator;
+
 export interface IColumn {
   _id: string;
   name: string;
@@ -16,6 +37,7 @@ export interface IColumn {
   selectValues?: string[];
   dateFormats?: string[];
   sequence?: number;
+  validators?: ValidatorType[];
   _templateId: string;
 }
 
