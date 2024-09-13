@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { IJwtPayload } from '@impler/shared';
 import { ProjectInvitationDto } from './dto/project-invtation.dto';
-import { ProjectInvitation, SentProjectInvitations, GetInvitation } from './usecase';
+import { ProjectInvitation, SentProjectInvitations, GetProjectInvitation, AcceptProjectInvitation } from './usecase';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { UserSession } from '@shared/framework/user.decorator';
 
@@ -11,7 +11,8 @@ export class ProjectInvitationController {
   constructor(
     private projectInvitation: ProjectInvitation,
     private sentProjectInvitations: SentProjectInvitations,
-    private acceptProjectInvitation: GetInvitation
+    private getProjectInvitation: GetProjectInvitation,
+    private acceptProjectInvitation: AcceptProjectInvitation
   ) {}
 
   @Post()
@@ -43,17 +44,30 @@ export class ProjectInvitationController {
 
     return sentInviatation;
   }
-
   @Get('/invitation')
   @ApiOperation({
-    summary: 'Accept an invitation and delete the entry of invitation from database',
+    summary: 'Fetch an already sent invitation',
   })
-  async acceptProjectInvitationRoute(@Query('invitationId') invitationId: string, @Query('token') token: string) {
+  async getProjectInvitationRoute(@Query('invitationId') invitationId: string, @Query('token') token: string) {
     console.log(invitationId, token);
 
-    return await this.acceptProjectInvitation.exec({
-      token,
+    const invitation = await this.getProjectInvitation.exec({
       invitationId,
+      token,
     });
+
+    return invitation;
+  }
+
+  @Post('/invitation-accept')
+  @ApiOperation({
+    summary: 'Accept a sent Invitation',
+  })
+  async acceptInvitationRoute(
+    @UserSession() user: IJwtPayload,
+    @Query('invitationId') invitationId: string,
+    @Query('token') token: string
+  ) {
+    return await this.acceptProjectInvitation.exec({ invitationId, token, userId: user._id });
   }
 }
