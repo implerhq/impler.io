@@ -8,6 +8,7 @@ export type Subjects =
   | 'Settings'
   | 'Plan'
   | 'File'
+  | 'TeamMembers'
   | 'AccessToken'
   | 'Cards'
   | 'all';
@@ -25,10 +26,10 @@ export const defineAbilitiesFor = (role?: string): AppAbility => {
       can('read', 'Homepage');
       can('create', 'Imports');
       can('read', 'Imports');
-      can('update', 'Imports');
       can('read', 'Analytics');
       can('read', 'Settings');
       can('read', 'AccessToken');
+      can('read', 'TeamMembers');
       break;
     case 'finance':
       can('read', 'Homepage');
