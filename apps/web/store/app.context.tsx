@@ -1,14 +1,24 @@
-import React, { createContext, useContext, useState } from 'react';
-import { IAppStore } from '../types';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { AppAbility } from 'config/defineAbilities';
 
-interface AppContextProviderProps extends React.PropsWithChildren, Omit<IAppStore, 'profileInfo' | 'setProfileInfo'> {}
+interface AppContextType {
+  profileInfo?: IProfileData;
+  setAbility: (ability: AppAbility) => void;
+  setProfileInfo: (profileInfo?: IProfileData) => void;
+}
 
-const AppContext = createContext<IAppStore | null>(null);
+const AppContext = createContext<AppContextType | null>(null);
 
-const AppContextProvider = ({ children }: AppContextProviderProps) => {
+const AppContextProvider = ({
+  children,
+  setAbility,
+}: {
+  children: ReactNode;
+  setAbility: (ability: AppAbility) => void;
+}) => {
   const [profileInfo, setProfileInfo] = useState<IProfileData | undefined>(undefined);
 
-  return <AppContext.Provider value={{ profileInfo, setProfileInfo }}>{children}</AppContext.Provider>;
+  return <AppContext.Provider value={{ profileInfo, setProfileInfo, setAbility }}>{children}</AppContext.Provider>;
 };
 
 export function useAppState() {
