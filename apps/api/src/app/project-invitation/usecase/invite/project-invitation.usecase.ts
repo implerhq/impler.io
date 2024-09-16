@@ -46,8 +46,6 @@ export class Invite {
         token: invitation.token,
       });
 
-      console.log(invitationUrl);
-
       const emailContents = this.emailService.getEmailContent({
         type: 'PROJECT_INVITATION_EMAIL',
         data: {
