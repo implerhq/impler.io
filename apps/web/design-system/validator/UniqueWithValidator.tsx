@@ -1,4 +1,4 @@
-import { MantineSize, TextInput } from '@mantine/core';
+import { MantineSize, Stack, TextInput } from '@mantine/core';
 import { Control, Controller, FieldErrors } from 'react-hook-form';
 
 import { IColumn } from '@impler/shared';
@@ -20,7 +20,7 @@ export function UniqueWithValidator({
   errorMessagePlaceholder,
 }: UniqueWithValidatorProps) {
   return (
-    <>
+    <Stack spacing={5}>
       <Controller
         control={control}
         rules={{
@@ -48,6 +48,6 @@ export function UniqueWithValidator({
           />
         )}
       />
-    </>
+    </Stack>
   );
 }

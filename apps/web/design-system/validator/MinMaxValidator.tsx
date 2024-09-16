@@ -1,5 +1,5 @@
 import { Control, Controller, FieldErrors } from 'react-hook-form';
-import { Group, MantineSize, TextInput, NumberInput } from '@mantine/core';
+import { Group, MantineSize, TextInput, NumberInput, Stack } from '@mantine/core';
 
 import { IColumn } from '@impler/shared';
 
@@ -39,7 +39,7 @@ export function MinMaxValidator({
   };
 
   return (
-    <>
+    <Stack spacing={5}>
       <Group spacing={5} noWrap>
         <Controller
           control={control}
@@ -86,6 +86,6 @@ export function MinMaxValidator({
           />
         )}
       />
-    </>
+    </Stack>
   );
 }

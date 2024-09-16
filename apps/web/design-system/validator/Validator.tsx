@@ -52,34 +52,32 @@ export function Validator({
           {label ? <label className={classes.label}>{label}</label> : null}
           {description ? <p className={classes.description}>{description}</p> : null}
         </div>
-        <Stack spacing={5}>
-          <AutoHeightComponent isVisible={index > -1 && type === ValidatorTypesEnum.UNIQUE_WITH}>
-            <UniqueWithValidator
-              key={index}
-              size={size}
-              index={index}
-              errors={errors}
-              control={control}
-              errorMessagePlaceholder={errorMessagePlaceholder}
-            />
-          </AutoHeightComponent>
-          <AutoHeightComponent
-            isVisible={index > -1 && (type === ValidatorTypesEnum.LENGTH || type === ValidatorTypesEnum.RANGE)}
-          >
-            <MinMaxValidator
-              max={max}
-              min={min}
-              key={index}
-              size={size}
-              index={index}
-              errors={errors}
-              control={control}
-              maxPlaceholder={maxPlaceholder}
-              minPlaceholder={minPlaceholder}
-              errorMessagePlaceholder={errorMessagePlaceholder}
-            />
-          </AutoHeightComponent>
-        </Stack>
+        <AutoHeightComponent isVisible={index > -1 && type === ValidatorTypesEnum.UNIQUE_WITH}>
+          <UniqueWithValidator
+            key={index}
+            size={size}
+            index={index}
+            errors={errors}
+            control={control}
+            errorMessagePlaceholder={errorMessagePlaceholder}
+          />
+        </AutoHeightComponent>
+        <AutoHeightComponent
+          isVisible={index > -1 && (type === ValidatorTypesEnum.LENGTH || type === ValidatorTypesEnum.RANGE)}
+        >
+          <MinMaxValidator
+            max={max}
+            min={min}
+            key={index}
+            size={size}
+            index={index}
+            errors={errors}
+            control={control}
+            maxPlaceholder={maxPlaceholder}
+            minPlaceholder={minPlaceholder}
+            errorMessagePlaceholder={errorMessagePlaceholder}
+          />
+        </AutoHeightComponent>
       </Stack>
     </Flex>
   );
