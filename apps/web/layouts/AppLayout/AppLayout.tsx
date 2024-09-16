@@ -21,6 +21,7 @@ import { useApp } from '@hooks/useApp';
 import { NavItem } from '@ui/nav-item';
 import { UserMenu } from '@ui/user-menu';
 import { track } from '@libs/amplitude';
+import { Can } from 'store/ability.context';
 import { ColorSchemeToggle } from '@ui/toggle-color-scheme';
 
 const Support = dynamic(() => import('components/common/Support').then((mod) => mod.Support), {
@@ -76,12 +77,15 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
           />
           <Stack spacing="sm" py="xs">
             <NavItem active={router.pathname === '/'} href="/" icon={<HomeIcon size="lg" />} title="Home" />
-            <NavItem
-              active={router.pathname.includes('/imports')}
-              href="/imports"
-              icon={<ImportIcon size="lg" />}
-              title="Imports"
-            />
+            <Can I="read" a="Imports">
+              <NavItem
+                active={router.pathname.includes('/imports')}
+                href="/imports"
+                icon={<ImportIcon size="lg" />}
+                title="Imports"
+              />
+            </Can>
+
             <NavItem
               active={router.pathname.includes('/activities')}
               href="/activities"
@@ -94,12 +98,14 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
               icon={<SettingsIcon size="lg" />}
               title="Settings"
             />
-            <NavItem
-              active={router.pathname.includes('/team-members')}
-              href="/team-members"
-              icon={<PeopleIcon size="lg" />}
-              title="Team Members"
-            />
+            <Can I="read" a="TeamMembers">
+              <NavItem
+                active={router.pathname.includes('/team-members')}
+                href="/team-members"
+                icon={<PeopleIcon size="lg" />}
+                title="Team Members"
+              />
+            </Can>
             <NavItem
               target="_blank"
               title="Documentation"
