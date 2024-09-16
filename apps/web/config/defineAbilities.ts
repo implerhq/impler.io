@@ -1,33 +1,37 @@
-import { createMongoAbility, MongoAbility } from '@casl/ability';
+import { defineAbility } from '@casl/ability';
 
 export type Actions = 'manage' | 'read' | 'create' | 'update' | 'buy';
-export type Subjects = 'Homepage' | 'Imports' | 'Analytics' | 'Settings' | 'Plan' | 'all';
+export type Subjects =
+  | 'Homepage'
+  | 'Imports'
+  | 'Analytics'
+  | 'Settings'
+  | 'Plan'
+  | 'File'
+  | 'AccessToken'
+  | 'Cards'
+  | 'all';
 
-export const defineAbilitiesFor = (user: { role?: string }): MongoAbility => {
-  const ability = createMongoAbility<[Actions, Subjects]>();
-
-  const role = user.role as 'admin' | 'tech' | 'finance' | undefined;
-  switch (role) {
-    case 'admin':
-      ability.can('manage', 'all');
-      break;
-    case 'tech':
-      ability.can('read', 'Homepage');
-      ability.can('create', 'Imports');
-      ability.can('read', 'Imports');
-      ability.can('update', 'Imports');
-      ability.can('read', 'Analytics');
-      ability.can('read', 'Settings');
-      break;
-    case 'finance':
-      ability.can('read', 'Homepage');
-      ability.can('read', 'Analytics');
-      ability.can('read', 'Settings');
-      ability.can('buy', 'Plan');
-      break;
-    default:
-      ability.cannot('manage', 'all');
-  }
-
-  return ability;
-};
+export const defineAbilitiesFor = (role?: string) =>
+  defineAbility((can) => {
+    switch (role) {
+      case 'admin':
+        can('manage', 'all');
+        break;
+      case 'tech':
+        can('read', 'Homepage');
+        can('create', 'Imports');
+        can('read', 'Imports');
+        can('update', 'Imports');
+        can('read', 'Analytics');
+        can('read', 'Settings');
+        can('read', 'AccessToken');
+        break;
+      case 'finance':
+        can('read', 'Homepage');
+        can('read', 'Settings');
+        can('buy', 'Plan');
+        can('read', 'Cards');
+        break;
+    }
+  });
