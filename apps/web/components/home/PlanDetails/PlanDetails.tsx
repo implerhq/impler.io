@@ -12,17 +12,18 @@ import { TooltipLink } from '@components/guide-point';
 import { PlansModal } from '@components/UpgradePlan/PlansModal';
 import { CONSTANTS, MODAL_KEYS, ROUTES, colors, DOCUMENTATION_REFERENCE_LINKS } from '@config';
 import { defineAbilitiesFor } from 'config/defineAbilities';
-import { useAppState } from 'store/app.context';
+import { useApp } from '@hooks/useApp';
 
 export function PlanDetails() {
   const router = useRouter();
 
-  const { profileInfo } = useAppState();
-  const ability = defineAbilitiesFor({ role: profileInfo?.role });
+  const { profile } = useApp();
+  const ability = defineAbilitiesFor(profile?.role);
+
   const { [CONSTANTS.PLAN_CODE_QUERY_KEY]: selectedPlan } = router.query;
 
   const { activePlanDetails, isActivePlanLoading } = usePlanDetails({
-    email: profileInfo?.email ?? '',
+    email: profile?.email ?? '',
   });
 
   const onChoosePlanClick = () => {
@@ -35,7 +36,7 @@ export function PlanDetails() {
       modalId: MODAL_KEYS.PAYMENT_PLANS,
       children: (
         <PlansModal
-          userProfile={profileInfo!}
+          userProfile={profile!}
           activePlanCode={activePlanDetails?.plan?.code}
           canceledOn={activePlanDetails?.plan.canceledOn}
           expiryDate={activePlanDetails?.expiryDate}
@@ -47,19 +48,17 @@ export function PlanDetails() {
   };
 
   useEffect(() => {
-    if (selectedPlan && profileInfo) {
+    if (selectedPlan && profile) {
       modals.open({
         size: '2xl',
         withCloseButton: false,
         id: MODAL_KEYS.SELECT_CARD,
         modalId: MODAL_KEYS.SELECT_CARD,
-        children: (
-          <SelectCardModal planCode={selectedPlan as string} email={profileInfo.email} onClose={modals.closeAll} />
-        ),
+        children: <SelectCardModal planCode={selectedPlan as string} email={profile.email} onClose={modals.closeAll} />,
       });
       router.push(ROUTES.HOME, {}, { shallow: true });
     }
-  }, [profileInfo, selectedPlan, router]);
+  }, [profile, selectedPlan, router]);
 
   if (isActivePlanLoading) return <Skeleton width="100%" height="200" />;
 
@@ -117,59 +116,62 @@ export function PlanDetails() {
         backgroundColor: backgroundColor + '20',
       }}
     >
-      <Flex gap={5} justify="space-between" w="100%">
-        <Flex direction="column" gap={5} align="center">
-          <Title order={3} fw="bold">
-            {numberFormatter(activePlanDetails!.usage.IMPORTED_ROWS)}
-            {'/'}
-            {numberFormatter(numberOfRecords)}
-          </Title>
-          <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
-            Records Imported
-          </Text>
-        </Flex>
-        <Flex direction="column" gap={5} align="center">
-          <Title order={3} fw="bold">
-            {activePlanDetails.plan.name}
-          </Title>
-          <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
-            Active Plan
-          </Text>
-        </Flex>
-        {Number(activePlanDetails.plan.charge) ? (
-          <>
-            <Flex direction="column" gap={5} align="center">
-              <Title order={3} fw="bold">
-                {'$' + activePlanDetails.plan.charge}
-              </Title>
-              <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
-                Outstanding Amount
-              </Text>
-            </Flex>
-          </>
-        ) : null}
-        <Flex direction="column" gap={5} align="center">
-          <Title order={3} fw="bold">
-            <>{activePlanDetails!.expiryDate}</>
-          </Title>
-          <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
-            Expiry Date
-          </Text>
-        </Flex>
-        {ability.can('buy', 'Plan') && (
+      {ability.can('read', 'Homepage') && (
+        <Flex gap={5} justify="space-between" w="100%">
           <Flex direction="column" gap={5} align="center">
-            <Button
-              onClick={onChoosePlanClick}
-              color={isLessThanZero || activePlanDetails.usage.IMPORTED_ROWS > numberOfRecords ? 'red' : 'blue'}
-            >
-              Choose Plan
-            </Button>
-            <Text component={Link} href="/transactions" color={colors.yellow} td="underline">
-              View all transactions
+            <Title order={3} fw="bold">
+              {numberFormatter(activePlanDetails!.usage.IMPORTED_ROWS)}
+              {'/'}
+              {numberFormatter(numberOfRecords)}
+            </Title>
+            <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
+              Records Imported
             </Text>
           </Flex>
-        )}
-      </Flex>
+          <Flex direction="column" gap={5} align="center">
+            <Title order={3} fw="bold">
+              {activePlanDetails.plan.name}
+            </Title>
+            <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
+              Active Plan
+            </Text>
+          </Flex>
+          {Number(activePlanDetails.plan.charge) ? (
+            <>
+              <Flex direction="column" gap={5} align="center">
+                <Title order={3} fw="bold">
+                  {'$' + activePlanDetails.plan.charge}
+                </Title>
+                <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
+                  Outstanding Amount
+                </Text>
+              </Flex>
+            </>
+          ) : null}
+          <Flex direction="column" gap={5} align="center">
+            <Title order={3} fw="bold">
+              <>{activePlanDetails!.expiryDate}</>
+            </Title>
+            <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
+              Expiry Date
+            </Text>
+          </Flex>
+          {ability.can('buy', 'Plan') && (
+            <Flex direction="column" gap={5} align="center">
+              <Button
+                onClick={onChoosePlanClick}
+                color={isLessThanZero || activePlanDetails.usage.IMPORTED_ROWS > numberOfRecords ? 'red' : 'blue'}
+              >
+                Choose Plan
+              </Button>
+              <Text component={Link} href="/transactions" color={colors.yellow} td="underline">
+                View all transactions
+              </Text>
+            </Flex>
+          )}
+        </Flex>
+      )}
+
       <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.subscriptionInformation} iconSize="md" />
     </Flex>
   );
