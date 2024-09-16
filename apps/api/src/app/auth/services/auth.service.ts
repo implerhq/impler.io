@@ -134,6 +134,7 @@ export class AuthService {
         {
           _id: user._id,
           _projectId,
+          role: 'admin',
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
