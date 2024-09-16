@@ -9,7 +9,14 @@ import Ajv, { AnySchemaObject, ErrorObject, ValidateFunction } from 'ajv';
 
 import { ValidatorErrorMessages } from '@shared/types/review.types';
 import { SManager, BATCH_LIMIT, MAIN_CODE, ExecuteIsolateResult } from '@shared/services/sandbox';
-import { ColumnTypesEnum, Defaults, ITemplateSchemaItem, RangeValidatorType, ValidatorTypesEnum } from '@impler/shared';
+import {
+  ColumnTypesEnum,
+  Defaults,
+  ITemplateSchemaItem,
+  LengthValidatorType,
+  RangeValidatorType,
+  ValidatorTypesEnum,
+} from '@impler/shared';
 
 dayjs.extend(customParseFormat);
 
@@ -106,11 +113,16 @@ export class BaseReview {
     const rangeValidator = column.validators?.find(
       (validator) => validator.validate === ValidatorTypesEnum.RANGE
     ) as RangeValidatorType;
+    const lengthValidator = column.validators?.find(
+      (validator) => validator.validate === ValidatorTypesEnum.LENGTH
+    ) as LengthValidatorType;
 
     switch (column.type) {
       case ColumnTypesEnum.STRING:
         property = {
           type: 'string',
+          ...(typeof lengthValidator?.min === 'number' && { minLength: lengthValidator?.min }),
+          ...(typeof lengthValidator?.max === 'number' && { maxLength: lengthValidator?.max }),
         };
         break;
       case ColumnTypesEnum.NUMBER:
@@ -197,6 +209,18 @@ export class BaseReview {
   ): string {
     let message = '';
     switch (true) {
+      // maximum length case
+      case error.keyword === 'maxLength':
+        message =
+          validatorErrorMessages?.[field]?.[ValidatorTypesEnum.LENGTH] ||
+          `Length must be less than or equal to ${error.params.limit}`;
+        break;
+      // maximum length case
+      case error.keyword === 'minLength':
+        message =
+          validatorErrorMessages?.[field]?.[ValidatorTypesEnum.LENGTH] ||
+          `Length must be greater than or equal to ${error.params.limit}`;
+        break;
       // maximum number case
       case error.keyword === 'maximum':
         message =
