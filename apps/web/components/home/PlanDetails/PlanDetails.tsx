@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import { modals } from '@mantine/modals';
 import { Title, Text, Flex, Button, Skeleton, Stack } from '@mantine/core';
 
-import { useApp } from '@hooks/useApp';
 import { track } from '@libs/amplitude';
 import { numberFormatter } from '@impler/shared';
 import { SelectCardModal } from '@components/settings';
@@ -12,15 +11,18 @@ import { usePlanDetails } from '@hooks/usePlanDetails';
 import { TooltipLink } from '@components/guide-point';
 import { PlansModal } from '@components/UpgradePlan/PlansModal';
 import { CONSTANTS, MODAL_KEYS, ROUTES, colors, DOCUMENTATION_REFERENCE_LINKS } from '@config';
+import { defineAbilitiesFor } from 'config/defineAbilities';
+import { useAppState } from 'store/app.context';
 
 export function PlanDetails() {
   const router = useRouter();
 
-  const { profile } = useApp();
+  const { profileInfo } = useAppState();
+  const ability = defineAbilitiesFor({ role: profileInfo?.role });
   const { [CONSTANTS.PLAN_CODE_QUERY_KEY]: selectedPlan } = router.query;
 
   const { activePlanDetails, isActivePlanLoading } = usePlanDetails({
-    email: profile?.email ?? '',
+    email: profileInfo?.email ?? '',
   });
 
   const onChoosePlanClick = () => {
@@ -33,7 +35,7 @@ export function PlanDetails() {
       modalId: MODAL_KEYS.PAYMENT_PLANS,
       children: (
         <PlansModal
-          userProfile={profile!}
+          userProfile={profileInfo!}
           activePlanCode={activePlanDetails?.plan?.code}
           canceledOn={activePlanDetails?.plan.canceledOn}
           expiryDate={activePlanDetails?.expiryDate}
@@ -45,17 +47,19 @@ export function PlanDetails() {
   };
 
   useEffect(() => {
-    if (selectedPlan && profile) {
+    if (selectedPlan && profileInfo) {
       modals.open({
         size: '2xl',
         withCloseButton: false,
         id: MODAL_KEYS.SELECT_CARD,
         modalId: MODAL_KEYS.SELECT_CARD,
-        children: <SelectCardModal planCode={selectedPlan as string} email={profile.email} onClose={modals.closeAll} />,
+        children: (
+          <SelectCardModal planCode={selectedPlan as string} email={profileInfo.email} onClose={modals.closeAll} />
+        ),
       });
       router.push(ROUTES.HOME, {}, { shallow: true });
     }
-  }, [profile, selectedPlan, router]);
+  }, [profileInfo, selectedPlan, router]);
 
   if (isActivePlanLoading) return <Skeleton width="100%" height="200" />;
 
@@ -152,17 +156,19 @@ export function PlanDetails() {
             Expiry Date
           </Text>
         </Flex>
-        <Flex direction="column" gap={5} align="center">
-          <Button
-            onClick={onChoosePlanClick}
-            color={isLessThanZero || activePlanDetails.usage.IMPORTED_ROWS > numberOfRecords ? 'red' : 'blue'}
-          >
-            Choose Plan
-          </Button>
-          <Text component={Link} href="/transactions" color={colors.yellow} td="underline">
-            View all transactions
-          </Text>
-        </Flex>
+        {ability.can('buy', 'Plan') && (
+          <Flex direction="column" gap={5} align="center">
+            <Button
+              onClick={onChoosePlanClick}
+              color={isLessThanZero || activePlanDetails.usage.IMPORTED_ROWS > numberOfRecords ? 'red' : 'blue'}
+            >
+              Choose Plan
+            </Button>
+            <Text component={Link} href="/transactions" color={colors.yellow} td="underline">
+              View all transactions
+            </Text>
+          </Flex>
+        )}
       </Flex>
       <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.subscriptionInformation} iconSize="md" />
     </Flex>
