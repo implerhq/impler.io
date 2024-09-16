@@ -19,7 +19,6 @@ import {
 import { UploadEntity } from '@impler/dal';
 import { ACCESS_KEY_NAME } from '@impler/shared';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
-import { AddColumnCommand } from 'app/column/commands/add-column.command';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
 
@@ -203,26 +202,10 @@ export class TemplateController {
     @Body(new ParseArrayPipe({ items: ColumnRequestDto, stopAtFirstError: false })) body: ColumnRequestDto[]
   ): Promise<ColumnResponseDto[]> {
     return this.updateTemplateColumns.execute(
-      body.map((columnData) =>
-        AddColumnCommand.create({
-          key: columnData.key,
-          alternateKeys: columnData.alternateKeys,
-          isRequired: columnData.isRequired,
-          isUnique: columnData.isUnique,
-          isFrozen: columnData.isFrozen,
-          name: columnData.name,
-          description: columnData.description,
-          regex: columnData.regex,
-          regexDescription: columnData.regexDescription,
-          selectValues: columnData.selectValues,
-          dateFormats: columnData.dateFormats,
-          sequence: columnData.sequence,
-          _templateId,
-          type: columnData.type,
-          delimiter: columnData.delimiter,
-          allowMultiSelect: columnData.allowMultiSelect,
-        })
-      ),
+      body.map((columnData) => ({
+        _templateId,
+        ...columnData,
+      })),
       _templateId
     );
   }
