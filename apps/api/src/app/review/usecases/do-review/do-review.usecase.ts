@@ -55,11 +55,18 @@ export class DoReview extends BaseReview {
     const columns = JSON.parse(uploadInfo.customSchema);
     const multiSelectColumnHeadings: Record<string, string> = {};
     const numberColumnHeadings = new Set<string>();
+    const validatorErrorMessages = {};
     (columns as ITemplateSchemaItem[]).forEach((column) => {
       if (column.type === ColumnTypesEnum.SELECT && column.allowMultiSelect)
         multiSelectColumnHeadings[column.key] = column.delimiter || ColumnDelimiterEnum.COMMA;
       if (column.type === ColumnTypesEnum.NUMBER || column.type === ColumnTypesEnum.DOUBLE)
         numberColumnHeadings.add(column.key);
+      if (Array.isArray(column.validators) && column.validators.length > 0) {
+        validatorErrorMessages[column.key] = {};
+        column.validators.forEach((validator) => {
+          validatorErrorMessages[column.key][validator.validate] = validator.errorMessage;
+        });
+      }
     });
     const schema = this.buildAJVSchema({
       columns,
@@ -103,6 +110,7 @@ export class DoReview extends BaseReview {
         dateFormats,
         numberColumnHeadings,
         multiSelectColumnHeadings,
+        validatorErrorMessages,
       });
 
       await this.processBatches({
@@ -146,6 +154,7 @@ export class DoReview extends BaseReview {
         validator,
         dateFormats,
         numberColumnHeadings,
+        validatorErrorMessages,
         multiSelectColumnHeadings,
       });
       response.invalidRecords = invalidRecords;

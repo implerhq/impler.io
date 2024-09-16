@@ -7,11 +7,13 @@ import addKeywords from 'ajv-keywords';
 import * as customParseFormat from 'dayjs/plugin/customParseFormat';
 import Ajv, { AnySchemaObject, ErrorObject, ValidateFunction } from 'ajv';
 
-import { ColumnTypesEnum, Defaults, ITemplateSchemaItem } from '@impler/shared';
+import { ColumnTypesEnum, Defaults, ITemplateSchemaItem, RangeValidatorType, ValidatorTypesEnum } from '@impler/shared';
 
 import { SManager, BATCH_LIMIT, MAIN_CODE, ExecuteIsolateResult } from '@shared/services/sandbox';
 
 dayjs.extend(customParseFormat);
+
+type ValidatorErrorMessages = Record<string, { string: Record<string, string> }>;
 
 interface IDataItem {
   index: number;
@@ -36,6 +38,7 @@ interface IRunData {
   extra: any;
   numberColumnHeadings: Set<string>;
   dateFormats: Record<string, string[]>;
+  validatorErrorMessages: ValidatorErrorMessages;
   multiSelectColumnHeadings: Record<string, string>;
 }
 
@@ -102,6 +105,9 @@ export class BaseReview {
 
   private getProperty(column: ITemplateSchemaItem): Record<string, unknown> {
     let property: Record<string, unknown> = {};
+    const rangeValidator = column.validators?.find(
+      (validator) => validator.validate === ValidatorTypesEnum.RANGE
+    ) as RangeValidatorType;
 
     switch (column.type) {
       case ColumnTypesEnum.STRING:
@@ -119,6 +125,8 @@ export class BaseReview {
         property = {
           allOf: [{ type: ['number', 'null'] }],
           ...(!column.isRequired && { default: null }),
+          ...(typeof rangeValidator?.min === 'number' && { minimum: rangeValidator?.min }),
+          ...(typeof rangeValidator?.max === 'number' && { maximum: rangeValidator?.max }),
         };
         break;
       case ColumnTypesEnum.SELECT:
@@ -169,7 +177,11 @@ export class BaseReview {
     };
   }
 
-  private getErrorsObject(errors: ErrorObject[], dateFormats: Record<string, string[]>): Record<string, string> {
+  private getErrorsObject(
+    errors: ErrorObject[],
+    dateFormats: Record<string, string[]>,
+    validatorErrorMessages: ValidatorErrorMessages
+  ): Record<string, string> {
     let field: string;
 
     return errors.reduce((obj, error) => {
@@ -177,15 +189,33 @@ export class BaseReview {
       else [, field] = error.instancePath.split('/');
 
       field = field.replace(/~1/g, '/');
-      obj[field] = this.getMessage(error, field || error.schema[0], error.data, dateFormats);
+      obj[field] = this.getMessage(error, field || error.schema[0], error.data, dateFormats, validatorErrorMessages);
 
       return obj;
     }, {});
   }
 
-  private getMessage(error: ErrorObject, field: string, data: unknown, dateFormats: Record<string, string[]>): string {
+  private getMessage(
+    error: ErrorObject,
+    field: string,
+    data: unknown,
+    dateFormats: Record<string, string[]>,
+    validatorErrorMessages?: ValidatorErrorMessages
+  ): string {
     let message = '';
     switch (true) {
+      // maximum number case
+      case error.keyword === 'maximum':
+        message =
+          validatorErrorMessages?.[field]?.[ValidatorTypesEnum.RANGE] ||
+          `${String(data)} must be less than or equal to ${error.params.limit}`;
+        break;
+      // minimum number case
+      case error.keyword === 'minimum':
+        message =
+          validatorErrorMessages?.[field]?.[ValidatorTypesEnum.RANGE] ||
+          `${String(data)} must be greater than or equal to ${error.params.limit}`;
+        break;
       // empty string case
       case error.keyword === 'emptyCheck':
       case error.keyword === 'required':
@@ -316,6 +346,7 @@ export class BaseReview {
     dateFormats,
     dataStream,
     numberColumnHeadings,
+    validatorErrorMessages,
     multiSelectColumnHeadings,
   }: IRunData): Promise<ISaveResults> {
     return new Promise(async (resolve, reject) => {
@@ -340,6 +371,7 @@ export class BaseReview {
               passRecord: recordObj.passRecord,
               validator,
               dateFormats,
+              validatorErrorMessages,
             });
             if (validationResultItem.isValid) {
               validRecords++;
@@ -371,16 +403,18 @@ export class BaseReview {
     checkRecord,
     validator,
     dateFormats,
+    validatorErrorMessages,
   }: {
     index: number;
     validator: ValidateFunction;
     passRecord: Record<string, any>;
     checkRecord: Record<string, any>;
     dateFormats: Record<string, string[]>;
+    validatorErrorMessages?: Record<string, { string: Record<string, string> }>;
   }) {
     const isValid = validator(checkRecord);
     if (!isValid) {
-      const errors = this.getErrorsObject(validator.errors, dateFormats);
+      const errors = this.getErrorsObject(validator.errors, dateFormats, validatorErrorMessages);
 
       return {
         index,
