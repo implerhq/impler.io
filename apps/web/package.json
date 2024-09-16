@@ -17,6 +17,8 @@
   },
   "dependencies": {
     "@amplitude/analytics-browser": "^2.0.1",
+    "@casl/ability": "^6.7.1",
+    "@casl/react": "^4.0.0",
     "@emotion/react": "^11.10.5",
     "@emotion/server": "^11.10.0",
     "@impler/react": "workspace:^",
