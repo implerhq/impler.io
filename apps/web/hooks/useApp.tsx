@@ -6,11 +6,12 @@ import { track } from '@libs/amplitude';
 import { useAppState } from 'store/app.context';
 import { API_KEYS, NOTIFICATION_KEYS, ROUTES } from '@config';
 import { IErrorObject, IProjectPayload, IEnvironmentData } from '@impler/shared';
+import { defineAbilitiesFor } from 'config/defineAbilities';
 
 export function useApp() {
   const { replace, pathname } = useRouter();
   const queryClient = useQueryClient();
-  const { profileInfo, setProfileInfo } = useAppState();
+  const { profileInfo, setProfileInfo, setAbility } = useAppState();
   const { isFetching: isProfileLoading } = useQuery<IProfileData, IErrorObject>(
     [API_KEYS.ME],
     () => commonApi<IProfileData>(API_KEYS.ME as any, {}),
@@ -20,6 +21,7 @@ export function useApp() {
         // @ts-ignore
         window.usetifulTags = { userId: profileData?._id };
         setProfileInfo(profileData);
+        setAbility(defineAbilitiesFor(profileData.role));
       },
     }
   );
