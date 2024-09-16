@@ -13,6 +13,7 @@ import { PlansModal } from '@components/UpgradePlan/PlansModal';
 import { CONSTANTS, MODAL_KEYS, ROUTES, colors, DOCUMENTATION_REFERENCE_LINKS } from '@config';
 import { defineAbilitiesFor } from 'config/defineAbilities';
 import { useApp } from '@hooks/useApp';
+import { Can } from 'store/ability.context';
 
 export function PlanDetails() {
   const router = useRouter();
@@ -156,7 +157,7 @@ export function PlanDetails() {
               Expiry Date
             </Text>
           </Flex>
-          {ability.can('buy', 'Plan') && (
+          <Can I="buy" a="Plan">
             <Flex direction="column" gap={5} align="center">
               <Button
                 onClick={onChoosePlanClick}
@@ -168,7 +169,7 @@ export function PlanDetails() {
                 View all transactions
               </Text>
             </Flex>
-          )}
+          </Can>
         </Flex>
       )}
 
