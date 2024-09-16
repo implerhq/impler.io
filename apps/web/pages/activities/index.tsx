@@ -3,6 +3,7 @@ import { Stack, Title } from '@mantine/core';
 import { AppLayout } from '@layouts/AppLayout';
 import { Activities } from '@components/import-feed/Activities';
 import { History } from '@components/import-feed/History';
+import { Can } from 'store/ability.context';
 
 export default function ImportFeed() {
   return (
@@ -12,7 +13,9 @@ export default function ImportFeed() {
       </Title>
       <Stack spacing="lg">
         <Activities />
-        <History />
+        <Can I="read" a="Analytics">
+          <History />
+        </Can>
       </Stack>
     </>
   );
