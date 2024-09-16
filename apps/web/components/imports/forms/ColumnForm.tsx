@@ -73,6 +73,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
         }
         break;
       case ColumnTypesEnum.DOUBLE:
+      case ColumnTypesEnum.NUMBER:
         if (lengthValidatorIndex > -1) {
           remove(lengthValidatorIndex);
         }
@@ -306,7 +307,9 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 register={register('isFrozen')}
                 description="Will freeze column left side in generated sample and in Review section."
               />
-              <AutoHeightComponent isVisible={typeValue === ColumnTypesEnum.DOUBLE}>
+              <AutoHeightComponent
+                isVisible={typeValue === ColumnTypesEnum.DOUBLE || typeValue === ColumnTypesEnum.NUMBER}
+              >
                 <Validator
                   errors={errors}
                   control={control}

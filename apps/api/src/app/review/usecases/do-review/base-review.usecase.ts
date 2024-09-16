@@ -7,13 +7,11 @@ import addKeywords from 'ajv-keywords';
 import * as customParseFormat from 'dayjs/plugin/customParseFormat';
 import Ajv, { AnySchemaObject, ErrorObject, ValidateFunction } from 'ajv';
 
+import { ValidatorErrorMessages } from '@shared/types/review.types';
+import { SManager, BATCH_LIMIT, MAIN_CODE, ExecuteIsolateResult } from '@shared/services/sandbox';
 import { ColumnTypesEnum, Defaults, ITemplateSchemaItem, RangeValidatorType, ValidatorTypesEnum } from '@impler/shared';
 
-import { SManager, BATCH_LIMIT, MAIN_CODE, ExecuteIsolateResult } from '@shared/services/sandbox';
-
 dayjs.extend(customParseFormat);
-
-type ValidatorErrorMessages = Record<string, { string: Record<string, string> }>;
 
 interface IDataItem {
   index: number;
@@ -117,13 +115,8 @@ export class BaseReview {
         break;
       case ColumnTypesEnum.NUMBER:
         property = {
-          allOf: [{ type: ['integer', 'null'] }],
-          ...(!column.isRequired && { default: null }),
-        };
-        break;
-      case ColumnTypesEnum.DOUBLE:
-        property = {
-          allOf: [{ type: ['number', 'null'] }],
+          ...(column.type === ColumnTypesEnum.NUMBER && { multipleOf: 1 }),
+          type: ['number', 'null'],
           ...(!column.isRequired && { default: null }),
           ...(typeof rangeValidator?.min === 'number' && { minimum: rangeValidator?.min }),
           ...(typeof rangeValidator?.max === 'number' && { maximum: rangeValidator?.max }),
@@ -492,6 +485,7 @@ export class BaseReview {
     csvFileStream,
     dateFormats,
     numberColumnHeadings,
+    validatorErrorMessages,
     multiSelectColumnHeadings,
   }: IRunData): Promise<IBatchItem[]> {
     return new Promise(async (resolve, reject) => {
@@ -518,6 +512,7 @@ export class BaseReview {
                 passRecord: recordObj.passRecord,
                 validator,
                 dateFormats,
+                validatorErrorMessages,
               });
               batchRecords.push(validationResultItem);
               if (batchRecords.length === BATCH_LIMIT) {
