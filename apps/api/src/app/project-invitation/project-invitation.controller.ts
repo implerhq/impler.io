@@ -46,17 +46,13 @@ export class ProjectInvitationController {
   }
   @Get('/invitation')
   @ApiOperation({
-    summary: 'Fetch an already sent invitation',
+    summary: 'Fetch an already sent invitation when the uer tries to accept the invitation',
   })
   async getProjectInvitationRoute(@Query('invitationId') invitationId: string, @Query('token') token: string) {
-    console.log(invitationId, token);
-
-    const invitation = await this.getProjectInvitation.exec({
+    return this.getProjectInvitation.exec({
       invitationId,
       token,
     });
-
-    return invitation;
   }
 
   @Post('/invitation-accept')
