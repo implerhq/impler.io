@@ -103,7 +103,7 @@ export function usePhase1({ goNext, texts }: IUsePhase1Props) {
     }
 
     const foundTemplate = findTemplate();
-    if (foundTemplate && ((Array.isArray(data) && data.length > variables.baseIndex) || schema)) {
+    if (foundTemplate && (data || schema)) {
       onDownload({ template: foundTemplate });
     } else if (foundTemplate && foundTemplate.sampleFileUrl) {
       getSignedUrl([
