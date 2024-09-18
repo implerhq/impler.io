@@ -18,8 +18,8 @@ const environmentSchema = new Schema(
       {
         role: {
           type: String,
-          enum: ['Admin', 'Tech', 'Finance'],
-          default: 'Admin',
+          enum: ['admin', 'tech', 'finance'],
+          default: 'admin',
         },
         _userId: {
           type: Schema.Types.ObjectId,
