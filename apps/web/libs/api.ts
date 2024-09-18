@@ -76,6 +76,11 @@ const routes: Record<string, Route> = {
     method: 'POST',
   },
 
+  [API_KEYS.LIST_TEAM_MEMBERS]: {
+    url: () => `/v1/invite/team-members-list`,
+    method: 'GET',
+  },
+
   [API_KEYS.PROJECTS_LIST]: {
     url: () => '/v1/project',
     method: 'GET',
