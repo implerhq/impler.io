@@ -11,12 +11,13 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
     return await this.update(
       {
         _id: environmentId,
+        key,
       },
       {
         $push: {
           apiKeys: {
-            key,
             _userId: userId,
+            // role: 'admin',
           },
         },
       }
@@ -56,6 +57,7 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
   }
 
   async getApiKeyForUserId(userId: string) {
+    console.log('Called');
     const userEnvironment = await this.findOne({
       'apiKeys._userId': userId,
     });
