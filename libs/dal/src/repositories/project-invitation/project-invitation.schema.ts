@@ -1,4 +1,4 @@
-import { model, models, Schema } from 'mongoose';
+import { Model, model, models, Schema } from 'mongoose';
 import { schemaOptions } from '../schema-default.options';
 import { ProjectInvitationEntity } from './project-invitation.entity';
 
@@ -32,4 +32,5 @@ interface IProjectInvitation extends ProjectInvitationEntity, Document {
 }
 
 export const ProjectInvitation =
-  models.ProjectInvitation || model<IProjectInvitation>('ProjectInvitation', projectInvitationSchema);
+  (models.ProjectInvitation as Model<IProjectInvitation>) ||
+  model<IProjectInvitation>('ProjectInvitation', projectInvitationSchema);
