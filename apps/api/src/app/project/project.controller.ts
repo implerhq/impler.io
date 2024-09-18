@@ -129,7 +129,7 @@ export class ProjectController {
         email: user.email,
         profilePicture: user.profilePicture,
         isEmailVerified: user.isEmailVerified,
-        accessToken: projectWithEnvironment.environment.apiKeys[0].key,
+        accessToken: projectWithEnvironment.environment.key,
       },
       projectWithEnvironment.project._id
     );
@@ -157,9 +157,10 @@ export class ProjectController {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        // role: 'tech',
         isEmailVerified: user.isEmailVerified,
         profilePicture: user.profilePicture,
-        accessToken: projectEnvironment.apiKeys[0].key,
+        accessToken: projectEnvironment.key,
       },
       projectEnvironment._projectId
     );
