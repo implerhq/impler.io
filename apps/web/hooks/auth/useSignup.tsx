@@ -41,9 +41,9 @@ export function useSignup() {
   const isInvitationLink = !!invitationId && !!token;
 
   const { isLoading: isAcceptingInvitation, isError } = useQuery<any, IErrorObject, { email: string }>(
-    [API_KEYS.ACCEPT_PROJECT_INVITATION, invitationId, token],
+    [API_KEYS.GET_PROJECT_INVITATION, invitationId, token],
     () =>
-      commonApi(API_KEYS.ACCEPT_PROJECT_INVITATION as any, {
+      commonApi(API_KEYS.GET_PROJECT_INVITATION as any, {
         query: {
           invitationId,
           token,
@@ -52,6 +52,7 @@ export function useSignup() {
     {
       enabled: isInvitationLink,
       onSuccess: (data) => {
+        console.log('Data', data);
         setValue('email', data.email);
       },
       onError: (error) => {
