@@ -16,10 +16,11 @@ export class CreateEnvironment {
 
     const environment = await this.environmentRepository.create({
       _projectId: command.projectId,
+      key,
       apiKeys: [
         {
-          key,
           _userId: command._userId,
+          role: '',
         },
       ],
     });
