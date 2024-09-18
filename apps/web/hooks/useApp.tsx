@@ -68,7 +68,7 @@ export function useApp() {
           ...profileInfo,
           _projectId: project._id,
           projectName: project.name,
-          accessToken: environment.apiKeys[0].key,
+          accessToken: environment.key,
         });
       }
       if (![ROUTES.SETTINGS, ROUTES.ACTIVITIES, ROUTES.IMPORTS].includes(pathname)) {
