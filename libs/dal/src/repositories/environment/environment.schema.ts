@@ -2,7 +2,6 @@ import { Schema, model, models } from 'mongoose';
 
 import { EnvironmentEntity } from './environment.entity';
 import { schemaOptions } from '../schema-default.options';
-import { UserRoleEnum } from '@impler/shared';
 
 const environmentSchema = new Schema(
   {
@@ -19,7 +18,7 @@ const environmentSchema = new Schema(
       {
         role: {
           type: String,
-          enum: [UserRoleEnum],
+          enum: ['Admin', 'Tech', 'Finance'],
           default: 'Admin',
         },
         _userId: {
