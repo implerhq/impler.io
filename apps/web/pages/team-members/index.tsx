@@ -1,23 +1,11 @@
-import { useEffect } from 'react';
 import { Title } from '@mantine/core';
+
 import { AppLayout } from '@layouts/AppLayout';
-import { ConfirmInvitationModal, TeamMembersTab } from '@components/TeamMembers';
-import { getCookie } from '@shared/utils';
-import { modals } from '@mantine/modals';
-import { CONSTANTS, MODAL_KEYS } from '@config';
+import { TeamMembersTab } from '@components/TeamMembers';
+import { useInvitation } from '@hooks/useInvitation';
 
 export default function TeamMembers() {
-  useEffect(() => {
-    const invitationUrlCookie = getCookie(CONSTANTS.INVITATION_URL_COOKIE);
-    if (invitationUrlCookie) {
-      modals.open({
-        title: 'Confirm Invitation?',
-        id: MODAL_KEYS.ACCEPT_INVITATION,
-        modalId: MODAL_KEYS.ACCEPT_INVITATION,
-        children: <ConfirmInvitationModal />,
-      });
-    }
-  }, []);
+  useInvitation();
 
   return (
     <>
