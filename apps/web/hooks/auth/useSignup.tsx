@@ -52,7 +52,6 @@ export function useSignup() {
     {
       enabled: isInvitationLink,
       onSuccess: (data) => {
-        console.log('Data', data);
         setValue('email', data.email);
       },
       onError: (error) => {
