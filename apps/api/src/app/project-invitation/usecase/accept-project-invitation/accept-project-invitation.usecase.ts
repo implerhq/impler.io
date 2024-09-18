@@ -31,6 +31,7 @@ export class AcceptProjectInvitation {
 
     const newAddedAPIKey = await this.environmentRepository.addApiKey(environment._id, key, _userId);
     if (newAddedAPIKey) {
+      // const deleted = await this.projectInvitationRepository.delete({ _id: invitationId });
       return {
         projectName,
       };
