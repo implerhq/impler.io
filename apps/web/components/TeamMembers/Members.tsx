@@ -1,7 +1,7 @@
 import { Group, Stack, Avatar, Text, Select } from '@mantine/core';
 import { Table } from '@ui/table';
 import { AppLayout } from '@layouts/AppLayout';
-import { ExitIcon } from '@assets/icons/Exit.icon';
+import { DeleteIcon } from '@assets/icons/Delete.icon';
 import dayjs from 'dayjs';
 import { DATE_FORMATS, MEMBER_ROLE } from '@config';
 
@@ -58,6 +58,10 @@ const membersData: Member[] = [
 ];
 
 export function Members() {
+  //const teamMembers = useListTeamMembers();
+
+  // console.log('Team Members in members', {teamMembers});
+
   return (
     <Stack spacing="xs">
       <Stack spacing="sm">
@@ -102,7 +106,7 @@ export function Members() {
             {
               title: 'Actions',
               key: 'action',
-              Cell: () => <ExitIcon style={{ fontWeight: 'bolder' }} size="xl" />,
+              Cell: () => <DeleteIcon />,
             },
           ]}
           data={membersData || []}
