@@ -56,15 +56,15 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
   }
 
   async getApiKeyForUserId(userId: string) {
-    const apiKey = await this.findOne({
+    const userEnvironment = await this.findOne({
       'apiKeys._userId': userId,
     });
 
-    return apiKey
+    return userEnvironment
       ? {
-          projectId: apiKey._projectId,
+          projectId: userEnvironment._projectId,
           // eslint-disable-next-line no-magic-numbers
-          apiKey: apiKey.apiKeys[0].key,
+          apiKey: userEnvironment.key,
         }
       : null;
   }
