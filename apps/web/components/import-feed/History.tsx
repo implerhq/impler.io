@@ -1,6 +1,7 @@
 import { ChangeEvent } from 'react';
-import { ActionIcon, Badge, Group, LoadingOverlay, Stack, Title, Tooltip, TextInput as Input } from '@mantine/core';
+import { ActionIcon, Group, LoadingOverlay, Stack, Title, Tooltip, TextInput as Input } from '@mantine/core';
 
+import { Badge } from '@ui/badge';
 import { Table } from '@ui/table';
 import { VARIABLES, colors } from '@config';
 import { Pagination } from '@ui/pagination';
