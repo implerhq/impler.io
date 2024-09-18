@@ -175,7 +175,7 @@ export class AuthController {
         email: user.email,
         profilePicture: user.profilePicture,
         isEmailVerified: user.isEmailVerified,
-        accessToken: projectWithEnvironment.environment.apiKeys[0].key,
+        accessToken: projectWithEnvironment.environment.key,
       },
       projectWithEnvironment.project._id
     );
