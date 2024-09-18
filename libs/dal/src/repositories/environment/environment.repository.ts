@@ -25,7 +25,7 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
 
   async findByApiKey(key: string) {
     return await this.findOne({
-      'apiKeys.key': key,
+      key,
     });
   }
 
@@ -39,6 +39,20 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
 
     // eslint-disable-next-line no-magic-numbers
     return apiKey ? apiKey.apiKeys[0]._userId : null;
+  }
+
+  async getUserEnvironmentProjects(userId: string): Promise<{ name: string; _id: string }[]> {
+    const environments = await Environment.find(
+      {
+        'apiKeys._userId': userId,
+      },
+      '_id'
+    ).populate('_projectId', 'name');
+
+    return environments.map((env) => ({
+      name: env._projectId.name,
+      _id: env._projectId._id,
+    }));
   }
 
   async getApiKeyForUserId(userId: string) {
