@@ -69,8 +69,7 @@ export class DoReReview extends BaseReview {
     });
 
     const columns = JSON.parse(uploadInfo.customSchema) as ITemplateSchemaItem[];
-    const uniqueFields = columns.filter((column) => column.isUnique).map((column) => column.key);
-    const uniqueFieldData = uniqueFields.length ? await this.dalService.getFieldData(_uploadId, uniqueFields) : [];
+    const uniqueFieldsSet = new Set(...columns.filter((column) => column.isUnique).map((column) => column.key));
     const multiSelectColumnHeadings: Record<string, string> = {};
     const validatorErrorMessages = {};
     (columns as ITemplateSchemaItem[]).forEach((column) => {
@@ -89,10 +88,13 @@ export class DoReReview extends BaseReview {
             } else {
               uniqueColumnKeysCombinationMap.set(validatorItem.uniqueKey, new Set([column.key]));
             }
+            uniqueFieldsSet.add(column.key);
           }
         });
       }
     });
+    const uniqueFields = [...uniqueFieldsSet];
+    const uniqueFieldData = uniqueFields.length ? await this.dalService.getFieldData(_uploadId, uniqueFields) : [];
 
     const uniqueCombinations = {};
     const schema = this.buildAJVSchema({
