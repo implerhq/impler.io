@@ -1,5 +1,5 @@
 export interface IApiKey {
-  key: string;
+  role: string;
   _userId: string;
 }
 
@@ -7,6 +7,8 @@ export class EnvironmentEntity {
   _id: string;
 
   _projectId: string;
+
+  key: string;
 
   apiKeys: IApiKey[];
 }
