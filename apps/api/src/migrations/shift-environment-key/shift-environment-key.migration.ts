@@ -22,7 +22,6 @@ export async function run() {
       //@ts-ignore
       const key = firstApiKey.key;
 
-      // Remove the key field from each apiKey
       const updatedApiKeys = environment.apiKeys.map((apiKey) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
@@ -38,32 +37,24 @@ export async function run() {
       }
 
       try {
-        // First, update the document to move the key to the root
         await environmentRepository.update(
           { _id: environment._id },
           {
             $set: {
               key: key,
-              apiKeys: updatedApiKeys, // Update the apiKeys array with the role field and without the key field
+              apiKeys: updatedApiKeys,
             },
           }
         );
-
-        // Log the updated environment document after migration
-        await environmentRepository.findOne({
-          _id: environment._id,
-        });
       } catch (error) {
         console.error(`Error updating environment ${environment._id}:`, error);
       }
-    } else {
-      console.log('Skipping environment with no apiKeys:', JSON.stringify(environment, null, 2));
     }
+
+    console.log('End migration - key moved to root and role added to apiKeys');
+
+    app.close();
+    process.exit(0);
   }
-
-  console.log('End migration - key moved to root and role added to apiKeys');
-
-  app.close();
-  process.exit(0);
+  run();
 }
-run();
