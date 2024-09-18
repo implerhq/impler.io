@@ -1,27 +1,16 @@
 import { useRouter } from 'next/router';
-import { modals } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
-
-import { commonApi } from '@libs/api';
+import { API_KEYS, MODAL_KEYS, NOTIFICATION_KEYS } from '@config';
 import { IErrorObject } from '@impler/shared';
-import { API_KEYS, MODAL_KEYS } from '@config';
-
+import { commonApi } from '@libs/api';
+import { notify } from '@libs/notify';
+import { modals } from '@mantine/modals';
 import { ConfirmInvitationModal } from '@components/TeamMembers';
-
-interface IUseAcceptInvitationProps {
-  token?: string;
-  invitationId?: string;
-}
 
 export function useInvitation() {
   const router = useRouter();
 
-  useQuery<
-    IUseAcceptInvitationProps,
-    IErrorObject,
-    { email: string; invitedBy: string; projectName: string },
-    string[]
-  >(
+  useQuery<any, IErrorObject, { email: string; invitedBy: string; projectName: string }, string[]>(
     [API_KEYS.GET_PROJECT_INVITATION],
     () =>
       commonApi(API_KEYS.GET_PROJECT_INVITATION as any, {
@@ -41,6 +30,13 @@ export function useInvitation() {
               projectName={data.projectName}
             />
           ),
+        });
+      },
+      onError: (error: IErrorObject) => {
+        notify(NOTIFICATION_KEYS.ERROR_ACCEPTING_INVITATION, {
+          title: 'Error Accepting Invitation',
+          message: error?.message || 'Error while accepting invitation',
+          color: 'red',
         });
       },
       enabled: !!(router.query.invitationId && router.query.token),
