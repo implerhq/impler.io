@@ -11,9 +11,9 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
     return await this.update(
       {
         _id: environmentId,
-        key,
       },
       {
+        key,
         $push: {
           apiKeys: {
             _userId: userId,
