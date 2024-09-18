@@ -2,7 +2,13 @@ import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { IJwtPayload } from '@impler/shared';
 import { ProjectInvitationDto } from './dto/project-invtation.dto';
-import { Invite, SentProjectInvitations, GetProjectInvitation, AcceptProjectInvitation } from './usecase';
+import {
+  Invite,
+  SentProjectInvitations,
+  GetProjectInvitation,
+  AcceptProjectInvitation,
+  ListTeamMembers,
+} from './usecase';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { UserSession } from '@shared/framework/user.decorator';
 
@@ -12,7 +18,8 @@ export class ProjectInvitationController {
     private invite: Invite,
     private sentProjectInvitations: SentProjectInvitations,
     private getProjectInvitation: GetProjectInvitation,
-    private acceptProjectInvitation: AcceptProjectInvitation
+    private acceptProjectInvitation: AcceptProjectInvitation,
+    private listTeamMembers: ListTeamMembers
   ) {}
 
   @Post()
@@ -46,7 +53,7 @@ export class ProjectInvitationController {
   }
   @Get('/invitation')
   @ApiOperation({
-    summary: 'Fetch an already sent invitation when the uer tries to accept the invitation',
+    summary: 'Fetch an already sent invitation when the user tries to accept the invitation',
   })
   async getProjectInvitationRoute(@Query('invitationId') invitationId: string, @Query('token') token: string) {
     return this.getProjectInvitation.exec({
@@ -65,5 +72,16 @@ export class ProjectInvitationController {
     @Query('token') token: string
   ) {
     return await this.acceptProjectInvitation.exec({ invitationId, token, userId: user._id });
+  }
+
+  @Get('/team-members-list')
+  @ApiOperation({
+    summary:
+      'List out the who have accepted the project invitation and now a part of a team and working on the same project',
+  })
+  async listTeamMembersRoute(@UserSession() user: IJwtPayload) {
+    const projectUser = await this.listTeamMembers.exec(user._projectId);
+
+    return projectUser;
   }
 }
