@@ -1,19 +1,20 @@
+import { modals } from '@mantine/modals';
 import { useMutation } from '@tanstack/react-query';
-import { API_KEYS, CONSTANTS, MODAL_KEYS, NOTIFICATION_KEYS } from '@config';
+
+import { notify } from '@libs/notify';
 import { commonApi } from '@libs/api';
 import { IErrorObject } from '@impler/shared';
-import { notify } from '@libs/notify';
-import { deleteCookie, getCookie } from '@shared/utils';
-import { modals } from '@mantine/modals';
+import { API_KEYS, MODAL_KEYS, NOTIFICATION_KEYS } from '@config';
 
-export function useAcceptInvitation() {
-  const { mutate: acceptInvitation, isLoading: isAcceptInvitationLoading } = useMutation<
-    any,
-    IErrorObject,
-    { invitationId: string; token: string }
-  >(
+interface IUseAcceptInvitationProps {
+  invitationId: string;
+  token: string;
+}
+
+export function useAcceptInvitation({ invitationId, token }: IUseAcceptInvitationProps) {
+  const { mutate: onAcceptClick, isLoading: isAcceptLoading } = useMutation<any, IErrorObject, void>(
     [API_KEYS.ACCEPT_PROJECT_INVITATION],
-    ({ invitationId, token }) =>
+    () =>
       commonApi(API_KEYS.ACCEPT_PROJECT_INVITATION as any, {
         query: { invitationId, token },
       }),
@@ -24,9 +25,6 @@ export function useAcceptInvitation() {
           message: `You have successfully joined the Project ${data.projectName}`,
           color: 'green',
         });
-
-        deleteCookie(CONSTANTS.INVITATION_URL_COOKIE);
-
         modals.closeAll();
       },
       onError: () => {
@@ -40,31 +38,8 @@ export function useAcceptInvitation() {
     }
   );
 
-  const acceptInvitationFromCookie = () => {
-    const cookie = getCookie(CONSTANTS.INVITATION_URL_COOKIE);
-
-    if (!cookie) {
-      modals.close(MODAL_KEYS.ACCEPT_INVITATION);
-
-      return;
-    }
-
-    const url = new URL(decodeURIComponent(cookie as string));
-    const invitationId = url.searchParams.get('invitationId');
-    const token = url.searchParams.get('token');
-
-    if (invitationId && token) {
-      acceptInvitation({
-        invitationId: invitationId as string,
-        token: token as string,
-      });
-    } else {
-      console.error('Invalid invitation data.');
-    }
-  };
-
   return {
-    acceptInvitationFromCookie,
-    isAcceptInvitationLoading,
+    onAcceptClick,
+    isAcceptLoading,
   };
 }
