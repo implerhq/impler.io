@@ -13,8 +13,9 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { IsValidRegex } from '@shared/framework/is-valid-regex.validator';
-import { ColumnDelimiterEnum, ColumnTypesEnum, Defaults, ValidatorTypesEnum } from '@impler/shared';
 import { IsNumberOrString } from '@shared/framework/number-or-string.validator';
+import { ColumnDelimiterEnum, ColumnTypesEnum, Defaults, ValidatorTypesEnum } from '@impler/shared';
+import { IsGreaterThan } from '@shared/framework/is-greator-than.validator';
 
 export class ValidatorDto {
   @ApiProperty({
@@ -38,16 +39,17 @@ export class ValidatorDto {
   })
   @IsNumber()
   @IsOptional()
-  @ValidateIf((object) => object.validate === ValidatorTypesEnum.RANGE || object.validate === ValidatorTypesEnum.LENGTH)
-  min: number;
+  min?: number;
 
   @ApiPropertyOptional({
     description: 'Maximum value',
   })
   @IsNumber()
   @IsOptional()
-  @ValidateIf((object) => object.validate === ValidatorTypesEnum.RANGE || object.validate === ValidatorTypesEnum.LENGTH)
-  max: number;
+  @IsGreaterThan('min', {
+    message: 'max must be greater than min',
+  })
+  max?: number;
 
   @ApiPropertyOptional({
     description: 'Unique key of the validator',
