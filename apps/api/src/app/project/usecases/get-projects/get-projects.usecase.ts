@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { ProjectRepository } from '@impler/dal';
+import { EnvironmentRepository } from '@impler/dal';
 import { ProjectResponseDto } from '../../dtos/project-response.dto';
 
 @Injectable()
 export class GetProjects {
-  constructor(private projectRepository: ProjectRepository) {}
+  constructor(private environmentRepository: EnvironmentRepository) {}
 
   async execute(_userId: string): Promise<ProjectResponseDto[]> {
-    const response = await this.projectRepository.getUserProjects(_userId);
-
-    return response;
+    return this.environmentRepository.getUserEnvironmentProjects(_userId);
   }
 }
