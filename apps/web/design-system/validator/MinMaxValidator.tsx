@@ -53,7 +53,8 @@ export function MinMaxValidator({
               min={min}
               placeholder={minPlaceholder}
               error={(errors?.validators?.[index] as any)?.min?.message}
-              {...field}
+              value={field.value}
+              onChange={(value) => (value === '' ? field.onChange(undefined) : field.onChange(value))}
             />
           )}
         />
@@ -69,7 +70,8 @@ export function MinMaxValidator({
               max={max}
               placeholder={maxPlaceholder}
               error={(errors?.validators?.[index] as any)?.max?.message}
-              {...field}
+              value={field.value}
+              onChange={(value) => (value === '' ? field.onChange(undefined) : field.onChange(value))}
             />
           )}
         />
