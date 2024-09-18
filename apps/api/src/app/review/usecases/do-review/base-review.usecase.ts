@@ -35,14 +35,15 @@ interface IBatchItem {
   // totalRecords: number;
 }
 interface IRunData {
+  extra: any;
   uploadId: string;
   headings: string[];
   csvFileStream: any;
   dataStream: Writable;
   validator: ValidateFunction;
-  extra: any;
   numberColumnHeadings: Set<string>;
   dateFormats: Record<string, string[]>;
+  uniqueCombinations: Record<string, string[]>;
   validatorErrorMessages: ValidatorErrorMessages;
   multiSelectColumnHeadings: Record<string, string>;
 }
@@ -185,7 +186,8 @@ export class BaseReview {
   private getErrorsObject(
     errors: ErrorObject[],
     dateFormats: Record<string, string[]>,
-    validatorErrorMessages: ValidatorErrorMessages
+    validatorErrorMessages: ValidatorErrorMessages,
+    uniqueCombinations: Record<string, string[]>
   ): Record<string, string> {
     let field: string;
 
@@ -194,19 +196,46 @@ export class BaseReview {
       else [, field] = error.instancePath.split('/');
 
       field = field.replace(/~1/g, '/');
-      obj[field] = this.getMessage(error, field || error.schema[0], error.data, dateFormats, validatorErrorMessages);
+      if (!!uniqueCombinations[error.keyword]) {
+        uniqueCombinations[error.keyword].forEach((columnKey) => {
+          obj[columnKey] = this.getMessage({
+            error,
+            data: error.data,
+            field: columnKey,
+            dateFormats,
+            uniqueCombinations,
+            validatorErrorMessages,
+          });
+        });
+      } else
+        obj[field] = this.getMessage({
+          error,
+          data: error.data,
+          field: field || error.schema[0],
+          dateFormats,
+          uniqueCombinations,
+          validatorErrorMessages,
+        });
 
       return obj;
     }, {});
   }
 
-  private getMessage(
-    error: ErrorObject,
-    field: string,
-    data: unknown,
-    dateFormats: Record<string, string[]>,
-    validatorErrorMessages?: ValidatorErrorMessages
-  ): string {
+  private getMessage({
+    data,
+    dateFormats,
+    error,
+    field,
+    uniqueCombinations,
+    validatorErrorMessages,
+  }: {
+    field: string;
+    data: unknown;
+    error: ErrorObject;
+    dateFormats: Record<string, string[]>;
+    uniqueCombinations: Record<string, string[]>;
+    validatorErrorMessages?: ValidatorErrorMessages;
+  }): string {
     let message = '';
     switch (true) {
       // maximum length case
@@ -276,6 +305,11 @@ export class BaseReview {
         break;
       case error.keyword === 'format':
         message = `${String(data)} must be a valid ${error.params.format}`;
+        break;
+      case !!uniqueCombinations[error.keyword]:
+        message =
+          validatorErrorMessages?.[field]?.[ValidatorTypesEnum.UNIQUE_WITH] ||
+          `Value should be unique for combination of ${uniqueCombinations[error.keyword].toString()}`;
         break;
       default:
         message = ` contains invalid data`;
@@ -362,6 +396,7 @@ export class BaseReview {
     headings,
     dateFormats,
     dataStream,
+    uniqueCombinations,
     numberColumnHeadings,
     validatorErrorMessages,
     multiSelectColumnHeadings,
@@ -388,6 +423,7 @@ export class BaseReview {
               passRecord: recordObj.passRecord,
               validator,
               dateFormats,
+              uniqueCombinations,
               validatorErrorMessages,
             });
             if (validationResultItem.isValid) {
@@ -420,6 +456,7 @@ export class BaseReview {
     checkRecord,
     validator,
     dateFormats,
+    uniqueCombinations,
     validatorErrorMessages,
   }: {
     index: number;
@@ -427,11 +464,18 @@ export class BaseReview {
     passRecord: Record<string, any>;
     checkRecord: Record<string, any>;
     dateFormats: Record<string, string[]>;
+    uniqueCombinations: Record<string, string[]>;
     validatorErrorMessages?: Record<string, { string: Record<string, string> }>;
   }) {
-    const isValid = validator(checkRecord);
+    const isValid = validator(checkRecord, {
+      instancePath: `/${index}`,
+      parentData: undefined,
+      parentDataProperty: '',
+      rootData: [],
+      dynamicAnchors: undefined,
+    });
     if (!isValid) {
-      const errors = this.getErrorsObject(validator.errors, dateFormats, validatorErrorMessages);
+      const errors = this.getErrorsObject(validator.errors, dateFormats, validatorErrorMessages, uniqueCombinations);
 
       return {
         index,
@@ -451,7 +495,11 @@ export class BaseReview {
     }
   }
 
-  getAjvValidator(dateFormats: Record<string, string[]>, uniqueItems: Record<string, Set<any>>) {
+  getAjvValidator(
+    dateFormats: Record<string, string[]>,
+    uniqueItems: Record<string, Set<any>>,
+    uniqueCombinations: Record<string, string[]>
+  ) {
     const ajv = new Ajv({
       allErrors: true,
       coerceTypes: true,
@@ -498,7 +546,31 @@ export class BaseReview {
       },
     });
 
+    const valuesMap = new Map();
+    Object.keys(uniqueCombinations).forEach((keyword) => {
+      valuesMap.set(keyword, new Set());
+      ajv.addKeyword({
+        keyword,
+        type: 'object',
+        validate: function (schema, data) {
+          const fields = uniqueCombinations[keyword];
+
+          const fullName = fields.map((field) => `${data[field]}`).join(', ');
+          if (valuesMap.get(keyword).has(fullName)) {
+            return false;
+          }
+          valuesMap.get(keyword).add(fullName);
+
+          return true;
+        },
+      });
+    });
+
     return ajv;
+  }
+
+  getUniqueKey(uniqueKey: string) {
+    return 'unique' + uniqueKey.replace(/\s+/g, '');
   }
 
   async batchRun({
@@ -508,6 +580,7 @@ export class BaseReview {
     extra,
     csvFileStream,
     dateFormats,
+    uniqueCombinations,
     numberColumnHeadings,
     validatorErrorMessages,
     multiSelectColumnHeadings,
@@ -536,6 +609,7 @@ export class BaseReview {
                 passRecord: recordObj.passRecord,
                 validator,
                 dateFormats,
+                uniqueCombinations,
                 validatorErrorMessages,
               });
               batchRecords.push(validationResultItem);

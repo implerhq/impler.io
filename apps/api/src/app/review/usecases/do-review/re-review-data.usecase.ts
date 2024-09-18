@@ -10,6 +10,7 @@ import {
   ITemplateSchemaItem,
   UploadStatusEnum,
   EMAIL_SUBJECT,
+  ValidatorTypesEnum,
 } from '@impler/shared';
 
 import { APIMessages } from '@shared/constants';
@@ -62,13 +63,7 @@ export class DoReReview extends BaseReview {
     const userEmail = await this.uploadRepository.getUserEmailFromUploadId(_uploadId);
     const dateFormats: Record<string, string[]> = {};
     const uniqueItems: Record<string, Set<any>> = {};
-    const schema = this.buildAJVSchema({
-      columns: JSON.parse(uploadInfo.customSchema),
-      dateFormats,
-      uniqueItems,
-    });
-    const ajv = this.getAjvValidator(dateFormats, uniqueItems);
-    const validator = ajv.compile(schema);
+    const uniqueColumnKeysCombinationMap = new Map<string, Set<string>>();
     const validations = await this.validatorRepository.findOne({
       _templateId: (uploadInfo._templateId as unknown as TemplateEntity)._id,
     });
@@ -85,9 +80,34 @@ export class DoReReview extends BaseReview {
         validatorErrorMessages[column.key] = {};
         column.validators.forEach((validatorItem) => {
           validatorErrorMessages[column.key][validatorItem.validate] = validatorItem.errorMessage;
+          if (validatorItem.validate === ValidatorTypesEnum.UNIQUE_WITH) {
+            if (uniqueColumnKeysCombinationMap.has(validatorItem.uniqueKey)) {
+              uniqueColumnKeysCombinationMap.set(
+                validatorItem.uniqueKey,
+                new Set([...uniqueColumnKeysCombinationMap.get(validatorItem.uniqueKey), column.key])
+              );
+            } else {
+              uniqueColumnKeysCombinationMap.set(validatorItem.uniqueKey, new Set([column.key]));
+            }
+          }
         });
       }
     });
+
+    const uniqueCombinations = {};
+    const schema = this.buildAJVSchema({
+      columns: JSON.parse(uploadInfo.customSchema),
+      dateFormats,
+      uniqueItems,
+    });
+    uniqueColumnKeysCombinationMap.forEach((value, key) => {
+      if (value.size > 1) {
+        uniqueCombinations[this.getUniqueKey(key)] = Array.from(value);
+        schema[this.getUniqueKey(key)] = true;
+      }
+    });
+    const ajv = this.getAjvValidator(dateFormats, uniqueItems, uniqueCombinations);
+    const validator = ajv.compile(schema);
 
     uniqueFieldData.forEach((item) => {
       uniqueFields.forEach((field) => {
@@ -133,6 +153,7 @@ export class DoReReview extends BaseReview {
         validator,
         userEmail,
         dateFormats,
+        uniqueCombinations,
         uploadId: _uploadId,
         validatorErrorMessages,
         extra: uploadInfo.extra,
@@ -146,6 +167,7 @@ export class DoReReview extends BaseReview {
         validator,
         dateFormats,
         result,
+        uniqueCombinations,
         multiSelectColumnHeadings,
         validatorErrorMessages,
       });
@@ -180,12 +202,14 @@ export class DoReReview extends BaseReview {
     uploadId,
     validator,
     dateFormats,
+    uniqueCombinations,
     multiSelectColumnHeadings,
   }: {
     uploadId: string;
     result: ISaveResults;
     validator: ValidateFunction;
     dateFormats: Record<string, string[]>;
+    uniqueCombinations: Record<string, string[]>;
     validatorErrorMessages: ValidatorErrorMessages;
     multiSelectColumnHeadings: Record<string, string>;
   }) {
@@ -203,6 +227,7 @@ export class DoReReview extends BaseReview {
         validator,
         checkRecord,
         dateFormats,
+        uniqueCombinations,
         index: record.index,
         passRecord: record.record,
       });
@@ -259,6 +284,7 @@ export class DoReReview extends BaseReview {
     userEmail,
     dateFormats,
     onBatchInitialize,
+    uniqueCombinations,
     validatorErrorMessages,
     multiSelectColumnHeadings,
   }: {
@@ -270,6 +296,7 @@ export class DoReReview extends BaseReview {
     onBatchInitialize: string;
     validator: ValidateFunction;
     dateFormats: Record<string, string[]>;
+    uniqueCombinations: Record<string, string[]>;
     validatorErrorMessages: ValidatorErrorMessages;
     multiSelectColumnHeadings: Record<string, string>;
   }) {
@@ -279,6 +306,7 @@ export class DoReReview extends BaseReview {
       uploadId,
       validator,
       dateFormats,
+      uniqueCombinations,
       validatorErrorMessages,
       multiSelectColumnHeadings,
     });
@@ -340,6 +368,7 @@ export class DoReReview extends BaseReview {
     uploadId,
     validator,
     dateFormats,
+    uniqueCombinations,
     validatorErrorMessages,
     multiSelectColumnHeadings,
   }: {
@@ -347,6 +376,7 @@ export class DoReReview extends BaseReview {
     uploadId: string;
     validator: ValidateFunction;
     dateFormats: Record<string, string[]>;
+    uniqueCombinations: Record<string, string[]>;
     validatorErrorMessages: ValidatorErrorMessages;
     multiSelectColumnHeadings: Record<string, string>;
   }) {
@@ -365,6 +395,7 @@ export class DoReReview extends BaseReview {
         validator,
         checkRecord,
         dateFormats,
+        uniqueCombinations,
         index: record.index,
         validatorErrorMessages,
         passRecord: record.record,
