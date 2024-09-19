@@ -1,4 +1,5 @@
-import { EventTypesEnum, IUpload } from '@impler/shared';
+import { IUpload } from '@impler/client';
+import { EventTypesEnum } from '@impler/shared';
 
 export function Ready() {
   window.parent.postMessage({ type: EventTypesEnum.WIDGET_READY }, '*');

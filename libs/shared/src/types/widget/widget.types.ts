@@ -1,4 +1,4 @@
-import { WIDGET_TEXTS } from '../../config/texts.config';
+import { WIDGET_TEXTS } from '@impler/client';
 import { ISchemaItem } from '../column';
 
 export interface ICommonShowPayload {

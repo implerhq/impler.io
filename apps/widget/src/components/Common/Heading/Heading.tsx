@@ -2,7 +2,8 @@ import { Group, MediaQuery, Title, useMantineTheme } from '@mantine/core';
 import { PhasesEnum } from '@types';
 import { Stepper } from '@ui/Stepper';
 import { variables } from '@config';
-import { TemplateModeEnum, WIDGET_TEXTS } from '@impler/shared';
+import { WIDGET_TEXTS } from '@impler/client';
+import { TemplateModeEnum } from '@impler/shared';
 
 interface IHeadingProps {
   title?: string;

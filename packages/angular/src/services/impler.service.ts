@@ -1,6 +1,5 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import { EventCalls, ShowWidgetProps } from '../types';
-import { logError } from '../utils/logger';
+import { EventCalls, IShowWidgetProps, logError } from '@impler/client';
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +30,7 @@ export class ImplerService {
     } else logError('IMPLER_UNDEFINED_ERROR');
   }
 
-  showWidget(options: ShowWidgetProps): void {
+  showWidget(options: IShowWidgetProps): void {
     if (this.isImplerReady) {
       window.impler.show({ ...options, uuid: this.uuid });
     } else {

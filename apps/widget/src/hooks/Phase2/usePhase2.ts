@@ -1,11 +1,13 @@
-import { logAmplitudeEvent } from '@amplitude';
-import { IMapping, IErrorObject, IMappingFinalize, IUpload } from '@impler/shared';
-import { useAPIState } from '@store/api.context';
-import { useAppState } from '@store/app.context';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { notifier } from '@util';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { logAmplitudeEvent } from '@amplitude';
+import { useQuery, useMutation } from '@tanstack/react-query';
+
+import { notifier } from '@util';
+import { IUpload } from '@impler/client';
+import { useAPIState } from '@store/api.context';
+import { useAppState } from '@store/app.context';
+import { IMapping, IErrorObject, IMappingFinalize } from '@impler/shared';
 
 interface IUsePhase2Props {
   goNext: () => void;

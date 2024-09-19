@@ -10,3 +10,15 @@ declare interface Window {
   _env_: any;
   amplitude?: any;
 }
+
+interface IOption {
+  label: string;
+  value: string;
+}
+
+interface IReplaceResponse {
+  acknowledged: boolean;
+  modifiedCount: number;
+  upsertedCount: number;
+  matchedCount: number;
+}

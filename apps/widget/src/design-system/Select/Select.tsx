@@ -14,11 +14,13 @@ export interface ISelectProps {
   data: string[] | IOption[];
   error?: string;
   required?: boolean;
+  searchable?: boolean;
   width?: string | number;
   value?: string;
+  defaultValue?: string;
   withinPortal?: boolean;
   style?: CSSProperties;
-  onChange?: (value: any) => void;
+  onChange?: (value: string | null) => void;
 }
 
 export const Select = React.forwardRef<HTMLInputElement, ISelectProps>((props: ISelectProps, ref) => {
@@ -27,6 +29,8 @@ export const Select = React.forwardRef<HTMLInputElement, ISelectProps>((props: I
     placeholder,
     data,
     error,
+    defaultValue,
+    searchable,
     required = true,
     width = '100%',
     onChange,
@@ -46,6 +50,8 @@ export const Select = React.forwardRef<HTMLInputElement, ISelectProps>((props: I
       style={style}
       error={error}
       label={title}
+      searchable={searchable}
+      defaultValue={defaultValue}
       rightSection={<ChevronDown />}
       classNames={{
         label: classes.label,

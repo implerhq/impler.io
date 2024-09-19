@@ -1,3 +1,5 @@
+import { isObject } from '@impler/client';
+
 export const changeToCode = (str = '') =>
   str
     ?.replace(/[^\s\w]/gi, '')
@@ -63,7 +65,7 @@ export function downloadFile(blob: Blob, name: string) {
   link.parentNode?.removeChild(link);
 }
 
-export function constructQueryString(obj: Record<string, string | number>): string {
+export function constructQueryString(obj: Record<string, string | number | undefined>): string {
   const arr = [];
   Object.keys(obj).forEach((key: string) => {
     if (obj[key] !== undefined && obj[key] !== null)
@@ -73,9 +75,6 @@ export function constructQueryString(obj: Record<string, string | number>): stri
 
   return query ? `?${query}` : '';
 }
-
-export const isObject = (value: any) =>
-  typeof value === 'object' && !Array.isArray(value) && value !== null && Object.keys(value).length > 0;
 
 export const convertStringToJson = (value: any) => {
   if (isObject(value)) return value;

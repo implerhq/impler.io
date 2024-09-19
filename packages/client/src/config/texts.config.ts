@@ -1,6 +1,15 @@
+export const TEXTS = {
+  PROJECTID_NOT_SPECIFIED:
+    'It looks like you have not specified projectId to the import button which is required!',
+  IMPLER_UNDEFINED_ERROR:
+    'It looks like you have not added embed script or your embed script path is incorrect!',
+  IMPLER_NOT_INITIATED: 'It looks like Impler is not initiated!',
+};
+
 export const WIDGET_TEXTS = {
   COMMON: {
     SORRY: 'Sorry!',
+    CANCEL: 'Cancel',
     CLOSE_WIDGET: 'Close',
     UPLOAD_AGAIN: 'Upload Again',
   },
@@ -17,7 +26,8 @@ export const WIDGET_TEXTS = {
   FILE_DROP_AREA: {
     DROP_FILE: 'Drop and drop a file here or ',
     BROWSE_FILE: 'Browse from computer',
-    IMAGE_FILE_SIZE: 'Image size should be less than 5 MB. Supported formats are PNG, JPG and JPEG.',
+    IMAGE_FILE_SIZE:
+      'Image size should be less than 5 MB. Supported formats are PNG, JPG and JPEG.',
     BRING_FILE: 'Bring any .csv or .xlsx file here to start Import',
     FILE_SELECTED: 'File selected successfully',
   },
@@ -44,10 +54,13 @@ export const WIDGET_TEXTS = {
 
     SELECT_FILE_NAME: 'Select a file',
     SELECT_FILE_REQUIRED_MSG: 'Please select a file',
-    SELECT_FILE_FORMAT_MSG: 'File type not supported! Please select a .csv or .xlsx file.',
+    SELECT_FILE_FORMAT_MSG:
+      'File type not supported! Please select a .csv or .xlsx file.',
 
-    TEMPLATE_NOT_FOUND_MSG: "We couldn't find the template you're importing! Please check the passed parameters.",
-    INCOMPLETE_TEMPLATE_MSG: 'This import does not have any columns. Please try again after some time!',
+    TEMPLATE_NOT_FOUND_MSG:
+      "We couldn't find the template you're importing! Please check the passed parameters.",
+    INCOMPLETE_TEMPLATE_MSG:
+      'This import does not have any columns. Please try again after some time!',
   },
   PHASE2: {
     REVIEW_DATA: 'Review Data',
@@ -58,18 +71,32 @@ export const WIDGET_TEXTS = {
     MAPPING_FIELD_PLACEHOLDER: 'Select Field',
   },
   PHASE3: {
+    COMPLETE: 'Complete',
     EXPORT_DATA: 'Export Data',
     RE_REVIEW_DATA: 'Re-Review Data',
-    COMPLETE: 'Complete',
     ALL_RECORDS_VALID_TITLE: ' All records are found valid!',
-    ALL_RECORDS_VALID_DETAILS: 'All {total} row(s) found valid! Would you like to complete the Import?',
+    ALL_RECORDS_VALID_DETAILS:
+      'All {total} row(s) found valid! Would you like to complete the Import?',
     LABEL_ALL_RECORDS: `All {records}`,
     LABEL_VALID_RECORDS: `Valid {records}`,
     LABEL_INVALID_RECORDS: `Invalid {records}`,
+
+    REPLACE: 'Replace',
+    FIND_REPLACE: 'Find and Replace',
+    ALL_COLUMNS_LABEL: 'All Columns',
+
+    FIND_LABEL: 'Find',
+    FIND_PLACEHOLDER: 'Empty Cell',
+
+    REPLACE_LABEL: 'Replace',
+    IN_COLUMN_LABEL: 'In Column',
+    CASE_SENSITIVE_LABEL: 'Case Sensitive',
+    MATCH_ENTIRE_LABEL: 'Match Entire Cell',
   },
   PHASE4: {
     TITLE: 'Bravo! {count} rows have been uploaded',
-    SUB_TITLE: '{count} rows have been uploaded successfully and currently is in process, it will be ready shortly.',
+    SUB_TITLE:
+      '{count} rows have been uploaded successfully and currently is in process, it will be ready shortly.',
     UPLOAD_AGAIN: 'Upload New File',
   },
   AUTOIMPORT_PHASE1: {
@@ -82,7 +109,8 @@ export const WIDGET_TEXTS = {
   },
   AUTOIMPORT_PHASE3: {
     CONFIRM: 'Confirm',
-    INVALID_CRON_MESSAGE: 'Expression values are incorrect. Please update values as per valid values below!',
+    INVALID_CRON_MESSAGE:
+      'Expression values are incorrect. Please update values as per valid values below!',
   },
   DELETE_RECORDS_CONFIRMATION: {
     TITLE: `{total} rows will be deleted. Are you sure?`,

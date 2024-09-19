@@ -1,7 +1,10 @@
 import { Schema } from 'mongoose';
 
 const RecordSchema = new Schema({
-  index: Number,
+  index: {
+    type: Number,
+    index: true,
+  },
   isValid: Boolean,
   errors: Schema.Types.Mixed,
   record: Schema.Types.Mixed,
