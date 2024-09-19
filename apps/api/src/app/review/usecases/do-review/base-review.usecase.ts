@@ -127,6 +127,7 @@ export class BaseReview {
         };
         break;
       case ColumnTypesEnum.NUMBER:
+      case ColumnTypesEnum.DOUBLE:
         property = {
           ...(column.type === ColumnTypesEnum.NUMBER && { multipleOf: 1 }),
           type: ['number', 'null'],
