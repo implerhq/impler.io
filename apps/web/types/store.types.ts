@@ -13,6 +13,7 @@ export interface IPlanMeta {
   }>;
   REMOVE_BRANDING: boolean;
   AUTOMATIC_IMPORTS: boolean;
+  ADVANCED_VALIDATORS: boolean;
 }
 
 export interface IPlanMetaContext {

@@ -1,23 +1,32 @@
+import Link from 'next/link';
 import { ReactNode } from 'react';
+import { modals } from '@mantine/modals';
 import { Control, FieldErrors } from 'react-hook-form';
 import { Flex, MantineSize, Stack } from '@mantine/core';
 
 import { Checkbox } from '@ui/checkbox';
 import { AutoHeightComponent } from '@ui/auto-height-component';
 
+import { Badge } from '@ui/badge';
+import { Button } from '@ui/button';
+import { LockIcon } from '@assets/icons/Lock.icon';
+import { TooltipLabel } from '@components/guide-point';
+import { IColumn, ValidatorTypesEnum } from '@impler/shared';
+
 import useStyles from './Validator.styles';
 import { MinMaxValidator } from './MinMaxValidator';
 import { UniqueWithValidator } from './UniqueWithValidator';
-import { IColumn, ValidatorTypesEnum } from '@impler/shared';
 
 interface ValidatorProps {
-  label?: string;
+  link: string;
+  label: string;
   size?: MantineSize;
   description?: ReactNode;
 
   index: number;
   min?: number;
   max?: number;
+  unavailable?: boolean;
   minPlaceholder?: string;
   maxPlaceholder?: string;
   control: Control<IColumn>;
@@ -28,6 +37,7 @@ interface ValidatorProps {
 }
 
 export function Validator({
+  link,
   label,
   index,
   errors,
@@ -35,6 +45,7 @@ export function Validator({
   min,
   max,
   type,
+  unavailable,
   size = 'sm',
   description,
   onCheckToggle,
@@ -45,11 +56,17 @@ export function Validator({
   const { classes } = useStyles();
 
   return (
-    <Flex direction="row" gap="sm">
-      <Checkbox checked={index > -1} onChange={(status) => onCheckToggle(status, index)} />
-      <Stack spacing={5} w="100%">
-        <div className={classes.root}>
-          {label ? <label className={classes.label}>{label}</label> : null}
+    <Flex direction="row" gap="sm" className={classes.wrapper} align="center">
+      {unavailable ? (
+        <LockIcon className={classes.icon} size="lg" />
+      ) : (
+        <Checkbox checked={index > -1} onChange={(status) => onCheckToggle(status, index)} />
+      )}
+
+      <Stack spacing={5} w="100%" align="flex-start">
+        <Badge color="orange">Feature unavailable on current plan</Badge>
+        <div>
+          <TooltipLabel link={link} label={label} />
           {description ? <p className={classes.description}>{description}</p> : null}
         </div>
         <AutoHeightComponent isVisible={index > -1 && type === ValidatorTypesEnum.UNIQUE_WITH}>
@@ -79,6 +96,10 @@ export function Validator({
           />
         </AutoHeightComponent>
       </Stack>
+
+      <Button component={Link} size="xs" href="/#plans" onClick={() => modals.closeAll()}>
+        Explore Options
+      </Button>
     </Flex>
   );
 }

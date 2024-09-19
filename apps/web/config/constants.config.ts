@@ -248,6 +248,9 @@ export const DOCUMENTATION_REFERENCE_LINKS = {
   bubbleIo: 'https://docs.impler.io/widget/bubble.io-embed',
   subscriptionInformation: 'https://docs.impler.io/platform/how-subscription-works',
   customValidation: 'https://docs.impler.io/features/custom-validation',
+  rangeValidator: 'https://docs.impler.io/features/advanced-validators#range',
+  lengthValidator: 'https://docs.impler.io/features/advanced-validators#length',
+  uniqueWithValidator: 'https://docs.impler.io/features/advanced-validators#unique-with',
 };
 
 export const COMPANY_SIZES = [
