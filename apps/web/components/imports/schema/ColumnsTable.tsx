@@ -1,20 +1,18 @@
-import { useEffect, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import {
-  ActionIcon,
   Flex,
-  Tooltip,
-  TextInput as Input,
-  Group,
-  SelectItem,
   Text,
-  useMantineTheme,
+  Group,
+  Tooltip,
+  ActionIcon,
   LoadingOverlay,
+  useMantineTheme,
+  TextInput as Input,
 } from '@mantine/core';
 
-import { colors as appColors } from '@config';
-import { useSchema } from '@hooks/useSchema';
 import { IColumn } from '@impler/shared';
+import { useSchema } from '@hooks/useSchema';
+import { colors as appColors } from '@config';
 
 import { Button } from '@ui/button';
 import { DraggableTable } from '@ui/table';
@@ -27,17 +25,16 @@ import { GripIcon } from '@assets/icons/Grip.icon';
 import { CloseIcon } from '@assets/icons/Close.icon';
 import { CheckIcon } from '@assets/icons/Check.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
-import { ValidationsGroup } from './ValidationsGroup';
+import { useSubscriptionInfo } from '@hooks/useSubscriptionInfo';
 
+import { ValidationsGroup } from './ValidationsGroup';
 interface ColumnsTableProps {
   templateId: string;
 }
 
 export function ColumnsTable({ templateId }: ColumnsTableProps) {
+  const { columnTypes } = useSubscriptionInfo();
   const { colors: themeColors } = useMantineTheme();
-  const { getColumnTypes } = useSchema({ templateId });
-  const [columnTypes, setColumnType] = useState<SelectItem[]>(getColumnTypes());
-
   const {
     columns,
     control,
@@ -62,10 +59,6 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
     const values = getValues();
     onValidationsClick({ ...values, key: values.key || values.name });
   };
-
-  useEffect(() => {
-    setColumnType(getColumnTypes());
-  }, []);
 
   return (
     <form id="columns" onSubmit={onAddColumnSubmit}>

@@ -38,15 +38,15 @@ export default function ImportDetails({}) {
   const [activeTab, setActiveTab] = useState<'schema' | 'destination' | 'snippet' | 'validator' | 'output'>();
   const { colorScheme } = useMantineTheme();
   const {
+    meta,
     columns,
     profileInfo,
+    updateImport,
     templateData,
     onUpdateClick,
     onDeleteClick,
     isTemplateDataLoading,
     onSpreadsheetImported,
-    updateImport,
-    meta,
   } = useImportDetails({
     templateId: router.query.id as string,
   });

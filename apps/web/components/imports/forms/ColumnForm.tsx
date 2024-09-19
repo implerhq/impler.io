@@ -1,17 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { modals } from '@mantine/modals';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import {
   Stack,
-  TextInput as Input,
   Text,
-  Divider,
-  SimpleGrid,
   Title,
   Group,
   Select,
-  SelectItem,
+  Divider,
+  SimpleGrid,
   CloseButton,
+  TextInput as Input,
   useMantineColorScheme,
 } from '@mantine/core';
 
@@ -22,11 +21,11 @@ import { Button } from '@ui/button';
 import { Textarea } from '@ui/textarea';
 import { Checkbox } from '@ui/checkbox';
 import { Validator } from '@ui/validator';
-import { useSchema } from '@hooks/useSchema';
 import { MultiSelect } from '@ui/multi-select';
 import { CustomSelect } from '@ui/custom-select';
 import { TooltipLabel } from '@components/guide-point';
 import { AutoHeightComponent } from '@ui/auto-height-component';
+import { useSubscriptionInfo } from '@hooks/useSubscriptionInfo';
 
 interface ColumnFormProps {
   isLoading?: boolean;
@@ -35,8 +34,7 @@ interface ColumnFormProps {
 }
 
 export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
-  const { getColumnTypes } = useSchema({ templateId: data?._templateId as string });
-  const [columnTypes, setColumnType] = useState<SelectItem[]>(getColumnTypes());
+  const { columnTypes } = useSubscriptionInfo();
   const { colorScheme } = useMantineColorScheme();
   const {
     watch,
@@ -57,11 +55,6 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
   const onClose = () => {
     modals.close(MODAL_KEYS.COLUMN_UPDATE);
   };
-
-  useEffect(() => {
-    setColumnType(getColumnTypes());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     const rangeValidatorIndex = fields.findIndex((field) => field.validate === ValidatorTypesEnum.RANGE);
