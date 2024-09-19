@@ -14,6 +14,6 @@ export class ProjectRepository extends BaseRepository<ProjectEntity> {
     });
   }
   async getUserOfProject(_projectId: string): Promise<ProjectEntity> {
-    return Project.findOne({ _id: _projectId }, '_userId').populate('_userId');
+    return Project.findOne({ _id: _projectId }, '_userId').populate('_userId', 'email');
   }
 }
