@@ -7,6 +7,7 @@ import { Flex, MantineSize, Stack } from '@mantine/core';
 import { Checkbox } from '@ui/checkbox';
 import { AutoHeightComponent } from '@ui/auto-height-component';
 
+import { ROUTES } from '@config';
 import { Badge } from '@ui/badge';
 import { Button } from '@ui/button';
 import { LockIcon } from '@assets/icons/Lock.icon';
@@ -98,7 +99,7 @@ export function Validator({
       </Stack>
 
       {unavailable ? (
-        <Button component={Link} size="xs" href="/#plans" onClick={() => modals.closeAll()}>
+        <Button component={Link} size="xs" href={ROUTES.EXPLORE_PLANS} onClick={modals.closeAll}>
           Explore Options
         </Button>
       ) : null}

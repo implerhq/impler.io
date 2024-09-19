@@ -1,4 +1,5 @@
 export const CONSTANTS = {
+  EXPLORE_PLANS_QUERY_LEY: 'explore_plans',
   PLAN_CODE_QUERY_KEY: 'plan_code',
   GITHUB_LOGIN_URL: '/v1/auth/github',
   AUTH_COOKIE_NAME: 'authentication',
@@ -169,6 +170,7 @@ export const ROUTES = {
   SETTINGS: '/settings',
   ACTIVITIES: '/activities',
   ADD_CARD: '/settings?tab=addcard&action=addcardmodal',
+  EXPLORE_PLANS: '/?explore_plans=true',
 };
 
 export const REGULAR_EXPRESSIONS = {
