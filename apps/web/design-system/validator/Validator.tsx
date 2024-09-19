@@ -53,18 +53,18 @@ export function Validator({
   maxPlaceholder,
   errorMessagePlaceholder,
 }: ValidatorProps) {
-  const { classes } = useStyles();
+  const { classes } = useStyles({ showWrapper: unavailable });
 
   return (
     <Flex direction="row" gap="sm" className={classes.wrapper} align="center">
       {unavailable ? (
-        <LockIcon className={classes.icon} size="lg" />
+        <LockIcon className={classes.icon} size="xl" />
       ) : (
         <Checkbox checked={index > -1} onChange={(status) => onCheckToggle(status, index)} />
       )}
 
       <Stack spacing={5} w="100%" align="flex-start">
-        <Badge color="orange">Feature unavailable on current plan</Badge>
+        {unavailable ? <Badge color="orange">Feature unavailable on current plan</Badge> : null}
         <div>
           <TooltipLabel link={link} label={label} />
           {description ? <p className={classes.description}>{description}</p> : null}
@@ -97,9 +97,11 @@ export function Validator({
         </AutoHeightComponent>
       </Stack>
 
-      <Button component={Link} size="xs" href="/#plans" onClick={() => modals.closeAll()}>
-        Explore Options
-      </Button>
+      {unavailable ? (
+        <Button component={Link} size="xs" href="/#plans" onClick={() => modals.closeAll()}>
+          Explore Options
+        </Button>
+      ) : null}
     </Flex>
   );
 }

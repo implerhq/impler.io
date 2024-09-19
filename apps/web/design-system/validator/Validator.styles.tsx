@@ -1,3 +1,4 @@
+import { colors } from '@config';
 import { createStyles, CSSObject, getSize, MantineTheme } from '@mantine/core';
 
 const getLabelStyles = (theme: MantineTheme): CSSObject => ({
@@ -11,9 +12,19 @@ const getDescriptionStyles = (theme: MantineTheme): CSSObject => ({
   color: theme.colors.gray[6],
 });
 
+interface IParamsProps {
+  showWrapper?: boolean;
+}
+
 export default createStyles(
-  (theme: MantineTheme): Record<string, any> => ({
+  (theme: MantineTheme, params: IParamsProps): Record<string, any> => ({
     label: getLabelStyles(theme),
     description: getDescriptionStyles(theme),
+    wrapper: params.showWrapper
+      ? {
+          padding: theme.spacing.xs,
+          backgroundColor: colors.BGPrimaryDark,
+        }
+      : {},
   })
 );
