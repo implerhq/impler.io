@@ -193,10 +193,6 @@ export class BaseReview {
     let field: string;
 
     return errors.reduce((obj, error) => {
-      if (error.keyword === 'required') field = error.params.missingProperty;
-      else [, field] = error.instancePath.split('/');
-
-      field = field.replace(/~1/g, '/');
       if (!!uniqueCombinations[error.keyword]) {
         uniqueCombinations[error.keyword].forEach((columnKey) => {
           obj[columnKey] = this.getMessage({
@@ -208,7 +204,11 @@ export class BaseReview {
             validatorErrorMessages,
           });
         });
-      } else
+      } else {
+        if (error.keyword === 'required') field = error.params.missingProperty;
+        else [, , field] = error.instancePath.split('/');
+
+        field = field.replace(/~1/g, '/');
         obj[field] = this.getMessage({
           error,
           data: error.data,
@@ -217,6 +217,7 @@ export class BaseReview {
           uniqueCombinations,
           validatorErrorMessages,
         });
+      }
 
       return obj;
     }, {});
