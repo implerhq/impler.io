@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UserRepository } from '@impler/dal';
-import { EMAIL_SUBJECT } from '@impler/shared';
+import { EMAIL_SUBJECT, UserRolesEnum } from '@impler/shared';
 import { EmailService } from '@impler/services';
 import { UpdateUserCommand } from './update-user.command';
 import { AuthService } from 'app/auth/services/auth.service';
@@ -56,6 +56,7 @@ export class UpdateUser {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
+        role: user.role as UserRolesEnum,
         isEmailVerified: user.isEmailVerified,
       });
 

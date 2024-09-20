@@ -20,7 +20,7 @@ export class CreateEnvironment {
       apiKeys: [
         {
           _userId: command._userId,
-          role: '',
+          role: command.role,
         },
       ],
     });

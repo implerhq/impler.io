@@ -5,7 +5,7 @@ import { EmailService } from '@impler/services';
 import { LoginUserCommand } from './login-user.command';
 import { AuthService } from '../../services/auth.service';
 import { EnvironmentRepository, UserRepository } from '@impler/dal';
-import { EMAIL_SUBJECT, SCREENS } from '@impler/shared';
+import { EMAIL_SUBJECT, SCREENS, UserRolesEnum } from '@impler/shared';
 import { generateVerificationCode } from '@shared/helpers/common.helper';
 
 @Injectable()
@@ -67,6 +67,7 @@ export class LoginUser {
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
+          role: apiKey.role as UserRolesEnum,
           profilePicture: user.profilePicture,
           accessToken: apiKey?.apiKey,
           isEmailVerified: user.isEmailVerified,

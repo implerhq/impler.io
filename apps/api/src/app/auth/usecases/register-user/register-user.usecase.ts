@@ -5,7 +5,7 @@ import { UserRepository } from '@impler/dal';
 
 import { EmailService } from '@impler/services';
 import { LEAD_SIGNUP_USING } from '@shared/constants';
-import { SCREENS, EMAIL_SUBJECT } from '@impler/shared';
+import { SCREENS, EMAIL_SUBJECT, UserRolesEnum } from '@impler/shared';
 import { AuthService } from 'app/auth/services/auth.service';
 import { RegisterUserCommand } from './register-user.command';
 import { generateVerificationCode } from '@shared/helpers/common.helper';
@@ -45,6 +45,7 @@ export class RegisterUser {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      role: user.role as UserRolesEnum,
       isEmailVerified: user.isEmailVerified,
     });
 
