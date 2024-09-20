@@ -10,6 +10,12 @@ export class UpdateTeamMemberRoleDto {
   userId: string;
 
   @ApiProperty({
+    description: 'Id of the Project From Which the role has to be changed',
+  })
+  @IsString()
+  projectId: string;
+
+  @ApiProperty({
     description: 'New Role of the User that to be asssigned',
   })
   @IsEnum(UserRolesEnum)
