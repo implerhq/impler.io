@@ -1,3 +1,4 @@
+import { UserRolesEnum } from '@impler/shared';
 import { BaseRepository } from '../base-repository';
 import { EnvironmentEntity } from './environment.entity';
 import { Environment } from './environment.schema';
@@ -56,18 +57,22 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
     }));
   }
 
-  async getApiKeyForUserId(userId: string) {
+  async getApiKeyForUserId(userId: string): Promise<{ projectId: string; apiKey: string; role: string } | null> {
     const userEnvironment = await this.findOne({
       'apiKeys._userId': userId,
     });
 
-    return userEnvironment
-      ? {
-          projectId: userEnvironment._projectId,
-          // eslint-disable-next-line no-magic-numbers
-          apiKey: userEnvironment.key,
-        }
-      : null;
+    if (userEnvironment) {
+      const userApiKey = userEnvironment.apiKeys.find((apiKey) => apiKey._userId.toString() === userId);
+
+      return {
+        projectId: userEnvironment._projectId,
+        apiKey: userEnvironment.key,
+        role: userApiKey ? userApiKey.role : null,
+      };
+    }
+
+    return null;
   }
 
   async listTeamMembersByProjectId(projectId: string) {
@@ -88,6 +93,29 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
           apiKeys: {
             _userId: userId,
           },
+        },
+      }
+    );
+
+    return result;
+  }
+  async updateTeamMemberRole({
+    projectId,
+    newRole,
+    userId,
+  }: {
+    projectId: string;
+    userId: string;
+    newRole: UserRolesEnum;
+  }) {
+    const result = await Environment.updateOne(
+      {
+        _projectId: projectId,
+        'apiKeys._userId': userId,
+      },
+      {
+        $set: {
+          'apiKeys.$.role': newRole,
         },
       }
     );
