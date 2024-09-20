@@ -37,6 +37,7 @@ export function useApp() {
             _projectId: data[0]._id,
             projectName: data[0].name,
           });
+          setAbility(defineAbilitiesFor(profileInfo.role));
         }
       },
     }
@@ -70,6 +71,7 @@ export function useApp() {
           projectName: project.name,
           accessToken: environment.key,
         });
+        setAbility(defineAbilitiesFor(profileInfo.role));
       }
       if (![ROUTES.SETTINGS, ROUTES.ACTIVITIES, ROUTES.IMPORTS].includes(pathname)) {
         replace(ROUTES.IMPORTS);
@@ -89,6 +91,7 @@ export function useApp() {
         _projectId: project._id,
         projectName: project?.name,
       });
+      setAbility(defineAbilitiesFor(profileInfo.role));
       switchProject(id);
 
       if (![ROUTES.SETTINGS, ROUTES.ACTIVITIES, ROUTES.IMPORTS].includes(pathname)) {
