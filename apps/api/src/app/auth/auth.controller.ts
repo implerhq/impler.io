@@ -13,7 +13,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 
-import { IJwtPayload } from '@impler/shared';
+import { IJwtPayload, UserRolesEnum } from '@impler/shared';
 import { AuthService } from './services/auth.service';
 import { IStrategyResponse } from '@shared/types/auth.types';
 import { CONSTANTS, COOKIE_CONFIG } from '@shared/constants';
@@ -167,12 +167,18 @@ export class AuthController {
       companySize: body.companySize,
       source: body.source,
     });
+
+    const userApiKey = projectWithEnvironment.environment.apiKeys.find(
+      (apiKey) => apiKey._userId.toString() === user._id
+    );
+
     const token = this.authService.getSignedToken(
       {
         _id: user._id,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        role: userApiKey.role as UserRolesEnum,
         profilePicture: user.profilePicture,
         isEmailVerified: user.isEmailVerified,
         accessToken: projectWithEnvironment.environment.key,
