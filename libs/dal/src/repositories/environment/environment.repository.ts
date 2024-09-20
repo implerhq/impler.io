@@ -69,4 +69,29 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
         }
       : null;
   }
+
+  async listTeamMembersByProjectId(projectId: string) {
+    return await Environment.find({ _projectId: projectId }, { apiKeys: 1, _projectId: 1 }).populate(
+      'apiKeys._userId',
+      'firstName lastName email'
+    );
+  }
+
+  async deleteTeamMember(projectId: string, userId: string) {
+    const result = await Environment.updateOne(
+      {
+        _projectId: projectId,
+        'apiKeys._userId': userId,
+      },
+      {
+        $pull: {
+          apiKeys: {
+            _userId: userId,
+          },
+        },
+      }
+    );
+
+    return result;
+  }
 }
