@@ -49,7 +49,7 @@ export function useSignup() {
       });
       handleRouteBasedOnScreenResponse(data.screen as SCREENS, push);
     },
-    onError(error) {
+    onError(error:any) {
       if (error.error === 'EmailAlreadyExists') {
         setError('email', {
           type: 'manual',
@@ -67,7 +67,7 @@ export function useSignup() {
    * @param name string to capitalize
    * @returns a string with the name with capital letter at char position 0
    */
- const formatName = (name: string): string => {
+const formatName = (name: string): string => {
   if (!name) return '';
   return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
 };
@@ -92,6 +92,8 @@ const onSignup = (data: ISignupFormData) => {
 
   signup(signupData);
 };
+
+
   return {
     errors,
     register,
