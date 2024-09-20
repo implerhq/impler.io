@@ -17,7 +17,7 @@ export function TooltipLink({ label = 'Read More', link, iconSize = 'sm' }: Tool
 
   return (
     <Tooltip label={label} withArrow>
-      <Link href={link} target="_blank" rel="noopener noreferrer">
+      <Link href={link} target="_blank" rel="referrer">
         <GuidePointIcon
           size={iconSize}
           color={theme.colorScheme === 'dark' ? colors.BGPrimaryLight : colors.BGPrimaryDark}

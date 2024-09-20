@@ -1,8 +1,9 @@
 import { modals } from '@mantine/modals';
 import React, { ChangeEvent, useState } from 'react';
-import { Switch, Stack, Table, Button, Text, Badge, Group, useMantineColorScheme } from '@mantine/core';
+import { Switch, Stack, Table, Button, Text, Group, useMantineColorScheme } from '@mantine/core';
 
 import useStyles from './Plans.styles';
+import { Badge } from '@ui/badge';
 import { track } from '@libs/amplitude';
 import { MODAL_KEYS, colors } from '@config';
 import { numberFormatter } from '@impler/shared';
