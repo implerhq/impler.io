@@ -39,6 +39,7 @@ export function ProjectInvitationModal() {
             error={errors.invitationEmailsTo ? errors.invitationEmailsTo.message : undefined}
             value={field.value || []}
             onChange={field.onChange}
+            withinPortal
           />
         )}
         rules={{
@@ -63,6 +64,7 @@ export function ProjectInvitationModal() {
             mt="md"
             {...field}
             error={errors.role ? errors.role.message : undefined}
+            withinPortal
           />
         )}
         rules={{ required: 'Role is required' }}
