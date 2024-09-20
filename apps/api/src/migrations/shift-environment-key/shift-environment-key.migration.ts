@@ -2,6 +2,7 @@ import '../../config';
 import { AppModule } from '../../app.module';
 import { NestFactory } from '@nestjs/core';
 import { EnvironmentRepository } from '@impler/dal';
+import { UserRolesEnum } from '@impler/shared';
 
 export async function run() {
   console.log('Start migration - moving key to root and adding role to apiKeys');
@@ -28,7 +29,7 @@ export async function run() {
         // eslint-disable-next-line no-unused-vars
         const { ...rest } = apiKey;
 
-        return { ...rest, role: 'admin' };
+        return { ...rest, role: UserRolesEnum.ADMIN };
       });
 
       if (key === null || key === undefined) {
