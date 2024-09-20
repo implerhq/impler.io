@@ -164,3 +164,17 @@ interface SentProjectInvitation {
   invitedBy: string;
   token: string;
 }
+
+interface TeamMember {
+  name: string;
+  email: string;
+}
+
+interface TeamMemberList {
+  _id: string;
+  user: User;
+  joinedDate: string;
+  role: string;
+  isCurrentUser: string;
+  projectId: string;
+}
