@@ -20,6 +20,7 @@ COPY .prettierignore .
 
 COPY apps/web ./apps/web
 COPY apps/web/.example.env ./apps/web/.env
+COPY packages/client ./packages/client
 COPY libs/shared ./libs/shared
 COPY packages/react ./packages/react
 

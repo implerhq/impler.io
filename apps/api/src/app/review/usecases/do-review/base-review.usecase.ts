@@ -7,9 +7,16 @@ import addKeywords from 'ajv-keywords';
 import * as customParseFormat from 'dayjs/plugin/customParseFormat';
 import Ajv, { AnySchemaObject, ErrorObject, ValidateFunction } from 'ajv';
 
-import { ColumnTypesEnum, Defaults, ITemplateSchemaItem } from '@impler/shared';
-
+import { ValidatorErrorMessages } from '@shared/types/review.types';
 import { SManager, BATCH_LIMIT, MAIN_CODE, ExecuteIsolateResult } from '@shared/services/sandbox';
+import {
+  ColumnTypesEnum,
+  Defaults,
+  ITemplateSchemaItem,
+  LengthValidatorType,
+  RangeValidatorType,
+  ValidatorTypesEnum,
+} from '@impler/shared';
 
 dayjs.extend(customParseFormat);
 
@@ -28,14 +35,16 @@ interface IBatchItem {
   // totalRecords: number;
 }
 interface IRunData {
+  extra: any;
   uploadId: string;
   headings: string[];
   csvFileStream: any;
   dataStream: Writable;
   validator: ValidateFunction;
-  extra: any;
   numberColumnHeadings: Set<string>;
   dateFormats: Record<string, string[]>;
+  uniqueCombinations: Record<string, string[]>;
+  validatorErrorMessages: ValidatorErrorMessages;
   multiSelectColumnHeadings: Record<string, string>;
 }
 
@@ -102,23 +111,29 @@ export class BaseReview {
 
   private getProperty(column: ITemplateSchemaItem): Record<string, unknown> {
     let property: Record<string, unknown> = {};
+    const rangeValidator = column.validators?.find(
+      (validator) => validator.validate === ValidatorTypesEnum.RANGE
+    ) as RangeValidatorType;
+    const lengthValidator = column.validators?.find(
+      (validator) => validator.validate === ValidatorTypesEnum.LENGTH
+    ) as LengthValidatorType;
 
     switch (column.type) {
       case ColumnTypesEnum.STRING:
         property = {
           type: 'string',
+          ...(typeof lengthValidator?.min === 'number' && { minLength: lengthValidator?.min }),
+          ...(typeof lengthValidator?.max === 'number' && { maxLength: lengthValidator?.max }),
         };
         break;
       case ColumnTypesEnum.NUMBER:
-        property = {
-          allOf: [{ type: ['integer', 'null'] }],
-          ...(!column.isRequired && { default: null }),
-        };
-        break;
       case ColumnTypesEnum.DOUBLE:
         property = {
-          allOf: [{ type: ['number', 'null'] }],
+          ...(column.type === ColumnTypesEnum.NUMBER && { multipleOf: 1 }),
+          type: ['number', 'null'],
           ...(!column.isRequired && { default: null }),
+          ...(typeof rangeValidator?.min === 'number' && { minimum: rangeValidator?.min }),
+          ...(typeof rangeValidator?.max === 'number' && { maximum: rangeValidator?.max }),
         };
         break;
       case ColumnTypesEnum.SELECT:
@@ -169,7 +184,12 @@ export class BaseReview {
     };
   }
 
-  private getErrorsObject(errors: ErrorObject[], dateFormats: Record<string, string[]>): Record<string, string> {
+  private getErrorsObject(
+    errors: ErrorObject[],
+    dateFormats: Record<string, string[]>,
+    validatorErrorMessages: ValidatorErrorMessages,
+    uniqueCombinations: Record<string, string[]>
+  ): Record<string, string> {
     let field: string;
 
     return errors.reduce((obj, error) => {
@@ -177,15 +197,72 @@ export class BaseReview {
       else [, field] = error.instancePath.split('/');
 
       field = field.replace(/~1/g, '/');
-      obj[field] = this.getMessage(error, field || error.schema[0], error.data, dateFormats);
+      if (!!uniqueCombinations[error.keyword]) {
+        uniqueCombinations[error.keyword].forEach((columnKey) => {
+          obj[columnKey] = this.getMessage({
+            error,
+            data: error.data,
+            field: columnKey,
+            dateFormats,
+            uniqueCombinations,
+            validatorErrorMessages,
+          });
+        });
+      } else
+        obj[field] = this.getMessage({
+          error,
+          data: error.data,
+          field: field || error.schema[0],
+          dateFormats,
+          uniqueCombinations,
+          validatorErrorMessages,
+        });
 
       return obj;
     }, {});
   }
 
-  private getMessage(error: ErrorObject, field: string, data: unknown, dateFormats: Record<string, string[]>): string {
+  private getMessage({
+    data,
+    dateFormats,
+    error,
+    field,
+    uniqueCombinations,
+    validatorErrorMessages,
+  }: {
+    field: string;
+    data: unknown;
+    error: ErrorObject;
+    dateFormats: Record<string, string[]>;
+    uniqueCombinations: Record<string, string[]>;
+    validatorErrorMessages?: ValidatorErrorMessages;
+  }): string {
     let message = '';
     switch (true) {
+      // maximum length case
+      case error.keyword === 'maxLength':
+        message =
+          validatorErrorMessages?.[field]?.[ValidatorTypesEnum.LENGTH] ||
+          `Length must be less than or equal to ${error.params.limit}`;
+        break;
+      // maximum length case
+      case error.keyword === 'minLength':
+        message =
+          validatorErrorMessages?.[field]?.[ValidatorTypesEnum.LENGTH] ||
+          `Length must be greater than or equal to ${error.params.limit}`;
+        break;
+      // maximum number case
+      case error.keyword === 'maximum':
+        message =
+          validatorErrorMessages?.[field]?.[ValidatorTypesEnum.RANGE] ||
+          `${String(data)} must be less than or equal to ${error.params.limit}`;
+        break;
+      // minimum number case
+      case error.keyword === 'minimum':
+        message =
+          validatorErrorMessages?.[field]?.[ValidatorTypesEnum.RANGE] ||
+          `${String(data)} must be greater than or equal to ${error.params.limit}`;
+        break;
       // empty string case
       case error.keyword === 'emptyCheck':
       case error.keyword === 'required':
@@ -229,6 +306,11 @@ export class BaseReview {
         break;
       case error.keyword === 'format':
         message = `${String(data)} must be a valid ${error.params.format}`;
+        break;
+      case !!uniqueCombinations[error.keyword]:
+        message =
+          validatorErrorMessages?.[field]?.[ValidatorTypesEnum.UNIQUE_WITH] ||
+          `Value should be unique for combination of ${uniqueCombinations[error.keyword].toString()}`;
         break;
       default:
         message = ` contains invalid data`;
@@ -315,7 +397,9 @@ export class BaseReview {
     headings,
     dateFormats,
     dataStream,
+    uniqueCombinations,
     numberColumnHeadings,
+    validatorErrorMessages,
     multiSelectColumnHeadings,
   }: IRunData): Promise<ISaveResults> {
     return new Promise(async (resolve, reject) => {
@@ -340,6 +424,8 @@ export class BaseReview {
               passRecord: recordObj.passRecord,
               validator,
               dateFormats,
+              uniqueCombinations,
+              validatorErrorMessages,
             });
             if (validationResultItem.isValid) {
               validRecords++;
@@ -371,16 +457,26 @@ export class BaseReview {
     checkRecord,
     validator,
     dateFormats,
+    uniqueCombinations,
+    validatorErrorMessages,
   }: {
     index: number;
     validator: ValidateFunction;
     passRecord: Record<string, any>;
     checkRecord: Record<string, any>;
     dateFormats: Record<string, string[]>;
+    uniqueCombinations: Record<string, string[]>;
+    validatorErrorMessages?: Record<string, { string: Record<string, string> }>;
   }) {
-    const isValid = validator(checkRecord);
+    const isValid = validator(checkRecord, {
+      instancePath: `/${index}`,
+      parentData: undefined,
+      parentDataProperty: '',
+      rootData: [],
+      dynamicAnchors: undefined,
+    });
     if (!isValid) {
-      const errors = this.getErrorsObject(validator.errors, dateFormats);
+      const errors = this.getErrorsObject(validator.errors, dateFormats, validatorErrorMessages, uniqueCombinations);
 
       return {
         index,
@@ -400,7 +496,11 @@ export class BaseReview {
     }
   }
 
-  getAjvValidator(dateFormats: Record<string, string[]>, uniqueItems: Record<string, Set<any>>) {
+  getAjvValidator(
+    dateFormats: Record<string, string[]>,
+    uniqueItems: Record<string, Set<any>>,
+    uniqueCombinations: Record<string, string[]>
+  ) {
     const ajv = new Ajv({
       allErrors: true,
       coerceTypes: true,
@@ -447,7 +547,31 @@ export class BaseReview {
       },
     });
 
+    const valuesMap = new Map();
+    Object.keys(uniqueCombinations).forEach((keyword) => {
+      valuesMap.set(keyword, new Set());
+      ajv.addKeyword({
+        keyword,
+        type: 'object',
+        validate: function (schema, data) {
+          const fields = uniqueCombinations[keyword];
+
+          const fullName = fields.map((field) => `${data[field]}`).join(', ');
+          if (valuesMap.get(keyword).has(fullName)) {
+            return false;
+          }
+          valuesMap.get(keyword).add(fullName);
+
+          return true;
+        },
+      });
+    });
+
     return ajv;
+  }
+
+  getUniqueKey(uniqueKey: string) {
+    return 'unique' + uniqueKey.replace(/\s+/g, '');
   }
 
   async batchRun({
@@ -457,7 +581,9 @@ export class BaseReview {
     extra,
     csvFileStream,
     dateFormats,
+    uniqueCombinations,
     numberColumnHeadings,
+    validatorErrorMessages,
     multiSelectColumnHeadings,
   }: IRunData): Promise<IBatchItem[]> {
     return new Promise(async (resolve, reject) => {
@@ -484,6 +610,8 @@ export class BaseReview {
                 passRecord: recordObj.passRecord,
                 validator,
                 dateFormats,
+                uniqueCombinations,
+                validatorErrorMessages,
               });
               batchRecords.push(validationResultItem);
               if (batchRecords.length === BATCH_LIMIT) {

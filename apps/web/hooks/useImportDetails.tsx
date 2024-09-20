@@ -16,8 +16,8 @@ interface useImportDetailProps {
 }
 
 export function useImportDetails({ templateId }: useImportDetailProps) {
-  const { meta } = usePlanMetaData();
   const router = useRouter();
+  const { meta } = usePlanMetaData();
   const queryClient = useQueryClient();
   const { profileInfo } = useAppState();
   const {

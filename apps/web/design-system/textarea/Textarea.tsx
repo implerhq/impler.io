@@ -8,9 +8,19 @@ interface TextareaProps {
   autosize?: boolean;
   minRows?: number;
   maxRows?: number;
+  description?: string;
 }
 
-export function Textarea({ required, placeholder, register, autosize, minRows, maxRows, label }: TextareaProps) {
+export function Textarea({
+  description,
+  required,
+  placeholder,
+  register,
+  autosize,
+  minRows,
+  maxRows,
+  label,
+}: TextareaProps) {
   return (
     <MantineTextarea
       label={label}
@@ -19,6 +29,7 @@ export function Textarea({ required, placeholder, register, autosize, minRows, m
       autosize={autosize}
       required={required}
       data-haslabel={!!label}
+      description={description}
       placeholder={placeholder}
       {...(register || {})}
     />

@@ -21,7 +21,7 @@ module.exports = [
         sourcemap: true,
       },
     ],
-    external: ['@angular/core', '@angular/common'],
+    external: ['@angular/core'],
     plugins: [
       externals(),
       nodeResolve({ preferBuiltins: false, browser: true }),

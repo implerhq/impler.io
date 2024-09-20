@@ -16,13 +16,14 @@ export class OnboardUser {
     private paymentAPIService: PaymentAPIService
   ) {}
 
-  async execute(command: OnboardUserCommand) {
+  async execute(command: OnboardUserCommand, email: string) {
     const createdProject = await this.createProject.execute(
       CreateProjectCommand.create({
         _userId: command._userId,
         name: command.projectName,
         onboarding: true,
-      })
+      }),
+      email
     );
 
     await this.userRepository.update(

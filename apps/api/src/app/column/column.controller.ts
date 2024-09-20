@@ -6,7 +6,6 @@ import { ACCESS_KEY_NAME } from '@impler/shared';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { ColumnRequestDto } from './dtos/column-request.dto';
 import { ColumnResponseDto } from './dtos/column-response.dto';
-import { AddColumnCommand } from './commands/add-column.command';
 import { AddColumn, UpdateColumn, DeleteColumn } from './usecases';
 import { UpdateColumnCommand } from './commands/update-column.command';
 
@@ -31,10 +30,10 @@ export class ColumnController {
     @Body() body: ColumnRequestDto
   ): Promise<ColumnResponseDto> {
     return this.addColumn.execute(
-      AddColumnCommand.create({
+      {
         ...body,
         _templateId,
-      }),
+      },
       _templateId
     );
   }

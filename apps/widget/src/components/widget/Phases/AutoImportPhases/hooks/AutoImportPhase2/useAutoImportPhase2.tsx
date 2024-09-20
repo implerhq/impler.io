@@ -24,7 +24,7 @@ export function useAutoImportPhase2({ goNext }: IUseAutoImportPhase2Props) {
     IErrorObject,
     IUserJobMapping[],
     string[]
-  >(['getUserJobMappings'], () => api.getUserJobMappings(jobsInfo?._id), {
+  >(['getUserJobMappings', jobsInfo?._id], () => api.getUserJobMappings(jobsInfo?._id), {
     onSuccess(mappingsResponse) {
       const allHeadings = jobsInfo.headings.map((heading) => ({ value: heading, label: heading, disabled: false }));
       const filteredHeadings = allHeadings.filter((headingItem) => !keysToOmit.has(headingItem.value));
@@ -42,6 +42,7 @@ export function useAutoImportPhase2({ goNext }: IUseAutoImportPhase2Props) {
       });
     },
     enabled: !!jobsInfo?._id,
+    refetchOnMount: true,
   });
 
   const { mutate: createJobMapping } = useMutation<IUserJobMapping[], IErrorObject, IUserJobMapping[]>(

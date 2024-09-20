@@ -5,8 +5,8 @@ import { PhasesEnum } from '@types';
 import { Select } from '@ui/Select';
 import { Button } from '@ui/Button';
 
-import { WIDGET_TEXTS } from '@impler/shared';
 import { variables } from '@config';
+import { WIDGET_TEXTS } from '@impler/client';
 import { DownloadIcon, BackIcon } from '@icons';
 import { UploadDropzone } from '@ui/UploadDropzone';
 import { usePhase1 } from '@hooks/Phase1/usePhase1';

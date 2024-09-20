@@ -2,7 +2,8 @@ import { Button } from '@ui/Button';
 import { Group, Modal as MantineModal, Text, Title } from '@mantine/core';
 import { CheckIcon } from '@icons';
 import { colors } from '@config';
-import { replaceVariablesInString, numberFormatter, WIDGET_TEXTS } from '@impler/shared';
+import { WIDGET_TEXTS } from '@impler/client';
+import { replaceVariablesInString, numberFormatter } from '@impler/shared';
 
 interface IConfirmModalProps {
   opened: boolean;

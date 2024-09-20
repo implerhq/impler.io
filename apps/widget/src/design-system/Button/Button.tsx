@@ -8,6 +8,7 @@ interface IButtonProps {
   loading?: boolean;
   onClick?: () => void;
   size?: MantineSize;
+  type?: 'submit' | 'reset' | 'button';
   color?: 'blue' | 'red' | 'gray' | string;
   leftIcon?: ReactNode;
   fullWidth?: boolean;
@@ -19,6 +20,7 @@ export function Button({
   children,
   loading,
   onClick,
+  type = 'button',
   size = 'md',
   color,
   leftIcon,
@@ -34,6 +36,7 @@ export function Button({
       loading={loading}
       onClick={onClick}
       size={size}
+      type={type}
       color={color}
       classNames={classes}
       fullWidth={fullWidth}

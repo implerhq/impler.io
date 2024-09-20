@@ -1,1 +1,3 @@
-export { ApiService } from './api/api.service';
+export * from './types';
+export * from './utils';
+export * from './config';

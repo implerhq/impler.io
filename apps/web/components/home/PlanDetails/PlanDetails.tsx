@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { modals } from '@mantine/modals';
+import { useCallback, useEffect } from 'react';
 import { Title, Text, Flex, Button, Skeleton, Stack } from '@mantine/core';
 
 import { useApp } from '@hooks/useApp';
@@ -17,13 +17,14 @@ export function PlanDetails() {
   const router = useRouter();
 
   const { profile } = useApp();
-  const { [CONSTANTS.PLAN_CODE_QUERY_KEY]: selectedPlan } = router.query;
+  const { [CONSTANTS.PLAN_CODE_QUERY_KEY]: selectedPlan, [CONSTANTS.EXPLORE_PLANS_QUERY_LEY]: explorePlans } =
+    router.query;
 
   const { activePlanDetails, isActivePlanLoading } = usePlanDetails({
     email: profile?.email ?? '',
   });
 
-  const onChoosePlanClick = () => {
+  const showPlans = useCallback(() => {
     track({
       name: 'VIEW PLANS',
       properties: {},
@@ -42,7 +43,7 @@ export function PlanDetails() {
       size: '2xl',
       withCloseButton: true,
     });
-  };
+  }, [activePlanDetails, profile]);
 
   useEffect(() => {
     if (selectedPlan && profile) {
@@ -54,8 +55,10 @@ export function PlanDetails() {
         children: <SelectCardModal planCode={selectedPlan as string} email={profile.email} onClose={modals.closeAll} />,
       });
       router.push(ROUTES.HOME, {}, { shallow: true });
+    } else if (explorePlans) {
+      showPlans();
     }
-  }, [profile, selectedPlan, router]);
+  }, [profile, selectedPlan, router, explorePlans, showPlans]);
 
   if (isActivePlanLoading) return <Skeleton width="100%" height="200" />;
 
@@ -77,7 +80,7 @@ export function PlanDetails() {
           </Text>
           .
         </Text>
-        <Button onClick={onChoosePlanClick} color={'red'}>
+        <Button onClick={showPlans} color={'red'}>
           Choose Plan
         </Button>
       </Stack>
@@ -154,7 +157,7 @@ export function PlanDetails() {
         </Flex>
         <Flex direction="column" gap={5} align="center">
           <Button
-            onClick={onChoosePlanClick}
+            onClick={showPlans}
             color={isLessThanZero || activePlanDetails.usage.IMPORTED_ROWS > numberOfRecords ? 'red' : 'blue'}
           >
             Choose Plan

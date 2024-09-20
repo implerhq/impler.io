@@ -7,7 +7,6 @@
   "repository": "https://github.com/implerhq/impler.io",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
-  "private": true,
   "keywords": [
     "impler",
     "implerhq",
@@ -19,6 +18,9 @@
     "dist",
     "package.json"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "start": "npm run start:dev",
     "prebuild": "rimraf dist",
@@ -35,10 +37,6 @@
     "rimraf": "^3.0.2",
     "typedoc": "^0.23.20",
     "typescript": "4.8.4"
-  },
-  "dependencies": {
-    "@impler/shared": "^0.24.1",
-    "axios": "1.6.2"
   },
   "engines": {
     "node": ">=10"

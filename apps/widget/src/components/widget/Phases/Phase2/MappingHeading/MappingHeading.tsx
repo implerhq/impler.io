@@ -1,7 +1,7 @@
 import React from 'react';
-import { WIDGET_TEXTS } from '@impler/shared';
-import useStyles from './Styles';
 import { Group, Text } from '@mantine/core';
+import useStyles from './Styles';
+import { WIDGET_TEXTS } from '@impler/client';
 
 interface IMappingHeadingProps {
   texts: typeof WIDGET_TEXTS;

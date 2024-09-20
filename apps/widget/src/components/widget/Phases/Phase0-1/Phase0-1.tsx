@@ -6,7 +6,7 @@ import { ReactNode, useEffect, useRef, useState } from 'react';
 import { Warning } from '@icons';
 import { Select } from '@ui/Select';
 import { PhasesEnum } from '@types';
-import { WIDGET_TEXTS } from '@impler/shared';
+import { WIDGET_TEXTS } from '@impler/client';
 import { colors, variables } from '@config';
 import { logAmplitudeEvent } from '@amplitude';
 import { FileDropzone } from '@ui/FileDropzone';
