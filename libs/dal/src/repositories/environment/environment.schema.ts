@@ -16,14 +16,14 @@ const environmentSchema = new Schema(
     },
     apiKeys: [
       {
-        role: {
-          type: String,
-          enum: ['admin', 'tech', 'finance'],
-          default: 'admin',
-        },
+        role: String,
         _userId: {
           type: Schema.Types.ObjectId,
           ref: 'User',
+        },
+        joinedOn: {
+          type: Schema.Types.Date,
+          default: Date.now,
         },
       },
     ],
