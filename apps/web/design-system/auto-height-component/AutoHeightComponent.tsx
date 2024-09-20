@@ -16,9 +16,7 @@ export const AutoHeightComponent: React.FC<AutoHeightComponentProps> = ({ isVisi
       shouldRemoveContent.current = false;
       setIsRendered(true);
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setIsExpanded(true);
-        });
+        setIsExpanded(true);
       });
     } else {
       shouldRemoveContent.current = true;

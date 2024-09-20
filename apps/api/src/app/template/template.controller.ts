@@ -17,7 +17,7 @@ import {
 } from '@nestjs/common';
 
 import { UploadEntity } from '@impler/dal';
-import { ACCESS_KEY_NAME } from '@impler/shared';
+import { ACCESS_KEY_NAME, IJwtPayload } from '@impler/shared';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
@@ -62,6 +62,7 @@ import { DuplicateTemplateRequestDto } from './dtos/duplicate-template-request.d
 import { UpdateValidationResponseDto } from './dtos/update-validation-response.dto';
 import { UpdateValidationsRequestDto } from './dtos/update-validations-request.dto';
 import { UpdateCustomizationRequestDto } from './dtos/update-customization-request.dto';
+import { UserSession } from '@shared/framework/user.decorator';
 
 @Controller('/template')
 @ApiTags('Template')
@@ -198,6 +199,7 @@ export class TemplateController {
   })
   @ApiBody({ type: [ColumnRequestDto] })
   async updateTemplateColumnRoute(
+    @UserSession() user: IJwtPayload,
     @Param('templateId', ValidateMongoId) _templateId: string,
     @Body(new ParseArrayPipe({ items: ColumnRequestDto, stopAtFirstError: false })) body: ColumnRequestDto[]
   ): Promise<ColumnResponseDto[]> {
@@ -206,7 +208,8 @@ export class TemplateController {
         _templateId,
         ...columnData,
       })),
-      _templateId
+      _templateId,
+      user.email
     );
   }
 
