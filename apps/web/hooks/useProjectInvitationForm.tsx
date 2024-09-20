@@ -1,4 +1,4 @@
-import { MODAL_KEYS } from '@config';
+import { MODAL_KEYS, NOTIFICATION_KEYS } from '@config';
 import { modals } from '@mantine/modals';
 import { validateEmails } from '@shared/utils';
 import { useMutation } from '@tanstack/react-query';
@@ -7,6 +7,7 @@ import { commonApi } from '@libs/api';
 import { API_KEYS } from '@config';
 import { IErrorObject } from '@impler/shared';
 import { useAppState } from 'store/app.context';
+import { notify } from '@libs/notify';
 
 interface ProjectInvitationData {
   invitationEmailsTo: string[];
@@ -45,8 +46,12 @@ export function useProjectInvitationForm({ refetchInvitations }: UseProjectInvit
         modals.close(MODAL_KEYS.INVITE_MEMBERS);
         refetchInvitations();
       },
-      onError: (err) => {
-        console.log(err);
+      onError: (error: IErrorObject) => {
+        notify(NOTIFICATION_KEYS.ERROR_INVITING_TEAM_MEMBER, {
+          title: 'Error while Deleting TeamMember',
+          message: error.message || 'An Error Occured While Deleting TeamMember',
+          color: 'ree',
+        });
       },
     }
   );
