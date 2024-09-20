@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { IJwtPayload } from '@impler/shared';
 import { ProjectInvitationDto } from './dto/project-invtation.dto';
@@ -8,9 +8,12 @@ import {
   GetProjectInvitation,
   AcceptProjectInvitation,
   ListTeamMembers,
+  UpdateTeamMemberRole,
+  DeleteTeamMember,
 } from './usecase';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { UserSession } from '@shared/framework/user.decorator';
+import { UpdateTeamMemberRoleDto } from './dto/update-team-member-role.dto';
 
 @Controller('invite')
 export class ProjectInvitationController {
@@ -19,7 +22,9 @@ export class ProjectInvitationController {
     private sentProjectInvitations: SentProjectInvitations,
     private getProjectInvitation: GetProjectInvitation,
     private acceptProjectInvitation: AcceptProjectInvitation,
-    private listTeamMembers: ListTeamMembers
+    private listTeamMembers: ListTeamMembers,
+    private updateTeamMemberRole: UpdateTeamMemberRole,
+    private deleteTeamMember: DeleteTeamMember
   ) {}
 
   @Post()
@@ -80,8 +85,26 @@ export class ProjectInvitationController {
       'List out the who have accepted the project invitation and now a part of a team and working on the same project',
   })
   async listTeamMembersRoute(@UserSession() user: IJwtPayload) {
-    const projectUser = await this.listTeamMembers.exec(user._projectId);
+    return await this.listTeamMembers.exec(user._projectId);
+  }
 
-    return projectUser;
+  @Put('/team-members-role-update')
+  @ApiOperation({
+    summary: 'Change the role of a particular team member',
+  })
+  async updateTeamMemberRoleRoute(@Body() updateTeamMemberData: UpdateTeamMemberRoleDto) {
+    return this.updateTeamMemberRole.exec({
+      projectId: updateTeamMemberData.projectId,
+      userId: updateTeamMemberData.userId,
+      role: updateTeamMemberData.role,
+    });
+  }
+
+  @Delete('/team-member-delete')
+  @ApiOperation({
+    summary: 'Delete a team member from the environment',
+  })
+  async deleteTeamMemberRoute(@Query('projectId') projectId: string, @Query('userId') userId: string) {
+    return await this.deleteTeamMember.exec({ projectId, userId });
   }
 }
