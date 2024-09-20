@@ -81,6 +81,16 @@ const routes: Record<string, Route> = {
     method: 'GET',
   },
 
+  [API_KEYS.UPDATE_TEAM_MEMBER_ROLE]: {
+    url: () => `/v1/invite/team-members-role-update`,
+    method: 'PUT',
+  },
+
+  [API_KEYS.DELETE_TEAM_MEMBER]: {
+    url: () => `/v1/invite/team-member-delete`,
+    method: 'DELETE',
+  },
+
   [API_KEYS.PROJECTS_LIST]: {
     url: () => '/v1/project',
     method: 'GET',
