@@ -1,6 +1,7 @@
 export interface IApiKey {
   role: string;
   _userId: string;
+  joinedOn?: string;
 }
 
 export class EnvironmentEntity {
