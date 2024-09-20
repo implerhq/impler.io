@@ -4,6 +4,8 @@ import { GetProjectInvitation } from './get-project-invitation/get-project-invit
 import { AcceptProjectInvitation } from './accept-project-invitation//accept-project-invitation.usecase';
 import { GenerateUniqueApiKey } from 'app/environment/usecases';
 import { ListTeamMembers } from './list-team-members/list-team-members.usecase';
+import { UpdateTeamMemberRole } from './update-team-member-role/update-team-member.usecase';
+import { DeleteTeamMember } from './delete-team-member/delete-team-member.usecase';
 
 export const USE_CASES = [
   Invite,
@@ -12,6 +14,8 @@ export const USE_CASES = [
   AcceptProjectInvitation,
   GenerateUniqueApiKey,
   ListTeamMembers,
+  UpdateTeamMemberRole,
+  DeleteTeamMember,
   //
 ];
 export {
@@ -21,4 +25,6 @@ export {
   AcceptProjectInvitation,
   GenerateUniqueApiKey,
   ListTeamMembers,
+  UpdateTeamMemberRole,
+  DeleteTeamMember,
 };
