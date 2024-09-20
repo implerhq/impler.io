@@ -1,6 +1,6 @@
 import * as XLSX from 'xlsx';
 import { cwd } from 'node:process';
-import * as xlsxPopulate from '@eyeseetea/xlsx-populate';
+import * as xlsxPopulate from 'xlsx-populate';
 import { CONSTANTS } from '@shared/constants';
 import { ParseConfig, parse } from 'papaparse';
 import { ColumnDelimiterEnum, ColumnTypesEnum, Defaults, FileEncodingsEnum } from '@impler/shared';
@@ -90,14 +90,6 @@ export class ExcelFileService {
         multiSelectHeadings[heading.key] = heading.delimiter || ColumnDelimiterEnum.COMMA;
       } else worksheet.cell(columnHeadingCellName).value(heading.key);
       worksheet.column(columnName).style('numberFormat', '@');
-      if (heading.description)
-        worksheet.cell(columnHeadingCellName).comment({
-          text: heading.description,
-          width: '200px',
-          height: '100px',
-          textAlign: 'left',
-          horizontalAlignment: 'Left',
-        });
     });
 
     const frozenColumns = headings.filter((heading) => heading.isFrozen).length;
@@ -147,7 +139,7 @@ export class ExcelFileService {
     }
     const buffer = await workbook.outputAsync();
 
-    return buffer;
+    return buffer as Promise<Buffer>;
   }
   getExcelSheets(file: Express.Multer.File): Promise<string[]> {
     return new Promise(async (resolve, reject) => {

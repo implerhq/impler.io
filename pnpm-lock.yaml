@@ -90,14 +90,17 @@ importers:
 
   apps/api:
     dependencies:
+      '@eyeseetea/xlsx-populate':
+        specifier: ^4.3.0
+        version: 4.3.0
       '@impler/dal':
-        specifier: ^0.24.1
+        specifier: workspace:^
         version: link:../../libs/dal
       '@impler/services':
-        specifier: ^0.24.1
+        specifier: workspace:^
         version: link:../../libs/services
       '@impler/shared':
-        specifier: ^0.24.1
+        specifier: workspace:^
         version: link:../../libs/shared
       '@nestjs/common':
         specifier: ^9.1.2
@@ -4181,6 +4184,15 @@ packages:
   /@eslint/js@8.57.0:
     resolution: {integrity: sha512-Ys+3g2TaW7gADOJzPt83SJtCDhMjndcDMFVQ/Tj9iA1BfJzFKD9mAUXT3OenpuPHbI6P/myECxRJrofUsDx/5g==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+
+  /@eyeseetea/xlsx-populate@4.3.0:
+    resolution: {integrity: sha512-pUwHEobDsl/MlUP2MWpVBAnccKKpTiJW6dNpli49LeKoNbnVPFVI9AHlUWHzMMQruwmrujAx6Grxa7QLqyJyaA==}
+    dependencies:
+      cfb: 1.2.2
+      jszip: 3.10.1
+      lodash: 4.17.21
+      sax: 1.4.1
+    dev: false
 
   /@floating-ui/core@1.6.4:
     resolution: {integrity: sha512-a4IowK4QkXl4SCWTGUR0INAfEOX3wtsYw3rKK5InQEHMGObkR8Xk44qYQD9P4r6HHw0iIfK6GUKECmY8sTkqRA==}
@@ -14661,7 +14673,7 @@ packages:
     resolution: {integrity: sha512-oWb1Z6mkHIskLzEJ/XWX0srkpkTQ7vaopMQkyaEIoq0fmtFVxOthb8cCxeT+p3ynTdkk/RZwbgG4brR5BeWECw==}
     engines: {node: '>= 4.0'}
     os: [darwin]
-    deprecated: The v1 package contains DANGEROUS / INSECURE binaries. Upgrade to safe fsevents v2
+    deprecated: Upgrade to fsevents v2 to mitigate potential security issues
     requiresBuild: true
     dependencies:
       bindings: 1.5.0
