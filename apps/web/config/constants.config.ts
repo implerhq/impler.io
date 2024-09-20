@@ -1,3 +1,5 @@
+import { UserRolesEnum } from '@impler/shared';
+
 export const CONSTANTS = {
   PLAN_CODE_QUERY_KEY: 'plan_code',
   GITHUB_LOGIN_URL: '/v1/auth/github',
@@ -47,6 +49,7 @@ export const MODAL_KEYS = {
 
   INVITE_MEMBERS: 'INVITE_MEMBERS',
   ACCEPT_INVITATION: 'ACCEPT_INVITATION',
+  CONFIRM_DELETE_TEAM_MEMBER: 'CONFIRM_DELETE_TEAM_MEMBER',
 };
 
 export const MODAL_TITLES = {
@@ -91,6 +94,8 @@ export const API_KEYS = {
   GET_PROJECT_INVITATION: 'GET_PROJECT_INVITATION',
   ACCEPT_PROJECT_INVITATION: 'INVITATION_ACCEPTED',
   LIST_TEAM_MEMBERS: 'LIST_TEAM_MEMBERS',
+  UPDATE_TEAM_MEMBER_ROLE: 'UPDATE_TEAM_MEMBER_ROLE',
+  DELETE_TEAM_MEMBER: 'DELETE_TEAM_MEMBER',
 
   LOGOUT: 'LOGOUT',
   SIGNIN: 'SIGNIN',
@@ -167,6 +172,10 @@ export const NOTIFICATION_KEYS = {
   INVITATION_ACCEPTED: 'INVITATION_ACCEPTED',
 
   ERROR_ACCEPTING_INVITATION: 'ERROR_ACCEPTING_INVITATION',
+  MEMBER_ROLE_CHANGED: 'MEMBER_ROLE_CHANGED',
+  ERROR_CHANGING_MEMBER_ROLE: 'ERROR_CHANGING_MEMBER_ROLE',
+  TEAM_MEMBER_DELETED: 'TEAM_MEMBER_DELETED',
+  ERROR_DELETING_TEAM_MEMBER: 'ERROR_DELETING_TEAM_MEMBER',
 };
 
 export const ROUTES = {
@@ -251,11 +260,7 @@ export const IMPORT_MODES = [
   { value: 'automatic', label: 'Automatic' },
 ];
 
-export const INVITATION_FORM_ROLES = [
-  { value: 'admin', label: 'Admin' },
-  { value: 'tech', label: 'Tech' },
-  { value: 'finance', label: 'Finance' },
-];
+export const INVITATION_FORM_ROLES = [UserRolesEnum.ADMIN, UserRolesEnum.FINANCE, UserRolesEnum.TECH];
 
 export const TAB_KEYS = {
   MEMBERS: 'members',
@@ -269,7 +274,7 @@ export const TAB_TITLES = {
   [TAB_KEYS.INVITATION_REQUESTS]: 'Invitation Requests',
 };
 
-export const MEMBER_ROLE = ['Admin', 'Tech', 'Finance'];
+export const MEMBER_ROLE = ['admin', 'tech', 'finance'];
 
 export const DOCUMENTATION_REFERENCE_LINKS = {
   columnDescription: 'https://docs.impler.io/features/column-description',
