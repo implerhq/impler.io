@@ -1,71 +1,19 @@
-import { Group, Stack, Avatar, Text, Select } from '@mantine/core';
+import { Group, Stack, Avatar, Text, Select, Badge, UnstyledButton } from '@mantine/core';
 import { Table } from '@ui/table';
 import { AppLayout } from '@layouts/AppLayout';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
 import dayjs from 'dayjs';
 import { DATE_FORMATS, MEMBER_ROLE } from '@config';
-
-interface User {
-  name: string;
-  email: string;
-}
-
-interface Member {
-  _id?: string;
-  user: User;
-  joinedDate: string;
-  role: string;
-  action: string;
-}
-
-const membersData: Member[] = [
-  {
-    user: {
-      name: 'John Doe',
-      email: 'john@example.com',
-    },
-    joinedDate: '2023-01-01',
-    role: 'Admin',
-    action: 'Edit',
-  },
-  {
-    user: {
-      name: 'Jane Smith',
-      email: 'jane@example.com',
-    },
-    joinedDate: '2023-02-15',
-    role: 'Admin',
-    action: 'Edit',
-  },
-  {
-    user: {
-      name: 'Bob Johnson',
-      email: 'bob@example.com',
-    },
-    joinedDate: '2023-03-10',
-    role: 'Tech',
-    action: 'Edit',
-  },
-  {
-    user: {
-      name: 'Alice Williams',
-      email: 'alice@example.com',
-    },
-    joinedDate: '2023-04-22',
-    role: 'Finance',
-    action: 'Edit',
-  },
-];
+import { useListTeamMembers } from '@hooks/useListTeamMembers';
+import { UserRolesEnum } from '@impler/shared';
 
 export function Members() {
-  //const teamMembers = useListTeamMembers();
-
-  // console.log('Team Members in members', {teamMembers});
+  const { teamMembersList, openDeleteModal, updateTeamMemberRole } = useListTeamMembers();
 
   return (
     <Stack spacing="xs">
       <Stack spacing="sm">
-        <Table<Member>
+        <Table<TeamMemberList>
           headings={[
             {
               title: 'User',
@@ -74,7 +22,14 @@ export function Members() {
                 <Group spacing="sm">
                   <Avatar style={{ border: '1px solid white', borderRadius: 0 }} size="md" />
                   <div>
-                    <Text>{item.user.name}</Text>
+                    <Text>
+                      {item.user.name}
+                      {item.isCurrentUser && (
+                        <Badge radius="lg" size="lg" p={5} color="gray">
+                          You
+                        </Badge>
+                      )}
+                    </Text>
                     <Text size="xs" color="dimmed">
                       {item.user.email}
                     </Text>
@@ -85,20 +40,24 @@ export function Members() {
             {
               title: 'Joined Date',
               key: 'joinedDate',
-              Cell(item) {
-                return dayjs(item.joinedDate).format(DATE_FORMATS.LONG);
-              },
+              Cell: (item) => dayjs(item.joinedDate).format(DATE_FORMATS.LONG),
             },
             {
               title: 'Role',
               key: 'role',
               Cell: (item) => (
                 <Select
+                  disabled={item.isCurrentUser && item.role === UserRolesEnum.ADMIN ? true : false}
                   data={MEMBER_ROLE}
-                  maw={125}
                   value={item.role}
-                  onChange={(value) => {
-                    alert(value);
+                  maw={150}
+                  onChange={(role) => {
+                    if (role)
+                      updateTeamMemberRole({
+                        role,
+                        userId: item._id,
+                        projectId: item.projectId,
+                      });
                   }}
                 />
               ),
@@ -106,10 +65,17 @@ export function Members() {
             {
               title: 'Actions',
               key: 'action',
-              Cell: () => <DeleteIcon />,
+              Cell: (item) => (
+                <UnstyledButton
+                  disabled={item.isCurrentUser ? true : false}
+                  onClick={() => openDeleteModal(item.projectId, item._id, item.user.name)}
+                >
+                  <DeleteIcon color={item.isCurrentUser ? 'lightblue' : 'red'} />
+                </UnstyledButton>
+              ),
             },
           ]}
-          data={membersData || []}
+          data={teamMembersList || []}
         />
       </Stack>
     </Stack>
