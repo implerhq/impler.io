@@ -9,10 +9,12 @@ import { ProjectInvitationModal } from './ProjectInvitationModal';
 import { OutlinedTabs } from '@ui/OutlinedTabs';
 import { useAppState } from 'store/app.context';
 import { useSentProjectInvitations } from '@hooks/useSentProjectInvitations';
+import { useListTeamMembers } from '@hooks/useListTeamMembers';
 
 export function TeamMembersTab() {
   const { profileInfo } = useAppState();
   const { invitationsCount, refetchInvitations } = useSentProjectInvitations();
+  const { teamMembersCount } = useListTeamMembers();
   const [activeTab, setActiveTab] = useState(TAB_KEYS.MEMBERS);
 
   const openInviteModal = () => {
@@ -42,7 +44,7 @@ export function TeamMembersTab() {
     {
       value: TAB_KEYS.MEMBERS,
       title: TAB_TITLES[TAB_KEYS.MEMBERS],
-      badgeCount: 5,
+      badgeCount: teamMembersCount,
       content: <Members />,
     },
     {
