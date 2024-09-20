@@ -2,7 +2,7 @@ import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 
-import { IJwtPayload } from '@impler/shared';
+import { IJwtPayload, UserRolesEnum } from '@impler/shared';
 import { CONSTANTS, LEAD_SIGNUP_USING } from '@shared/constants';
 import { UserEntity, UserRepository, EnvironmentRepository } from '@impler/dal';
 import { UserNotFoundException } from '@shared/exceptions/user-not-found.exception';
@@ -54,6 +54,7 @@ export class AuthService {
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
+          role: apiKey.role as UserRolesEnum,
           profilePicture: user.profilePicture,
           accessToken: apiKey?.apiKey,
           isEmailVerified: user.isEmailVerified,
@@ -89,6 +90,7 @@ export class AuthService {
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
+          role: apiKey.role as UserRolesEnum,
           accessToken: apiKey?.apiKey,
           isEmailVerified: user.isEmailVerified,
         },
@@ -109,6 +111,7 @@ export class AuthService {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
+        role: apiKey.role as UserRolesEnum,
         accessToken: apiKey?.apiKey,
         isEmailVerified: user.isEmailVerified,
       },
@@ -122,6 +125,7 @@ export class AuthService {
       firstName: string;
       lastName: string;
       email: string;
+      role?: UserRolesEnum;
       isEmailVerified: boolean;
       profilePicture?: string;
       accessToken?: string;
@@ -134,7 +138,7 @@ export class AuthService {
         {
           _id: user._id,
           _projectId,
-          role: 'admin',
+          role: user.role,
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
@@ -186,7 +190,7 @@ export class AuthService {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        // role: user.role,
+        role: apiKey.role as UserRolesEnum,
         accessToken: apiKey?.apiKey,
         isEmailVerified: user.isEmailVerified,
       },
