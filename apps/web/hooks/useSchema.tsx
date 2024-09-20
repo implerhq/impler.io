@@ -2,18 +2,16 @@ import { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { modals } from '@mantine/modals';
 import { useForm } from 'react-hook-form';
-import { SelectItem } from '@mantine/core';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
 import { track } from '@libs/amplitude';
 import { IColumn, IErrorObject } from '@impler/shared';
-import { API_KEYS, COLUMN_TYPES, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS } from '@config';
+import { API_KEYS, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS } from '@config';
 
 import { useKeyboardEvent } from './useKeyboardEvent';
 import { useUpdateBulkColumns } from './useUpdateBulkColumns';
-import { usePlanMetaData } from 'store/planmeta.store.context';
 import { ConfirmDelete } from '@components/imports/forms/ConfirmDelete';
 
 const ColumnForm = dynamic(() => import('@components/imports/forms/ColumnForm').then((mod) => mod.ColumnForm), {
@@ -25,7 +23,6 @@ interface UseSchemaProps {
 }
 
 export function useSchema({ templateId }: UseSchemaProps) {
-  const { meta } = usePlanMetaData();
   const queryClient = useQueryClient();
   const [showAddRow, setShowAddRow] = useState(false);
   const validationRef = useRef<boolean | undefined>(undefined);
@@ -176,17 +173,6 @@ export function useSchema({ templateId }: UseSchemaProps) {
     setShowAddRow(false);
     validationRef.current = false;
   }
-  function getColumnTypes(): SelectItem[] {
-    if (!meta) return COLUMN_TYPES;
-
-    return COLUMN_TYPES.map((item) => {
-      if (item.label === 'Image' && item.value === 'Image' && !meta.IMAGE_UPLOAD) {
-        return { ...item, disabled: true, label: 'Image - Scale Plan Feature' };
-      }
-
-      return item;
-    });
-  }
 
   useEffect(() => {
     if (showAddRow) setFocus('name');
@@ -208,7 +194,6 @@ export function useSchema({ templateId }: UseSchemaProps) {
     validationRef,
     onMoveColumns,
     setShowAddRow,
-    getColumnTypes,
     onAddColumnSubmit,
     onEditColumnClick,
     onCancelAddColumn,

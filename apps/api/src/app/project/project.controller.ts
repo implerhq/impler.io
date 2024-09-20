@@ -119,7 +119,8 @@ export class ProjectController {
       CreateProjectCommand.create({
         ...body,
         _userId: user._id,
-      })
+      }),
+      user.email
     );
     const token = this.authService.getSignedToken(
       {
