@@ -62,7 +62,9 @@ export default function ImportDetails({}) {
       name: 'IMPORT CLICK',
       properties: {},
     });
-    showWidget({ colorScheme });
+    showWidget({
+      colorScheme,
+    });
   };
 
   return (

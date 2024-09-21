@@ -14,7 +14,8 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 
-import { ColumnTypesEnum, DEFAULT_VALUES, IColumn, ValidatorTypesEnum } from '@impler/shared';
+import { ValidatorTypesEnum } from '@impler/client';
+import { ColumnTypesEnum, DEFAULT_VALUES, IColumn } from '@impler/shared';
 import { colors, DELIMITERS, MODAL_KEYS, MODAL_TITLES, DOCUMENTATION_REFERENCE_LINKS } from '@config';
 
 import { Button } from '@ui/button';
@@ -363,7 +364,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 index={fields.findIndex((field) => field.validate === ValidatorTypesEnum.UNIQUE_WITH)}
                 onCheckToggle={(status, index) => {
                   if (status) {
-                    append({ validate: ValidatorTypesEnum.UNIQUE_WITH });
+                    append({ validate: ValidatorTypesEnum.UNIQUE_WITH, uniqueKey: '' });
                   } else {
                     remove(index);
                   }

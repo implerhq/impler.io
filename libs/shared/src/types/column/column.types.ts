@@ -1,4 +1,4 @@
-import { ValidatorType } from '../../entities';
+import { ValidatorType } from '@impler/client';
 
 export enum ColumnTypesEnum {
   'STRING' = 'String',

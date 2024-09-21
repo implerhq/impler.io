@@ -1,7 +1,8 @@
-import { ColumnTypesEnum, IColumn, ValidatorTypesEnum } from '@impler/shared';
 import { Group } from '@mantine/core';
 import { Badge } from '@ui/badge';
 import { getColorForText } from '@shared/utils';
+import { ValidatorTypesEnum } from '@impler/client';
+import { ColumnTypesEnum, IColumn } from '@impler/shared';
 
 interface IValidationsGroupProps {
   item: IColumn;
@@ -54,7 +55,7 @@ export function ValidationsGroup({ item }: IValidationsGroupProps) {
       {item.validators?.map((validator) => {
         if (validator.validate === ValidatorTypesEnum.UNIQUE_WITH) {
           return (
-            <Badge variant="filled" key={ValidatorTypesEnum.UNIQUE_WITH} color={getColorForText(validator.uniqueKey!)}>
+            <Badge variant="filled" key={ValidatorTypesEnum.UNIQUE_WITH} color={getColorForText(validator.uniqueKey)}>
               Unique with: {validator.uniqueKey}
             </Badge>
           );

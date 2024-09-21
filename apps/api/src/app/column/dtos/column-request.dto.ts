@@ -12,10 +12,12 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+
+import { ValidatorTypesEnum } from '@impler/client';
 import { IsValidRegex } from '@shared/framework/is-valid-regex.validator';
-import { IsNumberOrString } from '@shared/framework/number-or-string.validator';
-import { ColumnDelimiterEnum, ColumnTypesEnum, Defaults, ValidatorTypesEnum } from '@impler/shared';
 import { IsGreaterThan } from '@shared/framework/is-greator-than.validator';
+import { IsNumberOrString } from '@shared/framework/number-or-string.validator';
+import { ColumnDelimiterEnum, ColumnTypesEnum, Defaults } from '@impler/shared';
 
 export class ValidatorDto {
   @ApiProperty({

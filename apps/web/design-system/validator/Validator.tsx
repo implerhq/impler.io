@@ -10,9 +10,10 @@ import { AutoHeightComponent } from '@ui/auto-height-component';
 import { ROUTES } from '@config';
 import { Badge } from '@ui/badge';
 import { Button } from '@ui/button';
+import { IColumn } from '@impler/shared';
 import { LockIcon } from '@assets/icons/Lock.icon';
+import { ValidatorTypesEnum } from '@impler/client';
 import { TooltipLabel } from '@components/guide-point';
-import { IColumn, ValidatorTypesEnum } from '@impler/shared';
 
 import useStyles from './Validator.styles';
 import { MinMaxValidator } from './MinMaxValidator';

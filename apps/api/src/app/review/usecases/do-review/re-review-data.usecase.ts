@@ -3,14 +3,14 @@ import { Writable } from 'stream';
 import { ValidateFunction } from 'ajv';
 import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 
+import { ValidatorTypesEnum } from '@impler/client';
 import { UploadRepository, ValidatorRepository, DalService, TemplateEntity } from '@impler/dal';
 import {
-  ColumnDelimiterEnum,
-  ColumnTypesEnum,
-  ITemplateSchemaItem,
-  UploadStatusEnum,
   EMAIL_SUBJECT,
-  ValidatorTypesEnum,
+  ColumnTypesEnum,
+  UploadStatusEnum,
+  ColumnDelimiterEnum,
+  ITemplateSchemaItem,
 } from '@impler/shared';
 
 import { APIMessages } from '@shared/constants';
