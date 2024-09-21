@@ -94,13 +94,13 @@ importers:
         specifier: workspace:^
         version: link:../../packages/client
       '@impler/dal':
-        specifier: ^0.24.1
+        specifier: workspace:^
         version: link:../../libs/dal
       '@impler/services':
-        specifier: ^0.24.1
+        specifier: workspace:^
         version: link:../../libs/services
       '@impler/shared':
-        specifier: ^0.24.1
+        specifier: workspace:^
         version: link:../../libs/shared
       '@nestjs/common':
         specifier: ^9.1.2
@@ -314,13 +314,13 @@ importers:
   apps/queue-manager:
     dependencies:
       '@impler/dal':
-        specifier: ^0.24.1
+        specifier: workspace:^
         version: link:../../libs/dal
       '@impler/services':
-        specifier: ^0.24.1
+        specifier: workspace:^
         version: link:../../libs/services
       '@impler/shared':
-        specifier: ^0.24.1
+        specifier: workspace:^
         version: link:../../libs/shared
       '@sentry/node':
         specifier: ^7.112.2
@@ -505,10 +505,10 @@ importers:
         specifier: ^14.1.0
         version: 14.4.0(handsontable@14.4.0)
       '@impler/client':
-        specifier: ^0.24.1
+        specifier: workspace:^
         version: link:../../packages/client
       '@impler/shared':
-        specifier: ^0.24.1
+        specifier: workspace:^
         version: link:../../libs/shared
       '@mantine/core':
         specifier: 6.0.21
@@ -608,7 +608,7 @@ importers:
   libs/dal:
     dependencies:
       '@impler/shared':
-        specifier: ^0.24.1
+        specifier: workspace:^
         version: link:../shared
       class-transformer:
         specifier: ^0.5.1
@@ -720,7 +720,7 @@ importers:
         specifier: ^3.276.0
         version: 3.609.0
       '@impler/shared':
-        specifier: ^0.24.1
+        specifier: workspace:^
         version: link:../shared
       axios:
         specifier: 1.6.2
