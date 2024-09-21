@@ -4,7 +4,7 @@ export interface IProjectPayload {
 }
 
 export enum UserRolesEnum {
-  ADMIN = 'admin',
-  TECH = 'tech',
-  FINANCE = 'finance',
+  ADMIN = 'Admin',
+  TECH = 'Tech',
+  FINANCE = 'Finance',
 }
