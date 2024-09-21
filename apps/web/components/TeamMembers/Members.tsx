@@ -1,3 +1,4 @@
+import { useApp } from '@hooks/useApp';
 import { Group, Stack, Avatar, Text, Select, Badge, UnstyledButton } from '@mantine/core';
 import { Table } from '@ui/table';
 import { AppLayout } from '@layouts/AppLayout';
@@ -5,9 +6,12 @@ import { DeleteIcon } from '@assets/icons/Delete.icon';
 import dayjs from 'dayjs';
 import { DATE_FORMATS, MEMBER_ROLE } from '@config';
 import { useListTeamMembers } from '@hooks/useListTeamMembers';
+import { defineAbilitiesFor } from 'config/defineAbilities';
 import { UserRolesEnum } from '@impler/shared';
 
 export function Members() {
+  const { profile } = useApp();
+  const ability = defineAbilitiesFor(profile?.role);
   const { teamMembersList, openDeleteModal, updateTeamMemberRole } = useListTeamMembers();
 
   return (
@@ -45,34 +49,44 @@ export function Members() {
             {
               title: 'Role',
               key: 'role',
-              Cell: (item) => (
-                <Select
-                  disabled={item.isCurrentUser && item.role === UserRolesEnum.ADMIN ? true : false}
-                  data={MEMBER_ROLE}
-                  value={item.role}
-                  maw={150}
-                  onChange={(role) => {
-                    if (role)
-                      updateTeamMemberRole({
-                        role,
-                        userId: item._id,
-                        projectId: item.projectId,
-                      });
-                  }}
-                />
-              ),
+              Cell: (item) =>
+                ability.can('update', 'Role') ? (
+                  <Select
+                    disabled={item.isCurrentUser ? true : false}
+                    data={MEMBER_ROLE}
+                    value={item.role}
+                    maw={150}
+                    onChange={(role) => {
+                      if (role)
+                        updateTeamMemberRole({
+                          role,
+                          userId: item._id,
+                          projectId: item.projectId,
+                        });
+                    }}
+                  />
+                ) : (
+                  <Text>{item.role}</Text>
+                ),
             },
             {
               title: 'Actions',
               key: 'action',
-              Cell: (item) => (
-                <UnstyledButton
-                  disabled={item.isCurrentUser ? true : false}
-                  onClick={() => openDeleteModal(item.projectId, item._id, item.user.name)}
-                >
-                  <DeleteIcon color={item.isCurrentUser ? 'lightblue' : 'red'} />
-                </UnstyledButton>
-              ),
+              Cell: (item) => {
+                const isCurrentUserAdmin = profile?.role === UserRolesEnum.ADMIN;
+                const isTargetUserAdmin = item.role === UserRolesEnum.ADMIN;
+
+                return ability.can('update', 'Role') &&
+                  !item.isCurrentUser &&
+                  (isCurrentUserAdmin || !isTargetUserAdmin) ? (
+                  <UnstyledButton
+                    disabled={isTargetUserAdmin && isCurrentUserAdmin}
+                    onClick={() => openDeleteModal(item.projectId, item._id, item.user.name)}
+                  >
+                    <DeleteIcon color={'red'} />
+                  </UnstyledButton>
+                ) : null;
+              },
             },
           ]}
           data={teamMembersList || []}
