@@ -36,9 +36,9 @@ export function SentInvitations() {
               {
                 title: 'Actions',
                 key: 'action',
-                Cell: () => (
+                Cell: (item) => (
                   <>
-                    <SentInvitationActions />
+                    <SentInvitationActions invitationId={item._id} />
                   </>
                 ),
               },
