@@ -8,15 +8,9 @@ import * as customParseFormat from 'dayjs/plugin/customParseFormat';
 import Ajv, { AnySchemaObject, ErrorObject, ValidateFunction } from 'ajv';
 
 import { ValidatorErrorMessages } from '@shared/types/review.types';
+import { ColumnTypesEnum, Defaults, ITemplateSchemaItem } from '@impler/shared';
 import { SManager, BATCH_LIMIT, MAIN_CODE, ExecuteIsolateResult } from '@shared/services/sandbox';
-import {
-  ColumnTypesEnum,
-  Defaults,
-  ITemplateSchemaItem,
-  LengthValidatorType,
-  RangeValidatorType,
-  ValidatorTypesEnum,
-} from '@impler/shared';
+import { ValidatorTypesEnum, LengthValidatorType, RangeValidatorType } from '@impler/client';
 
 dayjs.extend(customParseFormat);
 

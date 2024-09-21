@@ -1,4 +1,5 @@
-import { ColumnDelimiterEnum, ColumnTypesEnum, ValidatorTypesEnum } from '@impler/shared';
+import { ValidatorTypesEnum } from '@impler/client';
+import { ColumnDelimiterEnum, ColumnTypesEnum } from '@impler/shared';
 
 export class ValidatorCommand {
   validate: ValidatorTypesEnum;

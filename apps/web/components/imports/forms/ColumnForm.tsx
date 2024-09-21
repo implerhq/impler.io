@@ -14,7 +14,8 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 
-import { ColumnTypesEnum, DEFAULT_VALUES, IColumn, ValidatorTypesEnum } from '@impler/shared';
+import { ValidatorTypesEnum } from '@impler/client';
+import { ColumnTypesEnum, DEFAULT_VALUES, IColumn } from '@impler/shared';
 import { colors, DELIMITERS, MODAL_KEYS, MODAL_TITLES, DOCUMENTATION_REFERENCE_LINKS } from '@config';
 
 import { Button } from '@ui/button';

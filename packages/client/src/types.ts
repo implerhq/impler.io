@@ -36,6 +36,37 @@ export interface IUpload {
   customChunkFormat: string;
 }
 
+export enum ValidatorTypesEnum {
+  RANGE = 'range',
+  LENGTH = 'length',
+  UNIQUE_WITH = 'unique_with',
+}
+
+export type RangeValidatorType = {
+  validate: ValidatorTypesEnum.RANGE;
+  min?: number;
+  max?: number;
+  errorMessage?: string;
+};
+
+export type LengthValidatorType = {
+  validate: ValidatorTypesEnum.LENGTH;
+  min?: number;
+  max?: number;
+  errorMessage?: string;
+};
+
+export type UniqueWithValidatorType = {
+  validate: ValidatorTypesEnum.UNIQUE_WITH;
+  uniqueKey?: string;
+  errorMessage?: string;
+};
+
+export type ValidatorType =
+  | RangeValidatorType
+  | LengthValidatorType
+  | UniqueWithValidatorType;
+
 export const EventTypes = {
   INIT_IFRAME: 'INIT_IFRAME',
   WIDGET_READY: 'WIDGET_READY',
@@ -112,6 +143,7 @@ export interface IShowWidgetProps {
   texts?: CustomTexts;
   title?: string;
   primaryColor?: string;
+  validators?: ValidatorType[];
   extra?: string | Record<string, any>;
   authHeaderValue?: string | (() => string) | (() => Promise<string>);
 }

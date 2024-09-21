@@ -19,6 +19,7 @@
     "test": "cross-env TZ=UTC NODE_ENV=test E2E_RUNNER=true mocha --timeout 10000 --require ts-node/register --exit src/**/**/*.spec.ts"
   },
   "dependencies": {
+    "@impler/client": "workspace:^",
     "@impler/dal": "^0.24.1",
     "@impler/services": "^0.24.1",
     "@impler/shared": "^0.24.1",

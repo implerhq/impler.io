@@ -1,7 +1,8 @@
-import { ColumnTypesEnum, IColumn, ValidatorTypesEnum } from '@impler/shared';
 import { Group } from '@mantine/core';
 import { Badge } from '@ui/badge';
 import { getColorForText } from '@shared/utils';
+import { ValidatorTypesEnum } from '@impler/client';
+import { ColumnTypesEnum, IColumn } from '@impler/shared';
 
 interface IValidationsGroupProps {
   item: IColumn;

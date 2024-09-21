@@ -3,8 +3,9 @@ import { Writable } from 'stream';
 import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 
 import { APIMessages } from '@shared/constants';
-import { EMAIL_SUBJECT, ValidatorTypesEnum } from '@impler/shared';
+import { EMAIL_SUBJECT } from '@impler/shared';
 import { BaseReview } from './base-review.usecase';
+import { ValidatorTypesEnum } from '@impler/client';
 import { BATCH_LIMIT } from '@shared/services/sandbox';
 import { StorageService, PaymentAPIService, EmailService } from '@impler/services';
 import { ColumnTypesEnum, UploadStatusEnum, ITemplateSchemaItem, ColumnDelimiterEnum } from '@impler/shared';
