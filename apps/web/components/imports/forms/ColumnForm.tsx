@@ -364,7 +364,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 index={fields.findIndex((field) => field.validate === ValidatorTypesEnum.UNIQUE_WITH)}
                 onCheckToggle={(status, index) => {
                   if (status) {
-                    append({ validate: ValidatorTypesEnum.UNIQUE_WITH });
+                    append({ validate: ValidatorTypesEnum.UNIQUE_WITH, uniqueKey: '' });
                   } else {
                     remove(index);
                   }

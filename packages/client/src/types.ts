@@ -18,7 +18,20 @@ export const ValidatorTypes = {
   RANGE: 'range',
   LENGTH: 'length',
   UNIQUE_WITH: 'unique_with',
-};
+} as const;
+
+// used for export
+export const EventTypes = {
+  INIT_IFRAME: 'INIT_IFRAME',
+  WIDGET_READY: 'WIDGET_READY',
+  CLOSE_WIDGET: 'CLOSE_WIDGET',
+  AUTHENTICATION_VALID: 'AUTHENTICATION_VALID',
+  AUTHENTICATION_ERROR: 'AUTHENTICATION_ERROR',
+  UPLOAD_STARTED: 'UPLOAD_STARTED',
+  UPLOAD_TERMINATED: 'UPLOAD_TERMINATED',
+  UPLOAD_COMPLETED: 'UPLOAD_COMPLETED',
+  DATA_IMPORTED: 'DATA_IMPORTED',
+} as const;
 
 export interface IUpload {
   _id: string;
@@ -51,22 +64,22 @@ export enum ValidatorTypesEnum {
 }
 
 export type RangeValidatorType = {
-  validate: typeof ValidatorTypes.RANGE | ValidatorTypesEnum.RANGE;
+  validate: 'range' | ValidatorTypesEnum.RANGE;
   min?: number;
   max?: number;
   errorMessage?: string;
 };
 
 export type LengthValidatorType = {
-  validate: typeof ValidatorTypes.LENGTH | ValidatorTypesEnum.LENGTH;
+  validate: 'length' | ValidatorTypesEnum.LENGTH;
   min?: number;
   max?: number;
   errorMessage?: string;
 };
 
 export type UniqueWithValidatorType = {
-  validate: typeof ValidatorTypes.UNIQUE_WITH | ValidatorTypesEnum.UNIQUE_WITH;
-  uniqueKey?: string;
+  validate: 'unique_with' | ValidatorTypesEnum.UNIQUE_WITH;
+  uniqueKey: string;
   errorMessage?: string;
 };
 
@@ -74,18 +87,6 @@ export type ValidatorType =
   | RangeValidatorType
   | LengthValidatorType
   | UniqueWithValidatorType;
-
-export const EventTypes = {
-  INIT_IFRAME: 'INIT_IFRAME',
-  WIDGET_READY: 'WIDGET_READY',
-  CLOSE_WIDGET: 'CLOSE_WIDGET',
-  AUTHENTICATION_VALID: 'AUTHENTICATION_VALID',
-  AUTHENTICATION_ERROR: 'AUTHENTICATION_ERROR',
-  UPLOAD_STARTED: 'UPLOAD_STARTED',
-  UPLOAD_TERMINATED: 'UPLOAD_TERMINATED',
-  UPLOAD_COMPLETED: 'UPLOAD_COMPLETED',
-  DATA_IMPORTED: 'DATA_IMPORTED',
-} as const;
 
 export interface ISchemaItem {
   key: string;
