@@ -12,6 +12,7 @@ export type Subjects =
   | 'TeamMembers'
   | 'AccessToken'
   | 'Cards'
+  | 'Role'
   | 'all';
 
 export type AppAbility = MongoAbility<[Actions, Subjects]>;
