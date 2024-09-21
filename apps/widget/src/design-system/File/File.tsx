@@ -27,16 +27,16 @@ export function File(props: IFile) {
       <Group spacing="xs">
         <FileIcon className={classes.fileIcon} fill={colors.darkDeem} />
         <Group spacing={0} noWrap>
-          <Text size="sm" inline className={classes.nameText}>
+          <Text size="sm" color="primary" inline className={classes.nameText}>
             {name.split('.')[variables.baseIndex]}
           </Text>
-          <Text size="sm" inline className={classes.extensionText}>
+          <Text size="sm" color="primary" inline className={classes.extensionText}>
             .{name.split('.').pop()}
           </Text>
         </Group>
       </Group>
       <Group spacing="xs">
-        <Text size="sm" inline className={classes.sizeText}>
+        <Text size="sm" color="secondary" inline className={classes.sizeText}>
           {formatBytes(size)}
         </Text>
         <CrossIcon className={classes.crossIcon} onClick={onClearClick} />

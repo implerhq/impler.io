@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
 import { createStyles, MantineTheme } from '@mantine/core';
 import { colors } from '../../config/colors.config';
 
@@ -14,19 +13,18 @@ export const getContainerStyles = (theme: MantineTheme): React.CSSProperties => 
 });
 
 export const getFileIconStyles = (theme: MantineTheme): React.CSSProperties => ({
-  color: colors.darkDeem,
+  color: theme.colors.primary[0],
   height: '20px',
   width: '20px',
 });
 
-export const getCrossIconStyles = (theme: MantineTheme): React.CSSProperties => ({
+export const getCrossIconStyles = (): React.CSSProperties => ({
   color: colors.danger,
   height: '25px',
   cursor: 'pointer',
 });
 
 export const getNameTextStyles = (theme: MantineTheme): React.CSSProperties => ({
-  color: colors.darkDeem,
   fontWeight: 'bold',
   textOverflow: 'ellipsis',
   width: '100%',
@@ -41,8 +39,7 @@ export const getNameTextStyles = (theme: MantineTheme): React.CSSProperties => (
   },
 });
 
-export const getExtensionTextStyles = (theme: MantineTheme): React.CSSProperties => ({
-  color: colors.darkDeem,
+export const getExtensionTextStyles = (): React.CSSProperties => ({
   fontWeight: 'bold',
   whiteSpace: 'nowrap',
 });
@@ -52,16 +49,15 @@ export const getSizeTextStyles = (theme: MantineTheme): React.CSSProperties => (
   [`@media (min-width: ${theme.breakpoints.sm}px)`]: {
     display: 'block',
   },
-  color: colors.darkDeem,
 });
 
-export default createStyles((theme: MantineTheme, params, getRef): Record<string, any> => {
+export default createStyles((theme: MantineTheme): Record<string, any> => {
   return {
     root: getContainerStyles(theme),
     fileIcon: getFileIconStyles(theme),
-    crossIcon: getCrossIconStyles(theme),
+    crossIcon: getCrossIconStyles(),
     nameText: getNameTextStyles(theme),
     sizeText: getSizeTextStyles(theme),
-    extensionText: getExtensionTextStyles(theme),
+    extensionText: getExtensionTextStyles(),
   };
 });

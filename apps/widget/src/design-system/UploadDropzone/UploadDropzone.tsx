@@ -1,10 +1,11 @@
 import { Group, Text } from '@mantine/core';
 import { Dropzone as MantineDropzone, FileWithPath, MIME_TYPES } from '@mantine/dropzone';
+
+import { colors } from '@config';
+import { File as FileCMP } from '../File';
 import { WIDGET_TEXTS } from '@impler/client';
 import useStyles from './UploadDropzone.styles';
 import { FileIcon, CheckIcon } from '../../icons';
-import { File as FileCMP } from '../File';
-import { colors } from '@config';
 
 interface IDropzoneProps {
   loading?: boolean;
@@ -32,7 +33,7 @@ export function UploadDropzone(props: IDropzoneProps) {
     error,
     texts,
   } = props;
-  const { classes } = useStyles({ hasError: !!error });
+  const { classes } = useStyles();
   const wrapperClasses = [classes.wrapper];
   if (className) wrapperClasses.push(className);
 
@@ -59,21 +60,25 @@ export function UploadDropzone(props: IDropzoneProps) {
 
   const SelectFileContent = () => {
     return (
-      <MantineDropzone onReject={onReject} onDrop={onDrop} accept={accept} loading={loading} classNames={classes}>
+      <MantineDropzone
+        onReject={onReject}
+        onDrop={onDrop}
+        accept={accept}
+        loading={loading}
+        classNames={classes}
+        {...(error ? { 'data-has-error': true } : {})}
+      >
         <Group position="center">
           <div>
             <Text align="center" weight="bold">
-              {texts.FILE_DROP_AREA.DROP_FILE}{' '}
-              <Text component="span" className={classes.browseText}>
-                {texts.FILE_DROP_AREA.BROWSE_FILE}
-              </Text>
+              {texts.FILE_DROP_AREA.DROP_FILE} {texts.FILE_DROP_AREA.BROWSE_FILE}
             </Text>
             <MantineDropzone.Idle>
               <Group position="center" mt="md">
                 <FileIcon className={classes.icon} />
               </Group>
             </MantineDropzone.Idle>
-            <Text color="dimmed" size="sm" mt="md" align="center">
+            <Text color="secondary" size="sm" mt="md" align="center">
               {texts.FILE_DROP_AREA.BRING_FILE}
             </Text>
           </div>

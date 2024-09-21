@@ -14,6 +14,8 @@ import { IWidgetShowPayload, WidgetEventTypesEnum } from '@impler/shared';
 
 let api: ApiService;
 
+const font = "'Poppins'";
+
 export function Container({ children }: PropsWithChildren<{}>) {
   if (!api) api = new ApiService(API_URL);
   const [secondaryPayload, setSecondaryPayload] = useState<IWidgetShowPayload>({
@@ -29,7 +31,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
   useEffect(() => {
     WebFont.load({
       google: {
-        families: ['Poppins'],
+        families: [font],
       },
     });
   }, []);
@@ -144,12 +146,81 @@ export function Container({ children }: PropsWithChildren<{}>) {
         withNormalizeCSS
         theme={{
           ...mantineConfig,
+          fontFamily: `${font}, sans-serif`,
+          globalStyles: () => ({
+            '*': {
+              color: colors.lightDanger, // textColor
+            },
+          }),
+          components: {
+            Stepper: {
+              styles: {
+                stepLabel: {
+                  color: colors.danger,
+                  fontWeight: 700,
+                },
+                stepIcon: {
+                  color: colors.danger,
+                  borderColor: colors.softGrey,
+                  backgroundColor: 'transparent',
+                  '&[data-completed]': {
+                    backgroundColor: colors.softGrey,
+                    borderColor: colors.softGrey,
+                    color: colors.softGrey,
+                  },
+                  '&[data-progress]': {
+                    backgroundColor: colors.danger,
+                    borderColor: colors.danger,
+                    color: 'white',
+                  },
+                },
+              },
+            },
+            Modal: {
+              styles: {
+                content: {
+                  backgroundColor: colors.softBlue,
+                  borderRadius: 0,
+                },
+              },
+            },
+            Button: {
+              styles: {
+                root: {
+                  borderRadius: 0,
+                },
+              },
+            },
+            Dropzone: {
+              styles: {
+                root: {
+                  /*
+                   * borderRadius: 0,
+                   * borderWidth: 10,
+                   * borderColor: colors.softGrey,
+                   * border: `1px solid ${colors.softGrey}`,
+                   */
+                  backgroundColor: colors.lightDanger,
+                  '&[data-has-error]': {
+                    borderColor: colors.lightDanger,
+                  },
+                  '&:hover': {
+                    backgroundColor: colors.red,
+                  },
+                },
+              },
+            },
+          },
           colors: {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             primary: generateShades(secondaryPayload.primaryColor),
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            secondary: generateShades(colors.success), // secondary text color
           },
           primaryColor: 'primary',
+          secondaryColor: 'secondary',
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           primaryShade: variables.colorIndex,

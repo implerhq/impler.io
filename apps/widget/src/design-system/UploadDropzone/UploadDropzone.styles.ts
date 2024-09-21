@@ -1,31 +1,28 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
 import { createStyles, MantineTheme } from '@mantine/core';
 import { colors } from '../../config/colors.config';
-import { variables } from '../../config/variable.config';
 
-export const getRootStyles = (theme: MantineTheme, hasError: boolean): React.CSSProperties => ({
-  borderColor: hasError ? colors.red : theme.colors.primary[variables.colorIndex],
+const getRootStyles = (): React.CSSProperties => ({
   flexGrow: 1,
 });
 
-export const getSuccessRootStyles = (theme: MantineTheme): React.CSSProperties => ({
+const getSuccessRootStyles = (theme: MantineTheme): React.CSSProperties => ({
   borderColor: colors.success,
+  flexGrow: 1,
   borderWidth: 2,
+  display: 'flex',
+  borderRadius: 4,
+  alignItems: 'center',
+  position: 'relative',
   borderStyle: 'dashed',
   padding: theme.spacing.md,
-  borderRadius: 4,
-  position: 'relative',
-  flexGrow: 1,
-  display: 'flex',
   justifyContent: 'center',
-  alignItems: 'center',
 });
 
-export const getIconStyles = (theme) => ({
+const getIconStyles = () => ({
   height: 70,
 });
 
-export const getCheckIconStyles = (theme) => ({
+const getCheckIconStyles = (theme) => ({
   height: 40,
   backgroundColor: colors.success,
   borderRadius: '50%',
@@ -36,29 +33,24 @@ export const getCheckIconStyles = (theme) => ({
   },
 });
 
-export const getWrapperStyles = (theme) => ({
+const getWrapperStyles = () => ({
   width: '100%',
 });
 
-export const getDropzoneInnerStyles = (theme: MantineTheme): React.CSSProperties => ({
+const getDropzoneInnerStyles = (): React.CSSProperties => ({
+  height: '100%',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  height: '100%',
 });
 
-export const getBrowseTextStyles = (theme: MantineTheme): React.CSSProperties => ({
-  color: theme.colors.primary[variables.colorIndex],
-});
-
-export default createStyles((theme: MantineTheme, { hasError }: { hasError: boolean }, getRef): Record<string, any> => {
+export default createStyles((theme: MantineTheme): Record<string, any> => {
   return {
-    icon: getIconStyles(theme),
+    icon: getIconStyles(),
     successRoot: getSuccessRootStyles(theme),
-    root: getRootStyles(theme, hasError),
+    root: getRootStyles(),
     checkIcon: getCheckIconStyles(theme),
-    wrapper: getWrapperStyles(theme),
-    browseText: getBrowseTextStyles(theme),
-    inner: getDropzoneInnerStyles(theme),
+    wrapper: getWrapperStyles(),
+    inner: getDropzoneInnerStyles(),
   };
 });
