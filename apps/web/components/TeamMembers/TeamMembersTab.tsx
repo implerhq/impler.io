@@ -13,7 +13,7 @@ import { useListTeamMembers } from '@hooks/useListTeamMembers';
 
 export function TeamMembersTab() {
   const { profileInfo } = useAppState();
-  const { invitationsCount, refetchInvitations } = useSentProjectInvitations();
+  const { invitationsCount } = useSentProjectInvitations();
   const { teamMembersCount } = useListTeamMembers();
   const [activeTab, setActiveTab] = useState(TAB_KEYS.MEMBERS);
 
@@ -35,9 +35,6 @@ export function TeamMembersTab() {
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    if (value === TAB_KEYS.SENT_INVITATIONS) {
-      refetchInvitations();
-    }
   };
 
   const tabItems = [
