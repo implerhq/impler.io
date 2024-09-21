@@ -26,6 +26,6 @@ export function useSubscriptionInfo() {
 
   return {
     columnTypes,
-    advancedValidatorsUnavailable: false,
+    advancedValidatorsUnavailable: !meta?.ADVANCED_VALIDATORS,
   };
 }
