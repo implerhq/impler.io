@@ -31,7 +31,7 @@ export const AutoHeightComponent: React.FC<AutoHeightComponentProps> = ({ isVisi
   };
 
   return (
-    <Collapse in={isExpanded} onTransitionEnd={handleTransitionEnd}>
+    <Collapse in={isExpanded} onTransitionEnd={handleTransitionEnd} w="100%">
       {isRendered && children}
     </Collapse>
   );
