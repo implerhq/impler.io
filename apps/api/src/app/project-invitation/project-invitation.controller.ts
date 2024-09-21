@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { IJwtPayload } from '@impler/shared';
 import { ProjectInvitationDto } from './dto/project-invtation.dto';
@@ -10,6 +10,7 @@ import {
   ListTeamMembers,
   UpdateTeamMemberRole,
   DeleteTeamMember,
+  DeleteInvitation,
 } from './usecase';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { UserSession } from '@shared/framework/user.decorator';
@@ -24,7 +25,8 @@ export class ProjectInvitationController {
     private acceptProjectInvitation: AcceptProjectInvitation,
     private listTeamMembers: ListTeamMembers,
     private updateTeamMemberRole: UpdateTeamMemberRole,
-    private deleteTeamMember: DeleteTeamMember
+    private deleteTeamMember: DeleteTeamMember,
+    private deleteInvitation: DeleteInvitation
   ) {}
 
   @Post()
@@ -45,7 +47,7 @@ export class ProjectInvitationController {
 
   @Get('/sent-invitation')
   @ApiOperation({
-    summary: 'Fetch Team members details who have sent the invitation(s)',
+    summary: 'Fetch Team members details who have got the invitation',
   })
   @UseGuards(JwtAuthGuard)
   async sentProjectInvitationRoute(@UserSession() user: IJwtPayload) {
@@ -82,7 +84,7 @@ export class ProjectInvitationController {
   @Get('/team-members-list')
   @ApiOperation({
     summary:
-      'List out the who have accepted the project invitation and now a part of a team and working on the same project',
+      'List out the members who have accepted the project invitation and now a part of a team and working on the same project',
   })
   async listTeamMembersRoute(@UserSession() user: IJwtPayload) {
     return await this.listTeamMembers.exec(user._projectId);
@@ -106,5 +108,13 @@ export class ProjectInvitationController {
   })
   async deleteTeamMemberRoute(@Query('projectId') projectId: string, @Query('userId') userId: string) {
     return await this.deleteTeamMember.exec({ projectId, userId });
+  }
+
+  @Delete('/:invitationId')
+  @ApiOperation({
+    summary: 'Cancel an already sent invitation',
+  })
+  async cancelInvitationRoute(@Param('invitationId') invitationId: string) {
+    return await this.deleteInvitation.exec(invitationId);
   }
 }
