@@ -1,5 +1,6 @@
 import { WIDGET_TEXTS } from './config';
 
+// used for export
 export const ColumnTypes = {
   STRING: 'String',
   NUMBER: 'Number',
@@ -11,6 +12,13 @@ export const ColumnTypes = {
   DOUBLE: 'Double',
   IMAGE: 'Image',
 } as const;
+
+// used for export
+export const ValidatorTypes = {
+  RANGE: 'range',
+  LENGTH: 'length',
+  UNIQUE_WITH: 'unique_with',
+};
 
 export interface IUpload {
   _id: string;
@@ -43,21 +51,21 @@ export enum ValidatorTypesEnum {
 }
 
 export type RangeValidatorType = {
-  validate: ValidatorTypesEnum.RANGE;
+  validate: typeof ValidatorTypes.RANGE | ValidatorTypesEnum.RANGE;
   min?: number;
   max?: number;
   errorMessage?: string;
 };
 
 export type LengthValidatorType = {
-  validate: ValidatorTypesEnum.LENGTH;
+  validate: typeof ValidatorTypes.LENGTH | ValidatorTypesEnum.LENGTH;
   min?: number;
   max?: number;
   errorMessage?: string;
 };
 
 export type UniqueWithValidatorType = {
-  validate: ValidatorTypesEnum.UNIQUE_WITH;
+  validate: typeof ValidatorTypes.UNIQUE_WITH | ValidatorTypesEnum.UNIQUE_WITH;
   uniqueKey?: string;
   errorMessage?: string;
 };
@@ -100,6 +108,7 @@ export interface ISchemaItem {
   type?: keyof typeof ColumnTypes;
   regex?: string;
   allowMultiSelect?: boolean;
+  validators?: ValidatorType[];
 }
 
 export type UploadTemplateData = {
@@ -143,7 +152,6 @@ export interface IShowWidgetProps {
   texts?: CustomTexts;
   title?: string;
   primaryColor?: string;
-  validators?: ValidatorType[];
   extra?: string | Record<string, any>;
   authHeaderValue?: string | (() => string) | (() => Promise<string>);
 }

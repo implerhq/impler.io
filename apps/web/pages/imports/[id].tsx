@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { ActionIcon, Flex, Group, LoadingOverlay, Title, useMantineTheme, Select } from '@mantine/core';
 
 import { track } from '@libs/amplitude';
-import { useImpler } from '@impler/react';
+import { useImpler, ValidatorTypes } from '@impler/react';
 import { TemplateModeEnum } from '@impler/shared';
 import { IMPORT_MODES, ROUTES, colors } from '@config';
 import { useImportDetails } from '@hooks/useImportDetails';
@@ -62,7 +62,23 @@ export default function ImportDetails({}) {
       name: 'IMPORT CLICK',
       properties: {},
     });
-    showWidget({ colorScheme });
+    showWidget({
+      colorScheme,
+      schema: [
+        {
+          key: 'name',
+          name: 'Name',
+          validators: [
+            {
+              validate: ValidatorTypes.LENGTH,
+              errorMessage: 'Name must be less than 100 characters',
+              min: 1,
+              max: 100,
+            },
+          ],
+        },
+      ],
+    });
   };
 
   return (
