@@ -163,6 +163,7 @@ interface SentProjectInvitation {
   role: string;
   invitedBy: string;
   token: string;
+  invitationLink: string;
 }
 
 interface TeamMember {
