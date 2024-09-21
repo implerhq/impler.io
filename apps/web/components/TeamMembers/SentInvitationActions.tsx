@@ -1,32 +1,31 @@
 import React from 'react';
 import { Menu, UnstyledButton, useMantineTheme } from '@mantine/core';
-import { MenuOption } from '@assets/icons/MenuOption.icon';
+import { MenuIcon } from '@assets/icons/Menu.icon';
 import { colors } from '@config';
 import { CancelIcon } from '@assets/icons/Cancel.icon';
 import { CopyIcon } from '@assets/icons/Copy.icon';
+import { useSentProjectInvitations } from '@hooks/useSentProjectInvitations';
 
-export function SentInvitationActions() {
+interface IInvitation {
+  invitationId: string;
+}
+
+export function SentInvitationActions(invitation: IInvitation) {
+  const { handleCopyInvitationLink, handleCancelInvitation } = useSentProjectInvitations();
   const theme = useMantineTheme();
 
   return (
     <Menu width="sm" position="right" withArrow>
       <Menu.Target>
         <UnstyledButton>
-          <MenuOption size="lg" color={theme.colorScheme === 'dark' ? colors.BGPrimaryLight : colors.BGPrimaryDark} />
+          <MenuIcon size="lg" color={theme.colorScheme === 'dark' ? colors.BGPrimaryLight : colors.BGPrimaryDark} />
         </UnstyledButton>
       </Menu.Target>
       <Menu.Dropdown>
-        <Menu.Item
-          icon={<CopyIcon />}
-          // onClick={() => handleCopyInvitationLink(invitation._id)}
-        >
+        <Menu.Item icon={<CopyIcon />} onClick={() => handleCopyInvitationLink(invitation.invitationId)}>
           Copy Invitation Link
         </Menu.Item>
-        <Menu.Item
-          color="red"
-          icon={<CancelIcon />}
-          // onClick={() => handleCancelInvitation(invitation._id)}
-        >
+        <Menu.Item color="red" icon={<CancelIcon />} onClick={() => handleCancelInvitation(invitation.invitationId)}>
           Cancel Invitation
         </Menu.Item>
       </Menu.Dropdown>
