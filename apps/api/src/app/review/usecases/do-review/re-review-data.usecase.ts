@@ -3,14 +3,14 @@ import { Writable } from 'stream';
 import { ValidateFunction } from 'ajv';
 import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 
+import { ValidatorTypesEnum } from '@impler/client';
 import { UploadRepository, ValidatorRepository, DalService, TemplateEntity } from '@impler/dal';
 import {
-  ColumnDelimiterEnum,
-  ColumnTypesEnum,
-  ITemplateSchemaItem,
-  UploadStatusEnum,
   EMAIL_SUBJECT,
-  ValidatorTypesEnum,
+  ColumnTypesEnum,
+  UploadStatusEnum,
+  ColumnDelimiterEnum,
+  ITemplateSchemaItem,
 } from '@impler/shared';
 
 import { APIMessages } from '@shared/constants';
@@ -69,7 +69,7 @@ export class DoReReview extends BaseReview {
     });
 
     const columns = JSON.parse(uploadInfo.customSchema) as ITemplateSchemaItem[];
-    const uniqueFieldsSet = new Set(...columns.filter((column) => column.isUnique).map((column) => column.key));
+    const uniqueFieldsSet = new Set(columns.filter((column) => column.isUnique).map((column) => column.key));
     const multiSelectColumnHeadings: Record<string, string> = {};
     const validatorErrorMessages = {};
     (columns as ITemplateSchemaItem[]).forEach((column) => {
@@ -205,6 +205,7 @@ export class DoReReview extends BaseReview {
     validator,
     dateFormats,
     uniqueCombinations,
+    validatorErrorMessages,
     multiSelectColumnHeadings,
   }: {
     uploadId: string;
@@ -231,6 +232,7 @@ export class DoReReview extends BaseReview {
         dateFormats,
         uniqueCombinations,
         index: record.index,
+        validatorErrorMessages,
         passRecord: record.record,
       });
       response.totalRecords++;

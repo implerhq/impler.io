@@ -1,6 +1,6 @@
 import React from 'react';
 import { Validator } from './Validator';
-import { ValidatorTypesEnum } from '@impler/shared';
+import { ValidatorTypesEnum } from '@impler/client';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 export default {
