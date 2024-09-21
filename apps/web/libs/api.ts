@@ -91,6 +91,11 @@ const routes: Record<string, Route> = {
     method: 'DELETE',
   },
 
+  [API_KEYS.CANCEL_INVITATION]: {
+    url: (invitationId: string) => `/v1/invite/${invitationId}`,
+    method: 'DELETE',
+  },
+
   [API_KEYS.PROJECTS_LIST]: {
     url: () => '/v1/project',
     method: 'GET',
