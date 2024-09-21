@@ -6,6 +6,7 @@ import { GenerateUniqueApiKey } from 'app/environment/usecases';
 import { ListTeamMembers } from './list-team-members/list-team-members.usecase';
 import { UpdateTeamMemberRole } from './update-team-member-role/update-team-member.usecase';
 import { DeleteTeamMember } from './delete-team-member/delete-team-member.usecase';
+import { DeleteInvitation } from '../delete-invitation/delete-invitation.usecase';
 
 export const USE_CASES = [
   Invite,
@@ -16,6 +17,7 @@ export const USE_CASES = [
   ListTeamMembers,
   UpdateTeamMemberRole,
   DeleteTeamMember,
+  DeleteInvitation,
   //
 ];
 export {
@@ -27,4 +29,5 @@ export {
   ListTeamMembers,
   UpdateTeamMemberRole,
   DeleteTeamMember,
+  DeleteInvitation,
 };
