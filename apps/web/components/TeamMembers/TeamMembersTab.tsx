@@ -3,7 +3,7 @@ import { modals } from '@mantine/modals';
 import { Text } from '@mantine/core';
 import { Button } from '@ui/button';
 import { colors, MODAL_KEYS, TAB_KEYS, TAB_TITLES } from '@config';
-import { Members } from './Members';
+import { TeamMembers } from './TeamMembers';
 import { SentInvitations } from './SentInvitations';
 import { ProjectInvitationModal } from './ProjectInvitationModal';
 import { OutlinedTabs } from '@ui/OutlinedTabs';
@@ -42,7 +42,7 @@ export function TeamMembersTab() {
       value: TAB_KEYS.MEMBERS,
       title: TAB_TITLES[TAB_KEYS.MEMBERS],
       badgeCount: teamMembersCount,
-      content: <Members />,
+      content: <TeamMembers />,
     },
     {
       value: TAB_KEYS.SENT_INVITATIONS,
