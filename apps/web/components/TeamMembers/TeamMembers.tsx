@@ -4,7 +4,7 @@ import { Table } from '@ui/table';
 import { AppLayout } from '@layouts/AppLayout';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
 import dayjs from 'dayjs';
-import { DATE_FORMATS, MEMBER_ROLE } from '@config';
+import { ActionsEnum, DATE_FORMATS, MEMBER_ROLE, SubjectsEnum } from '@config';
 import { useListTeamMembers } from '@hooks/useListTeamMembers';
 import { defineAbilitiesFor } from 'config/defineAbilities';
 import { UserRolesEnum } from '@impler/shared';
@@ -54,14 +54,13 @@ export function TeamMembers() {
               title: 'Role',
               key: 'role',
               Cell: (item) =>
-                ability.can('update', 'Role') ? (
+                ability.can(ActionsEnum.UPDATE, SubjectsEnum.ROLE) ? (
                   <Select
                     disabled={item.isCurrentUser ? true : false}
                     data={MEMBER_ROLE}
                     value={item.role}
                     maw={150}
                     onChange={(role) => {
-                      console.log(item.user.profilePicture);
                       if (role)
                         updateTeamMemberRole({
                           role,
@@ -81,7 +80,7 @@ export function TeamMembers() {
                 const isCurrentUserAdmin = profile?.role === UserRolesEnum.ADMIN;
                 const isTargetUserAdmin = item.role === UserRolesEnum.ADMIN;
 
-                return ability.can('update', 'Role') &&
+                return ability.can(ActionsEnum.UPDATE, SubjectsEnum.ROLE) &&
                   !item.isCurrentUser &&
                   (isCurrentUserAdmin || !isTargetUserAdmin) ? (
                   <UnstyledButton
