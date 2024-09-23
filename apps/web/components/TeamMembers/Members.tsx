@@ -24,7 +24,11 @@ export function Members() {
               key: 'user',
               Cell: (item) => (
                 <Group spacing="sm">
-                  <Avatar style={{ border: '1px solid white', borderRadius: 0 }} size="md" />
+                  <Avatar
+                    src={item.user.profilePicture || null}
+                    style={{ border: '1px solid white', borderRadius: 0 }}
+                    size="md"
+                  />
                   <div>
                     <Text>
                       {item.user.name}
@@ -57,6 +61,7 @@ export function Members() {
                     value={item.role}
                     maw={150}
                     onChange={(role) => {
+                      console.log(item.user.profilePicture);
                       if (role)
                         updateTeamMemberRole({
                           role,
