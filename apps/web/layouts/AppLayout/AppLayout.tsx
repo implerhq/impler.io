@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { PropsWithChildren, useRef } from 'react';
 import { Flex, Group, LoadingOverlay, Select, Stack, Title, useMantineColorScheme } from '@mantine/core';
 
-import { TEXTS } from '@config';
+import { ActionsEnum, SubjectsEnum, TEXTS } from '@config';
 import useStyles from './AppLayout.styles';
 import { HomeIcon } from '@assets/icons/Home.icon';
 import { LogoutIcon } from '@assets/icons/Logout.icon';
@@ -77,7 +77,7 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
           />
           <Stack spacing="sm" py="xs">
             <NavItem active={router.pathname === '/'} href="/" icon={<HomeIcon size="lg" />} title="Home" />
-            <Can I="read" a="Imports">
+            <Can I={ActionsEnum.READ} a={SubjectsEnum.IMPORTS}>
               <NavItem
                 active={router.pathname.includes('/imports')}
                 href="/imports"
@@ -98,7 +98,7 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
               icon={<SettingsIcon size="lg" />}
               title="Settings"
             />
-            <Can I="read" a="TeamMembers">
+            <Can I={ActionsEnum.READ} a={SubjectsEnum.TEAM_MEMBERS}>
               <NavItem
                 active={router.pathname.includes('/team-members')}
                 href="/team-members"
