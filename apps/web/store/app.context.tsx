@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { AppAbility } from 'config/defineAbilities';
+import { AppAbility } from '@config';
 
 interface AppContextType {
   profileInfo?: IProfileData;
