@@ -1,47 +1,14 @@
-import { AbilityBuilder, createMongoAbility, MongoAbility } from '@casl/ability';
+import { AbilityBuilder, createMongoAbility } from '@casl/ability';
 import { UserRolesEnum } from '@impler/shared';
-
-export type Actions = 'manage' | 'read' | 'create' | 'update' | 'buy';
-export type Subjects =
-  | 'Homepage'
-  | 'Imports'
-  | 'Analytics'
-  | 'Settings'
-  | 'Plan'
-  | 'File'
-  | 'TeamMembers'
-  | 'AccessToken'
-  | 'Cards'
-  | 'Role'
-  | 'all';
-
-export type AppAbility = MongoAbility<[Actions, Subjects]>;
+import { AppAbility, ROLE_BASED_ACCESS } from './constants.config';
 
 export const defineAbilitiesFor = (role?: string): AppAbility => {
   const { can, build } = new AbilityBuilder<AppAbility>(createMongoAbility);
+  const roleBasedAccess = ROLE_BASED_ACCESS[role as UserRolesEnum] || [];
 
-  switch (role) {
-    case UserRolesEnum.ADMIN:
-      can('manage', 'all');
-      break;
-    case UserRolesEnum.TECH:
-      can('read', 'Homepage');
-      can('create', 'Imports');
-      can('read', 'Imports');
-      can('read', 'Analytics');
-      can('read', 'Settings');
-      can('read', 'AccessToken');
-      can('read', 'TeamMembers');
-      break;
-    case UserRolesEnum.FINANCE:
-      can('read', 'Homepage');
-      can('read', 'Settings');
-      can('buy', 'Plan');
-      can('read', 'Cards');
-      break;
-    default:
-      break;
-  }
+  roleBasedAccess.forEach(({ action, subject }) => {
+    can(action, subject);
+  });
 
   return build();
 };
