@@ -8,6 +8,7 @@ import { GenerateAccessToken } from './GenerateAccessToken';
 import { OutlinedTabs } from '@ui/OutlinedTabs';
 import { useApp } from '@hooks/useApp';
 import { defineAbilitiesFor } from 'config/defineAbilities';
+import { ActionsEnum, SubjectsEnum } from '@config';
 
 export function SettingsTab() {
   const { profile } = useApp();
@@ -20,13 +21,13 @@ export function SettingsTab() {
     loadStripe(publicRuntimeConfig.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
   const tabItems = [
-    ability.can('read', 'AccessToken') && {
+    ability.can(ActionsEnum.READ, SubjectsEnum.ACCESS_TOKEN) && {
       value: 'accesstoken',
       title: 'Access Token',
       content: <GenerateAccessToken />,
     },
     stripePromise &&
-      ability.can('read', 'Cards') && {
+      ability.can(ActionsEnum.READ, SubjectsEnum.CARDS) && {
         value: 'addcard',
         title: 'Cards',
         content: (
