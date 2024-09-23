@@ -169,6 +169,7 @@ interface SentProjectInvitation {
 interface TeamMember {
   name: string;
   email: string;
+  profilePicture?: string | null;
 }
 
 interface TeamMemberList {
