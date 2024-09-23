@@ -31,6 +31,7 @@ export class AuthService {
         lastName: profile.lastName,
         signupMethod: LEAD_SIGNUP_USING.GITHUB,
         profilePicture: profile.avatar_url,
+        role: UserRolesEnum.ADMIN,
         ...(provider ? { tokens: [provider] } : {}),
       };
       user = await this.userRepository.create(userObj);
@@ -54,7 +55,7 @@ export class AuthService {
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
-          role: apiKey.role as UserRolesEnum,
+          role: apiKey?.role as UserRolesEnum,
           profilePicture: user.profilePicture,
           accessToken: apiKey?.apiKey,
           isEmailVerified: user.isEmailVerified,
