@@ -10,7 +10,15 @@ import { SelectCardModal } from '@components/settings';
 import { usePlanDetails } from '@hooks/usePlanDetails';
 import { TooltipLink } from '@components/guide-point';
 import { PlansModal } from '@components/UpgradePlan/PlansModal';
-import { CONSTANTS, MODAL_KEYS, ROUTES, colors, DOCUMENTATION_REFERENCE_LINKS } from '@config';
+import {
+  CONSTANTS,
+  MODAL_KEYS,
+  ROUTES,
+  colors,
+  DOCUMENTATION_REFERENCE_LINKS,
+  ActionsEnum,
+  SubjectsEnum,
+} from '@config';
 import { defineAbilitiesFor } from 'config/defineAbilities';
 import { useApp } from '@hooks/useApp';
 import { Can } from 'store/ability.context';
@@ -117,7 +125,7 @@ export function PlanDetails() {
         backgroundColor: backgroundColor + '20',
       }}
     >
-      {ability.can('read', 'Homepage') && (
+      {ability.can(ActionsEnum.READ, SubjectsEnum.HOMEPAGE) && (
         <Flex gap={5} justify="space-between" w="100%">
           <Flex direction="column" gap={5} align="center">
             <Title order={3} fw="bold">
@@ -157,7 +165,7 @@ export function PlanDetails() {
               Expiry Date
             </Text>
           </Flex>
-          <Can I="buy" a="Plan">
+          <Can I={ActionsEnum.BUY} a={SubjectsEnum.PLAN}>
             <Flex direction="column" gap={5} align="center">
               <Button
                 onClick={onChoosePlanClick}
