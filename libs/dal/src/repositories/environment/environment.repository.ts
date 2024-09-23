@@ -78,7 +78,7 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
   async listTeamMembersByProjectId(projectId: string) {
     return await Environment.find({ _projectId: projectId }, { apiKeys: 1, _projectId: 1 }).populate(
       'apiKeys._userId',
-      'firstName lastName email'
+      'firstName lastName email profilePicture'
     );
   }
 
