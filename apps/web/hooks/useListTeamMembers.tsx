@@ -35,6 +35,7 @@ export function useListTeamMembers() {
             user: {
               name: `${apiKey._userId.firstName} ${apiKey._userId.lastName}`,
               email: apiKey._userId.email,
+              profilePicture: apiKey._userId.profilePicture || null,
             },
             joinedDate: apiKey.joinedOn,
             role: apiKey.role,
