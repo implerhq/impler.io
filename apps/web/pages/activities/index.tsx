@@ -1,9 +1,10 @@
 import { Stack, Title } from '@mantine/core';
 
+import { Can } from 'store/ability.context';
 import { AppLayout } from '@layouts/AppLayout';
 import { Activities } from '@components/import-feed/Activities';
 import { History } from '@components/import-feed/History';
-import { Can } from 'store/ability.context';
+import { ActionsEnum, SubjectsEnum } from '@config';
 
 export default function ImportFeed() {
   return (
@@ -13,7 +14,7 @@ export default function ImportFeed() {
       </Title>
       <Stack spacing="lg">
         <Activities />
-        <Can I="read" a="Analytics">
+        <Can I={ActionsEnum.READ} a={SubjectsEnum.ANALYTICS}>
           <History />
         </Can>
       </Stack>
