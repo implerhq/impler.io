@@ -1,3 +1,4 @@
+import { MongoAbility } from '@casl/ability';
 import { UserRolesEnum } from '@impler/shared';
 
 export const CONSTANTS = {
@@ -280,7 +281,50 @@ export const TAB_TITLES = {
   [TAB_KEYS.INVITATION_REQUESTS]: 'Invitation Requests',
 };
 
-export const MEMBER_ROLE = ['admin', 'tech', 'finance'];
+export const MEMBER_ROLE = [UserRolesEnum.ADMIN, UserRolesEnum.TECH, UserRolesEnum.FINANCE];
+
+export enum ActionsEnum {
+  MANAGE = 'manage',
+  READ = 'read',
+  CREATE = 'create',
+  UPDATE = 'update',
+  BUY = 'buy',
+}
+
+export enum SubjectsEnum {
+  HOMEPAGE = 'Homepage',
+  IMPORTS = 'Imports',
+  ANALYTICS = 'Analytics',
+  SETTINGS = 'Settings',
+  PLAN = 'Plan',
+  FILE = 'File',
+  TEAM_MEMBERS = 'TeamMembers',
+  ACCESS_TOKEN = 'AccessToken',
+  CARDS = 'Cards',
+  ROLE = 'Role',
+  ALL = 'all',
+}
+
+export type AppAbility = MongoAbility<[ActionsEnum, SubjectsEnum]>;
+
+export const ROLE_BASED_ACCESS = {
+  [UserRolesEnum.ADMIN]: [{ action: ActionsEnum.MANAGE, subject: SubjectsEnum.ALL }],
+  [UserRolesEnum.TECH]: [
+    { action: ActionsEnum.READ, subject: SubjectsEnum.HOMEPAGE },
+    { action: ActionsEnum.CREATE, subject: SubjectsEnum.IMPORTS },
+    { action: ActionsEnum.READ, subject: SubjectsEnum.IMPORTS },
+    { action: ActionsEnum.READ, subject: SubjectsEnum.ANALYTICS },
+    { action: ActionsEnum.READ, subject: SubjectsEnum.SETTINGS },
+    { action: ActionsEnum.READ, subject: SubjectsEnum.ACCESS_TOKEN },
+    { action: ActionsEnum.READ, subject: SubjectsEnum.TEAM_MEMBERS },
+  ],
+  [UserRolesEnum.FINANCE]: [
+    { action: ActionsEnum.READ, subject: SubjectsEnum.HOMEPAGE },
+    { action: ActionsEnum.READ, subject: SubjectsEnum.SETTINGS },
+    { action: ActionsEnum.BUY, subject: SubjectsEnum.PLAN },
+    { action: ActionsEnum.READ, subject: SubjectsEnum.CARDS },
+  ],
+};
 
 export const DOCUMENTATION_REFERENCE_LINKS = {
   columnDescription: 'https://docs.impler.io/features/column-description',
