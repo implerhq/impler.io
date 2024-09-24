@@ -43,7 +43,7 @@
     "@rollup/plugin-typescript": "^8.3.0",
     "babel-loader": "^8.2.5",
     "rimraf": "^3.0.2",
-    "rollup": "^2.60.0",
+    "rollup": "^3.29.5",
     "rollup-plugin-dts": "^4.0.1",
     "rollup-plugin-node-externals": "^4.0.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
