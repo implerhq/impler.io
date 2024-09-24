@@ -5,8 +5,8 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 export class GetProjectInvitation {
   constructor(private projectInvitationRepository: ProjectInvitationRepository) {}
 
-  async exec({ invitationId, token }: { invitationId: string; token: string }) {
-    const invitationData = await this.projectInvitationRepository.getInvitationData(invitationId, token);
+  async exec(invitationId: string) {
+    const invitationData = await this.projectInvitationRepository.getInvitationData(invitationId);
     if (!invitationData) {
       throw new BadRequestException('Invitation not found or token is invalid.');
     }
