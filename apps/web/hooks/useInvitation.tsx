@@ -1,47 +1,86 @@
+import { useApp } from '@hooks/useApp';
 import { useRouter } from 'next/router';
-import { useQuery } from '@tanstack/react-query';
-import { API_KEYS, MODAL_KEYS, NOTIFICATION_KEYS } from '@config';
-import { IErrorObject } from '@impler/shared';
+import { useQuery, useMutation } from '@tanstack/react-query';
+
 import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
-import { modals } from '@mantine/modals';
-import { ConfirmInvitationModal } from '@components/TeamMembers';
+import { API_KEYS, NOTIFICATION_KEYS } from '@config';
+import { IErrorObject, SCREENS } from '@impler/shared';
+import { handleRouteBasedOnScreenResponse } from '@shared/helpers';
 
 export function useInvitation() {
   const router = useRouter();
+  const { profile } = useApp();
+  const invitationId = router.query.id as string;
+  console.log(profile);
 
-  useQuery<any, IErrorObject, { email: string; invitedBy: string; projectName: string }, string[]>(
-    [API_KEYS.GET_PROJECT_INVITATION],
+  const {
+    data: invitationData,
+    isError: isInvitationError,
+    isLoading: isInvitationLoading,
+  } = useQuery<any, IErrorObject, { email: string; invitedBy: string; projectName: string }>(
+    [API_KEYS.GET_PROJECT_INVITATION, invitationId],
     () =>
       commonApi(API_KEYS.GET_PROJECT_INVITATION as any, {
-        query: { invitationId: router.query.invitationId as string, token: router.query.token as string },
+        parameters: [invitationId],
       }),
     {
-      onSuccess(data) {
-        modals.open({
-          title: 'Accept Invitation',
-          id: MODAL_KEYS.ACCEPT_INVITATION,
-          modalId: MODAL_KEYS.ACCEPT_INVITATION,
-          children: (
-            <ConfirmInvitationModal
-              invitationId={router.query.invitationId as string}
-              token={router.query.token as string}
-              invitedBy={data.invitedBy}
-              projectName={data.projectName}
-            />
-          ),
-        });
+      enabled: !!invitationId,
+      onSuccess: (data) => {
+        if (data.email === profile?.email) {
+          notify(NOTIFICATION_KEYS.VALID_INVITATION, {
+            title: 'Invitation Valid',
+            message: 'Invitation is Valid.',
+            color: 'red',
+          });
+        }
       },
       onError: (error: IErrorObject) => {
-        notify(NOTIFICATION_KEYS.ERROR_ACCEPTING_INVITATION, {
-          title: 'Error Accepting Invitation',
-          message: error?.message || 'Error while accepting invitation',
+        notify(NOTIFICATION_KEYS.ERROR_FETCHING_INVITATION, {
+          title: 'Error Fetching Invitation',
+          message: error?.message || 'Error while fetching invitation details',
           color: 'red',
         });
       },
-      enabled: !!(router.query.invitationId && router.query.token),
     }
   );
 
-  return {};
+  const { mutate: acceptInvitationLink, isLoading: isAcceptLoading } = useMutation<any, IErrorObject, void>(
+    [API_KEYS.ACCEPT_PROJECT_INVITATION],
+    () =>
+      commonApi(API_KEYS.ACCEPT_PROJECT_INVITATION as any, {
+        query: { invitationId },
+      }),
+    {
+      onSuccess: (data) => {
+        notify(NOTIFICATION_KEYS.INVITATION_ACCEPTED, {
+          title: 'Invitation Accepted',
+          message: `You have successfully joined the Project ${data.projectName}`,
+          color: 'green',
+        });
+        handleRouteBasedOnScreenResponse(data.screen as SCREENS, router.push);
+      },
+      onError: () => {
+        notify(NOTIFICATION_KEYS.ERROR_FETCHING_INVITATION, {
+          title: 'Error',
+          message: 'An error occurred while accepting the invitation',
+          color: 'red',
+        });
+      },
+    }
+  );
+
+  const isLoggedInUser = !!profile;
+  const isInvitationValid = !!invitationData;
+
+  return {
+    invitationId,
+    isInvitationLoading,
+    isInvitationError,
+    isInvitationValid,
+    invitationData,
+    isLoggedInUser,
+    isAcceptLoading,
+    acceptInvitationLink,
+  };
 }
