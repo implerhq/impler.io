@@ -120,6 +120,7 @@ export class ApiService {
 
   async confirmReview(uploadId: string) {
     return this.httpClient.post(`/review/${uploadId}/confirm`) as Promise<{
+      email: string;
       uploadInfo: IUpload;
       importedData: Record<string, any>[];
     }>;

@@ -8,7 +8,9 @@ declare interface Window {
     sendMessage: (payload: IMessagePayload) => void;
   };
   _env_: any;
-  amplitude?: any;
+  amplitude?: any & {
+    Identify: any;
+  };
 }
 
 interface IOption {

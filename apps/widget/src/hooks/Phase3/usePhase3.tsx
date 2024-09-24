@@ -211,6 +211,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
   });
   const { isLoading: isConfirmReviewLoading, mutate: confirmReview } = useMutation<
     {
+      email: string;
       uploadInfo: IUpload;
       importedData: Record<string, any>[];
     },
@@ -222,11 +223,13 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
       logAmplitudeEvent('RECORDS', {
         type: 'invalid',
         host,
+        email: uploadData.email,
         records: uploadData.uploadInfo.invalidRecords,
       });
       logAmplitudeEvent('RECORDS', {
         type: 'valid',
         host,
+        email: uploadData.email,
         records: uploadData.uploadInfo.totalRecords - uploadData.uploadInfo.invalidRecords,
       });
       setUploadInfo(uploadData.uploadInfo);

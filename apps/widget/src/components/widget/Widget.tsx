@@ -82,6 +82,7 @@ export function Widget() {
   };
   const resetProgress = () => {
     resetAppState();
+    resetAmplitude();
     setPhase(PhasesEnum.VALIDATE);
   };
   const onComplete = (uploadData: IUpload, importedData?: Record<string, any>[]) => {
