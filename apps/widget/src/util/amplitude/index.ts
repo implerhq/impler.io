@@ -7,14 +7,19 @@ export const initAmplitude = (id: string) => {
   // const sessionId = window.amplitude.getInstance().getSessionId();
 };
 
-export const logAmplitudeEvent = (eventName: keyof typeof AMPLITUDE, eventProperties?: any) => {
-  window.amplitude?.logEvent(eventName, eventProperties);
+export const identifyImportIntent = ({}: { templateId?: string; projectId: string }) => {
+  logAmplitudeEvent('IMPORT_INTENT');
 };
 
-export const setAmplitudeUserId = (userId: string) => {
-  window.amplitude?.setUserId(userId);
+export const startAmplitudeSession = (id: string) => {
+  window.amplitude?.setSessionId(id);
+};
+
+export const logAmplitudeEvent = (eventType: keyof typeof AMPLITUDE, eventProperties?: any) => {
+  window.amplitude?.track({ event_type: eventType, eventProperties });
 };
 
 export const resetAmplitude = () => {
+  window.amplitude?.flush();
   window.amplitude?.reset();
 };

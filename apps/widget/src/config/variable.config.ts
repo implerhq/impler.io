@@ -36,6 +36,7 @@ export const AMPLITUDE = {
   IMAGE_SELECTED: 'Image selected',
   HIDE_IMAGE_INFO: 'Hide image info',
   RECORDS_DELETED: 'Records deleted',
+  IMPORT_INTENT: 'Import Intent',
 };
 
 export const cronExampleBadges = [
