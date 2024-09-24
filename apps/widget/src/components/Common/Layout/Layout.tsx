@@ -1,7 +1,8 @@
 import { PropsWithChildren } from 'react';
 import useStyles from './Styles';
 import { PhasesEnum } from '@types';
-import { TemplateModeEnum, WIDGET_TEXTS } from '@impler/shared';
+import { WIDGET_TEXTS } from '@impler/client';
+import { TemplateModeEnum } from '@impler/shared';
 import { Heading } from 'components/Common/Heading';
 
 interface ILayoutProps {

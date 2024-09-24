@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { Modal } from '@ui/Modal';
-import { ParentWindow } from '@util';
 import { variables } from '@config';
+import { ParentWindow } from '@util';
+import { IUpload } from '@impler/client';
 import { useWidget } from '@hooks/useWidget';
 import { useAppState } from '@store/app.context';
 import { Layout } from 'components/Common/Layout';
@@ -10,7 +11,7 @@ import { ConfirmModal } from './modals/ConfirmModal';
 import { useTemplates } from '@hooks/useTemplates';
 import { PhasesEnum, PromptModalTypesEnum } from '@types';
 import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
-import { IImportConfig, IUpload, TemplateModeEnum } from '@impler/shared';
+import { IImportConfig, TemplateModeEnum } from '@impler/shared';
 
 import { Phase0 } from './Phases/Phase0';
 import { Phase01 } from './Phases/Phase0-1';
@@ -55,7 +56,18 @@ export function Widget() {
     setPromptContinueAction(undefined);
   };
   const onClose = () => {
-    if ([PhasesEnum.VALIDATE, PhasesEnum.IMAGE_UPLOAD, PhasesEnum.UPLOAD, PhasesEnum.COMPLETE].includes(phase)) {
+    let isImportNotOnProgress = false;
+    if (importConfig.mode === TemplateModeEnum.AUTOMATIC)
+      isImportNotOnProgress = [PhasesEnum.CONFIGURE, PhasesEnum.CONFIRM].includes(phase);
+    else
+      isImportNotOnProgress = [
+        PhasesEnum.VALIDATE,
+        PhasesEnum.IMAGE_UPLOAD,
+        PhasesEnum.UPLOAD,
+        PhasesEnum.COMPLETE,
+      ].includes(phase);
+
+    if (isImportNotOnProgress) {
       setPhase(PhasesEnum.VALIDATE);
       resetAppState();
       closeWidget();
@@ -70,6 +82,7 @@ export function Widget() {
   };
   const resetProgress = () => {
     resetAppState();
+    resetAmplitude();
     setPhase(PhasesEnum.VALIDATE);
   };
   const onComplete = (uploadData: IUpload, importedData?: Record<string, any>[]) => {

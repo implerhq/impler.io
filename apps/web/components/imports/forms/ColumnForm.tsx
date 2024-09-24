@@ -1,41 +1,42 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { modals } from '@mantine/modals';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import {
   Stack,
-  TextInput as Input,
   Text,
-  Divider,
-  SimpleGrid,
   Title,
   Group,
-  CloseButton,
   Select,
+  Divider,
+  SimpleGrid,
+  CloseButton,
+  TextInput as Input,
   useMantineColorScheme,
-  SelectItem,
 } from '@mantine/core';
 
+import { ValidatorTypesEnum } from '@impler/client';
 import { ColumnTypesEnum, DEFAULT_VALUES, IColumn } from '@impler/shared';
 import { colors, DELIMITERS, MODAL_KEYS, MODAL_TITLES, DOCUMENTATION_REFERENCE_LINKS } from '@config';
 
 import { Button } from '@ui/button';
 import { Textarea } from '@ui/textarea';
 import { Checkbox } from '@ui/checkbox';
-import { useSchema } from '@hooks/useSchema';
+import { Validator } from '@ui/validator';
 import { MultiSelect } from '@ui/multi-select';
 import { CustomSelect } from '@ui/custom-select';
 import { TooltipLabel } from '@components/guide-point';
+import { AutoHeightComponent } from '@ui/auto-height-component';
+import { useSubscriptionInfo } from '@hooks/useSubscriptionInfo';
 
 interface ColumnFormProps {
-  data?: Partial<IColumn>;
   isLoading?: boolean;
+  data?: Partial<IColumn>;
   onSubmit: (data: IColumn) => void;
 }
 
 export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
-  const { getColumnTypes } = useSchema({ templateId: data?._templateId as string });
-  const [columnTypes, setColumnType] = useState<SelectItem[]>(getColumnTypes());
   const { colorScheme } = useMantineColorScheme();
+  const { columnTypes, advancedValidatorsUnavailable } = useSubscriptionInfo();
   const {
     watch,
     control,
@@ -45,6 +46,10 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
   } = useForm<IColumn>({
     defaultValues: data,
   });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'validators',
+  });
   const typeValue = watch('type');
   const multiSelectValue = watch('allowMultiSelect');
 
@@ -53,8 +58,31 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
   };
 
   useEffect(() => {
-    setColumnType(getColumnTypes());
-  }, []);
+    const rangeValidatorIndex = fields.findIndex((field) => field.validate === ValidatorTypesEnum.RANGE);
+    const lengthValidatorIndex = fields.findIndex((field) => field.validate === ValidatorTypesEnum.LENGTH);
+    switch (typeValue) {
+      case ColumnTypesEnum.STRING:
+        if (rangeValidatorIndex > -1) {
+          remove(rangeValidatorIndex);
+        }
+        break;
+      case ColumnTypesEnum.DOUBLE:
+      case ColumnTypesEnum.NUMBER:
+        if (lengthValidatorIndex > -1) {
+          remove(lengthValidatorIndex);
+        }
+        break;
+      default:
+        if (rangeValidatorIndex > -1) {
+          remove(rangeValidatorIndex);
+        }
+        if (lengthValidatorIndex > -1) {
+          remove(lengthValidatorIndex);
+        }
+        break;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [typeValue]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -77,7 +105,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 {...register('name')}
                 error={errors.name?.message}
                 placeholder="Name of the column"
-                description="Name of the column, visible in mapping step"
+                description="Display name for column in mapping interface"
               />
               <Input
                 required
@@ -85,7 +113,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 {...register('key')}
                 placeholder="Column Key"
                 error={errors.key?.message}
-                description="Primary key and key to use while generating a sample file"
+                description="Unique identifier for column; used in sample generation and data retrival"
               />
               <Input
                 label={
@@ -93,7 +121,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 }
                 {...register('description')}
                 placeholder="Enter a description for this column"
-                description="This description will be shown as a tooltip in the review table"
+                description="Tooltip text for column in review table"
               />
               <Controller
                 name="alternateKeys"
@@ -107,7 +135,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                     onChange={onChange}
                     label="Alternative column keys"
                     placeholder="Alternative column keys"
-                    description="Suggested keys to find appropriate column from the file"
+                    description="Fallback identifiers for column matching"
                     getCreateLabel={(query) => `+ ${query}`}
                     data={Array.isArray(value) ? value : []}
                     onCreate={(newItem) => {
@@ -130,38 +158,36 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                     data-autofocus
                     onChange={onChange}
                     onBlur={onBlur}
-                    description={'Primary validation to apply on column.'}
+                    description="Base validation rule applied to column data"
                   />
                 )}
               />
-              {typeValue === ColumnTypesEnum.SELECT ? (
-                <>
-                  <Controller
-                    name="selectValues"
-                    control={control}
-                    render={({ field: { value, onChange } }) => (
-                      <MultiSelect
-                        creatable
-                        clearable
-                        searchable
-                        label="Select Values"
-                        placeholder="Select Values"
-                        description="User can only select value from the provided list"
-                        getCreateLabel={(query) => `+ Add ${query}`}
-                        data={Array.isArray(value) ? value : []}
-                        value={value}
-                        onCreate={(newItem) => {
-                          onChange([...(Array.isArray(value) ? value : []), newItem]);
+              <AutoHeightComponent isVisible={typeValue === ColumnTypesEnum.SELECT}>
+                <Controller
+                  name="selectValues"
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <MultiSelect
+                      creatable
+                      clearable
+                      searchable
+                      label="Select Values"
+                      placeholder="Select Values"
+                      description="Predefined list of allowable values for selection"
+                      getCreateLabel={(query) => `+ Add ${query}`}
+                      data={Array.isArray(value) ? value : []}
+                      value={value}
+                      onCreate={(newItem) => {
+                        onChange([...(Array.isArray(value) ? value : []), newItem]);
 
-                          return newItem;
-                        }}
-                        onChange={onChange}
-                      />
-                    )}
-                  />
-                </>
-              ) : null}
-              {typeValue === ColumnTypesEnum.DATE ? (
+                        return newItem;
+                      }}
+                      onChange={onChange}
+                    />
+                  )}
+                />
+              </AutoHeightComponent>
+              <AutoHeightComponent isVisible={typeValue === ColumnTypesEnum.DATE}>
                 <Controller
                   name="dateFormats"
                   control={control}
@@ -173,7 +199,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                       value={value}
                       label="Date Formats"
                       placeholder="Date Formats"
-                      description="User can provide date in any of the list formats"
+                      description="Accepted date input formats for this field"
                       data={[
                         'DD/MM/YYYY',
                         'DD/MM/YY',
@@ -191,25 +217,27 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                     />
                   )}
                 />
-              ) : null}
-              {typeValue === ColumnTypesEnum.REGEX && (
-                <>
-                  <Input
-                    required
-                    {...register('regex')}
-                    label="Regular expression"
-                    error={errors.regex?.message}
-                    placeholder="Regular expression"
-                  />
-                  <Textarea
-                    autosize
-                    minRows={2}
-                    label="Regular expression description"
-                    placeholder="Regular expression description"
-                    register={register('regexDescription')}
-                  />
-                </>
-              )}
+              </AutoHeightComponent>
+              <AutoHeightComponent isVisible={typeValue === ColumnTypesEnum.REGEX}>
+                <Input
+                  required
+                  {...register('regex')}
+                  label="Regular expression"
+                  error={errors.regex?.message}
+                  placeholder="Regular expression"
+                  description="Custom pattern for advanced string validation"
+                />
+              </AutoHeightComponent>
+              <AutoHeightComponent isVisible={typeValue === ColumnTypesEnum.REGEX}>
+                <Textarea
+                  autosize
+                  minRows={2}
+                  label="Regular expression description"
+                  placeholder="Regular expression description"
+                  register={register('regexDescription')}
+                  description="Human-readable explanation of regex pattern"
+                />
+              </AutoHeightComponent>
               <Controller
                 name="defaultValue"
                 control={control}
@@ -218,10 +246,10 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                     value={value}
                     onChange={onChange}
                     label="Default Value"
-                    placeholder="Default Value"
-                    description="Value used in response when cell is empty"
                     data={DEFAULT_VALUES}
+                    placeholder="Default Value"
                     link={DOCUMENTATION_REFERENCE_LINKS.defaultValue}
+                    description="Fallback value for empty cells in response"
                   />
                 )}
               />
@@ -229,11 +257,11 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
             <Stack spacing="sm" p="xs" bg={colorScheme === 'dark' ? colors.BGSecondaryDark : colors.BGSecondaryLight}>
               <Title order={5}>Column Validations</Title>
               <Checkbox
-                label="Required Values"
+                label={<TooltipLabel label="Required Values" />}
                 register={register('isRequired')}
-                description="User have to map this column with uploaded column during map column step and value must be filled during review step."
+                description="Mandatory column mapping and data entry during import"
               />
-              {typeValue === ColumnTypesEnum.SELECT ? (
+              <AutoHeightComponent isVisible={typeValue === ColumnTypesEnum.SELECT}>
                 <Checkbox
                   label={
                     <TooltipLabel
@@ -242,21 +270,23 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                     />
                   }
                   register={register('allowMultiSelect')}
-                  description="Users can pick multiple values from the list. Sample will also allow selecting multiple values."
+                  description="Enable multiple value selection from predefined list"
                 />
-              ) : (
+              </AutoHeightComponent>
+              <AutoHeightComponent isVisible={typeValue !== ColumnTypesEnum.SELECT}>
                 <Checkbox
-                  label="Unique Values Only"
+                  label={<TooltipLabel label="Unique Values Only" />}
                   register={register('isUnique')}
-                  description="Users will be required to resolve any duplicated values inside of this column prior to import."
+                  description="Enforce unique entries; users have to resolve duplicates before import"
                 />
-              )}
-              {multiSelectValue && typeValue === ColumnTypesEnum.SELECT ? (
+              </AutoHeightComponent>
+              <AutoHeightComponent isVisible={!!(multiSelectValue && typeValue === ColumnTypesEnum.SELECT)}>
                 <Controller
                   name="delimiter"
                   control={control}
                   render={({ field: { value, onChange } }) => (
                     <Select
+                      ml={35}
                       label="Delimiter"
                       data={DELIMITERS}
                       placeholder="Comma (,)"
@@ -264,16 +294,81 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                       data-autofocus
                       defaultValue=","
                       onChange={onChange}
-                      description="Delimiter used to separate multiple select values"
+                      description="Character used to separate multiple selected values"
                     />
                   )}
                 />
-              ) : null}
+              </AutoHeightComponent>
 
               <Checkbox
                 label={<TooltipLabel label="Freeze Column" link={DOCUMENTATION_REFERENCE_LINKS.freezeColumns} />}
                 register={register('isFrozen')}
-                description="Will freeze column left side in generated sample and in Review section."
+                description="Pin column to left side in sample file and review views"
+              />
+              <AutoHeightComponent
+                isVisible={typeValue === ColumnTypesEnum.DOUBLE || typeValue === ColumnTypesEnum.NUMBER}
+              >
+                <Validator
+                  errors={errors}
+                  control={control}
+                  minPlaceholder="Min"
+                  maxPlaceholder="Max"
+                  label="Range Validation"
+                  type={ValidatorTypesEnum.RANGE}
+                  unavailable={advancedValidatorsUnavailable}
+                  link={DOCUMENTATION_REFERENCE_LINKS.rangeValidator}
+                  description="Set min/max bounds for valid input values"
+                  errorMessagePlaceholder='Value must be between "Min" and "Max"'
+                  index={fields.findIndex((field) => field.validate === ValidatorTypesEnum.RANGE)}
+                  onCheckToggle={(status, index) => {
+                    if (status) {
+                      append({ validate: ValidatorTypesEnum.RANGE });
+                    } else {
+                      remove(index);
+                    }
+                  }}
+                />
+              </AutoHeightComponent>
+              <AutoHeightComponent isVisible={typeValue === ColumnTypesEnum.STRING}>
+                <Validator
+                  min={0}
+                  errors={errors}
+                  control={control}
+                  label="Length Validation"
+                  minPlaceholder="Min characters"
+                  maxPlaceholder="Max characters"
+                  type={ValidatorTypesEnum.LENGTH}
+                  unavailable={advancedValidatorsUnavailable}
+                  link={DOCUMENTATION_REFERENCE_LINKS.lengthValidator}
+                  description="Set min/max character count for valid strings"
+                  errorMessagePlaceholder='Value must be between "Min" and "Max"'
+                  index={fields.findIndex((field) => field.validate === ValidatorTypesEnum.LENGTH)}
+                  onCheckToggle={(status, index) => {
+                    if (status) {
+                      append({ validate: ValidatorTypesEnum.LENGTH });
+                    } else {
+                      remove(index);
+                    }
+                  }}
+                />
+              </AutoHeightComponent>
+              <Validator
+                errors={errors}
+                control={control}
+                label="Unique With Validation"
+                type={ValidatorTypesEnum.UNIQUE_WITH}
+                unavailable={advancedValidatorsUnavailable}
+                link={DOCUMENTATION_REFERENCE_LINKS.uniqueWithValidator}
+                description="Enforce unique combinations across specified columns"
+                errorMessagePlaceholder='Value should be unique with "Unique Key"'
+                index={fields.findIndex((field) => field.validate === ValidatorTypesEnum.UNIQUE_WITH)}
+                onCheckToggle={(status, index) => {
+                  if (status) {
+                    append({ validate: ValidatorTypesEnum.UNIQUE_WITH, uniqueKey: '' });
+                  } else {
+                    remove(index);
+                  }
+                }}
               />
             </Stack>
           </SimpleGrid>

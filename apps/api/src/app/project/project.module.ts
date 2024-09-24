@@ -5,10 +5,11 @@ import { SharedModule } from '@shared/shared.module';
 import { ProjectController } from './project.controller';
 import { UniqueValidator } from '@shared/framework/is-unique.validator';
 import { EnvironmentModule } from 'app/environment/environment.module';
+import { PaymentAPIService } from '@impler/services';
 
 @Module({
   imports: [SharedModule, UniqueValidator, forwardRef(() => AuthModule), EnvironmentModule],
-  providers: [...USE_CASES],
+  providers: [...USE_CASES, PaymentAPIService],
   controllers: [ProjectController],
 })
 export class ProjectModule {}

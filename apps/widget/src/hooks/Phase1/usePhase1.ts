@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { logAmplitudeEvent } from '@amplitude';
 import { useMutation } from '@tanstack/react-query';
 
+import { logAmplitudeEvent } from '@amplitude';
 import { notifier, ParentWindow } from '@util';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { useImplerState } from '@store/impler.context';
-import { IErrorObject, ITemplate, IUpload, FileMimeTypesEnum, WIDGET_TEXTS } from '@impler/shared';
+import { IUpload, WIDGET_TEXTS } from '@impler/client';
+import { IErrorObject, ITemplate, FileMimeTypesEnum } from '@impler/shared';
 
 import { variables } from '@config';
 import { useSample } from '@hooks/useSample';
@@ -84,9 +85,9 @@ export function usePhase1({ goNext, texts }: IUsePhase1Props) {
 
     return undefined;
   };
-  const onTemplateChange = (newTemplateId: string) => {
+  const onTemplateChange = (newTemplateId: string | null) => {
     const foundTemplate = templates?.find((templateItem) => templateItem._id === newTemplateId);
-    if (foundTemplate) {
+    if (foundTemplate && newTemplateId) {
       setTemplateInfo(foundTemplate);
       setValue('templateId', newTemplateId);
       trigger('templateId');
@@ -102,7 +103,7 @@ export function usePhase1({ goNext, texts }: IUsePhase1Props) {
     }
 
     const foundTemplate = findTemplate();
-    if (foundTemplate && ((Array.isArray(data) && data.length > variables.baseIndex) || schema)) {
+    if (foundTemplate && (data || schema)) {
       onDownload({ template: foundTemplate });
     } else if (foundTemplate && foundTemplate.sampleFileUrl) {
       getSignedUrl([

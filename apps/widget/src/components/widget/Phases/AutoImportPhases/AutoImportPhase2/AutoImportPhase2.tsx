@@ -8,7 +8,7 @@ import { MappingItem } from '@ui/MappingItem';
 import { MappingHeading } from './MappingHeading';
 import { AutoImportFooter } from 'components/Common/Footer/AutoImportFooter';
 import { useAutoImportPhase2 } from '../hooks/AutoImportPhase2/useAutoImportPhase2';
-import { WIDGET_TEXTS } from '@impler/shared';
+import { WIDGET_TEXTS } from '@impler/client';
 
 interface IAutoImportPhase2Props {
   onNextClick: () => void;

@@ -15,7 +15,7 @@ export class CreateProject {
     private readonly updateTemplateColumns: UpdateTemplateColumns
   ) {}
 
-  async execute(command: CreateProjectCommand) {
+  async execute(command: CreateProjectCommand, email: string) {
     const project = await this.projectRepository.create(command);
 
     const environment = await this.createEnvironment.execute({
@@ -24,7 +24,7 @@ export class CreateProject {
     });
 
     if (command.onboarding) {
-      await this.createSampleImport(project._id);
+      await this.createSampleImport(project._id, email);
     }
 
     return {
@@ -33,7 +33,7 @@ export class CreateProject {
     };
   }
 
-  async createSampleImport(_projectId: string) {
+  async createSampleImport(_projectId: string, email: string) {
     const template = await this.createTemplate.execute({
       _projectId,
       chunkSize: 100,
@@ -127,7 +127,8 @@ export class CreateProject {
           isUnique: false,
         },
       ],
-      template._id
+      template._id,
+      email
     );
   }
 }

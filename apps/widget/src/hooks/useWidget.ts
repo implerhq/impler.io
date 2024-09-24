@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 
 import { PhasesEnum } from '@types';
-import { IErrorObject, IUpload } from '@impler/shared';
+import { IUpload } from '@impler/client';
+import { IErrorObject } from '@impler/shared';
 import { useAppState } from '@store/app.context';
 import { useAPIState } from '@store/api.context';
 import { useTemplates } from './useTemplates';

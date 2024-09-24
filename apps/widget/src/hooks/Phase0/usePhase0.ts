@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
+import { identifyImportIntent } from '@amplitude';
 import { useImplerState } from '@store/impler.context';
 import { IErrorObject, IImportConfig } from '@impler/shared';
 
@@ -33,6 +34,7 @@ export function usePhase0({ goNext }: IUsePhase0Props) {
     () => api.checkIsRequestvalid(projectId, templateId, schema) as Promise<boolean>,
     {
       onSuccess(valid) {
+        identifyImportIntent({ projectId, templateId });
         if (valid) {
           fetchImportConfig();
         }

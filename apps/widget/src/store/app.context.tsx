@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
-import { IImportConfig, ITemplate, IUpload } from '@impler/shared';
 import { IAppStore } from '../types';
+import { IUpload } from '@impler/client';
+import { IImportConfig, ITemplate } from '@impler/shared';
 
 interface AppContextProviderProps
   extends React.PropsWithChildren,

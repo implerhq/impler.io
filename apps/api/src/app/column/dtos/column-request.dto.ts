@@ -9,11 +9,57 @@ import {
   ValidateIf,
   IsNotEmpty,
   Validate,
+  ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ColumnDelimiterEnum, ColumnTypesEnum, Defaults } from '@impler/shared';
+
+import { ValidatorTypesEnum } from '@impler/client';
 import { IsValidRegex } from '@shared/framework/is-valid-regex.validator';
+import { IsGreaterThan } from '@shared/framework/is-greator-than.validator';
 import { IsNumberOrString } from '@shared/framework/number-or-string.validator';
+import { ColumnDelimiterEnum, ColumnTypesEnum, Defaults } from '@impler/shared';
+
+export class ValidatorDto {
+  @ApiProperty({
+    description: 'Specifies the type of column',
+    enum: ValidatorTypesEnum,
+  })
+  @IsEnum(ValidatorTypesEnum, {
+    message: `type must be one of ${Object.values(ValidatorTypesEnum).join(', ')}`,
+  })
+  validate: ValidatorTypesEnum;
+
+  @ApiPropertyOptional({
+    description: 'Message to be shown on error',
+  })
+  @IsString()
+  @IsOptional()
+  errorMessage?: string;
+
+  @ApiPropertyOptional({
+    description: 'Minimum value',
+  })
+  @IsNumber()
+  @IsOptional()
+  min?: number;
+
+  @ApiPropertyOptional({
+    description: 'Maximum value',
+  })
+  @IsNumber()
+  @IsOptional()
+  @IsGreaterThan('min', {
+    message: 'max must be greater than min',
+  })
+  max?: number;
+
+  @ApiPropertyOptional({
+    description: 'Unique key of the validator',
+  })
+  @IsString()
+  @ValidateIf((object) => object.validate === ValidatorTypesEnum.UNIQUE_WITH)
+  uniqueKey: string;
+}
 
 export class ColumnRequestDto {
   @ApiProperty({
@@ -135,4 +181,13 @@ export class ColumnRequestDto {
     message: `Delimiter must be one of ${Object.values(ColumnDelimiterEnum).join(', ')}`,
   })
   delimiter?: ColumnDelimiterEnum;
+
+  @ApiPropertyOptional({
+    description: 'Validators for column',
+  })
+  @IsArray()
+  @IsOptional()
+  @Type(() => ValidatorDto)
+  @ValidateNested({ each: true })
+  validators?: ValidatorDto[];
 }

@@ -1,3 +1,5 @@
+import { ValidatorType } from '@impler/client';
+
 export interface IColumn {
   _id: string;
   name: string;
@@ -16,6 +18,7 @@ export interface IColumn {
   selectValues?: string[];
   dateFormats?: string[];
   sequence?: number;
+  validators?: ValidatorType[];
   _templateId: string;
 }
 

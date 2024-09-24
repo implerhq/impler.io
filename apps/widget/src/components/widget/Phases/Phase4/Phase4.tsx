@@ -3,10 +3,10 @@ import { Group, Title, Text } from '@mantine/core';
 import useStyles from './Styles';
 import { CheckIcon } from '@icons';
 import { PhasesEnum } from '@types';
+import { WIDGET_TEXTS } from '@impler/client';
 import { useAppState } from '@store/app.context';
 import { Footer } from 'components/Common/Footer';
 import { numberFormatter, replaceVariablesInString } from '@impler/shared';
-import { WIDGET_TEXTS } from '@impler/shared/src/config/texts.config';
 
 interface IPhase4Props {
   rowsCount: number;

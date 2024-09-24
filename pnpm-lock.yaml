@@ -89,14 +89,17 @@ importers:
 
   apps/api:
     dependencies:
+      '@impler/client':
+        specifier: workspace:^
+        version: link:../../packages/client
       '@impler/dal':
-        specifier: ^0.24.1
+        specifier: workspace:^
         version: link:../../libs/dal
       '@impler/services':
-        specifier: ^0.24.1
+        specifier: workspace:^
         version: link:../../libs/services
       '@impler/shared':
-        specifier: ^0.24.1
+        specifier: workspace:^
         version: link:../../libs/shared
       '@nestjs/common':
         specifier: ^9.1.2
@@ -310,13 +313,13 @@ importers:
   apps/queue-manager:
     dependencies:
       '@impler/dal':
-        specifier: ^0.24.1
+        specifier: workspace:^
         version: link:../../libs/dal
       '@impler/services':
-        specifier: ^0.24.1
+        specifier: workspace:^
         version: link:../../libs/services
       '@impler/shared':
-        specifier: ^0.24.1
+        specifier: workspace:^
         version: link:../../libs/shared
       '@sentry/node':
         specifier: ^7.112.2
@@ -361,6 +364,9 @@ importers:
       '@emotion/server':
         specifier: ^11.10.0
         version: 11.11.0
+      '@impler/client':
+        specifier: workspace:^
+        version: link:../../packages/client
       '@impler/react':
         specifier: workspace:^
         version: link:../../packages/react
@@ -498,10 +504,10 @@ importers:
         specifier: ^14.1.0
         version: 14.4.0(handsontable@14.4.0)
       '@impler/client':
-        specifier: ^0.24.1
+        specifier: workspace:^
         version: link:../../packages/client
       '@impler/shared':
-        specifier: ^0.24.1
+        specifier: workspace:^
         version: link:../../libs/shared
       '@mantine/core':
         specifier: 6.0.21
@@ -601,7 +607,7 @@ importers:
   libs/dal:
     dependencies:
       '@impler/shared':
-        specifier: ^0.24.1
+        specifier: workspace:^
         version: link:../shared
       class-transformer:
         specifier: ^0.5.1
@@ -713,7 +719,7 @@ importers:
         specifier: ^3.276.0
         version: 3.609.0
       '@impler/shared':
-        specifier: ^0.24.1
+        specifier: workspace:^
         version: link:../shared
       axios:
         specifier: 1.6.2
@@ -740,6 +746,9 @@ importers:
 
   libs/shared:
     dependencies:
+      '@impler/client':
+        specifier: workspace:^
+        version: link:../../packages/client
       uuid:
         specifier: ^9.0.0
         version: 9.0.1
@@ -759,15 +768,12 @@ importers:
 
   packages/angular:
     dependencies:
-      '@angular/common':
-        specifier: ^12.0.0
-        version: 12.2.17(@angular/core@12.2.17)(rxjs@7.8.1)
       '@angular/core':
-        specifier: ^12.0.0
+        specifier: '>=12.0.0'
         version: 12.2.17(rxjs@7.8.1)(zone.js@0.11.8)
-      '@impler/shared':
-        specifier: ^0.24.1
-        version: link:../../libs/shared
+      '@impler/client':
+        specifier: ^0.25.0
+        version: link:../client
     devDependencies:
       '@angular/compiler':
         specifier: ^12.0.0
@@ -816,13 +822,6 @@ importers:
         version: 4.9.5
 
   packages/client:
-    dependencies:
-      '@impler/shared':
-        specifier: ^0.24.1
-        version: link:../../libs/shared
-      axios:
-        specifier: 1.6.2
-        version: 1.6.2
     devDependencies:
       '@types/node':
         specifier: ^18.11.9
@@ -839,9 +838,9 @@ importers:
 
   packages/react:
     dependencies:
-      '@impler/shared':
-        specifier: ^0.24.1
-        version: link:../../libs/shared
+      '@impler/client':
+        specifier: ^0.25.0
+        version: link:../client
       react:
         specifier: '>=16.8.0'
         version: 18.2.0
@@ -1017,19 +1016,6 @@ packages:
     transitivePeerDependencies:
       - chokidar
     dev: true
-
-  /@angular/common@12.2.17(@angular/core@12.2.17)(rxjs@7.8.1):
-    resolution:
-      { integrity: sha512-/Rc83mzlL6YZScYTzg+Ng2hiCSf3jUVHAfQ8cyLOIMj/y8863Q+DMLVWW+ttvHwCjEFY44pC8IPyBl5FmSJYHg== }
-    engines: { node: ^12.14.1 || >=14.0.0 }
-    peerDependencies:
-      '@angular/core': 12.2.17
-      rxjs: ^6.5.3 || ^7.0.0
-    dependencies:
-      '@angular/core': 12.2.17(rxjs@7.8.1)(zone.js@0.11.8)
-      rxjs: 7.8.1
-      tslib: 2.6.3
-    dev: false
 
   /@angular/compiler-cli@12.2.17(@angular/compiler@12.2.17)(typescript@4.9.5):
     resolution:
@@ -16120,7 +16106,7 @@ packages:
       { integrity: sha512-oWb1Z6mkHIskLzEJ/XWX0srkpkTQ7vaopMQkyaEIoq0fmtFVxOthb8cCxeT+p3ynTdkk/RZwbgG4brR5BeWECw== }
     engines: { node: '>= 4.0' }
     os: [darwin]
-    deprecated: The v1 package contains DANGEROUS / INSECURE binaries. Upgrade to safe fsevents v2
+    deprecated: Upgrade to fsevents v2 to mitigate potential security issues
     requiresBuild: true
     dependencies:
       bindings: 1.5.0

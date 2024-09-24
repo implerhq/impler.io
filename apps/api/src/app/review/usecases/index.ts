@@ -1,4 +1,5 @@
 import { PaymentAPIService } from '@impler/services';
+import { Replace } from './replace/replace.usecase';
 import { DoReview } from './do-review/do-review.usecase';
 import { UpdateRecord } from './update-cell/update-cell.usecase';
 import { DeleteRecord } from './delete-record/delete-record.usecase';
@@ -8,6 +9,7 @@ import { GetUploadData } from './get-upload-data/get-upload-data.usecase';
 import { GetUpload } from '@shared/usecases/get-upload/get-upload.usecase';
 
 export const USE_CASES = [
+  Replace,
   DoReview,
   GetUpload,
   DoReReview,
@@ -18,4 +20,14 @@ export const USE_CASES = [
   PaymentAPIService,
 ];
 
-export { DoReview, GetUpload, DoReReview, DeleteRecord, UpdateRecord, StartProcess, GetUploadData, PaymentAPIService };
+export {
+  Replace,
+  DoReview,
+  GetUpload,
+  DoReReview,
+  DeleteRecord,
+  UpdateRecord,
+  StartProcess,
+  GetUploadData,
+  PaymentAPIService,
+};

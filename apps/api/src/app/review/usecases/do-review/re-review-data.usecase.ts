@@ -3,14 +3,21 @@ import { Writable } from 'stream';
 import { ValidateFunction } from 'ajv';
 import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 
-import { ColumnDelimiterEnum, ColumnTypesEnum, ITemplateSchemaItem, UploadStatusEnum } from '@impler/shared';
+import { ValidatorTypesEnum } from '@impler/client';
 import { UploadRepository, ValidatorRepository, DalService, TemplateEntity } from '@impler/dal';
+import {
+  EMAIL_SUBJECT,
+  ColumnTypesEnum,
+  UploadStatusEnum,
+  ColumnDelimiterEnum,
+  ITemplateSchemaItem,
+} from '@impler/shared';
 
 import { APIMessages } from '@shared/constants';
-import { EMAIL_SUBJECT } from '@impler/shared';
 import { EmailService } from '@impler/services';
 import { BATCH_LIMIT } from '@shared/services/sandbox';
 import { BaseReview } from './base-review.usecase';
+import { ValidatorErrorMessages } from '@shared/types/review.types';
 
 interface ISaveResults {
   uploadId: string;
@@ -56,25 +63,53 @@ export class DoReReview extends BaseReview {
     const userEmail = await this.uploadRepository.getUserEmailFromUploadId(_uploadId);
     const dateFormats: Record<string, string[]> = {};
     const uniqueItems: Record<string, Set<any>> = {};
-    const schema = this.buildAJVSchema({
-      columns: JSON.parse(uploadInfo.customSchema),
-      dateFormats,
-      uniqueItems,
-    });
-    const ajv = this.getAjvValidator(dateFormats, uniqueItems);
-    const validator = ajv.compile(schema);
+    const uniqueColumnKeysCombinationMap = new Map<string, Set<string>>();
     const validations = await this.validatorRepository.findOne({
       _templateId: (uploadInfo._templateId as unknown as TemplateEntity)._id,
     });
 
     const columns = JSON.parse(uploadInfo.customSchema) as ITemplateSchemaItem[];
-    const uniqueFields = columns.filter((column) => column.isUnique).map((column) => column.key);
-    const uniqueFieldData = uniqueFields.length ? await this.dalService.getFieldData(_uploadId, uniqueFields) : [];
+    const uniqueFieldsSet = new Set(columns.filter((column) => column.isUnique).map((column) => column.key));
     const multiSelectColumnHeadings: Record<string, string> = {};
+    const validatorErrorMessages = {};
     (columns as ITemplateSchemaItem[]).forEach((column) => {
       if (column.type === ColumnTypesEnum.SELECT && column.allowMultiSelect)
         multiSelectColumnHeadings[column.key] = column.delimiter || ColumnDelimiterEnum.COMMA;
+      if (Array.isArray(column.validators) && column.validators.length > 0) {
+        validatorErrorMessages[column.key] = {};
+        column.validators.forEach((validatorItem) => {
+          validatorErrorMessages[column.key][validatorItem.validate] = validatorItem.errorMessage;
+          if (validatorItem.validate === ValidatorTypesEnum.UNIQUE_WITH) {
+            if (uniqueColumnKeysCombinationMap.has(validatorItem.uniqueKey)) {
+              uniqueColumnKeysCombinationMap.set(
+                validatorItem.uniqueKey,
+                new Set([...uniqueColumnKeysCombinationMap.get(validatorItem.uniqueKey), column.key])
+              );
+            } else {
+              uniqueColumnKeysCombinationMap.set(validatorItem.uniqueKey, new Set([column.key]));
+            }
+            uniqueFieldsSet.add(column.key);
+          }
+        });
+      }
     });
+    const uniqueFields = [...uniqueFieldsSet];
+    const uniqueFieldData = uniqueFields.length ? await this.dalService.getFieldData(_uploadId, uniqueFields) : [];
+
+    const uniqueCombinations = {};
+    const schema = this.buildAJVSchema({
+      columns: JSON.parse(uploadInfo.customSchema),
+      dateFormats,
+      uniqueItems,
+    });
+    uniqueColumnKeysCombinationMap.forEach((value, key) => {
+      if (value.size > 1) {
+        uniqueCombinations[this.getUniqueKey(key)] = Array.from(value);
+        schema[this.getUniqueKey(key)] = true;
+      }
+    });
+    const ajv = this.getAjvValidator(dateFormats, uniqueItems, uniqueCombinations);
+    const validator = ajv.compile(schema);
 
     uniqueFieldData.forEach((item) => {
       uniqueFields.forEach((field) => {
@@ -104,8 +139,9 @@ export class DoReReview extends BaseReview {
       }
       uniqueItems[key].clear();
     }
-    await this._modal.bulkWrite(bulkOperations);
-
+    await this._modal.bulkWrite(bulkOperations, {
+      ordered: false,
+    });
     let result: ISaveResults = {
       uploadId: _uploadId,
       totalRecords: uploadInfo.totalRecords,
@@ -119,7 +155,9 @@ export class DoReReview extends BaseReview {
         validator,
         userEmail,
         dateFormats,
+        uniqueCombinations,
         uploadId: _uploadId,
+        validatorErrorMessages,
         extra: uploadInfo.extra,
         multiSelectColumnHeadings,
         onBatchInitialize: validations.onBatchInitialize,
@@ -131,7 +169,9 @@ export class DoReReview extends BaseReview {
         validator,
         dateFormats,
         result,
+        uniqueCombinations,
         multiSelectColumnHeadings,
+        validatorErrorMessages,
       });
     }
 
@@ -164,15 +204,19 @@ export class DoReReview extends BaseReview {
     uploadId,
     validator,
     dateFormats,
+    uniqueCombinations,
+    validatorErrorMessages,
     multiSelectColumnHeadings,
   }: {
     uploadId: string;
     result: ISaveResults;
     validator: ValidateFunction;
-    multiSelectColumnHeadings: Record<string, string>;
     dateFormats: Record<string, string[]>;
+    uniqueCombinations: Record<string, string[]>;
+    validatorErrorMessages: ValidatorErrorMessages;
+    multiSelectColumnHeadings: Record<string, string>;
   }) {
-    const bulkOp = this.dalService.getRecordBulkOp(uploadId);
+    const bulkOp = [];
     const response: ISaveResults = {
       uploadId,
       totalRecords: 0,
@@ -186,7 +230,9 @@ export class DoReReview extends BaseReview {
         validator,
         checkRecord,
         dateFormats,
+        uniqueCombinations,
         index: record.index,
+        validatorErrorMessages,
         passRecord: record.record,
       });
       response.totalRecords++;
@@ -197,26 +243,32 @@ export class DoReReview extends BaseReview {
         response.invalidRecords--;
         response.validRecords++;
       }
-      bulkOp.find({ index: record.index }).updateOne({ $set: { ...validationResult } });
+      bulkOp.push({ updateOne: { filter: { index: record.index }, update: { $set: validationResult } } });
     }
     if (response.totalRecords > 0) {
-      await bulkOp.execute();
+      await this._modal.bulkWrite(bulkOp, {
+        ordered: false,
+      });
     }
 
     return response;
   }
 
-  getStreams({ uploadId }: { uploadId: string }) {
-    const bulkOp = this.dalService.getRecordBulkOp(uploadId);
+  getStreams() {
+    const bulkOp = [];
     const dataStream = new Writable({
       objectMode: true,
       async write(record, encoding, callback) {
-        bulkOp.find({ index: record.index }).updateOne({ $set: record });
+        bulkOp.push({
+          updateOne: { filter: { index: record.index }, update: { $set: record, $unset: { updated: {} } } },
+        });
         callback();
       },
-      async final(callback) {
+      final: async (callback) => {
         try {
-          await bulkOp.execute();
+          await this._modal.bulkWrite(bulkOp, {
+            ordered: false,
+          });
         } catch (error) {}
         callback();
       },
@@ -236,6 +288,8 @@ export class DoReReview extends BaseReview {
     userEmail,
     dateFormats,
     onBatchInitialize,
+    uniqueCombinations,
+    validatorErrorMessages,
     multiSelectColumnHeadings,
   }: {
     extra: any;
@@ -245,17 +299,19 @@ export class DoReReview extends BaseReview {
     result: ISaveResults;
     onBatchInitialize: string;
     validator: ValidateFunction;
-    multiSelectColumnHeadings: Record<string, string>;
     dateFormats: Record<string, string[]>;
+    uniqueCombinations: Record<string, string[]>;
+    validatorErrorMessages: ValidatorErrorMessages;
+    multiSelectColumnHeadings: Record<string, string>;
   }) {
-    const { dataStream } = this.getStreams({
-      uploadId,
-    });
+    const { dataStream } = this.getStreams();
     const { batches, resultObj } = await this.prepareBatches({
       extra,
       uploadId,
       validator,
       dateFormats,
+      uniqueCombinations,
+      validatorErrorMessages,
       multiSelectColumnHeadings,
     });
     const errorEmailContents: {
@@ -316,13 +372,17 @@ export class DoReReview extends BaseReview {
     uploadId,
     validator,
     dateFormats,
+    uniqueCombinations,
+    validatorErrorMessages,
     multiSelectColumnHeadings,
   }: {
     extra: any;
     uploadId: string;
     validator: ValidateFunction;
-    multiSelectColumnHeadings: Record<string, string>;
     dateFormats: Record<string, string[]>;
+    uniqueCombinations: Record<string, string[]>;
+    validatorErrorMessages: ValidatorErrorMessages;
+    multiSelectColumnHeadings: Record<string, string>;
   }) {
     let batchCount = 1;
     const batches: IBatchItem[] = [];
@@ -339,7 +399,9 @@ export class DoReReview extends BaseReview {
         validator,
         checkRecord,
         dateFormats,
+        uniqueCombinations,
         index: record.index,
+        validatorErrorMessages,
         passRecord: record.record,
       });
       resultObj[Number(record.index)] = record.isValid;

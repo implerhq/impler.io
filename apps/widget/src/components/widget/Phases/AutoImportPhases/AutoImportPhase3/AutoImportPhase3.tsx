@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { Group, Text, Stack, Flex, Container } from '@mantine/core';
 const parseCronExpression = require('util/helpers/cronstrue');
 import { colors, cronExampleBadges, cronExamples, ScheduleFormValues, defaultCronValues } from '@config';
-import { WIDGET_TEXTS } from '@impler/shared';
+import { WIDGET_TEXTS } from '@impler/client';
 import { PhasesEnum } from '@types';
 import { AutoImportFooter } from 'components/Common/Footer';
 import { CronScheduleInputTextBox } from './CronScheduleInputTextBox';

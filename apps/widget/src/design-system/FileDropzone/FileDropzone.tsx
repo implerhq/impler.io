@@ -1,7 +1,7 @@
 import { Group, Text } from '@mantine/core';
 import { Dropzone as MantineDropzone, FileWithPath, MIME_TYPES } from '@mantine/dropzone';
 import { ImageIcon } from '../../icons';
-import { WIDGET_TEXTS } from '@impler/shared';
+import { WIDGET_TEXTS } from '@impler/client';
 import useStyles from './FileDropdown.styles';
 import { variables } from '../../config';
 
