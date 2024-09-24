@@ -59,8 +59,13 @@ export class LoginUser {
 
     const apiKey = await this.environmentRepository.getApiKeyForUserId(user._id);
 
+    let screen = SCREENS.ONBOARD;
+    if (command.invitationId) screen = SCREENS.INVIATAION;
+    else if (!user.isEmailVerified) screen = SCREENS.VERIFY;
+    else if (apiKey) screen = SCREENS.HOME;
+
     return {
-      screen: !user.isEmailVerified ? SCREENS.VERIFY : apiKey ? SCREENS.HOME : SCREENS.ONBOARD,
+      screen,
       token: this.authService.getSignedToken(
         {
           _id: user._id,
