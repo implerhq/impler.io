@@ -108,6 +108,7 @@ interface Window {
 interface ISigninData {
   email: string;
   password: string;
+  invitationId?: string;
 }
 
 interface ISignupData {
