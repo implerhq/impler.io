@@ -173,7 +173,8 @@ export const NOTIFICATION_KEYS = {
   COLUMN_ERRROR: 'COLUMN_ERRROR',
   INVITATION_ACCEPTED: 'INVITATION_ACCEPTED',
 
-  ERROR_ACCEPTING_INVITATION: 'ERROR_ACCEPTING_INVITATION',
+  VALID_INVITATION: 'VALID_INVITATION',
+  ERROR_FETCHING_INVITATION: 'ERROR_FETCHING_INVITATION',
   TEAM_MEMBER_ROLE_UPDATED: 'TEAM_MEMBER_ROLE_UPDATED',
   ERROR_CHANGING_MEMBER_ROLE: 'ERROR_CHANGING_MEMBER_ROLE',
   TEAM_MEMBER_DELETED: 'TEAM_MEMBER_DELETED',
@@ -198,6 +199,7 @@ export const ROUTES = {
   TEAM_MEMBERS: '/team-members',
   ACTIVITIES: '/activities',
   ADD_CARD: '/settings?tab=addcard&action=addcardmodal',
+  INVITATION: '/auth/invitation/:id',
 };
 
 export const REGULAR_EXPRESSIONS = {
@@ -370,7 +372,7 @@ export const HOW_HEARD_ABOUT_US = [
 ];
 
 export const PLACEHOLDERS = {
-  email: 'johndoe@company.org',
+  email: 'johndoe@acme.inc',
   password: '********',
   project: 'Acme Inc',
   fullName: 'John Doe',
