@@ -1,6 +1,5 @@
-import { ProjectInvitationRepository } from '@impler/dal';
-import { constructQueryString } from '@impler/shared';
 import { Injectable } from '@nestjs/common';
+import { ProjectInvitationRepository } from '@impler/dal';
 
 @Injectable()
 export class SentProjectInvitations {
@@ -13,10 +12,7 @@ export class SentProjectInvitations {
     });
 
     const sentInvitations = invitations.map((sentInvitation) => {
-      const invitationLink = `${process.env.WEB_BASE_URL}/team-members${constructQueryString({
-        invitationId: sentInvitation._id,
-        token: sentInvitation.token,
-      })}`;
+      const invitationLink = `${process.env.WEB_BASE_URL}/auth/invitation/${sentInvitation._id}`;
 
       return {
         ...sentInvitation,
