@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { notify } from '@libs/notify';
-import { API_KEYS, NOTIFICATION_KEYS } from '@config';
+import { API_KEYS, NOTIFICATION_KEYS, ROUTES } from '@config';
 import { commonApi } from '@libs/api';
 import { track } from '@libs/amplitude';
 import { useAppState } from 'store/app.context';
@@ -23,6 +23,7 @@ interface ISignupData {
   lastName: string;
   email: string;
   password: string;
+  invitationId?: string;
 }
 
 export function useSignup() {
@@ -36,30 +37,28 @@ export function useSignup() {
     formState: { errors },
   } = useForm<ISignupFormData>({});
   const [errorMessage, setErrorMessage] = useState<IErrorObject | undefined>(undefined);
-
-  const { invitationId, token } = query as { invitationId?: string; token?: string };
-  const isInvitationLink = !!invitationId && !!token;
+  const [isInvitationLink, setIsInvitationLink] = useState<boolean | undefined>();
+  const invitationId = query.invitationId as string | undefined;
 
   const { isLoading: isAcceptingInvitation, isError } = useQuery<any, IErrorObject, { email: string }>(
-    [API_KEYS.GET_PROJECT_INVITATION, invitationId, token],
+    [API_KEYS.GET_PROJECT_INVITATION, invitationId],
     () =>
       commonApi(API_KEYS.GET_PROJECT_INVITATION as any, {
-        query: {
-          invitationId,
-          token,
-        },
+        parameters: [invitationId!],
       }),
     {
-      enabled: isInvitationLink,
+      enabled: !!invitationId,
       onSuccess: (data) => {
         setValue('email', data.email);
+        setIsInvitationLink(true);
       },
       onError: (error) => {
-        notify(NOTIFICATION_KEYS.ERROR_ACCEPTING_INVITATION, {
-          title: 'Error Accepting Invitation',
+        notify(NOTIFICATION_KEYS.ERROR_FETCHING_INVITATION, {
+          title: 'Problem with Invitation Link',
           message: error?.message || 'Error while accepting invitation',
           color: 'red',
         });
+        push(ROUTES.SIGNUP, {}, { shallow: true });
       },
     }
   );
@@ -84,7 +83,7 @@ export function useSignup() {
         },
       });
 
-      handleRouteBasedOnScreenResponse(data.screen as SCREENS, push);
+      handleRouteBasedOnScreenResponse(data.screen as SCREENS, push, invitationId ? [invitationId] : []);
     },
     onError(error) {
       if (error.error === 'EmailAlreadyExists') {
@@ -105,18 +104,20 @@ export function useSignup() {
       lastName: data.fullName.split(' ')[1],
       email: data.email,
       password: data.password,
+      invitationId,
     };
     signup(signupData);
   };
 
   return {
     errors,
+    isError,
     register,
+    invitationId,
     errorMessage,
     isSignupLoading,
-    isAcceptingInvitation,
-    isError,
     isInvitationLink,
+    isAcceptingInvitation,
     signup: handleSubmit(onSignup),
   };
 }
