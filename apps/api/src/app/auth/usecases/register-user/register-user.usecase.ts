@@ -29,6 +29,7 @@ export class RegisterUser {
 
     const passwordHash = await bcrypt.hash(command.password, 10);
     const verificationCode = generateVerificationCode();
+    const isEmailVerified = command.invitationId ? true : this.emailService.isConnected() ? false : true;
 
     const user = await this.userRepository.create({
       email: command.email,
@@ -37,7 +38,7 @@ export class RegisterUser {
       password: passwordHash,
       signupMethod: LEAD_SIGNUP_USING.EMAIL,
       verificationCode,
-      isEmailVerified: this.emailService.isConnected() ? false : true,
+      isEmailVerified,
     });
 
     const token = this.authService.getSignedToken({
@@ -48,6 +49,13 @@ export class RegisterUser {
       role: user.role as UserRolesEnum,
       isEmailVerified: user.isEmailVerified,
     });
+
+    if (command.invitationId) {
+      return {
+        screen: SCREENS.INVIATAION,
+        token,
+      };
+    }
 
     if (this.emailService.isConnected()) {
       const emailContents = this.emailService.getEmailContent({
