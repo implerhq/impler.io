@@ -75,6 +75,7 @@ export enum SCREENS {
   VERIFY = 'verify',
   ONBOARD = 'onboard',
   HOME = 'home',
+  INVIATAION = 'invitation',
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
