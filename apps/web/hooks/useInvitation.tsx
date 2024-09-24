@@ -12,7 +12,6 @@ export function useInvitation() {
   const router = useRouter();
   const { profile } = useApp();
   const invitationId = router.query.id as string;
-  console.log(profile);
 
   const {
     data: invitationData,
