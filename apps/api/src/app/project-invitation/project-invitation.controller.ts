@@ -16,7 +16,7 @@ import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { UserSession } from '@shared/framework/user.decorator';
 import { UpdateTeamMemberRoleDto } from './dto/update-team-member-role.dto';
 
-@Controller('invite')
+@Controller('invitation')
 export class ProjectInvitationController {
   constructor(
     private invite: Invite,
@@ -45,28 +45,33 @@ export class ProjectInvitationController {
     });
   }
 
-  @Get('/sent-invitation')
+  @Get('/sent-invitations')
   @ApiOperation({
     summary: 'Fetch Team members details who have got the invitation',
   })
   @UseGuards(JwtAuthGuard)
   async sentProjectInvitationRoute(@UserSession() user: IJwtPayload) {
-    const sentInviatation = await this.sentProjectInvitations.exec({
+    return this.sentProjectInvitations.exec({
       email: user.email,
       projectId: user._projectId,
     });
-
-    return sentInviatation;
   }
-  @Get('/invitation')
+
+  @Get('/team-members')
+  @ApiOperation({
+    summary:
+      'List out the members who have accepted the project invitation and now a part of a team and working on the same project',
+  })
+  async listTeamMembersRoute(@UserSession() user: IJwtPayload) {
+    return await this.listTeamMembers.exec(user._projectId);
+  }
+
+  @Get('/:invitationId')
   @ApiOperation({
     summary: 'Fetch an already sent invitation when the user tries to accept the invitation',
   })
-  async getProjectInvitationRoute(@Query('invitationId') invitationId: string, @Query('token') token: string) {
-    return this.getProjectInvitation.exec({
-      invitationId,
-      token,
-    });
+  async getProjectInvitationRoute(@Param('invitationId') invitationId: string) {
+    return this.getProjectInvitation.exec(invitationId);
   }
 
   @Post('/invitation-accept')
@@ -79,15 +84,6 @@ export class ProjectInvitationController {
     @Query('token') token: string
   ) {
     return await this.acceptProjectInvitation.exec({ invitationId, token, userId: user._id });
-  }
-
-  @Get('/team-members-list')
-  @ApiOperation({
-    summary:
-      'List out the members who have accepted the project invitation and now a part of a team and working on the same project',
-  })
-  async listTeamMembersRoute(@UserSession() user: IJwtPayload) {
-    return await this.listTeamMembers.exec(user._projectId);
   }
 
   @Put('/team-members-role-update')
