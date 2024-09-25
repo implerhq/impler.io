@@ -11,7 +11,7 @@ import {
   ListTeamMembers,
   UpdateTeamMember,
   DeleteTeamMember,
-  DeleteInvitation,
+  RevokeInvitation,
   DeclineInvitation,
 } from './usecase';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
@@ -30,9 +30,30 @@ export class TeamController {
     private listTeamMembers: ListTeamMembers,
     private updateTeamMember: UpdateTeamMember,
     private deleteTeamMember: DeleteTeamMember,
-    private deleteInvitation: DeleteInvitation,
+    private revokeInvitation: RevokeInvitation,
     private declineInvitation: DeclineInvitation
   ) {}
+
+  @Get('/members')
+  @ApiOperation({
+    summary:
+      'List out the members who have accepted the project invitation and now a part of a team and working on the same project',
+  })
+  async listTeamMembersRoute(@UserSession() user: IJwtPayload) {
+    return await this.listTeamMembers.exec(user._projectId);
+  }
+
+  @Get('/invitations')
+  @ApiOperation({
+    summary: 'Fetch Team members details who have got the invitation',
+  })
+  @UseGuards(JwtAuthGuard)
+  async sentProjectInvitationRoute(@UserSession() user: IJwtPayload) {
+    return this.sentInvitations.exec({
+      email: user.email,
+      projectId: user._projectId,
+    });
+  }
 
   @Post()
   @ApiOperation({
@@ -50,27 +71,26 @@ export class TeamController {
     });
   }
 
-  @Get('/sent-invitations')
+  @Put('/:memberId')
   @ApiOperation({
-    summary: 'Fetch Team members details who have got the invitation',
+    summary: 'Change the role of a particular team member',
   })
-  @UseGuards(JwtAuthGuard)
-  async sentProjectInvitationRoute(@UserSession() user: IJwtPayload) {
-    return this.sentInvitations.exec({
-      email: user.email,
-      projectId: user._projectId,
-    });
+  async updateTeamMemberRoleRoute(
+    @Param('memberId') memberId: string,
+    @Body() updateTeamMemberData: UpdateTeamMemberDto
+  ) {
+    return this.updateTeamMember.exec(memberId, updateTeamMemberData);
   }
 
-  @Get('/members')
+  @Delete('/:memberId')
   @ApiOperation({
-    summary:
-      'List out the members who have accepted the project invitation and now a part of a team and working on the same project',
+    summary: 'Delete a team member from the environment',
   })
-  async listTeamMembersRoute(@UserSession() user: IJwtPayload) {
-    return await this.listTeamMembers.exec(user._projectId);
+  async deleteTeamMemberRoute(@Param('memberId') memberId: string) {
+    return await this.deleteTeamMember.exec(memberId);
   }
 
+  // invitation routes
   @Get('/:invitationId')
   @ApiOperation({
     summary: 'Fetch an already sent invitation when the user tries to accept the invitation',
@@ -97,34 +117,6 @@ export class TeamController {
     return { screen };
   }
 
-  @Put('/members-role-update')
-  @ApiOperation({
-    summary: 'Change the role of a particular team member',
-  })
-  async updateTeamMemberRoleRoute(@Body() updateTeamMemberData: UpdateTeamMemberDto) {
-    return this.updateTeamMember.exec({
-      projectId: updateTeamMemberData.projectId,
-      userId: updateTeamMemberData.userId,
-      role: updateTeamMemberData.role,
-    });
-  }
-
-  @Delete('/member-delete')
-  @ApiOperation({
-    summary: 'Delete a team member from the environment',
-  })
-  async deleteTeamMemberRoute(@Query('projectId') projectId: string, @UserSession() user: IJwtPayload) {
-    return await this.deleteTeamMember.exec({ projectId, userId: user._id });
-  }
-
-  @Delete('/:invitationId')
-  @ApiOperation({
-    summary: 'Cancel an already sent invitation',
-  })
-  async cancelInvitationRoute(@Param('invitationId') invitationId: string) {
-    return await this.deleteInvitation.exec(invitationId);
-  }
-
   @Delete('/:invitationId/decline')
   @ApiOperation({
     summary: 'Decline an Invitation',
@@ -134,5 +126,13 @@ export class TeamController {
       invitationId,
       user,
     });
+  }
+
+  @Delete('/:invitationId/revoke')
+  @ApiOperation({
+    summary: 'Revoke sent invitation',
+  })
+  async cancelInvitationRoute(@Param('invitationId') invitationId: string) {
+    return await this.revokeInvitation.exec(invitationId);
   }
 }
