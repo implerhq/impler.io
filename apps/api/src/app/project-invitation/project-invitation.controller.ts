@@ -12,6 +12,7 @@ import {
   UpdateTeamMemberRole,
   DeleteTeamMember,
   DeleteInvitation,
+  DeclineInvitation,
 } from './usecase';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { CONSTANTS, COOKIE_CONFIG } from '@shared/constants';
@@ -19,7 +20,7 @@ import { UserSession } from '@shared/framework/user.decorator';
 import { ProjectInvitationDto } from './dto/project-invtation.dto';
 import { UpdateTeamMemberRoleDto } from './dto/update-team-member-role.dto';
 
-@Controller('invitation')
+@Controller('team')
 export class ProjectInvitationController {
   constructor(
     private invite: Invite,
@@ -29,7 +30,8 @@ export class ProjectInvitationController {
     private listTeamMembers: ListTeamMembers,
     private updateTeamMemberRole: UpdateTeamMemberRole,
     private deleteTeamMember: DeleteTeamMember,
-    private deleteInvitation: DeleteInvitation
+    private deleteInvitation: DeleteInvitation,
+    private declineInvitation: DeclineInvitation
   ) {}
 
   @Post()
@@ -60,7 +62,7 @@ export class ProjectInvitationController {
     });
   }
 
-  @Get('/team-members')
+  @Get('/members')
   @ApiOperation({
     summary:
       'List out the members who have accepted the project invitation and now a part of a team and working on the same project',
@@ -77,7 +79,7 @@ export class ProjectInvitationController {
     return this.getProjectInvitation.exec(invitationId);
   }
 
-  @Post('/accept')
+  @Post('/:invitationId/accept')
   @ApiOperation({
     summary: 'Accept a sent Invitation',
   })
@@ -95,7 +97,7 @@ export class ProjectInvitationController {
     return { screen };
   }
 
-  @Put('/team-members-role-update')
+  @Put('/members-role-update')
   @ApiOperation({
     summary: 'Change the role of a particular team member',
   })
@@ -107,12 +109,12 @@ export class ProjectInvitationController {
     });
   }
 
-  @Delete('/team-member-delete')
+  @Delete('/member-delete')
   @ApiOperation({
     summary: 'Delete a team member from the environment',
   })
-  async deleteTeamMemberRoute(@Query('projectId') projectId: string, @Query('userId') userId: string) {
-    return await this.deleteTeamMember.exec({ projectId, userId });
+  async deleteTeamMemberRoute(@Query('projectId') projectId: string, @UserSession() user: IJwtPayload) {
+    return await this.deleteTeamMember.exec({ projectId, userId: user._id });
   }
 
   @Delete('/:invitationId')
@@ -121,5 +123,16 @@ export class ProjectInvitationController {
   })
   async cancelInvitationRoute(@Param('invitationId') invitationId: string) {
     return await this.deleteInvitation.exec(invitationId);
+  }
+
+  @Delete('/:invitationId/decline')
+  @ApiOperation({
+    summary: 'Decline an Invitation',
+  })
+  async declineInvitationRoute(@Param('invitationId') invitationId: string, @UserSession() user: IJwtPayload) {
+    return this.declineInvitation.exec({
+      invitationId,
+      user,
+    });
   }
 }
