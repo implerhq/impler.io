@@ -74,7 +74,10 @@ export class AuthController {
 
   @Get('/github/callback')
   @UseGuards(AuthGuard('github'))
-  async githubCallback(@StrategyUser() strategyUser: IStrategyResponse, @Res() response: Response) {
+  async githubCallback(
+    @Res({ passthrough: true }) response: Response,
+    @StrategyUser() strategyUser: IStrategyResponse
+  ) {
     if (!strategyUser || !strategyUser.token) {
       return response.redirect(`${process.env.WEB_BASE_URL}/auth/signin?error=AuthenticationError`);
     }
