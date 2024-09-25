@@ -1,13 +1,14 @@
-import { useApp } from '@hooks/useApp';
-import { Group, Stack, Avatar, Text, Select, Badge, UnstyledButton } from '@mantine/core';
-import { Table } from '@ui/table';
-import { AppLayout } from '@layouts/AppLayout';
-import { DeleteIcon } from '@assets/icons/Delete.icon';
 import dayjs from 'dayjs';
-import { ActionsEnum, DATE_FORMATS, MEMBER_ROLE, SubjectsEnum } from '@config';
-import { useListTeamMembers } from '@hooks/useListTeamMembers';
-import { defineAbilitiesFor } from 'config/defineAbilities';
+import { Group, Stack, Avatar, Text, Select, Badge, UnstyledButton } from '@mantine/core';
+
+import { Table } from '@ui/table';
+import { useApp } from '@hooks/useApp';
+import { AppLayout } from '@layouts/AppLayout';
 import { UserRolesEnum } from '@impler/shared';
+import { DeleteIcon } from '@assets/icons/Delete.icon';
+import { defineAbilitiesFor } from 'config/defineAbilities';
+import { useListTeamMembers } from '@hooks/useListTeamMembers';
+import { ActionsEnum, DATE_FORMATS, MEMBER_ROLE, SubjectsEnum } from '@config';
 
 export function TeamMembers() {
   const { profile } = useApp();
