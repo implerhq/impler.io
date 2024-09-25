@@ -72,7 +72,7 @@ const routes: Record<string, Route> = {
   },
 
   [API_KEYS.ACCEPT_PROJECT_INVITATION]: {
-    url: () => `/v1/invitation/invitation-accept`,
+    url: () => `/v1/invitation/accept`,
     method: 'POST',
   },
 
