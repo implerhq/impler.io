@@ -13,9 +13,9 @@ interface IUseAcceptInvitationProps {
 
 export function useAcceptInvitation({ invitationId, token }: IUseAcceptInvitationProps) {
   const { mutate: onAcceptClick, isLoading: isAcceptLoading } = useMutation<any, IErrorObject, void>(
-    [API_KEYS.ACCEPT_PROJECT_INVITATION],
+    [API_KEYS.ACCEPT_TEAM_INVITATION],
     () =>
-      commonApi(API_KEYS.ACCEPT_PROJECT_INVITATION as any, {
+      commonApi(API_KEYS.ACCEPT_TEAM_INVITATION as any, {
         query: { invitationId, token },
       }),
     {
