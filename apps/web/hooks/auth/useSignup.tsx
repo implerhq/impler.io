@@ -41,9 +41,9 @@ export function useSignup() {
   const invitationId = query.invitationId as string | undefined;
 
   const { isLoading: isAcceptingInvitation, isError } = useQuery<any, IErrorObject, { email: string }>(
-    [API_KEYS.GET_PROJECT_INVITATION, invitationId],
+    [API_KEYS.GET_TEAM_INVITATIONS, invitationId],
     () =>
-      commonApi(API_KEYS.GET_PROJECT_INVITATION as any, {
+      commonApi(API_KEYS.GET_TEAM_INVITATIONS as any, {
         parameters: [invitationId!],
       }),
     {
