@@ -72,7 +72,7 @@ export class LoginUser {
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
-          role: apiKey.role as UserRolesEnum,
+          role: apiKey?.role as UserRolesEnum,
           profilePicture: user.profilePicture,
           accessToken: apiKey?.apiKey,
           isEmailVerified: user.isEmailVerified,
