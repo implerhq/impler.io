@@ -1,15 +1,17 @@
 import { useState } from 'react';
-import { modals } from '@mantine/modals';
 import { Text } from '@mantine/core';
-import { Button } from '@ui/button';
-import { colors, MODAL_KEYS, TAB_KEYS, TAB_TITLES } from '@config';
+import { modals } from '@mantine/modals';
+
 import { TeamMembers } from './TeamMembers';
 import { SentInvitations } from './SentInvitations';
 import { ProjectInvitationModal } from './ProjectInvitationModal';
-import { OutlinedTabs } from '@ui/OutlinedTabs';
+
+import { Button } from '@ui/button';
 import { useAppState } from 'store/app.context';
-import { useSentProjectInvitations } from '@hooks/useSentProjectInvitations';
+import { OutlinedTabs } from '@ui/OutlinedTabs';
 import { useListTeamMembers } from '@hooks/useListTeamMembers';
+import { colors, MODAL_KEYS, TAB_KEYS, TAB_TITLES } from '@config';
+import { useSentProjectInvitations } from '@hooks/useSentProjectInvitations';
 
 export function TeamMembersTab() {
   const { profileInfo } = useAppState();
