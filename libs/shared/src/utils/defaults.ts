@@ -86,4 +86,6 @@ export enum EMAIL_SUBJECT {
   VERIFICATION_CODE = 'Your Verification Code for Impler',
   RESET_PASSWORD = 'Reset Password | Impler',
   PROJECT_INVITATION = 'You Have Invited to',
+  INVITATION_ACCEPTED = 'Invitation Accepted Successfully',
+  INVITATION_DECLINED = 'Has Declined the Invitation',
 }
