@@ -1,17 +1,28 @@
+import { useEffect, useState } from 'react';
 import { useApp } from '@hooks/useApp';
 import { useRouter } from 'next/router';
 import { useQuery, useMutation } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
-import { API_KEYS, NOTIFICATION_KEYS } from '@config';
+import { useLogout } from '@hooks/auth/useLogout';
+import { API_KEYS, NOTIFICATION_KEYS, ROUTES } from '@config';
 import { IErrorObject, SCREENS } from '@impler/shared';
 import { handleRouteBasedOnScreenResponse } from '@shared/helpers';
 
+export enum ModesEnum {
+  ACTIVE = 'ACTIVE',
+  ACCEPT = 'ACCEPT',
+}
+
 export function useInvitation() {
-  const router = useRouter();
   const { profile } = useApp();
-  const invitationId = router.query.id as string;
+  const { replace, query, push } = useRouter();
+  const { logout } = useLogout({
+    onLogout: () => replace(ROUTES.SIGNIN),
+  });
+  const [mode, setMode] = useState<ModesEnum>(ModesEnum.ACTIVE);
+  const invitationId = query.id as string;
 
   const {
     data: invitationData,
@@ -25,26 +36,18 @@ export function useInvitation() {
       }),
     {
       enabled: !!invitationId,
-      onSuccess: (data) => {
-        if (data.email === profile?.email) {
-          notify(NOTIFICATION_KEYS.VALID_INVITATION, {
-            title: 'Invitation Valid',
-            message: 'Invitation is Valid.',
-            color: 'red',
-          });
-        }
-      },
-      onError: (error: IErrorObject) => {
-        notify(NOTIFICATION_KEYS.ERROR_FETCHING_INVITATION, {
-          title: 'Error Fetching Invitation',
-          message: error?.message || 'Error while fetching invitation details',
-          color: 'red',
-        });
+      onError: () => {
+        setMode(ModesEnum.ACTIVE);
       },
     }
   );
 
-  const { mutate: acceptInvitationLink, isLoading: isAcceptLoading } = useMutation<any, IErrorObject, void>(
+  const { mutate: acceptInvitation, isLoading: isAcceptInvitationLoading } = useMutation<
+    { screen: SCREENS },
+    IErrorObject,
+    void,
+    [string]
+  >(
     [API_KEYS.ACCEPT_PROJECT_INVITATION],
     () =>
       commonApi(API_KEYS.ACCEPT_PROJECT_INVITATION as any, {
@@ -52,12 +55,7 @@ export function useInvitation() {
       }),
     {
       onSuccess: (data) => {
-        notify(NOTIFICATION_KEYS.INVITATION_ACCEPTED, {
-          title: 'Invitation Accepted',
-          message: `You have successfully joined the Project ${data.projectName}`,
-          color: 'green',
-        });
-        handleRouteBasedOnScreenResponse(data.screen as SCREENS, router.push);
+        handleRouteBasedOnScreenResponse(data.screen as SCREENS, push);
       },
       onError: () => {
         notify(NOTIFICATION_KEYS.ERROR_FETCHING_INVITATION, {
@@ -69,17 +67,25 @@ export function useInvitation() {
     }
   );
 
+  useEffect(() => {
+    if (profile && invitationData && invitationData.email === profile?.email) {
+      setMode(ModesEnum.ACCEPT);
+    }
+  }, [profile, invitationData]);
+
   const isLoggedInUser = !!profile;
   const isInvitationValid = !!invitationData;
 
   return {
+    mode,
+    logout,
     invitationId,
     isInvitationLoading,
     isInvitationError,
     isInvitationValid,
     invitationData,
     isLoggedInUser,
-    isAcceptLoading,
-    acceptInvitationLink,
+    acceptInvitation,
+    isAcceptInvitationLoading,
   };
 }
