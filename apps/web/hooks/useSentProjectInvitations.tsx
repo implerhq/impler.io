@@ -18,8 +18,8 @@ export function useSentProjectInvitations() {
     isFetched: isInvitationsFetched,
     isError,
   } = useQuery<SentProjectInvitation[], IErrorObject>(
-    [API_KEYS.SENT_PROJECT_INVITATION],
-    () => commonApi<SentProjectInvitation[]>(API_KEYS.SENT_PROJECT_INVITATION as any, {}),
+    [API_KEYS.SENT_TEAM_INVITATIONS],
+    () => commonApi<SentProjectInvitation[]>(API_KEYS.SENT_TEAM_INVITATIONS as any, {}),
     {
       onSuccess() {},
       onError() {},
@@ -32,7 +32,7 @@ export function useSentProjectInvitations() {
       }),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries([API_KEYS.SENT_PROJECT_INVITATION]);
+        queryClient.invalidateQueries([API_KEYS.SENT_TEAM_INVITATIONS]);
         notify(NOTIFICATION_KEYS.INVITATION_DELETED, {
           title: 'Invitation Cancelled',
           message: `Invitation Cancelled Successfully`,
