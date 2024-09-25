@@ -1,55 +1,44 @@
-import { EnvironmentRepository, ProjectInvitationRepository, UserRepository, ProjectRepository } from '@impler/dal';
-import { GenerateUniqueApiKey } from 'app/environment/usecases';
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { SCREENS, UserRolesEnum } from '@impler/shared';
+import { Injectable } from '@nestjs/common';
+
 import { AuthService } from 'app/auth/services/auth.service';
+import { IJwtPayload, SCREENS, UserRolesEnum } from '@impler/shared';
+import { EnvironmentRepository, ProjectInvitationRepository } from '@impler/dal';
 
 @Injectable()
 export class AcceptProjectInvitation {
   constructor(
+    private authService: AuthService,
     private environmentRepository: EnvironmentRepository,
-
-    private projectInvitationRepository: ProjectInvitationRepository,
-
-    private projectRepository: ProjectRepository,
-
-    private userRepository: UserRepository,
-    private generateUniqueApiKey: GenerateUniqueApiKey,
-    private authService: AuthService
+    private projectInvitationRepository: ProjectInvitationRepository
   ) {}
 
-  async exec({ invitationId, token, userId }: { invitationId: string; token: string; userId: string }) {
-    const key = await this.generateUniqueApiKey.execute();
-    const invitation = await this.projectInvitationRepository.findOne({ _id: invitationId, token });
+  async exec({ invitationId, user }: { invitationId: string; user: IJwtPayload }) {
+    const invitation = await this.projectInvitationRepository.findOne({ _id: invitationId });
     const environment = await this.environmentRepository.findOne({
       _projectId: invitation._projectId,
     });
-    const projectName = (await this.projectRepository.findById(environment._projectId)).name;
 
-    if (!environment && invitation) {
-      throw new BadRequestException('Invitation not found.');
-    }
+    await this.environmentRepository.addApiKey(environment._id, user._id, invitation.role);
 
-    const user = await this.userRepository.findById(userId);
+    await this.projectInvitationRepository.delete({ _id: invitationId });
 
-    const newAddedAPIKey = await this.environmentRepository.addApiKey(environment._id, key, user._id);
-    if (newAddedAPIKey) {
-      await this.projectInvitationRepository.delete({ _id: invitationId });
-
-      const accessToken = this.authService.getSignedToken({
+    const accessToken = this.authService.getSignedToken(
+      {
         _id: user._id,
-        email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
+        email: user.email,
         role: invitation.role as UserRolesEnum,
-        isEmailVerified: user.isEmailVerified,
-      });
+        isEmailVerified: true,
+        profilePicture: user.profilePicture,
+        accessToken: environment.key,
+      },
+      invitation._projectId
+    );
 
-      return {
-        projectName,
-        accessToken,
-        screen: SCREENS.HOME,
-      };
-    }
+    return {
+      accessToken,
+      screen: SCREENS.HOME,
+    };
   }
 }
