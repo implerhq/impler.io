@@ -167,17 +167,10 @@ interface SentProjectInvitation {
   invitationLink: string;
 }
 
-interface TeamMember {
-  name: string;
-  email: string;
-  profilePicture?: string | null;
-}
-
 interface TeamMemberList {
   _id: string;
-  user: User;
+  _userId: IProfileData;
   joinedDate: string;
   role: string;
   isCurrentUser: string;
-  projectId: string;
 }
