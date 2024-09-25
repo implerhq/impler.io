@@ -8,11 +8,6 @@ import { useAppState } from 'store/app.context';
 import { modals } from '@mantine/modals';
 import { DeleteTeamMemberModal } from '@components/TeamMembers/DeleteTeamMemberModal';
 
-interface DeleteMemberParams {
-  userId: string;
-  projectId: string;
-}
-
 interface UpdateRoleParams {
   projectId: string;
   userId: string;
@@ -49,39 +44,43 @@ export function useListTeamMembers() {
       onError: (error: IErrorObject) => {
         notify(NOTIFICATION_KEYS.ERROR_LISTING_TEAM_MEMBERS, {
           title: 'Error Listing Team Members',
-          message: error.message || 'An Error Occured while listing Team Members',
+          message: error.message || 'An Error Occurred while listing Team Members',
           color: 'red',
         });
       },
     }
   );
 
-  const { mutate: deleteMember, isLoading: isMemberDeleting } = useMutation<any, IErrorObject, DeleteMemberParams>(
-    ({ projectId, userId }) =>
+  const { mutate: deleteTeamMember, isLoading: isTeamMemberDeleting } = useMutation<IProfileData, IErrorObject, string>(
+    (teamMemberId) =>
       commonApi(API_KEYS.DELETE_TEAM_MEMBER as any, {
-        query: { projectId, userId },
+        parameters: [teamMemberId],
       }),
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries([API_KEYS.LIST_TEAM_MEMBERS]);
+      onSuccess: (_, teamMemberId) => {
+        queryClient.setQueryData<TeamMemberList[]>(
+          [API_KEYS.LIST_TEAM_MEMBERS],
+          (oldData) => oldData?.filter((member) => member._id !== teamMemberId)
+        );
+
         notify(NOTIFICATION_KEYS.TEAM_MEMBER_DELETED, {
-          title: 'Team Member Deleted Successfuly',
-          message: 'Team Member Deleted Successfuly',
+          title: 'Team Member Deleted Successfully',
+          message: 'Team Member Deleted Successfully',
           color: 'green',
         });
       },
       onError: (error: IErrorObject) => {
         notify(NOTIFICATION_KEYS.ERROR_DELETING_TEAM_MEMBER, {
-          title: 'Error while Deleting TeamMember',
-          message: error.message || 'An Error Occured While Deleting TeamMember',
-          color: 'green',
+          title: 'Error while Deleting Team Member',
+          message: error.message || 'An Error Occurred While Deleting Team Member',
+          color: 'red',
         });
       },
     }
   );
 
   const { mutate: updateTeamMemberRole, isLoading: isTeamMemberRoleUpdating } = useMutation<
-    any,
+    IProfileData,
     IErrorObject,
     UpdateRoleParams
   >(
@@ -90,8 +89,12 @@ export function useListTeamMembers() {
         body: { projectId, userId, role },
       }),
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries([API_KEYS.LIST_TEAM_MEMBERS]);
+      onSuccess: (_, { userId, role }) => {
+        queryClient.setQueryData<TeamMemberList[]>(
+          [API_KEYS.LIST_TEAM_MEMBERS],
+          (oldData) => oldData?.map((member) => (member._id === userId ? { ...member, role } : member)) || []
+        );
+
         notify(NOTIFICATION_KEYS.TEAM_MEMBER_ROLE_UPDATED, {
           title: 'Role Updated',
           message: 'Team Member Role Updated Successfully',
@@ -101,7 +104,7 @@ export function useListTeamMembers() {
       onError: (error: IErrorObject) => {
         notify(NOTIFICATION_KEYS.ERROR_CHANGING_MEMBER_ROLE, {
           title: 'Error while Changing Team Member Role',
-          message: error.message || 'An Error Occured While Changing TeamMember Role',
+          message: error.message || 'An Error Occurred While Changing Team Member Role',
           color: 'red',
         });
       },
@@ -118,7 +121,7 @@ export function useListTeamMembers() {
           userId={userId}
           userName={userName}
           onDeleteConfirm={() => {
-            deleteMember({ projectId, userId });
+            deleteTeamMember(projectId);
             modals.closeAll();
           }}
           onCancel={() => modals.closeAll()}
@@ -132,7 +135,7 @@ export function useListTeamMembers() {
     isMembersDataLoading,
     teamMembersCount: teamMembersList.length || 0,
     openDeleteModal,
-    isMemberDeleting,
+    isTeamMemberDeleting,
     updateTeamMemberRole,
     isTeamMemberRoleUpdating,
   };
