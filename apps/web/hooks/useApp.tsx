@@ -1,16 +1,21 @@
 import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
 import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
 import { track } from '@libs/amplitude';
 import { useAppState } from 'store/app.context';
+import { defineAbilitiesFor } from 'config/defineAbilities';
 import { API_KEYS, NOTIFICATION_KEYS, ROUTES } from '@config';
 import { IErrorObject, IProjectPayload, IEnvironmentData } from '@impler/shared';
-import { defineAbilitiesFor } from 'config/defineAbilities';
+import { useLogout } from './auth/useLogout';
 
 export function useApp() {
   const { replace, pathname } = useRouter();
   const queryClient = useQueryClient();
+  const { logout } = useLogout({
+    onLogout: () => replace(ROUTES.SIGNIN),
+  });
   const { profileInfo, setProfileInfo, setAbility } = useAppState();
   const { isFetching: isProfileLoading } = useQuery<IProfileData, IErrorObject>(
     [API_KEYS.ME],
@@ -42,13 +47,6 @@ export function useApp() {
       },
     }
   );
-
-  const { mutate: logout } = useMutation(() => commonApi(API_KEYS.LOGOUT as any, {}), {
-    onSuccess: () => {
-      track({ name: 'LOGOUT', properties: {} });
-      replace(ROUTES.SIGNIN);
-    },
-  });
   const { mutate: switchProject } = useMutation<unknown, IErrorObject, string, string[]>(
     [API_KEYS.PROJECT_SWITCH],
     (projectId) => commonApi(API_KEYS.PROJECT_SWITCH as any, { parameters: [projectId] })
