@@ -15,7 +15,7 @@ import { EnvironmentModule } from './app/environment/environment.module';
 import { ActivityModule } from './app/activity/activity.module';
 import { UserModule } from './app/user/user.module';
 import { ImportJobsModule } from 'app/import-jobs/import-jobs.module';
-import { ProjectInvitationModule } from 'app/project-invitation/project-invitation.module';
+import { TeamModule } from 'app/team/team.module';
 
 const modules: Array<Type | DynamicModule | Promise<DynamicModule> | ForwardReference> = [
   ProjectModule,
@@ -32,7 +32,7 @@ const modules: Array<Type | DynamicModule | Promise<DynamicModule> | ForwardRefe
   EnvironmentModule,
   ActivityModule,
   ImportJobsModule,
-  ProjectInvitationModule,
+  TeamModule,
 ];
 
 const providers = [Logger];

@@ -98,7 +98,7 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
 
     return result;
   }
-  async updateTeamMemberRole({
+  async updateTeamMember({
     projectId,
     newRole,
     userId,
