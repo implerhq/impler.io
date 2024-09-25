@@ -56,6 +56,51 @@ const routes: Record<string, Route> = {
     method: 'POST',
   },
 
+  [API_KEYS.PROJECT_INVITATION]: {
+    url: () => `/v1/team`,
+    method: 'POST',
+  },
+
+  [API_KEYS.SENT_TEAM_INVITATIONS]: {
+    url: () => `/v1/team/invitations`,
+    method: 'GET',
+  },
+
+  [API_KEYS.GET_TEAM_INVITATIONS]: {
+    url: (id: string) => `/v1/team/${id}`,
+    method: 'GET',
+  },
+
+  [API_KEYS.ACCEPT_TEAM_INVITATION]: {
+    url: (invitationId: string) => `/v1/team/${invitationId}/accept`,
+    method: 'POST',
+  },
+
+  [API_KEYS.DECLINE_TEAM_INVITATION]: {
+    url: (invitationId: string) => `/v1/team/${invitationId}/decline`,
+    method: 'DELETE',
+  },
+
+  [API_KEYS.LIST_TEAM_MEMBERS]: {
+    url: () => `/v1/team/members`,
+    method: 'GET',
+  },
+
+  [API_KEYS.UPDATE_TEAM_MEMBER_ROLE]: {
+    url: (memberId: string) => `/v1/team/${memberId}`,
+    method: 'PUT',
+  },
+
+  [API_KEYS.DELETE_TEAM_MEMBER]: {
+    url: (memberId: string) => `/v1/team/${memberId}`,
+    method: 'DELETE',
+  },
+
+  [API_KEYS.REVOKE_INVITATION]: {
+    url: (invitationId: string) => `/v1/team/${invitationId}/revoke`,
+    method: 'DELETE',
+  },
+
   [API_KEYS.PROJECTS_LIST]: {
     url: () => '/v1/project',
     method: 'GET',
@@ -72,6 +117,7 @@ const routes: Record<string, Route> = {
     url: (projectId) => `/v1/project/${projectId}/environment`,
     method: 'GET',
   },
+
   [API_KEYS.LOGOUT]: {
     url: () => '/v1/auth/logout',
     method: 'GET',

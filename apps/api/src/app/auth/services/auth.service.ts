@@ -2,7 +2,7 @@ import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 
-import { IJwtPayload } from '@impler/shared';
+import { IJwtPayload, UserRolesEnum } from '@impler/shared';
 import { CONSTANTS, LEAD_SIGNUP_USING } from '@shared/constants';
 import { UserEntity, UserRepository, EnvironmentRepository } from '@impler/dal';
 import { UserNotFoundException } from '@shared/exceptions/user-not-found.exception';
@@ -31,6 +31,7 @@ export class AuthService {
         lastName: profile.lastName,
         signupMethod: LEAD_SIGNUP_USING.GITHUB,
         profilePicture: profile.avatar_url,
+        role: UserRolesEnum.ADMIN,
         ...(provider ? { tokens: [provider] } : {}),
       };
       user = await this.userRepository.create(userObj);
@@ -54,6 +55,7 @@ export class AuthService {
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
+          role: apiKey?.role as UserRolesEnum,
           profilePicture: user.profilePicture,
           accessToken: apiKey?.apiKey,
           isEmailVerified: user.isEmailVerified,
@@ -89,6 +91,7 @@ export class AuthService {
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
+          role: apiKey.role as UserRolesEnum,
           accessToken: apiKey?.apiKey,
           isEmailVerified: user.isEmailVerified,
         },
@@ -109,6 +112,7 @@ export class AuthService {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
+        role: apiKey.role as UserRolesEnum,
         accessToken: apiKey?.apiKey,
         isEmailVerified: user.isEmailVerified,
       },
@@ -122,6 +126,7 @@ export class AuthService {
       firstName: string;
       lastName: string;
       email: string;
+      role?: UserRolesEnum;
       isEmailVerified: boolean;
       profilePicture?: string;
       accessToken?: string;
@@ -134,6 +139,7 @@ export class AuthService {
         {
           _id: user._id,
           _projectId,
+          role: user.role,
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
@@ -173,23 +179,7 @@ export class AuthService {
     const environment = await this.environmentRepository.findByApiKey(apiKey);
     if (!environment) throw new UnauthorizedException('API Key not found!');
 
-    const key = environment.apiKeys.find((i) => i.key === apiKey);
-    if (!key) throw new UnauthorizedException('API Key not found!');
-
-    const user = await this.getUser({ _id: key._userId });
-    if (!user) throw new UnauthorizedException('User not found!');
-
-    return this.getSignedToken(
-      {
-        _id: user._id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        accessToken: apiKey,
-        isEmailVerified: user.isEmailVerified,
-      },
-      environment._projectId
-    );
+    if (apiKey !== environment.key) throw new UnauthorizedException('API Key not found!');
   }
 
   async generateUserToken(user: UserEntity) {
@@ -201,6 +191,7 @@ export class AuthService {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
+        role: apiKey.role as UserRolesEnum,
         accessToken: apiKey?.apiKey,
         isEmailVerified: user.isEmailVerified,
       },

@@ -7,9 +7,7 @@ import { RequestForgotPassword } from './request-forgot-password/request-forgot-
 
 import { Verify } from './verify/verify.usecase';
 import { ResendOTP } from './resend-otp/resend-otp.usecase';
-import { LoginUserCommand } from './login-user/login-user.command';
 import { OnboardUserCommand } from './onboard-user/onboard-user.command';
-import { RegisterUserCommand } from './register-user/register-user.command';
 import { ResetPasswordCommand } from './reset-password/reset-password.command';
 import { RequestForgotPasswordCommand } from './request-forgot-password/request-forgot-pasword.command';
 
@@ -38,11 +36,5 @@ export const USE_CASES = [
   //
 ];
 
+export { OnboardUserCommand, ResetPasswordCommand, RequestForgotPasswordCommand };
 export { Verify, RegisterUser, LoginUser, RequestForgotPassword, ResetPassword, OnboardUser, ResendOTP, UpdateUser };
-export {
-  LoginUserCommand,
-  OnboardUserCommand,
-  RegisterUserCommand,
-  ResetPasswordCommand,
-  RequestForgotPasswordCommand,
-};

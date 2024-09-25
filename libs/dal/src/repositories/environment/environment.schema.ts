@@ -1,4 +1,4 @@
-import { Schema, model, models } from 'mongoose';
+import { Model, Schema, model, models } from 'mongoose';
 
 import { EnvironmentEntity } from './environment.entity';
 import { schemaOptions } from '../schema-default.options';
@@ -10,15 +10,20 @@ const environmentSchema = new Schema(
       ref: 'Project',
       index: true,
     },
+    key: {
+      type: Schema.Types.String,
+      unique: true,
+    },
     apiKeys: [
       {
-        key: {
-          type: Schema.Types.String,
-          unique: true,
-        },
+        role: String,
         _userId: {
           type: Schema.Types.ObjectId,
           ref: 'User',
+        },
+        joinedOn: {
+          type: Schema.Types.Date,
+          default: Date.now,
         },
       },
     ],
@@ -30,4 +35,5 @@ interface IEnvironmentDocument extends EnvironmentEntity, Document {
   _id: never;
 }
 
-export const Environment = models.Environment || model<IEnvironmentDocument>('Environment', environmentSchema);
+export const Environment =
+  (models.Environment as Model<IEnvironmentDocument>) || model<IEnvironmentDocument>('Environment', environmentSchema);

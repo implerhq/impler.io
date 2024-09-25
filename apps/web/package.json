@@ -17,6 +17,8 @@
   },
   "dependencies": {
     "@amplitude/analytics-browser": "^2.0.1",
+    "@casl/ability": "^6.7.1",
+    "@casl/react": "^4.0.0",
     "@emotion/react": "^11.10.5",
     "@emotion/server": "^11.10.0",
     "@impler/client": "workspace:^",
@@ -36,6 +38,7 @@
     "@tanstack/react-query": "^4.14.5",
     "@tawk.to/tawk-messenger-react": "^2.0.1",
     "chart.js": "^4.3.0",
+    "dayjs": "^1.11.11",
     "embla-carousel-react": "^7.0.9",
     "jwt-decode": "^3.1.2",
     "lottie-react": "^2.4.0",

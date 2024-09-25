@@ -5,7 +5,7 @@ import { EmailService } from '@impler/services';
 import { LoginUserCommand } from './login-user.command';
 import { AuthService } from '../../services/auth.service';
 import { EnvironmentRepository, UserRepository } from '@impler/dal';
-import { EMAIL_SUBJECT, SCREENS } from '@impler/shared';
+import { EMAIL_SUBJECT, SCREENS, UserRolesEnum } from '@impler/shared';
 import { generateVerificationCode } from '@shared/helpers/common.helper';
 
 @Injectable()
@@ -59,14 +59,20 @@ export class LoginUser {
 
     const apiKey = await this.environmentRepository.getApiKeyForUserId(user._id);
 
+    let screen = SCREENS.ONBOARD;
+    if (command.invitationId) screen = SCREENS.INVIATAION;
+    else if (!user.isEmailVerified) screen = SCREENS.VERIFY;
+    else if (apiKey) screen = SCREENS.HOME;
+
     return {
-      screen: !user.isEmailVerified ? SCREENS.VERIFY : apiKey ? SCREENS.HOME : SCREENS.ONBOARD,
+      screen,
       token: this.authService.getSignedToken(
         {
           _id: user._id,
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
+          role: apiKey?.role as UserRolesEnum,
           profilePicture: user.profilePicture,
           accessToken: apiKey?.apiKey,
           isEmailVerified: user.isEmailVerified,

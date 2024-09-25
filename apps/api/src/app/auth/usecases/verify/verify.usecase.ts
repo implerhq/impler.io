@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { SCREENS } from '@impler/shared';
+import { SCREENS, UserRolesEnum } from '@impler/shared';
 import { VerifyCommand } from './verify.command';
 import { AuthService } from 'app/auth/services/auth.service';
 import { UserRepository, EnvironmentRepository } from '@impler/dal';
@@ -41,6 +41,7 @@ export class Verify {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      role: apiKey?.role as UserRolesEnum,
       isEmailVerified: true,
       accessToken: apiKey?.apiKey,
     });

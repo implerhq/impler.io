@@ -12,11 +12,11 @@ import {
   ApplyCoupon,
   Checkout,
   Subscription,
+  RetrievePaymentMethods,
 } from './usecases';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { IJwtPayload, ACCESS_KEY_NAME } from '@impler/shared';
 import { UserSession } from '@shared/framework/user.decorator';
-import { RetrievePaymentMethods } from './usecases/retrive-payment-methods/retrive-payment-methods.usecase';
 
 @ApiTags('User')
 @Controller('/user')
@@ -41,6 +41,7 @@ export class UserController {
   @ApiOperation({
     summary: 'Get Import Count',
   })
+  @UseGuards(JwtAuthGuard)
   async getImportCountRoute(
     @UserSession() user: IJwtPayload,
     @Query('start') start: string,

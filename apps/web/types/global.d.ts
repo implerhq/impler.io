@@ -21,6 +21,7 @@ namespace NodeJS {
 
 interface IProfileData {
   _id: string;
+  projectName: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -82,7 +83,7 @@ interface IOnboardUserData {
   companySize: string;
   role: string;
   source: string;
-  onboarding: boolean;
+  onboarding?: boolean;
 }
 
 interface ICstringemplateData {
@@ -108,6 +109,7 @@ interface Window {
 interface ISigninData {
   email: string;
   password: string;
+  invitationId?: string;
 }
 
 interface ISignupData {
@@ -154,4 +156,22 @@ interface ISubscribeData {
   selectedPaymentMethod: string | undefined;
   email: string;
   planCode: string;
+}
+
+interface SentProjectInvitation {
+  _id: string;
+  invitationToEmail: string;
+  invitedOn: string;
+  role: string;
+  invitedBy: string;
+  token: string;
+  invitationLink: string;
+}
+
+interface TeamMember {
+  _id: string;
+  _userId: IProfileData;
+  joinedDate: string;
+  role: string;
+  isCurrentUser: string;
 }

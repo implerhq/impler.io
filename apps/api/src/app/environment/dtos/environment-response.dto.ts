@@ -14,6 +14,11 @@ export class EnvironmentResponseDto {
   @IsString()
   public _projectId: string;
 
+  @ApiProperty()
+  @IsDefined()
+  @IsString()
+  public key: string;
+
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ApiKey)

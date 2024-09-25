@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { PropsWithChildren, useRef } from 'react';
 import { Flex, Group, LoadingOverlay, Select, Stack, Title, useMantineColorScheme } from '@mantine/core';
 
-import { TEXTS } from '@config';
+import { ActionsEnum, SubjectsEnum, TEXTS } from '@config';
 import useStyles from './AppLayout.styles';
 import { HomeIcon } from '@assets/icons/Home.icon';
 import { LogoutIcon } from '@assets/icons/Logout.icon';
@@ -13,6 +13,7 @@ import { ImportIcon } from '@assets/icons/Import.icon';
 import { OutLinkIcon } from '@assets/icons/OutLink.icon';
 import { SettingsIcon } from '@assets/icons/Settings.icon';
 import { ActivitiesIcon } from '@assets/icons/Activities.icon';
+import { PeopleIcon } from '@assets/icons/People.icon';
 import LogoBlack from '@assets/images/full-logo-dark.png';
 import LogoWhite from '@assets/images/full-logo-light.png';
 
@@ -20,6 +21,7 @@ import { useApp } from '@hooks/useApp';
 import { NavItem } from '@ui/nav-item';
 import { UserMenu } from '@ui/user-menu';
 import { track } from '@libs/amplitude';
+import { Can } from 'store/ability.context';
 import { ColorSchemeToggle } from '@ui/toggle-color-scheme';
 
 const Support = dynamic(() => import('components/common/Support').then((mod) => mod.Support), {
@@ -75,12 +77,15 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
           />
           <Stack spacing="sm" py="xs">
             <NavItem active={router.pathname === '/'} href="/" icon={<HomeIcon size="lg" />} title="Home" />
-            <NavItem
-              active={router.pathname.includes('/imports')}
-              href="/imports"
-              icon={<ImportIcon size="lg" />}
-              title="Imports"
-            />
+            <Can I={ActionsEnum.READ} a={SubjectsEnum.IMPORTS}>
+              <NavItem
+                active={router.pathname.includes('/imports')}
+                href="/imports"
+                icon={<ImportIcon size="lg" />}
+                title="Imports"
+              />
+            </Can>
+
             <NavItem
               active={router.pathname.includes('/activities')}
               href="/activities"
@@ -93,6 +98,14 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
               icon={<SettingsIcon size="lg" />}
               title="Settings"
             />
+            <Can I={ActionsEnum.READ} a={SubjectsEnum.TEAM_MEMBERS}>
+              <NavItem
+                active={router.pathname.includes('/team-members')}
+                href="/team-members"
+                icon={<PeopleIcon size="lg" />}
+                title="Team Members"
+              />
+            </Can>
             <NavItem
               target="_blank"
               title="Documentation"

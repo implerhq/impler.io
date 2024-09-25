@@ -1,13 +1,18 @@
 import getConfig from 'next/config';
-import { Tabs } from '@mantine/core';
 import { useRouter } from 'next/router';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 
 import { UserCards } from './UserCards';
 import { GenerateAccessToken } from './GenerateAccessToken';
+import { OutlinedTabs } from '@ui/OutlinedTabs';
+import { useApp } from '@hooks/useApp';
+import { defineAbilitiesFor } from 'config/defineAbilities';
+import { ActionsEnum, SubjectsEnum } from '@config';
 
 export function SettingsTab() {
+  const { profile } = useApp();
+  const ability = defineAbilitiesFor(profile?.role);
   const router = useRouter();
   const { publicRuntimeConfig } = getConfig();
 
@@ -15,24 +20,27 @@ export function SettingsTab() {
     publicRuntimeConfig.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY &&
     loadStripe(publicRuntimeConfig.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
-  return (
-    <Tabs mt={2} defaultValue={(router.query.tab as string) || 'accesstoken'}>
-      <Tabs.List>
-        <Tabs.Tab value="accesstoken">Access Token</Tabs.Tab>
-        {stripePromise ? <Tabs.Tab value="addcard">Cards</Tabs.Tab> : null}
-      </Tabs.List>
-
-      <Tabs.Panel value="accesstoken" pt="xs">
-        <GenerateAccessToken />
-      </Tabs.Panel>
-
-      {stripePromise ? (
-        <Tabs.Panel value="addcard" pt="xs">
+  const tabItems = [
+    ability.can(ActionsEnum.READ, SubjectsEnum.ACCESS_TOKEN) && {
+      value: 'accesstoken',
+      title: 'Access Token',
+      content: <GenerateAccessToken />,
+    },
+    stripePromise &&
+      ability.can(ActionsEnum.READ, SubjectsEnum.CARDS) && {
+        value: 'addcard',
+        title: 'Cards',
+        content: (
           <Elements stripe={stripePromise}>
             <UserCards />
           </Elements>
-        </Tabs.Panel>
-      ) : null}
-    </Tabs>
-  );
+        ),
+      },
+  ].filter(Boolean);
+
+  const validTabValues = tabItems.map((item) => item.value);
+  const defaultTab = (router.query.tab as string) || 'accesstoken';
+  const selectedTab = validTabValues.includes(defaultTab) ? defaultTab : validTabValues[0] || 'accesstoken';
+
+  return <OutlinedTabs defaultValue={selectedTab} items={tabItems} />;
 }

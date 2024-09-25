@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDefined, IsString, IsEmail } from 'class-validator';
+import { IsDefined, IsString, IsEmail, IsOptional } from 'class-validator';
 
 export class RegisterUserDto {
   @ApiProperty({
@@ -29,4 +29,11 @@ export class RegisterUserDto {
   @IsString()
   @IsDefined()
   password: string;
+
+  @ApiProperty({
+    description: 'InvitationId to accept invitation later on',
+  })
+  @IsString()
+  @IsOptional()
+  invitationId?: string;
 }

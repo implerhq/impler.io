@@ -1,17 +1,17 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Title, Text, Stack, Flex, TextInput as Input, FocusTrap } from '@mantine/core';
+import { Flex, Title, Stack, Text, TextInput as Input, FocusTrap } from '@mantine/core';
 
 import { Button } from '@ui/button';
-import { PasswordInput } from '@ui/password-input';
-
 import { PLACEHOLDERS, ROUTES } from '@config';
+import { PasswordInput } from '@ui/password-input';
 import { useSignup } from '@hooks/auth/useSignup';
 import DarkLogo from '@assets/images/logo-dark.png';
 import { OnboardLayout } from '@layouts/OnboardLayout';
+import { formatUrl } from '@shared/helpers';
 
-export default function SignupPage({}) {
-  const { register, isSignupLoading, signup, errors } = useSignup();
+export default function SignupPage() {
+  const { register, isSignupLoading, signup, errors, isInvitationLink, invitationId } = useSignup();
 
   return (
     <>
@@ -53,6 +53,7 @@ export default function SignupPage({}) {
               error={errors.email?.message}
               placeholder={PLACEHOLDERS.email}
               description="Verification code will be sent to your email!"
+              disabled={isInvitationLink}
             />
             <PasswordInput
               required
@@ -65,7 +66,7 @@ export default function SignupPage({}) {
               Create an account
             </Button>
             <Text size="md" align="center">
-              Already have an account? <Link href={ROUTES.SIGNIN}>Sign In</Link>
+              Already have an account? <Link href={formatUrl(ROUTES.SIGNIN, [], { invitationId })}>Sign In</Link>
             </Text>
           </Stack>
         </form>

@@ -7,6 +7,7 @@ import { UploadEntity } from './upload.entity';
 import { Upload } from './upload.schema';
 import { Environment } from '../environment';
 import { Types } from 'mongoose';
+import { UserEntity } from '../user';
 
 export class UploadRepository extends BaseRepository<UploadEntity> {
   private templateRepository: TemplateRepository;
@@ -302,6 +303,6 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
       },
     ]);
 
-    return environment[0].apiKeys[0]._userId.email;
+    return (environment[0].apiKeys[0]._userId as unknown as UserEntity).email;
   }
 }

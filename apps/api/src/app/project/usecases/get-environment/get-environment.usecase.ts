@@ -18,6 +18,7 @@ export class GetEnvironment {
     return {
       _id: environment._id,
       _projectId: environment._projectId,
+      key: environment.key,
       apiKeys: environment.apiKeys,
     };
   }

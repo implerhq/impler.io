@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router';
 import { useMutation } from '@tanstack/react-query';
-
-import { API_KEYS } from '@config';
+import { API_KEYS, CONSTANTS, ROUTES } from '@config';
 import { commonApi } from '@libs/api';
 import { track } from '@libs/amplitude';
 import { useAppState } from 'store/app.context';
 import { IErrorObject, IEnvironmentData } from '@impler/shared';
+import { getCookie } from '@shared/utils';
 
 export function useOnboardUserProjectForm() {
   const { push } = useRouter();
@@ -21,22 +21,32 @@ export function useOnboardUserProjectForm() {
     (apiData) => commonApi(API_KEYS.ONBOARD_USER as any, { body: { ...apiData, onboarding: true } }),
     {
       onSuccess: () => {
+        const redirectUrl = getCookie(CONSTANTS.INVITATION_URL_COOKIE);
+        if (redirectUrl) {
+          push(ROUTES.TEAM_MEMBERS);
+        } else {
+          push(ROUTES.HOME);
+        }
+
         if (profileInfo) {
           setProfileInfo({
             ...profileInfo,
             _projectId: profileInfo._projectId,
           });
         }
+
         track({
           name: 'PROJECT CREATE',
           properties: {
             duringOnboard: true,
           },
         });
-        push('/');
       },
     }
   );
 
-  return { onboardUser, isUserOnboardLoading };
+  return {
+    onboardUser,
+    isUserOnboardLoading,
+  };
 }

@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { Group, LoadingOverlay, Stack, Title } from '@mantine/core';
 
-import { ROUTES } from '@config';
+import dayjs from 'dayjs';
+import { ROUTES, DATE_FORMATS } from '@config';
 import { Table } from '@ui/table';
 import { Button } from '@ui/button';
 import { Checkbox } from '@ui/checkbox';
@@ -30,6 +31,9 @@ export default function Transactions() {
             {
               title: 'Transaction Date',
               key: 'transactionDate',
+              Cell(item) {
+                return dayjs(item.transactionDate).format(DATE_FORMATS.LONG);
+              },
             },
             {
               title: 'Plan Name',
@@ -45,10 +49,16 @@ export default function Transactions() {
             {
               title: 'Membership Date',
               key: 'membershipDate',
+              Cell(item) {
+                return dayjs(item.membershipDate).format(DATE_FORMATS.LONG);
+              },
             },
             {
               title: 'Expiry Date',
               key: 'expiryDate',
+              Cell(item) {
+                return dayjs(item.expiryDate).format(DATE_FORMATS.LONG);
+              },
             },
             {
               title: 'Is Active',
