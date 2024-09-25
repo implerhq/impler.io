@@ -176,7 +176,7 @@ export class ProjectController {
       domain: process.env.COOKIE_DOMAIN,
     });
 
-    return token;
+    return {};
   }
 
   @Put(':projectId')

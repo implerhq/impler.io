@@ -18,6 +18,8 @@ export class CreateEnvironment {
       _projectId: command.projectId,
       key,
       apiKeys: [
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore // _id will be added automatically
         {
           _userId: command._userId,
           role: command.role,
