@@ -24,5 +24,5 @@ export class DuplicateTemplateCommand extends BaseCommand {
 
   @IsBoolean()
   @IsOptional()
-  duplicateValidator?: boolean;
+  duplicateValidations?: boolean;
 }

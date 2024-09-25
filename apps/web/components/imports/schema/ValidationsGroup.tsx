@@ -1,7 +1,7 @@
 import { Group } from '@mantine/core';
 import { Badge } from '@ui/badge';
 import { getColorForText } from '@shared/utils';
-import { ValidatorTypesEnum } from '@impler/client';
+import { ValidationTypesEnum } from '@impler/client';
 import { ColumnTypesEnum, IColumn } from '@impler/shared';
 
 interface IValidationsGroupProps {
@@ -16,21 +16,21 @@ interface IMinMaxValidationBadgeProps {
 function MinMaxValidationBadge({ max, min }: IMinMaxValidationBadgeProps) {
   if (typeof min === 'number' && typeof max === 'number')
     return (
-      <Badge key={ValidatorTypesEnum.RANGE} color="green" variant="filled">
+      <Badge key={ValidationTypesEnum.RANGE} color="green" variant="filled">
         Range: {min}-{max}
       </Badge>
     );
 
   if (typeof min === 'number')
     return (
-      <Badge key={ValidatorTypesEnum.RANGE} color="green" variant="filled">
+      <Badge key={ValidationTypesEnum.RANGE} color="green" variant="filled">
         Min: {min}
       </Badge>
     );
 
   if (typeof max === 'number')
     return (
-      <Badge key={ValidatorTypesEnum.RANGE} color="green" variant="filled">
+      <Badge key={ValidationTypesEnum.RANGE} color="green" variant="filled">
         Max: {max}
       </Badge>
     );
@@ -52,17 +52,17 @@ export function ValidationsGroup({ item }: IValidationsGroupProps) {
           Multi Select
         </Badge>
       )}
-      {item.validators?.map((validator) => {
-        if (validator.validate === ValidatorTypesEnum.UNIQUE_WITH) {
+      {item.validations?.map((validation) => {
+        if (validation.validate === ValidationTypesEnum.UNIQUE_WITH) {
           return (
-            <Badge variant="filled" key={ValidatorTypesEnum.UNIQUE_WITH} color={getColorForText(validator.uniqueKey)}>
-              Unique with: {validator.uniqueKey}
+            <Badge variant="filled" key={ValidationTypesEnum.UNIQUE_WITH} color={getColorForText(validation.uniqueKey)}>
+              Unique with: {validation.uniqueKey}
             </Badge>
           );
-        } else if (validator.validate === ValidatorTypesEnum.RANGE) {
-          return <MinMaxValidationBadge min={validator.min} max={validator.max} key={ValidatorTypesEnum.RANGE} />;
-        } else if (validator.validate === ValidatorTypesEnum.LENGTH) {
-          return <MinMaxValidationBadge min={validator.min} max={validator.max} key={ValidatorTypesEnum.LENGTH} />;
+        } else if (validation.validate === ValidationTypesEnum.RANGE) {
+          return <MinMaxValidationBadge min={validation.min} max={validation.max} key={ValidationTypesEnum.RANGE} />;
+        } else if (validation.validate === ValidationTypesEnum.LENGTH) {
+          return <MinMaxValidationBadge min={validation.min} max={validation.max} key={ValidationTypesEnum.LENGTH} />;
         }
       }) || []}
     </Group>

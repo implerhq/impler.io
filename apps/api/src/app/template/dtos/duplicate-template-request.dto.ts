@@ -42,5 +42,5 @@ export class DuplicateTemplateRequestDto {
   })
   @IsBoolean()
   @IsOptional()
-  duplicateValidator?: boolean;
+  duplicateValidations?: boolean;
 }

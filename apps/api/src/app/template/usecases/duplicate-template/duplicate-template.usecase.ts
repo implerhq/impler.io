@@ -86,7 +86,7 @@ export class DuplicateTemplate {
       });
     }
 
-    if (command.duplicateValidator) {
+    if (command.duplicateValidations) {
       const validator = await this.validatorRepository.findOne({ _templateId }, '-_id onBatchInitialize');
       await this.validatorRepository.create({
         _templateId: newTemplate._id,
