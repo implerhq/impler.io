@@ -20,6 +20,8 @@ interface UseProjectInvitationFormProps {
   refetchInvitations: () => void;
 }
 
+const MAX_INVITATION_EMAILS = 4;
+
 export function useProjectInvitationForm({ refetchInvitations }: UseProjectInvitationFormProps) {
   const { profileInfo } = useAppState();
 
@@ -27,6 +29,8 @@ export function useProjectInvitationForm({ refetchInvitations }: UseProjectInvit
     control,
     handleSubmit,
     formState: { errors },
+    setError,
+    clearErrors,
   } = useForm<ProjectInvitationData>();
 
   const { mutate: projectInvitation, isLoading: isProjectInvitationLoading } = useMutation<
@@ -48,24 +52,40 @@ export function useProjectInvitationForm({ refetchInvitations }: UseProjectInvit
       },
       onError: (error: IErrorObject) => {
         notify(NOTIFICATION_KEYS.ERROR_INVITING_TEAM_MEMBER, {
-          title: 'Error while Deleting TeamMember',
-          message: error.message || 'An Error Occured While Deleting TeamMember',
-          color: 'ree',
+          title: 'Error while Inviting Team Member',
+          message: error.message || 'An Error Occurred While Inviting Team Member',
+          color: 'red',
         });
       },
     }
   );
 
   const onSubmit = (data: ProjectInvitationData) => {
-    const isValid = validateEmails(data.invitationEmailsTo);
-    if (isValid) {
-      projectInvitation({
-        invitationEmailsTo: data.invitationEmailsTo,
-        role: data.role,
-        projectName: profileInfo?.projectName,
-        projectId: profileInfo?._projectId,
-      });
+    const emailValidationResult = validateEmails(data.invitationEmailsTo);
+
+    if (!emailValidationResult) {
+      setError('invitationEmailsTo', { type: 'manual', message: emailValidationResult });
+
+      return;
     }
+
+    if (data.invitationEmailsTo.length > MAX_INVITATION_EMAILS) {
+      setError('invitationEmailsTo', {
+        type: 'manual',
+        message: `You can invite a maximum of ${MAX_INVITATION_EMAILS} email addresses.`,
+      });
+
+      return;
+    }
+
+    clearErrors('invitationEmailsTo');
+
+    projectInvitation({
+      invitationEmailsTo: data.invitationEmailsTo,
+      role: data.role,
+      projectName: profileInfo?.projectName,
+      projectId: profileInfo?._projectId,
+    });
   };
 
   return {
@@ -74,5 +94,6 @@ export function useProjectInvitationForm({ refetchInvitations }: UseProjectInvit
     errors,
     onSubmit,
     isProjectInvitationLoading,
+    MAX_INVITATION_EMAILS,
   };
 }

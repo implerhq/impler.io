@@ -4,7 +4,6 @@ import { Button } from '@ui/button';
 import { colors } from '@config';
 
 interface IDeleteTeamMemberModalProps {
-  projectId: string;
   userId: string;
   userName: string;
   onDeleteConfirm: () => void;

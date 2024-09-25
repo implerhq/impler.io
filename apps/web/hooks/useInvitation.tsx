@@ -76,7 +76,7 @@ export function useInvitation() {
     [API_KEYS.DECLINE_TEAM_INVITATION],
     () =>
       commonApi(API_KEYS.DECLINE_TEAM_INVITATION as any, {
-        query: { invitationId },
+        parameters: [invitationId],
       }),
     {
       onSuccess: (data) => {

@@ -26,7 +26,7 @@ export function SentInvitationActions(invitation: IInvitation) {
           Copy Invitation Link
         </Menu.Item>
         <Menu.Item color="red" icon={<CancelIcon />} onClick={() => handleCancelInvitation(invitation.invitationId)}>
-          Cancel Invitation
+          Revoke Invitation
         </Menu.Item>
       </Menu.Dropdown>
     </Menu>

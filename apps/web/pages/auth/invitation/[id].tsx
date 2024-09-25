@@ -8,8 +8,17 @@ import { OnboardLayout } from '@layouts/OnboardLayout';
 import { useInvitation, ModesEnum } from '@hooks/useInvitation';
 
 export default function InvitationPage() {
-  const { mode, invitationData, logout, isLoggedInUser, acceptInvitation, isAcceptInvitationLoading, invitationId } =
-    useInvitation();
+  const {
+    mode,
+    invitationData,
+    logout,
+    isLoggedInUser,
+    acceptInvitation,
+    isAcceptInvitationLoading,
+    declineInvitation,
+    isDeclineInvitationLoading,
+    invitationId,
+  } = useInvitation();
 
   const handlePrimaryAction = () => {
     if (mode === ModesEnum.ACCEPT) acceptInvitation();
@@ -57,7 +66,14 @@ export default function InvitationPage() {
           </Button>
           <Text size="md" align="center">
             {mode === ModesEnum.ACCEPT ? (
-              <Link href={formatUrl(ROUTES.SIGNIN, [], { invitationId })}>Decline Invitation</Link>
+              <Button
+                fullWidth
+                variant="outline"
+                loading={isDeclineInvitationLoading}
+                onClick={() => declineInvitation()}
+              >
+                Decline Invitation
+              </Button>
             ) : (
               <>
                 Go to <Link href={ROUTES.HOME}>Homepage</Link>

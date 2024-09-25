@@ -1,19 +1,20 @@
-import { LoadingOverlay, Stack, Text } from '@mantine/core';
-import { Table } from '@ui/table';
-import { AppLayout } from '@layouts/AppLayout';
 import dayjs from 'dayjs';
-import { useSentProjectInvitations } from '@hooks/useSentProjectInvitations';
-import { SentInvitationActions } from './SentInvitationActions';
+import { LoadingOverlay, Stack, Text } from '@mantine/core';
+
+import { Table } from '@ui/table';
 import { DATE_FORMATS } from '@config';
+import { AppLayout } from '@layouts/AppLayout';
+import { SentInvitationActions } from './SentInvitationActions';
+import { useSentProjectInvitations } from '@hooks/useSentProjectInvitations';
+
 export function SentInvitations() {
-  const { invitations, isInvitationsLoading, isInvitationsFetched, isError } = useSentProjectInvitations();
+  const { invitations, isInvitationsLoading } = useSentProjectInvitations();
 
   return (
     <Stack spacing="xs">
       <Stack spacing="sm" style={{ position: 'relative' }}>
         <LoadingOverlay visible={isInvitationsLoading} />
-        {isError && <Text color="red">Error fetching invitations</Text>}
-        {!isInvitationsLoading && isInvitationsFetched && invitations && (
+        {!isInvitationsLoading && invitations && (
           <Table<SentProjectInvitation>
             headings={[
               {
@@ -36,17 +37,13 @@ export function SentInvitations() {
               {
                 title: 'Actions',
                 key: 'action',
-                Cell: (item) => (
-                  <>
-                    <SentInvitationActions invitationId={item._id} />
-                  </>
-                ),
+                Cell: (item) => <SentInvitationActions invitationId={item._id} />,
               },
             ]}
             data={invitations || []}
           />
         )}
-        {!isInvitationsLoading && !isError && !isInvitationsFetched && <Text>No data available</Text>}
+        {!isInvitationsLoading && invitations?.length === 0 && <Text>No data available</Text>}
       </Stack>
     </Stack>
   );

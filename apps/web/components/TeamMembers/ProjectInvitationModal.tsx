@@ -22,32 +22,35 @@ export function ProjectInvitationModal() {
         name="invitationEmailsTo"
         control={control}
         render={({ field }) => (
-          <MultiSelect
-            label="Enter or paste one or more email addresses"
-            data={emailOptions}
-            placeholder="Select or add email addresses"
-            nothingFound="Nothing found"
-            searchable
-            creatable
-            getCreateLabel={(query) => `+ ${query}`}
-            onCreate={(query) => {
-              const item: any = { value: query, label: query };
-              setEmailOptions((current) => [...current, item]);
+          <>
+            <MultiSelect
+              label="Enter or paste one or more email addresses"
+              data={emailOptions}
+              placeholder="Select or add email addresses"
+              nothingFound="Nothing found"
+              searchable
+              creatable
+              getCreateLabel={(query) => `+ ${query}`}
+              onCreate={(query) => {
+                const item: any = { value: query, label: query };
+                setEmailOptions((current) => [...current, item]);
 
-              return item;
-            }}
-            error={errors.invitationEmailsTo ? errors.invitationEmailsTo.message : undefined}
-            value={field.value || []}
-            onChange={field.onChange}
-            withinPortal
-          />
+                return item;
+              }}
+              error={errors.invitationEmailsTo ? errors.invitationEmailsTo.message : undefined}
+              value={field.value || []}
+              onChange={field.onChange}
+              withinPortal
+            />
+          </>
         )}
         rules={{
           required: 'Email addresses are required',
           validate: (value) => {
-            const emailValues = value.map((item) => item);
-
-            return validateEmails(emailValues);
+            const emailValidationResult = validateEmails(value);
+            if (emailValidationResult !== true) {
+              return emailValidationResult;
+            }
           },
         }}
       />

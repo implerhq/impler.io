@@ -1,7 +1,7 @@
 import { Title } from '@mantine/core';
 
 import { AppLayout } from '@layouts/AppLayout';
-import { TeamMembersTab } from '@components/TeamMembers';
+import { Team } from '@components/TeamMembers';
 import { useInvitation } from '@hooks/useInvitation';
 
 export default function TeamMembers() {
@@ -10,7 +10,7 @@ export default function TeamMembers() {
   return (
     <>
       <Title order={2}>Team Members</Title>
-      <TeamMembersTab />
+      <Team />
     </>
   );
 }

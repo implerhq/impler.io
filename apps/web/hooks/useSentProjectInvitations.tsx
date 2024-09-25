@@ -15,19 +15,12 @@ export function useSentProjectInvitations() {
     data: invitations,
     refetch: refetchInvitations,
     isLoading: isInvitationsLoading,
-    isFetched: isInvitationsFetched,
-    isError,
-  } = useQuery<SentProjectInvitation[], IErrorObject>(
-    [API_KEYS.SENT_TEAM_INVITATIONS],
-    () => commonApi<SentProjectInvitation[]>(API_KEYS.SENT_TEAM_INVITATIONS as any, {}),
-    {
-      onSuccess() {},
-      onError() {},
-    }
+  } = useQuery<SentProjectInvitation[], IErrorObject>([API_KEYS.SENT_TEAM_INVITATIONS], () =>
+    commonApi<SentProjectInvitation[]>(API_KEYS.SENT_TEAM_INVITATIONS as any, {})
   );
   const { mutate: cancelInvitation, isLoading: isCancelInvitationLoading } = useMutation<any, IErrorObject, string>(
     (invitationId) =>
-      commonApi(API_KEYS.CANCEL_INVITATION as any, {
+      commonApi(API_KEYS.REVOKE_INVITATION as any, {
         parameters: [invitationId],
       }),
     {
@@ -54,7 +47,6 @@ export function useSentProjectInvitations() {
     if (sentInvitations?._id === invitationId) {
       clipboard.copy(sentInvitations.invitationLink);
     }
-
     notify(NOTIFICATION_KEYS.INVITATION_LINK_COPIED, {
       title: 'Invitation Link Copied!',
       message: 'Invitation Link Copied',
@@ -85,8 +77,6 @@ export function useSentProjectInvitations() {
     invitations,
     refetchInvitations,
     isInvitationsLoading,
-    isInvitationsFetched,
-    isError,
     invitationsCount: invitations?.length || 0,
     handleCopyInvitationLink,
     handleCancelInvitation,
