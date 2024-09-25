@@ -8,17 +8,16 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
     super(Environment, EnvironmentEntity);
   }
 
-  async addApiKey(environmentId: string, key: string, userId: string) {
+  async addApiKey(environmentId: string, userId: string, role: string) {
     return await this.update(
       {
         _id: environmentId,
       },
       {
-        key,
         $push: {
           apiKeys: {
             _userId: userId,
-            // role: 'admin',
+            role,
           },
         },
       }
