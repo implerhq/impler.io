@@ -9,10 +9,11 @@ export class DeleteTeamMember {
     private userRepository: UserRepository
   ) {}
 
-  async exec({ projectId, userId }: { projectId: string; userId: string }) {
-    const teamMember = await this.userRepository.findById(userId, 'firstName lastName email profilePicture');
-    if (!teamMember) throw new DocumentNotFoundException('TeamMember', userId);
-    await this.environmentRepository.deleteTeamMember(projectId, userId);
+  async exec(memberId: string) {
+    const teamMember = await this.environmentRepository.getTeamMemberDetails(memberId);
+    if (!teamMember) throw new DocumentNotFoundException('TeamMember', memberId);
+
+    await this.environmentRepository.deleteTeamMember(memberId);
 
     return teamMember;
   }

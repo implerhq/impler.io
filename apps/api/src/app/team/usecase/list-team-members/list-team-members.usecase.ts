@@ -6,6 +6,8 @@ export class ListTeamMembers {
   constructor(private environmentRepository: EnvironmentRepository) {}
 
   async exec(projectId: string) {
-    return await this.environmentRepository.listTeamMembersByProjectId(projectId);
+    const environment = await this.environmentRepository.getProjectTeamMembers(projectId);
+
+    return environment;
   }
 }

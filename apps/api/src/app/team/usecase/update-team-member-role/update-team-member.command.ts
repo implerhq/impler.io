@@ -1,6 +1,4 @@
 import { UserRolesEnum } from '@impler/shared';
-export class UpdateTeamMemberCommand {
-  userId: string;
+export class UpdateTeammemberCommand {
   role: UserRolesEnum;
-  projectId: string;
 }
