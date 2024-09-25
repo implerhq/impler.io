@@ -9,14 +9,14 @@ import { ProjectInvitationModal } from './ProjectInvitationModal';
 import { Button } from '@ui/button';
 import { useAppState } from 'store/app.context';
 import { OutlinedTabs } from '@ui/OutlinedTabs';
-import { useListTeamMembers } from '@hooks/useListTeamMembers';
+import { useTeamMembers } from '@hooks/useTeamMembers';
 import { colors, MODAL_KEYS, TAB_KEYS, TAB_TITLES } from '@config';
 import { useSentProjectInvitations } from '@hooks/useSentProjectInvitations';
 
-export function TeamMembersTab() {
+export function Team() {
   const { profileInfo } = useAppState();
   const { invitationsCount } = useSentProjectInvitations();
-  const { teamMembersCount } = useListTeamMembers();
+  const { teamMembersCount } = useTeamMembers();
   const [activeTab, setActiveTab] = useState(TAB_KEYS.MEMBERS);
 
   const openInviteModal = () => {
