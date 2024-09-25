@@ -83,7 +83,7 @@ export class MakeUploadEntry {
         _templateId: templateId,
       },
       // eslint-disable-next-line max-len
-      'name key isRequired isUnique isFrozen selectValues dateFormats defaultValue type regex sequence allowMultiSelect alternateKeys delimiter description',
+      'name key isRequired isUnique isFrozen selectValues dateFormats defaultValue type regex sequence allowMultiSelect alternateKeys delimiter description validations',
       {
         sort: 'sequence',
       }
@@ -114,6 +114,7 @@ export class MakeUploadEntry {
           allowMultiSelect: schemaItem.allowMultiSelect,
           description: schemaItem.description,
           alternateKeys: Array.isArray(schemaItem.alternateKeys) ? schemaItem.alternateKeys : [],
+          validations: Array.isArray(schemaItem.validations) ? schemaItem.validations : [],
 
           sequence: Object.keys(formattedColumns).length,
           columnHeading: '', // used later during mapping

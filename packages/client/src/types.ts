@@ -1,5 +1,6 @@
 import { WIDGET_TEXTS } from './config';
 
+// used for export
 export const ColumnTypes = {
   STRING: 'String',
   NUMBER: 'Number',
@@ -10,6 +11,26 @@ export const ColumnTypes = {
   ANY: 'Any',
   DOUBLE: 'Double',
   IMAGE: 'Image',
+} as const;
+
+// used for export
+export const ValidationTypes = {
+  RANGE: 'range',
+  LENGTH: 'length',
+  UNIQUE_WITH: 'unique_with',
+} as const;
+
+// used for export
+export const EventTypes = {
+  INIT_IFRAME: 'INIT_IFRAME',
+  WIDGET_READY: 'WIDGET_READY',
+  CLOSE_WIDGET: 'CLOSE_WIDGET',
+  AUTHENTICATION_VALID: 'AUTHENTICATION_VALID',
+  AUTHENTICATION_ERROR: 'AUTHENTICATION_ERROR',
+  UPLOAD_STARTED: 'UPLOAD_STARTED',
+  UPLOAD_TERMINATED: 'UPLOAD_TERMINATED',
+  UPLOAD_COMPLETED: 'UPLOAD_COMPLETED',
+  DATA_IMPORTED: 'DATA_IMPORTED',
 } as const;
 
 export interface IUpload {
@@ -36,17 +57,36 @@ export interface IUpload {
   customChunkFormat: string;
 }
 
-export const EventTypes = {
-  INIT_IFRAME: 'INIT_IFRAME',
-  WIDGET_READY: 'WIDGET_READY',
-  CLOSE_WIDGET: 'CLOSE_WIDGET',
-  AUTHENTICATION_VALID: 'AUTHENTICATION_VALID',
-  AUTHENTICATION_ERROR: 'AUTHENTICATION_ERROR',
-  UPLOAD_STARTED: 'UPLOAD_STARTED',
-  UPLOAD_TERMINATED: 'UPLOAD_TERMINATED',
-  UPLOAD_COMPLETED: 'UPLOAD_COMPLETED',
-  DATA_IMPORTED: 'DATA_IMPORTED',
-} as const;
+export enum ValidationTypesEnum {
+  RANGE = 'range',
+  LENGTH = 'length',
+  UNIQUE_WITH = 'unique_with',
+}
+
+export type RangeValidationType = {
+  validate: 'range' | ValidationTypesEnum.RANGE;
+  min?: number;
+  max?: number;
+  errorMessage?: string;
+};
+
+export type LengthValidationType = {
+  validate: 'length' | ValidationTypesEnum.LENGTH;
+  min?: number;
+  max?: number;
+  errorMessage?: string;
+};
+
+export type UniqueWithValidationType = {
+  validate: 'unique_with' | ValidationTypesEnum.UNIQUE_WITH;
+  uniqueKey: string;
+  errorMessage?: string;
+};
+
+export type ValidationType =
+  | RangeValidationType
+  | LengthValidationType
+  | UniqueWithValidationType;
 
 export interface ISchemaItem {
   key: string;
@@ -69,6 +109,7 @@ export interface ISchemaItem {
   type?: keyof typeof ColumnTypes;
   regex?: string;
   allowMultiSelect?: boolean;
+  validations?: ValidationType[];
 }
 
 export type UploadTemplateData = {

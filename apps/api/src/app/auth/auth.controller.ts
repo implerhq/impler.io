@@ -157,13 +157,16 @@ export class AuthController {
     @UserSession() user: IJwtPayload,
     @Res({ passthrough: true }) res: Response
   ) {
-    const projectWithEnvironment = await this.onboardUser.execute({
-      _userId: user._id,
-      projectName: body.projectName,
-      role: body.role,
-      companySize: body.companySize,
-      source: body.source,
-    });
+    const projectWithEnvironment = await this.onboardUser.execute(
+      {
+        _userId: user._id,
+        projectName: body.projectName,
+        role: body.role,
+        companySize: body.companySize,
+        source: body.source,
+      },
+      user.email
+    );
 
     const userApiKey = projectWithEnvironment.environment.apiKeys.find(
       (apiKey) => apiKey._userId.toString() === user._id

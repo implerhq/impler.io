@@ -48,10 +48,12 @@ export function useColumnsEditor({ templateId }: UseSchemaProps) {
             defaultValue,
             description,
             allowMultiSelect,
+            validations,
           }) => ({
             key,
             name,
             type,
+            validations,
             description,
             alternateKeys,
             isRequired,

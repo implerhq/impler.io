@@ -1,4 +1,5 @@
 import { REGULAR_EXPRESSIONS } from '@config';
+import { MANTINE_COLORS } from '@mantine/core';
 
 /* eslint-disable no-magic-numbers */
 export function addOpacityToHex(color: string, alpha: number) {
@@ -14,6 +15,22 @@ export function addOpacityToHex(color: string, alpha: number) {
 export function capitalizeFirstLetter(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+export const getColorForText = (text: string) => {
+  const colors = MANTINE_COLORS;
+
+  // Generate a hash from the input text
+  let hash = 0;
+  for (let i = 0; i < text.length; i++) {
+    hash = (hash << 5) - hash + text.charCodeAt(i);
+    hash = hash & hash; // Convert to 32-bit integer
+  }
+
+  // Use the absolute value of the hash to select a color
+  const colorIndex = Math.abs(hash) % colors.length;
+
+  return colors[colorIndex];
+};
 
 export function validateEmails(emails: any): string | true {
   if (!Array.isArray(emails)) {

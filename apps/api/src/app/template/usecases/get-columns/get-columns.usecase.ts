@@ -9,10 +9,11 @@ export class GetTemplateColumns {
     return this.columnRepository.find(
       { _templateId },
       // eslint-disable-next-line max-len
-      '_id name key description type alternateKeys isRequired isUnique isFrozen selectValues regex dateFormats defaultValue sequence allowMultiSelect delimiter',
+      '_id name key description type alternateKeys isRequired isUnique isFrozen selectValues regex dateFormats defaultValue sequence allowMultiSelect delimiter validations',
       {
         sort: {
           isFrozen: -1,
+          sequence: 1,
         },
       }
     );

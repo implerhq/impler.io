@@ -33,8 +33,9 @@ export const APIMessages = {
   COLUMN_KEY_DUPLICATED: 'Column with the same key already exists. Please provide a unique key.',
   ERROR_DURING_VALIDATION:
     'Something went wrong while validating data. Data is not imported yet, but team is informed about issue. Please try again after sometime.',
-  ERROR_ACCESSING_FEATURE: {
-    IMAGE_UPLOAD: 'You do not have access to Image Upload Functionality.',
+  FEATURE_UNAVAILABLE: {
+    IMAGE_IMPORT: 'Image Import unavailable on current plan',
+    ADVANCED_VALIDATIONS: 'Advanced validations are unavailable on your current plan',
   },
   INVALID_VERIFICATION_CODE: 'Code you entered is invalid! Please try again or request new verification code!',
 };

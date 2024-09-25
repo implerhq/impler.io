@@ -2,6 +2,7 @@ import { MongoAbility } from '@casl/ability';
 import { UserRolesEnum } from '@impler/shared';
 
 export const CONSTANTS = {
+  EXPLORE_PLANS_QUERY_LEY: 'explore_plans',
   PLAN_CODE_QUERY_KEY: 'plan_code',
   GITHUB_LOGIN_URL: '/v1/auth/github',
   AUTH_COOKIE_NAME: 'authentication',
@@ -200,6 +201,7 @@ export const ROUTES = {
   TEAM_MEMBERS: '/team-members',
   ACTIVITIES: '/activities',
   ADD_CARD: '/settings?tab=addcard&action=addcardmodal',
+  EXPLORE_PLANS: '/?explore_plans=true',
   INVITATION: '/auth/invitation/:id',
 };
 
@@ -332,14 +334,17 @@ export const ROLE_BASED_ACCESS = {
 export const DOCUMENTATION_REFERENCE_LINKS = {
   columnDescription: 'https://docs.impler.io/features/column-description',
   defaultValue: 'https://docs.impler.io/platform/default-value',
-  primaryValidation: 'https://docs.impler.io/platform/validators',
+  primaryValidation: 'https://docs.impler.io/validations/base',
   multiSelectDropDown: 'https://docs.impler.io/features/multiselect-dropdown',
   freezeColumns: 'https://docs.impler.io/features/freeze-columns',
   frontendEndCallback: 'https://docs.impler.io/data-retrieval/using-frontend-callback',
   webhook: 'https://docs.impler.io/data-retrieval/using-webhook',
-  bubbleIo: 'https://docs.impler.io/widget/bubble.io-embed',
+  bubbleIo: 'https://docs.impler.io/importer/bubble.io-embed.md',
   subscriptionInformation: 'https://docs.impler.io/platform/how-subscription-works',
   customValidation: 'https://docs.impler.io/features/custom-validation',
+  rangeValidator: 'https://docs.impler.io/validations/advanced#range',
+  lengthValidator: 'https://docs.impler.io/validations/advanced#length',
+  uniqueWithValidator: 'https://docs.impler.io/validations/advanced#unique-across-multiple-fields',
 };
 
 export const COMPANY_SIZES = [

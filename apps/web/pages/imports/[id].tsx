@@ -38,15 +38,15 @@ export default function ImportDetails({}) {
   const [activeTab, setActiveTab] = useState<'schema' | 'destination' | 'snippet' | 'validator' | 'output'>();
   const { colorScheme } = useMantineTheme();
   const {
+    meta,
     columns,
     profileInfo,
+    updateImport,
     templateData,
     onUpdateClick,
     onDeleteClick,
     isTemplateDataLoading,
     onSpreadsheetImported,
-    updateImport,
-    meta,
   } = useImportDetails({
     templateId: router.query.id as string,
   });
@@ -62,7 +62,9 @@ export default function ImportDetails({}) {
       name: 'IMPORT CLICK',
       properties: {},
     });
-    showWidget({ colorScheme });
+    showWidget({
+      colorScheme,
+    });
   };
 
   return (
@@ -75,7 +77,7 @@ export default function ImportDetails({}) {
           </Button>
           <Group spacing={0}>
             <Title order={2}>{templateData?.name}</Title>
-            <ActionIcon onClick={onUpdateClick} p={0}>
+            <ActionIcon radius={0} onClick={onUpdateClick} p={0}>
               <EditIcon color={colors.blue} size="sm" />
             </ActionIcon>
           </Group>

@@ -4,7 +4,7 @@ import { BadRequestException, Body, Controller, Get, Param, Post, Put, Query, Us
 import { APIMessages } from '@shared/constants';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { validateUploadStatus } from '@shared/helpers/upload.helpers';
-import { Defaults, ACCESS_KEY_NAME, UploadStatusEnum, ReviewDataTypesEnum } from '@impler/shared';
+import { Defaults, ACCESS_KEY_NAME, UploadStatusEnum, ReviewDataTypesEnum, IJwtPayload } from '@impler/shared';
 
 import {
   Replace,
@@ -17,8 +17,9 @@ import {
   GetUploadData,
 } from './usecases';
 
-import { DeleteRecordsDto, UpdateCellDto, ReplaceDto } from './dtos';
+import { UserSession } from '@shared/framework/user.decorator';
 import { validateNotFound } from '@shared/helpers/common.helper';
+import { DeleteRecordsDto, UpdateCellDto, ReplaceDto } from './dtos';
 import { PaginationResponseDto } from '@shared/dtos/pagination-response.dto';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 
@@ -110,7 +111,7 @@ export class ReviewController {
   @ApiOperation({
     summary: 'Confirm review data for uploaded file',
   })
-  async doConfirmReview(@Param('uploadId', ValidateMongoId) _uploadId: string) {
+  async doConfirmReview(@UserSession() user: IJwtPayload, @Param('uploadId', ValidateMongoId) _uploadId: string) {
     const uploadInformation = await this.getUpload.execute({
       uploadId: _uploadId,
       select: 'status _validDataFileId _invalidDataFileId totalRecords invalidRecords _templateId',
@@ -122,7 +123,7 @@ export class ReviewController {
     // upload files with status reviewing can only be confirmed
     validateUploadStatus(uploadInformation.status as UploadStatusEnum, [UploadStatusEnum.REVIEWING]);
 
-    return this.startProcess.execute(_uploadId);
+    return this.startProcess.execute(_uploadId, user.email);
   }
 
   @Put(':uploadId/record')

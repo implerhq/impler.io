@@ -9,9 +9,10 @@ interface CheckboxProps {
   checked?: boolean;
   description?: string;
   size?: MantineNumberSize;
+  onChange?: (status: boolean) => void;
 }
 
-export function Checkbox({ label, defaultChecked, register, checked, description, size }: CheckboxProps) {
+export function Checkbox({ label, defaultChecked, register, checked, description, size, onChange }: CheckboxProps) {
   const { classes } = useStyles();
 
   return (
@@ -22,6 +23,7 @@ export function Checkbox({ label, defaultChecked, register, checked, description
       label={label}
       size={size}
       description={description}
+      onChange={(e) => onChange?.(e.currentTarget.checked)}
       {...register}
     />
   );

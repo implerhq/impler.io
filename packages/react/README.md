@@ -66,4 +66,4 @@ const { showWidget, isImplerInitiated } = useImpler({
 ## 🔗 Links
 
 - [Home page](https://impler.io/)
-- [Documentation](https://docs.impler.io/widget/react-embed)
+- [Documentation](https://docs.impler.io/importer/react-embed)

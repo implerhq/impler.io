@@ -37,7 +37,6 @@ export function Phase3(props: IPhase3Props) {
     totalPages,
     reviewData,
     allChecked,
-    replaceData,
     totalRecords,
     onTypeChange,
     reReviewData,
@@ -50,9 +49,9 @@ export function Phase3(props: IPhase3Props) {
     invalidRecords,
     onConfirmReview,
     selectedRowsRef,
+    refetchReviewData,
     isDoReviewLoading,
     isReviewDataLoading,
-    isReplaceDataLoading,
     selectedRowsCountRef,
     showFindReplaceModal,
     showAllDataValidModal,
@@ -241,11 +240,10 @@ export function Phase3(props: IPhase3Props) {
       <FindReplaceModal
         texts={texts}
         columns={columns}
-        onReplace={replaceData}
         opened={!!showFindReplaceModal}
         cancelLabel={texts.COMMON.CANCEL}
         replaceLabel={texts.PHASE3.REPLACE}
-        isReplaceLoading={isReplaceDataLoading}
+        refetchReviewData={refetchReviewData}
         onClose={() => setShowFindReplaceModal(false)}
       />
     </>

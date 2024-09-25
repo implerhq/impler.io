@@ -56,7 +56,18 @@ export function Widget() {
     setPromptContinueAction(undefined);
   };
   const onClose = () => {
-    if ([PhasesEnum.VALIDATE, PhasesEnum.IMAGE_UPLOAD, PhasesEnum.UPLOAD, PhasesEnum.COMPLETE].includes(phase)) {
+    let isImportNotOnProgress = false;
+    if (importConfig.mode === TemplateModeEnum.AUTOMATIC)
+      isImportNotOnProgress = [PhasesEnum.CONFIGURE, PhasesEnum.CONFIRM].includes(phase);
+    else
+      isImportNotOnProgress = [
+        PhasesEnum.VALIDATE,
+        PhasesEnum.IMAGE_UPLOAD,
+        PhasesEnum.UPLOAD,
+        PhasesEnum.COMPLETE,
+      ].includes(phase);
+
+    if (isImportNotOnProgress) {
       setPhase(PhasesEnum.VALIDATE);
       resetAppState();
       closeWidget();
@@ -71,6 +82,7 @@ export function Widget() {
   };
   const resetProgress = () => {
     resetAppState();
+    resetAmplitude();
     setPhase(PhasesEnum.VALIDATE);
   };
   const onComplete = (uploadData: IUpload, importedData?: Record<string, any>[]) => {

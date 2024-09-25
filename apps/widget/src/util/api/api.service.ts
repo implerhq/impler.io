@@ -120,6 +120,7 @@ export class ApiService {
 
   async confirmReview(uploadId: string) {
     return this.httpClient.post(`/review/${uploadId}/confirm`) as Promise<{
+      email: string;
       uploadInfo: IUpload;
       importedData: Record<string, any>[];
     }>;
@@ -172,7 +173,7 @@ export class ApiService {
   }
 
   async replace(uploadId: string, data: IReplaceData) {
-    return this.httpClient.put(`/review/${uploadId}/replace`, data);
+    return this.httpClient.put(`/review/${uploadId}/replace`, data) as Promise<IReplaceResponse>;
   }
 
   async getRssXmlMappingHeading(data: {

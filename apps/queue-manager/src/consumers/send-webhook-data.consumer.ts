@@ -127,7 +127,7 @@ export class SendWebhookDataConsumer extends BaseConsumer {
       Math.max((page - DEFAULT_PAGE) * chunkSize, MIN_LIMIT),
       Math.min(page * chunkSize, data.length)
     );
-    if ((Array.isArray(multiSelectHeadings) && multiSelectHeadings.length > 0) || imageHeadings?.length > 0) {
+    if ((multiSelectHeadings && Object.keys(multiSelectHeadings).length > 0) || imageHeadings?.length > 0) {
       slicedData = slicedData.map((obj) => {
         Object.keys(multiSelectHeadings).forEach((heading) => {
           obj.record[heading] = obj.record[heading] ? obj.record[heading].split(multiSelectHeadings[heading]) : [];

@@ -1,10 +1,18 @@
-import { useEffect, useRef, useState } from 'react';
 import { Controller } from 'react-hook-form';
-import { ActionIcon, Flex, Tooltip, TextInput as Input, Group, Badge, SelectItem } from '@mantine/core';
+import {
+  Flex,
+  Text,
+  Group,
+  Tooltip,
+  ActionIcon,
+  LoadingOverlay,
+  useMantineTheme,
+  TextInput as Input,
+} from '@mantine/core';
 
+import { IColumn } from '@impler/shared';
 import { useSchema } from '@hooks/useSchema';
-import { colors } from '@config';
-import { ColumnTypesEnum, IColumn } from '@impler/shared';
+import { colors as appColors } from '@config';
 
 import { Button } from '@ui/button';
 import { DraggableTable } from '@ui/table';
@@ -17,26 +25,28 @@ import { GripIcon } from '@assets/icons/Grip.icon';
 import { CloseIcon } from '@assets/icons/Close.icon';
 import { CheckIcon } from '@assets/icons/Check.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
+import { useSubscriptionInfo } from '@hooks/useSubscriptionInfo';
 
+import { ValidationsGroup } from './ValidationsGroup';
 interface ColumnsTableProps {
   templateId: string;
 }
 
 export function ColumnsTable({ templateId }: ColumnsTableProps) {
-  const ValidationRef = useRef(false);
-  const { getColumnTypes } = useSchema({ templateId });
-  const [columnTypes, setColumnType] = useState<SelectItem[]>(getColumnTypes());
-
+  const { columnTypes } = useSubscriptionInfo();
+  const { colors: themeColors } = useMantineTheme();
   const {
     columns,
     control,
     register,
     getValues,
     showAddRow,
-    handleSubmit,
     onMoveColumns,
+    validationRef,
     setShowAddRow,
+    onCancelAddColumn,
     onEditColumnClick,
+    onAddColumnSubmit,
     onValidationsClick,
     onDeleteColumnClick,
     isColumnCreateLoading,
@@ -45,25 +55,15 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
   });
 
   const onValidationsButtonClick = () => {
+    validationRef.current = true;
     const values = getValues();
     onValidationsClick({ ...values, key: values.key || values.name });
   };
 
-  useEffect(() => {
-    setColumnType(getColumnTypes());
-  }, []);
-
   return (
-    <form
-      onSubmit={(e) => {
-        handleSubmit();
-        e.preventDefault();
-        ValidationRef.current = false;
-      }}
-      id="columns"
-    >
+    <form id="columns" onSubmit={onAddColumnSubmit}>
       <DraggableTable<IColumn>
-        emptyDataText='No columns found click on "+" to add new column'
+        emptyDataText='No columns found click on "+" to add a new column'
         headings={[
           {
             title: 'Name',
@@ -79,27 +79,13 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
             title: 'Frozen?',
             key: 'isFrozen',
             width: '10%',
-            Cell: (item) => item.isFrozen && <CheckIcon color={colors.success} />,
+            Cell: (item) => item.isFrozen && <CheckIcon color={appColors.success} />,
           },
           {
             title: 'Validations',
             key: 'validations',
             width: '30%',
-            Cell: (item) => (
-              <Group spacing="xs">
-                {item.isRequired && <Badge variant="outline">Required</Badge>}
-                {item.type !== ColumnTypesEnum.SELECT && item.isUnique && (
-                  <Badge color="cyan" variant="outline">
-                    Unique
-                  </Badge>
-                )}
-                {item.type === ColumnTypesEnum.SELECT && item.allowMultiSelect && (
-                  <Badge color="green" variant="outline">
-                    Multi Select
-                  </Badge>
-                )}
-              </Group>
-            ),
+            Cell: (item) => <ValidationsGroup item={item} />,
           },
           {
             title: 'Actions',
@@ -107,12 +93,12 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
             Cell: (item) => (
               <Flex gap="xs">
                 <IconButton label="Edit" onClick={() => onEditColumnClick(item._id)}>
-                  <EditIcon color={colors.blue} />
+                  <EditIcon color={appColors.blue} />
                 </IconButton>
                 <IconButton label="Delete" onClick={() => onDeleteColumnClick(item._id)}>
-                  <DeleteIcon color={colors.danger} />
+                  <DeleteIcon color={appColors.danger} />
                 </IconButton>
-                <GripIcon color={colors.yellow} style={{ cursor: 'grab' }} />
+                <GripIcon color={appColors.yellow} style={{ cursor: 'grab' }} />
               </Flex>
             ),
             width: '15%',
@@ -122,54 +108,66 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
           <tr>
             {showAddRow ? (
               <>
-                <td colSpan={4} style={{ borderRight: 'none' }}>
-                  <Flex gap="xs" align={'center'}>
-                    <Input autoFocus required placeholder="Column Name" {...register('name')} />
-                    <Controller
-                      control={control}
-                      name="type"
-                      render={({ field }) => (
-                        <NativeSelect data={columnTypes} placeholder="Select Type" variant="default" register={field} />
-                      )}
-                    />
-                    <Button
-                      size="xs"
-                      color="blue"
-                      onClick={() => {
-                        ValidationRef.current = true;
-                        onValidationsButtonClick();
-                      }}
-                    >
-                      Validations
-                    </Button>
-                  </Flex>
-                </td>
-                <td style={{ borderLeft: 'none' }}>
-                  <Flex justify={'end'}>
+                <td colSpan={5} style={{ borderRight: 'none', position: 'relative' }}>
+                  <LoadingOverlay visible={isColumnCreateLoading} />
+                  <Flex gap="xs" align={'center'} justify="space-between">
+                    <Group>
+                      <Input autoFocus required placeholder="Column Name" {...register('name')} />
+                      <Controller
+                        control={control}
+                        name="type"
+                        render={({ field }) => (
+                          <NativeSelect
+                            data={columnTypes}
+                            placeholder="Select Type"
+                            variant="default"
+                            register={field}
+                          />
+                        )}
+                      />
+                      <Button color="blue" onClick={onValidationsButtonClick}>
+                        Validations
+                      </Button>
+                    </Group>
+
                     <ActionIcon
-                      color="green"
-                      type="submit"
-                      autoFocus={ValidationRef.current}
-                      loading={isColumnCreateLoading}
+                      radius={0}
+                      id="add-column"
+                      bg={appColors.danger}
+                      variant="transparent"
+                      onClick={onCancelAddColumn}
                     >
-                      <CheckIcon color={colors.green} />
-                    </ActionIcon>
-                    <ActionIcon color="red" onClick={() => setShowAddRow(false)}>
-                      <CloseIcon color={colors.dangerDark} />
+                      <CloseIcon color={appColors.white} />
                     </ActionIcon>
                   </Flex>
+                  <Text size="xs" mt="xs" color={themeColors.gray[6]}>
+                    * Press{' '}
+                    <Text size="sm" span>
+                      ENTER
+                    </Text>{' '}
+                    to save,{' '}
+                    <Text size="sm" span>
+                      ESC
+                    </Text>{' '}
+                    to cancel or click on{' '}
+                    <Text size="sm" span>
+                      VALIDATIONS
+                    </Text>{' '}
+                    to configure column behavior
+                  </Text>
                 </td>
               </>
             ) : (
               <td colSpan={6}>
                 <Tooltip label="Add new column" withArrow position="top-start">
                   <ActionIcon
+                    radius={0}
                     id="add-column"
-                    bg={colors.yellow}
+                    bg={appColors.yellow}
                     variant="transparent"
                     onClick={() => setShowAddRow(true)}
                   >
-                    <AddIcon color={colors.white} />
+                    <AddIcon color={appColors.white} />
                   </ActionIcon>
                 </Tooltip>
               </td>

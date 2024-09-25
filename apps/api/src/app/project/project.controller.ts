@@ -119,7 +119,8 @@ export class ProjectController {
       CreateProjectCommand.create({
         ...body,
         _userId: user._id,
-      })
+      }),
+      user.email
     );
     const userApiKey = projectWithEnvironment.environment.apiKeys.find(
       (apiKey) => apiKey._userId.toString() === user._id

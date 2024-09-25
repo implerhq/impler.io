@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { logAmplitudeEvent } from '@amplitude';
 import { useMutation } from '@tanstack/react-query';
 
+import { logAmplitudeEvent } from '@amplitude';
 import { notifier, ParentWindow } from '@util';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
@@ -103,7 +103,7 @@ export function usePhase1({ goNext, texts }: IUsePhase1Props) {
     }
 
     const foundTemplate = findTemplate();
-    if (foundTemplate && ((Array.isArray(data) && data.length > variables.baseIndex) || schema)) {
+    if (foundTemplate && (data || schema)) {
       onDownload({ template: foundTemplate });
     } else if (foundTemplate && foundTemplate.sampleFileUrl) {
       getSignedUrl([

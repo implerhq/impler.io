@@ -70,6 +70,7 @@ interface ISubscriptionData {
     }>;
     REMOVE_BRANDING: boolean;
     AUTOMATIC_IMPORTS: boolean;
+    ADVANCED_VALIDATORS: boolean;
   };
 }
 
@@ -94,7 +95,7 @@ interface IDuplicateTemplateData {
   duplicateColumns?: boolean;
   duplicateDestination?: boolean;
   duplicateWebhook?: boolean;
-  duplicateValidator?: boolean;
+  duplicateValidations?: boolean;
 }
 interface IUpdateTemplateData {
   mode?: string;

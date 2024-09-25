@@ -95,4 +95,4 @@ export class AppComponent {
 ## 🔗 Links
 
 - [Home page](https://impler.io/)
-- [Documentation](https://docs.impler.io/widget/angular-embed)
+- [Documentation](https://docs.impler.io/importer/angular-embed)

@@ -64,11 +64,33 @@ export class Replace {
           },
         };
         replaceOperation = {
-          $toDouble: {
-            $replaceAll: {
-              input: { $toString: '$' + path },
-              find: find,
-              replacement: replace,
+          $let: {
+            vars: {
+              stringValue: { $toString: '$' + path },
+              replacedValue: {
+                $replaceAll: {
+                  input: { $toString: '$' + path },
+                  find: find,
+                  replacement: { $toString: formattedReplace },
+                },
+              },
+            },
+            in: {
+              $switch: {
+                branches: [
+                  // Case 1: No change
+                  { case: { $eq: ['$$stringValue', '$$replacedValue'] }, then: `$${path}` },
+                  // Case 2: Result is empty
+                  { case: { $eq: ['$$replacedValue', ''] }, then: null },
+                  // Case 3: Result is a valid number
+                  {
+                    case: { $regexMatch: { input: '$$replacedValue', regex: /^-?\d*\.?\d+$/ } },
+                    then: { $toDouble: '$$replacedValue' },
+                  },
+                ],
+                // Default: Keep as string if not a valid number
+                default: '$$replacedValue',
+              },
             },
           },
         };
@@ -99,13 +121,19 @@ export class Replace {
         },
       });
 
+      // Update the 'updated' flag only if _oldRecord exists and the value has changed
       updateStages.push({
         $set: {
           [`updated.${fieldName}`]: {
             $cond: {
-              if: { $ne: [`$record.${fieldName}`, `$_oldRecord.${fieldName}`] },
+              if: {
+                $and: [
+                  { $ifNull: ['$_oldRecord', false] },
+                  { $ne: [`$record.${fieldName}`, `$_oldRecord.${fieldName}`] },
+                ],
+              },
               then: true,
-              else: { $ifNull: [`$updated.${fieldName}`, false] },
+              else: { $ifNull: [`$updated.${fieldName}`, '$$REMOVE'] },
             },
           },
         },

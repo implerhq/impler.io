@@ -19,7 +19,7 @@ export function GenerateAccessToken() {
           value={accessToken}
           rightSection={
             <Tooltip label={clipboardApiKey.copied ? 'Copied!' : 'Copy Key'}>
-              <ActionIcon variant="transparent" onClick={() => clipboardApiKey.copy(accessToken)}>
+              <ActionIcon radius={0} variant="transparent" onClick={() => clipboardApiKey.copy(accessToken)}>
                 {clipboardApiKey.copied ? <CheckIcon /> : <CopyIcon />}
               </ActionIcon>
             </Tooltip>
