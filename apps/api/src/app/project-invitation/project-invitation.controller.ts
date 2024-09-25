@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Response } from 'express';
 import { ApiOperation } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res, UseGuards } from '@nestjs/common';
+
 import { IJwtPayload } from '@impler/shared';
-import { ProjectInvitationDto } from './dto/project-invtation.dto';
 import {
   Invite,
   SentProjectInvitations,
@@ -13,7 +14,9 @@ import {
   DeleteInvitation,
 } from './usecase';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
+import { CONSTANTS, COOKIE_CONFIG } from '@shared/constants';
 import { UserSession } from '@shared/framework/user.decorator';
+import { ProjectInvitationDto } from './dto/project-invtation.dto';
 import { UpdateTeamMemberRoleDto } from './dto/update-team-member-role.dto';
 
 @Controller('invitation')
@@ -74,16 +77,22 @@ export class ProjectInvitationController {
     return this.getProjectInvitation.exec(invitationId);
   }
 
-  @Post('/invitation-accept')
+  @Post('/accept')
   @ApiOperation({
     summary: 'Accept a sent Invitation',
   })
   async acceptInvitationRoute(
     @UserSession() user: IJwtPayload,
     @Query('invitationId') invitationId: string,
-    @Query('token') token: string
+    @Res({ passthrough: true }) response: Response
   ) {
-    return await this.acceptProjectInvitation.exec({ invitationId, token, userId: user._id });
+    const { accessToken, screen } = await this.acceptProjectInvitation.exec({ invitationId, user });
+    response.cookie(CONSTANTS.AUTH_COOKIE_NAME, accessToken, {
+      ...COOKIE_CONFIG,
+      domain: process.env.COOKIE_DOMAIN,
+    });
+
+    return { screen };
   }
 
   @Put('/team-members-role-update')
