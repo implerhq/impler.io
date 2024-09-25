@@ -167,7 +167,7 @@ interface SentProjectInvitation {
   invitationLink: string;
 }
 
-interface TeamMemberList {
+interface TeamMember {
   _id: string;
   _userId: IProfileData;
   joinedDate: string;

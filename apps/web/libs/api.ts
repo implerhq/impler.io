@@ -62,7 +62,7 @@ const routes: Record<string, Route> = {
   },
 
   [API_KEYS.SENT_TEAM_INVITATIONS]: {
-    url: () => `/v1/team/sent-invitations`,
+    url: () => `/v1/team/invitations`,
     method: 'GET',
   },
 
@@ -87,17 +87,17 @@ const routes: Record<string, Route> = {
   },
 
   [API_KEYS.UPDATE_TEAM_MEMBER_ROLE]: {
-    url: () => `/v1/team/members-role-update`,
+    url: (memberId: string) => `/v1/team/${memberId}`,
     method: 'PUT',
   },
 
   [API_KEYS.DELETE_TEAM_MEMBER]: {
-    url: () => `/v1/team/member-delete`,
+    url: (memberId: string) => `/v1/team/${memberId}`,
     method: 'DELETE',
   },
 
-  [API_KEYS.CANCEL_INVITATION]: {
-    url: (invitationId: string) => `/v1/team/${invitationId}`,
+  [API_KEYS.REVOKE_INVITATION]: {
+    url: (invitationId: string) => `/v1/team/${invitationId}/revoke`,
     method: 'DELETE',
   },
 
