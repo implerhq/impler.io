@@ -79,11 +79,11 @@ export class ValidRequest {
         }
 
         const hasImageColumns = parsedSchema.some((column) => column.type === ColumnTypesEnum.IMAGE);
-        const hasValidators = parsedSchema.some(
-          (column) => Array.isArray(column.validators) && column.validators.length > 0
+        const hasValidations = parsedSchema.some(
+          (column) => Array.isArray(column.validations) && column.validations.length > 0
         );
         let email: string;
-        if (hasImageColumns || hasValidators) {
+        if (hasImageColumns || hasValidations) {
           const project = await this.projectRepository.getUserOfProject(command.projectId);
           email = (project._userId as unknown as UserEntity).email;
         }
@@ -97,17 +97,17 @@ export class ValidRequest {
             throw new DocumentNotFoundException('Schema', command.schema, APIMessages.FEATURE_UNAVAILABLE.IMAGE_IMPORT);
           }
         }
-        if (hasValidators && email) {
-          const validatorsAvailable = await this.paymentAPIService.checkEvent({
+        if (hasValidations && email) {
+          const validationsAvailable = await this.paymentAPIService.checkEvent({
             email,
             billableMetricCode: AVAILABLE_BILLABLEMETRIC_CODE_ENUM.ADVANCED_VALIDATORS,
           });
 
-          if (!validatorsAvailable) {
+          if (!validationsAvailable) {
             throw new DocumentNotFoundException(
               'Schema',
               command.schema,
-              APIMessages.FEATURE_UNAVAILABLE.ADVANCED_VALIDATORS
+              APIMessages.FEATURE_UNAVAILABLE.ADVANCED_VALIDATIONS
             );
           }
         }

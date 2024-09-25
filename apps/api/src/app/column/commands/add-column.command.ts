@@ -1,8 +1,8 @@
-import { ValidatorTypesEnum } from '@impler/client';
+import { ValidationTypesEnum } from '@impler/client';
 import { ColumnDelimiterEnum, ColumnTypesEnum } from '@impler/shared';
 
-export class ValidatorCommand {
-  validate: ValidatorTypesEnum;
+export class ValidationCommand {
+  validate: ValidationTypesEnum;
   min?: number;
   max?: number;
   uniqueKey?: string;
@@ -44,5 +44,5 @@ export class AddColumnCommand {
 
   delimiter?: ColumnDelimiterEnum;
 
-  validators?: ValidatorCommand[];
+  validations?: ValidationCommand[];
 }

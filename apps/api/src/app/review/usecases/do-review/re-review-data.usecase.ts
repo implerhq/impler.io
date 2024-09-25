@@ -3,7 +3,7 @@ import { Writable } from 'stream';
 import { ValidateFunction } from 'ajv';
 import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 
-import { ValidatorTypesEnum } from '@impler/client';
+import { ValidationTypesEnum } from '@impler/client';
 import { UploadRepository, ValidatorRepository, DalService, TemplateEntity } from '@impler/dal';
 import {
   EMAIL_SUBJECT,
@@ -17,7 +17,7 @@ import { APIMessages } from '@shared/constants';
 import { EmailService } from '@impler/services';
 import { BATCH_LIMIT } from '@shared/services/sandbox';
 import { BaseReview } from './base-review.usecase';
-import { ValidatorErrorMessages } from '@shared/types/review.types';
+import { ValidationErrorMessages } from '@shared/types/review.types';
 
 interface ISaveResults {
   uploadId: string;
@@ -71,15 +71,15 @@ export class DoReReview extends BaseReview {
     const columns = JSON.parse(uploadInfo.customSchema) as ITemplateSchemaItem[];
     const uniqueFieldsSet = new Set(columns.filter((column) => column.isUnique).map((column) => column.key));
     const multiSelectColumnHeadings: Record<string, string> = {};
-    const validatorErrorMessages = {};
+    const validationErrorMessages = {};
     (columns as ITemplateSchemaItem[]).forEach((column) => {
       if (column.type === ColumnTypesEnum.SELECT && column.allowMultiSelect)
         multiSelectColumnHeadings[column.key] = column.delimiter || ColumnDelimiterEnum.COMMA;
-      if (Array.isArray(column.validators) && column.validators.length > 0) {
-        validatorErrorMessages[column.key] = {};
-        column.validators.forEach((validatorItem) => {
-          validatorErrorMessages[column.key][validatorItem.validate] = validatorItem.errorMessage;
-          if (validatorItem.validate === ValidatorTypesEnum.UNIQUE_WITH) {
+      if (Array.isArray(column.validations) && column.validations.length > 0) {
+        validationErrorMessages[column.key] = {};
+        column.validations.forEach((validatorItem) => {
+          validationErrorMessages[column.key][validatorItem.validate] = validatorItem.errorMessage;
+          if (validatorItem.validate === ValidationTypesEnum.UNIQUE_WITH) {
             if (uniqueColumnKeysCombinationMap.has(validatorItem.uniqueKey)) {
               uniqueColumnKeysCombinationMap.set(
                 validatorItem.uniqueKey,
@@ -157,7 +157,7 @@ export class DoReReview extends BaseReview {
         dateFormats,
         uniqueCombinations,
         uploadId: _uploadId,
-        validatorErrorMessages,
+        validationErrorMessages,
         extra: uploadInfo.extra,
         multiSelectColumnHeadings,
         onBatchInitialize: validations.onBatchInitialize,
@@ -171,7 +171,7 @@ export class DoReReview extends BaseReview {
         result,
         uniqueCombinations,
         multiSelectColumnHeadings,
-        validatorErrorMessages,
+        validationErrorMessages,
       });
     }
 
@@ -205,7 +205,7 @@ export class DoReReview extends BaseReview {
     validator,
     dateFormats,
     uniqueCombinations,
-    validatorErrorMessages,
+    validationErrorMessages,
     multiSelectColumnHeadings,
   }: {
     uploadId: string;
@@ -213,7 +213,7 @@ export class DoReReview extends BaseReview {
     validator: ValidateFunction;
     dateFormats: Record<string, string[]>;
     uniqueCombinations: Record<string, string[]>;
-    validatorErrorMessages: ValidatorErrorMessages;
+    validationErrorMessages: ValidationErrorMessages;
     multiSelectColumnHeadings: Record<string, string>;
   }) {
     const bulkOp = [];
@@ -232,7 +232,7 @@ export class DoReReview extends BaseReview {
         dateFormats,
         uniqueCombinations,
         index: record.index,
-        validatorErrorMessages,
+        validationErrorMessages,
         passRecord: record.record,
       });
       response.totalRecords++;
@@ -289,7 +289,7 @@ export class DoReReview extends BaseReview {
     dateFormats,
     onBatchInitialize,
     uniqueCombinations,
-    validatorErrorMessages,
+    validationErrorMessages,
     multiSelectColumnHeadings,
   }: {
     extra: any;
@@ -301,7 +301,7 @@ export class DoReReview extends BaseReview {
     validator: ValidateFunction;
     dateFormats: Record<string, string[]>;
     uniqueCombinations: Record<string, string[]>;
-    validatorErrorMessages: ValidatorErrorMessages;
+    validationErrorMessages: ValidationErrorMessages;
     multiSelectColumnHeadings: Record<string, string>;
   }) {
     const { dataStream } = this.getStreams();
@@ -311,7 +311,7 @@ export class DoReReview extends BaseReview {
       validator,
       dateFormats,
       uniqueCombinations,
-      validatorErrorMessages,
+      validationErrorMessages,
       multiSelectColumnHeadings,
     });
     const errorEmailContents: {
@@ -373,7 +373,7 @@ export class DoReReview extends BaseReview {
     validator,
     dateFormats,
     uniqueCombinations,
-    validatorErrorMessages,
+    validationErrorMessages,
     multiSelectColumnHeadings,
   }: {
     extra: any;
@@ -381,7 +381,7 @@ export class DoReReview extends BaseReview {
     validator: ValidateFunction;
     dateFormats: Record<string, string[]>;
     uniqueCombinations: Record<string, string[]>;
-    validatorErrorMessages: ValidatorErrorMessages;
+    validationErrorMessages: ValidationErrorMessages;
     multiSelectColumnHeadings: Record<string, string>;
   }) {
     let batchCount = 1;
@@ -401,7 +401,7 @@ export class DoReReview extends BaseReview {
         dateFormats,
         uniqueCombinations,
         index: record.index,
-        validatorErrorMessages,
+        validationErrorMessages,
         passRecord: record.record,
       });
       resultObj[Number(record.index)] = record.isValid;

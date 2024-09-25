@@ -1,1 +1,1 @@
-export type ValidatorErrorMessages = Record<string, { string: Record<string, string> }>;
+export type ValidationErrorMessages = Record<string, { string: Record<string, string> }>;

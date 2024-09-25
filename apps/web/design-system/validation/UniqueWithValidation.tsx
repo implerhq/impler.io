@@ -3,7 +3,7 @@ import { Control, Controller, FieldErrors } from 'react-hook-form';
 
 import { IColumn } from '@impler/shared';
 
-interface UniqueWithValidatorProps {
+interface UniqueWithValidationProps {
   size?: MantineSize;
 
   index: number;
@@ -12,13 +12,13 @@ interface UniqueWithValidatorProps {
   errorMessagePlaceholder?: string;
 }
 
-export function UniqueWithValidator({
+export function UniqueWithValidation({
   index,
   errors,
   control,
   size = 'sm',
   errorMessagePlaceholder,
-}: UniqueWithValidatorProps) {
+}: UniqueWithValidationProps) {
   return (
     <Stack spacing={5}>
       <Controller
@@ -26,25 +26,25 @@ export function UniqueWithValidator({
         rules={{
           required: 'Unique Key is required',
         }}
-        name={`validators.${index}.uniqueKey`}
+        name={`validations.${index}.uniqueKey`}
         render={({ field }) => (
           <TextInput
             size={size}
             placeholder="Unique Key"
-            error={(errors?.validators?.[index] as any)?.uniqueKey?.message}
+            error={(errors?.validations?.[index] as any)?.uniqueKey?.message}
             {...field}
           />
         )}
       />
       <Controller
         control={control}
-        name={`validators.${index}.errorMessage`}
+        name={`validations.${index}.errorMessage`}
         render={({ field }) => (
           <TextInput
             {...field}
             size={size}
             placeholder={errorMessagePlaceholder}
-            error={errors?.validators?.[index]?.errorMessage?.message}
+            error={errors?.validations?.[index]?.errorMessage?.message}
           />
         )}
       />

@@ -94,7 +94,7 @@ interface IDuplicateTemplateData {
   duplicateColumns?: boolean;
   duplicateDestination?: boolean;
   duplicateWebhook?: boolean;
-  duplicateValidator?: boolean;
+  duplicateValidations?: boolean;
 }
 interface IUpdateTemplateData {
   mode?: string;

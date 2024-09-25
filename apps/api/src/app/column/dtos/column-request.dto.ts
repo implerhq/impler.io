@@ -13,21 +13,21 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-import { ValidatorTypesEnum } from '@impler/client';
+import { ValidationTypesEnum } from '@impler/client';
 import { IsValidRegex } from '@shared/framework/is-valid-regex.validator';
 import { IsGreaterThan } from '@shared/framework/is-greator-than.validator';
 import { IsNumberOrString } from '@shared/framework/number-or-string.validator';
 import { ColumnDelimiterEnum, ColumnTypesEnum, Defaults } from '@impler/shared';
 
-export class ValidatorDto {
+export class ValidationDto {
   @ApiProperty({
     description: 'Specifies the type of column',
-    enum: ValidatorTypesEnum,
+    enum: ValidationTypesEnum,
   })
-  @IsEnum(ValidatorTypesEnum, {
-    message: `type must be one of ${Object.values(ValidatorTypesEnum).join(', ')}`,
+  @IsEnum(ValidationTypesEnum, {
+    message: `type must be one of ${Object.values(ValidationTypesEnum).join(', ')}`,
   })
-  validate: ValidatorTypesEnum;
+  validate: ValidationTypesEnum;
 
   @ApiPropertyOptional({
     description: 'Message to be shown on error',
@@ -57,7 +57,7 @@ export class ValidatorDto {
     description: 'Unique key of the validator',
   })
   @IsString()
-  @ValidateIf((object) => object.validate === ValidatorTypesEnum.UNIQUE_WITH)
+  @ValidateIf((object) => object.validate === ValidationTypesEnum.UNIQUE_WITH)
   uniqueKey: string;
 }
 
@@ -183,11 +183,11 @@ export class ColumnRequestDto {
   delimiter?: ColumnDelimiterEnum;
 
   @ApiPropertyOptional({
-    description: 'Validators for column',
+    description: 'Validations for column',
   })
   @IsArray()
   @IsOptional()
-  @Type(() => ValidatorDto)
+  @Type(() => ValidationDto)
   @ValidateNested({ each: true })
-  validators?: ValidatorDto[];
+  validations?: ValidationDto[];
 }
