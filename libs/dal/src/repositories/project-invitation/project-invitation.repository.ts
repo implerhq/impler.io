@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import { ProjectEntity } from '../project';
 import { BaseRepository } from '../base-repository';
 import { ProjectInvitation } from './project-invitation.schema';
@@ -7,8 +8,11 @@ export class ProjectInvitationRepository extends BaseRepository<ProjectInvitatio
   constructor() {
     super(ProjectInvitation, ProjectInvitationEntity);
   }
-  async getInvitationData(invitationId: string, token: string) {
-    const invitation = await ProjectInvitation.findOne({ _id: invitationId, token }).populate('_projectId', 'name');
+  async getInvitationData(invitationId: string) {
+    const invitation = await ProjectInvitation.findOne({ _id: new Types.ObjectId(invitationId) }).populate(
+      '_projectId',
+      'name'
+    );
     if (!invitation) return null;
 
     return {
