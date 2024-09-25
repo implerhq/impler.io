@@ -29,9 +29,9 @@ export function useInvitation() {
     isError: isInvitationError,
     isLoading: isInvitationLoading,
   } = useQuery<any, IErrorObject, { email: string; invitedBy: string; projectName: string }>(
-    [API_KEYS.GET_PROJECT_INVITATION, invitationId],
+    [API_KEYS.GET_TEAM_INVITATIONS, invitationId],
     () =>
-      commonApi(API_KEYS.GET_PROJECT_INVITATION as any, {
+      commonApi(API_KEYS.GET_TEAM_INVITATIONS as any, {
         parameters: [invitationId],
       }),
     {
@@ -48,9 +48,9 @@ export function useInvitation() {
     void,
     [string]
   >(
-    [API_KEYS.ACCEPT_PROJECT_INVITATION],
+    [API_KEYS.ACCEPT_TEAM_INVITATION],
     () =>
-      commonApi(API_KEYS.ACCEPT_PROJECT_INVITATION as any, {
+      commonApi(API_KEYS.ACCEPT_TEAM_INVITATION as any, {
         query: { invitationId },
       }),
     {
@@ -61,6 +61,31 @@ export function useInvitation() {
         notify(NOTIFICATION_KEYS.ERROR_FETCHING_INVITATION, {
           title: 'Error',
           message: 'An error occurred while accepting the invitation',
+          color: 'red',
+        });
+      },
+    }
+  );
+
+  const { mutate: declineInvitation, isLoading: isDeclineInvitationLoading } = useMutation<
+    { screen: SCREENS },
+    IErrorObject,
+    void,
+    [string]
+  >(
+    [API_KEYS.DECLINE_TEAM_INVITATION],
+    () =>
+      commonApi(API_KEYS.DECLINE_TEAM_INVITATION as any, {
+        query: { invitationId },
+      }),
+    {
+      onSuccess: (data) => {
+        handleRouteBasedOnScreenResponse(data.screen as SCREENS, push);
+      },
+      onError: () => {
+        notify(NOTIFICATION_KEYS.ERROR_FETCHING_INVITATION, {
+          title: 'Error',
+          message: 'An error occurred while declining the invitation',
           color: 'red',
         });
       },
@@ -87,5 +112,7 @@ export function useInvitation() {
     isLoggedInUser,
     acceptInvitation,
     isAcceptInvitationLoading,
+    declineInvitation,
+    isDeclineInvitationLoading,
   };
 }
