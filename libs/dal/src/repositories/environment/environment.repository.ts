@@ -1,7 +1,9 @@
+import { Types } from 'mongoose';
 import { UserRolesEnum } from '@impler/shared';
 import { BaseRepository } from '../base-repository';
 import { EnvironmentEntity } from './environment.entity';
 import { Environment } from './environment.schema';
+import { ProjectEntity } from '../project';
 
 export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
   constructor() {
@@ -51,8 +53,8 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
     ).populate('_projectId', 'name');
 
     return environments.map((env) => ({
-      name: env._projectId.name,
-      _id: env._projectId._id,
+      name: (env._projectId as unknown as ProjectEntity).name,
+      _id: (env._projectId as unknown as ProjectEntity)._id,
     }));
   }
 
@@ -74,23 +76,24 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
     return null;
   }
 
-  async listTeamMembersByProjectId(projectId: string) {
-    return await Environment.find({ _projectId: projectId }, { apiKeys: 1, _projectId: 1 }).populate(
+  async getProjectTeamMembers(projectId: string) {
+    const environment = await Environment.findOne({ _projectId: projectId }, 'apiKeys').populate(
       'apiKeys._userId',
       'firstName lastName email profilePicture'
     );
+
+    return environment.apiKeys;
   }
 
-  async deleteTeamMember(projectId: string, userId: string) {
+  async deleteTeamMember(memberId: string) {
     const result = await Environment.updateOne(
       {
-        _projectId: projectId,
-        'apiKeys._userId': userId,
+        'apiKeys._id': memberId,
       },
       {
         $pull: {
           apiKeys: {
-            _userId: userId,
+            _id: memberId,
           },
         },
       }
@@ -98,27 +101,26 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
 
     return result;
   }
-  async updateTeamMember({
-    projectId,
-    newRole,
-    userId,
-  }: {
-    projectId: string;
-    userId: string;
-    newRole: UserRolesEnum;
-  }) {
-    const result = await Environment.updateOne(
+  async updateTeamMember(memberId: string, { role }: { role: UserRolesEnum }) {
+    return await Environment.updateOne(
       {
-        _projectId: projectId,
-        'apiKeys._userId': userId,
+        'apiKeys._id': memberId,
       },
       {
         $set: {
-          'apiKeys.$.role': newRole,
+          'apiKeys.$.role': role,
         },
       }
     );
+  }
+  async getTeamMemberDetails(memberId: string) {
+    const envApiKeys = await Environment.findOne(
+      {
+        'apiKeys._id': new Types.ObjectId(memberId),
+      },
+      'apiKeys'
+    ).populate('apiKeys._userId', 'firstName lastName email profilePicture');
 
-    return result;
+    return envApiKeys.apiKeys.find((apiKey) => apiKey._id.toString() === memberId);
   }
 }
