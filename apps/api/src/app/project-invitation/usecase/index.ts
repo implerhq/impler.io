@@ -7,6 +7,7 @@ import { ListTeamMembers } from './list-team-members/list-team-members.usecase';
 import { UpdateTeamMemberRole } from './update-team-member-role/update-team-member.usecase';
 import { DeleteTeamMember } from './delete-team-member/delete-team-member.usecase';
 import { DeleteInvitation } from '../delete-invitation/delete-invitation.usecase';
+import { DeclineInvitation } from './decline-project-invitation/decline-project-invitation.usecase';
 
 export const USE_CASES = [
   Invite,
@@ -18,6 +19,7 @@ export const USE_CASES = [
   UpdateTeamMemberRole,
   DeleteTeamMember,
   DeleteInvitation,
+  DeclineInvitation,
   //
 ];
 export {
@@ -30,4 +32,5 @@ export {
   UpdateTeamMemberRole,
   DeleteTeamMember,
   DeleteInvitation,
+  DeclineInvitation,
 };
