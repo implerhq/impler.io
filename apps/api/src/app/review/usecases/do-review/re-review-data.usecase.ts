@@ -132,7 +132,10 @@ export class DoReReview extends BaseReview {
         // update second occurance of data for validity
         bulkOperations.push({
           updateOne: {
-            filter: { [`record.${key}`]: item, [`updated.${key}`]: false },
+            filter: {
+              [`record.${key}`]: item,
+              $or: [{ [`updated.${key}`]: false }, { [`updated.${key}`]: { $exists: false } }],
+            },
             update: { $set: { [`updated.${key}`]: true } },
           },
         });
@@ -260,7 +263,15 @@ export class DoReReview extends BaseReview {
       objectMode: true,
       async write(record, encoding, callback) {
         bulkOp.push({
-          updateOne: { filter: { index: record.index }, update: { $set: record, $unset: { updated: {} } } },
+          updateOne: {
+            filter: { index: record.index },
+            update: {
+              $set: {
+                errors: record.errors,
+                updated: {},
+              },
+            },
+          },
         });
         callback();
       },
