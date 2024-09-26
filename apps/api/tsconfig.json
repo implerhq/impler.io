@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "ES2020",
     "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "types": ["node", "multer", "mocha", "chai"],
