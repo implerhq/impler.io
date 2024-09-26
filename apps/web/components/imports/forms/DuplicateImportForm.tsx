@@ -27,7 +27,7 @@ export function DuplicateImportForm({ onSubmit, profile, projects, originalName 
       duplicateColumns: true,
       duplicateDestination: true,
       duplicateWebhook: true,
-      duplicateValidator: true,
+      duplicateValidations: true,
       name: originalName,
     },
   });
@@ -55,7 +55,7 @@ export function DuplicateImportForm({ onSubmit, profile, projects, originalName 
             <Checkbox label="Copy Columns?" register={register('duplicateColumns')} />
             <Checkbox label="Copy Destination?" register={register('duplicateDestination')} />
             <Checkbox label="Copy Webhook?" register={register('duplicateWebhook')} />
-            <Checkbox label="Copy Validator?" register={register('duplicateValidator')} />
+            <Checkbox label="Copy Validations?" register={register('duplicateValidations')} />
           </SimpleGrid>
           <Button type="submit" fullWidth>
             Duplicate & Continue

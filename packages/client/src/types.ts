@@ -14,7 +14,7 @@ export const ColumnTypes = {
 } as const;
 
 // used for export
-export const ValidatorTypes = {
+export const ValidationTypes = {
   RANGE: 'range',
   LENGTH: 'length',
   UNIQUE_WITH: 'unique_with',
@@ -57,36 +57,36 @@ export interface IUpload {
   customChunkFormat: string;
 }
 
-export enum ValidatorTypesEnum {
+export enum ValidationTypesEnum {
   RANGE = 'range',
   LENGTH = 'length',
   UNIQUE_WITH = 'unique_with',
 }
 
-export type RangeValidatorType = {
-  validate: 'range' | ValidatorTypesEnum.RANGE;
+export type RangeValidationType = {
+  validate: 'range' | ValidationTypesEnum.RANGE;
   min?: number;
   max?: number;
   errorMessage?: string;
 };
 
-export type LengthValidatorType = {
-  validate: 'length' | ValidatorTypesEnum.LENGTH;
+export type LengthValidationType = {
+  validate: 'length' | ValidationTypesEnum.LENGTH;
   min?: number;
   max?: number;
   errorMessage?: string;
 };
 
-export type UniqueWithValidatorType = {
-  validate: 'unique_with' | ValidatorTypesEnum.UNIQUE_WITH;
+export type UniqueWithValidationType = {
+  validate: 'unique_with' | ValidationTypesEnum.UNIQUE_WITH;
   uniqueKey: string;
   errorMessage?: string;
 };
 
-export type ValidatorType =
-  | RangeValidatorType
-  | LengthValidatorType
-  | UniqueWithValidatorType;
+export type ValidationType =
+  | RangeValidationType
+  | LengthValidationType
+  | UniqueWithValidationType;
 
 export interface ISchemaItem {
   key: string;
@@ -109,7 +109,7 @@ export interface ISchemaItem {
   type?: keyof typeof ColumnTypes;
   regex?: string;
   allowMultiSelect?: boolean;
-  validators?: ValidatorType[];
+  validations?: ValidationType[];
 }
 
 export type UploadTemplateData = {

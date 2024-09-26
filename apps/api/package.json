@@ -1,6 +1,6 @@
 {
   "name": "@impler/api",
-  "version": "0.25.0",
+  "version": "0.25.1",
   "author": "implerhq",
   "license": "MIT",
   "private": true,
@@ -16,7 +16,7 @@
     "lint": "eslint src",
     "lint:fix": "pnpm lint -- --fix",
     "migration": "cross-env NODE_ENV=local MIGRATION=true ts-node --require tsconfig-paths/register --transpileOnly",
-    "test": "cross-env TZ=UTC NODE_ENV=test E2E_RUNNER=true mocha --timeout 10000 --require ts-node/register --exit src/**/**/*.spec.ts"
+    "test": "cross-env TZ=UTC NODE_ENV=test E2E_RUNNER=true mocha --timeout 10000 --require ts-node/register --exit"
   },
   "dependencies": {
     "@impler/client": "workspace:^",

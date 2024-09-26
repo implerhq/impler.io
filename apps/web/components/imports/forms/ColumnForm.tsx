@@ -14,14 +14,14 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 
-import { ValidatorTypesEnum } from '@impler/client';
+import { ValidationTypesEnum } from '@impler/client';
 import { ColumnTypesEnum, DEFAULT_VALUES, IColumn } from '@impler/shared';
 import { colors, DELIMITERS, MODAL_KEYS, MODAL_TITLES, DOCUMENTATION_REFERENCE_LINKS } from '@config';
 
 import { Button } from '@ui/button';
 import { Textarea } from '@ui/textarea';
 import { Checkbox } from '@ui/checkbox';
-import { Validator } from '@ui/validator';
+import { Validation } from '@ui/validation';
 import { MultiSelect } from '@ui/multi-select';
 import { CustomSelect } from '@ui/custom-select';
 import { TooltipLabel } from '@components/guide-point';
@@ -36,7 +36,7 @@ interface ColumnFormProps {
 
 export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
   const { colorScheme } = useMantineColorScheme();
-  const { columnTypes, advancedValidatorsUnavailable } = useSubscriptionInfo();
+  const { columnTypes, advancedValidationsUnavailable } = useSubscriptionInfo();
   const {
     watch,
     control,
@@ -48,7 +48,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
   });
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'validators',
+    name: 'validations',
   });
   const typeValue = watch('type');
   const multiSelectValue = watch('allowMultiSelect');
@@ -58,26 +58,26 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
   };
 
   useEffect(() => {
-    const rangeValidatorIndex = fields.findIndex((field) => field.validate === ValidatorTypesEnum.RANGE);
-    const lengthValidatorIndex = fields.findIndex((field) => field.validate === ValidatorTypesEnum.LENGTH);
+    const rangeValidationIndex = fields.findIndex((field) => field.validate === ValidationTypesEnum.RANGE);
+    const lengthValidationIndex = fields.findIndex((field) => field.validate === ValidationTypesEnum.LENGTH);
     switch (typeValue) {
       case ColumnTypesEnum.STRING:
-        if (rangeValidatorIndex > -1) {
-          remove(rangeValidatorIndex);
+        if (rangeValidationIndex > -1) {
+          remove(rangeValidationIndex);
         }
         break;
       case ColumnTypesEnum.DOUBLE:
       case ColumnTypesEnum.NUMBER:
-        if (lengthValidatorIndex > -1) {
-          remove(lengthValidatorIndex);
+        if (lengthValidationIndex > -1) {
+          remove(lengthValidationIndex);
         }
         break;
       default:
-        if (rangeValidatorIndex > -1) {
-          remove(rangeValidatorIndex);
+        if (rangeValidationIndex > -1) {
+          remove(rangeValidationIndex);
         }
-        if (lengthValidatorIndex > -1) {
-          remove(lengthValidatorIndex);
+        if (lengthValidationIndex > -1) {
+          remove(lengthValidationIndex);
         }
         break;
     }
@@ -308,21 +308,21 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
               <AutoHeightComponent
                 isVisible={typeValue === ColumnTypesEnum.DOUBLE || typeValue === ColumnTypesEnum.NUMBER}
               >
-                <Validator
+                <Validation
                   errors={errors}
                   control={control}
                   minPlaceholder="Min"
                   maxPlaceholder="Max"
                   label="Range Validation"
-                  type={ValidatorTypesEnum.RANGE}
-                  unavailable={advancedValidatorsUnavailable}
+                  type={ValidationTypesEnum.RANGE}
+                  unavailable={advancedValidationsUnavailable}
                   link={DOCUMENTATION_REFERENCE_LINKS.rangeValidator}
                   description="Set min/max bounds for valid input values"
                   errorMessagePlaceholder='Value must be between "Min" and "Max"'
-                  index={fields.findIndex((field) => field.validate === ValidatorTypesEnum.RANGE)}
+                  index={fields.findIndex((field) => field.validate === ValidationTypesEnum.RANGE)}
                   onCheckToggle={(status, index) => {
                     if (status) {
-                      append({ validate: ValidatorTypesEnum.RANGE });
+                      append({ validate: ValidationTypesEnum.RANGE });
                     } else {
                       remove(index);
                     }
@@ -330,41 +330,41 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 />
               </AutoHeightComponent>
               <AutoHeightComponent isVisible={typeValue === ColumnTypesEnum.STRING}>
-                <Validator
+                <Validation
                   min={0}
                   errors={errors}
                   control={control}
                   label="Length Validation"
                   minPlaceholder="Min characters"
                   maxPlaceholder="Max characters"
-                  type={ValidatorTypesEnum.LENGTH}
-                  unavailable={advancedValidatorsUnavailable}
+                  type={ValidationTypesEnum.LENGTH}
+                  unavailable={advancedValidationsUnavailable}
                   link={DOCUMENTATION_REFERENCE_LINKS.lengthValidator}
                   description="Set min/max character count for valid strings"
                   errorMessagePlaceholder='Value must be between "Min" and "Max"'
-                  index={fields.findIndex((field) => field.validate === ValidatorTypesEnum.LENGTH)}
+                  index={fields.findIndex((field) => field.validate === ValidationTypesEnum.LENGTH)}
                   onCheckToggle={(status, index) => {
                     if (status) {
-                      append({ validate: ValidatorTypesEnum.LENGTH });
+                      append({ validate: ValidationTypesEnum.LENGTH });
                     } else {
                       remove(index);
                     }
                   }}
                 />
               </AutoHeightComponent>
-              <Validator
+              <Validation
                 errors={errors}
                 control={control}
                 label="Unique With Validation"
-                type={ValidatorTypesEnum.UNIQUE_WITH}
-                unavailable={advancedValidatorsUnavailable}
+                type={ValidationTypesEnum.UNIQUE_WITH}
+                unavailable={advancedValidationsUnavailable}
                 link={DOCUMENTATION_REFERENCE_LINKS.uniqueWithValidator}
                 description="Enforce unique combinations across specified columns"
                 errorMessagePlaceholder='Value should be unique with "Unique Key"'
-                index={fields.findIndex((field) => field.validate === ValidatorTypesEnum.UNIQUE_WITH)}
+                index={fields.findIndex((field) => field.validate === ValidationTypesEnum.UNIQUE_WITH)}
                 onCheckToggle={(status, index) => {
                   if (status) {
-                    append({ validate: ValidatorTypesEnum.UNIQUE_WITH, uniqueKey: '' });
+                    append({ validate: ValidationTypesEnum.UNIQUE_WITH, uniqueKey: '' });
                   } else {
                     remove(index);
                   }

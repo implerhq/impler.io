@@ -1,3 +1,3 @@
 export * from './hooks';
-export { ColumnTypes, ValidatorTypes } from '@impler/client';
-export type { ISchemaItem, CustomTexts, ValidatorTypesEnum } from '@impler/client';
+export { ColumnTypes, ValidationTypes } from '@impler/client';
+export type { ISchemaItem, CustomTexts, ValidationTypesEnum } from '@impler/client';
