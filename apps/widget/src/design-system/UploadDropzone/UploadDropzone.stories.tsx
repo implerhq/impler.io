@@ -27,7 +27,6 @@ export const Default = Template.bind({});
 
 export const WithFile = Template.bind({});
 WithFile.args = {
-  title: 'Select a file',
   file: {
     name: 'Document.tsx',
     size: 1200,
@@ -36,6 +35,5 @@ WithFile.args = {
 
 export const WithError = Template.bind({});
 WithError.args = {
-  title: 'Select a file',
   error: 'File is required',
 };

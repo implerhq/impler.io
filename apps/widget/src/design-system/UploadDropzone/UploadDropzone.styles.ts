@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
 import { createStyles, MantineTheme } from '@mantine/core';
 import { colors } from '../../config/colors.config';
 import { variables } from '../../config/variable.config';
 
 export const getRootStyles = (theme: MantineTheme, hasError: boolean): React.CSSProperties => ({
   borderColor: hasError ? colors.red : theme.colors.primary[variables.colorIndex],
-  flexGrow: 1,
+  backgroundColor: colors.lightGray,
 });
 
 export const getSuccessRootStyles = (theme: MantineTheme): React.CSSProperties => ({
@@ -15,13 +14,12 @@ export const getSuccessRootStyles = (theme: MantineTheme): React.CSSProperties =
   padding: theme.spacing.md,
   borderRadius: 4,
   position: 'relative',
-  flexGrow: 1,
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
 });
 
-export const getIconStyles = (theme) => ({
+export const getIconStyles = () => ({
   height: 70,
 });
 
@@ -36,29 +34,19 @@ export const getCheckIconStyles = (theme) => ({
   },
 });
 
-export const getWrapperStyles = (theme) => ({
-  width: '100%',
-});
-
-export const getDropzoneInnerStyles = (theme: MantineTheme): React.CSSProperties => ({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
+export const getDropzoneInnerStyles = (): React.CSSProperties => ({
   height: '100%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
 });
 
-export const getBrowseTextStyles = (theme: MantineTheme): React.CSSProperties => ({
-  color: theme.colors.primary[variables.colorIndex],
-});
-
-export default createStyles((theme: MantineTheme, { hasError }: { hasError: boolean }, getRef): Record<string, any> => {
+export default createStyles((theme: MantineTheme, { hasError }: { hasError: boolean }): Record<string, any> => {
   return {
-    icon: getIconStyles(theme),
+    icon: getIconStyles(),
     successRoot: getSuccessRootStyles(theme),
     root: getRootStyles(theme, hasError),
     checkIcon: getCheckIconStyles(theme),
-    wrapper: getWrapperStyles(theme),
-    browseText: getBrowseTextStyles(theme),
-    inner: getDropzoneInnerStyles(theme),
+    inner: getDropzoneInnerStyles(),
   };
 });

@@ -6,7 +6,6 @@ export const getSeparatorStyles = () => ({
   flex: 0,
   marginLeft: 7,
   marginRight: 7,
-  color: colors.lightGray,
 });
 
 export const getStepLabelStyles = () => ({

@@ -21,17 +21,10 @@ export const getFooterStyles = (theme: MantineTheme): React.CSSProperties => ({
   alignSelf: 'flex-end',
 });
 
-export const getDropzoneStyles = (theme: MantineTheme): React.CSSProperties => ({
-  flexGrow: 1,
-  display: 'flex',
-  flexDirection: 'column',
-});
-
 export default createStyles((theme: MantineTheme, params, getRef): Record<string, any> => {
   return {
     container: getContainerStyles(theme),
     templateContainer: getTemplateContainerStyles(theme),
     download: getDownloadTemplateStyles(theme),
-    dropzone: getDropzoneStyles(theme),
   };
 });

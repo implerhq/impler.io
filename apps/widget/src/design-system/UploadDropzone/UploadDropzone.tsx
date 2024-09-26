@@ -1,10 +1,11 @@
-import { Group, Text } from '@mantine/core';
+import { Group, Stack, Text } from '@mantine/core';
 import { Dropzone as MantineDropzone, FileWithPath, MIME_TYPES } from '@mantine/dropzone';
+import { colors } from '@config';
+import { CheckIcon } from '../../icons';
+import { File as FileCMP } from '../File';
 import { WIDGET_TEXTS } from '@impler/client';
 import useStyles from './UploadDropzone.styles';
-import { FileIcon, CheckIcon } from '../../icons';
-import { File as FileCMP } from '../File';
-import { colors } from '@config';
+import { Button } from '@ui/Button';
 
 interface IDropzoneProps {
   loading?: boolean;
@@ -13,7 +14,6 @@ interface IDropzoneProps {
   onDrop: (files: FileWithPath[]) => void;
   onClear?: () => void;
   file?: FileWithPath;
-  title?: string;
   error?: string;
   className?: string;
   texts: typeof WIDGET_TEXTS;
@@ -27,14 +27,11 @@ export function UploadDropzone(props: IDropzoneProps) {
     onClear,
     file,
     onReject,
-    title,
     className,
     error,
     texts,
   } = props;
   const { classes } = useStyles({ hasError: !!error });
-  const wrapperClasses = [classes.wrapper];
-  if (className) wrapperClasses.push(className);
 
   const isFileSelected = !!(file && file.name && file.size);
 
@@ -60,35 +57,21 @@ export function UploadDropzone(props: IDropzoneProps) {
   const SelectFileContent = () => {
     return (
       <MantineDropzone onReject={onReject} onDrop={onDrop} accept={accept} loading={loading} classNames={classes}>
-        <Group position="center">
-          <div>
-            <Text align="center" weight="bold">
-              {texts.FILE_DROP_AREA.DROP_FILE}{' '}
-              <Text component="span" className={classes.browseText}>
-                {texts.FILE_DROP_AREA.BROWSE_FILE}
-              </Text>
-            </Text>
-            <MantineDropzone.Idle>
-              <Group position="center" mt="md">
-                <FileIcon className={classes.icon} />
-              </Group>
-            </MantineDropzone.Idle>
-            <Text color="dimmed" size="sm" mt="md" align="center">
-              {texts.FILE_DROP_AREA.BRING_FILE}
-            </Text>
-          </div>
-        </Group>
+        <Stack spacing={0} align="center">
+          <Text align="center" weight="bold">
+            {texts.FILE_DROP_AREA.DROP_FILE}
+          </Text>
+          <Text align="center">{texts.FILE_DROP_AREA.FILE_FORMATS}</Text>
+          <MantineDropzone.Idle>
+            <Button>{texts.FILE_DROP_AREA.CHOOSE_FILE}</Button>
+          </MantineDropzone.Idle>
+        </Stack>
       </MantineDropzone>
     );
   };
 
   return (
-    <div className={wrapperClasses.join(' ')}>
-      {title ? (
-        <Text weight="bold" size="sm">
-          {title}
-        </Text>
-      ) : null}
+    <div className={className}>
       {isFileSelected ? <SelectedFileContent /> : <SelectFileContent />}
       {error ? (
         <Text size="sm" mt={3} color={colors.red}>

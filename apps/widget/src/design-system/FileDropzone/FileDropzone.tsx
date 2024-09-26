@@ -1,9 +1,9 @@
-import { Group, Text } from '@mantine/core';
+import { Text } from '@mantine/core';
 import { Dropzone as MantineDropzone, FileWithPath, MIME_TYPES } from '@mantine/dropzone';
-import { ImageIcon } from '../../icons';
+import { Button } from '@ui/Button';
+import { variables } from '../../config';
 import { WIDGET_TEXTS } from '@impler/client';
 import useStyles from './FileDropdown.styles';
-import { variables } from '../../config';
 
 interface IDropzoneProps {
   loading?: boolean;
@@ -37,15 +37,13 @@ export function FileDropzone(props: IDropzoneProps) {
         classNames={classes}
         maxSize={variables.LIMIT_5_MB} // 5 MB
       >
-        <Group position="center" p="xs">
-          <ImageIcon />
-        </Group>
-        <Text align="center">
-          {texts.FILE_DROP_AREA.DROP_FILE}{' '}
-          <Text component="span" className={classes.browseText}>
-            {texts.FILE_DROP_AREA.BROWSE_FILE}
-          </Text>
+        <Text align="center" weight="bold">
+          {texts.FILE_DROP_AREA.DROP_FILE}
         </Text>
+        <Text align="center">{texts.FILE_DROP_AREA.FILE_FORMATS}</Text>
+        <MantineDropzone.Idle>
+          <Button>{texts.FILE_DROP_AREA.CHOOSE_FILE}</Button>
+        </MantineDropzone.Idle>
         <Text size="xs" align="center">
           {texts.FILE_DROP_AREA.IMAGE_FILE_SIZE}
         </Text>

@@ -24,11 +24,11 @@ export const WIDGET_TEXTS = {
     CONFIRM_JOB: 'Confirm',
   },
   FILE_DROP_AREA: {
-    DROP_FILE: 'Drop and drop a file here or ',
-    BROWSE_FILE: 'Browse from computer',
+    DROP_FILE: 'Drop and drop a file here',
+    CHOOSE_FILE: 'Choose a file',
     IMAGE_FILE_SIZE:
       'Image size should be less than 5 MB. Supported formats are PNG, JPG and JPEG.',
-    BRING_FILE: 'Bring any .csv or .xlsx file here to start Import',
+    FILE_FORMATS: 'You can upload: CSV, xlsx, xlsm',
     FILE_SELECTED: 'File selected successfully',
   },
   'PHASE0-1': {
@@ -52,7 +52,6 @@ export const WIDGET_TEXTS = {
     GENERATE_TEMPLATE: 'Generate Template',
     SEE_MAPPING: 'See Mapping',
 
-    SELECT_FILE_NAME: 'Select a file',
     SELECT_FILE_REQUIRED_MSG: 'Please select a file',
     SELECT_FILE_FORMAT_MSG:
       'File type not supported! Please select a .csv or .xlsx file.',
