@@ -1,5 +1,5 @@
 export * from './TeamMembers';
-export * from './ProjectInvitationModal';
+export * from './TeamInvitationModal';
 export * from './SentInvitations';
 export * from './Team';
 export * from './SentInvitationActions';
