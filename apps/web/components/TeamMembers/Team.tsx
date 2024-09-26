@@ -4,7 +4,7 @@ import { modals } from '@mantine/modals';
 
 import { TeamMembers } from './TeamMembers';
 import { SentInvitations } from './SentInvitations';
-import { ProjectInvitationModal } from './ProjectInvitationModal';
+import { TeamInvitationModal } from './TeamInvitationModal';
 
 import { Button } from '@ui/button';
 import { useAppState } from 'store/app.context';
@@ -29,7 +29,7 @@ export function Team() {
           <span style={{ color: colors.yellow, fontWeight: 'bold' }}>{profileInfo?.projectName}</span>
         </Text>
       ),
-      children: <ProjectInvitationModal />,
+      children: <TeamInvitationModal />,
       size: 'lg',
       withCloseButton: true,
     });
