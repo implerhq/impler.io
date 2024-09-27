@@ -8,6 +8,8 @@ import { UpdateTeamMember } from './update-team-member-role/update-team-member.u
 import { DeleteTeamMember } from './delete-team-member/delete-team-member.usecase';
 import { RevokeInvitation } from './revoke-invitation/revoke-invitation.usecase';
 import { DeclineInvitation } from './decline-invitation/decline-invitation.usecase';
+import { TeamMemberMeta } from './team-member-meta/team-member-meta.usecase';
+import { PaymentAPIService } from '@impler/services';
 
 export const USE_CASES = [
   Invite,
@@ -20,6 +22,8 @@ export const USE_CASES = [
   DeleteTeamMember,
   RevokeInvitation,
   DeclineInvitation,
+  TeamMemberMeta,
+  PaymentAPIService,
   //
 ];
 export {
@@ -33,4 +37,6 @@ export {
   DeleteTeamMember,
   RevokeInvitation,
   DeclineInvitation,
+  TeamMemberMeta,
+  PaymentAPIService,
 };
