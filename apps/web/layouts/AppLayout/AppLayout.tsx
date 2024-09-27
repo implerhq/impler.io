@@ -72,7 +72,7 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
             onCreate={(value: string) => {
               createProject({ name: value });
 
-              return { value, label: value };
+              return undefined;
             }}
           />
           <Stack spacing="sm" py="xs">
