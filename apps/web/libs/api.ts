@@ -100,6 +100,10 @@ const routes: Record<string, Route> = {
     url: (invitationId: string) => `/v1/team/${invitationId}/revoke`,
     method: 'DELETE',
   },
+  [API_KEYS.TEAM_MEMBER_META]: {
+    url: (projectId: string) => `/v1/team/${projectId}/members`,
+    method: 'GET',
+  },
 
   [API_KEYS.PROJECTS_LIST]: {
     url: () => '/v1/project',
