@@ -77,14 +77,13 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
           />
           <Stack spacing="sm" py="xs">
             <NavItem active={router.pathname === '/'} href="/" icon={<HomeIcon size="lg" />} title="Home" />
-            <Can I={ActionsEnum.READ} a={SubjectsEnum.IMPORTS}>
-              <NavItem
-                active={router.pathname.includes('/imports')}
-                href="/imports"
-                icon={<ImportIcon size="lg" />}
-                title="Imports"
-              />
-            </Can>
+
+            <NavItem
+              active={router.pathname.includes('/imports')}
+              href="/imports"
+              icon={<ImportIcon size="lg" />}
+              title="Imports"
+            />
 
             <NavItem
               active={router.pathname.includes('/activities')}
