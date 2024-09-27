@@ -71,6 +71,7 @@ interface ISubscriptionData {
     REMOVE_BRANDING: boolean;
     AUTOMATIC_IMPORTS: boolean;
     ADVANCED_VALIDATORS: boolean;
+    TEAM_MEMBERS: number;
   };
 }
 
