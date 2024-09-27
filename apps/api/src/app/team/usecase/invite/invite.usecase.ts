@@ -46,12 +46,6 @@ export class Invite {
         throw new BadRequestException(`The email ${invitationEmailTo} has already been invited.`);
       }
 
-      const teamMember = await this.environmentRepository.getProjectTeamMembers(command.projectId);
-      if (teamMember.length >= 4) {
-        throw new BadRequestException(
-          'You Have Already Invited More than the Allocated team members in your current Plan'
-        );
-      }
       const invitation = await this.projectInvitationRepository.create({
         invitationToEmail: invitationEmailTo,
         invitedOn: new Date().toDateString(),
