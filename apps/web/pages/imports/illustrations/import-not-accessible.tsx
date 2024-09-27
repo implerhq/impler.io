@@ -1,4 +1,4 @@
-export function ImportNotAccessible() {
+export default function ImportNotAccessible() {
   return (
     <svg width="161" height="160" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clip-path="url(#a)">

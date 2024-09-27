@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { Stack, Text } from '@mantine/core';
 import { AbilityContext } from 'store/ability.context';
 import { ActionsEnum, AppAbility, SubjectsEnum } from '@config';
-import { ImportNotAccessible } from 'pages/imports/illustrations/import-not-accessible';
+import ImportNotAccessible from 'pages/imports/illustrations/import-not-accessible';
 
 interface WithExtraParamsProps {
   subject: SubjectsEnum;
