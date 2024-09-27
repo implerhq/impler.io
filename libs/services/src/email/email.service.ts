@@ -38,7 +38,7 @@ interface IVerificationEmailOptions {
   firstName: string;
 }
 
-interface IProjectInvitationEmailOptions {
+interface ITeamnvitationEmailOptions {
   invitedBy: string;
   projectName: string;
   invitationUrl: string;
@@ -417,7 +417,7 @@ const EMAIL_CONTENTS = {
 </html>
 `,
 
-  PROJECT_INVITATION_EMAIL: ({ invitedBy, projectName, invitationUrl }: IProjectInvitationEmailOptions) => `
+  TEAM_INVITATION_EMAIL: ({ invitedBy, projectName, invitationUrl }: ITeamnvitationEmailOptions) => `
   <!DOCTYPE html>
   <html lang="en">
   <head>
@@ -714,8 +714,8 @@ type EmailContents =
       data: IVerificationEmailOptions;
     }
   | {
-      type: 'PROJECT_INVITATION_EMAIL';
-      data: IProjectInvitationEmailOptions;
+      type: 'TEAM_INVITATION_EMAIL';
+      data: ITeamnvitationEmailOptions;
     }
   | {
       type: 'ACCEPT_PROJECT_INVITATION_SENDER_EMAIL';
