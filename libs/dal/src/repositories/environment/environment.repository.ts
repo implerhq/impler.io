@@ -123,4 +123,11 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
 
     return envApiKeys.apiKeys.find((apiKey) => apiKey._id.toString() === memberId);
   }
+
+  async getTeamOwnerDetails(projectId: string) {
+    const teamMembers = await this.getProjectTeamMembers(projectId);
+    const teamOwner = teamMembers.find((member) => member.isOwner);
+
+    return teamOwner;
+  }
 }
