@@ -22,6 +22,7 @@ export class CreateProject {
       projectId: project._id,
       _userId: command._userId,
       role: UserRolesEnum.ADMIN,
+      isOwner: true,
     });
 
     if (command.onboarding) {
