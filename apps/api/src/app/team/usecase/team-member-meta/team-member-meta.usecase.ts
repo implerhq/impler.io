@@ -12,7 +12,6 @@ export class TeamMemberMeta {
 
   async exec(projectId: string) {
     const teamMembers = await this.environmentRepository.getProjectTeamMembers(projectId);
-
     const teamMember = teamMembers.find((member) => member.isOwner);
 
     const invitationCount = await this.projectInvitationRepository.count({
@@ -30,11 +29,17 @@ export class TeamMemberMeta {
 
       const total = teamMembers.length + invitationCount;
 
-      const available = allocated - total;
+      const available = Math.max(allocated - total, 0);
 
-      return { available, total };
+      const result = { available, total, allocated, error: null };
+
+      if (available <= 0) {
+        result.error = 'You Have Reached the Limit or Invited the Maximum Team Members';
+      }
+
+      return result;
     } else {
-      return null;
+      return { error: 'No owner found', available: null, total: null, allocated: null };
     }
   }
 }
