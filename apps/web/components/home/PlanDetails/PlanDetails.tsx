@@ -33,7 +33,7 @@ export function PlanDetails() {
     router.query;
 
   const { activePlanDetails, isActivePlanLoading } = usePlanDetails({
-    email: profile?.email ?? '',
+    projectId: profile?._projectId ?? '',
   });
 
   const showPlans = useCallback(() => {
