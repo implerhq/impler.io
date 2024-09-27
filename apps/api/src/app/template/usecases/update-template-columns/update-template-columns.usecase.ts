@@ -53,8 +53,8 @@ export class UpdateTemplateColumns {
     }
 
     const hasImageColumns = userColumns.some((column) => column.type === ColumnTypesEnum.IMAGE);
-    const hasValidators = userColumns.some(
-      (column) => Array.isArray(column.validators) && column.validators.length > 0
+    const hasValidations = userColumns.some(
+      (column) => Array.isArray(column.validations) && column.validations.length > 0
     );
 
     if (hasImageColumns && email) {
@@ -71,17 +71,17 @@ export class UpdateTemplateColumns {
         );
       }
     }
-    if (hasValidators && email) {
-      const validatorsAvailable = await this.paymentAPIService.checkEvent({
+    if (hasValidations && email) {
+      const validationsAvailable = await this.paymentAPIService.checkEvent({
         email,
         billableMetricCode: AVAILABLE_BILLABLEMETRIC_CODE_ENUM.ADVANCED_VALIDATORS,
       });
 
-      if (!validatorsAvailable) {
+      if (!validationsAvailable) {
         throw new DocumentNotFoundException(
           'Schema',
           AVAILABLE_BILLABLEMETRIC_CODE_ENUM.ADVANCED_VALIDATORS,
-          APIMessages.FEATURE_UNAVAILABLE.ADVANCED_VALIDATORS
+          APIMessages.FEATURE_UNAVAILABLE.ADVANCED_VALIDATIONS
         );
       }
     }

@@ -3,7 +3,7 @@ import { Group, MantineSize, TextInput, NumberInput, Stack } from '@mantine/core
 
 import { IColumn } from '@impler/shared';
 
-interface MinMaxValidatorProps {
+interface MinMaxValidationProps {
   size?: MantineSize;
 
   index: number;
@@ -16,7 +16,7 @@ interface MinMaxValidatorProps {
   errorMessagePlaceholder?: string;
 }
 
-export function MinMaxValidator({
+export function MinMaxValidation({
   min,
   max,
   index,
@@ -26,7 +26,7 @@ export function MinMaxValidator({
   minPlaceholder,
   maxPlaceholder,
   errorMessagePlaceholder,
-}: MinMaxValidatorProps) {
+}: MinMaxValidationProps) {
   const validateMinMax = (minValue?: number, maxValue?: number) => {
     if (typeof minValue !== 'number' && typeof maxValue !== 'number') {
       return 'Either min or max must be provided';
@@ -43,16 +43,16 @@ export function MinMaxValidator({
       <Group spacing={5} noWrap>
         <Controller
           control={control}
-          name={`validators.${index}.min`}
+          name={`validations.${index}.min`}
           rules={{
-            validate: (value, formValues) => validateMinMax(value, (formValues.validators?.[index] as any).max),
+            validate: (value, formValues) => validateMinMax(value, (formValues.validations?.[index] as any).max),
           }}
           render={({ field }) => (
             <NumberInput
               size={size}
               min={min}
               placeholder={minPlaceholder}
-              error={(errors?.validators?.[index] as any)?.min?.message}
+              error={(errors?.validations?.[index] as any)?.min?.message}
               value={field.value}
               onChange={(value) => (value === '' ? field.onChange(undefined) : field.onChange(value))}
             />
@@ -60,16 +60,16 @@ export function MinMaxValidator({
         />
         <Controller
           control={control}
-          name={`validators.${index}.max`}
+          name={`validations.${index}.max`}
           rules={{
-            validate: (value, formValues) => validateMinMax((formValues.validators?.[index] as any).min, value),
+            validate: (value, formValues) => validateMinMax((formValues.validations?.[index] as any).min, value),
           }}
           render={({ field }) => (
             <NumberInput
               size={size}
               max={max}
               placeholder={maxPlaceholder}
-              error={(errors?.validators?.[index] as any)?.max?.message}
+              error={(errors?.validations?.[index] as any)?.max?.message}
               value={field.value}
               onChange={(value) => (value === '' ? field.onChange(undefined) : field.onChange(value))}
             />
@@ -78,12 +78,12 @@ export function MinMaxValidator({
       </Group>
       <Controller
         control={control}
-        name={`validators.${index}.errorMessage`}
+        name={`validations.${index}.errorMessage`}
         render={({ field }) => (
           <TextInput
             size={size}
             placeholder={errorMessagePlaceholder}
-            error={(errors?.validators?.[index] as any)?.errorMessage?.message}
+            error={(errors?.validations?.[index] as any)?.errorMessage?.message}
             {...field}
           />
         )}

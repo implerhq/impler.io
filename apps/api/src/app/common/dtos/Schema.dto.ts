@@ -15,7 +15,7 @@ import {
 import { Type } from 'class-transformer';
 import { ColumnTypesEnum, Defaults } from '@impler/shared';
 import { IsValidRegex } from '@shared/framework/is-valid-regex.validator';
-import { ValidatorDto } from 'app/column/dtos/column-request.dto';
+import { ValidationDto } from 'app/column/dtos/column-request.dto';
 
 export class SchemaDto {
   @ApiProperty({
@@ -111,11 +111,11 @@ export class SchemaDto {
   sequence: number;
 
   @ApiPropertyOptional({
-    description: 'Validators for column',
+    description: 'Validations for column',
   })
   @IsArray()
   @IsOptional()
-  @Type(() => ValidatorDto)
+  @Type(() => ValidationDto)
   @ValidateNested({ each: true })
-  validators?: ValidatorDto[];
+  validations?: ValidationDto[];
 }

@@ -12,14 +12,14 @@ import { Badge } from '@ui/badge';
 import { Button } from '@ui/button';
 import { IColumn } from '@impler/shared';
 import { LockIcon } from '@assets/icons/Lock.icon';
-import { ValidatorTypesEnum } from '@impler/client';
+import { ValidationTypesEnum } from '@impler/client';
 import { TooltipLabel } from '@components/guide-point';
 
-import useStyles from './Validator.styles';
-import { MinMaxValidator } from './MinMaxValidator';
-import { UniqueWithValidator } from './UniqueWithValidator';
+import useStyles from './Validation.styles';
+import { MinMaxValidation } from './MinMaxValidation';
+import { UniqueWithValidation } from './UniqueWithValidation';
 
-interface ValidatorProps {
+interface ValidationProps {
   link: string;
   label: string;
   size?: MantineSize;
@@ -32,13 +32,13 @@ interface ValidatorProps {
   minPlaceholder?: string;
   maxPlaceholder?: string;
   control: Control<IColumn>;
-  type?: ValidatorTypesEnum;
+  type?: ValidationTypesEnum;
   errors?: FieldErrors<IColumn>;
   errorMessagePlaceholder?: string;
   onCheckToggle: (status: boolean, index: number) => void;
 }
 
-export function Validator({
+export function Validation({
   link,
   label,
   index,
@@ -54,7 +54,7 @@ export function Validator({
   minPlaceholder,
   maxPlaceholder,
   errorMessagePlaceholder,
-}: ValidatorProps) {
+}: ValidationProps) {
   const { classes } = useStyles({ showWrapper: unavailable });
 
   return (
@@ -71,8 +71,8 @@ export function Validator({
           <TooltipLabel link={link} label={label} />
           {description ? <p className={classes.description}>{description}</p> : null}
         </div>
-        <AutoHeightComponent isVisible={index > -1 && type === ValidatorTypesEnum.UNIQUE_WITH}>
-          <UniqueWithValidator
+        <AutoHeightComponent isVisible={index > -1 && type === ValidationTypesEnum.UNIQUE_WITH}>
+          <UniqueWithValidation
             key={index}
             size={size}
             index={index}
@@ -82,9 +82,9 @@ export function Validator({
           />
         </AutoHeightComponent>
         <AutoHeightComponent
-          isVisible={index > -1 && (type === ValidatorTypesEnum.LENGTH || type === ValidatorTypesEnum.RANGE)}
+          isVisible={index > -1 && (type === ValidationTypesEnum.LENGTH || type === ValidationTypesEnum.RANGE)}
         >
-          <MinMaxValidator
+          <MinMaxValidation
             max={max}
             min={min}
             key={index}

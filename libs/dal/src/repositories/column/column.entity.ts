@@ -35,5 +35,5 @@ export class ColumnEntity {
 
   defaultValue?: string | number;
 
-  validators?: any[];
+  validations?: any[];
 }

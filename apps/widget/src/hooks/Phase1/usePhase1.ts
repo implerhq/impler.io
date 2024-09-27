@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { logAmplitudeEvent } from '@amplitude';
 import { useMutation } from '@tanstack/react-query';
 
+import { logAmplitudeEvent } from '@amplitude';
 import { notifier, ParentWindow } from '@util';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';

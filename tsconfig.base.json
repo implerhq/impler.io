@@ -9,7 +9,6 @@
     "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "suppressImplicitAnyIndexErrors": true,
     "lib": ["es2019", "dom"],
     "target": "es5",
     "typeRoots": ["./node_modules/@types"],

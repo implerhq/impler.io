@@ -5,7 +5,7 @@ import { Injectable, BadRequestException, InternalServerErrorException } from '@
 import { APIMessages } from '@shared/constants';
 import { EMAIL_SUBJECT } from '@impler/shared';
 import { BaseReview } from './base-review.usecase';
-import { ValidatorTypesEnum } from '@impler/client';
+import { UniqueWithValidationType, ValidationTypesEnum } from '@impler/client';
 import { BATCH_LIMIT } from '@shared/services/sandbox';
 import { StorageService, PaymentAPIService, EmailService } from '@impler/services';
 import { ColumnTypesEnum, UploadStatusEnum, ITemplateSchemaItem, ColumnDelimiterEnum } from '@impler/shared';
@@ -56,25 +56,31 @@ export class DoReview extends BaseReview {
     const columns = JSON.parse(uploadInfo.customSchema);
     const multiSelectColumnHeadings: Record<string, string> = {};
     const numberColumnHeadings = new Set<string>();
-    const validatorErrorMessages = {};
+    const validationErrorMessages = {};
     const uniqueColumnKeysCombinationMap = new Map<string, Set<string>>();
     (columns as ITemplateSchemaItem[]).forEach((column) => {
       if (column.type === ColumnTypesEnum.SELECT && column.allowMultiSelect)
         multiSelectColumnHeadings[column.key] = column.delimiter || ColumnDelimiterEnum.COMMA;
       if (column.type === ColumnTypesEnum.NUMBER || column.type === ColumnTypesEnum.DOUBLE)
         numberColumnHeadings.add(column.key);
-      if (Array.isArray(column.validators) && column.validators.length > 0) {
-        validatorErrorMessages[column.key] = {};
-        column.validators.forEach((validator) => {
-          validatorErrorMessages[column.key][validator.validate] = validator.errorMessage;
-          if (validator.validate === ValidatorTypesEnum.UNIQUE_WITH) {
-            if (uniqueColumnKeysCombinationMap.has(validator.uniqueKey)) {
+      if (Array.isArray(column.validations) && column.validations.length > 0) {
+        validationErrorMessages[column.key] = {};
+        column.validations.forEach((validation) => {
+          validationErrorMessages[column.key][validation.validate] = validation.errorMessage;
+          if (validation.validate === ValidationTypesEnum.UNIQUE_WITH) {
+            if (uniqueColumnKeysCombinationMap.has((validation as UniqueWithValidationType).uniqueKey)) {
               uniqueColumnKeysCombinationMap.set(
-                validator.uniqueKey,
-                new Set([...uniqueColumnKeysCombinationMap.get(validator.uniqueKey), column.key])
+                (validation as UniqueWithValidationType).uniqueKey,
+                new Set([
+                  ...uniqueColumnKeysCombinationMap.get((validation as UniqueWithValidationType).uniqueKey),
+                  column.key,
+                ])
               );
             } else {
-              uniqueColumnKeysCombinationMap.set(validator.uniqueKey, new Set([column.key]));
+              uniqueColumnKeysCombinationMap.set(
+                (validation as UniqueWithValidationType).uniqueKey,
+                new Set([column.key])
+              );
             }
           }
         });
@@ -131,7 +137,7 @@ export class DoReview extends BaseReview {
         uniqueCombinations,
         numberColumnHeadings,
         multiSelectColumnHeadings,
-        validatorErrorMessages,
+        validationErrorMessages,
       });
 
       await this.processBatches({
@@ -176,7 +182,7 @@ export class DoReview extends BaseReview {
         dateFormats,
         uniqueCombinations,
         numberColumnHeadings,
-        validatorErrorMessages,
+        validationErrorMessages,
         multiSelectColumnHeadings,
       });
       response.invalidRecords = invalidRecords;
