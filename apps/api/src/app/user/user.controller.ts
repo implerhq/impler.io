@@ -54,12 +54,12 @@ export class UserController {
     });
   }
 
-  @Get('/subscription')
+  @Get('/:projectId/subscription')
   @ApiOperation({
     summary: 'Get Active Subscription Information',
   })
-  async getActiveSubscriptionRoute(@UserSession() user: IJwtPayload) {
-    return this.getActiveSubscription.execute(user.email);
+  async getActiveSubscriptionRoute(@Param('projectId') projectId: string) {
+    return this.getActiveSubscription.execute(projectId);
   }
 
   @Delete('/subscription')
