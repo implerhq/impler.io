@@ -12,17 +12,15 @@ export class TeamMemberMeta {
 
   async exec(projectId: string) {
     const teamMembers = await this.environmentRepository.getProjectTeamMembers(projectId);
-    const teamMember = teamMembers.find((member) => member.isOwner);
-
+    const owner = await this.environmentRepository.getTeamOwnerDetails(projectId);
     const invitationCount = await this.projectInvitationRepository.count({
       _projectId: projectId,
     });
 
-    if (teamMember && teamMember._userId) {
+    if (owner && owner._userId) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
-      const subscription = await this.paymentAPIService.fetchActiveSubscription(teamMember._userId.email);
-
+      const subscription = await this.paymentAPIService.fetchActiveSubscription(owner._userId.email);
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
       const allocated = subscription.meta.TEAM_MEMBERS;
