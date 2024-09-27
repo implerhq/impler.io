@@ -25,6 +25,10 @@ const environmentSchema = new Schema(
           type: Schema.Types.Date,
           default: Date.now,
         },
+        isOwner: {
+          type: Schema.Types.Boolean,
+          default: false,
+        },
       },
     ],
   },
