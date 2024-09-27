@@ -13,7 +13,6 @@ export class CreateEnvironment {
 
   async execute(command: CreateEnvironmentCommand) {
     const key = await this.generateUniqueApiKey.execute();
-
     const environment = await this.environmentRepository.create({
       _projectId: command.projectId,
       key,
@@ -23,6 +22,7 @@ export class CreateEnvironment {
         {
           _userId: command._userId,
           role: command.role,
+          isOwner: !!command.isOwner,
         },
       ],
     });
