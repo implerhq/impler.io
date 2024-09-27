@@ -13,7 +13,7 @@ import { IErrorObject, IProjectPayload, IEnvironmentData } from '@impler/shared'
 
 export function useApp() {
   const queryClient = useQueryClient();
-  const { replace, pathname } = useRouter();
+  const { replace } = useRouter();
   const { logout } = useLogout({
     onLogout: () => replace(ROUTES.SIGNIN),
   });
@@ -51,16 +51,10 @@ export function useApp() {
     ICreateProjectData
   >([API_KEYS.PROJECT_CREATE], (data) => commonApi(API_KEYS.PROJECT_CREATE as any, { body: data }), {
     onSuccess: ({ project }) => {
-      queryClient.setQueryData<IProjectPayload[]>([API_KEYS.PROJECTS_LIST], () => {
-        return [...(projects || []), project];
-      });
+      queryClient.setQueryData<IProjectPayload[]>([API_KEYS.PROJECTS_LIST], () => [...(projects || []), project]);
       track({ name: 'PROJECT CREATE', properties: { duringOnboard: false } });
-      if (profileInfo) {
-        refetchMeData();
-      }
-      if (![ROUTES.SETTINGS, ROUTES.ACTIVITIES, ROUTES.IMPORTS].includes(pathname)) {
-        replace(ROUTES.IMPORTS);
-      }
+      replace(ROUTES.HOME);
+      refetchMeData();
       notify(NOTIFICATION_KEYS.PROJECT_CREATED, {
         title: 'Project created',
         message: `Project ${project.name} created successfully`,
@@ -68,23 +62,9 @@ export function useApp() {
     },
   });
 
-  const onProjectIdChange = async (id: string) => {
-    const project = projects?.find((projectItem) => projectItem._id === id);
-    if (project && profileInfo) {
-      setProfileInfo({
-        ...profileInfo,
-        _projectId: project._id,
-        projectName: project?.name,
-      });
-      setAbility(defineAbilitiesFor(profileInfo.role));
-      switchProject(id);
-
-      if (![ROUTES.SETTINGS, ROUTES.ACTIVITIES, ROUTES.IMPORTS].includes(pathname)) {
-        replace(ROUTES.HOME);
-      }
-
-      track({ name: 'PROJECT SWITCH', properties: {} });
-    }
+  const onProjectIdChange = (id: string) => {
+    switchProject(id);
+    track({ name: 'PROJECT SWITCH', properties: {} });
   };
 
   useEffect(() => {
