@@ -43,7 +43,6 @@ export function SentInvitations() {
             data={invitations || []}
           />
         )}
-        {!isInvitationsLoading && invitations?.length === 0 && <Text>No data available</Text>}
       </Stack>
     </Stack>
   );
