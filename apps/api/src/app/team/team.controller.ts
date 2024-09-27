@@ -13,6 +13,7 @@ import {
   DeleteTeamMember,
   RevokeInvitation,
   DeclineInvitation,
+  TeamMemberMeta,
 } from './usecase';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { CONSTANTS, COOKIE_CONFIG } from '@shared/constants';
@@ -31,7 +32,8 @@ export class TeamController {
     private updateTeamMember: UpdateTeamMember,
     private deleteTeamMember: DeleteTeamMember,
     private revokeInvitation: RevokeInvitation,
-    private declineInvitation: DeclineInvitation
+    private declineInvitation: DeclineInvitation,
+    private teamMemberMeta: TeamMemberMeta
   ) {}
 
   @Get('/members')
@@ -126,6 +128,14 @@ export class TeamController {
       invitationId,
       user,
     });
+  }
+
+  @Get(':projectId/members')
+  @ApiOperation({
+    summary: 'Fetch Meta Related to TeamMembers in Current Plan',
+  })
+  async teamMembersMetaRoute(@Param('projectId') projectId: string) {
+    return this.teamMemberMeta.exec(projectId);
   }
 
   @Delete('/:invitationId/revoke')
