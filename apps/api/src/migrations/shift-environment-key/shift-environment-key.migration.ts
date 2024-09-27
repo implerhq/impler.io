@@ -23,14 +23,11 @@ export async function run() {
       //@ts-ignore
       const key = firstApiKey.key;
 
-      const updatedApiKeys = environment.apiKeys.map((apiKey) => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        // eslint-disable-next-line no-unused-vars
-        const { ...rest } = apiKey;
-
-        return { ...rest, role: UserRolesEnum.ADMIN };
-      });
+      const updatedApiKeys = environment.apiKeys.map((apiKey) => ({
+        ...apiKey,
+        role: UserRolesEnum.ADMIN,
+        isOwner: true,
+      }));
 
       if (key === null || key === undefined) {
         console.error(`Skipping environment ${environment._id} due to null key`);
@@ -38,6 +35,7 @@ export async function run() {
       }
 
       try {
+        // TODO: optimize update query in loop
         await environmentRepository.update(
           { _id: environment._id },
           {
