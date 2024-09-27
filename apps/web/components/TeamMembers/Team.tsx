@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 
@@ -10,11 +10,13 @@ import { Button } from '@ui/button';
 import { useAppState } from 'store/app.context';
 import { OutlinedTabs } from '@ui/OutlinedTabs';
 import { useTeamMembers } from '@hooks/useTeamMembers';
-import { colors, MODAL_KEYS, TAB_KEYS, TAB_TITLES } from '@config';
+import { AbilityContext } from 'store/ability.context';
+import { ActionsEnum, AppAbility, colors, MODAL_KEYS, SubjectsEnum, TAB_KEYS, TAB_TITLES } from '@config';
 import { useSentProjectInvitations } from '@hooks/useSentProjectInvitations';
 
 export function Team() {
   const { profileInfo } = useAppState();
+  const ability = useContext<AppAbility | null>(AbilityContext);
   const { invitationsCount } = useSentProjectInvitations();
   const { teamMembersCount } = useTeamMembers();
   const [activeTab, setActiveTab] = useState(TAB_KEYS.MEMBERS);
@@ -54,13 +56,19 @@ export function Team() {
     },
   ];
 
+  const canInvite = ability && ability.can(ActionsEnum.CREATE, SubjectsEnum.TEAM_MEMBERS);
+
   return (
     <OutlinedTabs
       defaultValue={TAB_KEYS.MEMBERS}
       value={activeTab}
       onTabChange={handleTabChange}
       items={tabItems}
-      inviteButton={<Button onClick={openInviteModal}>Invite to {profileInfo?.projectName}</Button>}
+      inviteButton={
+        <Button onClick={canInvite ? openInviteModal : undefined} disabled={!canInvite}>
+          Invite to {profileInfo?.projectName}
+        </Button>
+      }
     />
   );
 }
