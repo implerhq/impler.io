@@ -56,7 +56,7 @@ export class Invite {
       });
 
       const emailContents = this.emailService.getEmailContent({
-        type: 'PROJECT_INVITATION_EMAIL',
+        type: 'TEAM_INVITATION_EMAIL',
         data: {
           invitedBy: command.invitatedBy,
           projectName: command.projectName,
