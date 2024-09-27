@@ -1,13 +1,12 @@
-import { MODAL_KEYS, NOTIFICATION_KEYS } from '@config';
+import { MODAL_KEYS } from '@config';
 import { modals } from '@mantine/modals';
 import { validateEmails } from '@shared/utils';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { commonApi } from '@libs/api';
 import { API_KEYS } from '@config';
 import { IErrorObject } from '@impler/shared';
 import { useAppState } from 'store/app.context';
-import { notify } from '@libs/notify';
 
 interface ProjectInvitationData {
   invitationEmailsTo: string[];
@@ -19,8 +18,6 @@ interface ProjectInvitationData {
 interface UseProjectInvitationFormProps {
   refetchInvitations: () => void;
 }
-
-const MAX_INVITATION_EMAILS = 4;
 
 export function useProjectInvitationForm({ refetchInvitations }: UseProjectInvitationFormProps) {
   const { profileInfo } = useAppState();
@@ -51,10 +48,9 @@ export function useProjectInvitationForm({ refetchInvitations }: UseProjectInvit
         refetchInvitations();
       },
       onError: (error: IErrorObject) => {
-        notify(NOTIFICATION_KEYS.ERROR_INVITING_TEAM_MEMBER, {
-          title: 'Error while Inviting Team Member',
-          message: error.message || 'An Error Occurred While Inviting Team Member',
-          color: 'red',
+        setError('invitationEmailsTo', {
+          type: 'manual',
+          message: error.message,
         });
       },
     }
@@ -69,15 +65,6 @@ export function useProjectInvitationForm({ refetchInvitations }: UseProjectInvit
       return;
     }
 
-    if (data.invitationEmailsTo.length > MAX_INVITATION_EMAILS) {
-      setError('invitationEmailsTo', {
-        type: 'manual',
-        message: `You can invite a maximum of ${MAX_INVITATION_EMAILS} email addresses.`,
-      });
-
-      return;
-    }
-
     clearErrors('invitationEmailsTo');
 
     projectInvitation({
@@ -88,12 +75,34 @@ export function useProjectInvitationForm({ refetchInvitations }: UseProjectInvit
     });
   };
 
+  const {
+    data: teamTeamMemberMeta,
+    refetch: refetchTeamMemberMeta,
+    isLoading: isTeamMemberMetaLoading,
+  } = useQuery<unknown, IErrorObject, { available: number; total: number }, (string | undefined)[]>(
+    [API_KEYS.TEAM_MEMBER_META, profileInfo?._projectId],
+    () =>
+      commonApi(API_KEYS.TEAM_MEMBER_META as any, {
+        parameters: [profileInfo!._projectId],
+      }),
+    {
+      enabled: !!profileInfo?._projectId,
+      onSuccess: (data) => {
+        console.log('API DATA', data);
+      },
+    }
+  );
+
   return {
     control,
     handleSubmit,
     errors,
     onSubmit,
+    setError,
+    clearErrors,
     isProjectInvitationLoading,
-    MAX_INVITATION_EMAILS,
+    isTeamMemberMetaLoading,
+    teamTeamMemberMeta,
+    refetchTeamMemberMeta,
   };
 }
