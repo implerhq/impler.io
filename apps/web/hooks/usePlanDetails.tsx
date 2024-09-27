@@ -5,10 +5,10 @@ import { IErrorObject } from '@impler/shared';
 import { usePlanMetaData } from 'store/planmeta.store.context';
 
 interface UsePlanDetailProps {
-  email: string;
+  projectId: string;
 }
 
-export function usePlanDetails({ email }: UsePlanDetailProps) {
+export function usePlanDetails({ projectId }: UsePlanDetailProps) {
   const { meta, setPlanMeta } = usePlanMetaData();
   const { data: activePlanDetails, isLoading: isActivePlanLoading } = useQuery<
     unknown,
@@ -16,8 +16,11 @@ export function usePlanDetails({ email }: UsePlanDetailProps) {
     ISubscriptionData,
     [string, string]
   >(
-    [API_KEYS.FETCH_ACTIVE_SUBSCRIPTION, email],
-    () => commonApi<ISubscriptionData>(API_KEYS.FETCH_ACTIVE_SUBSCRIPTION as any, {}),
+    [API_KEYS.FETCH_ACTIVE_SUBSCRIPTION, projectId],
+    () =>
+      commonApi<ISubscriptionData>(API_KEYS.FETCH_ACTIVE_SUBSCRIPTION as any, {
+        parameters: [projectId],
+      }),
     {
       onSuccess(data) {
         if (data && data.meta) {
@@ -27,10 +30,11 @@ export function usePlanDetails({ email }: UsePlanDetailProps) {
             IMPORTED_ROWS: data.meta.IMPORTED_ROWS,
             REMOVE_BRANDING: data.meta.REMOVE_BRANDING,
             ADVANCED_VALIDATORS: data.meta.ADVANCED_VALIDATORS,
+            TEAM_MEMBERS: data.meta.TEAM_MEMBERS,
           });
         }
       },
-      enabled: !!email,
+      enabled: !!projectId,
     }
   );
 
