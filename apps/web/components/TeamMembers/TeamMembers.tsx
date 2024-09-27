@@ -1,3 +1,4 @@
+import { useContext } from 'react';
 import dayjs from 'dayjs';
 import { Group, Avatar, Text, Select, Badge, UnstyledButton } from '@mantine/core';
 
@@ -5,13 +6,13 @@ import { Table } from '@ui/table';
 import { useApp } from '@hooks/useApp';
 import { UserRolesEnum } from '@impler/shared';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
-import { defineAbilitiesFor } from 'config/defineAbilities';
 import { useTeamMembers } from '@hooks/useTeamMembers';
-import { ActionsEnum, DATE_FORMATS, MEMBER_ROLE, SubjectsEnum } from '@config';
+import { ActionsEnum, AppAbility, DATE_FORMATS, MEMBER_ROLE, SubjectsEnum } from '@config';
+import { AbilityContext } from 'store/ability.context';
 
 export function TeamMembers() {
   const { profile } = useApp();
-  const ability = defineAbilitiesFor(profile?.role);
+  const ability = useContext<AppAbility | null>(AbilityContext);
   const { teamMembersList, openDeleteModal, updateTeamMemberRole } = useTeamMembers();
 
   return (
@@ -52,7 +53,7 @@ export function TeamMembers() {
           title: 'Role',
           key: 'role',
           Cell: (item) =>
-            ability.can(ActionsEnum.UPDATE, SubjectsEnum.ROLE) ? (
+            ability && ability.can(ActionsEnum.UPDATE, SubjectsEnum.ROLE) ? (
               <Select
                 disabled={item.isCurrentUser ? true : false}
                 data={MEMBER_ROLE}
@@ -77,7 +78,9 @@ export function TeamMembers() {
             const isCurrentUserAdmin = profile?.role === UserRolesEnum.ADMIN;
             const isTargetUserAdmin = item.role === UserRolesEnum.ADMIN;
 
-            return ability.can(ActionsEnum.UPDATE, SubjectsEnum.ROLE) && (isCurrentUserAdmin || !isTargetUserAdmin) ? (
+            return ability &&
+              ability.can(ActionsEnum.UPDATE, SubjectsEnum.ROLE) &&
+              (isCurrentUserAdmin || !isTargetUserAdmin) ? (
               <UnstyledButton
                 disabled={isTargetUserAdmin && isCurrentUserAdmin}
                 onClick={() => openDeleteModal(item._id, item._userId.firstName)}
