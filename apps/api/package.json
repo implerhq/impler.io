@@ -69,7 +69,7 @@
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
-    "@nestjs/cli": "^9.1.5",
+    "@nestjs/cli": "^10.4.5",
     "@types/bcryptjs": "^2.4.2",
     "@types/body-parser": "^1.19.2",
     "@types/chai": "^4.3.4",
