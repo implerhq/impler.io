@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { TemplateRepository } from '@impler/dal';
 import { TemplateResponseDto } from 'app/template/dtos/template-response.dto';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
+import { IntegrationEnum } from '@impler/shared';
 
 @Injectable()
 export class GetTemplateDetails {
@@ -25,6 +26,7 @@ export class GetTemplateDetails {
       totalInvalidRecords: template.totalInvalidRecords,
       totalRecords: template.totalRecords,
       mode: template.mode,
+      integration: template.integration as IntegrationEnum,
     };
   }
 }

@@ -126,7 +126,9 @@ export function useImports() {
     modals.open({
       modalId: MODAL_KEYS.IMPORT_CREATE,
       title: MODAL_TITLES.IMPORT_CREATE,
+      centered: true,
       children: <CreateImportForm onSubmit={createImport} />,
+      size: 'lg',
     });
   }
   function onDuplicateClick(importId: string) {

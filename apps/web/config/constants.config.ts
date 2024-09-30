@@ -1,3 +1,9 @@
+import { JavaScriptIcon } from '@assets/icons/Javascript.icon';
+import { ReactIcon } from '@assets/icons/React.icon';
+import { AngularIcon } from '@assets/icons/Angular.icon';
+import { BubbleIcon } from '@assets/icons/Bubble.icon';
+import { IntegrationEnum } from '@impler/shared';
+
 export const CONSTANTS = {
   EXPLORE_PLANS_QUERY_LEY: 'explore_plans',
   PLAN_CODE_QUERY_KEY: 'plan_code',
@@ -45,6 +51,19 @@ export const MODAL_KEYS = {
   PAYMENT_PLANS: 'PAYMENT_PLANS',
   PAYMENT_DETAILS_ADD: 'PAYMENT_PLANS',
 };
+
+interface IntegrateOption {
+  name: IntegrationEnum;
+  Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  key: string;
+}
+
+export const INTEGRATE_IMPORT: IntegrateOption[] = [
+  { name: IntegrationEnum.JAVASCRIPT, Icon: JavaScriptIcon, key: IntegrationEnum.JAVASCRIPT },
+  { name: IntegrationEnum.REACT, Icon: ReactIcon, key: IntegrationEnum.REACT },
+  { name: IntegrationEnum.ANGULAR, Icon: AngularIcon, key: IntegrationEnum.ANGULAR },
+  { name: IntegrationEnum.BUBBLE, Icon: BubbleIcon, key: IntegrationEnum.BUBBLE },
+];
 
 export const MODAL_TITLES = {
   IMPORT_DUPLICATE: 'Duplicate Import',

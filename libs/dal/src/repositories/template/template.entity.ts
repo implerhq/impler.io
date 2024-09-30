@@ -1,4 +1,4 @@
-import { DestinationsEnum } from '@impler/shared';
+import { DestinationsEnum, IntegrationEnum } from '@impler/shared';
 
 export class TemplateEntity {
   _id?: string;
@@ -20,4 +20,6 @@ export class TemplateEntity {
   mode: string;
 
   imageColumns: string[];
+
+  integration: IntegrationEnum;
 }
