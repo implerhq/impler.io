@@ -1,9 +1,9 @@
 import { IconType } from '@types';
 import { IconSizes } from 'config';
 
-export const ReactIcon = ({ size = 'lg', color = '#fff' }: IconType) => (
+export const ReactIcon = ({ size = 'lg' }: IconType) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={IconSizes[size]} height={IconSizes[size]} fill="none">
-    <g clipPath="url(#a)" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <g clipPath="url(#a)" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M6.306 9.21094C3.704 9.93394 2 11.1369 2 12.4999c0 2.21 4.477 4 10 4 .773 0 1.526-.035 2.248-.102" />
       <path d="M17.692 15.789C20.295 15.067 22 13.863 22 12.5c0-2.21-4.477-4-10-4-.773 0-1.526.035-2.25.102" />
       <path d="M6.30633 15.787c-.676 2.615-.485 4.693.695 5.373 1.913 1.105 5.70297-1.877 8.46397-6.66.387-.67.733-1.339 1.036-2M17.695 9.21544c.677-2.616.487-4.696-.694-5.376-1.913-1.105-5.703 1.877-8.464 6.65996-.387.67-.733 1.34-1.037 2" />
@@ -11,7 +11,7 @@ export const ReactIcon = ({ size = 'lg', color = '#fff' }: IconType) => (
     </g>
     <defs>
       <clipPath id="a">
-        <path fill="#fff" transform="translate(0 .5)" d="M0 0h24v24H0z" />
+        <path fill="currentColor" transform="translate(0 .5)" d="M0 0h24v24H0z" />
       </clipPath>
     </defs>
   </svg>
