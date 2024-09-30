@@ -35,11 +35,6 @@ export function Footer({
         </Button>
       </>
     ),
-    [PhasesEnum.UPLOAD]: (
-      <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
-        {texts.PHASE1.SEE_MAPPING}
-      </Button>
-    ),
     [PhasesEnum.MAPPING]: (
       <>
         <Button
