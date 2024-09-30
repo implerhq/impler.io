@@ -25,13 +25,8 @@ const Template: ComponentStory<typeof UploadDropzone> = (args) => <UploadDropzon
 
 export const Default = Template.bind({});
 
-export const WithFile = Template.bind({});
-WithFile.args = {
-  file: {
-    name: 'Document.tsx',
-    size: 1200,
-  } as unknown as File,
-};
+export const Primary = Template.bind({});
+Primary.args = {};
 
 export const WithError = Template.bind({});
 WithError.args = {
