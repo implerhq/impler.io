@@ -12,6 +12,9 @@ export const getModalStyles = (theme: MantineTheme): React.CSSProperties => ({
   width: 'calc(100vw - 20%)',
   display: 'flex',
   flexDirection: 'column',
+
+  borderRadius: 'var(--border-radius)',
+  backgroundColor: 'var(--primary-background)',
 });
 
 export const getModalBodyStyles = (theme: MantineTheme): React.CSSProperties => ({
