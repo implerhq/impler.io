@@ -12,7 +12,7 @@ import { mantineConfig, variables } from '@config';
 import { UploadDropzone } from '@ui/UploadDropzone';
 import { usePhase1 } from '@hooks/Phase1/usePhase1';
 
-import useStyles from './Styles';
+import useStyles from './Phase1.Styles';
 import { Divider } from '@ui/Divider';
 import { Footer } from 'components/Common/Footer';
 import { SheetSelectModal } from './SheetSelectModal';
