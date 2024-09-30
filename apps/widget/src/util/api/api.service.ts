@@ -11,6 +11,7 @@ import {
   constructQueryString,
   IUserJobMapping,
   IUserJob,
+  IColumn,
 } from '@impler/shared';
 import { IUpload } from '@impler/client';
 import { HttpClient } from './api.client';
@@ -132,6 +133,10 @@ export class ApiService {
 
   async terminateUpload(uploadId: string) {
     return this.httpClient.delete(`/upload/${uploadId}`) as Promise<IUpload>;
+  }
+
+  async getTemplateColun(templateId: string) {
+    return this.httpClient.get(`/template/${templateId}/columns`) as Promise<IColumn[]>;
   }
 
   async getColumns(uploadId: string) {

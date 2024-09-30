@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { logAmplitudeEvent } from '@amplitude';
 import { notifier, ParentWindow } from '@util';
@@ -8,7 +8,7 @@ import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { useImplerState } from '@store/impler.context';
 import { IUpload, WIDGET_TEXTS } from '@impler/client';
-import { IErrorObject, ITemplate, FileMimeTypesEnum } from '@impler/shared';
+import { IErrorObject, ITemplate, FileMimeTypesEnum, IColumn } from '@impler/shared';
 
 import { variables } from '@config';
 import { useSample } from '@hooks/useSample';
@@ -22,6 +22,7 @@ interface IUsePhase1Props {
 
 export function usePhase1({ goNext, texts }: IUsePhase1Props) {
   const {
+    watch,
     control,
     register,
     trigger,
@@ -39,6 +40,16 @@ export function usePhase1({ goNext, texts }: IUsePhase1Props) {
   const [excelSheetNames, setExcelSheetNames] = useState<string[]>([]);
   const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
   const { setUploadInfo, setTemplateInfo, output, schema, data, importId, imageSchema } = useAppState();
+
+  const selectedTemplateId = watch('templateId');
+
+  const { data: columns, isLoading: isColumnListLoading } = useQuery<unknown, IErrorObject, IColumn[], [string]>(
+    [`template-columns:${selectedTemplateId}`],
+    () => api.getTemplateColun(selectedTemplateId),
+    {
+      enabled: !!selectedTemplateId,
+    }
+  );
 
   const { isLoading: isUploadLoading, mutate: submitUpload } = useMutation<IUpload, IErrorObject, IUploadValues>(
     ['upload'],
@@ -135,9 +146,7 @@ export function usePhase1({ goNext, texts }: IUsePhase1Props) {
       });
     }
   };
-  const onSubmit = async () => {
-    await trigger();
-    const file = getValues('file');
+  const onSubmit = async (file: File) => {
     if (file && [FileMimeTypesEnum.EXCEL, FileMimeTypesEnum.EXCELX].includes(file.type as FileMimeTypesEnum)) {
       getExcelSheetNames({ file: file });
     } else {
@@ -157,6 +166,7 @@ export function usePhase1({ goNext, texts }: IUsePhase1Props) {
   return {
     control,
     errors,
+    columns,
     setError,
     register,
     onSubmit,
@@ -165,6 +175,7 @@ export function usePhase1({ goNext, texts }: IUsePhase1Props) {
     excelSheetNames,
     isUploadLoading,
     onTemplateChange,
+    isColumnListLoading,
     isDownloadInProgress,
     onSelectSheetModalReset,
     isExcelSheetNamesLoading,

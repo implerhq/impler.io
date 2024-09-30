@@ -1,30 +1,35 @@
-import { Box, Divider, Flex, Group, Skeleton, Table, Text } from '@mantine/core';
+import { Flex, Group } from '@mantine/core';
 import { Controller } from 'react-hook-form';
+import { useMediaQuery } from '@mantine/hooks';
 
 import { PhasesEnum } from '@types';
 import { Select } from '@ui/Select';
 import { Button } from '@ui/Button';
-
-import { variables } from '@config';
 import { WIDGET_TEXTS } from '@impler/client';
-import { DownloadIcon, BackIcon, Warning, GridIcon } from '@icons';
+
+import { DownloadIcon, BackIcon } from '@icons';
+import { mantineConfig, variables } from '@config';
 import { UploadDropzone } from '@ui/UploadDropzone';
 import { usePhase1 } from '@hooks/Phase1/usePhase1';
 
 import useStyles from './Styles';
+import { Divider } from '@ui/Divider';
 import { Footer } from 'components/Common/Footer';
 import { SheetSelectModal } from './SheetSelectModal';
+import { ManaulEntryView } from './ManualEntryView';
 
 interface IPhase1Props {
   onNextClick: () => void;
   hasImageUpload: boolean;
-  generateImageTemplate: () => void;
   texts: typeof WIDGET_TEXTS;
+  generateImageTemplate: () => void;
 }
 
 export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTemplate, texts }: IPhase1Props) {
   const { classes } = useStyles();
+  const isBiggerThanSm = useMediaQuery(`(min-width: ${mantineConfig.breakpoints?.sm}px)`);
   const {
+    columns,
     onSubmit,
     control,
     setError,
@@ -82,71 +87,36 @@ export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTempl
         </div>
       </Group>
 
-      <Flex direction="row" style={{ flexGrow: 1 }}>
-        <Controller
-          control={control}
-          name="file"
-          rules={{
-            required: texts.PHASE1.SELECT_FILE_REQUIRED_MSG,
-          }}
-          render={({ field, fieldState }) => (
-            <UploadDropzone
-              texts={texts}
-              loading={isUploadLoading}
-              onReject={() => {
-                setError('file', {
-                  message: texts.PHASE1.SELECT_FILE_FORMAT_MSG,
-                  type: 'manual',
-                });
-              }}
-              onDrop={(selectedFile) => {
-                field.onChange(selectedFile[variables.baseIndex]);
-                setError('file', {});
-              }}
-              onClear={() => field.onChange(undefined)}
-              file={field.value}
-              error={fieldState.error?.message}
-            />
-          )}
-        />
-        <Divider orientation="vertical" label="OR" />
-        <Flex direction="column" bg="#F3F4F6" pt="sm" pl="sm">
-          <Button fullWidth={false} leftIcon={<GridIcon />}>
-            Manually enter your data
-          </Button>
-          <Group>
-            <Warning /> <Text>Recommanded upto 1K records.</Text>
-          </Group>
-          <Box pt="xs" pl="xs">
-            <Table>
-              <thead>
-                <tr>
-                  <th>Element position</th>
-                  <th>Element name</th>
-                  <th>Symbol</th>
-                  <th>Atomic mass</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <tr key={index}>
-                    <td>
-                      <Skeleton animate={false} height={15} radius="md" />
-                    </td>
-                    <td>
-                      <Skeleton animate={false} height={15} radius="md" />
-                    </td>
-                    <td>
-                      <Skeleton animate={false} height={15} radius="md" />
-                    </td>
-                    <td>
-                      <Skeleton animate={false} height={15} radius="md" />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          </Box>
+      <Flex style={{ flexGrow: 1 }} justify="center" align="center">
+        <Flex direction={{ base: 'column', sm: 'row' }} align="stretch" justify="center" gap="xs" w="75%">
+          <Controller
+            control={control}
+            name="file"
+            rules={{
+              required: texts.PHASE1.SELECT_FILE_REQUIRED_MSG,
+            }}
+            render={({ field, fieldState }) => (
+              <UploadDropzone
+                texts={texts}
+                loading={isUploadLoading}
+                className={classes.contentWrapper}
+                onReject={() => {
+                  setError('file', {
+                    message: texts.PHASE1.SELECT_FILE_FORMAT_MSG,
+                    type: 'manual',
+                  });
+                }}
+                onDrop={(selectedFile) => {
+                  field.onChange(selectedFile[variables.baseIndex]);
+                  onSubmit(selectedFile[variables.baseIndex]);
+                }}
+                error={fieldState.error?.message}
+              />
+            )}
+          />
+          <Divider orientation={isBiggerThanSm ? 'vertical' : 'horizontal'} label="OR" />
+
+          <ManaulEntryView columns={columns} className={classes.contentWrapper} />
         </Flex>
       </Flex>
 
@@ -159,12 +129,7 @@ export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTempl
         onClose={onSelectSheetModalReset}
       />
 
-      <Footer
-        onNextClick={onSubmit}
-        onPrevClick={() => {}}
-        active={PhasesEnum.UPLOAD}
-        primaryButtonLoading={isUploadLoading || isExcelSheetNamesLoading}
-      />
+      <Footer active={PhasesEnum.UPLOAD} primaryButtonLoading={isUploadLoading || isExcelSheetNamesLoading} />
     </>
   );
 }
