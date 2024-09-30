@@ -145,8 +145,9 @@ export function Widget() {
   return (
     <Modal title={title || importConfig?.title || templateInfo?.name} opened={showWidget} onClose={onClose}>
       <Layout
-        active={phase}
         texts={texts}
+        active={phase}
+        onClose={onClose}
         hasImageUpload={hasImageUpload}
         mode={importConfig.mode as TemplateModeEnum}
         title={title || importConfig?.title || templateInfo?.name}
