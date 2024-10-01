@@ -33,6 +33,5 @@ export const useStyles = createStyles((theme) => ({
   },
   panel: {
     marginTop: theme.spacing.md,
-    padding: `${theme.spacing.md}px 0`,
   },
 }));

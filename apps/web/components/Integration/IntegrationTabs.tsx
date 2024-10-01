@@ -53,8 +53,7 @@ export function IntegrationTabs({
       {items.map((item) => (
         <MantineTabs.Panel key={item.value} value={item.value}>
           <Divider pt="md" />
-
-          {item.content}
+          <div style={{ maxHeight: 390, overflow: 'auto' }}>{item.content}</div>
         </MantineTabs.Panel>
       ))}
     </MantineTabs>

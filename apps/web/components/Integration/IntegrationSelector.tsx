@@ -13,6 +13,6 @@ export const IntegrationSelector = ({ integration, setIntegration }: LanguageSel
     withinPortal
     value={integration}
     data={INTEGRATION_GUIDE}
-    onChange={(value) => setIntegration((value as IntegrationEnum) || IntegrationEnum.JAVASCRIPT)} // Ensure proper casting
+    onChange={(value) => setIntegration((value as IntegrationEnum) || IntegrationEnum.JAVASCRIPT)}
   />
 );
