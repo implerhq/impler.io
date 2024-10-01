@@ -10,6 +10,7 @@ import { usePlanMetaData } from 'store/planmeta.store.context';
 import { ITemplate, IErrorObject, IColumn } from '@impler/shared';
 import { UpdateImportForm } from '@components/imports/forms/UpdateImportForm';
 import { API_KEYS, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS, ROUTES } from '@config';
+import { IntegrationModal } from '@components/Integration/IntegrationModal';
 
 interface useImportDetailProps {
   templateId: string;
@@ -81,6 +82,16 @@ export function useImportDetails({ templateId }: useImportDetailProps) {
     });
   };
 
+  const onIntegrationClick = () => {
+    modals.open({
+      modalId: MODAL_KEYS.INTEGRATION_DETAILS,
+      centered: true,
+      size: '75%',
+      children: <IntegrationModal />,
+      withCloseButton: false,
+    });
+  };
+
   const onUpdateClick = () => {
     if (templateData)
       modals.open({
@@ -105,6 +116,7 @@ export function useImportDetails({ templateId }: useImportDetailProps) {
     templateData,
     onUpdateClick,
     onDeleteClick,
+    onIntegrationClick,
     isColumnListLoading,
     isTemplateDataLoading,
     onSpreadsheetImported,

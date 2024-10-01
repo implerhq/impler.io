@@ -46,6 +46,7 @@ export const MODAL_KEYS = {
   IMPORT_UPDATE: 'IMPORT_UPDATE',
   COLUMN_UPDATE: 'COLUMN_UPDATE',
   COLUMN_DELETE: 'COLUMN_DELETE',
+  INTEGRATION_DETAILS: 'Integration Details',
 
   VALIDATIONS_OUTPUT: 'VALIDATIONS_OUTPUT',
   PAYMENT_PLANS: 'PAYMENT_PLANS',
@@ -65,6 +66,15 @@ export const INTEGRATE_IMPORT: IntegrateOption[] = [
   { name: IntegrationEnum.BUBBLE, Icon: BubbleIcon, key: IntegrationEnum.BUBBLE },
 ];
 
+export const INTEGRATION_GUIDE = [
+  { value: IntegrationEnum.JAVASCRIPT, label: IntegrationEnum.JAVASCRIPT },
+  { value: IntegrationEnum.ANGULAR, label: IntegrationEnum.ANGULAR },
+  { value: IntegrationEnum.REACT, label: IntegrationEnum.REACT },
+  { value: IntegrationEnum.BUBBLE, label: IntegrationEnum.BUBBLE },
+];
+
+export type IntegrationLanguage = 'javascript' | 'jsx' | 'typescript' | 'markup';
+
 export const MODAL_TITLES = {
   IMPORT_DUPLICATE: 'Duplicate Import',
   IMPORT_CREATE: 'Start with a new Import',
@@ -72,6 +82,7 @@ export const MODAL_TITLES = {
   IMPORT_DELETE: 'Delete Import',
   COLUMN_UPDATE: 'Configure Column',
   COLUMN_DELETE: 'Delete Column',
+  INTEGRATION_DETAILS: 'Integrate',
 
   VALIDATIONS_OUTPUT: 'Test code output',
 };
