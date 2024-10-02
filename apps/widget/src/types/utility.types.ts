@@ -31,3 +31,13 @@ export type HotItemSchema = {
         cellProperties: CellProperties
       ) => any);
 };
+
+export interface IRecordExtended {
+  _id?: string;
+  checked?: boolean;
+  index: number;
+  isValid: boolean;
+  record: Record<string, any>;
+  errors?: Record<string, string>;
+  updated: Record<string, boolean>;
+}

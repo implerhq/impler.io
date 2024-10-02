@@ -20,9 +20,3 @@ export interface IReplaceData {
   caseSensitive?: boolean;
   matchEntireCell?: boolean;
 }
-
-export interface ICreateRecord {
-  startingRowIndex: number;
-
-  amountOfRows: number;
-}

@@ -1,7 +1,7 @@
 import { Group, Text } from '@mantine/core';
 import { Button } from '@ui/Button';
 import { variables } from '@config';
-import { PhasesEnum } from '@types';
+import { FlowsEnum, PhasesEnum } from '@types';
 import useStyles from './Styles';
 import { useAppState } from '@store/app.context';
 
@@ -24,62 +24,103 @@ export function Footer({
   primaryButtonDisabled,
   secondaryButtonDisabled,
 }: IFooterProps) {
-  const { importConfig, texts } = useAppState();
   const { classes } = useStyles();
+  const { importConfig, texts, flow } = useAppState();
 
-  const FooterActions = {
-    [PhasesEnum.IMAGE_UPLOAD]: (
-      <>
-        <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
-          {texts['PHASE0-1'].GENERATE_TEMPLATE}
-        </Button>
-      </>
-    ),
-    [PhasesEnum.MAPPING]: (
-      <>
-        <Button
-          loading={secondaryButtonLoading}
-          disabled={secondaryButtonDisabled}
-          onClick={onPrevClick}
-          variant="outline"
-        >
-          {texts.COMMON.UPLOAD_AGAIN}
-        </Button>
-        <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
-          {texts.PHASE2.REVIEW_DATA}
-        </Button>
-      </>
-    ),
-    [PhasesEnum.REVIEW]: (
-      <>
-        <Button
-          loading={secondaryButtonLoading}
-          disabled={secondaryButtonDisabled}
-          onClick={onPrevClick}
-          variant="outline"
-        >
-          {texts.COMMON.UPLOAD_AGAIN}
-        </Button>
-        <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
-          {texts.PHASE3.RE_REVIEW_DATA}
-        </Button>
-      </>
-    ),
-    [PhasesEnum.COMPLETE]: (
-      <>
-        <Button
-          loading={secondaryButtonLoading}
-          disabled={secondaryButtonDisabled}
-          onClick={onPrevClick}
-          variant="outline"
-        >
-          {texts.COMMON.CLOSE_WIDGET}
-        </Button>
-        <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
-          {texts.COMMON.UPLOAD_AGAIN}
-        </Button>
-      </>
-    ),
+  const footerActions = {
+    ...(flow === FlowsEnum.AUTO_IMPORT
+      ? {
+          [PhasesEnum.CONFIGURE]: (
+            <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
+              {texts.AUTOIMPORT_PHASE1.MAPCOLUMN}
+            </Button>
+          ),
+          [PhasesEnum.MAPCOLUMNS]: (
+            <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
+              {texts.AUTOIMPORT_PHASE2.SCHEDULE}
+            </Button>
+          ),
+          [PhasesEnum.SCHEDULE]: (
+            <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
+              {texts.AUTOIMPORT_PHASE3.CONFIRM}
+            </Button>
+          ),
+          [PhasesEnum.CONFIRM]: (
+            <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
+              {texts.COMMON.CLOSE_WIDGET}
+            </Button>
+          ),
+        }
+      : flow === FlowsEnum.MANUAL_ENTRY
+      ? {
+          [PhasesEnum.MANUAL_ENTRY]: (
+            <>
+              <Button
+                loading={secondaryButtonLoading}
+                disabled={secondaryButtonDisabled}
+                onClick={onPrevClick}
+                variant="outline"
+              >
+                {texts.COMMON.UPLOAD_AGAIN}
+              </Button>
+              <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
+                {texts.COMMON.FINISH}
+              </Button>
+            </>
+          ),
+        }
+      : {
+          [PhasesEnum.IMAGE_UPLOAD]: (
+            <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
+              {texts['PHASE0-1'].GENERATE_TEMPLATE}
+            </Button>
+          ),
+          [PhasesEnum.MAPPING]: (
+            <>
+              <Button
+                loading={secondaryButtonLoading}
+                disabled={secondaryButtonDisabled}
+                onClick={onPrevClick}
+                variant="outline"
+              >
+                {texts.COMMON.UPLOAD_AGAIN}
+              </Button>
+              <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
+                {texts.PHASE2.REVIEW_DATA}
+              </Button>
+            </>
+          ),
+          [PhasesEnum.REVIEW]: (
+            <>
+              <Button
+                loading={secondaryButtonLoading}
+                disabled={secondaryButtonDisabled}
+                onClick={onPrevClick}
+                variant="outline"
+              >
+                {texts.COMMON.UPLOAD_AGAIN}
+              </Button>
+              <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
+                {texts.PHASE3.RE_REVIEW_DATA}
+              </Button>
+            </>
+          ),
+          [PhasesEnum.COMPLETE]: (
+            <>
+              <Button
+                loading={secondaryButtonLoading}
+                disabled={secondaryButtonDisabled}
+                onClick={onPrevClick}
+                variant="outline"
+              >
+                {texts.COMMON.CLOSE_WIDGET}
+              </Button>
+              <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
+                {texts.COMMON.UPLOAD_AGAIN}
+              </Button>
+            </>
+          ),
+        }),
   };
 
   return (
@@ -93,7 +134,7 @@ export function Footer({
       ) : (
         <div />
       )}
-      <Group spacing="xs">{FooterActions[active]}</Group>
+      <Group spacing="xs">{footerActions[active]}</Group>
     </Group>
   );
 }

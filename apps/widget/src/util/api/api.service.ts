@@ -63,7 +63,7 @@ export class ApiService {
 
   async uploadFile(data: {
     templateId: string;
-    file: File;
+    file?: File;
     authHeaderValue?: string;
     extra?: string;
     schema?: string;
@@ -73,7 +73,7 @@ export class ApiService {
     selectedSheetName?: string;
   }) {
     const formData = new FormData();
-    formData.append('file', data.file);
+    if (data.file) formData.append('file', data.file);
     if (data.authHeaderValue) formData.append('authHeaderValue', data.authHeaderValue);
     if (data.extra) formData.append('extra', data.extra);
     if (data.schema) formData.append('schema', data.schema);
@@ -82,9 +82,15 @@ export class ApiService {
     if (data.importId) formData.append('importId', data.importId);
     if (data.imageSchema) formData.append('imageSchema', data.imageSchema);
 
-    return this.httpClient.post(`/upload/${data.templateId}`, formData, {
-      'Content-Type': 'multipart/form-data',
-    }) as Promise<IUpload>;
+    return this.httpClient.post(
+      `/upload/${data.templateId}`,
+      formData,
+      data.file
+        ? {
+            'Content-Type': 'multipart/form-data',
+          }
+        : {}
+    ) as Promise<IUpload>;
   }
 
   async getTemplates(projectId: string): Promise<ITemplate[]> {
@@ -166,7 +172,7 @@ export class ApiService {
   }
 
   async updateRecord(uploadId: string, record: Partial<IRecord>) {
-    return this.httpClient.put(`/review/${uploadId}/record`, record);
+    return this.httpClient.put(`/review/${uploadId}/record`, record) as Promise<IRecord>;
   }
 
   async deleteRecord(uploadId: string, indexes: number[], valid: number, invalid: number) {
