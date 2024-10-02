@@ -16,6 +16,7 @@ import {
   DalService,
   TemplateEntity,
   TemplateRepository,
+  RecordEntity,
 } from '@impler/dal';
 
 interface ISaveResults {
@@ -28,7 +29,7 @@ interface ISaveResults {
 
 @Injectable()
 export class DoReview extends BaseReview {
-  private _modal: Model<unknown>;
+  private _modal: Model<RecordEntity>;
 
   constructor(
     private templateRepository: TemplateRepository,
@@ -44,7 +45,7 @@ export class DoReview extends BaseReview {
   }
 
   async execute(_uploadId: string) {
-    this._modal = await this.dalService.createRecordCollection(_uploadId);
+    this._modal = this.dalService.getRecordCollection(_uploadId);
     const userEmail = await this.uploadRepository.getUserEmailFromUploadId(_uploadId);
 
     const uploadInfo = await this.uploadRepository.getUploadWithTemplate(_uploadId, ['name']);

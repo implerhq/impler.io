@@ -147,9 +147,9 @@ export class DoReReview extends BaseReview {
     });
     let result: ISaveResults = {
       uploadId: _uploadId,
-      totalRecords: uploadInfo.totalRecords,
-      validRecords: uploadInfo.validRecords,
-      invalidRecords: uploadInfo.invalidRecords,
+      totalRecords: uploadInfo.totalRecords || 0,
+      validRecords: uploadInfo.validRecords || 0,
+      invalidRecords: uploadInfo.invalidRecords || 0,
     };
 
     if (validations && validations.onBatchInitialize) {
@@ -223,8 +223,8 @@ export class DoReReview extends BaseReview {
     const response: ISaveResults = {
       uploadId,
       totalRecords: 0,
-      validRecords: result.validRecords,
-      invalidRecords: result.invalidRecords,
+      validRecords: result.validRecords || 0,
+      invalidRecords: result.invalidRecords || 0,
     };
 
     for await (const record of this._modal.find({ updated: { $ne: {}, $exists: true } })) {

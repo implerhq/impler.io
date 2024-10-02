@@ -72,15 +72,20 @@ export class DalService {
     if (!model) return;
     if (record._id) delete record._id;
 
-    await model.updateOne(
+    return model.findOneAndUpdate(
       {
         index,
       },
       {
         $set: {
+          index,
           record,
           updated,
         },
+      },
+      {
+        upsert: true,
+        new: true,
       }
     );
   }

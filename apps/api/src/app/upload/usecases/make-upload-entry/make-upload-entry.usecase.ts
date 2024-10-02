@@ -13,6 +13,7 @@ import {
   ColumnRepository,
   CommonRepository,
   CustomizationRepository,
+  DalService,
   FileEntity,
   FileRepository,
   TemplateRepository,
@@ -30,6 +31,7 @@ import { FileSizeException } from '@shared/exceptions/file-size-limit.exception'
 @Injectable()
 export class MakeUploadEntry {
   constructor(
+    private dalService: DalService,
     private fileRepository: FileRepository,
     private storageService: StorageService,
     private fileNameService: FileNameService,
@@ -52,30 +54,33 @@ export class MakeUploadEntry {
     selectedSheetName,
   }: MakeUploadEntryCommand) {
     const csvFileService = new CSVFileService2();
-    const fileOriginalName = file.originalname;
-    let csvFile: string | Express.Multer.File = file;
-    if (
-      file.mimetype === FileMimeTypesEnum.EXCEL ||
-      file.mimetype === FileMimeTypesEnum.EXCELX ||
-      file.mimetype === FileMimeTypesEnum.EXCELM
-    ) {
-      try {
-        const fileService = new ExcelFileService();
-        const opts = await fileService.getExcelRowsColumnsCount(file, selectedSheetName);
-        this.analyzeLargeFile(opts, true);
-        csvFile = await fileService.convertToCsv(file, selectedSheetName);
-      } catch (error) {
-        if (error instanceof FileSizeException) {
-          throw error;
-        }
-        throw new FileParseException();
-      }
-    } else if (file.mimetype === FileMimeTypesEnum.CSV) {
-      const opts = await csvFileService.getCSVMetaInfo(file);
-      this.analyzeLargeFile(opts, false);
+    let fileOriginalName: string | undefined, csvFile: string | Express.Multer.File | undefined;
+    if (file) {
+      fileOriginalName = file.originalname;
       csvFile = file;
-    } else {
-      throw new Error('Invalid file type');
+      if (
+        file.mimetype === FileMimeTypesEnum.EXCEL ||
+        file.mimetype === FileMimeTypesEnum.EXCELX ||
+        file.mimetype === FileMimeTypesEnum.EXCELM
+      ) {
+        try {
+          const fileService = new ExcelFileService();
+          const opts = await fileService.getExcelRowsColumnsCount(file, selectedSheetName);
+          this.analyzeLargeFile(opts, true);
+          csvFile = await fileService.convertToCsv(file, selectedSheetName);
+        } catch (error) {
+          if (error instanceof FileSizeException) {
+            throw error;
+          }
+          throw new FileParseException();
+        }
+      } else if (file.mimetype === FileMimeTypesEnum.CSV) {
+        const opts = await csvFileService.getCSVMetaInfo(file);
+        this.analyzeLargeFile(opts, false);
+        csvFile = file;
+      } else {
+        throw new Error('Invalid file type');
+      }
     }
 
     const columns = await this.columnRepository.find(
@@ -144,13 +149,19 @@ export class MakeUploadEntry {
       customRecordFormat = defaultCustomization?.recordFormat;
     }
 
-    const fileHeadings = await csvFileService.getFileHeaders(csvFile);
+    let fileHeadings: string[] = [],
+      fileId: string,
+      originalFileName: string | undefined;
     const uploadId = importId || this.commonRepository.generateMongoId().toString();
-    const fileEntity = await this.makeFileEntry(uploadId, csvFile, fileOriginalName);
+    if (csvFile && fileOriginalName) {
+      fileHeadings = await csvFileService.getFileHeaders(csvFile);
+      const fileEntity = await this.makeFileEntry(uploadId, csvFile, fileOriginalName);
+      fileId = fileEntity._id;
 
-    const originalFileName = this.fileNameService.getOriginalFileName(fileOriginalName);
-    const originalFilePath = this.fileNameService.getOriginalFilePath(uploadId, originalFileName);
-    await this.storageService.uploadFile(originalFilePath, file.buffer, file.mimetype);
+      originalFileName = this.fileNameService.getOriginalFileName(fileOriginalName);
+      const originalFilePath = this.fileNameService.getOriginalFilePath(uploadId, originalFileName);
+      await this.storageService.uploadFile(originalFilePath, file.buffer, file.mimetype);
+    }
 
     await this.templateRepository.findOneAndUpdate(
       { _id: templateId },
@@ -171,8 +182,8 @@ export class MakeUploadEntry {
       schema: combinedSchema,
       headings: fileHeadings,
       _templateId: templateId,
-      _uploadedFileId: fileEntity._id,
-      originalFileType: file.mimetype,
+      _uploadedFileId: fileId,
+      originalFileType: file?.mimetype,
     });
   }
   roundToNiceNumber(num: number) {
@@ -235,6 +246,8 @@ export class MakeUploadEntry {
     customChunkFormat,
     customRecordFormat,
   }: AddUploadEntryCommand) {
+    await this.dalService.createRecordCollection(uploadId);
+
     return this.uploadRepository.create({
       _id: uploadId,
       _uploadedFileId,
@@ -245,7 +258,7 @@ export class MakeUploadEntry {
       originalFileName,
       customSchema: schema,
       headings: Array.isArray(headings) ? headings : [],
-      status: UploadStatusEnum.UPLOADED,
+      status: _uploadedFileId ? UploadStatusEnum.UPLOADED : UploadStatusEnum.REVIEWING,
       authHeaderValue: authHeaderValue,
       totalRecords: totalRecords || Defaults.ZERO,
       customChunkFormat,
