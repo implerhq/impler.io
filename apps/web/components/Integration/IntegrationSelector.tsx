@@ -1,6 +1,6 @@
 import { INTEGRATION_GUIDE } from '@config';
 import { IntegrationEnum } from '@impler/shared';
-import { Select } from '@mantine/core';
+import { NativeSelect } from '@ui/native-select';
 
 type LanguageSelectorProps = {
   integration: IntegrationEnum;
@@ -8,9 +8,7 @@ type LanguageSelectorProps = {
 };
 
 export const IntegrationSelector = ({ integration, setIntegration }: LanguageSelectorProps) => (
-  <Select
-    size="xs"
-    withinPortal
+  <NativeSelect
     value={integration}
     data={INTEGRATION_GUIDE}
     onChange={(value) => setIntegration((value as IntegrationEnum) || IntegrationEnum.JAVASCRIPT)}
