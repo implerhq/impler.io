@@ -4,10 +4,10 @@ import {} from '@mantine/prism';
 
 type CodeBlockProps = {
   code: string;
-  language: IntegrationLanguage;
+  language?: IntegrationLanguage;
 };
 
-export const CodeBlock = ({ code, language }: CodeBlockProps) => (
+export const CodeBlock = ({ code, language = 'javascript' }: CodeBlockProps) => (
   <div style={{ position: 'relative', marginTop: 10 }}>
     <Prism language={language} copyLabel="Copy code" copiedLabel="Copied!">
       {code.trim()}
