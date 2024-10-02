@@ -16,6 +16,7 @@ import { track } from '@libs/amplitude';
 import { addOpacityToHex } from 'shared/utils';
 import { StoreWrapper } from 'store/StoreWrapper';
 import { mantineConfig, colors, API_KEYS, ROUTES, NOTIFICATION_KEYS } from '@config';
+import { Global } from '@emotion/react';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -97,8 +98,33 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       <QueryClientProvider client={client}>
         <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
           <StoreWrapper>
+            <Global
+              styles={{
+                /* width */
+                '::-webkit-scrollbar': {
+                  width: '7px',
+                  height: '7px',
+                },
+
+                /* Track */
+                '::-webkit-scrollbar-track': {
+                  boxShadow: 'inset 0 0 3px grey',
+                  borderRadius: '10px',
+                },
+
+                /* Handle */
+                '::-webkit-scrollbar-thumb': {
+                  background: colors.TXTGray,
+                  borderRadius: '10px',
+                },
+              }}
+            />
             <MantineProvider
-              theme={{ ...mantineConfig, colorScheme, fontFamily: poppinsFont.style.fontFamily }}
+              theme={{
+                ...mantineConfig,
+                colorScheme,
+                fontFamily: poppinsFont.style.fontFamily,
+              }}
               withGlobalStyles
               withNormalizeCSS
             >
