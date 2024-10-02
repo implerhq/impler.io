@@ -10,7 +10,6 @@ interface IStep {
 export interface IStepperProps {
   active: number;
   steps: IStep[];
-  primaryColor?: string;
 }
 
 export function Stepper(props: IStepperProps) {

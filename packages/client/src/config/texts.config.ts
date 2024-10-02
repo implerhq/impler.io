@@ -61,6 +61,10 @@ export const WIDGET_TEXTS = {
     INCOMPLETE_TEMPLATE_MSG:
       'This import does not have any columns. Please try again after some time!',
   },
+  'PHASE1-2': {
+    ENTER_DATA: 'Manually enter your data',
+    RECOMMANDED_LIMIT: 'Recommanded upto {records} records',
+  },
   PHASE2: {
     REVIEW_DATA: 'Review Data',
     IN_SCHEMA_TITLE: 'Column in schema',

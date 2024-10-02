@@ -1,7 +1,6 @@
-import { CloseButton, Group, MediaQuery, Title, useMantineTheme } from '@mantine/core';
+import { CloseButton, Group, MediaQuery, Title } from '@mantine/core';
 import { PhasesEnum } from '@types';
 import { Stepper } from '@ui/Stepper';
-import { variables } from '@config';
 import { WIDGET_TEXTS } from '@impler/client';
 import { TemplateModeEnum } from '@impler/shared';
 
@@ -15,7 +14,6 @@ interface IHeadingProps {
 }
 
 export function Heading({ active, title, mode, hasImageUpload, texts, onClose }: IHeadingProps) {
-  const theme = useMantineTheme();
   const manualImportSteps = [
     {
       label: texts.STEPPER_TITLES.UPLOAD_FILE,
@@ -64,7 +62,6 @@ export function Heading({ active, title, mode, hasImageUpload, texts, onClose }:
                 ]
               : manualImportSteps
           }
-          primaryColor={theme.colors.primary[variables.colorIndex]}
         />
       </MediaQuery>
       <CloseButton onClick={onClose} />

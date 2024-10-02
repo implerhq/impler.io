@@ -20,11 +20,11 @@ export function GridIcon(props: IIcon) {
           strokeLinejoin="round"
         />
         <path
-          stroke-width="2"
+          strokeWidth="2"
           d="M2.625 9.25H18.375"
           stroke="currentColor"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           strokeWidth="2"

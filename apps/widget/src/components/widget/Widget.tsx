@@ -32,8 +32,9 @@ export function Widget() {
   const [dataCount, setDataCount] = useState<number>(defaultDataCount);
   const [promptContinueAction, setPromptContinueAction] = useState<PromptModalTypesEnum>();
   const {
-    title,
     flow,
+    title,
+    texts,
     setFlow,
     uploadInfo,
     showWidget,
@@ -42,7 +43,6 @@ export function Widget() {
     setShowWidget,
     setImportConfig,
     reset: resetAppState,
-    texts,
   } = useAppState();
 
   const onUploadResetClick = () => {

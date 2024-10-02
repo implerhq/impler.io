@@ -1,23 +1,37 @@
 import { GridIcon, Warning } from '@icons';
 import { Box, Group, Skeleton, Stack, Table, Text } from '@mantine/core';
 import { Button } from '@ui/Button';
-import { IColumn } from '@impler/shared';
+import { WIDGET_TEXTS } from '@impler/client';
+import { IColumn, numberFormatter, replaceVariablesInString } from '@impler/shared';
 
 interface ManaulEntryViewProps {
-  columns?: IColumn[];
+  limit?: number;
   className?: string;
+  columns?: IColumn[];
+  texts: typeof WIDGET_TEXTS;
+  onManuallyEnterData?: () => void;
 }
 
-export function ManaulEntryView({ columns, className }: ManaulEntryViewProps) {
+export function ManaulEntryView({ limit, columns, className, onManuallyEnterData, texts }: ManaulEntryViewProps) {
   return (
     <Box bg="var(--secondary-background)" pt="sm" pl="sm" className={className}>
       <Stack spacing="xs">
         <div>
-          <Button leftIcon={<GridIcon />}>Manually enter your data</Button>
+          <Button onClick={onManuallyEnterData} leftIcon={<GridIcon />}>
+            {texts['PHASE1-2'].ENTER_DATA}
+          </Button>
         </div>
-        <Group>
-          <Warning fill="var(--error-color)" /> <Text>Recommanded upto 1K records.</Text>
-        </Group>
+        {limit ? (
+          <Group>
+            <Warning fill="var(--error-color)" />{' '}
+            <Text>
+              {replaceVariablesInString(texts['PHASE1-2'].RECOMMANDED_LIMIT, {
+                records: numberFormatter(limit),
+              })}
+            </Text>
+          </Group>
+        ) : null}
+
         <Box
           pl="xs"
           pt="xs"

@@ -8,9 +8,9 @@ import { Button } from '@ui/Button';
 import { WIDGET_TEXTS } from '@impler/client';
 
 import { DownloadIcon, BackIcon } from '@icons';
-import { mantineConfig, variables } from '@config';
 import { UploadDropzone } from '@ui/UploadDropzone';
 import { usePhase1 } from '@hooks/Phase1/usePhase1';
+import { mantineConfig, MANUAL_ENTRY_LIMIT, variables } from '@config';
 
 import useStyles from './Phase1.Styles';
 import { Divider } from '@ui/Divider';
@@ -22,10 +22,17 @@ interface IPhase1Props {
   onNextClick: () => void;
   hasImageUpload: boolean;
   texts: typeof WIDGET_TEXTS;
+  onManuallyEnterData: () => void;
   generateImageTemplate: () => void;
 }
 
-export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTemplate, texts }: IPhase1Props) {
+export function Phase1({
+  texts,
+  hasImageUpload,
+  onManuallyEnterData,
+  onNextClick: goNext,
+  generateImageTemplate,
+}: IPhase1Props) {
   const { classes } = useStyles();
   const isBiggerThanSm = useMediaQuery(`(min-width: ${mantineConfig.breakpoints?.sm}px)`);
   const {
@@ -46,6 +53,7 @@ export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTempl
   } = usePhase1({
     goNext,
     texts,
+    onManuallyEnterData,
   });
   const onDownload = () => {
     if (hasImageUpload) generateImageTemplate();
@@ -92,9 +100,6 @@ export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTempl
           <Controller
             control={control}
             name="file"
-            rules={{
-              required: texts.PHASE1.SELECT_FILE_REQUIRED_MSG,
-            }}
             render={({ field, fieldState }) => (
               <UploadDropzone
                 texts={texts}
@@ -116,7 +121,13 @@ export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTempl
           />
           <Divider orientation={isBiggerThanSm ? 'vertical' : 'horizontal'} label="OR" />
 
-          <ManaulEntryView columns={columns} className={classes.contentWrapper} />
+          <ManaulEntryView
+            texts={texts}
+            columns={columns}
+            limit={MANUAL_ENTRY_LIMIT}
+            className={classes.contentWrapper}
+            onManuallyEnterData={onSubmit}
+          />
         </Flex>
       </Flex>
 
