@@ -1,177 +1,344 @@
+import Link from 'next/link';
 import React, { ReactNode } from 'react';
-import { Text } from '@mantine/core';
-import { IntegrationEnum } from '@impler/shared';
-import { CodeBlock } from './ContentBlock';
+import { Code, List } from '@mantine/core';
 
-export const integrationData: Record<IntegrationEnum, Record<string, ReactNode>> = {
+import { colors } from '@config';
+import { CodeBlock } from './ContentBlock';
+import { ModifiedText } from './ModifiedText';
+import { IntegrationEnum } from '@impler/shared';
+
+interface IContentProps {
+  templateId: string;
+  projectId: string;
+  accessToken: string;
+  embedScriptUrl: string;
+}
+
+export const integrationData: Record<IntegrationEnum, Record<string, (data: IContentProps) => ReactNode>> = {
   [IntegrationEnum.JAVASCRIPT]: {
-    'Add Script': (
+    'Add Script': ({ embedScriptUrl }) => (
       <>
-        <Text size="sm">
-          Copy this snippet to your code before the closing body tag. It will add impler variable in window.
-        </Text>
+        <ModifiedText>Add embed script before closing body tag.</ModifiedText>
         <CodeBlock
-          code="<script type='text/javascript' src='https://embed.impler.io/embed.umd.min.js' async></script>"
+          code={`<script type='text/javascript' src='${embedScriptUrl}' async></script>`}
           language="javascript"
         />
       </>
     ),
-    'Add Import Button': (
+    'Add Import Button': () => (
       <>
-        <Text>Use the following button to open Impler:</Text>
         <CodeBlock code={`<button disabled id="impler-btn">Import</button>`} language="markup" />
       </>
     ),
-    'Initialize Widget': (
+    'Initialize Widget': () => (
       <>
-        <Text size="sm">Before the widget gets shown you have to call its init method:</Text>
+        <ModifiedText size="sm">
+          Before the widget gets shown you have to call <Code>init</Code> method, which initialize the importer.
+        </ModifiedText>
         <CodeBlock
           code={`
-          <script type="text/javascript">
-            let uuid = generateUuid();
-            let isImplerInitialized = false;
-            const ImplerBtn = document.getElementById("impler-btn");
+<script type="text/javascript">
+  let uuid = generateUuid();
+  let isImplerInitialized = false;
+  const ImplerBtn = document.getElementById("impler-btn");
 
-            function generateUuid() { // (1)
-              return window.crypto.getRandomValues(new Uint32Array(1))[0];
-            }
+  function generateUuid() {
+    return window.crypto.getRandomValues(new Uint32Array(1))[0];
+  }
 
-            window.onload = (e) => {
-              if (window.impler) {
-                window.impler.init(uuid); // (2)
+  window.onload = (e) => {
+    if (window.impler) {
+      window.impler.init(uuid);
 
-                const readyCheckInterval = setInterval(() => {
-                  if (window.impler.isReady()) { // (3)
-                    clearInterval(readyCheckInterval);
-                    ImplerBtn.removeAttribute("disabled"); // (4)
-                  }
-                }, 1000);
-              }
-            };
-          </script>
+      const readyCheckInterval = setInterval(() => {
+        if (window.impler.isReady()) {
+          clearInterval(readyCheckInterval);
+          ImplerBtn.removeAttribute("disabled");
+        }
+      }, 1000);
+    }
+  };
+</script>
         `}
           language="javascript"
         />
       </>
     ),
-    'Show Widget': (
+    'Show Widget': ({ accessToken, projectId, templateId }) => (
       <>
-        <Text size="sm">After initialization, use the following code to show the widget:</Text>
+        <ModifiedText size="sm">After initialization, use the following code to show the widget:</ModifiedText>
         <CodeBlock
           code={`
+ImplerBtn.addEventListener("click", (e) => {
+  window.impler.show({
+    uuid,
+    projectId: "${projectId}",
+    templateId: "${templateId}",
+    accessToken: "${accessToken}",
+  });
+});
+        `}
+          language="javascript"
+        />
+      </>
+    ),
+    'Listening to Events': () => (
+      <>
+        <ModifiedText size="sm">You can listen for events from the Impler widget:</ModifiedText>
+        <CodeBlock
+          code={`
+ window.impler.on('message', (eventData) => {
+  switch (eventData.type) {
+    case "WIDGET_READY":
+      console.log("Widget is ready");
+      break;
+    case "CLOSE_WIDGET":
+      console.log("Widget is closed");
+      break;
+    case "UPLOAD_STARTED":
+      console.log("Upload started", eventData.value);
+      break;
+    case "UPLOAD_TERMINATED":
+      console.log("Upload skipped in middle", eventData.value);
+      break;
+    case "UPLOAD_COMPLETED":
+      console.log("Upload completed", eventData.value);
+      break;
+    case "DATA_IMPORTED":
+      console.log("Data imported", eventData.value);
+      break;
+    default:
+      break;
+  }
+}, uuid); // uuid generated in "Initialize Widget Step"
+        `}
+          language="javascript"
+        />
+      </>
+    ),
+    'Data Seeding in File': ({ projectId, templateId, accessToken }) => (
+      <CodeBlock
+        code={`
+window.impler.show({
+  uuid,
+  projectId: "${projectId}",
+  templateId: "${templateId}",
+  accessToken: "${accessToken}",
+  data: [
+    { country: 'ABC' },
+    { country: 'DEF' },
+    { country: 'GHE' },
+  ]
+});
+        `}
+      />
+    ),
+    'Customize Importer Texts': () => (
+      <CodeBlock
+        code={`
+window.impler.show({
+  ...
+  texts: {
+    STEPPER_TITLES: {
+      REVIEW_DATA: 'Check Data', // New Title
+    },
+  },
+});
+        `}
+      />
+    ),
+    'Advanced Validations': () => (
+      <CodeBlock
+        code={`
+window.impler.show({
+  ...
+  schema: [
+    {
+      "key": "Department Code",
+      "name": "Department Code",
+      "type": "String",
+      "validations": [
+        {
+          "validate": "unique_with",
+          "uniqueKey": "Employee No"
+        }
+      ]
+    },
+    {
+      "key": "Employee Id",
+      "name": "Employee Id",
+      "type": "Number",
+      "validations": [
+        {
+          "validate": "unique_with",
+          "uniqueKey": "Employee No"
+        }
+      ]
+    }
+  ]
+});
+        `}
+      />
+    ),
+    'Providing Runtime Schema': () => (
+      <CodeBlock
+        code={`
+window.impler.show({
+  ...
+  schema: [
+    {
+      key: 'country',
+      name: 'Country',
+      type: 'String'
+    }
+  ],
+  output: {
+      "%data%": {
+        "country_id": "{{country}}"
+      },
+      "page": "{{page}}",
+      "chunkSize": "{{chunkSize}}",
+      "isInvalidRecords": "{{isInvalidRecords}}",
+      "template": "{{template}}",
+      "uploadId": "{{uploadId}}",
+      "fileName": "{{fileName}}",
+      "extra": "{{extra}}"
+    }
+});
+`}
+      />
+    ),
+    'Passing Extra Values': () => (
+      <CodeBlock
+        code={`
+window.impler.show({
+  ...
+  extra: {
+      userId: '4ddhodw3',
+      time: new Date()
+  }
+});
+`}
+      />
+    ),
+    'Changing Import Title': () => (
+      <CodeBlock
+        code={`
+window.impler.show({
+  ...
+  title: "Employee Import"
+});
+`}
+      />
+    ),
+    'Programatically Closing Importer': () => (
+      <CodeBlock
+        code={`
+window.impler.close();
+  `}
+      />
+    ),
+    'Changing the Color theme': () => (
+      <CodeBlock
+        code={`
+window.impler.show({
+  ...
+  primaryColor: '#5f45ff'
+});
+`}
+      />
+    ),
+    'Passing Auth Header Value': () => (
+      <CodeBlock
+        code={`
+window.impler.show({
+  authHeaderValue: () => '$2y$10$M5X2QYelhy1AV.2GgnlEm.aBPUG9CR4lNYP.kQcMP8YWNA.isM446'
+});
+  `}
+      />
+    ),
+    'Complete Code Example': ({ accessToken, embedScriptUrl, projectId, templateId }) => (
+      <>
+        <CodeBlock
+          code={`
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Acme Inc</title>
+  </head>
+  <body>
+    <button disabled id="impler-btn">Import</button>
+    <script type="text/javascript" src="${embedScriptUrl}" async></script>
+    <script type="text/javascript">
+      let uuid = generateUuid();
+      const ImplerBtn = document.getElementById("impler-btn");
+
+      function generateUuid() {
+        return window.crypto.getRandomValues(new Uint32Array(1))[0];
+      }
+
+      window.onload = (e) => {
+        if (window.impler) {
+          window.impler.init(uuid);
+          const readyCheckInterval = setInterval(() => {
+            if (window.impler.isReady()) {
+              clearInterval(readyCheckInterval);
+              ImplerBtn.removeAttribute("disabled");
+            }
+          }, 1000);
+
           ImplerBtn.addEventListener("click", (e) => {
             window.impler.show({
               uuid,
-              projectId: "", // projectId
-              templateId: "", // templateId
-              accessToken: "", // accessToken
+              projectId: "${projectId}",
+              templateId: "${templateId}",
+              accessToken: "${accessToken}",
             });
           });
-        `}
-          language="javascript"
-        />
-      </>
-    ),
-    'Listening to Events': (
-      <>
-        <Text size="sm">You can listen for events from the Impler widget:</Text>
-        <CodeBlock
-          code={`
+
           window.impler.on('message', (eventData) => {
-            // handle events here
+            // Handle the messages from the widget
           }, uuid);
-        `}
-          language="javascript"
-        />
-      </>
-    ),
-    'Complete Code Example': (
-      <>
-        <Text size="sm">Here is a complete code example:</Text>
-        <CodeBlock
-          code={`
-          <!DOCTYPE html>
-          <html lang="en">
-            <head>
-              <meta charset="UTF-8" />
-              <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-              <title>Acme Inc</title>
-            </head>
-            <body>
-              <button disabled id="impler-btn">Import</button>
-              <script type="text/javascript" src="https://embed.impler.io/embed.umd.min.js" async></script>
-              <script type="text/javascript">
-                let uuid = generateUuid();
-                const ImplerBtn = document.getElementById("impler-btn");
-
-                function generateUuid() {
-                  return window.crypto.getRandomValues(new Uint32Array(1))[0];
-                }
-
-                window.onload = (e) => {
-                  if (window.impler) {
-                    window.impler.init(uuid);
-                    const readyCheckInterval = setInterval(() => {
-                      if (window.impler.isReady()) {
-                        clearInterval(readyCheckInterval);
-                        ImplerBtn.removeAttribute("disabled");
-                      }
-                    }, 1000);
-
-                    ImplerBtn.addEventListener("click", (e) => {
-                      window.impler.show({
-                        uuid,
-                        projectId: "",
-                        templateId: "",
-                        accessToken: "",
-                      });
-                    });
-
-                    window.impler.on('message', (eventData) => {
-                      // Handle the messages from the widget
-                    }, uuid);
-                  }
-                };
-              </script>
-            </body>
-          </html>
+        }
+      };
+    </script>
+  </body>
+</html>
         `}
           language="markup"
         />
       </>
     ),
   },
-
   [IntegrationEnum.REACT]: {
-    'Add Script': (
+    'Add Script': ({ embedScriptUrl }) => (
       <>
-        <Text size="sm">Copy this snippet to your code before the closing body tag.</Text>
-        <CodeBlock
-          code="<script type='text/javascript' src='https://embed.impler.io/embed.umd.min.js' async></script>"
-          language="javascript"
-        />
+        <ModifiedText>Add embed script before closing body tag.</ModifiedText>
+        <CodeBlock code={`<script type='text/javascript' src='${embedScriptUrl}' async></script>`} />
       </>
     ),
-    'Install Package': (
+    'Install Package': () => (
       <>
-        <Text size="sm">Install the Package</Text>
+        <ModifiedText size="sm">Install the Package</ModifiedText>
         <CodeBlock code="npm i @impler/react" language="jsx" />
       </>
     ),
-    'Add Import Button': (
+    'Add Import Button': ({ accessToken, projectId, templateId }) => (
       <>
-        <Text size="lg">Add Import Button</Text>
-        <Text mt="sm">
-          @impler/react provides a headless <code>useImpler</code> hook that you can use to show an import widget in
-          your application.
-        </Text>
+        <ModifiedText mt="sm">
+          <Code>@impler/react</Code> provides a headless <code>useImpler</code> hook that you can use to show an import
+          widget in your application.
+        </ModifiedText>
         <CodeBlock
-          code={`import { useImpler } from '@impler/react';
+          code={`
+import { useImpler } from '@impler/react';
 
 const { showWidget, isImplerInitiated } = useImpler({
-  projectId: "",
-  templateId: "",
-  accessToken: "",
+  projectId: "${projectId}",
+  templateId: "${templateId}",
+  accessToken: "${accessToken}",
 });
 
 <button disabled={!isImplerInitiated} onClick={showWidget}>Import</button>`}
@@ -179,16 +346,16 @@ const { showWidget, isImplerInitiated } = useImpler({
         />
       </>
     ),
-    'Usage Example': (
+    'Usage Example': ({ accessToken, projectId, templateId }) => (
       <>
-        <Text size="lg">Usage Example</Text>
         <CodeBlock
-          code={`import { useImpler } from '@impler/react';
+          code={`
+import { useImpler } from '@impler/react';
 
 const { showWidget, isImplerInitiated } = useImpler({
-  projectId: "",
-  templateId: "",
-  accessToken: ""
+  projectId: "${projectId}",
+  templateId: "${templateId}",
+  accessToken: "${accessToken}",
 });
 
 function MyComponent() {
@@ -198,16 +365,16 @@ function MyComponent() {
         />
       </>
     ),
-    'Customize Texts': (
+    'Customize Texts': ({ accessToken, projectId, templateId }) => (
       <>
-        <Text size="lg">Customize Texts</Text>
         <CodeBlock
-          code={`import { useImpler } from '@impler/react';
+          code={`
+import { useImpler } from '@impler/react';
 
 const { showWidget, isImplerInitiated } = useImpler({
-    projectId: "",
-    templateId: "",
-    accessToken: "",
+    projectId: ${projectId},
+    templateId: ${templateId},
+    accessToken: ${accessToken},
     texts: {
       STEPPER_TITLES: {
           REVIEW_DATA: 'Check Data', // New Title
@@ -220,14 +387,14 @@ const { showWidget, isImplerInitiated } = useImpler({
         />
       </>
     ),
-    'Listening for Events': (
+    'Listening for Events': ({ accessToken, projectId, templateId }) => (
       <>
-        <Text size="lg">Listening for Events</Text>
         <CodeBlock
-          code={`const { showWidget, isImplerInitiated } = useImpler({
-  projectId: "",
-  templateId: "",
-  accessToken: "",
+          code={`
+const { showWidget, isImplerInitiated } = useImpler({
+  projectId: ${projectId},
+    templateId: ${templateId},
+    accessToken: ${accessToken},
   onUploadStart: (uploadInfo) => {
       console.log("User Started Importing", uploadInfo);
   },
@@ -248,11 +415,11 @@ const { showWidget, isImplerInitiated } = useImpler({
         />
       </>
     ),
-    'Data Seeding in Sample File': (
+    'Data Seeding in Sample File': () => (
       <>
-        <Text size="lg">Data Seeding in Sample File</Text>
         <CodeBlock
-          code={`showWidget({
+          code={`
+showWidget({
   data: [
       { country: 'ABC' },
       { country: 'DEF' },
@@ -263,11 +430,11 @@ const { showWidget, isImplerInitiated } = useImpler({
         />
       </>
     ),
-    'Providing Runtime Schema': (
+    'Providing Runtime Schema': () => (
       <>
-        <Text size="lg">Providing Runtime Schema</Text>
         <CodeBlock
-          code={`showWidget({
+          code={`
+showWidget({
   schema: [
       {
         key: 'country',
@@ -292,11 +459,11 @@ const { showWidget, isImplerInitiated } = useImpler({
         />
       </>
     ),
-    'Advanced Validations': (
+    'Advanced Validations': () => (
       <>
-        <Text size="lg">Advanced Validations</Text>
         <CodeBlock
-          code={`showWidget({
+          code={`
+showWidget({
   schema: [
     {
       "key": "Department Code",
@@ -326,14 +493,13 @@ const { showWidget, isImplerInitiated } = useImpler({
         />
       </>
     ),
-    'Programmatically Closing Import Widget': (
+    'Programmatically Closing Import Widget': ({ accessToken, projectId, templateId }) => (
       <>
-        <Text size="lg">Programmatically Closing Import Widget</Text>
         <CodeBlock
           code={`const { showWidget, closeWidget, isImplerInitiated } = useImpler({
-  projectId: "",
-  templateId: "",
-  accessToken: "",
+  projectId: ${projectId},
+   templateId: ${templateId},
+    accessToken: ${accessToken},
   onDataImported: (data) => {
       console.log("Imported data:", data);
       closeWidget();
@@ -343,42 +509,39 @@ const { showWidget, isImplerInitiated } = useImpler({
         />
       </>
     ),
-    'Changing Import Title': (
+    'Changing Import Title': ({ accessToken, projectId, templateId }) => (
       <>
-        <Text size="lg">Changing Import Title</Text>
         <CodeBlock
           code={`const { showWidget, isImplerInitiated } = useImpler({
-  projectId: "",
-  templateId: "",
-  accessToken: "",
+  projectId: ${projectId},
+   templateId: ${templateId},
+    accessToken: ${accessToken},
   title: "Employee Import"
 });`}
           language="javascript"
         />
       </>
     ),
-    'Changing Theme Color': (
+    'Changing Theme Color': ({ accessToken, projectId, templateId }) => (
       <>
-        <Text size="lg">Changing Theme Color</Text>
         <CodeBlock
           code={`const { showWidget, isImplerInitiated } = useImpler({
-  projectId: "",
-  templateId: "",
-  accessToken: "",
+  projectId: ${templateId},
+  templateId: ${projectId},
+  accessToken: ${accessToken},
   primaryColor: '#5f45ff'
 });`}
           language="javascript"
         />
       </>
     ),
-    'Providing Authentication Header': (
+    'Providing Authentication Header': ({ accessToken, projectId, templateId }) => (
       <>
-        <Text size="lg">Providing Authentication Header</Text>
         <CodeBlock
           code={`const { showWidget, isImplerInitiated } = useImpler({
-  projectId: "",
-  templateId: "",
-  accessToken: "",
+   projectId: ${templateId},
+  templateId: ${projectId},
+  accessToken: ${accessToken},
   authHeaderValue: async () => {
       return "..."
   }
@@ -389,24 +552,21 @@ const { showWidget, isImplerInitiated } = useImpler({
     ),
   },
   [IntegrationEnum.ANGULAR]: {
-    'Add Script': (
+    'Add Script': () => (
       <>
-        <Text size="lg">Add Script</Text>
         <CodeBlock
           code="<script type='text/javascript' src='https://embed.impler.io/embed.umd.min.js' async></script>"
           language="javascript"
         />
       </>
     ),
-    'Install Package': (
+    'Install Package': () => (
       <>
-        <Text size="lg">Install the Package</Text>
         <CodeBlock code="npm i @impler/angular" language="javascript" />
       </>
     ),
-    'Use Impler Service': (
+    'Use Impler Service': ({ accessToken, projectId, templateId }) => (
       <>
-        <Text size="lg">Use Impler Service</Text>
         <CodeBlock
           code={`import { RouterOutlet } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
@@ -435,9 +595,9 @@ export class AppComponent {
   public show(): void {
     this.implerService.showWidget({
       colorScheme: 'dark',
-      projectId: '...',
-      templateId: '...',
-      accessToken: '...',
+      projectId: ${templateId},
+  templateId: ${projectId},
+  accessToken: ${accessToken},
     });
   }
 }`}
@@ -446,7 +606,7 @@ export class AppComponent {
       </>
     ),
 
-    'Customize Texts': (
+    'Customize Texts': () => (
       <CodeBlock
         code={`public show(): void {
         this.implerService.showWidget({
@@ -462,7 +622,7 @@ export class AppComponent {
       />
     ),
 
-    'Applying App Color Scheme': (
+    'Applying App Color Scheme': () => (
       <CodeBlock
         code={`public show(): void {
   this.implerService.showWidget({
@@ -474,7 +634,7 @@ export class AppComponent {
       />
     ),
 
-    'Data Seeding in Sample File': (
+    'Data Seeding in Sample File': () => (
       <CodeBlock
         code={` public show(): void {
         this.implerService.showWidget({
@@ -489,7 +649,7 @@ export class AppComponent {
       />
     ),
 
-    'Providing Runtime Schema': (
+    'Providing Runtime Schema': () => (
       <CodeBlock
         code={`public show(): void {
   this.implerService.showWidget({
@@ -518,7 +678,7 @@ export class AppComponent {
       />
     ),
 
-    'Advanced Validations': (
+    'Advanced Validations': () => (
       <CodeBlock
         code={`public show(): void {
   this.implerService.showWidget({
@@ -552,7 +712,7 @@ export class AppComponent {
       />
     ),
 
-    'Using Typescript': (
+    'Using Typescript': () => (
       <CodeBlock
         code={`import { useImpler, ColumnTypes, ValidationTypes } from '@impler/angular';
 
@@ -579,7 +739,7 @@ public show(): void {
       />
     ),
 
-    'Passing Extra Parameters': (
+    'Passing Extra Parameters': () => (
       <CodeBlock
         code={`public show(): void {
   this.implerService.showWidget({
@@ -593,7 +753,7 @@ public show(): void {
       />
     ),
 
-    'Programmatically Closing Import Widget': (
+    'Programmatically Closing Import Widget': () => (
       <CodeBlock
         code={`public close(): void {
   this.implerService.closeWidget();
@@ -602,7 +762,7 @@ public show(): void {
       />
     ),
 
-    'Changing Import Title': (
+    'Changing Import Title': () => (
       <CodeBlock
         code={`public show(): void {
   this.implerService.showWidget({
@@ -613,7 +773,7 @@ public show(): void {
       />
     ),
 
-    'Changing Theme Color': (
+    'Changing Theme Color': () => (
       <CodeBlock
         code={`public show(): void {
   this.implerService.showWidget({
@@ -624,7 +784,7 @@ public show(): void {
       />
     ),
 
-    'Providing Authentication Header Value': (
+    'Providing Authentication Header Value': () => (
       <CodeBlock
         code={`public show(): void {
   this.implerService.showWidget({
@@ -637,9 +797,9 @@ public show(): void {
       />
     ),
 
-    'Usage Example': (
+    'Usage Example': () => (
       <>
-        <Text size="lg">Usage Example</Text>
+        <ModifiedText>Usage Example</ModifiedText>
         <CodeBlock
           code={`...
 import { EventCalls, EventTypesEnum, ImplerService } from '@impler/angular';
@@ -674,5 +834,16 @@ export class AppComponent {
       </>
     ),
   },
-  [IntegrationEnum.BUBBLE]: {},
+  [IntegrationEnum.BUBBLE]: {
+    'Integration Steps': () => (
+      <>
+        <List type="ordered">
+          <List.Item>Setting Bubble App</List.Item>
+        </List>
+        <Link href="#">
+          <ModifiedText color={colors.yellow}>Visit Documentation with Detailed Steps</ModifiedText>
+        </Link>
+      </>
+    ),
+  },
 };
