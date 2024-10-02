@@ -83,18 +83,21 @@ export function useImportDetails({ templateId }: useImportDetailProps) {
   };
 
   const onIntegrationClick = () => {
-    modals.open({
-      modalId: MODAL_KEYS.INTEGRATION_DETAILS,
-      centered: true,
-      size: 'calc(100vw - 3rem)',
-      children: <IntegrationModal />,
-      withCloseButton: false,
-      styles: {
-        content: {
-          height: '70%',
-        },
-      },
-    });
+    if (templateData && profileInfo) {
+      modals.open({
+        modalId: MODAL_KEYS.INTEGRATION_DETAILS,
+        centered: true,
+        size: 'calc(100vw - 3rem)',
+        children: (
+          <IntegrationModal
+            templateId={templateData?._id}
+            projectId={templateData?._projectId}
+            accessToken={profileInfo?.accessToken}
+          />
+        ),
+        withCloseButton: false,
+      });
+    }
   };
 
   const onUpdateClick = () => {
