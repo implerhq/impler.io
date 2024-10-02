@@ -20,6 +20,7 @@ export enum PromptModalTypesEnum {
 
 export enum PhasesEnum {
   VALIDATE = 0,
+
   IMAGE_UPLOAD = 1,
   UPLOAD = 2,
   MAPPING = 3,
@@ -30,6 +31,9 @@ export enum PhasesEnum {
   MAPCOLUMNS = 2,
   SCHEDULE = 3,
   CONFIRM = 4,
+
+  MANUAL_ENTRY = 1,
+  SUBMIT = 2,
 }
 
 export interface IFormvalues {

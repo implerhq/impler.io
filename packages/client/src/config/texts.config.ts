@@ -8,6 +8,7 @@ export const TEXTS = {
 
 export const WIDGET_TEXTS = {
   COMMON: {
+    FINISH: 'Finish',
     SORRY: 'Sorry!',
     CANCEL: 'Cancel',
     CLOSE_WIDGET: 'Close',
@@ -52,7 +53,6 @@ export const WIDGET_TEXTS = {
     GENERATE_TEMPLATE: 'Generate Template',
     SEE_MAPPING: 'See Mapping',
 
-    SELECT_FILE_REQUIRED_MSG: 'Please select a file',
     SELECT_FILE_FORMAT_MSG:
       'File type not supported! Please select a .csv or .xlsx file.',
 
