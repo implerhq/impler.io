@@ -44,21 +44,6 @@ import 'handsontable/dist/handsontable.full.min.css';
 import './HandsonTable.styles.min.css';
 import { addTippyToElement } from '@util';
 
-interface TableProps {
-  headings: string[];
-  allChecked?: boolean;
-  frozenColumns?: number;
-  height?: string | number;
-  width?: string | number;
-  afterRender?: () => void;
-  data: Record<string, any>[];
-  columnDescriptions?: string[];
-  columnDefs: HotItemSchema[];
-  onCheckAll?: (checked: boolean) => void;
-  onValueChange?: (row: number, prop: string, oldVal: any, newVal: any) => void;
-  onRowCheck?: (rowIndex: number, recordIndex: number, checked: boolean) => void;
-}
-
 Handsontable.renderers.registerRenderer(
   'custom',
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
@@ -68,7 +53,9 @@ Handsontable.renderers.registerRenderer(
     TD.ariaLabel = '';
     const soureData = instance.getSourceDataAtRow(row) as IRecord;
     let fieldValue =
-      typeof soureData.record[name] === 'undefined' || soureData.record[name] === null ? null : soureData.record[name];
+      !soureData.record || typeof soureData.record[name] === 'undefined' || soureData.record[name] === null
+        ? null
+        : soureData.record[name];
     if (typeof fieldValue === 'string' && fieldValue.length > name.length + 20)
       fieldValue = value.substring(0, name.length + 20) + '...';
 
@@ -157,6 +144,24 @@ Handsontable.renderers.registerRenderer(
   }
 );
 
+interface TableProps {
+  headings: string[];
+  allChecked?: boolean;
+  rowHeaders?: boolean;
+  minSpareRows?: number;
+  frozenColumns?: number;
+  height?: string | number;
+  width?: string | number;
+  selectEnabled?: boolean;
+  afterRender?: () => void;
+  columnDefs: HotItemSchema[];
+  data?: Record<string, any>[];
+  columnDescriptions?: string[];
+  onCheckAll?: (checked: boolean) => void;
+  onValueChange?: (row: number, prop: string, oldVal: any, newVal: any) => void;
+  onRowCheck?: (rowIndex: number, recordIndex: number, checked: boolean) => void;
+}
+
 export const Table = forwardRef<HotTableClass, TableProps>(
   (
     {
@@ -170,8 +175,11 @@ export const Table = forwardRef<HotTableClass, TableProps>(
       allChecked,
       onRowCheck,
       onCheckAll,
+      rowHeaders,
+      minSpareRows,
       frozenColumns = 2,
       onValueChange,
+      selectEnabled = true,
     }: TableProps,
     gridRef
   ) => {
@@ -188,6 +196,13 @@ export const Table = forwardRef<HotTableClass, TableProps>(
               // @ts-ignore
               onValueChange(change[0], change[1], change[2], change[3]);
             });
+          }
+        }}
+        beforeKeyDown={(event) => {
+          const [[row, col]] = (gridRef as any)?.current.__hotInstance?.getSelected();
+          const rows = (gridRef as any)?.current?.__hotInstance?.countRows();
+          if (event.key === 'Tab' && col === headings.length - 1) {
+            (gridRef as any)?.current.__hotInstance.selectCell(Math.min(rows, row + 1), selectEnabled ? 3 : 1);
           }
         }}
         fillHandle={{
@@ -212,7 +227,9 @@ export const Table = forwardRef<HotTableClass, TableProps>(
           TH.innerHTML = '';
           TH.innerHTML = headings[i];
 
-          if (i === 0) {
+          if (!selectEnabled && i < 0) {
+            TH.innerHTML = '#';
+          } else if (selectEnabled && i === 0) {
             TH.classList.add('check-all-cell');
             TH.innerHTML = `
               <div class="checkbox">
@@ -248,9 +265,11 @@ export const Table = forwardRef<HotTableClass, TableProps>(
         renderAllColumns
         columns={columnDefs}
         colHeaders={headings}
+        rowHeaders={rowHeaders}
         afterRender={afterRender}
         manualColumnResize
         stretchH="all"
+        minSpareRows={minSpareRows}
         fixedColumnsLeft={frozenColumns}
         licenseKey={HANDSONTABLE_LICENSE_KEY}
       />
