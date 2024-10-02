@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDefined } from 'class-validator';
 
-export class UpdateCellDto {
+export class UpdateRecordDto {
   @ApiProperty({
     description: 'Record index',
   })

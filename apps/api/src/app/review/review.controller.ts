@@ -19,7 +19,7 @@ import {
 
 import { UserSession } from '@shared/framework/user.decorator';
 import { validateNotFound } from '@shared/helpers/common.helper';
-import { DeleteRecordsDto, UpdateCellDto, ReplaceDto } from './dtos';
+import { DeleteRecordsDto, UpdateRecordDto, ReplaceDto } from './dtos';
 import { PaginationResponseDto } from '@shared/dtos/pagination-response.dto';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 
@@ -131,8 +131,8 @@ export class ReviewController {
   @ApiOperation({
     summary: 'Update review record for ongoing import',
   })
-  async updateReviewData(@Param('uploadId', ValidateMongoId) _uploadId: string, @Body() body: UpdateCellDto) {
-    await this.updateRecord.execute(_uploadId, body);
+  async updateReviewData(@Param('uploadId') _uploadId: string, @Body() body: UpdateRecordDto) {
+    return this.updateRecord.execute(_uploadId, body);
   }
 
   @Post(':uploadId/delete-records')
