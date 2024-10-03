@@ -11,17 +11,19 @@ export function useAutoImportPhase3({ goNext }: IUseAutoImportPhase3Props) {
   const { api } = useAPIState();
   const { jobsInfo, setJobsInfo } = useJobsInfo();
 
-  const { mutate: updateUserJob } = useMutation<IUserJob, IErrorObject, Partial<IUserJob>>(
-    (jobInfo) => api.updateUserJob(jobsInfo._id, jobInfo),
-    {
-      onSuccess(updatedJobInfo) {
-        setJobsInfo(updatedJobInfo);
-        goNext();
-      },
-    }
-  );
+  const { mutate: updateUserJob, isLoading: isUpdateUserJobLoading } = useMutation<
+    IUserJob,
+    IErrorObject,
+    Partial<IUserJob>
+  >((jobInfo) => api.updateUserJob(jobsInfo._id, jobInfo), {
+    onSuccess(updatedJobInfo) {
+      setJobsInfo(updatedJobInfo);
+      goNext();
+    },
+  });
 
   return {
     updateUserJob,
+    isUpdateUserJobLoading,
   };
 }
