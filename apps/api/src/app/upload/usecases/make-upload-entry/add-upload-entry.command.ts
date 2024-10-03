@@ -13,8 +13,6 @@ export class AddUploadEntryCommand {
 
   headings?: string[];
 
-  totalRecords?: number;
-
   schema?: string;
 
   originalFileName?: string;
