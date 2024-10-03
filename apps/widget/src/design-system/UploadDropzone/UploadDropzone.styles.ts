@@ -10,11 +10,6 @@ const getDropzoneInnerStyles = (): CSSObject => ({
 const getRootStyles = (): CSSObject => ({
   flexGrow: 1,
   height: '100%',
-  borderRadius: 'var(--border-radius)',
-  backgroundColor: `var(--secondary-background)`,
-  '&:hover': {
-    backgroundColor: `var(--secondary-background-hover)`,
-  },
   '&[data-has-error]': {
     borderColor: `var(--error-color)`,
   },

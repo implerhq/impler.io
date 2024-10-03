@@ -1,4 +1,4 @@
-import { Text } from '@mantine/core';
+import { Stack, Text } from '@mantine/core';
 import { Dropzone as MantineDropzone, FileWithPath, MIME_TYPES } from '@mantine/dropzone';
 import { Button } from '@ui/Button';
 import { variables } from '../../config';
@@ -37,16 +37,18 @@ export function FileDropzone(props: IDropzoneProps) {
         classNames={classes}
         maxSize={variables.LIMIT_5_MB} // 5 MB
       >
-        <Text align="center" weight="bold">
-          {texts.FILE_DROP_AREA.DROP_FILE}
-        </Text>
-        <Text align="center">{texts.FILE_DROP_AREA.FILE_FORMATS}</Text>
-        <MantineDropzone.Idle>
-          <Button>{texts.FILE_DROP_AREA.CHOOSE_FILE}</Button>
-        </MantineDropzone.Idle>
-        <Text size="xs" align="center">
-          {texts.FILE_DROP_AREA.IMAGE_FILE_SIZE}
-        </Text>
+        <Stack spacing={0} align="center" content="center">
+          <Text align="center" weight="bold">
+            {texts.FILE_DROP_AREA.DROP_FILE}
+          </Text>
+          <Text align="center">{texts.FILE_DROP_AREA.FILE_FORMATS}</Text>
+          <MantineDropzone.Idle>
+            <Button>{texts.FILE_DROP_AREA.CHOOSE_FILE}</Button>
+          </MantineDropzone.Idle>
+          <Text size="xs" align="center">
+            {texts.FILE_DROP_AREA.IMAGE_FILE_SIZE}
+          </Text>
+        </Stack>
       </MantineDropzone>
     );
   };
