@@ -242,7 +242,6 @@ export class MakeUploadEntry {
     authHeaderValue,
     headings,
     schema,
-    totalRecords,
     originalFileName,
     originalFileType,
     customChunkFormat,
@@ -262,9 +261,11 @@ export class MakeUploadEntry {
       headings: Array.isArray(headings) ? headings : [],
       status: _uploadedFileId ? UploadStatusEnum.UPLOADED : UploadStatusEnum.REVIEWING,
       authHeaderValue: authHeaderValue,
-      totalRecords: totalRecords || Defaults.ZERO,
+      totalRecords: Defaults.ZERO,
       customChunkFormat,
       customRecordFormat,
+      validRecords: Defaults.ZERO,
+      invalidRecords: Defaults.ZERO,
     });
   }
 }
