@@ -2,7 +2,7 @@ import * as WebFont from 'webfontloader';
 import { Global } from '@emotion/react';
 import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
-import { useEffect, useState, PropsWithChildren } from 'react';
+import { useEffect, useState, PropsWithChildren, useMemo } from 'react';
 
 import { ApiService } from '@api';
 import { Provider } from '../Provider';
@@ -84,6 +84,13 @@ export function Container({ children }: PropsWithChildren<{}>) {
     }
   }
 
+  const primaryColorShades = useMemo(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    () => generateShades(secondaryPayload.primaryColor),
+    [secondaryPayload.primaryColor]
+  );
+
   return (
     <>
       <Global
@@ -144,10 +151,160 @@ export function Container({ children }: PropsWithChildren<{}>) {
         withNormalizeCSS
         theme={{
           ...mantineConfig,
+          globalStyles: () => ({
+            ':root': {
+              // common
+              '--border-radius': '0.25rem',
+              '--label-color': '#868e96',
+              '--error-color': '#f03e3e',
+              '--border-color': colors.lightDeem,
+              '--primary-color': secondaryPayload.primaryColor,
+
+              '--primary-background': '#FFF',
+              '--secondary-background': colors.lightDeem,
+              '--primary-background-hover': '#FAFAFA',
+              '--secondary-background-hover': '#F4F4F4',
+
+              // counts
+              '--counts-background': '#f1f3f5',
+              '--counts-border-radius': '2rem',
+              '--counts-active-background': '#ffffff',
+
+              // stepper
+              '--stepper-background': '#f1f3f5',
+              '--stepper-completed-background': colors.success,
+              '--stepper-progress-background': '#f1f3f5',
+              '--stepper-icon-color': '#495057',
+              '--stepper-icon-progress-color': '#495057',
+              '--stepper-icon-completed-color': colors.white,
+              '--stepper-border-color': '#f1f3f5',
+              '--stepper-completed-border-color': colors.success,
+              '--stepper-progress-border-color': secondaryPayload.primaryColor,
+              '--stepper-border-radius': '0px',
+              '--stepper-color': '#666',
+
+              /*
+               * button
+               *
+               * '--button-primary-color': '#fff',
+               * '--button-primary-background': secondaryPayload.primaryColor,
+               * '--button-primary-background-hover': primaryColorShades?.[6],
+               * '--button-secondary-color': secondaryPayload.primaryColor,
+               * '--button-secondary-background': '#fff',
+               * '--button-secondary-background-hover': '#a8c6ff59',
+               */
+            },
+          }),
+          components: {
+            Dropzone: {
+              styles: {
+                root: {
+                  borderRadius: 'var(--border-radius)',
+                  backgroundColor: `var(--secondary-background)`,
+                  '&:hover': {
+                    backgroundColor: `var(--secondary-background-hover)`,
+                  },
+                },
+              },
+            },
+            InputWrapper: {
+              styles: {
+                label: {
+                  color: 'var(--label-color)',
+                },
+              },
+            },
+            Input: {
+              styles: {
+                input: {
+                  borderColor: 'var(--border-color)',
+                  borderRadius: 'var(--border-radius)',
+                },
+              },
+            },
+            Checkbox: {
+              styles: {
+                input: {
+                  borderColor: 'var(--border-color)',
+                  borderRadius: 'var(--border-radius)',
+                },
+              },
+            },
+            Stepper: {
+              styles: {
+                stepLabel: {
+                  color: 'var(--stepper-color)',
+                  fontWeight: 600,
+                },
+                stepIcon: {
+                  borderColor: 'var(--stepper-border-color)',
+                  backgroundColor: 'var(--stepper-background)',
+                  '&[data-completed]': {
+                    color: 'var(--stepper-icon-completed-color) !important',
+                    backgroundColor: 'var(--stepper-completed-background) !important',
+                    borderColor: 'var(--stepper-completed-border-color) !important',
+                  },
+                  '&[data-progress]': {
+                    backgroundColor: 'var(--stepper-progress-background) !important',
+                    borderColor: 'var(--stepper-progress-border-color) !important',
+                    color: 'var(--stepper-icon-progress-color) !important',
+                  },
+                },
+                stepCompletedIcon: {
+                  svg: {
+                    fill: 'var(--stepper-icon-completed-color) !important',
+                  },
+                },
+              },
+            },
+            /*
+             * Button: {
+             *   styles: {
+             *     root: {
+             *       borderRadius: 'var(--border-radius)',
+             *       backgroundColor: 'var(--button-primary-background)',
+             *       '&:hover': {
+             *         backgroundColor: 'var(--button-primary-background-hover)',
+             *       },
+             *       '&[data-color=red]': {
+             *         backgroundColor: 'var(--button-secondary-background)',
+             *         borderColor: 'var(--error-color)',
+             *         '.mantine-Button-label': {
+             *           color: 'var(--error-color)',
+             *         },
+             *         '&:hover': {
+             *           backgroundColor: 'var(--button-secondary-background-hover)',
+             *         },
+             *       },
+             *       '&[data-variant=outline]': {
+             *         backgroundColor: 'var(--button-secondary-background)',
+             *         '.mantine-Button-label': {
+             *           color: 'var(--button-secondary-color)',
+             *         },
+             *         '&:hover': {
+             *           backgroundColor: 'var(--button-secondary-background-hover)',
+             *         },
+             *       },
+             *       '&:focus': {
+             *         outline: '0.125rem solid var(--button-primary-background)',
+             *       },
+             *     },
+             *     label: {
+             *       color: 'var(--button-primary-color)',
+             *     },
+             *     icon: {
+             *       svg: {
+             *         fill: 'var(--button-primary-color)',
+             *       },
+             *     },
+             *   },
+             * },
+             */
+          },
           colors: {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
-            primary: generateShades(secondaryPayload.primaryColor),
+            primary: primaryColorShades,
           },
           primaryColor: 'primary',
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
