@@ -36,8 +36,8 @@ export const MappingItem = React.forwardRef<HTMLInputElement, IMappingItem>((pro
     mappingDoneText,
   } = props;
   const defaultGroupHeight = 45;
-  const [groupHeight, setGroupHeight] = useState<number>(defaultGroupHeight);
   const groupRef = useRef<HTMLDivElement>(null);
+  const [groupHeight, setGroupHeight] = useState<number>(defaultGroupHeight);
   const { classes } = useStyles({ height: groupHeight });
 
   useEffect(() => {

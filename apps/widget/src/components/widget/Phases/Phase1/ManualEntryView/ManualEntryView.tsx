@@ -22,7 +22,13 @@ export function ManaulEntryView({
   onManuallyEnterData,
 }: ManaulEntryViewProps) {
   return (
-    <Box bg="var(--secondary-background)" pt="sm" pl="sm" className={className}>
+    <Box
+      bg="var(--secondary-background)"
+      style={{ borderRadius: 'var(--border-radius)' }}
+      pt="sm"
+      pl="sm"
+      className={className}
+    >
       <Stack spacing="xs">
         <div>
           <Button loading={isLoading} onClick={onManuallyEnterData} leftIcon={<GridIcon />}>

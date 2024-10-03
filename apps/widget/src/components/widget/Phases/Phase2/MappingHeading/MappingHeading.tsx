@@ -13,10 +13,10 @@ export const MappingHeading = React.forwardRef<HTMLDivElement, IMappingHeadingPr
   return (
     <Group style={{ justifyContent: 'space-between' }} noWrap ref={ref}>
       <Group className={classes.textWrapper} align="stretch" noWrap>
-        <Text color="dimmed" className={classes.text}>
+        <Text color="var(--label-color)" className={classes.text}>
           {texts.PHASE2.IN_SCHEMA_TITLE}
         </Text>
-        <Text color="dimmed" className={classes.text}>
+        <Text color="var(--label-color)" className={classes.text}>
           {texts.PHASE2.IN_SHEET_TITLE}
         </Text>
       </Group>
