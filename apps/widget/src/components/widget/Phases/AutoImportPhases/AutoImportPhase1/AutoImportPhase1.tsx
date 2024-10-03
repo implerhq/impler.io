@@ -2,17 +2,15 @@ import { Stack, TextInput } from '@mantine/core';
 
 import { PhasesEnum } from '@types';
 import { validateRssUrl } from '@util';
-import { WIDGET_TEXTS } from '@impler/client';
-import { AutoImportFooter } from 'components/Common/Footer/AutoImportFooter';
-import { useAutoImportPhase1 } from '../hooks/AutoImportPhase1/useAutoImportPhase1';
+import { Footer } from 'components/Common/Footer';
+import { useAutoImportPhase1 } from '@hooks/AutoImportPhase1/useAutoImportPhase1';
 
 interface IAutoImportPhase1Props {
   onNextClick: () => void;
-  texts: typeof WIDGET_TEXTS;
 }
 
-export function AutoImportPhase1({ onNextClick, texts }: IAutoImportPhase1Props) {
-  const { isLoading, register, errors, onSubmit } = useAutoImportPhase1({
+export function AutoImportPhase1({ onNextClick }: IAutoImportPhase1Props) {
+  const { isGetRssXmlHeadingsLoading, register, errors, onSubmit } = useAutoImportPhase1({
     goNext: onNextClick,
   });
 
@@ -36,13 +34,7 @@ export function AutoImportPhase1({ onNextClick, texts }: IAutoImportPhase1Props)
         />
       </form>
 
-      <AutoImportFooter
-        onNextClick={onSubmit}
-        primaryButtonLoading={isLoading}
-        onPrevClick={() => {}}
-        active={PhasesEnum.CONFIGURE}
-        texts={texts}
-      />
+      <Footer onNextClick={onSubmit} active={PhasesEnum.CONFIGURE} primaryButtonLoading={isGetRssXmlHeadingsLoading} />
     </Stack>
   );
 }
