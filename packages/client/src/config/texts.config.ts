@@ -62,6 +62,10 @@ export const WIDGET_TEXTS = {
     INCOMPLETE_TEMPLATE_MSG:
       'This import does not have any columns. Please try again after some time!',
   },
+  SELECT_HEADER: {
+    FILE_DONT_HAVE_HEADERS: 'File does not have headers',
+    CONFIRM_AND_CONTINUE: 'Confirm selection and Continue',
+  },
   'PHASE1-2': {
     ENTER_DATA: 'Manually enter your data',
     RECOMMANDED_LIMIT: 'Recommanded upto {records} records',
