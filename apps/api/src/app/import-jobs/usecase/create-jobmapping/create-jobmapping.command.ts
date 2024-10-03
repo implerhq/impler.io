@@ -5,7 +5,7 @@ export class CreateJobMappingCommand {
 
   isRequired: boolean;
 
-  path: string;
+  path?: string;
 
   _jobId: string;
 }
