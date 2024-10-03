@@ -18,7 +18,7 @@ interface UseBatchedUpdateRecordProps {
   onUpdate?: () => void;
 }
 
-export function useBatchedUpdateRecord({ batchSize = 100, delay = 100, onUpdate }: UseBatchedUpdateRecordProps) {
+export function useBatchedUpdateRecord({ batchSize = 125, delay = 100, onUpdate }: UseBatchedUpdateRecordProps) {
   const { api } = useAPIState();
   const { uploadInfo } = useAppState();
   const updateQueueRef = useRef<UpdateQueue>({});
