@@ -1,4 +1,4 @@
-export class UpdateCellCommand {
+export class UpdateRecordCommand {
   index: number;
 
   record: Record<string, any>;

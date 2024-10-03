@@ -9,13 +9,14 @@ import { useAppState } from '@store/app.context';
 import { Layout } from 'components/Common/Layout';
 import { ConfirmModal } from './modals/ConfirmModal';
 import { useTemplates } from '@hooks/useTemplates';
-import { PhasesEnum, PromptModalTypesEnum } from '@types';
+import { FlowsEnum, PhasesEnum, PromptModalTypesEnum } from '@types';
 import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
 import { IImportConfig, TemplateModeEnum } from '@impler/shared';
 
 import { Phase0 } from './Phases/Phase0';
 import { Phase01 } from './Phases/Phase0-1';
 import { Phase1 } from './Phases/Phase1';
+import { Phase12 } from './Phases/Phase1-2';
 import { Phase2 } from './Phases/Phase2';
 import { Phase3 } from './Phases/Phase3';
 import { Phase4 } from './Phases/Phase4';
@@ -31,7 +32,10 @@ export function Widget() {
   const [dataCount, setDataCount] = useState<number>(defaultDataCount);
   const [promptContinueAction, setPromptContinueAction] = useState<PromptModalTypesEnum>();
   const {
+    flow,
     title,
+    texts,
+    setFlow,
     uploadInfo,
     showWidget,
     templateInfo,
@@ -39,7 +43,6 @@ export function Widget() {
     setShowWidget,
     setImportConfig,
     reset: resetAppState,
-    texts,
   } = useAppState();
 
   const onUploadResetClick = () => {
@@ -57,8 +60,10 @@ export function Widget() {
   };
   const onClose = () => {
     let isImportNotOnProgress = false;
-    if (importConfig.mode === TemplateModeEnum.AUTOMATIC)
+    if (flow === FlowsEnum.AUTO_IMPORT)
       isImportNotOnProgress = [PhasesEnum.CONFIGURE, PhasesEnum.CONFIRM].includes(phase);
+    else if (flow == FlowsEnum.MANUAL_ENTRY)
+      isImportNotOnProgress = [PhasesEnum.MANUAL_ENTRY, PhasesEnum.SUBMIT].includes(phase);
     else
       isImportNotOnProgress = [
         PhasesEnum.VALIDATE,
@@ -107,7 +112,7 @@ export function Widget() {
 
   const PhaseView = {
     [PhasesEnum.VALIDATE]: <Phase0 onValidationSuccess={onSuccess} />,
-    ...(importConfig.mode === TemplateModeEnum.AUTOMATIC
+    ...(flow === FlowsEnum.AUTO_IMPORT
       ? {
           [PhasesEnum.CONFIGURE]: (
             <AutoImportPhase1 texts={texts} onNextClick={() => setPhase(PhasesEnum.MAPCOLUMNS)} />
@@ -116,6 +121,10 @@ export function Widget() {
           [PhasesEnum.SCHEDULE]: <AutoImportPhase3 onNextClick={() => setPhase(PhasesEnum.CONFIRM)} texts={texts} />,
           [PhasesEnum.CONFIRM]: <AutoImportPhase4 texts={texts} onCloseClick={onClose} />,
         }
+      : flow === FlowsEnum.MANUAL_ENTRY
+      ? {
+          [PhasesEnum.MANUAL_ENTRY]: <Phase12 texts={texts} onPrevClick={onUploadResetClick} onNextClick={onClose} />,
+        }
       : {
           [PhasesEnum.IMAGE_UPLOAD]: <Phase01 texts={texts} goToUpload={() => setPhase(PhasesEnum.UPLOAD)} />,
           [PhasesEnum.UPLOAD]: (
@@ -123,6 +132,10 @@ export function Widget() {
               texts={texts}
               hasImageUpload={hasImageUpload}
               onNextClick={() => setPhase(PhasesEnum.MAPPING)}
+              onManuallyEnterData={() => {
+                setFlow(FlowsEnum.MANUAL_ENTRY);
+                setPhase(PhasesEnum.MANUAL_ENTRY);
+              }}
               generateImageTemplate={() => setPhase(PhasesEnum.IMAGE_UPLOAD)}
             />
           ),
@@ -145,8 +158,9 @@ export function Widget() {
   return (
     <Modal title={title || importConfig?.title || templateInfo?.name} opened={showWidget} onClose={onClose}>
       <Layout
-        active={phase}
         texts={texts}
+        active={phase}
+        onClose={onClose}
         hasImageUpload={hasImageUpload}
         mode={importConfig.mode as TemplateModeEnum}
         title={title || importConfig?.title || templateInfo?.name}
@@ -155,8 +169,8 @@ export function Widget() {
 
         <ConfirmModal
           onCancel={onPromptCancel}
-          title={texts.CLOSE_CONFIRMATION.TITLE}
           onConfirm={onPromptConfirm}
+          title={texts.CLOSE_CONFIRMATION.TITLE}
           cancelLabel={texts.CLOSE_CONFIRMATION.CANCEL_CLOSE}
           confirmLabel={texts.CLOSE_CONFIRMATION.CONFIRM_CLOSE}
           opened={!!promptContinueAction}

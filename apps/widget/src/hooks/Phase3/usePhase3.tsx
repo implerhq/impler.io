@@ -20,6 +20,7 @@ import {
 import { IUpload } from '@impler/client';
 import { SelectEditor } from './SelectEditor';
 import { MultiSelectEditor } from './MultiSelectEditor';
+import { useCompleteImport } from '@hooks/useCompleteImport';
 
 interface IUsePhase3Props {
   onNext: (uploadData: IUpload, importedData?: Record<string, any>[]) => void;
@@ -42,12 +43,13 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     valid: new Set(),
     invalid: new Set(),
   });
-  const { uploadInfo, setUploadInfo, host } = useAppState();
+  const { uploadInfo, setUploadInfo } = useAppState();
   const [allChecked, setAllChecked] = useState<boolean>(false);
   const [reviewData, setReviewData] = useState<IRecordExtended[]>([]);
   const [columnDefs, setColumnDefs] = useState<HotItemSchema[]>([]);
   const [totalPages, setTotalPages] = useState<number>(defaultPage);
   const [type, setType] = useState<ReviewDataTypesEnum>(ReviewDataTypesEnum.ALL);
+  const { completeImport, isCompleteImportLoading } = useCompleteImport({ onNext });
   const [showFindReplaceModal, setShowFindReplaceModal] = useState<boolean | undefined>(undefined);
   const [showAllDataValidModal, setShowAllDataValidModal] = useState<boolean | undefined>(undefined);
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState<boolean | undefined>(undefined);
@@ -209,36 +211,6 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
       notifier.showError({ message: error.message, title: error.error });
     },
   });
-  const { isLoading: isConfirmReviewLoading, mutate: confirmReview } = useMutation<
-    {
-      email: string;
-      uploadInfo: IUpload;
-      importedData: Record<string, any>[];
-    },
-    IErrorObject,
-    void,
-    [string]
-  >([`confirm:${uploadInfo._id}`], () => api.confirmReview(uploadInfo._id), {
-    onSuccess(uploadData) {
-      logAmplitudeEvent('RECORDS', {
-        type: 'invalid',
-        host,
-        email: uploadData.email,
-        records: uploadData.uploadInfo.invalidRecords,
-      });
-      logAmplitudeEvent('RECORDS', {
-        type: 'valid',
-        host,
-        email: uploadData.email,
-        records: uploadData.uploadInfo.totalRecords - uploadData.uploadInfo.invalidRecords,
-      });
-      setUploadInfo(uploadData.uploadInfo);
-      onNext(uploadData.uploadInfo, uploadData.importedData);
-    },
-    onError(error: IErrorObject) {
-      notifier.showError({ message: error.message, title: error.error });
-    },
-  });
   const { mutate: updateRecord } = useMutation<unknown, IErrorObject, Partial<IRecord>, [string]>(
     [`update`],
     (record) => api.updateRecord(uploadInfo._id, record)
@@ -306,6 +278,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     setReviewData,
     setAllChecked,
     frozenColumns,
+    completeImport,
     selectedRowsRef,
     isDoReviewLoading,
     isReviewDataLoading,
@@ -313,13 +286,12 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     showFindReplaceModal,
     showAllDataValidModal,
     isDeleteRecordLoading,
-    isConfirmReviewLoading,
+    isCompleteImportLoading,
     showDeleteConfirmModal,
     setShowFindReplaceModal,
     setShowAllDataValidModal,
     setShowDeleteConfirmModal,
     reviewData: reviewData || [],
-    onConfirmReview: confirmReview,
     totalRecords: uploadInfo.totalRecords ?? undefined,
     invalidRecords: uploadInfo.invalidRecords ?? undefined,
     refetchReviewData: () => refetchReviewData([page, type]),

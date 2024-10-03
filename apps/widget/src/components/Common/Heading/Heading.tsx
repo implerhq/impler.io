@@ -1,20 +1,19 @@
-import { Group, MediaQuery, Title, useMantineTheme } from '@mantine/core';
+import { CloseButton, Group, MediaQuery, Title } from '@mantine/core';
 import { PhasesEnum } from '@types';
 import { Stepper } from '@ui/Stepper';
-import { variables } from '@config';
 import { WIDGET_TEXTS } from '@impler/client';
 import { TemplateModeEnum } from '@impler/shared';
 
 interface IHeadingProps {
   title?: string;
-  texts: typeof WIDGET_TEXTS;
   active: PhasesEnum;
+  onClose?: () => void;
   mode?: TemplateModeEnum;
   hasImageUpload?: boolean;
+  texts: typeof WIDGET_TEXTS;
 }
 
-export function Heading({ active, title, mode, hasImageUpload, texts }: IHeadingProps) {
-  const theme = useMantineTheme();
+export function Heading({ active, title, mode, hasImageUpload, texts, onClose }: IHeadingProps) {
   const manualImportSteps = [
     {
       label: texts.STEPPER_TITLES.UPLOAD_FILE,
@@ -45,31 +44,27 @@ export function Heading({ active, title, mode, hasImageUpload, texts }: IHeading
     },
   ];
 
-  return (
-    <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
-      {active ? (
-        <Group style={{ justifyContent: 'space-between' }} mb="lg">
-          <Title order={3}>{title}</Title>
-          <Stepper
-            active={active - (mode === TemplateModeEnum.AUTOMATIC ? 1 : hasImageUpload ? 1 : 2)}
-            steps={
-              mode === TemplateModeEnum.AUTOMATIC
-                ? autoImportSteps
-                : hasImageUpload
-                ? [
-                    {
-                      label: texts.STEPPER_TITLES.GENERATE_TEMPLATE,
-                    },
-                    ...manualImportSteps,
-                  ]
-                : manualImportSteps
-            }
-            primaryColor={theme.colors.primary[variables.colorIndex]}
-          />
-        </Group>
-      ) : (
-        <></>
-      )}
-    </MediaQuery>
-  );
+  return active ? (
+    <Group style={{ justifyContent: 'space-between' }} mb="lg">
+      <Title order={3}>{title}</Title>
+      <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
+        <Stepper
+          active={active - (mode === TemplateModeEnum.AUTOMATIC ? 1 : hasImageUpload ? 1 : 2)}
+          steps={
+            mode === TemplateModeEnum.AUTOMATIC
+              ? autoImportSteps
+              : hasImageUpload
+              ? [
+                  {
+                    label: texts.STEPPER_TITLES.GENERATE_TEMPLATE,
+                  },
+                  ...manualImportSteps,
+                ]
+              : manualImportSteps
+          }
+        />
+      </MediaQuery>
+      <CloseButton onClick={onClose} />
+    </Group>
+  ) : null;
 }

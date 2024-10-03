@@ -42,76 +42,73 @@ registerValidator(dateValidator);
 
 import 'handsontable/dist/handsontable.full.min.css';
 import './HandsonTable.styles.min.css';
-import { addTippyToElement } from '@util';
+import { addTippyToElement, memoize } from '@util';
 
-interface TableProps {
-  headings: string[];
-  allChecked?: boolean;
-  frozenColumns?: number;
-  height?: string | number;
-  width?: string | number;
-  afterRender?: () => void;
-  data: Record<string, any>[];
-  columnDescriptions?: string[];
-  columnDefs: HotItemSchema[];
-  onCheckAll?: (checked: boolean) => void;
-  onValueChange?: (row: number, prop: string, oldVal: any, newVal: any) => void;
-  onRowCheck?: (rowIndex: number, recordIndex: number, checked: boolean) => void;
-}
+const createErrorSvg = memoize(() => {
+  const errorSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  errorSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  errorSvg.setAttribute('viewBox', '-2 -2 24 24');
+  errorSvg.setAttribute('width', '20');
+  errorSvg.setAttribute('fill', 'currentColor');
+  const errorSvgPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  errorSvgPath.setAttribute(
+    'd',
+    'M10 20C4.477 20 0 15.523 0 10S4.477 0 10 0s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-13a1 1 0 0 1 1 1v5a1 1 0 0 1-2 0V6a1 1 0 0 1 1-1zm0 10a1 1 0 1 1 0-2 1 1 0 0 1 0 2z'
+  );
+  errorSvg.appendChild(errorSvgPath);
+
+  return errorSvg;
+});
+
+// Memoized style strings
+const memoizedStyles = {
+  errorUpdated: 'vertical-align: middle;float: right;cursor: pointer;color:#795e00;',
+  errorOnly: 'vertical-align: middle;float: right;cursor: pointer;color:#ff1111;',
+};
 
 Handsontable.renderers.registerRenderer(
   'custom',
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-  function renderer(instance, TD, row, col, prop, value, cellProperties) {
+  function renderer(instance: Handsontable, TD: HTMLTableCellElement, row: number, col: number, prop: string | number) {
     const name = String(prop).replace('record.', '');
-    TD.classList.add('custom-cell');
-    TD.ariaLabel = '';
-    const soureData = instance.getSourceDataAtRow(row) as IRecord;
-    let fieldValue =
-      typeof soureData.record[name] === 'undefined' || soureData.record[name] === null ? null : soureData.record[name];
-    if (typeof fieldValue === 'string' && fieldValue.length > name.length + 20)
-      fieldValue = value.substring(0, name.length + 20) + '...';
+    const sourceData = instance.getSourceDataAtRow(row) as IRecord;
+    const hasError = sourceData.errors?.[name];
+    const isUpdated = sourceData.updated?.[name];
 
-    if (soureData.errors && soureData.errors[name]) {
-      TD.ariaLabel = soureData.errors[name];
+    TD.className = 'custom-cell';
+    TD.ariaLabel = '';
+
+    let fieldValue = sourceData.record?.[name] ?? null;
+
+    if (typeof fieldValue === 'string' && fieldValue.length > name.length + 20) {
+      fieldValue = fieldValue.slice(0, name.length + 20) + '...';
+    }
+
+    if (hasError) {
+      TD.ariaLabel = hasError;
       TD.dataset.cooltipzDir = row < 5 ? 'bottom' : 'top';
       TD.dataset.cooltipzSize = 'fit';
     }
 
-    const errorSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    errorSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    errorSvg.setAttribute('viewBox', '-2 -2 24 24');
-    errorSvg.setAttribute('width', '20');
-    errorSvg.setAttribute('fill', 'currentColor');
-    const errorSvgPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    errorSvgPath.setAttribute(
-      'd',
-      'M10 20C4.477 20 0 15.523 0 10S4.477 0 10 0s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-13a1 1 0 0 1 1 1v5a1 1 0 0 1-2 0V6a1 1 0 0 1 1-1zm0 10a1 1 0 1 1 0-2 1 1 0 0 1 0 2z'
-    );
-    errorSvg.appendChild(errorSvgPath);
+    const errorSvg = createErrorSvg().cloneNode(true) as SVGElement;
 
     TD.innerHTML = '';
     const valueSpan = document.createElement('span');
-    if (soureData.updated?.[name] || soureData.errors?.[name]) {
+    if (sourceData.updated?.[name] || sourceData.errors?.[name]) {
       valueSpan.classList.add('cell-value');
     }
-    if (fieldValue !== null) valueSpan.appendChild(document.createTextNode(fieldValue));
+    if (fieldValue !== null) valueSpan.textContent = fieldValue;
     TD.appendChild(valueSpan);
-    if (soureData.updated && soureData.updated[name]) {
-      errorSvg.setAttribute('style', 'vertical-align: middle;float: right;cursor: pointer;color:#795e00;');
-      if (soureData.errors && soureData.errors[name]) {
+
+    if (isUpdated) {
+      errorSvg.setAttribute('style', memoizedStyles.errorUpdated);
+      if (hasError) {
         TD.appendChild(errorSvg);
       }
       TD.style.backgroundColor = '#ffda5b';
-
-      return TD;
-    }
-    if (soureData.errors && soureData.errors[name]) {
-      errorSvg.setAttribute('style', 'vertical-align: middle;float: right;cursor: pointer;color:#ff1111;');
+    } else if (hasError) {
+      errorSvg.setAttribute('style', memoizedStyles.errorOnly);
       TD.appendChild(errorSvg);
       TD.style.backgroundColor = '#fdebeb';
-
-      return TD;
     }
 
     return TD;
@@ -157,6 +154,24 @@ Handsontable.renderers.registerRenderer(
   }
 );
 
+interface TableProps {
+  headings: string[];
+  allChecked?: boolean;
+  rowHeaders?: boolean;
+  minSpareRows?: number;
+  frozenColumns?: number;
+  height?: string | number;
+  width?: string | number;
+  selectEnabled?: boolean;
+  afterRender?: () => void;
+  columnDefs: HotItemSchema[];
+  data?: Record<string, any>[];
+  columnDescriptions?: string[];
+  onCheckAll?: (checked: boolean) => void;
+  onValueChange?: (row: number, prop: string, oldVal: any, newVal: any) => void;
+  onRowCheck?: (rowIndex: number, recordIndex: number, checked: boolean) => void;
+}
+
 export const Table = forwardRef<HotTableClass, TableProps>(
   (
     {
@@ -170,8 +185,11 @@ export const Table = forwardRef<HotTableClass, TableProps>(
       allChecked,
       onRowCheck,
       onCheckAll,
+      rowHeaders,
+      minSpareRows,
       frozenColumns = 2,
       onValueChange,
+      selectEnabled = true,
     }: TableProps,
     gridRef
   ) => {
@@ -188,6 +206,13 @@ export const Table = forwardRef<HotTableClass, TableProps>(
               // @ts-ignore
               onValueChange(change[0], change[1], change[2], change[3]);
             });
+          }
+        }}
+        beforeKeyDown={(event) => {
+          const [[row, col]] = (gridRef as any)?.current.__hotInstance?.getSelected();
+          const rows = (gridRef as any)?.current?.__hotInstance?.countRows();
+          if (event.key === 'Tab' && col === headings.length - 1) {
+            (gridRef as any)?.current.__hotInstance.selectCell(Math.min(rows, row + 1), selectEnabled ? 3 : 1);
           }
         }}
         fillHandle={{
@@ -212,7 +237,9 @@ export const Table = forwardRef<HotTableClass, TableProps>(
           TH.innerHTML = '';
           TH.innerHTML = headings[i];
 
-          if (i === 0) {
+          if (!selectEnabled && i < 0) {
+            TH.innerHTML = '#';
+          } else if (selectEnabled && i === 0) {
             TH.classList.add('check-all-cell');
             TH.innerHTML = `
               <div class="checkbox">
@@ -245,12 +272,14 @@ export const Table = forwardRef<HotTableClass, TableProps>(
             }
           }
         }}
+        stretchH="all"
         renderAllColumns
+        manualColumnResize
         columns={columnDefs}
         colHeaders={headings}
+        rowHeaders={rowHeaders}
         afterRender={afterRender}
-        manualColumnResize
-        stretchH="all"
+        minSpareRows={minSpareRows}
         fixedColumnsLeft={frozenColumns}
         licenseKey={HANDSONTABLE_LICENSE_KEY}
       />

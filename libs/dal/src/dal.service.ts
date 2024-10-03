@@ -72,17 +72,49 @@ export class DalService {
     if (!model) return;
     if (record._id) delete record._id;
 
-    await model.updateOne(
+    return model.findOneAndUpdate(
       {
         index,
       },
       {
         $set: {
+          index,
           record,
           updated,
         },
+      },
+      {
+        upsert: true,
+        new: true,
       }
     );
+  }
+  async updateRecords(
+    _uploadId: string,
+    records: {
+      index: number;
+      record: Record<string, string>;
+      updated: Record<string, boolean>;
+    }[]
+  ) {
+    const model = this.getRecordCollection(_uploadId);
+    if (!model) return;
+
+    const bulkOps = records.map(({ index, record, updated }) => ({
+      updateOne: {
+        filter: { index },
+        update: {
+          $set: {
+            index,
+            record,
+            updated,
+          },
+        },
+        upsert: true,
+      },
+    }));
+
+    return model.bulkWrite(bulkOps, { ordered: false });
   }
   async deleteRecords(_uploadId: string, index: number[]) {
     const model = this.getRecordCollection(_uploadId);

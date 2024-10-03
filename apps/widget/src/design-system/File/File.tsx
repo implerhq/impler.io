@@ -1,9 +1,10 @@
-import { FileIcon, CrossIcon } from '../../icons';
 import { Group, Text } from '@mantine/core';
+
+import { variables } from '@config';
 import useStyles from './File.style';
+import { FileIcon, CrossIcon } from '../../icons';
 import { colors } from '../../config/colors.config';
 import { formatBytes } from '../../util/helpers/common.helpers';
-import { variables } from '@config';
 
 interface IFile {
   name: string;

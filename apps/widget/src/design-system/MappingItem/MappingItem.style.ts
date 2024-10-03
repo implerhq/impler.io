@@ -13,10 +13,10 @@ export const getRootStyles = (theme: MantineTheme): React.CSSProperties => ({
 });
 
 export const getSelectionRootStyles = (theme: MantineTheme): React.CSSProperties => ({
-  borderColor: colors.lightDeem,
+  borderColor: 'var(--border-color)',
   borderWidth: 1,
   borderStyle: 'solid',
-  borderRadius: 4,
+  borderRadius: 'var(--border-radius)',
   padding: 0,
   [`@media (max-width: ${theme.breakpoints.md}px)`]: {
     width: '100%',

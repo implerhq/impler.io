@@ -8,18 +8,26 @@ import { Heading } from 'components/Common/Heading';
 interface ILayoutProps {
   active: PhasesEnum;
   title?: string;
-  texts: typeof WIDGET_TEXTS;
+  onClose?: () => void;
   mode?: TemplateModeEnum;
   hasImageUpload?: boolean;
+  texts: typeof WIDGET_TEXTS;
 }
 
 export function Layout(props: PropsWithChildren<ILayoutProps>) {
   const { classes } = useStyles();
-  const { children, active, title, hasImageUpload, mode, texts } = props;
+  const { children, active, title, hasImageUpload, mode, texts, onClose } = props;
 
   return (
     <div className={classes.root}>
-      <Heading texts={texts} active={active} title={title} hasImageUpload={hasImageUpload} mode={mode} />
+      <Heading
+        mode={mode}
+        texts={texts}
+        title={title}
+        active={active}
+        onClose={onClose}
+        hasImageUpload={hasImageUpload}
+      />
       <div className={classes.container}>{children}</div>
     </div>
   );

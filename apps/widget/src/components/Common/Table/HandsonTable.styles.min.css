@@ -1,7 +1,13 @@
 .handsontable td {
     overflow: unset !important;
+    border-color: var(--border-color) !important;
+}
+.handsontable th {
+    background-color: var(--secondary-background) !important;
+    border-color: var(--border-color) !important;
 }
 .htCore thead tr th {
+    padding: 0.3rem !important;
     vertical-align: middle !important;
 }
 .custom-cell {
