@@ -8,16 +8,24 @@ interface ManaulEntryViewProps {
   limit?: number;
   className?: string;
   columns?: IColumn[];
+  isLoading?: boolean;
   texts: typeof WIDGET_TEXTS;
   onManuallyEnterData?: () => void;
 }
 
-export function ManaulEntryView({ limit, columns, className, onManuallyEnterData, texts }: ManaulEntryViewProps) {
+export function ManaulEntryView({
+  limit,
+  texts,
+  columns,
+  isLoading,
+  className,
+  onManuallyEnterData,
+}: ManaulEntryViewProps) {
   return (
     <Box bg="var(--secondary-background)" pt="sm" pl="sm" className={className}>
       <Stack spacing="xs">
         <div>
-          <Button onClick={onManuallyEnterData} leftIcon={<GridIcon />}>
+          <Button loading={isLoading} onClick={onManuallyEnterData} leftIcon={<GridIcon />}>
             {texts['PHASE1-2'].ENTER_DATA}
           </Button>
         </div>

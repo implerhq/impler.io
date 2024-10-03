@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
+import { notifier } from '@util';
 import { variables } from '@config';
-import { IUpload } from '@impler/client';
-import { debounce, notifier } from '@util';
 import { logAmplitudeEvent } from '@amplitude';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
@@ -12,7 +11,6 @@ import { SelectEditor } from '@hooks/Phase3/SelectEditor';
 import { MultiSelectEditor } from '@hooks/Phase3/MultiSelectEditor';
 import {
   IColumn,
-  IRecord,
   IReviewData,
   IErrorObject,
   ColumnTypesEnum,
@@ -21,10 +19,10 @@ import {
 } from '@impler/shared';
 
 interface IUsePhase3Props {
-  onNext?: (uploadData: IUpload, importedData?: Record<string, any>[]) => void;
+  limit: number;
 }
 
-export function usePhase12({}: IUsePhase3Props) {
+export function usePhase12({ limit }: IUsePhase3Props) {
   const { api } = useAPIState();
   const { uploadInfo } = useAppState();
   const [columns, setColumns] = useState<IOption[]>([]);
@@ -54,7 +52,7 @@ export function usePhase12({}: IUsePhase3Props) {
     [string]
   >(
     ['review'],
-    (reviewDataType) => api.getReviewData({ uploadId: uploadInfo._id, page: 1, limit: 10000, type: reviewDataType }),
+    (reviewDataType) => api.getReviewData({ uploadId: uploadInfo._id, page: 1, limit, type: reviewDataType }),
     {
       cacheTime: 0,
       onSuccess(reviewDataResponse) {
@@ -77,7 +75,7 @@ export function usePhase12({}: IUsePhase3Props) {
   >([`review`, uploadInfo._id], () => api.doReivewData(uploadInfo._id), {
     cacheTime: 0,
     staleTime: 0,
-    enabled: !!uploadInfo._id,
+    enabled: false,
     onSuccess() {
       refetchReviewData(type);
     },
@@ -85,38 +83,16 @@ export function usePhase12({}: IUsePhase3Props) {
       notifier.showError({ message: error.message, title: error.error });
     },
   });
-  const debouncedReview = useCallback(
-    debounce(() => {
-      reReviewData();
-    }, 1000),
-    [reReviewData]
-  );
-  const { mutate: updateRecord } = useMutation<IRecord, IErrorObject, Partial<IRecord>, [string]>(
-    [`update`],
-    (record) => api.updateRecord(uploadInfo._id, record),
-    {
-      onSuccess(data) {
-        setReviewData(
-          reviewData.map((record) => {
-            if (record.index === data.index) {
-              return { ...record, ...data };
-            }
 
-            return record;
-          })
-        );
-        debouncedReview();
-      },
-    }
-  );
   const onTypeChange = (newType: ReviewDataTypesEnum) => {
     setType(newType);
     refetchReviewData(newType);
   };
+
   useEffect(() => {
     if (templateColumns) {
       let updatedFrozenColumns = 0;
-      const dataColumns: IOption[] = [];
+      const dataColumns: IOption[] = [{ value: '', label: 'All columns' }];
       const newColumnDefs: HotItemSchema[] = [];
       const newHeadings: string[] = [];
       templateColumns.forEach((column: IColumn) => {
@@ -183,7 +159,6 @@ export function usePhase12({}: IUsePhase3Props) {
     reviewData,
     columnDefs,
     onTypeChange,
-    updateRecord,
     reReviewData,
     frozenColumns,
     setReviewData,

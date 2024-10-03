@@ -11,6 +11,7 @@ export const WIDGET_TEXTS = {
     FINISH: 'Finish',
     SORRY: 'Sorry!',
     CANCEL: 'Cancel',
+    DELETE: 'Delete',
     CLOSE_WIDGET: 'Close',
     UPLOAD_AGAIN: 'Upload Again',
   },

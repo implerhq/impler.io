@@ -169,8 +169,8 @@ export function Widget() {
 
         <ConfirmModal
           onCancel={onPromptCancel}
-          title={texts.CLOSE_CONFIRMATION.TITLE}
           onConfirm={onPromptConfirm}
+          title={texts.CLOSE_CONFIRMATION.TITLE}
           cancelLabel={texts.CLOSE_CONFIRMATION.CANCEL_CLOSE}
           confirmLabel={texts.CLOSE_CONFIRMATION.CONFIRM_CLOSE}
           opened={!!promptContinueAction}

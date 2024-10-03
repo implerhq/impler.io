@@ -8,9 +8,9 @@ import { usePhase3 } from '@hooks/Phase3/usePhase3';
 import { IUpload, WIDGET_TEXTS } from '@impler/client';
 import { numberFormatter, replaceVariablesInString } from '@impler/shared';
 
-import { ReviewConfirmModal } from './ReviewConfirmModal';
 import { Table } from 'components/Common/Table';
 import { Footer } from 'components/Common/Footer';
+import { ReviewConfirmModal } from './ReviewConfirmModal';
 
 import { Button } from '@ui/Button';
 import { Pagination } from '@ui/Pagination';
@@ -121,7 +121,7 @@ export function Phase3(props: IPhase3Props) {
               disabled={!selectedRowsRef.current.size}
               onClick={() => setShowDeleteConfirmModal(true)}
             >
-              Delete
+              {texts.COMMON.DELETE}
               <Badge variant="light" ml="xs" color="red">
                 {numberFormatter(selectedRowsRef.current.size)}
               </Badge>

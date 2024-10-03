@@ -125,8 +125,9 @@ export function Phase1({
             texts={texts}
             columns={columns}
             limit={MANUAL_ENTRY_LIMIT}
-            className={classes.contentWrapper}
+            isLoading={isUploadLoading}
             onManuallyEnterData={onSubmit}
+            className={classes.contentWrapper}
           />
         </Flex>
       </Flex>

@@ -175,6 +175,10 @@ export class ApiService {
     return this.httpClient.put(`/review/${uploadId}/record`, record) as Promise<IRecord>;
   }
 
+  async updateRecords(uploadId: string, records: Partial<IRecord>[]) {
+    return this.httpClient.put(`/review/${uploadId}/records`, records) as Promise<IRecord[]>;
+  }
+
   async deleteRecord(uploadId: string, indexes: number[], valid: number, invalid: number) {
     return this.httpClient.post(`/review/${uploadId}/delete-records`, {
       indexes,
