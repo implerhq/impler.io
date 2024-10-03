@@ -1,12 +1,13 @@
-import { Group, Text } from '@mantine/core';
+import { Group, Text, Tooltip } from '@mantine/core';
 import { Button } from '@ui/Button';
 import { variables } from '@config';
-import { FlowsEnum, PhasesEnum } from '@types';
 import useStyles from './Styles';
+import { FlowsEnum, PhasesEnum } from '@types';
 import { useAppState } from '@store/app.context';
 
 interface IFooterProps {
   active: PhasesEnum;
+  primaryButtonTooltip?: string;
   primaryButtonDisabled?: boolean;
   secondaryButtonDisabled?: boolean;
   primaryButtonLoading?: boolean;
@@ -19,9 +20,10 @@ export function Footer({
   active,
   onNextClick,
   onPrevClick,
+  primaryButtonTooltip,
   primaryButtonLoading,
-  secondaryButtonLoading,
   primaryButtonDisabled,
+  secondaryButtonLoading,
   secondaryButtonDisabled,
 }: IFooterProps) {
   const { classes } = useStyles();
@@ -63,9 +65,17 @@ export function Footer({
               >
                 {texts.COMMON.UPLOAD_AGAIN}
               </Button>
-              <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
-                {texts.COMMON.FINISH}
-              </Button>
+              {primaryButtonTooltip ? (
+                <Tooltip label={primaryButtonTooltip} withArrow>
+                  <Button loading={primaryButtonLoading} visiblyDisabled={primaryButtonDisabled} onClick={onNextClick}>
+                    {texts.COMMON.FINISH}
+                  </Button>
+                </Tooltip>
+              ) : (
+                <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
+                  {texts.COMMON.FINISH}
+                </Button>
+              )}
             </>
           ),
         }

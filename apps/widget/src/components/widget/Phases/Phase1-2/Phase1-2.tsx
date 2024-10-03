@@ -10,6 +10,7 @@ import { Table } from 'components/Common/Table';
 import { Footer } from 'components/Common/Footer';
 import { usePhase12 } from '@hooks/Phase1-2/usePhase12';
 import { SegmentedControl } from '@ui/SegmentedControl';
+import { useCompleteImport } from '@hooks/useCompleteImport';
 import { FindReplaceModal } from 'components/widget/modals/FindReplace';
 import { numberFormatter, replaceVariablesInString } from '@impler/shared';
 import { useBatchedUpdateRecord } from '@hooks/Phase1-2/useBatchUpdateRecords';
@@ -41,6 +42,7 @@ export function Phase12({ onNextClick, onPrevClick, texts }: IPhase12Props) {
   } = usePhase12({ limit: MANUAL_ENTRY_LIMIT });
   const { updateRecord } = useBatchedUpdateRecord({ onUpdate: reReviewData });
   const tableWrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
+  const { completeImport, isCompleteImportLoading } = useCompleteImport({ onNext: onNextClick });
   const [tableWrapperDimensions, setTableWrapperDimentions] = useState({
     height: 200,
     width: 500,
@@ -127,10 +129,12 @@ export function Phase12({ onNextClick, onPrevClick, texts }: IPhase12Props) {
       </Stack>
 
       <Footer
-        active={PhasesEnum.MANUAL_ENTRY}
-        primaryButtonLoading={isDoReviewLoading || isReviewDataLoading}
-        onNextClick={onNextClick}
         onPrevClick={onPrevClick}
+        onNextClick={completeImport}
+        active={PhasesEnum.MANUAL_ENTRY}
+        primaryButtonLoading={isDoReviewLoading || isReviewDataLoading || isCompleteImportLoading}
+        primaryButtonTooltip={invalidRecords > 0 ? texts['PHASE1-2'].FIX_INVALID_DATA : undefined}
+        primaryButtonDisabled={invalidRecords > 0 || totalRecords === 0}
       />
 
       <FindReplaceModal
