@@ -17,6 +17,7 @@ import {
   ColumnDelimiterEnum,
   ReviewDataTypesEnum,
 } from '@impler/shared';
+import { IUpload } from '@impler/client';
 
 interface IUsePhase3Props {
   limit: number;
@@ -24,7 +25,7 @@ interface IUsePhase3Props {
 
 export function usePhase12({ limit }: IUsePhase3Props) {
   const { api } = useAPIState();
-  const { uploadInfo } = useAppState();
+  const { uploadInfo, setUploadInfo } = useAppState();
   const [columns, setColumns] = useState<IOption[]>([]);
   const [headings, setHeadings] = useState<string[]>([]);
   const [frozenColumns, setFrozenColumns] = useState<number>(2);
@@ -44,7 +45,16 @@ export function usePhase12({ limit }: IUsePhase3Props) {
     [`columns:${uploadInfo._id}`, uploadInfo._id],
     () => api.getColumns(uploadInfo._id)
   );
-
+  const { refetch: fetchUploadInfo } = useQuery<IUpload, IErrorObject, IUpload, [string]>(
+    [`getUpload:${uploadInfo._id}`],
+    () => api.getUpload(uploadInfo._id),
+    {
+      enabled: false,
+      onSuccess(data) {
+        setUploadInfo(data);
+      },
+    }
+  );
   const { mutate: refetchReviewData, isLoading: isReviewDataLoading } = useMutation<
     IReviewData,
     IErrorObject,
@@ -77,6 +87,7 @@ export function usePhase12({ limit }: IUsePhase3Props) {
     staleTime: 0,
     enabled: false,
     onSuccess() {
+      fetchUploadInfo();
       refetchReviewData(type);
     },
     onError(error: IErrorObject) {
