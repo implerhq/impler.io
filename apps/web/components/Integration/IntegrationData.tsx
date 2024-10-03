@@ -838,7 +838,35 @@ export class AppComponent {
     'Integration Steps': () => (
       <>
         <List type="ordered">
-          <List.Item>Setting Bubble App</List.Item>
+          <List.Item>
+            Setting Bubble App
+            <List type="unordered">
+              <List.Item>You must have a paid bubble application plan to use the Bubble Data API</List.Item>
+            </List>
+            <List type="ordered">
+              <List.Item>Setting up data type</List.Item>
+              <List.Item>API Settings</List.Item>
+            </List>
+          </List.Item>
+          <List.Item>
+            Setting up the Impler Application
+            <List type="ordered">
+              <List.Item>Click on the &quot;Create Import&quot; to create the new import</List.Item>
+              <List.Item>Give name and click on &quot;Create & Continue&quot;</List.Item>
+              <List.Item>Enable Bubble.io destination</List.Item>
+              <List.Item>Map Columns</List.Item>
+            </List>
+          </List.Item>
+          <List.Item>
+            Using the Plugin
+            <List type="ordered">
+              <List.Item>Install plugin</List.Item>
+              <List.Item>Using the Plugin</List.Item>
+            </List>
+          </List.Item>
+          <List.Item>Considering UserId while importing data</List.Item>
+          <List.Item>Theming Importer</List.Item>
+          <List.Item>Configuring multiple Importers on Page (In Progress)</List.Item>
         </List>
         <Link href="#">
           <ModifiedText color={colors.yellow}>Visit Documentation with Detailed Steps</ModifiedText>
