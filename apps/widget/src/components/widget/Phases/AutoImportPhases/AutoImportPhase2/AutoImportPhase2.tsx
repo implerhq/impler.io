@@ -4,11 +4,12 @@ import { useEffect, useRef, useState } from 'react';
 
 import useStyles from './Styles';
 import { PhasesEnum } from '@types';
+import { WIDGET_TEXTS } from '@impler/client';
 import { MappingItem } from '@ui/MappingItem';
 import { MappingHeading } from './MappingHeading';
-import { AutoImportFooter } from 'components/Common/Footer/AutoImportFooter';
-import { useAutoImportPhase2 } from '../hooks/AutoImportPhase2/useAutoImportPhase2';
-import { WIDGET_TEXTS } from '@impler/client';
+import { Footer } from 'components/Common/Footer';
+import { LoadingOverlay } from '@ui/LoadingOverlay';
+import { useAutoImportPhase2 } from '@hooks/AutoImportPhase2/useAutoImportPhase2';
 
 interface IAutoImportPhase2Props {
   onNextClick: () => void;
@@ -19,9 +20,10 @@ const defaulWrappertHeight = 200;
 export function AutoImportPhase2({ onNextClick, texts }: IAutoImportPhase2Props) {
   const { classes } = useStyles();
   const [wrapperHeight, setWrapperHeight] = useState(defaulWrappertHeight);
-  const { control, mappings, onSubmit, onFieldSelect, headings } = useAutoImportPhase2({
-    goNext: onNextClick,
-  });
+  const { control, mappings, onSubmit, onFieldSelect, headings, isCreateJobMappingLoading, isMappingsLoading } =
+    useAutoImportPhase2({
+      goNext: onNextClick,
+    });
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const titlesRef = useRef<HTMLDivElement>(null);
@@ -36,6 +38,7 @@ export function AutoImportPhase2({ onNextClick, texts }: IAutoImportPhase2Props)
 
   return (
     <>
+      <LoadingOverlay visible={isMappingsLoading} />
       <div style={{ flexGrow: 1 }} ref={wrapperRef}>
         <MappingHeading texts={texts} ref={titlesRef} />
         <div
@@ -74,13 +77,7 @@ export function AutoImportPhase2({ onNextClick, texts }: IAutoImportPhase2Props)
         </div>
       </div>
 
-      <AutoImportFooter
-        onNextClick={onSubmit}
-        primaryButtonLoading={false}
-        onPrevClick={() => {}}
-        active={PhasesEnum.MAPCOLUMNS}
-        texts={texts}
-      />
+      <Footer onNextClick={onSubmit} active={PhasesEnum.MAPCOLUMNS} primaryButtonLoading={isCreateJobMappingLoading} />
     </>
   );
 }

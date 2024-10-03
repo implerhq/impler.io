@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Group, Text, Stack, Flex, Container } from '@mantine/core';
+
 const parseCronExpression = require('util/helpers/cronstrue');
-import { colors, cronExampleBadges, cronExamples, ScheduleFormValues, defaultCronValues } from '@config';
-import { WIDGET_TEXTS } from '@impler/client';
 import { PhasesEnum } from '@types';
-import { AutoImportFooter } from 'components/Common/Footer';
+import { WIDGET_TEXTS } from '@impler/client';
+import { TooltipBadge } from './TooltipBadge';
+import { Footer } from 'components/Common/Footer';
 import { CronScheduleInputTextBox } from './CronScheduleInputTextBox';
 import { CollapsibleExplanationTable } from './CollapsibleExplanationTable';
-import { TooltipBadge } from './TooltipBadge';
-import { useAutoImportPhase3 } from '../hooks/AutoImportPhase3/useAutoImportPhase3';
+import { useAutoImportPhase3 } from '@hooks/AutoImportPhase3/useAutoImportPhase3';
+import { colors, cronExampleBadges, cronExamples, ScheduleFormValues, defaultCronValues } from '@config';
 
 interface IAutoImportPhase3Props {
   onNextClick: () => void;
@@ -25,7 +26,7 @@ export function AutoImportPhase3({ onNextClick, texts }: IAutoImportPhase3Props)
   const [cronDescription, setCronDescription] = useState({ description: '', isError: false });
   const [focusedField, setFocusedField] = useState<keyof ScheduleFormValues | null>(null);
 
-  const { updateUserJob } = useAutoImportPhase3({ goNext: onNextClick });
+  const { updateUserJob, isUpdateUserJobLoading } = useAutoImportPhase3({ goNext: onNextClick });
 
   useEffect(() => {
     const cronExpression = `${scheduleData.Minute} ${scheduleData.Hour} ${scheduleData.Day} ${scheduleData.Month} ${scheduleData.Days}`;
@@ -141,11 +142,10 @@ export function AutoImportPhase3({ onNextClick, texts }: IAutoImportPhase3Props)
           />
         </Stack>
       </Container>
-      <AutoImportFooter
-        texts={texts}
+      <Footer
         active={PhasesEnum.SCHEDULE}
-        onPrevClick={() => {}}
         onNextClick={handleNextClick}
+        primaryButtonLoading={isUpdateUserJobLoading}
       />
     </>
   );
