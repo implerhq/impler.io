@@ -1,5 +1,16 @@
 import { ApiOperation, ApiTags, ApiSecurity, ApiQuery, ApiOkResponse } from '@nestjs/swagger';
-import { BadRequestException, Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseArrayPipe,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 
 import { APIMessages } from '@shared/constants';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
@@ -15,6 +26,7 @@ import {
   StartProcess,
   DeleteRecord,
   GetUploadData,
+  UpdateRecords,
 } from './usecases';
 
 import { UserSession } from '@shared/framework/user.decorator';
@@ -35,6 +47,7 @@ export class ReviewController {
     private deleteRecord: DeleteRecord,
     private startProcess: StartProcess,
     private updateRecord: UpdateRecord,
+    private updateRecords: UpdateRecords,
     private getFileInvalidData: GetUploadData
   ) {}
 
@@ -133,6 +146,18 @@ export class ReviewController {
   })
   async updateReviewData(@Param('uploadId') _uploadId: string, @Body() body: UpdateRecordDto) {
     return this.updateRecord.execute(_uploadId, body);
+  }
+
+  @Put(':uploadId/records')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Delete review records for ongoing import',
+  })
+  async updateRecordsRoute(
+    @Param('uploadId') _uploadId: string,
+    @Body(new ParseArrayPipe({ items: UpdateRecordDto })) body: UpdateRecordDto[]
+  ) {
+    await this.updateRecords.execute(_uploadId, body);
   }
 
   @Post(':uploadId/delete-records')

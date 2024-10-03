@@ -161,6 +161,8 @@ export class MakeUploadEntry {
       originalFileName = this.fileNameService.getOriginalFileName(fileOriginalName);
       const originalFilePath = this.fileNameService.getOriginalFilePath(uploadId, originalFileName);
       await this.storageService.uploadFile(originalFilePath, file.buffer, file.mimetype);
+    } else {
+      fileHeadings = (JSON.parse(combinedSchema) as Array<ITemplateSchemaItem>).map((item) => item.key);
     }
 
     await this.templateRepository.findOneAndUpdate(
