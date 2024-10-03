@@ -196,6 +196,14 @@ export function Container({ children }: PropsWithChildren<{}>) {
             },
           }),
           components: {
+            Modal: {
+              styles: {
+                content: {
+                  borderRadius: 'var(--border-radius)',
+                  backgroundColor: 'var(--primary-background)',
+                },
+              },
+            },
             Dropzone: {
               styles: {
                 root: {
