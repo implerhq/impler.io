@@ -8,12 +8,12 @@ import { MANUAL_ENTRY_LIMIT } from '@config';
 import { WIDGET_TEXTS } from '@impler/client';
 import { Table } from 'components/Common/Table';
 import { Footer } from 'components/Common/Footer';
-import { usePhase12 } from '@hooks/Phase1-2/usePhase12';
 import { SegmentedControl } from '@ui/SegmentedControl';
+import { useDataGrid } from '@hooks/DataGrid/useDataGrid';
 import { useCompleteImport } from '@hooks/useCompleteImport';
 import { FindReplaceModal } from 'components/widget/modals/FindReplace';
 import { numberFormatter, replaceVariablesInString } from '@impler/shared';
-import { useBatchedUpdateRecord } from '@hooks/Phase1-2/useBatchUpdateRecords';
+import { useBatchedUpdateRecord } from '@hooks/DataGrid/useBatchUpdateRecords';
 
 interface IPhase12Props {
   onPrevClick: () => void;
@@ -21,7 +21,7 @@ interface IPhase12Props {
   texts: typeof WIDGET_TEXTS;
 }
 
-export function Phase12({ onNextClick, onPrevClick, texts }: IPhase12Props) {
+export function DataGrid({ onNextClick, onPrevClick, texts }: IPhase12Props) {
   const tableRef = useRef<HotTableClass>(null);
   const {
     type,
@@ -39,7 +39,7 @@ export function Phase12({ onNextClick, onPrevClick, texts }: IPhase12Props) {
     isReviewDataLoading,
     showFindReplaceModal,
     setShowFindReplaceModal,
-  } = usePhase12({ limit: MANUAL_ENTRY_LIMIT });
+  } = useDataGrid({ limit: MANUAL_ENTRY_LIMIT });
   const { updateRecord } = useBatchedUpdateRecord({ onUpdate: reReviewData });
   const tableWrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
   const { completeImport, isCompleteImportLoading } = useCompleteImport({ onNext: onNextClick });

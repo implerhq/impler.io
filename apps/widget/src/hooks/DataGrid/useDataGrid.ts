@@ -19,11 +19,11 @@ import {
 } from '@impler/shared';
 import { IUpload } from '@impler/client';
 
-interface IUsePhase3Props {
+interface IDataGridProps {
   limit: number;
 }
 
-export function usePhase12({ limit }: IUsePhase3Props) {
+export function useDataGrid({ limit }: IDataGridProps) {
   const { api } = useAPIState();
   const { uploadInfo, setUploadInfo } = useAppState();
   const [columns, setColumns] = useState<IOption[]>([]);

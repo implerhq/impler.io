@@ -11,15 +11,15 @@ import { colors, variables } from '@config';
 import { logAmplitudeEvent } from '@amplitude';
 import { FileDropzone } from '@ui/FileDropzone';
 import { Footer } from 'components/Common/Footer';
-import { usePhase01 } from '@hooks/Phase0-1/usePhase01';
+import { useImageUpload } from '@hooks/ImageUpload/useImageUpload';
 import { ImageWithIndicator } from '@ui/ImageWithIndicator';
 
-interface Phase01Props {
+interface ImageUploadProps {
   goToUpload: () => void;
   texts: typeof WIDGET_TEXTS;
 }
 
-export function Phase01({ goToUpload, texts }: Phase01Props) {
+export function ImageUpload({ goToUpload, texts }: ImageUploadProps) {
   const [showAlert, setShowAlert] = useLocalStorage<boolean>({
     key: variables.SHOW_IMAGE_ALERT_STORAGE_KEY,
     defaultValue: true,
@@ -33,7 +33,7 @@ export function Phase01({ goToUpload, texts }: Phase01Props) {
     onRemoveImage,
     isDownloadInProgress,
     onGenerateTemplateClick,
-  } = usePhase01({ goToUpload });
+  } = useImageUpload({ goToUpload });
   const wrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
   const [containerHeight, setContainerHeight] = useState<number>(200);
 

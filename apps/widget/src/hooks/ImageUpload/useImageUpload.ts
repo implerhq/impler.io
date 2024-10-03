@@ -10,11 +10,11 @@ import { captureError, getObjectId } from '@util';
 import { useTemplates } from '@hooks/useTemplates';
 import { useImplerState } from '@store/impler.context';
 
-interface UsePhase01Props {
+interface ImageUploadProps {
   goToUpload: () => void;
 }
 
-export function usePhase01({ goToUpload }: UsePhase01Props) {
+export function useImageUpload({ goToUpload }: ImageUploadProps) {
   const { setImportId, setImageSchema } = useAppState();
   const { templateId } = useImplerState();
   const imageSchemaRef = useRef<Map<string, Set<string>>>(new Map());
