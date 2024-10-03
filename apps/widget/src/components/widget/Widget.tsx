@@ -114,12 +114,10 @@ export function Widget() {
     [PhasesEnum.VALIDATE]: <Phase0 onValidationSuccess={onSuccess} />,
     ...(flow === FlowsEnum.AUTO_IMPORT
       ? {
-          [PhasesEnum.CONFIGURE]: (
-            <AutoImportPhase1 texts={texts} onNextClick={() => setPhase(PhasesEnum.MAPCOLUMNS)} />
-          ),
+          [PhasesEnum.CONFIGURE]: <AutoImportPhase1 onNextClick={() => setPhase(PhasesEnum.MAPCOLUMNS)} />,
           [PhasesEnum.MAPCOLUMNS]: <AutoImportPhase2 texts={texts} onNextClick={() => setPhase(PhasesEnum.SCHEDULE)} />,
           [PhasesEnum.SCHEDULE]: <AutoImportPhase3 onNextClick={() => setPhase(PhasesEnum.CONFIRM)} texts={texts} />,
-          [PhasesEnum.CONFIRM]: <AutoImportPhase4 texts={texts} onCloseClick={onClose} />,
+          [PhasesEnum.CONFIRM]: <AutoImportPhase4 onCloseClick={onClose} />,
         }
       : flow === FlowsEnum.MANUAL_ENTRY
       ? {

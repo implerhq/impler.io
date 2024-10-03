@@ -45,17 +45,18 @@ export function useAutoImportPhase2({ goNext }: IUseAutoImportPhase2Props) {
     refetchOnMount: true,
   });
 
-  const { mutate: createJobMapping } = useMutation<IUserJobMapping[], IErrorObject, IUserJobMapping[]>(
-    (updateMappingData) => api.createUserJobMapings(jobsInfo._id, updateMappingData),
-    {
-      onSuccess() {
-        goNext();
-      },
-      onError(error) {
-        notifier.showError({ message: error.message, title: error.error });
-      },
-    }
-  );
+  const { mutate: createJobMapping, isLoading: isCreateJobMappingLoading } = useMutation<
+    IUserJobMapping[],
+    IErrorObject,
+    IUserJobMapping[]
+  >((updateMappingData) => api.createUserJobMapings(jobsInfo._id, updateMappingData), {
+    onSuccess() {
+      goNext();
+    },
+    onError(error) {
+      notifier.showError({ message: error.message, title: error.error });
+    },
+  });
 
   const onSubmit = (data: any) => {
     createJobMapping(data.mappings);
@@ -79,8 +80,9 @@ export function useAutoImportPhase2({ goNext }: IUseAutoImportPhase2Props) {
     control,
     headings,
     mappings,
-    isColumnLoading: isMappingsLoading,
-    onSubmit: handleSubmit(onSubmit),
     onFieldSelect,
+    isMappingsLoading,
+    isCreateJobMappingLoading,
+    onSubmit: handleSubmit(onSubmit),
   };
 }

@@ -27,19 +27,20 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
     formState: { errors },
   } = useForm<FormValues>();
 
-  const { isLoading, mutate: getRssXmlHeading } = useMutation<IUserJob, IErrorObject, IAutoImportValues, [string]>(
-    ['getRssXmlHeading'],
-    (importData) => api.getRssXmlMappingHeading(importData) as Promise<IUserJob>,
-    {
-      onSuccess(data) {
-        setJobsInfo(data);
-        goNext();
-      },
-      onError(error) {
-        notifier.showError({ message: error.message, title: error.error });
-      },
-    }
-  );
+  const { isLoading: isGetRssXmlHeadingsLoading, mutate: getRssXmlHeading } = useMutation<
+    IUserJob,
+    IErrorObject,
+    IAutoImportValues,
+    [string]
+  >(['getRssXmlHeading'], (importData) => api.getRssXmlMappingHeading(importData) as Promise<IUserJob>, {
+    onSuccess(data) {
+      setJobsInfo(data);
+      goNext();
+    },
+    onError(error) {
+      notifier.showError({ message: error.message, title: error.error });
+    },
+  });
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     getRssXmlHeading({
@@ -56,7 +57,7 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
   return {
     errors,
     register,
-    isLoading,
+    isGetRssXmlHeadingsLoading,
     onSubmit: handleSubmit(onSubmit),
   };
 }

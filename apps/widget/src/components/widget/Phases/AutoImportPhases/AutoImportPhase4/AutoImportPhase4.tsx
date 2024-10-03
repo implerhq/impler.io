@@ -1,19 +1,17 @@
 import { colors } from '@config';
 import { CheckIcon } from '@icons';
-import { WIDGET_TEXTS } from '@impler/client';
 import { Text, Stack, Paper } from '@mantine/core';
 import { useJobsInfo } from '@store/jobinfo.context';
 const parseCronExpression = require('util/helpers/cronstrue');
 
 import { PhasesEnum } from '@types';
-import { AutoImportFooter } from 'components/Common/Footer/AutoImportFooter';
+import { Footer } from 'components/Common/Footer';
 
 interface IAutoImportPhase4Props {
   onCloseClick: () => void;
-  texts: typeof WIDGET_TEXTS;
 }
 
-export function AutoImportPhase4({ onCloseClick, texts }: IAutoImportPhase4Props) {
+export function AutoImportPhase4({ onCloseClick }: IAutoImportPhase4Props) {
   const { jobsInfo } = useJobsInfo();
 
   return (
@@ -38,13 +36,7 @@ export function AutoImportPhase4({ onCloseClick, texts }: IAutoImportPhase4Props
           Will be executed on {parseCronExpression.toString(jobsInfo.cron)}
         </Text>
       </Stack>
-      <AutoImportFooter
-        onNextClick={onCloseClick}
-        primaryButtonLoading={false}
-        onPrevClick={() => {}}
-        active={PhasesEnum.CONFIRM}
-        texts={texts}
-      />
+      <Footer onNextClick={onCloseClick} active={PhasesEnum.CONFIRM} />
     </>
   );
 }
