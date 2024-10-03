@@ -3,43 +3,15 @@ import { IIcon } from '@types';
 export function GridIcon(props: IIcon) {
   return (
     <svg
-      width="21"
-      height="22"
-      viewBox="0 0 21 22"
-      fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      viewBox="-5 -5 24 24"
+      width="28"
+      fill="currentColor"
       className={props?.className}
       style={props?.styles}
     >
-      <g clipPath="url(#clip0_4259_5403)">
-        <path
-          // eslint-disable-next-line max-len
-          d="M2.625 4.875C2.625 4.41087 2.80937 3.96575 3.13756 3.63756C3.46575 3.30937 3.91087 3.125 4.375 3.125H16.625C17.0891 3.125 17.5342 3.30937 17.8624 3.63756C18.1906 3.96575 18.375 4.41087 18.375 4.875V17.125C18.375 17.5891 18.1906 18.0342 17.8624 18.3624C17.5342 18.6906 17.0891 18.875 16.625 18.875H4.375C3.91087 18.875 3.46575 18.6906 3.13756 18.3624C2.80937 18.0342 2.625 17.5891 2.625 17.125V4.875Z"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          strokeWidth="2"
-          d="M2.625 9.25H18.375"
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          strokeWidth="2"
-          d="M8.75 3.125V18.875"
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </g>
-      <defs>
-        <clipPath id="clip0_4259_5403">
-          <rect width="21" height="21" fill="currentColor" transform="translate(0 0.5)" />
-        </clipPath>
-      </defs>
+      {/* eslint-disable-next-line max-len */}
+      <path d="M2,6 L6,6 L6,2 L2,2 L2,6 Z M2,8 L2,12 L6,12 L6,8 L2,8 Z M12,6 L12,2 L8,2 L8,6 L12,6 Z M12,8 L8,8 L8,12 L12,12 L12,8 Z M2,0 L12,0 C13.1045695,0 14,0.8954305 14,2 L14,12 C14,13.1045695 13.1045695,14 12,14 L2,14 C0.8954305,14 0,13.1045695 0,12 L0,2 C0,0.8954305 0.8954305,0 2,0 Z" />
     </svg>
   );
 }

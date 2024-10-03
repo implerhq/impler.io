@@ -30,7 +30,7 @@ export const WIDGET_TEXTS = {
     CHOOSE_FILE: 'Choose a file',
     IMAGE_FILE_SIZE:
       'Image size should be less than 5 MB. Supported formats are PNG, JPG and JPEG.',
-    FILE_FORMATS: 'You can upload: CSV, xlsx, xlsm',
+    FILE_FORMATS: 'You can upload: csv, xlsx, xlsm',
     FILE_SELECTED: 'File selected successfully',
   },
   'PHASE0-1': {
@@ -65,6 +65,7 @@ export const WIDGET_TEXTS = {
   'PHASE1-2': {
     ENTER_DATA: 'Manually enter your data',
     RECOMMANDED_LIMIT: 'Recommanded upto {records} records',
+    FIX_INVALID_DATA: 'To complete import you need to fix invalid data',
   },
   PHASE2: {
     REVIEW_DATA: 'Review Data',
