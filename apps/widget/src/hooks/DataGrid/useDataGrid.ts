@@ -53,10 +53,12 @@ export function useDataGrid({ limit }: IDataGridProps) {
         ]
   );
 
-  const { data: templateColumns } = useQuery<unknown, IErrorObject, IColumn[], [string, string]>(
-    [`columns:${uploadInfo._id}`, uploadInfo._id],
-    () => api.getColumns(uploadInfo._id)
-  );
+  const { data: templateColumns, isLoading: isTemplateColumnsLoading } = useQuery<
+    unknown,
+    IErrorObject,
+    IColumn[],
+    [string, string]
+  >([`columns:${uploadInfo._id}`, uploadInfo._id], () => api.getColumns(uploadInfo._id));
 
   const { mutate: refetchReviewData, isLoading: isReviewDataLoading } = useMutation<
     IReviewData,
@@ -180,6 +182,7 @@ export function useDataGrid({ limit }: IDataGridProps) {
     isReviewDataLoading,
     showFindReplaceModal,
     setShowFindReplaceModal,
+    isTemplateColumnsLoading,
     totalRecords: uploadInfo.totalRecords ?? undefined,
     invalidRecords: uploadInfo.invalidRecords ?? undefined,
   };

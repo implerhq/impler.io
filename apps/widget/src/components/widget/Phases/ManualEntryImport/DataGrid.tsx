@@ -8,6 +8,7 @@ import { MANUAL_ENTRY_LIMIT } from '@config';
 import { WIDGET_TEXTS } from '@impler/client';
 import { Table } from 'components/Common/Table';
 import { Footer } from 'components/Common/Footer';
+import { LoadingOverlay } from '@ui/LoadingOverlay';
 import { SegmentedControl } from '@ui/SegmentedControl';
 import { useDataGrid } from '@hooks/DataGrid/useDataGrid';
 import { useCompleteImport } from '@hooks/useCompleteImport';
@@ -39,8 +40,15 @@ export function DataGrid({ onNextClick, onPrevClick, texts }: IPhase12Props) {
     isReviewDataLoading,
     showFindReplaceModal,
     setShowFindReplaceModal,
+    isTemplateColumnsLoading,
   } = useDataGrid({ limit: MANUAL_ENTRY_LIMIT });
-  const { updateRecord } = useBatchedUpdateRecord({ onUpdate: reReviewData });
+  const [isPasteLoading, setIsPasteLoading] = useState<boolean>(false);
+  const { updateRecord } = useBatchedUpdateRecord({
+    onUpdate: () => {
+      reReviewData();
+      setIsPasteLoading(false);
+    },
+  });
   const tableWrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
   const { completeImport, isCompleteImportLoading } = useCompleteImport({ onNext: onNextClick });
   const [tableWrapperDimensions, setTableWrapperDimentions] = useState({
@@ -57,6 +65,8 @@ export function DataGrid({ onNextClick, onPrevClick, texts }: IPhase12Props) {
 
   return (
     <>
+      <LoadingOverlay visible={isTemplateColumnsLoading || isPasteLoading} />
+
       <Stack ref={tableWrapperRef} style={{ flexGrow: 1 }} spacing="xs" align="flex-start">
         <Flex direction="row" justify="space-between" w="100%">
           <SegmentedControl
@@ -95,6 +105,7 @@ export function DataGrid({ onNextClick, onPrevClick, texts }: IPhase12Props) {
           headings={headings}
           selectEnabled={false}
           columnDefs={columnDefs}
+          beforePaste={() => setIsPasteLoading(true)}
           onValueChange={(row, prop, oldVal, newVal) => {
             const name = String(prop).replace('record.', '');
 
