@@ -3,7 +3,7 @@
     border-color: var(--border-color) !important;
 }
 .handsontable th {
-    background-color: var(--secondary-background) !important;
+    background-color: var(--stepper-background) !important;
     border-color: var(--border-color) !important;
 }
 .htCore thead tr th {

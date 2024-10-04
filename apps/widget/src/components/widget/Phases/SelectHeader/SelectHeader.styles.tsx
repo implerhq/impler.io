@@ -6,6 +6,7 @@ export default createStyles((theme: MantineTheme): Record<string, any> => {
       overflow: 'auto',
       borderSpacing: 0,
       borderCollapse: 'separate',
+      borderRadius: 'var(--border-radius)',
     },
     row: {
       cursor: 'pointer',

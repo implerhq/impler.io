@@ -23,7 +23,7 @@ export function ManaulEntryView({
 }: ManaulEntryViewProps) {
   return (
     <Box
-      bg="var(--secondary-background)"
+      bg="var(--stepper-background)"
       style={{ borderRadius: 'var(--border-radius)' }}
       pt="sm"
       pl="sm"
@@ -50,7 +50,11 @@ export function ManaulEntryView({
           pl="xs"
           pt="xs"
           bg="var(--primary-background)"
-          style={{ borderTopLeftRadius: 'var(--border-radius)', overflow: 'hidden' }}
+          style={{
+            overflow: 'hidden',
+            boxShadow: '-1px 3px 11px 0px #00000014',
+            borderTopLeftRadius: 'var(--border-radius)',
+          }}
         >
           <Table>
             <thead style={{ backgroundColor: 'var(--secondary-background-hover)' }}>

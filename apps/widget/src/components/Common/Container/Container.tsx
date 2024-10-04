@@ -208,9 +208,9 @@ export function Container({ children }: PropsWithChildren<{}>) {
               styles: {
                 root: {
                   borderRadius: 'var(--border-radius)',
-                  backgroundColor: `var(--secondary-background)`,
+                  backgroundColor: `var(--stepper-background)`,
                   '&:hover': {
-                    backgroundColor: `var(--secondary-background-hover)`,
+                    backgroundColor: `var(--secondary-background)`,
                   },
                 },
               },
