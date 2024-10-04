@@ -66,6 +66,7 @@ export const WIDGET_TEXTS = {
   SELECT_HEADER: {
     FILE_DONT_HAVE_HEADERS: 'File does not have headers',
     CONFIRM_AND_CONTINUE: 'Confirm selection and Continue',
+    INFO: 'Select Header Row from the table. Rows above the header will not be imported. Click on row to change selection.',
   },
   'PHASE1-2': {
     ENTER_DATA: 'Manually enter your data',

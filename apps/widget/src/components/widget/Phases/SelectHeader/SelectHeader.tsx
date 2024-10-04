@@ -5,15 +5,17 @@ import { Warning } from '@icons';
 import { colors } from '@config';
 import { PhasesEnum } from '@types';
 import useStyles from './SelectHeader.styles';
+import { WIDGET_TEXTS } from '@impler/client';
 import { Footer } from 'components/Common/Footer';
 import { LoadingOverlay } from '@ui/LoadingOverlay';
 import { useSelectHeader } from '@hooks/SelectHeader/useSelectHeader';
 
 interface ISelectHeaderProps {
   onNext: () => void;
+  texts: typeof WIDGET_TEXTS;
 }
 
-export function SelectHeader({ onNext }: ISelectHeaderProps) {
+export function SelectHeader({ texts, onNext }: ISelectHeaderProps) {
   const { classes, cx } = useStyles();
   const [selectedRow, setSelectedRow] = useState<number>(0);
   const tableWrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
@@ -38,6 +40,11 @@ export function SelectHeader({ onNext }: ISelectHeaderProps) {
   return (
     <>
       <LoadingOverlay visible={isPreviewRowsLoading} />
+
+      <Alert color="yellow" icon={<Warning fill={colors.yellow} />}>
+        {texts.SELECT_HEADER.INFO}
+      </Alert>
+
       <Stack style={{ flexGrow: 1, overflow: 'auto' }} ref={tableWrapperRef} h={tableWrapperDimensions.height + 'px'}>
         <Table withBorder withColumnBorders className={classes.table}>
           <tbody>
@@ -64,10 +71,6 @@ export function SelectHeader({ onNext }: ISelectHeaderProps) {
           </tbody>
         </Table>
       </Stack>
-
-      <Alert color="yellow" icon={<Warning fill={colors.yellow} />}>
-        Rows above the header will not be imported
-      </Alert>
 
       <Footer
         active={PhasesEnum.SELECT_HEADER}

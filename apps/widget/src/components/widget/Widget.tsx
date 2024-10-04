@@ -138,7 +138,7 @@ export function Widget() {
               generateImageTemplate={() => setPhase(PhasesEnum.IMAGE_UPLOAD)}
             />
           ),
-          [PhasesEnum.SELECT_HEADER]: <SelectHeader onNext={() => setPhase(PhasesEnum.MAPPING)} />,
+          [PhasesEnum.SELECT_HEADER]: <SelectHeader texts={texts} onNext={() => setPhase(PhasesEnum.MAPPING)} />,
           [PhasesEnum.MAPPING]: (
             <Phase2 texts={texts} onNextClick={() => setPhase(PhasesEnum.REVIEW)} onPrevClick={onUploadResetClick} />
           ),
