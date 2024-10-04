@@ -49,7 +49,7 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
       {
         'apiKeys._userId': userId,
       },
-      '_id'
+      '_id apiKeys'
     ).populate('_projectId', 'name');
 
     return environments.map((env) => {
