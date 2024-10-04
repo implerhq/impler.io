@@ -38,6 +38,7 @@ export const MappingItem = React.forwardRef<HTMLInputElement, IMappingItem>((pro
     mappingNotDoneText,
   } = props;
   const defaultGroupHeight = 45;
+  const isMapped = value && !error;
   const groupRef = useRef<HTMLDivElement>(null);
   const [groupHeight, setGroupHeight] = useState<number>(defaultGroupHeight);
   const { classes } = useStyles({ height: groupHeight });
@@ -73,9 +74,9 @@ export const MappingItem = React.forwardRef<HTMLInputElement, IMappingItem>((pro
           </Text>
         ) : null}
       </Stack>
-      <Text size={size} color={value ? 'black' : 'gray'} className={classes.statusText}>
-        {value ? <GreenCheck /> : null}
-        {value ? mappingDoneText : mappingNotDoneText}
+      <Text size={size} color={isMapped ? 'black' : 'gray'} className={classes.statusText}>
+        {isMapped ? <GreenCheck /> : null}
+        {isMapped ? mappingDoneText : mappingNotDoneText}
       </Text>
     </Group>
   );
