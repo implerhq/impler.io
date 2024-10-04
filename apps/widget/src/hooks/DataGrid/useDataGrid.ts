@@ -17,7 +17,7 @@ import {
   ColumnDelimiterEnum,
   ReviewDataTypesEnum,
 } from '@impler/shared';
-import { IUpload } from '@impler/client';
+import { useUploadInfo } from '@hooks/useUploadInfo';
 
 interface IDataGridProps {
   limit: number;
@@ -25,7 +25,10 @@ interface IDataGridProps {
 
 export function useDataGrid({ limit }: IDataGridProps) {
   const { api } = useAPIState();
-  const { uploadInfo, setUploadInfo } = useAppState();
+  const { uploadInfo } = useAppState();
+  const { fetchUploadInfo } = useUploadInfo({
+    enabled: false,
+  });
   const [columns, setColumns] = useState<IOption[]>([]);
   const [headings, setHeadings] = useState<string[]>([]);
   const [frozenColumns, setFrozenColumns] = useState<number>(2);
@@ -45,16 +48,7 @@ export function useDataGrid({ limit }: IDataGridProps) {
     [`columns:${uploadInfo._id}`, uploadInfo._id],
     () => api.getColumns(uploadInfo._id)
   );
-  const { refetch: fetchUploadInfo } = useQuery<IUpload, IErrorObject, IUpload, [string]>(
-    [`getUpload:${uploadInfo._id}`],
-    () => api.getUpload(uploadInfo._id),
-    {
-      enabled: false,
-      onSuccess(data) {
-        setUploadInfo(data);
-      },
-    }
-  );
+
   const { mutate: refetchReviewData, isLoading: isReviewDataLoading } = useMutation<
     IReviewData,
     IErrorObject,
