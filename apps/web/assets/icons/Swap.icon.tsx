@@ -11,7 +11,7 @@ export const SwapIcon = ({ size = 'sm' }: IconType) => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clip-path="url(#clip0_5106_4813)">
+      <g clipPath="url(#clip0_5106_4813)">
         <path d="M16 3L20 7L16 11" stroke="#5463FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         <path d="M10 7H20" stroke="#5463FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         <path d="M8 13L4 17L8 21" stroke="#5463FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
