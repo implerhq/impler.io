@@ -1,38 +1,47 @@
+import { useEffect, useRef, useState } from 'react';
 import { Alert, Radio, Stack, Table } from '@mantine/core';
+
+import { Warning } from '@icons';
+import { colors } from '@config';
 import { PhasesEnum } from '@types';
 import useStyles from './SelectHeader.styles';
 import { Footer } from 'components/Common/Footer';
-import { useState } from 'react';
-import { Warning } from '@icons';
-import { colors } from '@config';
+import { LoadingOverlay } from '@ui/LoadingOverlay';
+import { useSelectHeader } from '@hooks/SelectHeader/useSelectHeader';
 
-const DATA = [
-  [1, 'john', 'doe', 'john doe', 'male', 28, 'California', 'New York', 'Software Engineer'],
-  [2, 'jane', 'doe', 'jane doe', 'female', 32, 'California', 'New York', 'Software Engineer'],
-  [3, 'john', 'doe', 'john doe', 'male', 28, 'California', 'New York', 'Software Engineer'],
-  [4, 'jane', 'doe', 'jane doe', 'female', 32, 'California', 'New York', 'Software Engineer'],
-  [5, 'john', 'doe', 'john doe', 'male', 28, 'California', 'New York', 'Software Engineer'],
-  [6, 'jane', 'doe', 'jane doe', 'female', 32, 'California', 'New York', 'Software Engineer'],
-  [7, 'john', 'doe', 'john doe', 'male', 28, 'California', 'New York', 'Software Engineer'],
-  [8, 'jane', 'doe', 'jane doe', 'female', 32, 'California', 'New York', 'Software Engineer'],
-  [9, 'john', 'doe', 'john doe', 'male', 28, 'California', 'New York', 'Software Engineer'],
-  [10, 'jane', 'doe', 'jane doe', 'female', 32, 'California', 'New York', 'Software Engineer'],
-];
+interface ISelectHeaderProps {
+  onNext: () => void;
+}
 
-export function SelectHeader() {
+export function SelectHeader({ onNext }: ISelectHeaderProps) {
   const { classes, cx } = useStyles();
   const [selectedRow, setSelectedRow] = useState<number>(0);
+  const tableWrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
+  const [tableWrapperDimensions, setTableWrapperDimentions] = useState({
+    height: 200,
+    width: 500,
+  });
+  const { previewRows, isPreviewRowsLoading, setHeaderRow, isSetHeaderRowLoading } = useSelectHeader({ onNext });
 
   const handleRowClick = (index: number) => {
     setSelectedRow(index);
   };
 
+  useEffect(() => {
+    //  setting wrapper height
+    setTableWrapperDimentions({
+      height: tableWrapperRef.current.getBoundingClientRect().height,
+      width: tableWrapperRef.current.getBoundingClientRect().width,
+    });
+  }, []);
+
   return (
     <>
-      <Stack style={{ flexGrow: 1 }}>
-        <Table className={classes.table} withBorder withColumnBorders>
+      <LoadingOverlay visible={isPreviewRowsLoading} />
+      <Stack style={{ flexGrow: 1, overflow: 'auto' }} ref={tableWrapperRef} h={tableWrapperDimensions.height + 'px'}>
+        <Table withBorder withColumnBorders className={classes.table}>
           <tbody>
-            {DATA.map((element, indexOuter) => (
+            {previewRows?.map((element, indexOuter) => (
               <tr
                 key={indexOuter}
                 className={cx(
@@ -60,7 +69,13 @@ export function SelectHeader() {
         Rows above the header will not be imported
       </Alert>
 
-      <Footer active={PhasesEnum.SELECT_HEADER} />
+      <Footer
+        active={PhasesEnum.SELECT_HEADER}
+        primaryButtonLoading={isSetHeaderRowLoading}
+        secondaryButtonLoading={isSetHeaderRowLoading}
+        onPrevClick={() => setHeaderRow({ index: -1, headings: previewRows?.[selectedRow] || [] })}
+        onNextClick={() => setHeaderRow({ index: selectedRow, headings: previewRows?.[selectedRow] || [] })}
+      />
     </>
   );
 }

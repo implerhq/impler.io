@@ -78,6 +78,8 @@ export const WIDGET_TEXTS = {
     MAPPING_NOT_DONE_TEXT: 'Not Mapped',
     MAPPING_DONE_TEXT: 'Mapping Successful',
     MAPPING_FIELD_PLACEHOLDER: 'Select Field',
+    FIELD_REQUIRED_MSG: 'This field is required',
+    ALREADY_MAPPED_MSG: '{field} is already mapped to {column}',
   },
   PHASE3: {
     COMPLETE: 'Complete',

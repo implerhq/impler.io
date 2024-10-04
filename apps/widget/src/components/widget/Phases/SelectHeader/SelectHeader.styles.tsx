@@ -3,8 +3,9 @@ import { createStyles, MantineTheme } from '@mantine/core';
 export default createStyles((theme: MantineTheme): Record<string, any> => {
   return {
     table: {
-      borderCollapse: 'separate',
+      overflow: 'auto',
       borderSpacing: 0,
+      borderCollapse: 'separate',
     },
     row: {
       cursor: 'pointer',
@@ -21,11 +22,13 @@ export default createStyles((theme: MantineTheme): Record<string, any> => {
     },
     aboveSelectedRow: {
       backgroundColor: '#F3F4F6',
+      color: 'var(--label-color)',
       fontWeight: 300, // Lighter font weight for rows above selected
     },
     cell: {
+      textWrap: 'nowrap',
       border: `1px solid ${theme.colors.gray[3]}`,
-      padding: theme.spacing.sm,
+      padding: theme.spacing.xs,
       backgroundColor: 'transparent',
     },
     radioCell: {

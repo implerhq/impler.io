@@ -4,6 +4,7 @@ export enum UploadStatusEnum {
   'UPLOADED' = 'Uploaded',
   'MAPPING' = 'Mapping',
   'MAPPED' = 'Mapped',
+  'SELECT_HEADER' = 'Select Header',
   'REVIEWING' = 'Reviewing',
   'REVIEWED' = 'Reviewed',
   'CONFIRMED' = 'Confirmed',

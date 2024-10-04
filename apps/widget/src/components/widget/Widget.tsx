@@ -19,6 +19,7 @@ import { Phase2 } from './Phases/Phase2';
 import { Phase3 } from './Phases/Phase3';
 import { Phase4 } from './Phases/Phase4';
 import { ImageUpload } from './Phases/ImageImport';
+import { SelectHeader } from './Phases/SelectHeader';
 import { DataGrid } from './Phases/ManualEntryImport';
 import { AutoImportPhase1 } from './Phases/AutoImport/AutoImportPhase1';
 import { AutoImportPhase2 } from './Phases/AutoImport/AutoImportPhase2';
@@ -129,7 +130,7 @@ export function Widget() {
             <Phase1
               texts={texts}
               hasImageUpload={hasImageUpload}
-              onNextClick={() => setPhase(PhasesEnum.MAPPING)}
+              onNextClick={() => setPhase(PhasesEnum.SELECT_HEADER)}
               onManuallyEnterData={() => {
                 setFlow(FlowsEnum.MANUAL_ENTRY);
                 setPhase(PhasesEnum.MANUAL_ENTRY);
@@ -137,6 +138,7 @@ export function Widget() {
               generateImageTemplate={() => setPhase(PhasesEnum.IMAGE_UPLOAD)}
             />
           ),
+          [PhasesEnum.SELECT_HEADER]: <SelectHeader onNext={() => setPhase(PhasesEnum.MAPPING)} />,
           [PhasesEnum.MAPPING]: (
             <Phase2 texts={texts} onNextClick={() => setPhase(PhasesEnum.REVIEW)} onPrevClick={onUploadResetClick} />
           ),

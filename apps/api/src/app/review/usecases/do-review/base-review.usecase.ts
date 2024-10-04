@@ -31,6 +31,7 @@ interface IBatchItem {
 interface IRunData {
   extra: any;
   uploadId: string;
+  headerRow: number;
   headings: string[];
   csvFileStream: any;
   dataStream: Writable;
@@ -392,6 +393,7 @@ export class BaseReview {
     headings,
     dateFormats,
     dataStream,
+    headerRow,
     uniqueCombinations,
     numberColumnHeadings,
     validationErrorMessages,
@@ -408,7 +410,7 @@ export class BaseReview {
           totalRecords++;
           const record = results.data;
 
-          if (totalRecords >= 1) {
+          if (totalRecords > headerRow) {
             const recordObj: {
               checkRecord: Record<string, unknown>;
               passRecord: Record<string, unknown>;
@@ -574,8 +576,9 @@ export class BaseReview {
     validator,
     uploadId,
     extra,
-    csvFileStream,
+    headerRow,
     dateFormats,
+    csvFileStream,
     uniqueCombinations,
     numberColumnHeadings,
     validationErrorMessages,
@@ -598,7 +601,7 @@ export class BaseReview {
               checkRecord: Record<string, unknown>;
               passRecord: Record<string, unknown>;
             } = this.formatRecord({ headings, multiSelectColumnHeadings, record, numberColumnHeadings });
-            if (recordsCount >= 1) {
+            if (recordsCount > headerRow) {
               const validationResultItem = this.validateRecord({
                 index: recordsCount,
                 checkRecord: recordObj.checkRecord,

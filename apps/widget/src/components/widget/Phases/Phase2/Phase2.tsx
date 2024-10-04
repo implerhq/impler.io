@@ -20,7 +20,17 @@ const defaulWrappertHeight = 200;
 export function Phase2({ onPrevClick, onNextClick, texts }: IPhase2Props) {
   const { classes } = useStyles();
   const [wrapperHeight, setWrapperHeight] = useState(defaulWrappertHeight);
-  const { headings, mappings, control, onSubmit, onFieldSelect, isInitialDataLoaded, isMappingFinalizing } = usePhase2({
+  const {
+    headings,
+    mappings,
+    control,
+    onSubmit,
+    validateUniqueHeadings,
+    isInitialDataLoaded,
+    isMappingFinalizing,
+    isUploadInfoLoading,
+  } = usePhase2({
+    texts,
     goNext: onNextClick,
   });
   const wrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
@@ -35,7 +45,7 @@ export function Phase2({ onPrevClick, onNextClick, texts }: IPhase2Props) {
 
   return (
     <>
-      <LoadingOverlay visible={!isInitialDataLoaded || isMappingFinalizing} />
+      <LoadingOverlay visible={!isInitialDataLoaded || isMappingFinalizing || isUploadInfoLoading} />
       <div style={{ flexGrow: 1 }} ref={wrapperRef}>
         {/* Heading */}
         <MappingHeading texts={texts} ref={titlesRef} />
@@ -49,10 +59,13 @@ export function Phase2({ onPrevClick, onNextClick, texts }: IPhase2Props) {
           {Array.isArray(mappings) &&
             mappings.map((mappingItem, index) => (
               <Controller
+                control={control}
                 key={mappingItem.key}
                 name={`mappings.${index}.columnHeading`}
-                control={control}
-                render={({ field }) => (
+                rules={{
+                  required: mappingItem.isRequired ? texts.PHASE2.FIELD_REQUIRED_MSG : false,
+                }}
+                render={({ field, fieldState }) => (
                   <MappingItem
                     key={mappingItem.key}
                     options={headings}
@@ -61,12 +74,13 @@ export function Phase2({ onPrevClick, onNextClick, texts }: IPhase2Props) {
                     value={field.value}
                     onChange={(value) => {
                       field.onChange(value);
-                      onFieldSelect();
+                      validateUniqueHeadings();
                     }}
+                    ref={field.ref}
+                    error={fieldState.error?.message}
                     mappingNotDoneText={texts.PHASE2.MAPPING_NOT_DONE_TEXT}
                     mappingDoneText={texts.PHASE2.MAPPING_DONE_TEXT}
                     mappingPlaceholder={texts.PHASE2.MAPPING_FIELD_PLACEHOLDER}
-                    ref={field.ref}
                   />
                 )}
               />
