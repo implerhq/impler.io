@@ -3,9 +3,9 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { PropsWithChildren, useRef } from 'react';
-import { Flex, Group, LoadingOverlay, Select, Stack, Title, useMantineColorScheme } from '@mantine/core';
+import { Flex, Group, LoadingOverlay, Text, Stack, Title, UnstyledButton, useMantineColorScheme } from '@mantine/core';
 
-import { ActionsEnum, SubjectsEnum, TEXTS } from '@config';
+import { ActionsEnum, colors, SubjectsEnum, TEXTS } from '@config';
 import useStyles from './AppLayout.styles';
 import { HomeIcon } from '@assets/icons/Home.icon';
 import { LogoutIcon } from '@assets/icons/Logout.icon';
@@ -23,6 +23,7 @@ import { UserMenu } from '@ui/user-menu';
 import { track } from '@libs/amplitude';
 import { Can } from 'store/ability.context';
 import { ColorSchemeToggle } from '@ui/toggle-color-scheme';
+import { EditImportIcon } from '@assets/icons/EditImport.icon';
 
 const Support = dynamic(() => import('components/common/Support').then((mod) => mod.Support), {
   ssr: false,
@@ -38,7 +39,7 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
   const { classes } = useStyles();
   const navRef = useRef<HTMLElement>(null);
   const { colorScheme } = useMantineColorScheme();
-  const { profile, projects, createProject, logout, setProjectId, isProjectsLoading, isProfileLoading } = useApp();
+  const { profile, logout, isProjectsLoading, isProfileLoading, onEditImportClick } = useApp();
 
   return (
     <>
@@ -57,24 +58,21 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
           <div className={classes.logoContainer}>
             <Image src={colorScheme === 'dark' ? LogoWhite : LogoBlack} alt="Impler Logo" width={140} />
           </div>
-          <Select
-            data={projects?.map((project) => ({ label: project.name, value: project._id })) || []}
-            placeholder="Select Project"
-            nothingFound="No projects found"
-            searchable
-            creatable
-            pl="sm"
-            id="project-manager"
-            radius={0}
-            value={profile?._projectId}
-            getCreateLabel={(query) => `+ Create "${query}"`}
-            onChange={(value: string) => setProjectId(value)}
-            onCreate={(value: string) => {
-              createProject({ name: value });
 
-              return undefined;
+          <UnstyledButton
+            onClick={onEditImportClick}
+            style={{
+              width: '100%',
+              border: `1px solid ${colors.StrokeLight}`,
+              padding: '8px 12px',
             }}
-          />
+          >
+            <Group position="apart">
+              <Text>{profile?.projectName}</Text>
+              <EditImportIcon />
+            </Group>
+          </UnstyledButton>
+
           <Stack spacing="sm" py="xs">
             <NavItem active={router.pathname === '/'} href="/" icon={<HomeIcon size="lg" />} title="Home" />
 
