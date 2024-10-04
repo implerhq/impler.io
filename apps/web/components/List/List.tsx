@@ -40,9 +40,9 @@ export function List<T extends { _id?: string }>(props: IListProps<T>) {
     return (
       <thead className={classes.header}>
         {headings.map((heading: IHeadingItem<T>, index: number) => (
-          <Text key={index} weight={700} style={heading.width ? { width: heading.width } : {}}>
+          <th key={index} className={classes.th} style={heading.width ? { width: heading.width } : {}}>
             {heading.title}
-          </Text>
+          </th>
         ))}
       </thead>
     );
@@ -55,9 +55,7 @@ export function List<T extends { _id?: string }>(props: IListProps<T>) {
       return (
         <tbody>
           <tr>
-            <Text align="center" className={classes.emptyText}>
-              {emptyDataText}
-            </Text>
+            <td>{emptyDataText}</td>
           </tr>
         </tbody>
       );
@@ -71,7 +69,7 @@ export function List<T extends { _id?: string }>(props: IListProps<T>) {
             onClick={() => onItemClick && onItemClick(item)}
           >
             {headings.map((heading: IHeadingItem<T>, fieldIndex: number) => (
-              <td key={fieldIndex} style={heading.width ? { width: heading.width } : {}}>
+              <td key={fieldIndex} className={classes.td}>
                 {typeof heading.Cell === 'function' ? (
                   heading.Cell(item)
                 ) : (
