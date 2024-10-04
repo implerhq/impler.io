@@ -44,7 +44,7 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
     return apiKey ? apiKey.apiKeys[0]._userId : null;
   }
 
-  async getUserEnvironmentProjects(userId: string): Promise<{ name: string; _id: string }[]> {
+  async getUserEnvironmentProjects(userId: string): Promise<{ name: string; _id: string; isOwner: boolean }[]> {
     const environments = await Environment.find(
       {
         'apiKeys._userId': userId,
@@ -52,10 +52,15 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
       '_id'
     ).populate('_projectId', 'name');
 
-    return environments.map((env) => ({
-      name: (env._projectId as unknown as ProjectEntity).name,
-      _id: (env._projectId as unknown as ProjectEntity)._id,
-    }));
+    return environments.map((env) => {
+      const userApiKey = env.apiKeys.find((apiKey) => apiKey._userId.toString() === userId);
+
+      return {
+        name: (env._projectId as unknown as ProjectEntity).name,
+        _id: (env._projectId as unknown as ProjectEntity)._id,
+        isOwner: userApiKey.isOwner ? true : false,
+      };
+    });
   }
 
   async getApiKeyForUserId(userId: string): Promise<{ projectId: string; apiKey: string; role: string } | null> {
