@@ -52,15 +52,31 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
       '_id apiKeys'
     ).populate('_projectId', 'name');
 
-    return environments.map((env) => {
-      const userApiKey = env.apiKeys.find((apiKey) => apiKey._userId.toString() === userId);
+    return environments
+      .filter((env) => env._projectId)
+      .map((env) => {
+        const userApiKey = env.apiKeys.find((apiKey) => apiKey._userId.toString() === userId);
 
-      return {
-        name: (env._projectId as unknown as ProjectEntity).name,
-        _id: (env._projectId as unknown as ProjectEntity)._id,
-        isOwner: userApiKey.isOwner ? true : false,
-      };
-    });
+        if (!userApiKey) {
+          return null;
+        }
+
+        const project = env._projectId as unknown as ProjectEntity;
+
+        if (!project || !project.name) {
+          return null;
+        }
+
+        const result = {
+          name: project.name,
+          _id: project._id.toString(),
+          isOwner: userApiKey.isOwner || false,
+          role: userApiKey.role as UserRolesEnum,
+        };
+
+        return result;
+      })
+      .filter((item): item is { name: string; _id: string; isOwner: boolean; role: UserRolesEnum } => item !== null);
   }
 
   async getApiKeyForUserId(userId: string): Promise<{ projectId: string; apiKey: string; role: string } | null> {
