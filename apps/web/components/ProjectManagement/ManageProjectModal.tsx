@@ -8,6 +8,7 @@ import { InformationIcon } from '@assets/icons/Information.icon';
 import { useProjectManagement } from '@hooks/useProjectManagement';
 import { List } from '@components/List';
 import { useApp } from '@hooks/useApp';
+import { IProjectPayload } from '@impler/shared';
 
 export function ManageProjectModal() {
   const { profile } = useApp();
@@ -20,13 +21,13 @@ export function ManageProjectModal() {
     isProjectsLoading,
     projects,
     currentProjectId,
-    handleDeleteProject,
-    handleSwitchProject,
+    deleteProject,
+    switchProject,
   } = useProjectManagement();
 
   return (
     <>
-      <List
+      <List<IProjectPayload>
         headings={[
           {
             title: 'Project Name',
@@ -51,7 +52,7 @@ export function ManageProjectModal() {
             title: 'Switch',
             key: 'switch',
             Cell: (item) => (
-              <UnstyledButton onClick={() => handleSwitchProject(item._id)}>
+              <UnstyledButton onClick={() => switchProject(item._id as string)}>
                 {item._id !== currentProjectId && <SwapIcon size="md" />}
               </UnstyledButton>
             ),
@@ -61,7 +62,7 @@ export function ManageProjectModal() {
             key: 'delete',
             Cell: (item) => {
               return item.isOwner ? (
-                <UnstyledButton onClick={() => handleDeleteProject(item._id)}>
+                <UnstyledButton onClick={() => deleteProject(item._id as string)}>
                   <DeleteIcon size="md" />
                 </UnstyledButton>
               ) : null;
