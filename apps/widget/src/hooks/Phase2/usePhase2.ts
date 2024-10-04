@@ -94,7 +94,7 @@ export function usePhase2({ goNext, texts }: IUsePhase2Props) {
     const newMappings = getValues('mappings');
     const valuesMap = new Map<string, number>();
     newMappings.forEach((mapping) => {
-      valuesMap.set(mapping.columnHeading, (valuesMap.get(mapping.columnHeading) || 0) + 1);
+      if (mapping.columnHeading) valuesMap.set(mapping.columnHeading, (valuesMap.get(mapping.columnHeading) || 0) + 1);
     });
     newMappings.forEach((mapping, idx) => {
       if ((valuesMap.get(mapping.columnHeading) || 0) > 1) {
