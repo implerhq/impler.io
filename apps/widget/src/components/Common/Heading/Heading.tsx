@@ -19,6 +19,9 @@ export function Heading({ active, title, mode, hasImageUpload, texts, onClose }:
       label: texts.STEPPER_TITLES.UPLOAD_FILE,
     },
     {
+      label: texts.STEPPER_TITLES.SELECT_HEADER,
+    },
+    {
       label: texts.STEPPER_TITLES.MAP_COLUMNS,
     },
     {

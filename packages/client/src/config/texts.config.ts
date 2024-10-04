@@ -20,6 +20,7 @@ export const WIDGET_TEXTS = {
     UPLOAD_FILE: 'Upload',
     MAP_COLUMNS: 'Map Columns',
     REVIEW_DATA: 'Review',
+    SELECT_HEADER: 'Select Header',
     COMPLETE_IMPORT: 'Complete',
     CONFIGURE_JOB: 'Configure',
     SCHEDULE_JOB: 'Schedule',
