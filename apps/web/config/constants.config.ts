@@ -316,6 +316,12 @@ export enum SubjectsEnum {
   ALL = 'all',
 }
 
+export const ROLE_BADGES = {
+  [UserRolesEnum.ADMIN]: 'red',
+  [UserRolesEnum.TECH]: 'blue',
+  [UserRolesEnum.FINANCE]: 'green',
+};
+
 export type AppAbility = MongoAbility<[ActionsEnum, SubjectsEnum]>;
 
 export const ROLE_BASED_ACCESS = {
