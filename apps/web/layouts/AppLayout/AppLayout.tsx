@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { PropsWithChildren, useRef } from 'react';
 import { Flex, Group, LoadingOverlay, Text, Stack, Title, UnstyledButton, useMantineColorScheme } from '@mantine/core';
 
-import { ActionsEnum, colors, SubjectsEnum, TEXTS } from '@config';
+import { ActionsEnum, colors, ROUTES, SubjectsEnum, TEXTS } from '@config';
 import useStyles from './AppLayout.styles';
 import { HomeIcon } from '@assets/icons/Home.icon';
 import { LogoutIcon } from '@assets/icons/Logout.icon';
@@ -17,13 +17,15 @@ import { PeopleIcon } from '@assets/icons/People.icon';
 import LogoBlack from '@assets/images/full-logo-dark.png';
 import LogoWhite from '@assets/images/full-logo-light.png';
 
-import { useApp } from '@hooks/useApp';
 import { NavItem } from '@ui/nav-item';
 import { UserMenu } from '@ui/user-menu';
 import { track } from '@libs/amplitude';
 import { Can } from 'store/ability.context';
 import { ColorSchemeToggle } from '@ui/toggle-color-scheme';
 import { EditImportIcon } from '@assets/icons/EditImport.icon';
+import { useAppState } from 'store/app.context';
+import { useLogout } from '@hooks/auth/useLogout';
+import { useProject } from '@hooks/useProject';
 
 const Support = dynamic(() => import('components/common/Support').then((mod) => mod.Support), {
   ssr: false,
@@ -36,10 +38,16 @@ interface PageProps {
 export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps: PageProps }>) {
   const router = useRouter();
 
+  const { replace } = useRouter();
+
   const { classes } = useStyles();
   const navRef = useRef<HTMLElement>(null);
   const { colorScheme } = useMantineColorScheme();
-  const { profile, logout, isProjectsLoading, isProfileLoading, onEditImportClick } = useApp();
+  const { profileInfo } = useAppState();
+  const { logout } = useLogout({
+    onLogout: () => replace(ROUTES.SIGNIN),
+  });
+  const { projects, onEditImportClick, isProjectsLoading, isProfileLoading } = useProject();
 
   return (
     <>
@@ -58,7 +66,6 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
           <div className={classes.logoContainer}>
             <Image src={colorScheme === 'dark' ? LogoWhite : LogoBlack} alt="Impler Logo" width={140} />
           </div>
-
           <UnstyledButton
             onClick={onEditImportClick}
             style={{
@@ -68,11 +75,12 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
             }}
           >
             <Group position="apart">
-              <Text>{profile?.projectName}</Text>
+              <Text>
+                {projects?.find((project) => project._id === profileInfo?._projectId)?.name || 'No Project Selected'}
+              </Text>
               <EditImportIcon />
             </Group>
           </UnstyledButton>
-
           <Stack spacing="sm" py="xs">
             <NavItem active={router.pathname === '/'} href="/" icon={<HomeIcon size="lg" />} title="Home" />
 
@@ -113,18 +121,18 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
         </aside>
         <main className={classes.main}>
           <nav ref={navRef}>
-            {profile && (
+            {profileInfo && (
               <Flex justify="space-between">
                 <Title order={2}>
-                  Welcome, {profile.firstName} {profile.lastName}
+                  Welcome, {profileInfo.firstName} {profileInfo.lastName}
                 </Title>
                 <Group>
                   <ColorSchemeToggle onChange={(theme) => track({ name: 'TOGGLE THEME', properties: { theme } })} />
                   <UserMenu
                     user={{
-                      name: `${profile.firstName} ${profile.lastName}`,
-                      email: profile.email,
-                      image: profile.profilePicture,
+                      name: `${profileInfo.firstName} ${profileInfo.lastName}`,
+                      email: profileInfo.email,
+                      image: profileInfo.profilePicture,
                     }}
                     menus={[
                       {
@@ -143,7 +151,7 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
           </div>
         </main>
       </div>
-      <Support profile={profile} />
+      <Support profile={profileInfo} />
     </>
   );
 }
