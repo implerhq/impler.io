@@ -3,15 +3,15 @@ import dayjs from 'dayjs';
 import { Group, Avatar, Text, Select, Badge, UnstyledButton } from '@mantine/core';
 
 import { Table } from '@ui/table';
-import { useApp } from '@hooks/useApp';
 import { UserRolesEnum } from '@impler/shared';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
 import { useTeamMembers } from '@hooks/useTeamMembers';
 import { ActionsEnum, AppAbility, DATE_FORMATS, MEMBER_ROLE, SubjectsEnum } from '@config';
 import { AbilityContext } from 'store/ability.context';
+import { useAppState } from 'store/app.context';
 
 export function TeamMembers() {
-  const { profile } = useApp();
+  const { profileInfo } = useAppState();
   const ability = useContext<AppAbility | null>(AbilityContext);
   const { teamMembersList, openDeleteModal, updateTeamMemberRole } = useTeamMembers();
 
@@ -31,7 +31,7 @@ export function TeamMembers() {
               <div>
                 <Text>
                   {item._userId?.firstName} {item._userId?.lastName}
-                  {item._userId.email === profile?.email ? (
+                  {item._userId.email === profileInfo?.email ? (
                     <Badge radius="lg" size="lg" p={5} color="gray">
                       You
                     </Badge>
@@ -75,7 +75,7 @@ export function TeamMembers() {
           title: 'Actions',
           key: 'action',
           Cell: (item) => {
-            const isCurrentUserAdmin = profile?.role === UserRolesEnum.ADMIN;
+            const isCurrentUserAdmin = profileInfo?.role === UserRolesEnum.ADMIN;
             const isTargetUserAdmin = item.role === UserRolesEnum.ADMIN;
 
             return ability &&
