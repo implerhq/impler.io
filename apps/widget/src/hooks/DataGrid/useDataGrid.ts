@@ -25,7 +25,7 @@ interface IDataGridProps {
 
 export function useDataGrid({ limit }: IDataGridProps) {
   const { api } = useAPIState();
-  const { uploadInfo } = useAppState();
+  const { uploadInfo, data } = useAppState();
   const { fetchUploadInfo } = useUploadInfo({
     enabled: false,
   });
@@ -35,14 +35,23 @@ export function useDataGrid({ limit }: IDataGridProps) {
   const [columnDefs, setColumnDefs] = useState<HotItemSchema[]>([]);
   const [type, setType] = useState<ReviewDataTypesEnum>(ReviewDataTypesEnum.ALL);
   const [showFindReplaceModal, setShowFindReplaceModal] = useState<boolean | undefined>(undefined);
-  const [reviewData, setReviewData] = useState<IRecordExtended[]>([
-    {
-      index: 1,
-      isValid: false,
-      record: {},
-      updated: {},
-    },
-  ]);
+  const [reviewData, setReviewData] = useState<IRecordExtended[]>(
+    data
+      ? JSON.parse(data).map((record: Record<string, any>, index: number) => ({
+          index,
+          record,
+          updated: {},
+          isValid: false,
+        }))
+      : [
+          {
+            index: 1,
+            isValid: false,
+            record: {},
+            updated: {},
+          },
+        ]
+  );
 
   const { data: templateColumns } = useQuery<unknown, IErrorObject, IColumn[], [string, string]>(
     [`columns:${uploadInfo._id}`, uploadInfo._id],
