@@ -25,6 +25,7 @@ export const WIDGET_TEXTS = {
     CONFIGURE_JOB: 'Configure',
     SCHEDULE_JOB: 'Schedule',
     CONFIRM_JOB: 'Confirm',
+    REVIEW_EDIT: 'Review & Edit',
   },
   FILE_DROP_AREA: {
     DROP_FILE: 'Drop and drop a file here',
