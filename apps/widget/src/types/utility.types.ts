@@ -18,6 +18,7 @@ export type HotItemSchema = {
   allowInvalid?: boolean;
   disableVisualSelection?: boolean;
   description?: string;
+  datePickerConfig?: Record<string, any>; // https://github.com/Pikaday/Pikaday#configuration
   renderer?:
     | 'custom'
     | 'check'

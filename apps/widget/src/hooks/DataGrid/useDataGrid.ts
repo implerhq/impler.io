@@ -153,6 +153,9 @@ export function useDataGrid({ limit }: IDataGridProps) {
               columnItem.dateFormat = column.dateFormats[variables.baseIndex];
               columnItem.correctFormat = true;
             }
+            columnItem.datePickerConfig = {
+              yearRange: [1900, 3000],
+            };
             columnItem.renderer = 'custom';
             break;
           default:
