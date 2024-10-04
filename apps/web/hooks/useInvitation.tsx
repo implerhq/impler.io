@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useApp } from '@hooks/useApp';
 import { useRouter } from 'next/router';
 import { useQuery, useMutation } from '@tanstack/react-query';
 
@@ -9,6 +8,7 @@ import { useLogout } from '@hooks/auth/useLogout';
 import { API_KEYS, NOTIFICATION_KEYS, ROUTES } from '@config';
 import { IErrorObject, SCREENS } from '@impler/shared';
 import { handleRouteBasedOnScreenResponse } from '@shared/helpers';
+import { useAppState } from 'store/app.context';
 
 export enum ModesEnum {
   ACTIVE = 'ACTIVE',
@@ -16,7 +16,7 @@ export enum ModesEnum {
 }
 
 export function useInvitation() {
-  const { profile } = useApp();
+  const { profileInfo } = useAppState();
   const { replace, query, push } = useRouter();
   const { logout } = useLogout({
     onLogout: () => replace(ROUTES.SIGNIN),
@@ -93,12 +93,12 @@ export function useInvitation() {
   );
 
   useEffect(() => {
-    if (profile && invitationData && invitationData.email === profile?.email) {
+    if (profileInfo && invitationData && invitationData.email === profileInfo?.email) {
       setMode(ModesEnum.ACCEPT);
     }
-  }, [profile, invitationData]);
+  }, [profileInfo, invitationData]);
 
-  const isLoggedInUser = !!profile;
+  const isLoggedInUser = !!profileInfo;
   const isInvitationValid = !!invitationData;
 
   return {
