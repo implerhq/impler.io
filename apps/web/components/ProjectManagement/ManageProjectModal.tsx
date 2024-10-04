@@ -1,29 +1,26 @@
 import React from 'react';
 import { Badge, Flex, Text, UnstyledButton, Stack, TextInput } from '@mantine/core';
-import { colors } from '@config';
+import { colors, ROLE_BADGES } from '@config';
 import { Button } from '@ui/button';
 import { SwapIcon } from '@assets/icons/Swap.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
 import { InformationIcon } from '@assets/icons/Information.icon';
-import { useProjectManagement } from '@hooks/useProjectManagement';
 import { List } from '@components/List';
-import { useApp } from '@hooks/useApp';
-import { IProjectPayload } from '@impler/shared';
+import { IProjectPayload, UserRolesEnum } from '@impler/shared';
+import { useProject } from '@hooks/useProject';
 
 export function ManageProjectModal() {
-  const { profile } = useApp();
-
   const {
     handleSubmit,
     register,
     errors,
     onSubmit,
-    isProjectsLoading,
     projects,
     currentProjectId,
-    deleteProject,
-    switchProject,
-  } = useProjectManagement();
+    handleDeleteProject,
+    onProjectIdChange,
+    isCreateProjectLoading,
+  } = useProject();
 
   return (
     <>
@@ -32,6 +29,7 @@ export function ManageProjectModal() {
           {
             title: 'Project Name',
             key: 'name',
+            width: '60%',
             Cell: (item) => (
               <Flex>
                 {item.name}
@@ -46,13 +44,23 @@ export function ManageProjectModal() {
           {
             title: 'Role',
             key: 'role',
-            Cell: () => <>{profile?.role}</>,
+            width: '20%',
+            Cell: (item) => (
+              <Badge size="sm" variant="filled" color={ROLE_BADGES[item.role as UserRolesEnum]}>
+                {item.role}
+              </Badge>
+            ),
           },
           {
             title: 'Switch',
             key: 'switch',
+            width: '10%',
             Cell: (item) => (
-              <UnstyledButton onClick={() => switchProject(item._id as string)}>
+              <UnstyledButton
+                onClick={() => {
+                  onProjectIdChange(item._id as string);
+                }}
+              >
                 {item._id !== currentProjectId && <SwapIcon size="md" />}
               </UnstyledButton>
             ),
@@ -60,13 +68,17 @@ export function ManageProjectModal() {
           {
             title: 'Delete',
             key: 'delete',
-            Cell: (item) => {
-              return item.isOwner ? (
-                <UnstyledButton onClick={() => deleteProject(item._id as string)}>
+            width: '10%',
+            Cell: (item) =>
+              item.isOwner ? (
+                <UnstyledButton
+                  onClick={() => {
+                    handleDeleteProject(item._id as string);
+                  }}
+                >
                   <DeleteIcon size="md" />
                 </UnstyledButton>
-              ) : null;
-            },
+              ) : null,
           },
         ]}
         data={projects || []}
@@ -81,7 +93,7 @@ export function ManageProjectModal() {
               {...register('name', { required: 'Project name is required' })}
               error={errors.name?.message}
             />
-            <Button type="submit" loading={isProjectsLoading}>
+            <Button type="submit" loading={isCreateProjectLoading}>
               Create
             </Button>
           </Flex>
