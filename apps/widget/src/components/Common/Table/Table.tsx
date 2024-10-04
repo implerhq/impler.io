@@ -164,6 +164,7 @@ interface TableProps {
   width?: string | number;
   selectEnabled?: boolean;
   afterRender?: () => void;
+  beforePaste?: () => void;
   columnDefs: HotItemSchema[];
   data?: Record<string, any>[];
   columnDescriptions?: string[];
@@ -181,6 +182,7 @@ export const Table = forwardRef<HotTableClass, TableProps>(
       headings,
       columnDefs,
       data,
+      beforePaste,
       columnDescriptions,
       allChecked,
       onRowCheck,
@@ -278,6 +280,7 @@ export const Table = forwardRef<HotTableClass, TableProps>(
         columns={columnDefs}
         colHeaders={headings}
         rowHeaders={rowHeaders}
+        beforePaste={beforePaste}
         afterRender={afterRender}
         minSpareRows={minSpareRows}
         fixedColumnsLeft={frozenColumns}

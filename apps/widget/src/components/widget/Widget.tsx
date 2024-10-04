@@ -14,16 +14,17 @@ import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
 import { IImportConfig, TemplateModeEnum } from '@impler/shared';
 
 import { Phase0 } from './Phases/Phase0';
-import { Phase01 } from './Phases/Phase0-1';
 import { Phase1 } from './Phases/Phase1';
-import { Phase12 } from './Phases/Phase1-2';
 import { Phase2 } from './Phases/Phase2';
 import { Phase3 } from './Phases/Phase3';
 import { Phase4 } from './Phases/Phase4';
-import { AutoImportPhase1 } from './Phases/AutoImportPhases/AutoImportPhase1';
-import { AutoImportPhase2 } from './Phases/AutoImportPhases/AutoImportPhase2';
-import { AutoImportPhase3 } from './Phases/AutoImportPhases/AutoImportPhase3';
-import { AutoImportPhase4 } from './Phases/AutoImportPhases/AutoImportPhase4';
+import { ImageUpload } from './Phases/ImageImport';
+import { SelectHeader } from './Phases/SelectHeader';
+import { DataGrid } from './Phases/ManualEntryImport';
+import { AutoImportPhase1 } from './Phases/AutoImport/AutoImportPhase1';
+import { AutoImportPhase2 } from './Phases/AutoImport/AutoImportPhase2';
+import { AutoImportPhase3 } from './Phases/AutoImport/AutoImportPhase3';
+import { AutoImportPhase4 } from './Phases/AutoImport/AutoImportPhase4';
 
 export function Widget() {
   const defaultDataCount = 0;
@@ -121,15 +122,15 @@ export function Widget() {
         }
       : flow === FlowsEnum.MANUAL_ENTRY
       ? {
-          [PhasesEnum.MANUAL_ENTRY]: <Phase12 texts={texts} onPrevClick={onUploadResetClick} onNextClick={onClose} />,
+          [PhasesEnum.MANUAL_ENTRY]: <DataGrid texts={texts} onPrevClick={onUploadResetClick} onNextClick={onClose} />,
         }
       : {
-          [PhasesEnum.IMAGE_UPLOAD]: <Phase01 texts={texts} goToUpload={() => setPhase(PhasesEnum.UPLOAD)} />,
+          [PhasesEnum.IMAGE_UPLOAD]: <ImageUpload texts={texts} goToUpload={() => setPhase(PhasesEnum.UPLOAD)} />,
           [PhasesEnum.UPLOAD]: (
             <Phase1
               texts={texts}
               hasImageUpload={hasImageUpload}
-              onNextClick={() => setPhase(PhasesEnum.MAPPING)}
+              onNextClick={() => setPhase(PhasesEnum.SELECT_HEADER)}
               onManuallyEnterData={() => {
                 setFlow(FlowsEnum.MANUAL_ENTRY);
                 setPhase(PhasesEnum.MANUAL_ENTRY);
@@ -137,6 +138,7 @@ export function Widget() {
               generateImageTemplate={() => setPhase(PhasesEnum.IMAGE_UPLOAD)}
             />
           ),
+          [PhasesEnum.SELECT_HEADER]: <SelectHeader texts={texts} onNext={() => setPhase(PhasesEnum.MAPPING)} />,
           [PhasesEnum.MAPPING]: (
             <Phase2 texts={texts} onNextClick={() => setPhase(PhasesEnum.REVIEW)} onPrevClick={onUploadResetClick} />
           ),

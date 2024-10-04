@@ -85,6 +85,21 @@ export function Footer({
               {texts['PHASE0-1'].GENERATE_TEMPLATE}
             </Button>
           ),
+          [PhasesEnum.SELECT_HEADER]: (
+            <>
+              <Button
+                loading={secondaryButtonLoading}
+                disabled={secondaryButtonDisabled}
+                onClick={onPrevClick}
+                variant="outline"
+              >
+                {texts.SELECT_HEADER.FILE_DONT_HAVE_HEADERS}
+              </Button>
+              <Button loading={primaryButtonLoading} disabled={primaryButtonDisabled} onClick={onNextClick}>
+                {texts.SELECT_HEADER.CONFIRM_AND_CONTINUE}
+              </Button>
+            </>
+          ),
           [PhasesEnum.MAPPING]: (
             <>
               <Button

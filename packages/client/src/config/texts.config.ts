@@ -20,6 +20,7 @@ export const WIDGET_TEXTS = {
     UPLOAD_FILE: 'Upload',
     MAP_COLUMNS: 'Map Columns',
     REVIEW_DATA: 'Review',
+    SELECT_HEADER: 'Select Header',
     COMPLETE_IMPORT: 'Complete',
     CONFIGURE_JOB: 'Configure',
     SCHEDULE_JOB: 'Schedule',
@@ -62,6 +63,11 @@ export const WIDGET_TEXTS = {
     INCOMPLETE_TEMPLATE_MSG:
       'This import does not have any columns. Please try again after some time!',
   },
+  SELECT_HEADER: {
+    FILE_DONT_HAVE_HEADERS: 'File does not have headers',
+    CONFIRM_AND_CONTINUE: 'Confirm selection and Continue',
+    INFO: 'Select Header Row from the table. Rows above the header will not be imported. Click on row to change selection.',
+  },
   'PHASE1-2': {
     ENTER_DATA: 'Manually enter your data',
     RECOMMANDED_LIMIT: 'Recommanded upto {records} records',
@@ -74,6 +80,8 @@ export const WIDGET_TEXTS = {
     MAPPING_NOT_DONE_TEXT: 'Not Mapped',
     MAPPING_DONE_TEXT: 'Mapping Successful',
     MAPPING_FIELD_PLACEHOLDER: 'Select Field',
+    FIELD_REQUIRED_MSG: 'This field is required',
+    ALREADY_MAPPED_MSG: '{field} is already mapped to {column}',
   },
   PHASE3: {
     COMPLETE: 'Complete',

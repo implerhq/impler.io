@@ -21,6 +21,7 @@ import { IUpload } from '@impler/client';
 import { SelectEditor } from './SelectEditor';
 import { MultiSelectEditor } from './MultiSelectEditor';
 import { useCompleteImport } from '@hooks/useCompleteImport';
+import { useUploadInfo } from '@hooks/useUploadInfo';
 
 interface IUsePhase3Props {
   onNext: (uploadData: IUpload, importedData?: Record<string, any>[]) => void;
@@ -137,19 +138,14 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
       enabled: !!uploadInfo?._id,
     }
   );
-  const { refetch: fetchUploadInfo } = useQuery<IUpload, IErrorObject, IUpload, [string]>(
-    [`getUpload:${uploadInfo._id}`],
-    () => api.getUpload(uploadInfo._id),
-    {
-      enabled: false,
-      onSuccess(data) {
-        setUploadInfo(data);
-        if (data.invalidRecords === variables.baseIndex && data.totalRecords) {
-          setShowAllDataValidModal(true);
-        }
-      },
-    }
-  );
+  const { fetchUploadInfo } = useUploadInfo({
+    enabled: false,
+    onNext: (data) => {
+      if (data.invalidRecords === variables.baseIndex && data.totalRecords) {
+        setShowAllDataValidModal(true);
+      }
+    },
+  });
   const { mutate: refetchReviewData, isLoading: isReviewDataLoading } = useMutation<
     IReviewData,
     IErrorObject,
@@ -197,7 +193,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     IErrorObject,
     void,
     [string, string]
-  >([`review`, uploadInfo._id], () => api.doReivewData(uploadInfo._id), {
+  >([`re-review`, uploadInfo._id], () => api.doReivewData(uploadInfo._id), {
     cacheTime: 0,
     staleTime: 0,
     enabled: !!uploadInfo._id,

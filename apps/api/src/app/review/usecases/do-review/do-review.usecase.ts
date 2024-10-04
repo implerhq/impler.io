@@ -139,6 +139,7 @@ export class DoReview extends BaseReview {
         numberColumnHeadings,
         multiSelectColumnHeadings,
         validationErrorMessages,
+        headerRow: uploadInfo.headerRow,
       });
 
       await this.processBatches({
@@ -185,6 +186,7 @@ export class DoReview extends BaseReview {
         numberColumnHeadings,
         validationErrorMessages,
         multiSelectColumnHeadings,
+        headerRow: uploadInfo.headerRow,
       });
       response.invalidRecords = invalidRecords;
       response.totalRecords = totalRecords;

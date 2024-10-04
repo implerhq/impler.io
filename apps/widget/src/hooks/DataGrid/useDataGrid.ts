@@ -17,44 +17,49 @@ import {
   ColumnDelimiterEnum,
   ReviewDataTypesEnum,
 } from '@impler/shared';
-import { IUpload } from '@impler/client';
+import { useUploadInfo } from '@hooks/useUploadInfo';
 
-interface IUsePhase3Props {
+interface IDataGridProps {
   limit: number;
 }
 
-export function usePhase12({ limit }: IUsePhase3Props) {
+export function useDataGrid({ limit }: IDataGridProps) {
   const { api } = useAPIState();
-  const { uploadInfo, setUploadInfo } = useAppState();
+  const { uploadInfo, data } = useAppState();
+  const { fetchUploadInfo } = useUploadInfo({
+    enabled: false,
+  });
   const [columns, setColumns] = useState<IOption[]>([]);
   const [headings, setHeadings] = useState<string[]>([]);
   const [frozenColumns, setFrozenColumns] = useState<number>(2);
   const [columnDefs, setColumnDefs] = useState<HotItemSchema[]>([]);
   const [type, setType] = useState<ReviewDataTypesEnum>(ReviewDataTypesEnum.ALL);
   const [showFindReplaceModal, setShowFindReplaceModal] = useState<boolean | undefined>(undefined);
-  const [reviewData, setReviewData] = useState<IRecordExtended[]>([
-    {
-      index: 1,
-      isValid: false,
-      record: {},
-      updated: {},
-    },
-  ]);
+  const [reviewData, setReviewData] = useState<IRecordExtended[]>(
+    data
+      ? JSON.parse(data).map((record: Record<string, any>, index: number) => ({
+          index,
+          record,
+          updated: {},
+          isValid: false,
+        }))
+      : [
+          {
+            index: 1,
+            isValid: false,
+            record: {},
+            updated: {},
+          },
+        ]
+  );
 
-  const { data: templateColumns } = useQuery<unknown, IErrorObject, IColumn[], [string, string]>(
-    [`columns:${uploadInfo._id}`, uploadInfo._id],
-    () => api.getColumns(uploadInfo._id)
-  );
-  const { refetch: fetchUploadInfo } = useQuery<IUpload, IErrorObject, IUpload, [string]>(
-    [`getUpload:${uploadInfo._id}`],
-    () => api.getUpload(uploadInfo._id),
-    {
-      enabled: false,
-      onSuccess(data) {
-        setUploadInfo(data);
-      },
-    }
-  );
+  const { data: templateColumns, isLoading: isTemplateColumnsLoading } = useQuery<
+    unknown,
+    IErrorObject,
+    IColumn[],
+    [string, string]
+  >([`columns:${uploadInfo._id}`, uploadInfo._id], () => api.getColumns(uploadInfo._id));
+
   const { mutate: refetchReviewData, isLoading: isReviewDataLoading } = useMutation<
     IReviewData,
     IErrorObject,
@@ -177,6 +182,7 @@ export function usePhase12({ limit }: IUsePhase3Props) {
     isReviewDataLoading,
     showFindReplaceModal,
     setShowFindReplaceModal,
+    isTemplateColumnsLoading,
     totalRecords: uploadInfo.totalRecords ?? undefined,
     invalidRecords: uploadInfo.invalidRecords ?? undefined,
   };

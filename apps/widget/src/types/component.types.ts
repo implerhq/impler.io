@@ -23,9 +23,10 @@ export enum PhasesEnum {
 
   IMAGE_UPLOAD = 1,
   UPLOAD = 2,
-  MAPPING = 3,
-  REVIEW = 4,
-  COMPLETE = 5,
+  SELECT_HEADER = 3,
+  MAPPING = 4,
+  REVIEW = 5,
+  COMPLETE = 6,
 
   CONFIGURE = 1,
   MAPCOLUMNS = 2,

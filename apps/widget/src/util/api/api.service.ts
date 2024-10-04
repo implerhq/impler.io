@@ -12,6 +12,7 @@ import {
   IUserJobMapping,
   IUserJob,
   IColumn,
+  ISetHeaderData,
 } from '@impler/shared';
 import { IUpload } from '@impler/client';
 import { HttpClient } from './api.client';
@@ -135,6 +136,14 @@ export class ApiService {
 
   async getUpload(uploadId: string) {
     return this.httpClient.get(`/upload/${uploadId}`) as Promise<IUpload>;
+  }
+
+  async getDataPreview(uploadId: string) {
+    return this.httpClient.get(`/upload/${uploadId}/preview`) as Promise<string[][]>;
+  }
+
+  async setHeaderRow(uploadId: string, data: ISetHeaderData) {
+    return this.httpClient.put(`/upload/${uploadId}/header`, data) as Promise<IUpload>;
   }
 
   async terminateUpload(uploadId: string) {
