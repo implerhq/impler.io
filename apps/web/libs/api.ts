@@ -113,6 +113,12 @@ const routes: Record<string, Route> = {
     url: () => '/v1/project',
     method: 'POST',
   },
+
+  [API_KEYS.PROJECT_DELETE]: {
+    url: (projectId: string) => `/v1/project/${projectId}`,
+    method: 'DELETE',
+  },
+
   [API_KEYS.PROJECT_SWITCH]: {
     url: (projectId) => `/v1/project/switch/${projectId}`,
     method: 'PUT',
