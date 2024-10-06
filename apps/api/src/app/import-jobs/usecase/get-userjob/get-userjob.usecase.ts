@@ -1,7 +1,8 @@
 import { UserJobRepository } from '@impler/dal';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { APIMessages } from '@shared/constants';
 
+@Injectable()
 export class GetUserJob {
   constructor(private readonly userJobRepository: UserJobRepository) {}
 

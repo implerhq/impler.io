@@ -18,6 +18,7 @@ export type HotItemSchema = {
   allowInvalid?: boolean;
   disableVisualSelection?: boolean;
   description?: string;
+  datePickerConfig?: Record<string, any>; // https://github.com/Pikaday/Pikaday#configuration
   renderer?:
     | 'custom'
     | 'check'
@@ -31,3 +32,13 @@ export type HotItemSchema = {
         cellProperties: CellProperties
       ) => any);
 };
+
+export interface IRecordExtended {
+  _id?: string;
+  checked?: boolean;
+  index: number;
+  isValid: boolean;
+  record: Record<string, any>;
+  errors?: Record<string, string>;
+  updated: Record<string, boolean>;
+}

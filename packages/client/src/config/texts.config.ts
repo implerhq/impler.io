@@ -8,8 +8,10 @@ export const TEXTS = {
 
 export const WIDGET_TEXTS = {
   COMMON: {
+    FINISH: 'Finish',
     SORRY: 'Sorry!',
     CANCEL: 'Cancel',
+    DELETE: 'Delete',
     CLOSE_WIDGET: 'Close',
     UPLOAD_AGAIN: 'Upload Again',
   },
@@ -18,17 +20,19 @@ export const WIDGET_TEXTS = {
     UPLOAD_FILE: 'Upload',
     MAP_COLUMNS: 'Map Columns',
     REVIEW_DATA: 'Review',
+    SELECT_HEADER: 'Select Header',
     COMPLETE_IMPORT: 'Complete',
     CONFIGURE_JOB: 'Configure',
     SCHEDULE_JOB: 'Schedule',
     CONFIRM_JOB: 'Confirm',
+    REVIEW_EDIT: 'Review & Edit',
   },
   FILE_DROP_AREA: {
-    DROP_FILE: 'Drop and drop a file here or ',
-    BROWSE_FILE: 'Browse from computer',
+    DROP_FILE: 'Drop and drop a file here',
+    CHOOSE_FILE: 'Choose a file',
     IMAGE_FILE_SIZE:
       'Image size should be less than 5 MB. Supported formats are PNG, JPG and JPEG.',
-    BRING_FILE: 'Bring any .csv or .xlsx file here to start Import',
+    FILE_FORMATS: 'You can upload: csv, xlsx, xlsm',
     FILE_SELECTED: 'File selected successfully',
   },
   'PHASE0-1': {
@@ -52,8 +56,6 @@ export const WIDGET_TEXTS = {
     GENERATE_TEMPLATE: 'Generate Template',
     SEE_MAPPING: 'See Mapping',
 
-    SELECT_FILE_NAME: 'Select a file',
-    SELECT_FILE_REQUIRED_MSG: 'Please select a file',
     SELECT_FILE_FORMAT_MSG:
       'File type not supported! Please select a .csv or .xlsx file.',
 
@@ -62,6 +64,16 @@ export const WIDGET_TEXTS = {
     INCOMPLETE_TEMPLATE_MSG:
       'This import does not have any columns. Please try again after some time!',
   },
+  SELECT_HEADER: {
+    FILE_DONT_HAVE_HEADERS: 'File does not have headers',
+    CONFIRM_AND_CONTINUE: 'Confirm selection and Continue',
+    INFO: 'Select Header Row from the table. Rows above the header will not be imported. Click on row to change selection.',
+  },
+  'PHASE1-2': {
+    ENTER_DATA: 'Manually enter your data',
+    RECOMMANDED_LIMIT: 'Recommanded upto {records} records',
+    FIX_INVALID_DATA: 'To complete import you need to fix invalid data',
+  },
   PHASE2: {
     REVIEW_DATA: 'Review Data',
     IN_SCHEMA_TITLE: 'Column in schema',
@@ -69,6 +81,8 @@ export const WIDGET_TEXTS = {
     MAPPING_NOT_DONE_TEXT: 'Not Mapped',
     MAPPING_DONE_TEXT: 'Mapping Successful',
     MAPPING_FIELD_PLACEHOLDER: 'Select Field',
+    FIELD_REQUIRED_MSG: 'This field is required',
+    ALREADY_MAPPED_MSG: '{field} is already mapped to {column}',
   },
   PHASE3: {
     COMPLETE: 'Complete',

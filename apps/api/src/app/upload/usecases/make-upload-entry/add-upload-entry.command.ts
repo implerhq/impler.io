@@ -3,7 +3,7 @@ export class AddUploadEntryCommand {
 
   _allDataFileId?: string;
 
-  _uploadedFileId: string;
+  _uploadedFileId?: string;
 
   uploadId: string;
 
@@ -13,15 +13,13 @@ export class AddUploadEntryCommand {
 
   headings?: string[];
 
-  totalRecords?: number;
-
   schema?: string;
 
-  originalFileName: string;
+  originalFileName?: string;
 
-  originalFileType: string;
+  originalFileType?: string;
 
-  customRecordFormat?: string;
+  customRecordFormat: string;
 
-  customChunkFormat?: string;
+  customChunkFormat: string;
 }

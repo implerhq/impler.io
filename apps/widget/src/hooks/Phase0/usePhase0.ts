@@ -1,10 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
 
+import { FlowsEnum } from '@types';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { identifyImportIntent } from '@amplitude';
 import { useImplerState } from '@store/impler.context';
-import { IErrorObject, IImportConfig } from '@impler/shared';
+import { IErrorObject, IImportConfig, TemplateModeEnum } from '@impler/shared';
 
 interface IUsePhase0Props {
   goNext: () => void;
@@ -13,13 +14,16 @@ interface IUsePhase0Props {
 export function usePhase0({ goNext }: IUsePhase0Props) {
   const { api } = useAPIState();
   const { projectId, templateId } = useImplerState();
-  const { schema, setImportConfig, showWidget } = useAppState();
+  const { schema, setImportConfig, showWidget, setFlow } = useAppState();
 
   const { mutate: fetchImportConfig } = useMutation<IImportConfig, IErrorObject, void>(
     ['importConfig', projectId, templateId],
     () => api.getImportConfig(projectId, templateId),
     {
       onSuccess(importConfigData) {
+        setFlow(
+          importConfigData.mode === TemplateModeEnum.AUTOMATIC ? FlowsEnum.AUTO_IMPORT : FlowsEnum.STRAIGHT_IMPORT
+        );
         setImportConfig(importConfigData);
         goNext();
       },

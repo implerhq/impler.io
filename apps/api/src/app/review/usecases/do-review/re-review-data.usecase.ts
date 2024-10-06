@@ -147,9 +147,9 @@ export class DoReReview extends BaseReview {
     });
     let result: ISaveResults = {
       uploadId: _uploadId,
-      totalRecords: uploadInfo.totalRecords,
-      validRecords: uploadInfo.validRecords,
-      invalidRecords: uploadInfo.invalidRecords,
+      totalRecords: uploadInfo.totalRecords || 0,
+      validRecords: uploadInfo.validRecords || 0,
+      invalidRecords: uploadInfo.invalidRecords || 0,
     };
 
     if (validations && validations.onBatchInitialize) {
@@ -223,8 +223,8 @@ export class DoReReview extends BaseReview {
     const response: ISaveResults = {
       uploadId,
       totalRecords: 0,
-      validRecords: result.validRecords,
-      invalidRecords: result.invalidRecords,
+      validRecords: result.validRecords || 0,
+      invalidRecords: result.invalidRecords || 0,
     };
 
     for await (const record of this._modal.find({ updated: { $ne: {}, $exists: true } })) {
@@ -268,6 +268,7 @@ export class DoReReview extends BaseReview {
             update: {
               $set: {
                 errors: record.errors,
+                isValid: record.isValid,
                 updated: {},
               },
             },
@@ -316,8 +317,9 @@ export class DoReReview extends BaseReview {
     multiSelectColumnHeadings: Record<string, string>;
   }) {
     const { dataStream } = this.getStreams();
-    const { batches, resultObj } = await this.prepareBatches({
+    const { batches } = await this.prepareBatches({
       extra,
+      result,
       uploadId,
       validator,
       dateFormats,
@@ -336,11 +338,9 @@ export class DoReReview extends BaseReview {
       dataStream,
       onBatchInitialize,
       forItem(item) {
-        if (resultObj[item.index] && !item.isValid) {
-          result.validRecords--;
+        if (!item.isValid) {
           result.invalidRecords++;
-        } else if (!resultObj[item.index] && item.isValid) {
-          result.invalidRecords--;
+        } else if (item.isValid) {
           result.validRecords++;
         }
       },
@@ -380,6 +380,7 @@ export class DoReReview extends BaseReview {
 
   private async prepareBatches({
     extra,
+    result,
     uploadId,
     validator,
     dateFormats,
@@ -389,6 +390,7 @@ export class DoReReview extends BaseReview {
   }: {
     extra: any;
     uploadId: string;
+    result: ISaveResults;
     validator: ValidateFunction;
     dateFormats: Record<string, string[]>;
     uniqueCombinations: Record<string, string[]>;
@@ -402,9 +404,10 @@ export class DoReReview extends BaseReview {
       console.log(`Modal not found for upload ${uploadId}`, this._modal);
       this._modal = this.dalService.getRecordCollection(uploadId);
     }
-    const resultObj = {};
 
     for await (const record of this._modal.find({ updated: { $ne: {}, $exists: true } })) {
+      if (record.isValid) result.validRecords--;
+      else result.invalidRecords--;
       const checkRecord: Record<string, unknown> = this.formatRecord({ record, multiSelectColumnHeadings });
       const validationResultItem = this.validateRecord({
         validator,
@@ -415,7 +418,6 @@ export class DoReReview extends BaseReview {
         validationErrorMessages,
         passRecord: record.record,
       });
-      resultObj[Number(record.index)] = record.isValid;
       batchRecords.push(validationResultItem);
       if (batchRecords.length === BATCH_LIMIT) {
         batches.push(
@@ -447,7 +449,6 @@ export class DoReReview extends BaseReview {
 
     return {
       batches,
-      resultObj,
     };
   }
 

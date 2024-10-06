@@ -17,3 +17,6 @@ export const HANDSONTABLE_LICENSE_KEY =
   'non-commercial-and-evaluation';
 
 export const CONTEXT_PATH = '';
+
+export const MANUAL_ENTRY_LIMIT =
+  window._env_?.REACT_APP_MANUAL_ENTRY_LIMIT || process.env.REACT_APP_MANUAL_ENTRY_LIMIT || 5000;

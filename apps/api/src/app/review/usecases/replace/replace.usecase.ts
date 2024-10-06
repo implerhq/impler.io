@@ -50,6 +50,7 @@ export class Replace {
             { $eq: ['$' + path, ''] },
             { $regexMatch: { input: { $toString: '$' + path }, regex: /^\s*$/ } },
             { $eq: ['$' + path, null] },
+            { $not: [{ $ifNull: ['$' + path, false] }] },
           ],
         };
         replaceOperation = { $literal: formattedReplace };
@@ -145,6 +146,8 @@ export class Replace {
 
     // Add a final stage to remove the temporary _oldRecord field
     updateStages.push({ $unset: '_oldRecord' });
+
+    console.log(updateStages);
 
     const result = await recordCollectionModal.updateMany({}, updateStages, { multi: true });
 

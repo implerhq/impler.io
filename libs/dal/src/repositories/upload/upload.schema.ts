@@ -54,6 +54,10 @@ const uploadSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    headerRow: {
+      type: Number,
+      default: 0,
+    },
   },
   { ...schemaOptions }
 );

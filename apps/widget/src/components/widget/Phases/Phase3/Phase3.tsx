@@ -8,9 +8,9 @@ import { usePhase3 } from '@hooks/Phase3/usePhase3';
 import { IUpload, WIDGET_TEXTS } from '@impler/client';
 import { numberFormatter, replaceVariablesInString } from '@impler/shared';
 
-import { ReviewConfirmModal } from './ReviewConfirmModal';
 import { Table } from 'components/Common/Table';
 import { Footer } from 'components/Common/Footer';
+import { ReviewConfirmModal } from './ReviewConfirmModal';
 
 import { Button } from '@ui/Button';
 import { Pagination } from '@ui/Pagination';
@@ -47,7 +47,7 @@ export function Phase3(props: IPhase3Props) {
     setAllChecked,
     deleteRecords,
     invalidRecords,
-    onConfirmReview,
+    completeImport,
     selectedRowsRef,
     refetchReviewData,
     isDoReviewLoading,
@@ -56,9 +56,9 @@ export function Phase3(props: IPhase3Props) {
     showFindReplaceModal,
     showAllDataValidModal,
     isDeleteRecordLoading,
-    isConfirmReviewLoading,
     showDeleteConfirmModal,
     setShowFindReplaceModal,
+    isCompleteImportLoading,
     setShowAllDataValidModal,
     setShowDeleteConfirmModal,
   } = usePhase3({ onNext: onNextClick });
@@ -79,13 +79,13 @@ export function Phase3(props: IPhase3Props) {
 
   const onReviewConfirmed = () => {
     logAmplitudeEvent('CONFIRM');
-    onConfirmReview();
+    completeImport();
   };
 
   return (
     <>
       <LoadingOverlay
-        visible={isReviewDataLoading || isDoReviewLoading || isConfirmReviewLoading || isDeleteRecordLoading}
+        visible={isReviewDataLoading || isDoReviewLoading || isCompleteImportLoading || isDeleteRecordLoading}
       />
 
       <Stack ref={tableWrapperRef} style={{ flexGrow: 1 }} spacing="xs" align="flex-start">
@@ -121,7 +121,7 @@ export function Phase3(props: IPhase3Props) {
               disabled={!selectedRowsRef.current.size}
               onClick={() => setShowDeleteConfirmModal(true)}
             >
-              Delete
+              {texts.COMMON.DELETE}
               <Badge variant="light" ml="xs" color="red">
                 {numberFormatter(selectedRowsRef.current.size)}
               </Badge>
@@ -207,7 +207,7 @@ export function Phase3(props: IPhase3Props) {
       <Pagination page={page} total={totalPages} onChange={onPageChange} />
 
       <Footer
-        primaryButtonLoading={isConfirmReviewLoading}
+        primaryButtonLoading={isCompleteImportLoading}
         active={PhasesEnum.REVIEW}
         onNextClick={reReviewData}
         onPrevClick={onPrevClick}

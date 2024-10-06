@@ -4,9 +4,7 @@ import { createStyles, MantineTheme } from '@mantine/core';
 export const getRootStyles = (theme: MantineTheme) => ({
   paddingBottom: 16,
   '@media (min-width: 768px)': {
-    paddingRight: 24,
-    paddingLeft: 24,
-    paddingBottom: 24,
+    padding: 8,
   },
   border: '1px solid transparent',
   display: 'flex',

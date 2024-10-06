@@ -40,4 +40,6 @@ export class UploadEntity {
   customRecordFormat: string;
 
   customChunkFormat: string;
+
+  headerRow: number;
 }
