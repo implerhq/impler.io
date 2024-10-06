@@ -122,6 +122,9 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
                 columnItem.dateFormat = column.dateFormats[variables.baseIndex];
                 columnItem.correctFormat = true;
               }
+              columnItem.datePickerConfig = {
+                yearRange: [1900, 3000],
+              };
               columnItem.renderer = 'custom';
               break;
             default:

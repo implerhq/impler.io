@@ -211,10 +211,13 @@ export const Table = forwardRef<HotTableClass, TableProps>(
           }
         }}
         beforeKeyDown={(event) => {
-          const [[row, col]] = (gridRef as any)?.current.__hotInstance?.getSelected();
-          const rows = (gridRef as any)?.current?.__hotInstance?.countRows();
-          if (event.key === 'Tab' && col === headings.length - 1) {
-            (gridRef as any)?.current.__hotInstance.selectCell(Math.min(rows, row + 1), selectEnabled ? 3 : 1);
+          const selected = (gridRef as any)?.current.__hotInstance?.getSelected();
+          if (Array.isArray(selected) && selected.length > 0 && Array.isArray(selected[0])) {
+            const [[row, col]] = selected;
+            const rows = (gridRef as any)?.current?.__hotInstance?.countRows();
+            if (event.key === 'Tab' && col === headings.length - 1) {
+              (gridRef as any)?.current.__hotInstance.selectCell(Math.min(rows, row + 1), selectEnabled ? 3 : 1);
+            }
           }
         }}
         fillHandle={{

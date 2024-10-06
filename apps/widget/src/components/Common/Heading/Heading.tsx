@@ -1,20 +1,17 @@
 import { CloseButton, Group, MediaQuery, Title } from '@mantine/core';
-import { PhasesEnum } from '@types';
+import { FlowsEnum, PhasesEnum } from '@types';
 import { Stepper } from '@ui/Stepper';
-import { WIDGET_TEXTS } from '@impler/client';
-import { TemplateModeEnum } from '@impler/shared';
+import { useAppState } from '@store/app.context';
 
 interface IHeadingProps {
   title?: string;
   active: PhasesEnum;
   onClose?: () => void;
-  mode?: TemplateModeEnum;
-  hasImageUpload?: boolean;
-  texts: typeof WIDGET_TEXTS;
 }
 
-export function Heading({ active, title, mode, hasImageUpload, texts, onClose }: IHeadingProps) {
-  const manualImportSteps = [
+export function Heading({ active, title, onClose }: IHeadingProps) {
+  const { texts, flow } = useAppState();
+  const straightImportSteps = [
     {
       label: texts.STEPPER_TITLES.UPLOAD_FILE,
     },
@@ -29,6 +26,15 @@ export function Heading({ active, title, mode, hasImageUpload, texts, onClose }:
     },
     {
       label: texts.STEPPER_TITLES.COMPLETE_IMPORT,
+    },
+  ];
+
+  const manualEntryImportSteps = [
+    {
+      label: texts.STEPPER_TITLES.UPLOAD_FILE,
+    },
+    {
+      label: texts.STEPPER_TITLES.REVIEW_EDIT,
     },
   ];
 
@@ -52,18 +58,27 @@ export function Heading({ active, title, mode, hasImageUpload, texts, onClose }:
       <Title order={3}>{title}</Title>
       <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
         <Stepper
-          active={active - (mode === TemplateModeEnum.AUTOMATIC ? 1 : hasImageUpload ? 1 : 2)}
+          active={
+            active -
+            ([FlowsEnum.AUTO_IMPORT, FlowsEnum.IMAGE_IMPORT].includes(flow)
+              ? 1
+              : flow === FlowsEnum.MANUAL_ENTRY
+              ? 0
+              : 2)
+          }
           steps={
-            mode === TemplateModeEnum.AUTOMATIC
+            flow == FlowsEnum.AUTO_IMPORT
               ? autoImportSteps
-              : hasImageUpload
+              : flow == FlowsEnum.IMAGE_IMPORT
               ? [
                   {
                     label: texts.STEPPER_TITLES.GENERATE_TEMPLATE,
                   },
-                  ...manualImportSteps,
+                  ...straightImportSteps,
                 ]
-              : manualImportSteps
+              : flow === FlowsEnum.MANUAL_ENTRY
+              ? manualEntryImportSteps
+              : straightImportSteps
           }
         />
       </MediaQuery>
