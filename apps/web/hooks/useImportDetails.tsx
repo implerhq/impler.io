@@ -96,7 +96,7 @@ export function useImportDetails({ templateId }: useImportDetailProps) {
             integrations={templateData.integration}
           />
         ),
-        withCloseButton: false,
+        withCloseButton: true,
       });
     }
   };
