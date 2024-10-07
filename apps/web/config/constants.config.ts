@@ -73,7 +73,7 @@ export const INTEGRATION_GUIDE = [
   { value: IntegrationEnum.BUBBLE, label: IntegrationEnum.BUBBLE },
 ];
 
-export type IntegrationLanguage = 'javascript' | 'jsx' | 'typescript' | 'markup';
+export type IntegrationLanguage = 'javascript' | 'jsx' | 'typescript' | 'markup' | 'bash';
 
 export const MODAL_TITLES = {
   IMPORT_DUPLICATE: 'Duplicate Import',
