@@ -45,7 +45,9 @@ export function useImports() {
         ]);
         track({
           name: 'IMPORT CREATE',
-          properties: {},
+          properties: {
+            framework: data.integration,
+          },
         });
         push(`/imports/${data._id}`);
         notify(NOTIFICATION_KEYS.IMPORT_CREATED);

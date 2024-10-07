@@ -83,6 +83,10 @@ export function useImportDetails({ templateId }: useImportDetailProps) {
   };
 
   const onIntegrationClick = () => {
+    track({
+      name: 'INTEGRATE',
+      properties: {},
+    });
     if (templateData && profileInfo) {
       modals.open({
         modalId: MODAL_KEYS.INTEGRATION_DETAILS,

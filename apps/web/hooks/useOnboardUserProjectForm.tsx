@@ -20,7 +20,7 @@ export function useOnboardUserProjectForm() {
     [API_KEYS.ONBOARD_USER],
     (apiData) => commonApi(API_KEYS.ONBOARD_USER as any, { body: { ...apiData, onboarding: true } }),
     {
-      onSuccess: () => {
+      onSuccess: (_, onboardData) => {
         if (profileInfo) {
           setProfileInfo({
             ...profileInfo,
@@ -31,6 +31,14 @@ export function useOnboardUserProjectForm() {
           name: 'PROJECT CREATE',
           properties: {
             duringOnboard: true,
+          },
+        });
+        track({
+          name: 'ONBOARD',
+          properties: {
+            companySize: onboardData.companySize,
+            role: onboardData.role,
+            source: onboardData.source,
           },
         });
         push('/');
