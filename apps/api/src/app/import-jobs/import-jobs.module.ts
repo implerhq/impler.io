@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { SharedModule } from '@shared/shared.module';
 import { USECASES } from './usecase';
+import { SharedModule } from '@shared/shared.module';
 import { ImportJobsController } from './import-jobs.controller';
 
 @Module({

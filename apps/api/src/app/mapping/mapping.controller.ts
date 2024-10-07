@@ -13,10 +13,9 @@ import {
   DoMapping,
   GetMappings,
   FinalizeUpload,
-  ReanameFileHeadings,
-  DoMappingCommand,
   UpdateMappings,
   ValidateMapping,
+  ReanameFileHeadings,
 } from './usecases';
 
 @Controller('/mapping')
@@ -56,13 +55,11 @@ export class MappingController {
     ]);
 
     if (uploadInformation.status === UploadStatusEnum.UPLOADED) {
-      await this.doMapping.execute(
-        DoMappingCommand.create({
-          headings: uploadInformation.headings,
-          _templateId: uploadInformation._templateId,
-          _uploadId: uploadId,
-        })
-      );
+      await this.doMapping.execute({
+        headings: uploadInformation.headings,
+        _templateId: uploadInformation._templateId,
+        _uploadId: uploadId,
+      });
     }
 
     return this.getMappings.execute(uploadId);

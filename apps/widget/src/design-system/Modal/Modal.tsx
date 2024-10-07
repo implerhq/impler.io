@@ -1,6 +1,7 @@
 import { PropsWithChildren } from 'react';
-import useStyles from './Modal.style';
 import { Modal as MantineModal } from '@mantine/core';
+import useStyles from './Modal.style';
+
 interface IModalProps extends JSX.ElementChildrenAttribute {
   title?: string;
   opened: boolean;
@@ -11,8 +12,8 @@ interface IModalProps extends JSX.ElementChildrenAttribute {
 }
 
 export function Modal(props: PropsWithChildren<IModalProps>) {
-  const { children, onClose, opened, title, centered = true } = props;
   const { classes } = useStyles();
+  const { children, onClose, opened, centered = true } = props;
 
   return (
     <MantineModal
@@ -23,8 +24,8 @@ export function Modal(props: PropsWithChildren<IModalProps>) {
         opacity: 0.4,
         blur: 0.8,
       }}
+      withCloseButton={false}
       centered={centered}
-      title={title}
       classNames={classes}
     >
       {children}

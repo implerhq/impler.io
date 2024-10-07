@@ -123,3 +123,31 @@ export function deepMerge(
     return mergedResult;
   }
 }
+
+export function debounce(func: (...args: any[]) => void, wait: number) {
+  let timeout: any;
+
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+export function memoize<T extends (...args: any[]) => any>(fn: T): T {
+  const cache = new Map<string, ReturnType<T>>();
+
+  return function (this: any, ...args: Parameters<T>): ReturnType<T> {
+    const key = JSON.stringify(args);
+    if (cache.has(key)) {
+      return cache.get(key)!;
+    }
+    const result = fn.apply(this, args);
+    cache.set(key, result);
+
+    return result;
+  } as T;
+}

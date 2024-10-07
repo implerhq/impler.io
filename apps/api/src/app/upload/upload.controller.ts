@@ -11,6 +11,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Query,
   Res,
   UploadedFile,
@@ -21,15 +22,18 @@ import { ApiTags, ApiSecurity, ApiConsumes, ApiOperation, ApiParam, ApiQuery, Ap
 
 import { GetUpload, GetAsset } from './usecases';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
-import { getAssetMimeType, validateNotFound } from '@shared/helpers/common.helper';
 import { validateUploadStatus } from '@shared/helpers/upload.helpers';
 import { PaginationResponseDto } from '@shared/dtos/pagination-response.dto';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 import { ValidateTemplate } from '@shared/validations/valid-template.validation';
 import { ValidImportFile } from '@shared/validations/valid-import-file.validation';
+import { getAssetMimeType, validateNotFound } from '@shared/helpers/common.helper';
 
+import { SetHeaderDto } from './dtos/set-header.dto';
 import { UploadRequestDto } from './dtos/upload-request.dto';
 import {
+  SetHeaderRow,
+  GetPreviewRows,
   TerminateUpload,
   MakeUploadEntry,
   GetUploadColumns,
@@ -46,6 +50,8 @@ export class UploadController {
   constructor(
     private getAsset: GetAsset,
     private getUpload: GetUpload,
+    private setHeaderRow: SetHeaderRow,
+    private getPreviewRows: GetPreviewRows,
     private terminateUpload: TerminateUpload,
     private makeUploadEntry: MakeUploadEntry,
     private getUploadColumns: GetUploadColumns,
@@ -149,6 +155,27 @@ export class UploadController {
     res.setHeader('Content-Type', getAssetMimeType(assetName));
     res.setHeader('Content-Disposition', 'attachment; filename=' + assetName);
     content.pipe(res);
+  }
+
+  @Get(':uploadId/preview')
+  @ApiOperation({
+    summary: 'Get rows of the uploaded file',
+  })
+  async getPreviewRowsRoute(@Param('uploadId') uploadId: string) {
+    const uploadData = await this.getUploadProcessInfo.execute(uploadId);
+
+    // throw error if upload information not found
+    validateNotFound(uploadData, 'upload');
+
+    return this.getPreviewRows.execute((uploadData._uploadedFileId as unknown as FileEntity).path);
+  }
+
+  @Put(':uploadId/header')
+  @ApiOperation({
+    summary: 'Set header row of the uploaded file',
+  })
+  async setHeaderRowRoute(@Param('uploadId') uploadId: string, @Body() body: SetHeaderDto) {
+    await this.setHeaderRow.execute(uploadId, body);
   }
 
   @Get(':uploadId/rows/valid')

@@ -39,6 +39,8 @@ export class ImportJobsController {
     return this.createUserJob.execute({
       _templateId: templateId,
       url: createUserJobData.url,
+      extra: createUserJobData.extra,
+      externalUserId: createUserJobData.externalUserId,
     });
   }
 

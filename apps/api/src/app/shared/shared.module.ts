@@ -43,7 +43,6 @@ const DAL_MODELS = [
   ValidatorRepository,
   WebhookDestinationRepository,
   BubbleDestinationRepository,
-  UserJobRepository,
   JobMappingRepository,
   UserJobRepository,
   SchedulerRegistry,

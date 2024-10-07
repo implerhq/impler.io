@@ -316,7 +316,7 @@ export const HOW_HEARD_ABOUT_US = [
 ];
 
 export const PLACEHOLDERS = {
-  email: 'johndoe@company.org',
+  email: 'johndoe@acme.inc',
   password: '********',
   project: 'Acme Inc',
   fullName: 'John Doe',
