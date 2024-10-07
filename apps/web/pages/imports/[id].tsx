@@ -25,6 +25,7 @@ import { FourIcon } from '@assets/icons/Four.icon';
 import { ThreeIcon } from '@assets/icons/Three.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
 import { LeftArrowIcon } from '@assets/icons/LeftArrow.icon';
+import { IntegrationIcon } from '@assets/icons/Integration.icon';
 
 const Editor = dynamic(() => import('@components/imports/editor').then((mod) => mod.OutputEditor), {
   ssr: false,
@@ -45,6 +46,7 @@ export default function ImportDetails({}) {
     templateData,
     onUpdateClick,
     onDeleteClick,
+    onIntegrationClick,
     isTemplateDataLoading,
     onSpreadsheetImported,
   } = useImportDetails({
@@ -102,6 +104,9 @@ export default function ImportDetails({}) {
             disabled={!isImplerInitiated || columns?.length === 0 || isTemplateDataLoading}
           >
             Import
+          </Button>
+          <Button leftIcon={<IntegrationIcon />} id="import" onClick={onIntegrationClick}>
+            Integrate
           </Button>
           <Button variant="outline" color="red" onClick={onDeleteClick}>
             <DeleteIcon />
