@@ -33,5 +33,9 @@ export const useStyles = createStyles((theme) => ({
   },
   panel: {
     marginTop: theme.spacing.md,
+    minHeight: '65vh',
+  },
+  content: {
+    minHeight: '20vh',
   },
 }));
