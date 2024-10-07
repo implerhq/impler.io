@@ -105,7 +105,7 @@ export default function ImportDetails({}) {
           >
             Import
           </Button>
-          <Button leftIcon={<IntegrationIcon />} id="import" onClick={onIntegrationClick}>
+          <Button leftIcon={<IntegrationIcon />} id="integration" onClick={onIntegrationClick}>
             Integrate
           </Button>
           <Button variant="outline" color="red" onClick={onDeleteClick}>
