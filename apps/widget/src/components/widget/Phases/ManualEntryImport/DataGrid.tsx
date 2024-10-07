@@ -5,10 +5,10 @@ import { useEffect, useRef, useState } from 'react';
 import { PhasesEnum } from '@types';
 import { Button } from '@ui/Button';
 import { MANUAL_ENTRY_LIMIT } from '@config';
-import { WIDGET_TEXTS } from '@impler/client';
 import { Table } from 'components/Common/Table';
 import { Footer } from 'components/Common/Footer';
 import { LoadingOverlay } from '@ui/LoadingOverlay';
+import { IUpload, WIDGET_TEXTS } from '@impler/client';
 import { SegmentedControl } from '@ui/SegmentedControl';
 import { useDataGrid } from '@hooks/DataGrid/useDataGrid';
 import { useCompleteImport } from '@hooks/useCompleteImport';
@@ -18,8 +18,8 @@ import { useBatchedUpdateRecord } from '@hooks/DataGrid/useBatchUpdateRecords';
 
 interface IPhase12Props {
   onPrevClick: () => void;
-  onNextClick: () => void;
   texts: typeof WIDGET_TEXTS;
+  onNextClick: (uploadData: IUpload, importedData?: Record<string, any>[]) => void;
 }
 
 export function DataGrid({ onNextClick, onPrevClick, texts }: IPhase12Props) {
