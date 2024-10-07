@@ -2,7 +2,7 @@ import Link from 'next/link';
 import React, { ReactNode } from 'react';
 import { Code, List } from '@mantine/core';
 
-import { colors } from '@config';
+import { colors, DOCUMENTATION_REFERENCE_LINKS } from '@config';
 import { CodeBlock } from './ContentBlock';
 import { ModifiedText } from './ModifiedText';
 import { IntegrationEnum } from '@impler/shared';
@@ -16,7 +16,7 @@ interface IContentProps {
 
 export const integrationData: Record<IntegrationEnum, Record<string, (data: IContentProps) => ReactNode>> = {
   [IntegrationEnum.JAVASCRIPT]: {
-    'Add Script': ({ embedScriptUrl }) => (
+    '1) Add Script': ({ embedScriptUrl }) => (
       <>
         <ModifiedText>Add embed script before closing body tag.</ModifiedText>
         <CodeBlock
@@ -25,12 +25,12 @@ export const integrationData: Record<IntegrationEnum, Record<string, (data: ICon
         />
       </>
     ),
-    'Add Import Button': () => (
+    '2) Add Import Button': () => (
       <>
         <CodeBlock code={`<button disabled id="impler-btn">Import</button>`} language="markup" />
       </>
     ),
-    'Initialize Widget': () => (
+    '3) Initialize Widget': () => (
       <>
         <ModifiedText size="sm">
           Before the widget gets shown you have to call <Code>init</Code> method, which initialize the importer.
@@ -125,9 +125,9 @@ window.impler.show({
   templateId: "${templateId}",
   accessToken: "${accessToken}",
   data: [
-    { country: 'ABC' },
-    { country: 'DEF' },
-    { country: 'GHE' },
+    { country: "Germany" },
+    { country: "Australia" },
+    { country: "Indonesia" },
   ]
 });
         `}
@@ -140,7 +140,7 @@ window.impler.show({
   ...
   texts: {
     STEPPER_TITLES: {
-      REVIEW_DATA: 'Check Data', // New Title
+      REVIEW_DATA: "Check Data", // New Title
     },
   },
 });
@@ -187,9 +187,9 @@ window.impler.show({
   ...
   schema: [
     {
-      key: 'country',
-      name: 'Country',
-      type: 'String'
+      key: "country",
+      name: "Country",
+      type: "String"
     }
   ],
   output: {
@@ -214,7 +214,7 @@ window.impler.show({
 window.impler.show({
   ...
   extra: {
-      userId: '4ddhodw3',
+      userId: "4ddhodw3",
       time: new Date()
   }
 });
@@ -243,7 +243,7 @@ window.impler.close();
         code={`
 window.impler.show({
   ...
-  primaryColor: '#5f45ff'
+  primaryColor: "#5f45ff"
 });
 `}
       />
@@ -252,7 +252,7 @@ window.impler.show({
       <CodeBlock
         code={`
 window.impler.show({
-  authHeaderValue: () => '$2y$10$M5X2QYelhy1AV.2GgnlEm.aBPUG9CR4lNYP.kQcMP8YWNA.isM446'
+  authHeaderValue: () => "..."
 });
   `}
       />
@@ -299,7 +299,28 @@ window.impler.show({
           });
 
           window.impler.on('message', (eventData) => {
-            // Handle the messages from the widget
+            switch (eventData.type) {
+              case "WIDGET_READY":
+                console.log("Widget is ready");
+                break;
+              case "CLOSE_WIDGET":
+                console.log("Widget is closed");
+                break;
+              case "UPLOAD_STARTED":
+                console.log("Upload started", eventData.value);
+                break;
+              case "UPLOAD_TERMINATED":
+                console.log("Upload skipped in middle", eventData.value);
+                break;
+              case "UPLOAD_COMPLETED":
+                console.log("Upload completed", eventData.value);
+                break;
+              case "DATA_IMPORTED":
+                console.log("Data imported", eventData.value);
+                break;
+              default:
+                break;
+            }
           }, uuid);
         }
       };
@@ -313,27 +334,35 @@ window.impler.show({
     ),
   },
   [IntegrationEnum.REACT]: {
-    'Add Script': ({ embedScriptUrl }) => (
+    '1) Add Script': ({ embedScriptUrl }) => (
       <>
-        <ModifiedText>Add embed script before closing body tag.</ModifiedText>
-        <CodeBlock code={`<script type='text/javascript' src='${embedScriptUrl}' async></script>`} />
+        <ModifiedText>Add embed script before closing body tag</ModifiedText>
+        <CodeBlock
+          code={`
+// ReactJS
+<script type='text/javascript' src='${embedScriptUrl}' async></script>
+
+// NextJS
+import Script from 'next/script';
+...
+<Script
+  type="text/javascript"
+  src="${embedScriptUrl}"
+  strategy="beforeInteractive"
+/>
+          `}
+        />
       </>
     ),
-    'Install Package': () => (
+    '2) Install Package': () => <CodeBlock code="npm i @impler/react" language="bash" />,
+    '3) Add Import Button': ({ accessToken, projectId, templateId }) => (
       <>
-        <ModifiedText size="sm">Install the Package</ModifiedText>
-        <CodeBlock code="npm i @impler/react" language="jsx" />
-      </>
-    ),
-    'Add Import Button': ({ accessToken, projectId, templateId }) => (
-      <>
-        <ModifiedText mt="sm">
-          <Code>@impler/react</Code> provides a headless <code>useImpler</code> hook that you can use to show an import
-          widget in your application.
+        <ModifiedText>
+          Use <Code>useImpler</Code> hook provided by <Code>@impler/react</Code> to show an Importer in application
         </ModifiedText>
         <CodeBlock
           code={`
-import { useImpler } from '@impler/react';
+import { useImpler } from "@impler/react";
 
 const { showWidget, isImplerInitiated } = useImpler({
   projectId: "${projectId}",
@@ -346,38 +375,19 @@ const { showWidget, isImplerInitiated } = useImpler({
         />
       </>
     ),
-    'Usage Example': ({ accessToken, projectId, templateId }) => (
-      <>
-        <CodeBlock
-          code={`
-import { useImpler } from '@impler/react';
-
-const { showWidget, isImplerInitiated } = useImpler({
-  projectId: "${projectId}",
-  templateId: "${templateId}",
-  accessToken: "${accessToken}",
-});
-
-function MyComponent() {
-  return <button disabled={!isImplerInitiated} onClick={showWidget}>Import</button>;
-}`}
-          language="javascript"
-        />
-      </>
-    ),
     'Customize Texts': ({ accessToken, projectId, templateId }) => (
       <>
         <CodeBlock
           code={`
-import { useImpler } from '@impler/react';
+import { useImpler } from "@impler/react";
 
 const { showWidget, isImplerInitiated } = useImpler({
-    projectId: ${projectId},
-    templateId: ${templateId},
-    accessToken: ${accessToken},
+    projectId: "${projectId}",
+    templateId: "${templateId}",
+    accessToken: "${accessToken}",
     texts: {
       STEPPER_TITLES: {
-          REVIEW_DATA: 'Check Data', // New Title
+          REVIEW_DATA: "Check Data", // New Title
       },
     },
 });
@@ -392,9 +402,9 @@ const { showWidget, isImplerInitiated } = useImpler({
         <CodeBlock
           code={`
 const { showWidget, isImplerInitiated } = useImpler({
-  projectId: ${projectId},
-    templateId: ${templateId},
-    accessToken: ${accessToken},
+  projectId: "${projectId}",
+  templateId: "${templateId}",
+  accessToken: "${accessToken}",
   onUploadStart: (uploadInfo) => {
       console.log("User Started Importing", uploadInfo);
   },
@@ -415,32 +425,17 @@ const { showWidget, isImplerInitiated } = useImpler({
         />
       </>
     ),
-    'Data Seeding in Sample File': () => (
-      <>
-        <CodeBlock
-          code={`
-showWidget({
-  data: [
-      { country: 'ABC' },
-      { country: 'DEF' },
-      { country: 'GHE' },
-  ]
-});`}
-          language="javascript"
-        />
-      </>
-    ),
     'Providing Runtime Schema': () => (
       <>
         <CodeBlock
           code={`
 showWidget({
   schema: [
-      {
-        key: 'country',
-        name: 'Country',
-        type: 'String'
-      }
+    {
+      key: "country",
+      name: "Country",
+      type: "String"
+    }
   ],
   output: {
     "%data%": {
@@ -454,6 +449,23 @@ showWidget({
     "fileName": "{{fileName}}",
     "extra": "{{extra}}"
   }
+});`}
+          language="javascript"
+        />
+      </>
+    ),
+    'Data Seeding in Sample File': () => (
+      <>
+        <CodeBlock
+          code={`
+showWidget({
+  data: [
+    { country: "Germany" },
+    { country: "Australia" },
+    { country: "Bharat" },
+    { country: "Indonesia" },
+    ...
+  ]
 });`}
           language="javascript"
         />
@@ -493,16 +505,45 @@ showWidget({
         />
       </>
     ),
-    'Programmatically Closing Import Widget': ({ accessToken, projectId, templateId }) => (
+    'Using Typescript': () => (
+      <CodeBlock
+        code={`
+import { useImpler, ColumnTypes, ValidationTypes } from "@impler/react";
+
+const { showWidget } = useImpler({ ... })
+
+showWidget({
+  schema: [
+    {
+      key: "country",
+      name: "Country",
+      type: ColumnTypes.STRING,
+      "validations": [
+        {
+          "validate": ValidationTypes.LENGTH,
+          "min": 5,
+          "max": 100,
+          "errorMessage": "Country Name must be between 5 to 100 characters"
+        }
+      ]
+    }
+  ]
+});
+`}
+        language="javascript"
+      />
+    ),
+    'Closing Import Widget': ({ accessToken, projectId, templateId }) => (
       <>
         <CodeBlock
-          code={`const { showWidget, closeWidget, isImplerInitiated } = useImpler({
-  projectId: ${projectId},
-   templateId: ${templateId},
-    accessToken: ${accessToken},
+          code={`
+const { showWidget, closeWidget, isImplerInitiated } = useImpler({
+  projectId: "${projectId}",
+  templateId: "${templateId}",
+  accessToken: "${accessToken}",
   onDataImported: (data) => {
-      console.log("Imported data:", data);
-      closeWidget();
+    console.log("Imported data:", data);
+    closeWidget();
   }
 });`}
           language="javascript"
@@ -512,12 +553,14 @@ showWidget({
     'Changing Import Title': ({ accessToken, projectId, templateId }) => (
       <>
         <CodeBlock
-          code={`const { showWidget, isImplerInitiated } = useImpler({
-  projectId: ${projectId},
-   templateId: ${templateId},
-    accessToken: ${accessToken},
+          code={`
+const { showWidget, isImplerInitiated } = useImpler({
+  projectId: "${projectId}",
+  templateId: "${templateId}",
+  accessToken: "${accessToken}",
   title: "Employee Import"
-});`}
+});
+`}
           language="javascript"
         />
       </>
@@ -526,10 +569,10 @@ showWidget({
       <>
         <CodeBlock
           code={`const { showWidget, isImplerInitiated } = useImpler({
-  projectId: ${templateId},
-  templateId: ${projectId},
-  accessToken: ${accessToken},
-  primaryColor: '#5f45ff'
+  projectId: "${templateId}",
+  templateId: "${projectId}",
+  accessToken: "${accessToken}",
+  primaryColor: "#5f45ff"
 });`}
           language="javascript"
         />
@@ -539,9 +582,9 @@ showWidget({
       <>
         <CodeBlock
           code={`const { showWidget, isImplerInitiated } = useImpler({
-   projectId: ${templateId},
-  templateId: ${projectId},
-  accessToken: ${accessToken},
+   projectId: "${templateId}",
+  templateId: "${projectId}",
+  accessToken: "${accessToken}",
   authHeaderValue: async () => {
       return "..."
   }
@@ -552,7 +595,7 @@ showWidget({
     ),
   },
   [IntegrationEnum.ANGULAR]: {
-    'Add Script': () => (
+    '1) Add Script': () => (
       <>
         <CodeBlock
           code="<script type='text/javascript' src='https://embed.impler.io/embed.umd.min.js' async></script>"
@@ -560,28 +603,28 @@ showWidget({
         />
       </>
     ),
-    'Install Package': () => (
+    '2) Install Package': () => (
       <>
-        <CodeBlock code="npm i @impler/angular" language="javascript" />
+        <CodeBlock code="npm i @impler/angular" language="bash" />
       </>
     ),
-    'Use Impler Service': ({ accessToken, projectId, templateId }) => (
+    '3) Use Impler Service': ({ accessToken, projectId, templateId }) => (
       <>
         <CodeBlock
-          code={`import { RouterOutlet } from '@angular/router';
-import { isPlatformBrowser } from '@angular/common';
-import { Component, Inject, PLATFORM_ID } from '@angular/core';
-import { EventCalls, EventTypesEnum, ImplerService } from '@impler/angular';
+          code={`import { RouterOutlet } from "@angular/router";
+import { isPlatformBrowser } from "@angular/common";
+import { Component, Inject, PLATFORM_ID } from "@angular/core";
+import { EventCalls, EventTypesEnum, ImplerService } from "@impler/angular";
 
 @Component({
-  selector: 'app-root',
+  selector: "app-root",
   standalone: true,
   imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
+  templateUrl: "./app.component.html",
+  styleUrls: ["./app.component.css"],
 })
 export class AppComponent {
-  title = 'impler-app';
+  title = "impler-app";
 
   constructor(
     private implerService: ImplerService,
@@ -594,11 +637,11 @@ export class AppComponent {
 
   public show(): void {
     this.implerService.showWidget({
-      colorScheme: 'dark',
-      projectId: ${templateId},
-  templateId: ${projectId},
-  accessToken: ${accessToken},
-    });
+      colorScheme: "dark",
+      projectId: "${templateId}",
+      templateId: "${projectId}",
+      accessToken: "${accessToken}",
+  });
   }
 }`}
           language="typescript"
@@ -613,7 +656,7 @@ export class AppComponent {
           ...
           texts: {
             STEPPER_TITLES: {
-              REVIEW_DATA: 'Check Data', // New Title
+              REVIEW_DATA: "Check Data", // New Title
             },
           }
         });
@@ -627,7 +670,7 @@ export class AppComponent {
         code={`public show(): void {
   this.implerService.showWidget({
     ...
-    colorScheme: 'dark',
+    colorScheme: "dark",
   });
 }`}
         language="javascript"
@@ -639,9 +682,9 @@ export class AppComponent {
         code={` public show(): void {
         this.implerService.showWidget({
           data: [
-              { country: 'Canada' },
-              { country: 'Australia' },
-              { country: 'Germany' },
+              { country: "Canada" },
+              { country: "Australia" },
+              { country: "Germany" },
           ]
         });
 }`}
@@ -655,9 +698,9 @@ export class AppComponent {
   this.implerService.showWidget({
     schema: [
       {
-        key: 'country',
-        name: 'Country',
-        type: 'String'
+        key: "country",
+        name: "Country",
+        type: "String"
       }
     ],
     output: {
@@ -714,14 +757,14 @@ export class AppComponent {
 
     'Using Typescript': () => (
       <CodeBlock
-        code={`import { useImpler, ColumnTypes, ValidationTypes } from '@impler/angular';
+        code={`import { useImpler, ColumnTypes, ValidationTypes } from "@impler/angular";
 
 public show(): void {
   this.implerService.showWidget({
     schema: [
       {
-        key: 'country',
-        name: 'Country',
+        key: "country",
+        name: "Country",
         type: ColumnTypes.STRING,
         "validations": [
           {
@@ -744,7 +787,7 @@ public show(): void {
         code={`public show(): void {
   this.implerService.showWidget({
     extra: {
-      userId: '4ddhodw3',
+      userId: "4ddhodw3",
       time: new Date().this string()
     }
   });
@@ -777,7 +820,7 @@ public show(): void {
       <CodeBlock
         code={`public show(): void {
   this.implerService.showWidget({
-    primaryColor: '#5f45ff'
+    primaryColor: "#5f45ff"
   });
 }`}
         language="typescript"
@@ -802,13 +845,13 @@ public show(): void {
         <ModifiedText>Usage Example</ModifiedText>
         <CodeBlock
           code={`...
-import { EventCalls, EventTypesEnum, ImplerService } from '@impler/angular';
+import { EventCalls, EventTypesEnum, ImplerService } from "@impler/angular";
 
 @Component({
   ...
 })
 export class AppComponent {
-  title = 'impler-app';
+  title = "impler-app";
 
   constructor(
     private implerService: ImplerService,
@@ -819,7 +862,7 @@ export class AppComponent {
       this.implerService.subscribeToWidgetEvents((eventData: EventCalls) => {
         switch (eventData.type) {
           case EventTypesEnum.DATA_IMPORTED:
-            console.log('Data Imported', eventData.value);
+            console.log("Data Imported", eventData.value);
             break;
           default:
             console.log(eventData);
@@ -837,39 +880,58 @@ export class AppComponent {
   [IntegrationEnum.BUBBLE]: {
     'Integration Steps': () => (
       <>
-        <List type="ordered">
+        <List type="ordered" styles={{ item: { margin: '10px 0', paddingLeft: '20px' } }}>
           <List.Item>
-            Setting Bubble App
+            <strong>Setting Up Bubble App</strong>
             <List type="unordered">
-              <List.Item>You must have a paid bubble application plan to use the Bubble Data API</List.Item>
+              <List.Item>
+                <strong>You must have a paid Bubble application plan to use the Bubble Data API.</strong>
+              </List.Item>
             </List>
             <List type="ordered">
-              <List.Item>Setting up data type</List.Item>
-              <List.Item>API Settings</List.Item>
+              <List.Item>Set up the data type.</List.Item>
+              <List.Item>Configure API settings.</List.Item>
             </List>
           </List.Item>
+
           <List.Item>
-            Setting up the Impler Application
+            <strong>Setting Up the Impler Application</strong>
             <List type="ordered">
-              <List.Item>Click on the &quot;Create Import&quot; to create the new import</List.Item>
-              <List.Item>Give name and click on &quot;Create & Continue&quot;</List.Item>
-              <List.Item>Enable Bubble.io destination</List.Item>
-              <List.Item>Map Columns</List.Item>
+              <List.Item>Click on &quot;Create Import&quote; to initiate a new import.</List.Item>
+              <List.Item>Provide a name and click &quot;Create & Continue.&quot;</List.Item>
+              <List.Item>Enable the Bubble.io destination.</List.Item>
+              <List.Item>Map columns as necessary.</List.Item>
             </List>
           </List.Item>
+
           <List.Item>
-            Using the Plugin
+            <strong>Using the Plugin</strong>
             <List type="ordered">
-              <List.Item>Install plugin</List.Item>
-              <List.Item>Using the Plugin</List.Item>
+              <List.Item>Install the plugin.</List.Item>
+              <List.Item>Utilize the plugin features.</List.Item>
             </List>
           </List.Item>
-          <List.Item>Considering UserId while importing data</List.Item>
-          <List.Item>Theming Importer</List.Item>
-          <List.Item>Configuring multiple Importers on Page (In Progress)</List.Item>
+
+          <List.Item>
+            <strong>Considering UserId while Importing Data</strong>
+          </List.Item>
+
+          <List.Item>
+            <strong>Theming the Importer</strong>
+          </List.Item>
+
+          <List.Item>
+            <strong>Configuring Multiple Importers on Page (In Progress)</strong>
+          </List.Item>
         </List>
-        <Link href="#">
-          <ModifiedText color={colors.yellow}>Visit Documentation with Detailed Steps</ModifiedText>
+
+        <Link href={DOCUMENTATION_REFERENCE_LINKS.bubbleIo}>
+          <ModifiedText
+            color={colors.yellow}
+            style={{ textDecoration: 'underline', marginTop: '20px', display: 'block' }}
+          >
+            Visit Documentation with Detailed Steps
+          </ModifiedText>
         </Link>
       </>
     ),
