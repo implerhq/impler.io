@@ -22,7 +22,11 @@ const { publicRuntimeConfig } = getConfig();
 if (typeof window !== 'undefined' && publicRuntimeConfig.NEXT_PUBLIC_AMPLITUDE_ID) {
   init(publicRuntimeConfig.NEXT_PUBLIC_AMPLITUDE_ID, {
     defaultTracking: {
+      sessions: false,
+      pageViews: false,
       attribution: false,
+      fileDownloads: false,
+      formInteractions: false,
     },
   });
 }
