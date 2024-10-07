@@ -13,27 +13,27 @@ export const IntegrationIcon = ({ size = 'lg' }: IconType) => {
       height={IconSizes[size]}
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clip-path="url(#clip0_4865_3178)">
+      <g clipPath="url(#clip0_4865_3178)">
         <path
           d="M5.83333 7.16602L2.5 10.4993L5.83333 13.8327"
           stroke="white"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M14.168 7.16602L17.5013 10.4993L14.168 13.8327"
           stroke="white"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M11.6654 3.83398L8.33203 17.1673"
           stroke="white"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
       </g>
       <defs>
