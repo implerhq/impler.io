@@ -93,6 +93,7 @@ export function useImportDetails({ templateId }: useImportDetailProps) {
             templateId={templateData?._id}
             projectId={templateData?._projectId}
             accessToken={profileInfo?.accessToken}
+            integrations={templateData.integration}
           />
         ),
         withCloseButton: false,
