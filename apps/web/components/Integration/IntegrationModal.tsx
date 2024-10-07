@@ -1,7 +1,9 @@
 import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import { Flex, Title, useMantineColorScheme } from '@mantine/core';
+
 import { colors } from '@config';
+import { track } from '@libs/amplitude';
 import { IntegrationEnum } from '@impler/shared';
 import { IntegrationTabs } from './IntegrationTabs';
 import { integrationData } from './IntegrationData';
@@ -27,6 +29,26 @@ export function IntegrationModal({ accessToken, projectId, templateId, integrati
     setSelectedTab(Object.keys(integrationData[integration])[0]);
   }, [integration]);
 
+  const onIntegrationFrameworkChange = (value: string) => {
+    track({
+      name: 'CHANGE INTEGRATION FRAMEWORK',
+      properties: {
+        framework: value,
+      },
+    });
+    setIntegration(value as IntegrationEnum);
+  };
+
+  const onIntegrationStepChange = (newStep: string) => {
+    track({
+      name: 'CHANGE INTEGRATION STEPS',
+      properties: {
+        step: newStep,
+      },
+    });
+    setSelectedTab(newStep);
+  };
+
   const tabs = Object.keys(integrationData[integration]);
 
   return (
@@ -35,12 +57,12 @@ export function IntegrationModal({ accessToken, projectId, templateId, integrati
         <Title order={3} color={colorScheme === 'dark' ? colors.StrokeLight : colors.black}>
           Integrate
         </Title>
-        <IntegrationSelector integration={integration} setIntegration={setIntegration} />
+        <IntegrationSelector integration={integration} setIntegration={onIntegrationFrameworkChange} />
       </Flex>
 
       <IntegrationTabs
         value={selectedTab}
-        onTabChange={setSelectedTab}
+        onTabChange={onIntegrationStepChange}
         items={tabs.map((tab) => ({
           id: tab.toLowerCase().replace(/\s+/g, ''),
           value: tab,

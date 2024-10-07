@@ -47,7 +47,9 @@ type TrackData =
     }
   | {
       name: 'IMPORT CREATE';
-      properties: Record<string, never>;
+      properties: {
+        framework: string;
+      };
     }
   | {
       name: 'OUTPUT FORMAT UPDATED';
@@ -164,6 +166,22 @@ type TrackData =
       name: 'SAVE VALIDATION';
       properties: {
         isValid: boolean;
+      };
+    }
+  | {
+      name: 'INTEGRATE';
+      properties: Record<string, never>;
+    }
+  | {
+      name: 'CHANGE INTEGRATION FRAMEWORK';
+      properties: {
+        framework: string;
+      };
+    }
+  | {
+      name: 'CHANGE INTEGRATION STEPS';
+      properties: {
+        step: string;
       };
     };
 
