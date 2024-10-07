@@ -11,13 +11,13 @@ export const useStyles = createStyles((theme) => ({
     color: theme.white,
     fontWeight: 600,
     fontSize: theme.fontSizes.xs,
-    padding: 10,
+    padding: 8,
     border: `1px solid rgba(255, 255, 255, 0.5)`,
     borderRadius: 0,
     transition: 'all 0.2s ease',
 
     '&:hover': {
-      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      backgroundColor: colors.darkGrey,
       cursor: 'pointer',
     },
 
