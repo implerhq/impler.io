@@ -18,7 +18,7 @@ export const integrationData: Record<IntegrationEnum, Record<string, (data: ICon
   [IntegrationEnum.JAVASCRIPT]: {
     '1) Add Script': ({ embedScriptUrl }) => (
       <>
-        <ModifiedText>Add embed script before closing body tag.</ModifiedText>
+        <ModifiedText>Add embed script before closing body tag</ModifiedText>
         <CodeBlock
           code={`<script type='text/javascript' src='${embedScriptUrl}' async></script>`}
           language="javascript"
@@ -601,6 +601,7 @@ const { showWidget, isImplerInitiated } = useImpler({
   [IntegrationEnum.ANGULAR]: {
     '1) Add Script': ({ embedScriptUrl }) => (
       <>
+        <ModifiedText>Add embed script before closing body tag</ModifiedText>
         <CodeBlock
           code={`<script type="text/javascript" src="${embedScriptUrl}" async></script>`}
           language="javascript"
@@ -899,11 +900,6 @@ export class AppComponent {
         <List type="ordered" styles={{ item: { margin: '10px 0', paddingLeft: '20px' } }}>
           <List.Item>
             <strong>Setting Up Bubble App</strong>
-            <List type="unordered">
-              <List.Item>
-                <strong>You must have a paid Bubble application plan to use the Bubble Data API.</strong>
-              </List.Item>
-            </List>
             <List type="ordered">
               <List.Item>Set up the data type.</List.Item>
               <List.Item>Configure API settings.</List.Item>
@@ -921,23 +917,27 @@ export class AppComponent {
           </List.Item>
 
           <List.Item>
-            <strong>Using the Plugin</strong>
+            <strong>Use the Plugin</strong>
             <List type="ordered">
               <List.Item>Install the plugin.</List.Item>
-              <List.Item>Utilize the plugin features.</List.Item>
+              <List.Item>
+                Use the Plugin
+                <List type="ordered">
+                  <List.Item>Initialize Importer on Page Load</List.Item>
+                  <List.Item>Add a Button on the Page and Add Workflow</List.Item>
+                  <List.Item>Add Workflow to Open Importer on Button Click</List.Item>
+                  <List.Item>Configure Importer</List.Item>
+                </List>
+              </List.Item>
             </List>
           </List.Item>
 
           <List.Item>
-            <strong>Considering UserId while Importing Data</strong>
+            <strong>Provide consideration for UserId if neede</strong>
           </List.Item>
 
           <List.Item>
-            <strong>Theming the Importer</strong>
-          </List.Item>
-
-          <List.Item>
-            <strong>Configuring Multiple Importers on Page (In Progress)</strong>
+            <strong>Theme the Importer by providing theme color</strong>
           </List.Item>
         </List>
 
