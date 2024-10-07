@@ -6,6 +6,7 @@ import { IntegrationEnum } from '@impler/shared';
 import { IntegrationTabs } from './IntegrationTabs';
 import { integrationData } from './IntegrationData';
 import { IntegrationSelector } from './IntegrationSelector';
+import { useImportDetails } from '@hooks/useImportDetails';
 
 interface IIntegrationModalProps {
   templateId: string;
@@ -16,9 +17,12 @@ interface IIntegrationModalProps {
 const { publicRuntimeConfig } = getConfig();
 
 export function IntegrationModal({ accessToken, projectId, templateId }: IIntegrationModalProps) {
+  const { templateData } = useImportDetails({ templateId });
   const { colorScheme } = useMantineColorScheme();
   const [selectedTab, setSelectedTab] = useState<string>('Add Script');
-  const [integration, setIntegration] = useState<IntegrationEnum>(IntegrationEnum.JAVASCRIPT);
+  const [integration, setIntegration] = useState<IntegrationEnum>(
+    (templateData?.integration as IntegrationEnum) || IntegrationEnum.JAVASCRIPT
+  );
 
   useEffect(() => {
     setSelectedTab(Object.keys(integrationData[integration])[0]);
