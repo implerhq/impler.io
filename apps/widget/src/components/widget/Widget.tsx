@@ -124,7 +124,11 @@ export function Widget() {
       : flow === FlowsEnum.MANUAL_ENTRY
       ? {
           [PhasesEnum.MANUAL_ENTRY]: (
-            <DataGrid texts={texts} onPrevClick={onUploadResetClick} onNextClick={onComplete} />
+            <DataGrid
+              texts={texts}
+              onPrevClick={onUploadResetClick}
+              onNextClick={(uploadData, importedData) => onComplete(uploadData, importedData, true)}
+            />
           ),
         }
       : {
