@@ -66,6 +66,14 @@ type TrackData =
       };
     }
   | {
+      name: 'ONBOARD';
+      properties: {
+        companySize: string;
+        role: string;
+        source: string;
+      };
+    }
+  | {
       name: 'PROJECT SWITCH';
       properties: Record<string, never>;
     }
@@ -150,6 +158,12 @@ type TrackData =
       name: 'PLAN TOGGLE DURATION';
       properties: {
         yearly: boolean;
+      };
+    }
+  | {
+      name: 'SAVE VALIDATION';
+      properties: {
+        isValid: boolean;
       };
     };
 
