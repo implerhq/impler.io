@@ -1,4 +1,5 @@
 import React from 'react';
+import { Global } from '@emotion/react';
 import Head from 'next/head';
 import getConfig from 'next/config';
 import { Poppins } from 'next/font/google';
@@ -16,7 +17,6 @@ import { track } from '@libs/amplitude';
 import { addOpacityToHex } from 'shared/utils';
 import { StoreWrapper } from 'store/StoreWrapper';
 import { mantineConfig, colors, API_KEYS, ROUTES, NOTIFICATION_KEYS } from '@config';
-import { Global } from '@emotion/react';
 
 const { publicRuntimeConfig } = getConfig();
 

@@ -87,7 +87,7 @@ export function useImportDetails({ templateId }: useImportDetailProps) {
       modals.open({
         modalId: MODAL_KEYS.INTEGRATION_DETAILS,
         centered: true,
-        size: 'calc(100vw - 3rem)',
+        size: 'calc(70vw - 3rem)',
         children: (
           <IntegrationModal
             templateId={templateData?._id}

@@ -12,7 +12,7 @@ export const useStyles = createStyles((theme) => ({
     fontWeight: 600,
     fontSize: theme.fontSizes.xs,
     padding: 8,
-    border: `1px solid rgba(255, 255, 255, 0.5)`,
+    border: `0.5px solid ${colors.StrokeLight}`,
     borderRadius: 0,
     transition: 'all 0.2s ease',
 
