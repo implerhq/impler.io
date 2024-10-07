@@ -252,7 +252,9 @@ window.impler.show({
       <CodeBlock
         code={`
 window.impler.show({
-  authHeaderValue: () => "..."
+  authHeaderValue: async () => {
+    return "..."
+  }
 });
   `}
       />
@@ -387,7 +389,7 @@ const { showWidget, isImplerInitiated } = useImpler({
     accessToken: "${accessToken}",
     texts: {
       STEPPER_TITLES: {
-          REVIEW_DATA: "Check Data", // New Title
+        REVIEW_DATA: "Check Data", // New Title
       },
     },
 });
@@ -530,7 +532,7 @@ showWidget({
   ]
 });
 `}
-        language="javascript"
+        language="typescript"
       />
     ),
     'Closing Import Widget': ({ accessToken, projectId, templateId }) => (
@@ -568,7 +570,8 @@ const { showWidget, isImplerInitiated } = useImpler({
     'Changing Theme Color': ({ accessToken, projectId, templateId }) => (
       <>
         <CodeBlock
-          code={`const { showWidget, isImplerInitiated } = useImpler({
+          code={`
+const { showWidget, isImplerInitiated } = useImpler({
   projectId: "${templateId}",
   templateId: "${projectId}",
   accessToken: "${accessToken}",
@@ -581,12 +584,13 @@ const { showWidget, isImplerInitiated } = useImpler({
     'Providing Authentication Header': ({ accessToken, projectId, templateId }) => (
       <>
         <CodeBlock
-          code={`const { showWidget, isImplerInitiated } = useImpler({
-   projectId: "${templateId}",
+          code={`
+const { showWidget, isImplerInitiated } = useImpler({
+  projectId: "${templateId}",
   templateId: "${projectId}",
   accessToken: "${accessToken}",
   authHeaderValue: async () => {
-      return "..."
+    return "..."
   }
 });`}
           language="javascript"
@@ -595,14 +599,15 @@ const { showWidget, isImplerInitiated } = useImpler({
     ),
   },
   [IntegrationEnum.ANGULAR]: {
-    '1) Add Script': () => (
+    '1) Add Script': ({ embedScriptUrl }) => (
       <>
         <CodeBlock
-          code="<script type='text/javascript' src='https://embed.impler.io/embed.umd.min.js' async></script>"
+          code={`<script type="text/javascript" src="${embedScriptUrl}" async></script>`}
           language="javascript"
         />
       </>
     ),
+
     '2) Install Package': () => (
       <>
         <CodeBlock code="npm i @impler/angular" language="bash" />
@@ -611,7 +616,8 @@ const { showWidget, isImplerInitiated } = useImpler({
     '3) Use Impler Service': ({ accessToken, projectId, templateId }) => (
       <>
         <CodeBlock
-          code={`import { RouterOutlet } from "@angular/router";
+          code={`
+import { RouterOutlet } from "@angular/router";
 import { isPlatformBrowser } from "@angular/common";
 import { Component, Inject, PLATFORM_ID } from "@angular/core";
 import { EventCalls, EventTypesEnum, ImplerService } from "@impler/angular";
@@ -638,12 +644,12 @@ export class AppComponent {
 public show(): void {
   this.implerService.showWidget({
     colorScheme: "dark",
-      projectId: "${templateId}",
-      templateId: "${projectId}",
-      accessToken: "${accessToken}",
-    });
-    }
-  }`}
+    projectId: "${templateId}",
+    templateId: "${projectId}",
+    accessToken: "${accessToken}",
+  })
+  }
+}`}
           language="typescript"
         />
       </>
@@ -651,16 +657,17 @@ public show(): void {
 
     'Customize Texts': () => (
       <CodeBlock
-        code={`public show(): void {
-        this.implerService.showWidget({
-          ...
-          texts: {
-            STEPPER_TITLES: {
-              REVIEW_DATA: "Check Data", // New Title
-            },
-          }
-        });
-      `}
+        code={`
+public show(): void {
+  this.implerService.showWidget({
+    ...
+    texts: {
+    STEPPER_TITLES:{
+      REVIEW_DATA: "Check Data", // New Title     
+    },
+  }
+});
+`}
         language="typescript"
       />
     ),
@@ -684,9 +691,9 @@ public show(): void {
 public show(): void {
   this.implerService.showWidget({
     data: [
-    { country: "Canada"},
-    { country: "Australia"},
-    { country: "Germany"},
+        { country: "Canada"}, // spacing
+        { country: "Australia"},
+        { country: "Germany"},
     ]
   });
 }`}
@@ -696,7 +703,8 @@ public show(): void {
 
     'Providing Runtime Schema': () => (
       <CodeBlock
-        code={`public show(): void {
+        code={`
+public show(): void {
   this.implerService.showWidget({
     schema: [
       {
@@ -725,7 +733,8 @@ public show(): void {
 
     'Advanced Validations': () => (
       <CodeBlock
-        code={`public show(): void {
+        code={`
+public show(): void {
   this.implerService.showWidget({
     schema: [
       {
@@ -756,10 +765,10 @@ public show(): void {
         language="typescript"
       />
     ),
-
     'Using Typescript': () => (
       <CodeBlock
-        code={`import { useImpler, ColumnTypes, ValidationTypes } from "@impler/angular";
+        code={`
+import { useImpler, ColumnTypes, ValidationTypes } from "@impler/angular";
 
 public show(): void {
   this.implerService.showWidget({
@@ -786,21 +795,24 @@ public show(): void {
 
     'Passing Extra Parameters': () => (
       <CodeBlock
-        code={`public show(): void {
-this.implerService.showWidget({
-  extra: {
-    userId: "4ddhodw3",
-    time: new Date().this string()
-  }
-});
-}`}
+        code={`
+public show(): void {
+  this.implerService.showWidget({
+    extra: {
+      userId: "4ddhodw3",
+      time: new Date().this string()
+    }
+  });
+}
+`}
         language="typescript"
       />
     ),
 
     'Programmatically Closing Import Widget': () => (
       <CodeBlock
-        code={`public close(): void {
+        code={`
+public close(): void {
   this.implerService.closeWidget();
 }`}
         language="typescript"
@@ -809,7 +821,8 @@ this.implerService.showWidget({
 
     'Changing Import Title': () => (
       <CodeBlock
-        code={`public show(): void {
+        code={`
+public show(): void {
   this.implerService.showWidget({
     title: "Employee Import"
   });
@@ -820,7 +833,8 @@ this.implerService.showWidget({
 
     'Changing Theme Color': () => (
       <CodeBlock
-        code={`public show(): void {
+        code={`
+public show(): void {
   this.implerService.showWidget({
     primaryColor: "#5f45ff"
   });
@@ -831,7 +845,8 @@ this.implerService.showWidget({
 
     'Providing Authentication Header Value': () => (
       <CodeBlock
-        code={`public show(): void {
+        code={`
+public show(): void {
   this.implerService.showWidget({
     authHeaderValue: async () => {
       return "..."
@@ -845,7 +860,7 @@ this.implerService.showWidget({
     'Usage Example': () => (
       <>
         <CodeBlock
-          code={`...
+          code={`
 import { EventCalls, EventTypesEnum, ImplerService } from "@impler/angular";
 
 @Component({
