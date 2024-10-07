@@ -11,7 +11,7 @@ export class GetTemplateDetails {
   async execute(_id: string): Promise<TemplateResponseDto> {
     const template = await this.templateRepository.findOne(
       { _id },
-      '_projectId name sampleFileUrl _id totalUploads totalInvalidRecords totalRecords mode'
+      '_projectId name sampleFileUrl _id totalUploads totalInvalidRecords totalRecords mode integration'
     );
     if (!template) {
       throw new DocumentNotFoundException('Template', _id);
