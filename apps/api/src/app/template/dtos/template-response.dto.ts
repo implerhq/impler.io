@@ -1,5 +1,6 @@
+import { IntegrationEnum } from '@impler/shared';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDefined, IsNumber, IsString } from 'class-validator';
+import { IsDefined, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class TemplateResponseDto {
   @ApiPropertyOptional({
@@ -15,6 +16,14 @@ export class TemplateResponseDto {
   @IsString()
   @IsDefined()
   name: string;
+
+  @ApiProperty({
+    description: 'Where do the user wanted to integrate the import',
+  })
+  @IsOptional()
+  @IsEnum(IntegrationEnum)
+  @IsDefined()
+  integration: IntegrationEnum;
 
   @ApiProperty({
     description: 'URL to download samle csv file',

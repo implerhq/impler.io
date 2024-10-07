@@ -99,6 +99,7 @@ interface IDuplicateTemplateData {
 interface IUpdateTemplateData {
   mode?: string;
   name?: string;
+  integration?: string;
 }
 
 interface Window {

@@ -17,7 +17,7 @@ import {
 } from '@nestjs/common';
 
 import { UploadEntity } from '@impler/dal';
-import { ACCESS_KEY_NAME, IJwtPayload } from '@impler/shared';
+import { ACCESS_KEY_NAME, IJwtPayload, IntegrationEnum } from '@impler/shared';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
@@ -150,6 +150,7 @@ export class TemplateController {
         callbackUrl: body.callbackUrl,
         chunkSize: body.chunkSize,
         name: body.name,
+        integration: body.integration as IntegrationEnum,
       })
     );
   }
