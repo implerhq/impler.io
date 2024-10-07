@@ -844,7 +844,6 @@ this.implerService.showWidget({
 
     'Usage Example': () => (
       <>
-        <ModifiedText>Usage Example</ModifiedText>
         <CodeBlock
           code={`...
 import { EventCalls, EventTypesEnum, ImplerService } from "@impler/angular";
