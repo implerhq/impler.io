@@ -635,15 +635,15 @@ export class AppComponent {
     }
   }
 
-  public show(): void {
-    this.implerService.showWidget({
-      colorScheme: "dark",
+public show(): void {
+  this.implerService.showWidget({
+    colorScheme: "dark",
       projectId: "${templateId}",
       templateId: "${projectId}",
       accessToken: "${accessToken}",
-  });
-  }
-}`}
+    });
+    }
+  }`}
           language="typescript"
         />
       </>
@@ -667,7 +667,8 @@ export class AppComponent {
 
     'Applying App Color Scheme': () => (
       <CodeBlock
-        code={`public show(): void {
+        code={`
+public show(): void {
   this.implerService.showWidget({
     ...
     colorScheme: "dark",
@@ -679,14 +680,15 @@ export class AppComponent {
 
     'Data Seeding in Sample File': () => (
       <CodeBlock
-        code={` public show(): void {
-        this.implerService.showWidget({
-          data: [
-              { country: "Canada" },
-              { country: "Australia" },
-              { country: "Germany" },
-          ]
-        });
+        code={`
+public show(): void {
+  this.implerService.showWidget({
+    data: [
+    { country: "Canada"},
+    { country: "Australia"},
+    { country: "Germany"},
+    ]
+  });
 }`}
         language="javascript"
       />
@@ -785,12 +787,12 @@ public show(): void {
     'Passing Extra Parameters': () => (
       <CodeBlock
         code={`public show(): void {
-  this.implerService.showWidget({
-    extra: {
-      userId: "4ddhodw3",
-      time: new Date().this string()
-    }
-  });
+this.implerService.showWidget({
+  extra: {
+    userId: "4ddhodw3",
+    time: new Date().this string()
+  }
+});
 }`}
         language="typescript"
       />
