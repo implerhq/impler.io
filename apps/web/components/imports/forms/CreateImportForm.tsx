@@ -1,6 +1,6 @@
 import { Controller, useForm } from 'react-hook-form';
 import { useFocusTrap } from '@mantine/hooks';
-import { Stack, TextInput as Input, FocusTrap, Divider, Text, Group, useMantineTheme } from '@mantine/core';
+import { Stack, TextInput as Input, FocusTrap, Text, Group, useMantineTheme } from '@mantine/core';
 import { Button } from '@ui/button';
 
 import { INTEGRATE_IMPORT } from '@config';
@@ -24,17 +24,16 @@ export function CreateImportForm({ onSubmit }: CreateImportFormProps) {
     <FocusTrap active>
       <form onSubmit={handleSubmit(onSubmit)} ref={focusTrapRef}>
         <Stack spacing="sm">
-          <Divider mb="xs" />
           <Input
-            label="Import Name"
-            placeholder="Import title"
-            data-autofocus
             required
+            data-autofocus
+            label="Import Name"
+            placeholder="Contacts"
             {...register('name', { required: 'Import name is required' })}
             error={errors.name?.message}
           />
           <Text size="sm" mb={0} fw={500} color={theme.colors.dark[0]}>
-            How do you want to integrate importer?
+            Where do you want to integrate importer?
           </Text>
           <Controller
             name="integration"
