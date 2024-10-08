@@ -54,12 +54,13 @@ export function IntegrationModal({ accessToken, projectId, templateId, integrati
   return (
     <>
       <Flex justify="space-between" mb="sm">
-        <Title order={3} color={colorScheme === 'dark' ? colors.StrokeLight : colors.black}>
+        <Title order={3} color={colorScheme === 'dark' ? colors.StrokeLight : colors.StrokeDark}>
           Integrate
         </Title>
         <NativeSelect
           data={[IntegrationEnum.JAVASCRIPT, IntegrationEnum.REACT, IntegrationEnum.ANGULAR, IntegrationEnum.BUBBLE]}
           onChange={onIntegrationFrameworkChange}
+          variant="default"
         />
       </Flex>
 
