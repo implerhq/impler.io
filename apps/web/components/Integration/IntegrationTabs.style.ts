@@ -11,13 +11,14 @@ export const useStyles = createStyles((theme) => ({
     color: theme.white,
     fontWeight: 600,
     fontSize: theme.fontSizes.xs,
-    padding: 8,
-    border: `0.5px solid ${colors.StrokeLight}`,
+    padding: '8px 12px',
+    border: `1px solid ${theme.fn.rgba(colors.StrokeLight, 0.3)}`,
     borderRadius: 0,
     transition: 'all 0.2s ease',
+    boxShadow: `0 0 0 1px ${theme.fn.rgba(colors.StrokeLight, 0.1)}`,
 
     '&:hover': {
-      backgroundColor: colors.darkGrey,
+      backgroundColor: theme.fn.rgba(colors.darkGrey, 0.5),
       cursor: 'pointer',
     },
 
@@ -25,6 +26,7 @@ export const useStyles = createStyles((theme) => ({
       backgroundColor: colors.blue,
       color: theme.white,
       border: `1px solid ${colors.blue}`,
+      boxShadow: `0 0 0 1px ${theme.fn.rgba(colors.blue, 0.5)}`,
       '&:hover': {
         backgroundColor: colors.blue,
         color: theme.white,
