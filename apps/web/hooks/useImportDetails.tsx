@@ -8,9 +8,9 @@ import { track } from '@libs/amplitude';
 import { useAppState } from 'store/app.context';
 import { usePlanMetaData } from 'store/planmeta.store.context';
 import { ITemplate, IErrorObject, IColumn } from '@impler/shared';
+import { IntegrationModal } from '@components/Integration/IntegrationModal';
 import { UpdateImportForm } from '@components/imports/forms/UpdateImportForm';
 import { API_KEYS, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS, ROUTES } from '@config';
-import { IntegrationModal } from '@components/Integration/IntegrationModal';
 
 interface useImportDetailProps {
   templateId: string;

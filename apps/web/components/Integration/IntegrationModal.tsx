@@ -1,13 +1,12 @@
 import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
-import { Flex, Title, useMantineColorScheme } from '@mantine/core';
 
-import { colors } from '@config';
+import { Flex, NativeSelect, Title, useMantineColorScheme } from '@mantine/core';
 import { track } from '@libs/amplitude';
+import { colors } from '@config';
 import { IntegrationEnum } from '@impler/shared';
 import { IntegrationTabs } from './IntegrationTabs';
 import { integrationData } from './IntegrationData';
-import { IntegrationSelector } from './IntegrationSelector';
 
 interface IIntegrationModalProps {
   templateId: string;
@@ -29,7 +28,8 @@ export function IntegrationModal({ accessToken, projectId, templateId, integrati
     setSelectedTab(Object.keys(integrationData[integration])[0]);
   }, [integration]);
 
-  const onIntegrationFrameworkChange = (value: string) => {
+  const onIntegrationFrameworkChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = event.target.value;
     track({
       name: 'CHANGE INTEGRATION FRAMEWORK',
       properties: {
@@ -54,10 +54,10 @@ export function IntegrationModal({ accessToken, projectId, templateId, integrati
   return (
     <>
       <Flex justify="space-between" mb="sm">
-        <Title order={3} color={colorScheme === 'dark' ? colors.StrokeLight : colors.black}>
+        <Title order={3} color={colorScheme === 'dark' ? colors.StrokeLight : colors.StrokeDark}>
           Integrate
         </Title>
-        <IntegrationSelector integration={integration} setIntegration={onIntegrationFrameworkChange} />
+        <NativeSelect data={Object.values(IntegrationEnum)} onChange={onIntegrationFrameworkChange} variant="default" />
       </Flex>
 
       <IntegrationTabs
