@@ -102,8 +102,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
               styles={{
                 /* width */
                 '::-webkit-scrollbar': {
-                  width: '7px',
-                  height: '7px',
+                  width: '5px',
+                  height: '5px',
                 },
 
                 /* Track */

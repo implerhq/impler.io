@@ -1,4 +1,5 @@
-import { Divider, Tabs as MantineTabs } from '@mantine/core';
+import React from 'react';
+import { Tabs as MantineTabs } from '@mantine/core';
 import { useStyles } from './IntegrationTabs.style';
 
 interface TabItem {
@@ -36,9 +37,9 @@ export function IntegrationTabs({
       keepMounted={keepMounted}
       defaultValue={defaultValue}
       classNames={{
-        tabsList: classes.tabsList,
         tab: classes.tab,
         panel: classes.panel,
+        tabsList: classes.tabsList,
       }}
       variant="pills"
     >
@@ -52,8 +53,7 @@ export function IntegrationTabs({
 
       {items.map((item) => (
         <MantineTabs.Panel key={item.value} value={item.value}>
-          <Divider pt="md" />
-          <div>{item.content}</div>
+          {item.content}
         </MantineTabs.Panel>
       ))}
     </MantineTabs>

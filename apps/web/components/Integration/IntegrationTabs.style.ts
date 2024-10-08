@@ -4,15 +4,22 @@ import { createStyles } from '@mantine/core';
 export const useStyles = createStyles((theme) => ({
   tabsList: {
     border: 'none',
+    overflow: 'auto',
+    flexWrap: 'nowrap',
     gap: theme.spacing.xs,
+    paddingBottom: theme.spacing.xs,
+    borderBottom: `1px solid ${colors.StrokeDark}`,
+    ':hover': {
+      cursor: 'move',
+    },
   },
   tab: {
     backgroundColor: 'transparent',
-    color: theme.white,
-    fontWeight: 600,
-    fontSize: theme.fontSizes.xs,
-    padding: '8px 12px',
-    border: `1px solid ${theme.fn.rgba(colors.StrokeLight, 0.3)}`,
+    color: theme.colorScheme === 'dark' ? colors.StrokeLight : colors.StrokeDark,
+    fontWeight: 400,
+    fontSize: theme.fontSizes.sm,
+    padding: 8,
+    border: `0.5px solid ${colors.DisabledDark}`,
     borderRadius: 0,
     transition: 'all 0.2s ease',
     boxShadow: `0 0 0 1px ${theme.fn.rgba(colors.StrokeLight, 0.1)}`,
@@ -35,9 +42,6 @@ export const useStyles = createStyles((theme) => ({
   },
   panel: {
     marginTop: theme.spacing.md,
-    minHeight: '65vh',
-  },
-  content: {
-    minHeight: '20vh',
+    height: '50vh',
   },
 }));
