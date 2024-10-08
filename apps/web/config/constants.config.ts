@@ -277,7 +277,7 @@ export const DOCUMENTATION_REFERENCE_LINKS = {
   freezeColumns: 'https://docs.impler.io/features/freeze-columns',
   frontendEndCallback: 'https://docs.impler.io/data-retrieval/using-frontend-callback',
   webhook: 'https://docs.impler.io/data-retrieval/using-webhook',
-  bubbleIo: 'https://docs.impler.io/importer/bubble.io-embed.md',
+  bubbleIo: 'https://docs.impler.io/importer/bubble.io-embed',
   subscriptionInformation: 'https://docs.impler.io/platform/how-subscription-works',
   customValidation: 'https://docs.impler.io/features/custom-validation',
   rangeValidator: 'https://docs.impler.io/validations/advanced#range',

@@ -10,6 +10,7 @@ import {
 } from '@impler/shared';
 import { PaymentAPIService } from '@impler/services';
 import { QueueService } from '@shared/services/queue.service';
+import { AmplitudeService } from '@shared/services/amplitude.service';
 import { DalService, TemplateEntity, UploadRepository } from '@impler/dal';
 
 @Injectable()
@@ -18,6 +19,7 @@ export class StartProcess {
     private dalService: DalService,
     private queueService: QueueService,
     private uploadRepository: UploadRepository,
+    private amplitudeService: AmplitudeService,
     private paymentAPIService: PaymentAPIService
   ) {}
 
@@ -57,6 +59,12 @@ export class StartProcess {
         { status: UploadStatusEnum.PROCESSING }
       );
     }
+
+    this.amplitudeService.recordsImported(userEmail, {
+      records: uploadInfo.totalRecords,
+      valid: uploadInfo.validRecords,
+      invalid: uploadInfo.invalidRecords,
+    });
 
     this.queueService.publishToQueue(QueuesEnum.END_IMPORT, {
       uploadId: _uploadId,

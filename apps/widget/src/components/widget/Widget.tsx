@@ -91,11 +91,12 @@ export function Widget() {
     resetAmplitude();
     setPhase(PhasesEnum.VALIDATE);
   };
-  const onComplete = (uploadData: IUpload, importedData?: Record<string, any>[]) => {
+  const onComplete = (uploadData: IUpload, importedData?: Record<string, any>[], doClose = false) => {
     setDataCount(uploadData.totalRecords);
     setPhase(PhasesEnum.COMPLETE);
     ParentWindow.UploadCompleted(uploadData);
     if (importedData) ParentWindow.DataImported(importedData);
+    if (doClose) closeWidget();
   };
   const onSuccess = useCallback(() => {
     setImportConfig((configData: IImportConfig) => {
@@ -122,7 +123,13 @@ export function Widget() {
         }
       : flow === FlowsEnum.MANUAL_ENTRY
       ? {
-          [PhasesEnum.MANUAL_ENTRY]: <DataGrid texts={texts} onPrevClick={onUploadResetClick} onNextClick={onClose} />,
+          [PhasesEnum.MANUAL_ENTRY]: (
+            <DataGrid
+              texts={texts}
+              onPrevClick={onUploadResetClick}
+              onNextClick={(uploadData, importedData) => onComplete(uploadData, importedData, true)}
+            />
+          ),
         }
       : {
           [PhasesEnum.IMAGE_UPLOAD]: <ImageUpload texts={texts} goToUpload={() => setPhase(PhasesEnum.UPLOAD)} />,
