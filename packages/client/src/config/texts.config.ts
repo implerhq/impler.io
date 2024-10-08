@@ -70,7 +70,7 @@ export const WIDGET_TEXTS = {
     INFO: 'Select Header Row from the table. Rows above the header will not be imported. Click on row to change selection.',
   },
   'PHASE1-2': {
-    ENTER_DATA: 'Manually enter your data',
+    ENTER_DATA: 'Directly enter your data',
     RECOMMANDED_LIMIT: 'Recommanded upto {records} records',
     FIX_INVALID_DATA: 'To complete import you need to fix invalid data',
   },

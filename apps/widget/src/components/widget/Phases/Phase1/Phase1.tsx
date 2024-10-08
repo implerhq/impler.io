@@ -16,7 +16,7 @@ import useStyles from './Phase1.Styles';
 import { Divider } from '@ui/Divider';
 import { Footer } from 'components/Common/Footer';
 import { SheetSelectModal } from './SheetSelectModal';
-import { ManaulEntryView } from './ManualEntryView';
+import { DirectEntryView } from './DirectEntryView';
 
 interface IPhase1Props {
   onNextClick: () => void;
@@ -121,7 +121,7 @@ export function Phase1({
           />
           <Divider orientation={isBiggerThanSm ? 'vertical' : 'horizontal'} label="OR" />
 
-          <ManaulEntryView
+          <DirectEntryView
             texts={texts}
             columns={columns}
             limit={MANUAL_ENTRY_LIMIT}
