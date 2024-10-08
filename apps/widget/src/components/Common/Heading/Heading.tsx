@@ -29,7 +29,7 @@ export function Heading({ active, title, onClose }: IHeadingProps) {
     },
   ];
 
-  const manualEntryImportSteps = [
+  const directEntryImportSteps = [
     {
       label: texts.STEPPER_TITLES.UPLOAD_FILE,
     },
@@ -77,7 +77,7 @@ export function Heading({ active, title, onClose }: IHeadingProps) {
                   ...straightImportSteps,
                 ]
               : flow === FlowsEnum.MANUAL_ENTRY
-              ? manualEntryImportSteps
+              ? directEntryImportSteps
               : straightImportSteps
           }
         />
