@@ -69,6 +69,7 @@ export class StartProcess {
     this.queueService.publishToQueue(QueuesEnum.END_IMPORT, {
       uploadId: _uploadId,
       destination: destination,
+      uploadedFileId: uploadInfo._uploadedFileId,
     });
 
     return { uploadInfo, importedData, email };
