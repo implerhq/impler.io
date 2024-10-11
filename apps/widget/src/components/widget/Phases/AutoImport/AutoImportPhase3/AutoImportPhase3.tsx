@@ -4,6 +4,7 @@ import { Group, Text, Stack, Flex, Container } from '@mantine/core';
 
 const parseCronExpression = require('util/helpers/cronstrue');
 import { PhasesEnum } from '@types';
+import { IUserJob } from '@impler/shared';
 import { WIDGET_TEXTS } from '@impler/client';
 import { TooltipBadge } from './TooltipBadge';
 import { Footer } from 'components/Common/Footer';
@@ -13,7 +14,7 @@ import { useAutoImportPhase3 } from '@hooks/AutoImportPhase3/useAutoImportPhase3
 import { colors, cronExampleBadges, cronExamples, ScheduleFormValues, defaultCronValues } from '@config';
 
 interface IAutoImportPhase3Props {
-  onNextClick: () => void;
+  onNextClick: (importJob: IUserJob) => void;
   texts: typeof WIDGET_TEXTS;
 }
 
@@ -26,7 +27,7 @@ export function AutoImportPhase3({ onNextClick, texts }: IAutoImportPhase3Props)
   const [cronDescription, setCronDescription] = useState({ description: '', isError: false });
   const [focusedField, setFocusedField] = useState<keyof ScheduleFormValues | null>(null);
 
-  const { updateUserJob, isUpdateUserJobLoading } = useAutoImportPhase3({ goNext: onNextClick });
+  const { updateUserJob, isUpdateUserJobLoading } = useAutoImportPhase3({ onImportJobCreate: onNextClick });
 
   useEffect(() => {
     const cronExpression = `${scheduleData.Minute} ${scheduleData.Hour} ${scheduleData.Day} ${scheduleData.Month} ${scheduleData.Days}`;

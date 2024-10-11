@@ -1,5 +1,5 @@
 import { IUpload } from '@impler/client';
-import { EventTypesEnum } from '@impler/shared';
+import { EventTypesEnum, IUserJob } from '@impler/shared';
 
 export function Ready() {
   window.parent.postMessage({ type: EventTypesEnum.WIDGET_READY }, '*');
@@ -24,4 +24,7 @@ export function UploadCompleted(value: IUpload) {
 }
 export function DataImported(value: Record<string, any>[]) {
   window.parent.postMessage({ type: EventTypesEnum.DATA_IMPORTED, value }, '*');
+}
+export function ImportJobCreated(value: IUserJob) {
+  window.parent.postMessage({ type: EventTypesEnum.IMPORT_JOB_CREATED, value }, '*');
 }

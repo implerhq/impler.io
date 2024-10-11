@@ -10,7 +10,7 @@ import { Layout } from 'components/Common/Layout';
 import { useTemplates } from '@hooks/useTemplates';
 import { ConfirmModal } from './modals/ConfirmModal';
 import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
-import { IImportConfig, TemplateModeEnum } from '@impler/shared';
+import { IImportConfig, IUserJob, TemplateModeEnum } from '@impler/shared';
 import { FlowsEnum, PhasesEnum, PromptModalTypesEnum } from '@types';
 
 import { Phase0 } from './Phases/Phase0';
@@ -91,6 +91,10 @@ export function Widget() {
     resetAmplitude();
     setPhase(PhasesEnum.VALIDATE);
   };
+  const onImportJobCreated = (jobInfo: IUserJob) => {
+    ParentWindow.ImportJobCreated(jobInfo);
+    setPhase(PhasesEnum.CONFIRM);
+  };
   const onComplete = (uploadData: IUpload, importedData?: Record<string, any>[], doClose = false) => {
     setDataCount(uploadData.totalRecords);
     setPhase(PhasesEnum.COMPLETE);
@@ -118,7 +122,7 @@ export function Widget() {
       ? {
           [PhasesEnum.CONFIGURE]: <AutoImportPhase1 onNextClick={() => setPhase(PhasesEnum.MAPCOLUMNS)} />,
           [PhasesEnum.MAPCOLUMNS]: <AutoImportPhase2 texts={texts} onNextClick={() => setPhase(PhasesEnum.SCHEDULE)} />,
-          [PhasesEnum.SCHEDULE]: <AutoImportPhase3 onNextClick={() => setPhase(PhasesEnum.CONFIRM)} texts={texts} />,
+          [PhasesEnum.SCHEDULE]: <AutoImportPhase3 onNextClick={onImportJobCreated} texts={texts} />,
           [PhasesEnum.CONFIRM]: <AutoImportPhase4 onCloseClick={onClose} />,
         }
       : flow === FlowsEnum.MANUAL_ENTRY
