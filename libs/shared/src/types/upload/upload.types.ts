@@ -110,6 +110,7 @@ export type PublishToQueueData = SendWebhookData;
 
 export type EndImportData = {
   uploadId: string;
+  uploadedFileId?: string;
   destination: DestinationsEnum;
 };
 

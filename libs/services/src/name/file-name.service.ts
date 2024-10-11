@@ -28,6 +28,12 @@ export class FileNameService {
   getUploadedFilePath(uploadId: string, fileName: string): string {
     return `${uploadId}/${this.getUploadedFileName(fileName)}`;
   }
+  getImportedFileName(uploadId: string) {
+    return `imported-${uploadId}.csv`;
+  }
+  getImportedFilePath(uploadId: string) {
+    return `${uploadId}/${this.getImportedFileName(uploadId)}`;
+  }
   getUploadedFileName(fileName: string): string {
     return `uploaded.${this.getFileExtension(fileName)}`;
   }
