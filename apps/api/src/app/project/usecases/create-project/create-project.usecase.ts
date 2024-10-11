@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ProjectRepository } from '@impler/dal';
-import { ColumnTypesEnum } from '@impler/shared';
+import { ColumnTypesEnum, IntegrationEnum } from '@impler/shared';
 
 import { CreateProjectCommand } from './create-project.command';
 import { CreateEnvironment } from 'app/environment/usecases';
@@ -38,6 +38,7 @@ export class CreateProject {
       _projectId,
       chunkSize: 100,
       name: 'Sales Data Import',
+      integration: IntegrationEnum.JAVASCRIPT,
     });
     await this.updateTemplateColumns.execute(
       [

@@ -1,3 +1,9 @@
+import { JavaScriptIcon } from '@assets/icons/Javascript.icon';
+import { ReactIcon } from '@assets/icons/React.icon';
+import { AngularIcon } from '@assets/icons/Angular.icon';
+import { BubbleIcon } from '@assets/icons/Bubble.icon';
+import { IntegrationEnum } from '@impler/shared';
+
 export const CONSTANTS = {
   EXPLORE_PLANS_QUERY_LEY: 'explore_plans',
   PLAN_CODE_QUERY_KEY: 'plan_code',
@@ -40,11 +46,34 @@ export const MODAL_KEYS = {
   IMPORT_UPDATE: 'IMPORT_UPDATE',
   COLUMN_UPDATE: 'COLUMN_UPDATE',
   COLUMN_DELETE: 'COLUMN_DELETE',
+  INTEGRATION_DETAILS: 'Integration Details',
 
   VALIDATIONS_OUTPUT: 'VALIDATIONS_OUTPUT',
   PAYMENT_PLANS: 'PAYMENT_PLANS',
   PAYMENT_DETAILS_ADD: 'PAYMENT_PLANS',
 };
+
+interface IntegrateOption {
+  name: IntegrationEnum;
+  Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  key: string;
+}
+
+export const INTEGRATE_IMPORT: IntegrateOption[] = [
+  { name: IntegrationEnum.JAVASCRIPT, Icon: JavaScriptIcon, key: IntegrationEnum.JAVASCRIPT },
+  { name: IntegrationEnum.REACT, Icon: ReactIcon, key: IntegrationEnum.REACT },
+  { name: IntegrationEnum.ANGULAR, Icon: AngularIcon, key: IntegrationEnum.ANGULAR },
+  { name: IntegrationEnum.BUBBLE, Icon: BubbleIcon, key: IntegrationEnum.BUBBLE },
+];
+
+export const INTEGRATION_GUIDE = [
+  { value: IntegrationEnum.JAVASCRIPT, label: IntegrationEnum.JAVASCRIPT },
+  { value: IntegrationEnum.ANGULAR, label: IntegrationEnum.ANGULAR },
+  { value: IntegrationEnum.REACT, label: IntegrationEnum.REACT },
+  { value: IntegrationEnum.BUBBLE, label: IntegrationEnum.BUBBLE },
+];
+
+export type IntegrationLanguage = 'javascript' | 'jsx' | 'typescript' | 'markup' | 'bash';
 
 export const MODAL_TITLES = {
   IMPORT_DUPLICATE: 'Duplicate Import',
@@ -53,6 +82,7 @@ export const MODAL_TITLES = {
   IMPORT_DELETE: 'Delete Import',
   COLUMN_UPDATE: 'Configure Column',
   COLUMN_DELETE: 'Delete Column',
+  INTEGRATION_DETAILS: 'Integrate',
 
   VALIDATIONS_OUTPUT: 'Test code output',
 };
@@ -247,7 +277,7 @@ export const DOCUMENTATION_REFERENCE_LINKS = {
   freezeColumns: 'https://docs.impler.io/features/freeze-columns',
   frontendEndCallback: 'https://docs.impler.io/data-retrieval/using-frontend-callback',
   webhook: 'https://docs.impler.io/data-retrieval/using-webhook',
-  bubbleIo: 'https://docs.impler.io/importer/bubble.io-embed.md',
+  bubbleIo: 'https://docs.impler.io/importer/bubble.io-embed',
   subscriptionInformation: 'https://docs.impler.io/platform/how-subscription-works',
   customValidation: 'https://docs.impler.io/features/custom-validation',
   rangeValidator: 'https://docs.impler.io/validations/advanced#range',

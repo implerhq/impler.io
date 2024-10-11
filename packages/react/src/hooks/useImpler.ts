@@ -15,6 +15,7 @@ export function useImpler({
   onUploadStart,
   onDataImported,
   onUploadTerminate,
+  onImportJobCreated,
 }: IUseImplerProps) {
   const [uuid] = useState(generateUuid());
   const [isImplerInitiated, setIsImplerInitiated] = useState(false);
@@ -36,6 +37,9 @@ export function useImpler({
           break;
         case EventTypes.CLOSE_WIDGET:
           if (onWidgetClose) onWidgetClose();
+          break;
+        case EventTypes.IMPORT_JOB_CREATED:
+          if (onImportJobCreated) onImportJobCreated(eventData.value);
           break;
       }
     },

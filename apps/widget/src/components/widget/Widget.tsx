@@ -7,11 +7,11 @@ import { IUpload } from '@impler/client';
 import { useWidget } from '@hooks/useWidget';
 import { useAppState } from '@store/app.context';
 import { Layout } from 'components/Common/Layout';
-import { ConfirmModal } from './modals/ConfirmModal';
 import { useTemplates } from '@hooks/useTemplates';
-import { FlowsEnum, PhasesEnum, PromptModalTypesEnum } from '@types';
+import { ConfirmModal } from './modals/ConfirmModal';
 import { logAmplitudeEvent, resetAmplitude } from '@amplitude';
-import { IImportConfig, TemplateModeEnum } from '@impler/shared';
+import { IImportConfig, IUserJob, TemplateModeEnum } from '@impler/shared';
+import { FlowsEnum, PhasesEnum, PromptModalTypesEnum } from '@types';
 
 import { Phase0 } from './Phases/Phase0';
 import { Phase1 } from './Phases/Phase1';
@@ -20,7 +20,7 @@ import { Phase3 } from './Phases/Phase3';
 import { Phase4 } from './Phases/Phase4';
 import { ImageUpload } from './Phases/ImageImport';
 import { SelectHeader } from './Phases/SelectHeader';
-import { DataGrid } from './Phases/ManualEntryImport';
+import { DataGrid } from './Phases/DirectEntryImport';
 import { AutoImportPhase1 } from './Phases/AutoImport/AutoImportPhase1';
 import { AutoImportPhase2 } from './Phases/AutoImport/AutoImportPhase2';
 import { AutoImportPhase3 } from './Phases/AutoImport/AutoImportPhase3';
@@ -91,11 +91,16 @@ export function Widget() {
     resetAmplitude();
     setPhase(PhasesEnum.VALIDATE);
   };
-  const onComplete = (uploadData: IUpload, importedData?: Record<string, any>[]) => {
+  const onImportJobCreated = (jobInfo: IUserJob) => {
+    ParentWindow.ImportJobCreated(jobInfo);
+    setPhase(PhasesEnum.CONFIRM);
+  };
+  const onComplete = (uploadData: IUpload, importedData?: Record<string, any>[], doClose = false) => {
     setDataCount(uploadData.totalRecords);
     setPhase(PhasesEnum.COMPLETE);
     ParentWindow.UploadCompleted(uploadData);
     if (importedData) ParentWindow.DataImported(importedData);
+    if (doClose) closeWidget();
   };
   const onSuccess = useCallback(() => {
     setImportConfig((configData: IImportConfig) => {
@@ -117,12 +122,18 @@ export function Widget() {
       ? {
           [PhasesEnum.CONFIGURE]: <AutoImportPhase1 onNextClick={() => setPhase(PhasesEnum.MAPCOLUMNS)} />,
           [PhasesEnum.MAPCOLUMNS]: <AutoImportPhase2 texts={texts} onNextClick={() => setPhase(PhasesEnum.SCHEDULE)} />,
-          [PhasesEnum.SCHEDULE]: <AutoImportPhase3 onNextClick={() => setPhase(PhasesEnum.CONFIRM)} texts={texts} />,
+          [PhasesEnum.SCHEDULE]: <AutoImportPhase3 onNextClick={onImportJobCreated} texts={texts} />,
           [PhasesEnum.CONFIRM]: <AutoImportPhase4 onCloseClick={onClose} />,
         }
       : flow === FlowsEnum.MANUAL_ENTRY
       ? {
-          [PhasesEnum.MANUAL_ENTRY]: <DataGrid texts={texts} onPrevClick={onUploadResetClick} onNextClick={onClose} />,
+          [PhasesEnum.MANUAL_ENTRY]: (
+            <DataGrid
+              texts={texts}
+              onPrevClick={onUploadResetClick}
+              onNextClick={(uploadData, importedData) => onComplete(uploadData, importedData, true)}
+            />
+          ),
         }
       : {
           [PhasesEnum.IMAGE_UPLOAD]: <ImageUpload texts={texts} goToUpload={() => setPhase(PhasesEnum.UPLOAD)} />,

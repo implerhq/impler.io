@@ -1,6 +1,6 @@
 {
   "name": "@impler/queue-manager",
-  "version": "0.26.0",
+  "version": "0.26.1",
   "author": "implerhq",
   "license": "MIT",
   "private": true,
@@ -23,6 +23,7 @@
     "axios": "1.6.2",
     "dotenv": "^16.0.2",
     "envalid": "^7.3.1",
+    "papaparse": "^5.4.1",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {

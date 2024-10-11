@@ -4,7 +4,7 @@ import { Button } from '@ui/Button';
 import { WIDGET_TEXTS } from '@impler/client';
 import { IColumn, numberFormatter, replaceVariablesInString } from '@impler/shared';
 
-interface ManaulEntryViewProps {
+interface DirectEntryViewProps {
   limit?: number;
   className?: string;
   columns?: IColumn[];
@@ -13,14 +13,14 @@ interface ManaulEntryViewProps {
   onManuallyEnterData?: () => void;
 }
 
-export function ManaulEntryView({
+export function DirectEntryView({
   limit,
   texts,
   columns,
   isLoading,
   className,
   onManuallyEnterData,
-}: ManaulEntryViewProps) {
+}: DirectEntryViewProps) {
   return (
     <Box
       bg="var(--stepper-background)"

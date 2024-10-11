@@ -31,6 +31,7 @@ export const EventTypes = {
   UPLOAD_TERMINATED: 'UPLOAD_TERMINATED',
   UPLOAD_COMPLETED: 'UPLOAD_COMPLETED',
   DATA_IMPORTED: 'DATA_IMPORTED',
+  IMPORT_JOB_CREATED: 'IMPORT_JOB_CREATED',
 } as const;
 
 export interface IUpload {
@@ -55,6 +56,14 @@ export interface IUpload {
   processInvalidRecords: boolean;
   customRecordFormat: string;
   customChunkFormat: string;
+}
+
+export interface IUserJob {
+  _id: string;
+  url: string;
+  _templateId: string;
+  headings: string[];
+  cron: string;
 }
 
 export enum ValidationTypesEnum {
@@ -136,6 +145,10 @@ export type EventCalls =
       value: Record<string, any>[];
     }
   | {
+      type: typeof EventTypes.IMPORT_JOB_CREATED;
+      value: IUserJob;
+    }
+  | {
       type: typeof EventTypes.CLOSE_WIDGET;
     }
   | {
@@ -179,4 +192,5 @@ export interface IUseImplerProps {
   onUploadComplete?: (value: IUpload) => void;
   onDataImported?: (importedData: Record<string, any>[]) => void;
   onWidgetClose?: () => void;
+  onImportJobCreated?: (jobInfo: IUserJob) => void;
 }
