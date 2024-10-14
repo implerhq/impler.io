@@ -14,20 +14,30 @@ interface IContentProps {
   embedScriptUrl: string;
 }
 
+const HEIGHTS = {
+  WITH_TEXT: '47vh',
+  WITHOUT_TEXT: '50vh',
+};
+
 export const integrationData: Record<IntegrationEnum, Record<string, (data: IContentProps) => ReactNode>> = {
   [IntegrationEnum.JAVASCRIPT]: {
     '1) Add Script': ({ embedScriptUrl }) => (
       <>
         <ModifiedText>Add embed script before closing body tag</ModifiedText>
         <CodeBlock
-          code={`<script type='text/javascript' src='${embedScriptUrl}' async></script>`}
           language="javascript"
+          height={HEIGHTS.WITH_TEXT}
+          code={`<script type='text/javascript' src='${embedScriptUrl}' async></script>`}
         />
       </>
     ),
     '2) Add Import Button': () => (
       <>
-        <CodeBlock code={`<button disabled id="impler-btn">Import</button>`} language="markup" />
+        <CodeBlock
+          language="markup"
+          height={HEIGHTS.WITHOUT_TEXT}
+          code={`<button disabled id="impler-btn">Import</button>`}
+        />
       </>
     ),
     '3) Initialize Widget': () => (
@@ -36,6 +46,7 @@ export const integrationData: Record<IntegrationEnum, Record<string, (data: ICon
           Before the widget gets shown you have to call <Code>init</Code> method, which initialize the importer.
         </ModifiedText>
         <CodeBlock
+          height={HEIGHTS.WITH_TEXT}
           code={`
 <script type="text/javascript">
   let uuid = generateUuid();
@@ -68,6 +79,7 @@ export const integrationData: Record<IntegrationEnum, Record<string, (data: ICon
       <>
         <ModifiedText size="sm">After initialization, use the following code to show the widget:</ModifiedText>
         <CodeBlock
+          height={HEIGHTS.WITH_TEXT}
           code={`
 ImplerBtn.addEventListener("click", (e) => {
   window.impler.show({
@@ -86,6 +98,7 @@ ImplerBtn.addEventListener("click", (e) => {
       <>
         <ModifiedText size="sm">You can listen for events from the Impler widget:</ModifiedText>
         <CodeBlock
+          height={HEIGHTS.WITH_TEXT}
           code={`
  window.impler.on('message', (eventData) => {
   switch (eventData.type) {
@@ -118,6 +131,7 @@ ImplerBtn.addEventListener("click", (e) => {
     ),
     'Data Seeding in File': ({ projectId, templateId, accessToken }) => (
       <CodeBlock
+        height={HEIGHTS.WITHOUT_TEXT}
         code={`
 window.impler.show({
   uuid,
@@ -135,6 +149,7 @@ window.impler.show({
     ),
     'Customize Importer Texts': () => (
       <CodeBlock
+        height={HEIGHTS.WITHOUT_TEXT}
         code={`
 window.impler.show({
   ...
@@ -149,6 +164,7 @@ window.impler.show({
     ),
     'Advanced Validations': () => (
       <CodeBlock
+        height={HEIGHTS.WITHOUT_TEXT}
         code={`
 window.impler.show({
   ...
@@ -182,6 +198,7 @@ window.impler.show({
     ),
     'Providing Runtime Schema': () => (
       <CodeBlock
+        height={HEIGHTS.WITHOUT_TEXT}
         code={`
 window.impler.show({
   ...
@@ -210,6 +227,7 @@ window.impler.show({
     ),
     'Passing Extra Values': () => (
       <CodeBlock
+        height={HEIGHTS.WITHOUT_TEXT}
         code={`
 window.impler.show({
   ...
@@ -223,6 +241,7 @@ window.impler.show({
     ),
     'Changing Import Title': () => (
       <CodeBlock
+        height={HEIGHTS.WITHOUT_TEXT}
         code={`
 window.impler.show({
   ...
@@ -233,6 +252,7 @@ window.impler.show({
     ),
     'Programatically Closing Importer': () => (
       <CodeBlock
+        height={HEIGHTS.WITHOUT_TEXT}
         code={`
 window.impler.close();
   `}
@@ -240,6 +260,7 @@ window.impler.close();
     ),
     'Changing the Color theme': () => (
       <CodeBlock
+        height={HEIGHTS.WITHOUT_TEXT}
         code={`
 window.impler.show({
   ...
@@ -250,6 +271,7 @@ window.impler.show({
     ),
     'Passing Auth Header Value': () => (
       <CodeBlock
+        height={HEIGHTS.WITHOUT_TEXT}
         code={`
 window.impler.show({
   authHeaderValue: async () => {
@@ -262,6 +284,7 @@ window.impler.show({
     'Complete Code Example': ({ accessToken, embedScriptUrl, projectId, templateId }) => (
       <>
         <CodeBlock
+          height={HEIGHTS.WITHOUT_TEXT}
           code={`
 <!DOCTYPE html>
 <html lang="en">
@@ -340,6 +363,7 @@ window.impler.show({
       <>
         <ModifiedText>Add embed script before closing body tag</ModifiedText>
         <CodeBlock
+          height={HEIGHTS.WITH_TEXT}
           code={`
 // ReactJS
 <script type='text/javascript' src='${embedScriptUrl}' async></script>
@@ -356,13 +380,14 @@ import Script from 'next/script';
         />
       </>
     ),
-    '2) Install Package': () => <CodeBlock code="npm i @impler/react" language="bash" />,
+    '2) Install Package': () => <CodeBlock height={HEIGHTS.WITHOUT_TEXT} code="npm i @impler/react" language="bash" />,
     '3) Add Import Button': ({ accessToken, projectId, templateId }) => (
       <>
         <ModifiedText>
           Use <Code>useImpler</Code> hook provided by <Code>@impler/react</Code> to show an Importer in application
         </ModifiedText>
         <CodeBlock
+          height={HEIGHTS.WITH_TEXT}
           code={`
 import { useImpler } from "@impler/react";
 
@@ -380,6 +405,7 @@ const { showWidget, isImplerInitiated } = useImpler({
     'Customize Texts': ({ accessToken, projectId, templateId }) => (
       <>
         <CodeBlock
+          height={HEIGHTS.WITHOUT_TEXT}
           code={`
 import { useImpler } from "@impler/react";
 
@@ -402,6 +428,7 @@ const { showWidget, isImplerInitiated } = useImpler({
     'Listening for Events': ({ accessToken, projectId, templateId }) => (
       <>
         <CodeBlock
+          height={HEIGHTS.WITHOUT_TEXT}
           code={`
 const { showWidget, isImplerInitiated } = useImpler({
   projectId: "${projectId}",
@@ -430,6 +457,7 @@ const { showWidget, isImplerInitiated } = useImpler({
     'Providing Runtime Schema': () => (
       <>
         <CodeBlock
+          height={HEIGHTS.WITHOUT_TEXT}
           code={`
 showWidget({
   schema: [
@@ -459,6 +487,7 @@ showWidget({
     'Data Seeding in Sample File': () => (
       <>
         <CodeBlock
+          height={HEIGHTS.WITHOUT_TEXT}
           code={`
 showWidget({
   data: [
@@ -476,6 +505,7 @@ showWidget({
     'Advanced Validations': () => (
       <>
         <CodeBlock
+          height={HEIGHTS.WITHOUT_TEXT}
           code={`
 showWidget({
   schema: [
@@ -509,6 +539,7 @@ showWidget({
     ),
     'Using Typescript': () => (
       <CodeBlock
+        height={HEIGHTS.WITHOUT_TEXT}
         code={`
 import { useImpler, ColumnTypes, ValidationTypes } from "@impler/react";
 
@@ -538,6 +569,7 @@ showWidget({
     'Closing Import Widget': ({ accessToken, projectId, templateId }) => (
       <>
         <CodeBlock
+          height={HEIGHTS.WITHOUT_TEXT}
           code={`
 const { showWidget, closeWidget, isImplerInitiated } = useImpler({
   projectId: "${projectId}",
@@ -555,6 +587,7 @@ const { showWidget, closeWidget, isImplerInitiated } = useImpler({
     'Changing Import Title': ({ accessToken, projectId, templateId }) => (
       <>
         <CodeBlock
+          height={HEIGHTS.WITHOUT_TEXT}
           code={`
 const { showWidget, isImplerInitiated } = useImpler({
   projectId: "${projectId}",
@@ -570,6 +603,7 @@ const { showWidget, isImplerInitiated } = useImpler({
     'Changing Theme Color': ({ accessToken, projectId, templateId }) => (
       <>
         <CodeBlock
+          height={HEIGHTS.WITHOUT_TEXT}
           code={`
 const { showWidget, isImplerInitiated } = useImpler({
   projectId: "${templateId}",
@@ -584,6 +618,7 @@ const { showWidget, isImplerInitiated } = useImpler({
     'Providing Authentication Header': ({ accessToken, projectId, templateId }) => (
       <>
         <CodeBlock
+          height={HEIGHTS.WITHOUT_TEXT}
           code={`
 const { showWidget, isImplerInitiated } = useImpler({
   projectId: "${templateId}",
@@ -603,20 +638,22 @@ const { showWidget, isImplerInitiated } = useImpler({
       <>
         <ModifiedText>Add embed script before closing body tag</ModifiedText>
         <CodeBlock
-          code={`<script type="text/javascript" src="${embedScriptUrl}" async></script>`}
           language="javascript"
+          height={HEIGHTS.WITH_TEXT}
+          code={`<script type="text/javascript" src="${embedScriptUrl}" async></script>`}
         />
       </>
     ),
 
     '2) Install Package': () => (
       <>
-        <CodeBlock code="npm i @impler/angular" language="bash" />
+        <CodeBlock height={HEIGHTS.WITHOUT_TEXT} code="npm i @impler/angular" language="bash" />
       </>
     ),
     '3) Use Impler Service': ({ accessToken, projectId, templateId }) => (
       <>
         <CodeBlock
+          height={HEIGHTS.WITHOUT_TEXT}
           code={`
 import { RouterOutlet } from "@angular/router";
 import { isPlatformBrowser } from "@angular/common";
@@ -658,6 +695,7 @@ public show(): void {
 
     'Customize Texts': () => (
       <CodeBlock
+        height={HEIGHTS.WITHOUT_TEXT}
         code={`
 public show(): void {
   this.implerService.showWidget({
@@ -675,6 +713,7 @@ public show(): void {
 
     'Applying App Color Scheme': () => (
       <CodeBlock
+        height={HEIGHTS.WITHOUT_TEXT}
         code={`
 public show(): void {
   this.implerService.showWidget({
@@ -688,6 +727,7 @@ public show(): void {
 
     'Data Seeding in Sample File': () => (
       <CodeBlock
+        height={HEIGHTS.WITHOUT_TEXT}
         code={`
 public show(): void {
   this.implerService.showWidget({
@@ -704,6 +744,7 @@ public show(): void {
 
     'Providing Runtime Schema': () => (
       <CodeBlock
+        height={HEIGHTS.WITHOUT_TEXT}
         code={`
 public show(): void {
   this.implerService.showWidget({
@@ -734,6 +775,7 @@ public show(): void {
 
     'Advanced Validations': () => (
       <CodeBlock
+        height={HEIGHTS.WITHOUT_TEXT}
         code={`
 public show(): void {
   this.implerService.showWidget({
@@ -768,6 +810,7 @@ public show(): void {
     ),
     'Using Typescript': () => (
       <CodeBlock
+        height={HEIGHTS.WITHOUT_TEXT}
         code={`
 import { useImpler, ColumnTypes, ValidationTypes } from "@impler/angular";
 
@@ -796,6 +839,7 @@ public show(): void {
 
     'Passing Extra Parameters': () => (
       <CodeBlock
+        height={HEIGHTS.WITHOUT_TEXT}
         code={`
 public show(): void {
   this.implerService.showWidget({
@@ -812,6 +856,7 @@ public show(): void {
 
     'Programmatically Closing Import Widget': () => (
       <CodeBlock
+        height={HEIGHTS.WITHOUT_TEXT}
         code={`
 public close(): void {
   this.implerService.closeWidget();
@@ -822,6 +867,7 @@ public close(): void {
 
     'Changing Import Title': () => (
       <CodeBlock
+        height={HEIGHTS.WITHOUT_TEXT}
         code={`
 public show(): void {
   this.implerService.showWidget({
@@ -834,6 +880,7 @@ public show(): void {
 
     'Changing Theme Color': () => (
       <CodeBlock
+        height={HEIGHTS.WITHOUT_TEXT}
         code={`
 public show(): void {
   this.implerService.showWidget({
@@ -846,6 +893,7 @@ public show(): void {
 
     'Providing Authentication Header Value': () => (
       <CodeBlock
+        height={HEIGHTS.WITHOUT_TEXT}
         code={`
 public show(): void {
   this.implerService.showWidget({
@@ -861,6 +909,7 @@ public show(): void {
     'Usage Example': () => (
       <>
         <CodeBlock
+          height={HEIGHTS.WITHOUT_TEXT}
           code={`
 import { EventCalls, EventTypesEnum, ImplerService } from "@impler/angular";
 

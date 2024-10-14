@@ -1,9 +1,9 @@
 import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
-
 import { Flex, NativeSelect, Title, useMantineColorScheme } from '@mantine/core';
-import { track } from '@libs/amplitude';
+
 import { colors } from '@config';
+import { track } from '@libs/amplitude';
 import { IntegrationEnum } from '@impler/shared';
 import { IntegrationTabs } from './IntegrationTabs';
 import { integrationData } from './IntegrationData';
@@ -57,7 +57,12 @@ export function IntegrationModal({ accessToken, projectId, templateId, integrati
         <Title order={3} color={colorScheme === 'dark' ? colors.StrokeLight : colors.StrokeDark}>
           Integrate
         </Title>
-        <NativeSelect data={Object.values(IntegrationEnum)} onChange={onIntegrationFrameworkChange} variant="default" />
+        <NativeSelect
+          variant="default"
+          value={integration}
+          data={Object.values(IntegrationEnum)}
+          onChange={onIntegrationFrameworkChange}
+        />
       </Flex>
 
       <IntegrationTabs
