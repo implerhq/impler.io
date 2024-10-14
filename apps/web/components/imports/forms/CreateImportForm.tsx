@@ -18,7 +18,11 @@ export function CreateImportForm({ onSubmit }: CreateImportFormProps) {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<IUpdateTemplateData>({});
+  } = useForm<IUpdateTemplateData>({
+    defaultValues: {
+      integration: IntegrationEnum.REACT,
+    },
+  });
 
   return (
     <FocusTrap active>
@@ -47,9 +51,9 @@ export function CreateImportForm({ onSubmit }: CreateImportFormProps) {
                     key={key}
                     radius="xl"
                     leftIcon={<Icon />}
+                    onClick={() => field.onChange(key)}
                     color={field.value === key ? 'blue' : 'grey'}
                     variant={field.value === key ? 'filled' : 'outline'}
-                    onClick={() => field.onChange(key)}
                   >
                     {name}
                   </Button>
