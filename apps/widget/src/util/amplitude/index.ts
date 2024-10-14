@@ -24,7 +24,7 @@ export const startAmplitudeSession = (id: number) => {
 
 export const logAmplitudeEvent = (eventType: keyof typeof AMPLITUDE, eventProperties?: any) => {
   window.amplitude?.track({ event_type: eventType, event_properties: eventProperties });
-  if (eventProperties && eventProperties.email) window.amplitude.setUserId(eventProperties.email);
+  if (eventProperties && eventProperties.email) window.amplitude?.setUserId(eventProperties.email);
 };
 
 export const resetAmplitude = () => {
