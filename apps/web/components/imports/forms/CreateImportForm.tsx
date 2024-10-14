@@ -1,8 +1,8 @@
 import { Controller, useForm } from 'react-hook-form';
 import { useFocusTrap } from '@mantine/hooks';
 import { Stack, TextInput as Input, FocusTrap, Text, Group, useMantineTheme } from '@mantine/core';
-import { Button } from '@ui/button';
 
+import { Button } from '@ui/button';
 import { INTEGRATE_IMPORT } from '@config';
 import { IntegrationEnum } from '@impler/shared';
 
@@ -47,6 +47,7 @@ export function CreateImportForm({ onSubmit }: CreateImportFormProps) {
                     key={key}
                     radius="xl"
                     leftIcon={<Icon />}
+                    color={field.value === key ? 'blue' : 'grey'}
                     variant={field.value === key ? 'filled' : 'outline'}
                     onClick={() => field.onChange(key)}
                   >
