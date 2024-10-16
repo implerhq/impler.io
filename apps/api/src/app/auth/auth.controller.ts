@@ -61,17 +61,12 @@ export class AuthController {
     private requestForgotPassword: RequestForgotPassword
   ) {}
 
-  @Get('/github')
-  githubAuth() {
-    if (!process.env.GITHUB_OAUTH_CLIENT_ID || !process.env.GITHUB_OAUTH_CLIENT_SECRET) {
-      throw new ApiException(
-        'GitHub auth is not configured, please provide GITHUB_OAUTH_CLIENT_ID and GITHUB_OAUTH_CLIENT_SECRET as env variables'
-      );
-    }
-
-    return {
-      success: true,
-    };
+ @Post('/github')
+async githubAuth(@Body() body: RegisterUserDto, @Res() response: Response) {
+  if (process.env.DISABLE_USER_REGISTRATION === 'true') {
+    response.status(403).send({ message: 'Account creation is disabled' });
+    return;
+  }
   }
 
   @Get('/github/callback')
@@ -131,17 +126,23 @@ export class AuthController {
     response.contentType('text').send();
   }
 
-  @Post('/register')
-  async register(@Body() body: RegisterUserDto, @Res() response: Response) {
-    const registeredUser = await this.registerUser.execute(RegisterUserCommand.create(body));
-
-    response.cookie(CONSTANTS.AUTH_COOKIE_NAME, registeredUser.token, {
-      ...COOKIE_CONFIG,
-      domain: process.env.COOKIE_DOMAIN,
-    });
-
-    response.send(registeredUser);
+ @Post('/register')
+async register(@Body() body: RegisterUserDto, @Res() response: Response) {
+  if (process.env.DISABLE_USER_REGISTRATION === 'true') {
+    response.status(403).send({ message: 'Account creation is disabled' });
+    return;
   }
+
+  const registeredUser = await this.registerUser.execute(RegisterUserCommand.create(body));
+
+  response.cookie(CONSTANTS.AUTH_COOKIE_NAME, registeredUser.token, {
+    ...COOKIE_CONFIG,
+    domain: process.env.COOKIE_DOMAIN,
+  });
+
+  response.send(registeredUser);
+}
+
 
   @Post('/verify')
   async verifyRoute(@Body() body: VerifyDto, @UserSession() user: IJwtPayload, @Res() response: Response) {
