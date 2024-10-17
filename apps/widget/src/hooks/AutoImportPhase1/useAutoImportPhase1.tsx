@@ -2,12 +2,12 @@ import { useMutation } from '@tanstack/react-query';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
 import { notifier } from '@util';
+import { IAutoImportValues } from '@types';
+import { useAppState } from '@store/app.context';
 import { useAPIState } from '@store/api.context';
 import { useJobsInfo } from '@store/jobinfo.context';
 import { useImplerState } from '@store/impler.context';
 import { IUserJob, IErrorObject } from '@impler/shared';
-import { IAutoImportValues } from '@types';
-import { useAppState } from '@store/app.context';
 
 interface IUseAutoImportPhase1Props {
   goNext: () => void;
