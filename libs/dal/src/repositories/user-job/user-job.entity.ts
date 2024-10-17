@@ -15,6 +15,8 @@ export class UserJobEntity {
 
   status: string;
 
+  authHeaderValue: string;
+
   customRecordFormat: string;
 
   customChunkFormat: string;
