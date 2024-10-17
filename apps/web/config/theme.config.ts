@@ -12,7 +12,10 @@ export const colors = {
   yellow: '#F7B801',
   grey: '#B9BEBD',
   darkGrey: '#454545',
+  stoneGrey: '#25262b',
+  blackGrey: '#333333',
   lightGrey: '#333333',
+  faintGrey: '#1c1d21',
 
   BGPrimaryDark: '#111111',
   BGPrimaryLight: '#F3F3F3',

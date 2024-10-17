@@ -5,11 +5,11 @@ import { Plans } from './Plans';
 interface PlanProps {
   userProfile: IProfileData;
   activePlanCode?: string;
-  canceledOn?: Date;
-  expiryDate?: Date;
+  canceledOn?: string;
+  expiryDate?: string;
 }
 
-export const PlansModal = ({ userProfile, activePlanCode, canceledOn, expiryDate }: PlanProps) => {
+export const PlansModal = ({ userProfile, activePlanCode }: PlanProps) => {
   return (
     <Container fluid={true}>
       <Stack align="center" justify="center">
@@ -17,7 +17,7 @@ export const PlansModal = ({ userProfile, activePlanCode, canceledOn, expiryDate
           Choose the plan that works best for you
         </Title>
 
-        <Plans profile={userProfile} activePlanCode={activePlanCode} canceledOn={canceledOn} expiryDate={expiryDate} />
+        <Plans email={userProfile.email} activePlanCode={activePlanCode as string} />
       </Stack>
     </Container>
   );

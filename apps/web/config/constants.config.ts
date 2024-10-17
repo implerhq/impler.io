@@ -3,6 +3,7 @@ import { ReactIcon } from '@assets/icons/React.icon';
 import { AngularIcon } from '@assets/icons/Angular.icon';
 import { BubbleIcon } from '@assets/icons/Bubble.icon';
 import { IntegrationEnum } from '@impler/shared';
+import { Plan } from '@components/UpgradePlan/Plans';
 
 export const CONSTANTS = {
   EXPLORE_PLANS_QUERY_LEY: 'explore_plans',
@@ -201,6 +202,7 @@ export const ROUTES = {
   ACTIVITIES: '/activities',
   ADD_CARD: '/settings?tab=addcard&action=addcardmodal',
   EXPLORE_PLANS: '/?explore_plans=true',
+  TRANSACTIONS: '/transactions',
 };
 
 export const REGULAR_EXPRESSIONS = {
@@ -324,4 +326,124 @@ export const PLACEHOLDERS = {
   role: 'Engineer, Manager, Founder...',
   source: 'Google Search, Recommendation...',
   about: 'Google Search',
+};
+export const plans: { monthly: Plan[]; yearly: Plan[] } = {
+  monthly: [
+    {
+      name: 'Starter (Default)',
+      code: 'STARTER',
+      rowsIncluded: 5000,
+      price: 0,
+      extraChargeOverheadTenThusandRecords: 1,
+      removeBranding: false,
+      content: {
+        'Rows Included': [{ check: true, title: '5K' }],
+        'For extra 10K Records': [{ check: true, title: '$1 (Billed monthly)' }],
+        Projects: [{ check: true, title: 'Unlimited' }],
+        Features: [
+          { check: true, title: 'Theming' },
+          { check: false, title: 'Remove Branding' },
+          { check: true, title: 'Custom Validation' },
+          { check: true, title: 'Output Customization' },
+        ],
+      },
+    },
+    {
+      name: 'Growth',
+      code: 'GROWTH-MONTHLY',
+      price: 42,
+      rowsIncluded: 500000,
+      extraChargeOverheadTenThusandRecords: 0.7,
+      removeBranding: true,
+      content: {
+        'Rows Included': [{ check: true, title: '500K' }],
+        'For extra 10K Records': [{ check: true, title: '$0.70 (Billed monthly)' }],
+        Projects: [{ check: true, title: 'Unlimited' }],
+        Features: [
+          { check: true, title: 'Theming' },
+          { check: true, title: 'Remove Branding' },
+          { check: true, title: 'Custom Validation' },
+          { check: true, title: 'Output Customization' },
+        ],
+      },
+    },
+    {
+      name: 'Scale',
+      code: 'SCALE-MONTHLY',
+      price: 90,
+      rowsIncluded: 1500000,
+      extraChargeOverheadTenThusandRecords: 0.5,
+      removeBranding: true,
+      content: {
+        'Rows Included': [{ check: true, title: '1.5M' }],
+        'For extra 10K Records': [{ check: true, title: '$0.50 (Billed monthly)' }],
+        Projects: [{ check: true, title: 'Unlimited' }],
+        Features: [
+          { check: true, title: 'Theming' },
+          { check: true, title: 'Remove Branding' },
+          { check: true, title: 'Custom Validation' },
+          { check: true, title: 'Output Customization' },
+        ],
+      },
+    },
+  ],
+  yearly: [
+    {
+      name: 'Starter (Default)',
+      code: 'STARTER',
+      rowsIncluded: 5000,
+      price: 0,
+      extraChargeOverheadTenThusandRecords: 1,
+      removeBranding: false,
+      content: {
+        'Rows Included': [{ check: true, title: '5K' }],
+        'For extra 10K Records': [{ check: true, title: '$1 (Billed yearly)' }],
+        Projects: [{ check: true, title: 'Unlimited' }],
+        Features: [
+          { check: false, title: 'Theming' },
+          { check: false, title: 'Remove Branding' },
+          { check: false, title: 'Custom Validation' },
+          { check: false, title: 'Output Customization' },
+        ],
+      },
+    },
+    {
+      name: 'Growth',
+      code: 'GROWTH-YEARLY',
+      price: 420,
+      rowsIncluded: 6000000,
+      extraChargeOverheadTenThusandRecords: 0.7,
+      removeBranding: true,
+      content: {
+        'Rows Included': [{ check: true, title: '6M' }],
+        'For extra 10K Records': [{ check: true, title: '$0.70 (Billed yearly)' }],
+        Projects: [{ check: true, title: 'Unlimited' }],
+        Features: [
+          { check: true, title: 'Theming' },
+          { check: true, title: 'Remove Branding' },
+          { check: false, title: 'Custom Validation' },
+          { check: false, title: 'Output Customization' },
+        ],
+      },
+    },
+    {
+      name: 'Scale',
+      code: 'SCALE-YEARLY',
+      price: 900,
+      rowsIncluded: 18000000,
+      extraChargeOverheadTenThusandRecords: 0.5,
+      removeBranding: true,
+      content: {
+        'Rows Included': [{ check: true, title: '18M' }],
+        'For extra 10K Records': [{ check: true, title: '$0.50 (Billed yearly)' }],
+        Projects: [{ check: true, title: 'Unlimited' }],
+        Features: [
+          { check: true, title: 'Theming' },
+          { check: false, title: 'Remove Branding' },
+          { check: true, title: 'Custom Validation' },
+          { check: false, title: 'Output Customization' },
+        ],
+      },
+    },
+  ],
 };
