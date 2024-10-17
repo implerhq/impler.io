@@ -23,6 +23,9 @@ const userJobSchema = new Schema(
     externalUserId: {
       type: Schema.Types.String,
     },
+    authHeaderValue: {
+      type: Schema.Types.String,
+    },
     status: {
       type: Schema.Types.String,
     },
