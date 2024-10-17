@@ -18,14 +18,14 @@ export class UserJobResume {
   ) {}
 
   async execute(_jobId: string): Promise<UserJobEntity> {
-    const userJob = await this.userJobRepository.findOne({ _id: _jobId });
+    const userJob = await this.userJobRepository.findById(_jobId);
 
     if (!userJob) {
       throw new DocumentNotFoundException(`Userjob`, _jobId);
     }
 
     if (userJob.status !== UserJobImportStatusEnum.PAUSED) {
-      throw new BadRequestException(`Job ${_jobId} is not paused. Current status: ${userJob.status}`);
+      throw new BadRequestException(`Userjob with id ${_jobId} is not paused. Current status: ${userJob.status}`);
     }
 
     const cronExpression = userJob.cron;
@@ -45,10 +45,6 @@ export class UserJobResume {
       { $set: { status: UserJobImportStatusEnum.RUNNING } },
       { returnDocument: 'after' }
     );
-
-    if (!updatedUserJob) {
-      throw new DocumentNotFoundException(`No User Job was found with the given _jobId ${_jobId}`, _jobId);
-    }
 
     return updatedUserJob;
   }

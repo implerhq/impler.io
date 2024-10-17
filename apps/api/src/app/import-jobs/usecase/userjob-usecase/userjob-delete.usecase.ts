@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';
-import { BadRequestException } from '@nestjs/common';
 import { NameService } from '@impler/services';
 import { UserJobEntity, UserJobRepository } from '@impler/dal';
+import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
 
 @Injectable()
 export class UserJobDelete {
@@ -13,14 +13,22 @@ export class UserJobDelete {
   ) {}
 
   async execute({ externalUserId, _jobId }: { externalUserId: string; _jobId: string }): Promise<UserJobEntity> {
-    const deletedUserJob = await this.userJobRepository.delete({ _id: _jobId, externalUserId });
+    const userJobToDelete = await this.userJobRepository.findOne({ _id: _jobId, externalUserId });
 
-    if (!deletedUserJob) {
-      throw new BadRequestException(`Unable to Delete UserJob with id ${_jobId}`);
+    if (!userJobToDelete) {
+      throw new DocumentNotFoundException(
+        'Userjob',
+        _jobId,
+        `Userjob with JobId ${_jobId} and externalUserId ${externalUserId} not found`
+      );
     }
 
-    this.schedulerRegistry.deleteCronJob(this.nameService.getCronName(_jobId));
+    try {
+      this.schedulerRegistry.deleteCronJob(this.nameService.getCronName(_jobId));
+    } catch (error) {}
 
-    return deletedUserJob;
+    await this.userJobRepository.delete({ _id: _jobId });
+
+    return userJobToDelete;
   }
 }
