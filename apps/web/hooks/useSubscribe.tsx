@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import getConfig from 'next/config';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/router';
 import { notify } from '@libs/notify';
 import { commonApi } from '@libs/api';
-import { API_KEYS, CONSTANTS, NOTIFICATION_KEYS, ROUTES } from '@config';
+import { API_KEYS, CONSTANTS, MODAL_KEYS, NOTIFICATION_KEYS } from '@config';
 import { modals } from '@mantine/modals';
 import { ICardData, IErrorObject } from '@impler/shared';
 import { ConfirmationModal } from '@components/ConfirmationModal';
@@ -25,7 +24,6 @@ interface ISubscribeResponse {
 
 export const useSubscribe = ({ email, planCode, paymentMethodId }: UseSubscribeProps) => {
   const queryClient = useQueryClient();
-  const router = useRouter();
   const isCouponFeatureEnabled = publicRuntimeConfig.NEXT_PUBLIC_COUPON_ENABLED;
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | undefined>(paymentMethodId);
   const [appliedCouponCode, setAppliedCouponCode] = useState<string | undefined>(undefined);
@@ -39,16 +37,10 @@ export const useSubscribe = ({ email, planCode, paymentMethodId }: UseSubscribeP
     () => commonApi<ICardData[]>(API_KEYS.PAYMENT_METHOD_LIST as any, {}),
     {
       onSuccess(data) {
-        if (data?.length === 0) {
-          notify(NOTIFICATION_KEYS.NO_PAYMENT_METHOD_FOUND, {
-            title: 'No Cards Found!',
-            message: 'Please Add your Card first. Redirecting you to cards!',
-            color: 'red',
-          });
-          modals.closeAll();
-          router.push(ROUTES.ADD_CARD + `&${CONSTANTS.PLAN_CODE_QUERY_KEY}=${planCode}`);
-        } else {
+        if (data?.length) {
           setSelectedPaymentMethod(data[0].paymentMethodId);
+        } else {
+          return;
         }
       },
     }
@@ -74,6 +66,8 @@ export const useSubscribe = ({ email, planCode, paymentMethodId }: UseSubscribeP
                 : CONSTANTS.SUBSCRIPTION_FAILED_TITLE,
             children: <ConfirmationModal status={response.status as string} />,
           });
+
+          modals.close(MODAL_KEYS.SELECT_CARD);
         }
       },
       onError: (error: IErrorObject) => {
@@ -94,7 +88,6 @@ export const useSubscribe = ({ email, planCode, paymentMethodId }: UseSubscribeP
   );
 
   const handleProceed = () => {
-    modals.closeAll();
     if (selectedPaymentMethod) {
       subscribe({
         email,

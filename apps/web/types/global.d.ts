@@ -149,6 +149,7 @@ interface ICheckoutData {
   totalPrice: number;
   discount?: number;
   proratedRefund?: number;
+  interval: string;
 }
 
 interface ISubscribeData {

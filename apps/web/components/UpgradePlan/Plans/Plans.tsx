@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Stack, Text, Group, Badge, Switch, Title } from '@mantine/core';
+import { Stack, Text, Group, Badge, Switch, Title, Divider } from '@mantine/core';
 
 import { colors, plans } from '@config';
 import { PlanCard } from './PlanCard';
@@ -26,6 +26,8 @@ export interface Plan {
 interface PlansProps {
   activePlanCode: string;
   email: string;
+  canceledOn?: string;
+  expiryDate?: string;
 }
 
 export function Plans({ activePlanCode, email }: PlansProps) {
@@ -50,6 +52,7 @@ export function Plans({ activePlanCode, email }: PlansProps) {
           Save 20% OFF
         </Badge>
       </Group>
+      <Divider />
       <Group grow align="flex-start">
         {plans[showYearly ? 'yearly' : 'monthly'].map((plan) => (
           <PlanCard key={plan.code} plan={plan} isYearly={showYearly} activePlanCode={activePlanCode} email={email} />

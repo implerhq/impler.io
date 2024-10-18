@@ -4,6 +4,7 @@ import { API_KEYS, MODAL_KEYS, NOTIFICATION_KEYS } from '@config';
 import { IErrorObject } from '@impler/shared';
 import { modals } from '@mantine/modals';
 import { notify } from '@libs/notify';
+import { CancelSubscriptionModal } from '@components/home/PlanDetails/CancelSubscriptionModal';
 
 interface UseCancelPlanProps {
   email: string;
@@ -26,11 +27,21 @@ export function useCancelPlan({ email }: UseCancelPlanProps) {
          Your current subscription will continue till ${data.expiryDate}. You won't be charged again.`,
         color: 'red',
       });
+      modals.closeAll();
     },
   });
 
+  const openCancelPlanModal = () => {
+    modals.open({
+      children: <CancelSubscriptionModal />,
+      size: '2xl',
+      withCloseButton: false,
+    });
+  };
+
   return {
     cancelPlan,
+    openCancelPlanModal,
     isCancelPlanLoading,
   };
 }

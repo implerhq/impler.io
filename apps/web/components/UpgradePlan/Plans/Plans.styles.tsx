@@ -1,3 +1,4 @@
+import { colors } from '@config';
 import { MantineTheme, createStyles } from '@mantine/core';
 
 export default createStyles((theme: MantineTheme): Record<string, any> => {
@@ -39,16 +40,13 @@ export default createStyles((theme: MantineTheme): Record<string, any> => {
     },
     button: {
       width: '100%',
-      marginBottom: theme.spacing.lg,
-      color: 'white',
+      color: colors.white,
+      radius: '0px',
       '&:disabled': {
-        backgroundColor: theme.colors.gray[6],
-        color: 'white',
+        backgroundColor: theme.colors.gray,
+        color: colors.white,
         cursor: 'not-allowed',
       },
-    },
-    categoryTitle: {
-      fontWeight: 600,
     },
   };
 });

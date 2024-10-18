@@ -56,7 +56,7 @@ export function usePlanDetails({ email }: UsePlanDetailProps) {
           expiryDate={activePlanDetails?.expiryDate}
         />
       ),
-      size: 'calc(70vw - 3rem)',
+      size: 'calc(60vw - 3rem)',
       withCloseButton: true,
     });
   }, [activePlanDetails, profileInfo]);

@@ -22,4 +22,7 @@ export const usePlanDetailCardStyles = createStyles((theme, { isWarning }: PlanD
   value: {
     color: colors.white,
   },
+  warningValue: {
+    color: colors.danger,
+  },
 }));

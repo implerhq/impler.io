@@ -14,7 +14,7 @@ export function PlanDetailCard({ title, value, isWarning = false }: PlanDetailCa
     <Container className={classes.container}>
       <Stack spacing={4}>
         <Text className={classes.title}>{title}</Text>
-        <Title order={3} className={classes.value}>
+        <Title order={3} className={isWarning ? classes.warningValue : classes.value}>
           {value}
         </Title>
       </Stack>

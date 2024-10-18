@@ -1,4 +1,4 @@
-import { Container, Stack, Title } from '@mantine/core';
+import { Flex, Stack, Title } from '@mantine/core';
 import React from 'react';
 import { Plans } from './Plans';
 
@@ -11,7 +11,7 @@ interface PlanProps {
 
 export const PlansModal = ({ userProfile, activePlanCode }: PlanProps) => {
   return (
-    <Container fluid={true}>
+    <Flex>
       <Stack align="center" justify="center">
         <Title order={2} align="center">
           Choose the plan that works best for you
@@ -19,6 +19,6 @@ export const PlansModal = ({ userProfile, activePlanCode }: PlanProps) => {
 
         <Plans email={userProfile.email} activePlanCode={activePlanCode as string} />
       </Stack>
-    </Container>
+    </Flex>
   );
 };

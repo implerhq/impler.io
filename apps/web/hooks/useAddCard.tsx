@@ -1,21 +1,18 @@
 import { useState } from 'react';
-import { useRouter } from 'next/router';
 import { useStripe } from '@stripe/react-stripe-js';
 import { useMutation } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
 import { IErrorObject } from '@impler/shared';
-import { API_KEYS, CONSTANTS, NOTIFICATION_KEYS, ROUTES } from '@config';
+import { API_KEYS, NOTIFICATION_KEYS } from '@config';
 
 interface UseAddCardProps {
-  close: () => void;
   planCode?: string | null;
   refetchPaymentMethods: () => void;
 }
 
-export function useAddCard({ close, planCode, refetchPaymentMethods }: UseAddCardProps) {
-  const router = useRouter();
+export function useAddCard({ refetchPaymentMethods }: UseAddCardProps) {
   const stripe = useStripe();
   const [isPaymentMethodLoading, setIsPaymentMethodLoading] = useState<boolean>(false);
   const { mutate: addPaymentMethod } = useMutation<any, IErrorObject, string>(
@@ -28,7 +25,7 @@ export function useAddCard({ close, planCode, refetchPaymentMethods }: UseAddCar
       async onSuccess(data: any) {
         if (data && data.status === 'succeeded') {
           notify(NOTIFICATION_KEYS.CARD_ADDED);
-          performReturnAction();
+          refetchPaymentMethods();
         }
 
         if (data && data.status === 'requires_action') {
@@ -47,7 +44,6 @@ export function useAddCard({ close, planCode, refetchPaymentMethods }: UseAddCar
           }
         }
         refetchPaymentMethods();
-        close();
       },
       onError(error: any) {
         notify(NOTIFICATION_KEYS.ERROR_ADDING_PAYMENT_METHOD, {
@@ -65,20 +61,12 @@ export function useAddCard({ close, planCode, refetchPaymentMethods }: UseAddCar
       parameters: [intentId],
     });
     refetchPaymentMethods();
-    close();
-    performReturnAction();
-  };
-
-  const performReturnAction = async () => {
-    if (planCode) {
-      router.push(ROUTES.HOME + `?${CONSTANTS.PLAN_CODE_QUERY_KEY}=${planCode}`);
-    }
   };
 
   return {
-    performReturnAction,
     addPaymentMethod,
     isPaymentMethodLoading,
     setIsPaymentMethodLoading,
+    refetchPaymentMethods,
   };
 }

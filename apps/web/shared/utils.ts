@@ -30,3 +30,16 @@ export const getColorForText = (text: string) => {
 
   return colors[colorIndex];
 };
+
+export function getPlanType(CODE: string): string | undefined {
+  switch (CODE) {
+    case 'MONTHLY':
+      return 'Month';
+    case 'WEEKLY':
+      return 'Week';
+    case 'YEARLY':
+      return 'Year';
+    default:
+      return undefined;
+  }
+}

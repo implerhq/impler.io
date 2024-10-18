@@ -317,6 +317,14 @@ export const HOW_HEARD_ABOUT_US = [
   { value: 'Linkdin', label: 'Linkdin' },
 ];
 
+export const MEMBERSHIP_CANCELLATION_REASONS = [
+  'Not liking service',
+  'Building my own data importer',
+  'No more need of data importer',
+  'Moving to another service provider',
+  'Something else',
+];
+
 export const PLACEHOLDERS = {
   email: 'johndoe@acme.inc',
   password: '********',
@@ -400,10 +408,10 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
         'For extra 10K Records': [{ check: true, title: '$1 (Billed yearly)' }],
         Projects: [{ check: true, title: 'Unlimited' }],
         Features: [
-          { check: false, title: 'Theming' },
+          { check: true, title: 'Theming' },
           { check: false, title: 'Remove Branding' },
-          { check: false, title: 'Custom Validation' },
-          { check: false, title: 'Output Customization' },
+          { check: true, title: 'Custom Validation' },
+          { check: true, title: 'Output Customization' },
         ],
       },
     },
@@ -421,8 +429,8 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
         Features: [
           { check: true, title: 'Theming' },
           { check: true, title: 'Remove Branding' },
-          { check: false, title: 'Custom Validation' },
-          { check: false, title: 'Output Customization' },
+          { check: true, title: 'Custom Validation' },
+          { check: true, title: 'Output Customization' },
         ],
       },
     },
@@ -439,9 +447,9 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
         Projects: [{ check: true, title: 'Unlimited' }],
         Features: [
           { check: true, title: 'Theming' },
-          { check: false, title: 'Remove Branding' },
+          { check: true, title: 'Remove Branding' },
           { check: true, title: 'Custom Validation' },
-          { check: false, title: 'Output Customization' },
+          { check: true, title: 'Output Customization' },
         ],
       },
     },

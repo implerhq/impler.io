@@ -6,6 +6,8 @@ import { Button } from '@ui/button';
 import Link from 'next/link';
 import React from 'react';
 import { PlanDetailCard } from './PlanDetailsCard';
+import { modals } from '@mantine/modals';
+import { CancelSubscriptionModal } from './CancelSubscriptionModal'; // Adjust the import path as necessary
 
 interface ActivePlanDetailsProps {
   activePlanDetails: any;
@@ -20,6 +22,12 @@ export function ActivePlanDetails({
   showWarning,
   showPlans,
 }: ActivePlanDetailsProps) {
+  const openCancelModal = () => {
+    modals.open({
+      children: <CancelSubscriptionModal />,
+    });
+  };
+
   return (
     <Stack>
       <Group grow>
@@ -55,7 +63,13 @@ export function ActivePlanDetails({
           <Button onClick={showPlans} variant="filled">
             Upgrade Plan
           </Button>
-          <Button variant="outline">Cancel Plan</Button>
+
+          {activePlanDetails?.plan.code != 'STARTER' && (
+            <Button variant="outline" onClick={openCancelModal}>
+              Cancel Plan
+            </Button>
+          )}
+
           <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.subscriptionInformation} iconSize="md" />
         </Group>
       </Stack>

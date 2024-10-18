@@ -4,7 +4,7 @@ import { CrossCircle } from '@assets/icons/CrossCircle.icon';
 
 interface PlanFeatureProps {
   included: boolean;
-  value?: string; // This will be the title
+  value?: string;
 }
 
 export function PlanFeature({ included, value }: PlanFeatureProps) {
@@ -12,7 +12,7 @@ export function PlanFeature({ included, value }: PlanFeatureProps) {
     <>
       <Flex align="center" gap="sm">
         {included ? <CheckCircle /> : <CrossCircle />}
-        <Text>{value}</Text>
+        <Text fw="bolder">{value}</Text>
       </Flex>
     </>
   );

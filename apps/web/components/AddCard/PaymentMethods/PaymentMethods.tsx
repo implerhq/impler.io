@@ -1,9 +1,5 @@
-import { Radio } from '@mantine/core';
-import { useRouter } from 'next/router';
-import { modals } from '@mantine/modals';
-import { Button } from '@ui/button';
 import { ICardData } from '@impler/shared';
-import { MODAL_KEYS, ROUTES } from '@config';
+import { Radio, SimpleGrid } from '@mantine/core';
 
 import { PaymentMethodOption } from './PaymentMethodOption';
 
@@ -18,22 +14,13 @@ export function PaymentMethods({
   selectedPaymentMethod,
   handlePaymentMethodChange,
 }: PaymentMethodsProps) {
-  const router = useRouter();
-
-  const handleAddMoreCard = () => {
-    modals.close(MODAL_KEYS.SELECT_CARD);
-    modals.close(MODAL_KEYS.PAYMENT_PLANS);
-    router.push(ROUTES.ADD_CARD);
-  };
-
   return (
-    <>
-      <Radio.Group
-        w={480}
-        name="paymentMethod"
-        value={selectedPaymentMethod || undefined}
-        onChange={(event) => handlePaymentMethodChange(event)}
-      >
+    <Radio.Group
+      name="paymentMethod"
+      value={selectedPaymentMethod || undefined}
+      onChange={(event) => handlePaymentMethodChange(event)}
+    >
+      <SimpleGrid>
         {paymentMethods?.map((method) => (
           <PaymentMethodOption
             key={method.paymentMethodId}
@@ -42,11 +29,7 @@ export function PaymentMethods({
             onChange={() => handlePaymentMethodChange(method.paymentMethodId)}
           />
         ))}
-      </Radio.Group>
-
-      <Button variant="outline" color="yellow" fullWidth onClick={handleAddMoreCard}>
-        + Add Card
-      </Button>
-    </>
+      </SimpleGrid>
+    </Radio.Group>
   );
 }

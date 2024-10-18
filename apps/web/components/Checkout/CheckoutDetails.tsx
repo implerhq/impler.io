@@ -28,11 +28,7 @@ export function CheckoutDetails({ checkoutData, isCheckoutDataLoading }: Checkou
 
   if (checkoutData)
     return (
-      <Stack
-        p="sm"
-        spacing="sm"
-        style={{ border: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[4]}` }}
-      >
+      <Stack spacing="sm">
         <Group position="apart">
           <Text>Plan Name</Text>
           <Text>{checkoutData.planName}</Text>

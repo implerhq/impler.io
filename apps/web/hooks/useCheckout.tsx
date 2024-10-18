@@ -9,17 +9,17 @@ interface UseCheckoutProps {
   paymentMethodId?: string;
 }
 
-export function useCheckout({ couponCode, planCode, paymentMethodId }: UseCheckoutProps) {
+export function useCheckout({ couponCode, planCode }: UseCheckoutProps) {
   const { data: checkoutData, isLoading: isCheckoutDataLoading } = useQuery<
     unknown,
     IErrorObject,
     ICheckoutData,
     (string | undefined)[]
   >(
-    [API_KEYS.CHECKOUT, couponCode, planCode, paymentMethodId],
-    () => commonApi(API_KEYS.CHECKOUT as any, { query: { couponCode, planCode, paymentMethodId } }),
+    [API_KEYS.CHECKOUT, couponCode, planCode],
+    () => commonApi(API_KEYS.CHECKOUT as any, { query: { couponCode, planCode } }),
     {
-      enabled: !!paymentMethodId && !!planCode,
+      enabled: !!planCode,
     }
   );
 
