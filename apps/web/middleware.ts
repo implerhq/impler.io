@@ -26,8 +26,7 @@ export function middleware(request: NextRequest) {
     else return;
   else if ([ROUTES.SIGNIN, ROUTES.OTP_VERIFY, ROUTES.SIGNUP_ONBOARDING, ROUTES.SIGNUP].includes(path))
     return NextResponse.redirect(new URL(ROUTES.HOME, request.url));
-  else if ((path == ROUTES.SIGNUP, [ROUTES.SIGNUP] && !cookie))
-    return NextResponse.redirect(new URL(ROUTES.SIGNUP, request.url));
+  else if (path == ROUTES.SIGNUP && !cookie) return NextResponse.redirect(new URL(ROUTES.SIGNUP, request.url));
   // else if (path !== ROUTES.HOME)
 }
 
