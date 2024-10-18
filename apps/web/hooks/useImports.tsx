@@ -45,7 +45,9 @@ export function useImports() {
         ]);
         track({
           name: 'IMPORT CREATE',
-          properties: {},
+          properties: {
+            framework: data.integration,
+          },
         });
         push(`/imports/${data._id}`);
         notify(NOTIFICATION_KEYS.IMPORT_CREATED);
@@ -127,6 +129,7 @@ export function useImports() {
       modalId: MODAL_KEYS.IMPORT_CREATE,
       title: MODAL_TITLES.IMPORT_CREATE,
       children: <CreateImportForm onSubmit={createImport} />,
+      size: 'lg',
     });
   }
   function onDuplicateClick(importId: string) {

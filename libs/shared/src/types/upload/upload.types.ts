@@ -4,6 +4,7 @@ export enum UploadStatusEnum {
   'UPLOADED' = 'Uploaded',
   'MAPPING' = 'Mapping',
   'MAPPED' = 'Mapped',
+  'SELECT_HEADER' = 'Select Header',
   'REVIEWING' = 'Reviewing',
   'REVIEWED' = 'Reviewed',
   'CONFIRMED' = 'Confirmed',
@@ -98,7 +99,8 @@ export type SendWebhookData = {
 };
 
 export type SendImportJobData = {
-  importJobHistoryId: string;
+  _jobId: string;
+  allDataFilePath: string;
   cache?: SendImportJobCachedData;
 };
 
@@ -109,6 +111,7 @@ export type PublishToQueueData = SendWebhookData;
 
 export type EndImportData = {
   uploadId: string;
+  uploadedFileId?: string;
   destination: DestinationsEnum;
 };
 

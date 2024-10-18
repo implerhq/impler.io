@@ -9,6 +9,7 @@ const colorsCodes: Record<ButtonColors, string> = {
   green: colors.green,
   invariant: colors.black,
   yellow: colors.yellow,
+  grey: colors.StrokeLight,
 };
 
 const getRootFilledStyles = (theme: MantineTheme, color: ButtonColors = 'blue', fullWidth?: boolean) => ({
@@ -100,6 +101,14 @@ const getRootOutlineStyles = (
       backgroundColor: colors.yellow,
       color: colors.white,
       border: `1px solid ${colors.yellow}`,
+    }),
+    ...(color === 'grey' && {
+      backgroundColor: colors.lightGrey,
+      color: colors.white,
+      border: `1px solid ${colors.lightGrey}`,
+      '> svg': {
+        color: theme.colorScheme === 'dark' ? colors.black : colors.white,
+      },
     }),
     color: theme.colorScheme === 'dark' && color === 'invariant' ? colors.black : colors.white,
   },

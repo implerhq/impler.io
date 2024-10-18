@@ -29,6 +29,9 @@ export class GetImports {
       {
         skip: limit * (page - 1),
         limit,
+        sort: {
+          updatedAt: -1,
+        },
       }
     );
 

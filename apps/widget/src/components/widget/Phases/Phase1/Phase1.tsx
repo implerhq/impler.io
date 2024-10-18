@@ -1,30 +1,42 @@
-import { Group } from '@mantine/core';
+import { Flex, Group } from '@mantine/core';
 import { Controller } from 'react-hook-form';
+import { useMediaQuery } from '@mantine/hooks';
 
 import { PhasesEnum } from '@types';
 import { Select } from '@ui/Select';
 import { Button } from '@ui/Button';
-
-import { variables } from '@config';
 import { WIDGET_TEXTS } from '@impler/client';
+
 import { DownloadIcon, BackIcon } from '@icons';
 import { UploadDropzone } from '@ui/UploadDropzone';
 import { usePhase1 } from '@hooks/Phase1/usePhase1';
+import { mantineConfig, MANUAL_ENTRY_LIMIT, variables } from '@config';
 
-import useStyles from './Styles';
+import useStyles from './Phase1.Styles';
+import { Divider } from '@ui/Divider';
 import { Footer } from 'components/Common/Footer';
 import { SheetSelectModal } from './SheetSelectModal';
+import { DirectEntryView } from './DirectEntryView';
 
 interface IPhase1Props {
   onNextClick: () => void;
   hasImageUpload: boolean;
-  generateImageTemplate: () => void;
   texts: typeof WIDGET_TEXTS;
+  onManuallyEnterData: () => void;
+  generateImageTemplate: () => void;
 }
 
-export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTemplate, texts }: IPhase1Props) {
+export function Phase1({
+  texts,
+  hasImageUpload,
+  onManuallyEnterData,
+  onNextClick: goNext,
+  generateImageTemplate,
+}: IPhase1Props) {
   const { classes } = useStyles();
+  const isBiggerThanSm = useMediaQuery(`(min-width: ${mantineConfig.breakpoints?.sm}px)`);
   const {
+    columns,
     onSubmit,
     control,
     setError,
@@ -41,6 +53,7 @@ export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTempl
   } = usePhase1({
     goNext,
     texts,
+    onManuallyEnterData,
   });
   const onDownload = () => {
     if (hasImageUpload) generateImageTemplate();
@@ -82,34 +95,42 @@ export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTempl
         </div>
       </Group>
 
-      <Controller
-        control={control}
-        name="file"
-        rules={{
-          required: texts.PHASE1.SELECT_FILE_REQUIRED_MSG,
-        }}
-        render={({ field, fieldState }) => (
-          <UploadDropzone
-            texts={texts}
-            loading={isUploadLoading}
-            onReject={() => {
-              setError('file', {
-                message: texts.PHASE1.SELECT_FILE_FORMAT_MSG,
-                type: 'manual',
-              });
-            }}
-            className={classes.dropzone}
-            onDrop={(selectedFile) => {
-              field.onChange(selectedFile[variables.baseIndex]);
-              setError('file', {});
-            }}
-            onClear={() => field.onChange(undefined)}
-            title={texts.PHASE1.SELECT_FILE_NAME}
-            file={field.value}
-            error={fieldState.error?.message}
+      <Flex style={{ flexGrow: 1 }} justify="center" align="center">
+        <Flex direction={{ base: 'column', sm: 'row' }} align="stretch" justify="center" gap="xs" w="75%">
+          <Controller
+            control={control}
+            name="file"
+            render={({ field, fieldState }) => (
+              <UploadDropzone
+                texts={texts}
+                loading={isUploadLoading}
+                className={classes.contentWrapper}
+                onReject={() => {
+                  setError('file', {
+                    message: texts.PHASE1.SELECT_FILE_FORMAT_MSG,
+                    type: 'manual',
+                  });
+                }}
+                onDrop={(selectedFile) => {
+                  field.onChange(selectedFile[variables.baseIndex]);
+                  onSubmit(selectedFile[variables.baseIndex]);
+                }}
+                error={fieldState.error?.message}
+              />
+            )}
           />
-        )}
-      />
+          <Divider orientation={isBiggerThanSm ? 'vertical' : 'horizontal'} label="OR" />
+
+          <DirectEntryView
+            texts={texts}
+            columns={columns}
+            limit={MANUAL_ENTRY_LIMIT}
+            isLoading={isUploadLoading}
+            onManuallyEnterData={onSubmit}
+            className={classes.contentWrapper}
+          />
+        </Flex>
+      </Flex>
 
       <SheetSelectModal
         texts={texts}
@@ -120,12 +141,7 @@ export function Phase1({ onNextClick: goNext, hasImageUpload, generateImageTempl
         onClose={onSelectSheetModalReset}
       />
 
-      <Footer
-        onNextClick={onSubmit}
-        onPrevClick={() => {}}
-        active={PhasesEnum.UPLOAD}
-        primaryButtonLoading={isUploadLoading || isExcelSheetNamesLoading}
-      />
+      <Footer active={PhasesEnum.UPLOAD} primaryButtonLoading={isUploadLoading || isExcelSheetNamesLoading} />
     </>
   );
 }

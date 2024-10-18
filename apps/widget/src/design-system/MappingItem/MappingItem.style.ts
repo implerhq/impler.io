@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
 import { createStyles, MantineTheme } from '@mantine/core';
 import { colors } from '../../config/colors.config';
 
-export const getRootStyles = (theme: MantineTheme): React.CSSProperties => ({
+const getRootStyles = (theme: MantineTheme): React.CSSProperties => ({
   justifyContent: 'space-between',
   width: '100%',
   [`@media (max-width: ${theme.breakpoints.md}px)`]: {
@@ -12,21 +11,22 @@ export const getRootStyles = (theme: MantineTheme): React.CSSProperties => ({
   },
 });
 
-export const getSelectionRootStyles = (theme: MantineTheme): React.CSSProperties => ({
-  borderColor: colors.lightDeem,
-  borderWidth: 1,
-  borderStyle: 'solid',
-  borderRadius: 4,
-  padding: 0,
+const getSelectionWrapperStyles = (theme: MantineTheme): React.CSSProperties => ({
+  width: '70%',
   [`@media (max-width: ${theme.breakpoints.md}px)`]: {
     width: '100%',
   },
-  [`@media (min-width: ${theme.breakpoints.md}px)`]: {
-    width: '70%',
-  },
 });
 
-export const getHeadingStyles = (theme: MantineTheme) => ({
+const getSelectionRootStyles = (): React.CSSProperties => ({
+  borderColor: 'var(--border-color)',
+  borderWidth: 1,
+  borderStyle: 'solid',
+  borderRadius: 'var(--border-radius)',
+  padding: 0,
+});
+
+const getHeadingStyles = (theme: MantineTheme) => ({
   padding: theme.spacing.xs,
   backgroundColor: colors.light,
   display: 'flex',
@@ -55,7 +55,7 @@ export const getSelectStyles = (theme: MantineTheme, height: number): React.CSSP
   cursor: 'pointer',
 });
 
-export const getSelectRootStyles = (theme: MantineTheme): React.CSSProperties => ({
+export const getSelectRootStyles = (): React.CSSProperties => ({
   width: '50%',
 });
 
@@ -68,18 +68,19 @@ export const getStatusTextStyles = (theme: MantineTheme): React.CSSProperties =>
   },
 });
 
-export const getRequiredStyles = (theme: MantineTheme): React.CSSProperties => ({
-  color: 'red',
+export const getRequiredStyles = (): React.CSSProperties => ({
+  color: 'var(--error-color)',
 });
 
-export default createStyles((theme: MantineTheme, params: { height: number }, getRef): Record<string, any> => {
+export default createStyles((theme: MantineTheme, params: { height: number }): Record<string, any> => {
   return {
     root: getRootStyles(theme),
     statusText: getStatusTextStyles(theme),
-    selectionRoot: getSelectionRootStyles(theme),
-    selectRoot: getSelectRootStyles(theme),
+    selectionWrapper: getSelectionWrapperStyles(theme),
+    selectionRoot: getSelectionRootStyles(),
+    selectRoot: getSelectRootStyles(),
     select: getSelectStyles(theme, params.height),
     heading: getHeadingStyles(theme),
-    required: getRequiredStyles(theme),
+    required: getRequiredStyles(),
   };
 });

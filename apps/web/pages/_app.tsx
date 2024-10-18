@@ -1,4 +1,5 @@
 import React from 'react';
+import { Global } from '@emotion/react';
 import Head from 'next/head';
 import getConfig from 'next/config';
 import { Poppins } from 'next/font/google';
@@ -22,7 +23,11 @@ const { publicRuntimeConfig } = getConfig();
 if (typeof window !== 'undefined' && publicRuntimeConfig.NEXT_PUBLIC_AMPLITUDE_ID) {
   init(publicRuntimeConfig.NEXT_PUBLIC_AMPLITUDE_ID, {
     defaultTracking: {
+      sessions: false,
+      pageViews: false,
       attribution: false,
+      fileDownloads: false,
+      formInteractions: false,
     },
   });
 }
@@ -98,8 +103,33 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       <QueryClientProvider client={client}>
         <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
           <StoreWrapper>
+            <Global
+              styles={{
+                /* width */
+                '::-webkit-scrollbar': {
+                  width: '5px',
+                  height: '5px',
+                },
+
+                /* Track */
+                '::-webkit-scrollbar-track': {
+                  boxShadow: 'inset 0 0 3px grey',
+                  borderRadius: '10px',
+                },
+
+                /* Handle */
+                '::-webkit-scrollbar-thumb': {
+                  background: colors.TXTGray,
+                  borderRadius: '10px',
+                },
+              }}
+            />
             <MantineProvider
-              theme={{ ...mantineConfig, colorScheme, fontFamily: poppinsFont.style.fontFamily }}
+              theme={{
+                ...mantineConfig,
+                colorScheme,
+                fontFamily: poppinsFont.style.fontFamily,
+              }}
               withGlobalStyles
               withNormalizeCSS
             >

@@ -7,7 +7,7 @@ import { FileNotValidError } from '../exceptions/file-not-valid.exception';
 @Injectable()
 export class ValidImportFile implements PipeTransform<Express.Multer.File> {
   transform(value: Express.Multer.File) {
-    if (!SupportedFileMimeTypes.includes(value.mimetype)) {
+    if (value && !SupportedFileMimeTypes.includes(value.mimetype)) {
       throw new FileNotValidError();
     }
 

@@ -1,17 +1,10 @@
 import { createStyles } from '@mantine/core';
-import { colors } from '../../config/colors.config';
 
-export const getSeparatorStyles = () => ({
+const getSeparatorStyles = () => ({
   backgroundColor: 'none',
   flex: 0,
   marginLeft: 7,
   marginRight: 7,
-  color: colors.lightGray,
-});
-
-export const getStepLabelStyles = () => ({
-  color: colors.darkDeem,
-  fontWeight: 600,
 });
 
 export default createStyles((): Record<string, any> => {
@@ -23,6 +16,5 @@ export default createStyles((): Record<string, any> => {
       marginLeft: '5px',
     },
     separator: getSeparatorStyles(),
-    stepLabel: getStepLabelStyles(),
   };
 });

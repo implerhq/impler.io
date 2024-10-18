@@ -5,6 +5,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { notify } from '@libs/notify';
 import { commonApi } from '@libs/api';
+import { track } from '@libs/amplitude';
 import { API_KEYS, MODAL_KEYS, MODAL_TITLES } from '@config';
 import { ICustomization, IErrorObject, IValidator } from '@impler/shared';
 import { CodeOutput } from '@components/imports/validator/CodeOutput';
@@ -87,6 +88,12 @@ export function useValidator({ templateId }: UseSchemaProps) {
         } else {
           notify('VALIDATIONS_UPDATED');
         }
+        track({
+          name: 'SAVE VALIDATION',
+          properties: {
+            isValid: !!output?.passed,
+          },
+        });
       },
       onError(error) {
         notify('VALIDATIONS_UPDATED', { title: 'Something went wrong!', message: error?.message, color: 'red' });

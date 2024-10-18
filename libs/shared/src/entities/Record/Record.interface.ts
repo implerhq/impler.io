@@ -3,6 +3,6 @@ export interface IRecord {
   index: number;
   isValid: boolean;
   record: Record<string, any>;
-  errors: Record<string, string>;
+  errors?: Record<string, string>;
   updated: Record<string, boolean>;
 }

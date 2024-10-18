@@ -1,11 +1,12 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "types": ["node", "multer", "mocha", "chai"],
-    "target": "es2017",
+    "target": "esnext",
     "allowJs": false,
     "esModuleInterop": false,
     "declarationMap": true,
