@@ -1,29 +1,32 @@
 import React from 'react';
-import { Badge, Flex, Text, UnstyledButton, Stack, TextInput } from '@mantine/core';
-import { colors, ROLE_BADGES } from '@config';
+import { Flex, Text, Stack, TextInput } from '@mantine/core';
+
+import { Badge } from '@ui/badge';
 import { Button } from '@ui/button';
+import { List } from '@components/List';
+import { colors, ROLE_BADGES } from '@config';
+import { IconButton } from '@ui/icon-button';
+import { useProject } from '@hooks/useProject';
 import { SwapIcon } from '@assets/icons/Swap.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
 import { InformationIcon } from '@assets/icons/Information.icon';
-import { List } from '@components/List';
 import { IProjectPayload, UserRolesEnum } from '@impler/shared';
-import { useProject } from '@hooks/useProject';
 
 export function ManageProjectModal() {
   const {
-    handleSubmit,
-    register,
     errors,
     onSubmit,
     projects,
+    register,
+    handleSubmit,
     currentProjectId,
-    handleDeleteProject,
     onProjectIdChange,
+    handleDeleteProject,
     isCreateProjectLoading,
   } = useProject();
 
   return (
-    <>
+    <Stack spacing="xs">
       <List<IProjectPayload>
         headings={[
           {
@@ -34,7 +37,7 @@ export function ManageProjectModal() {
               <Flex>
                 {item.name}
                 {item.isOwner && (
-                  <Badge size="sm" variant="filled" color={colors.darkBlue} ml="xs">
+                  <Badge variant="filled" color={colors.darkBlue} ml="xs">
                     Owner
                   </Badge>
                 )}
@@ -44,7 +47,7 @@ export function ManageProjectModal() {
           {
             title: 'Role',
             key: 'role',
-            width: '20%',
+            width: '10%',
             Cell: (item) => (
               <Badge size="sm" variant="filled" color={ROLE_BADGES[item.role as UserRolesEnum]}>
                 {item.role}
@@ -52,41 +55,39 @@ export function ManageProjectModal() {
             ),
           },
           {
-            title: 'Switch',
-            key: 'switch',
-            width: '10%',
+            key: '',
+            width: '5%',
+            title: 'Actions',
             Cell: (item) => (
-              <UnstyledButton
-                onClick={() => {
-                  onProjectIdChange(item._id as string);
-                }}
-              >
-                {item._id !== currentProjectId && <SwapIcon size="md" />}
-              </UnstyledButton>
-            ),
-          },
-          {
-            title: 'Delete',
-            key: 'delete',
-            width: '10%',
-            Cell: (item) =>
-              item.isOwner ? (
-                <UnstyledButton
+              <Flex justify="flex-end" gap="xs">
+                <IconButton
+                  label="Switch Project"
+                  disabled={item._id === currentProjectId}
+                  onClick={() => {
+                    onProjectIdChange(item._id as string);
+                  }}
+                >
+                  <SwapIcon size="md" />
+                </IconButton>
+                <IconButton
+                  label="Delete Project"
+                  disabled={!item.isOwner}
                   onClick={() => {
                     handleDeleteProject(item._id as string);
                   }}
                 >
                   <DeleteIcon size="md" />
-                </UnstyledButton>
-              ) : null,
+                </IconButton>
+              </Flex>
+            ),
           },
         ]}
         data={projects || []}
         selectedItemId={currentProjectId}
       />
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack>
-          <Flex mt="sm" gap="sm" justify="space-between">
+        <Stack spacing="xs">
+          <Flex gap="sm" justify="space-between">
             <TextInput
               style={{ width: '90%' }}
               placeholder="Enter Project Name"
@@ -103,6 +104,6 @@ export function ManageProjectModal() {
           </Flex>
         </Stack>
       </form>
-    </>
+    </Stack>
   );
 }

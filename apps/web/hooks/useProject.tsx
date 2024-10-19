@@ -1,18 +1,18 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { API_KEYS, MODAL_KEYS, NOTIFICATION_KEYS, ROUTES } from '@config';
-import { IEnvironmentData, IErrorObject, IProjectPayload } from '@impler/shared';
-import { commonApi } from '@libs/api';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { defineAbilitiesFor } from 'config/defineAbilities';
 import { useEffect } from 'react';
-import { useAppState } from 'store/app.context';
-import { ConfirmDeleteProjectModal, ManageProjectModal } from '@components/ProjectManagement';
+import { useRouter } from 'next/router';
 import { modals } from '@mantine/modals';
 import { useForm } from 'react-hook-form';
+import { Flex, Title } from '@mantine/core';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
+import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
 import { track } from '@libs/amplitude';
-import { Flex, Title } from '@mantine/core';
-import { useRouter } from 'next/router';
+import { useAppState } from 'store/app.context';
+import { defineAbilitiesFor } from 'config/defineAbilities';
+import { API_KEYS, MODAL_KEYS, NOTIFICATION_KEYS, ROUTES } from '@config';
+import { IEnvironmentData, IErrorObject, IProjectPayload } from '@impler/shared';
+import { ConfirmDeleteProjectModal, ManageProjectModal } from '@components/ManageProject';
 
 export function useProject() {
   const queryClient = useQueryClient();

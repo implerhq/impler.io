@@ -5,5 +5,5 @@ export * from './Team';
 export * from './SentInvitationActions';
 export * from './ConfirmInvitationModal';
 export * from './ConfirmDeleteInvitation';
-export * from './DeleteTeamMemberModal';
+export * from './RemoveTeamMemberModal';
 export * from './SentInvitationActions';

@@ -10,7 +10,7 @@ import {
   AcceptInvitation,
   ListTeamMembers,
   UpdateTeamMember,
-  DeleteTeamMember,
+  RemoveTeamMember,
   RevokeInvitation,
   DeclineInvitation,
   TeamMemberMeta,
@@ -30,7 +30,7 @@ export class TeamController {
     private acceptInvitation: AcceptInvitation,
     private listTeamMembers: ListTeamMembers,
     private updateTeamMember: UpdateTeamMember,
-    private deleteTeamMember: DeleteTeamMember,
+    private removeTeamMember: RemoveTeamMember,
     private revokeInvitation: RevokeInvitation,
     private declineInvitation: DeclineInvitation,
     private teamMemberMeta: TeamMemberMeta
@@ -86,10 +86,10 @@ export class TeamController {
 
   @Delete('/:memberId')
   @ApiOperation({
-    summary: 'Delete a team member from the environment',
+    summary: 'Remove a team member from the project',
   })
-  async deleteTeamMemberRoute(@Param('memberId') memberId: string) {
-    return await this.deleteTeamMember.exec(memberId);
+  async removeTeamMemberRoute(@Param('memberId') memberId: string) {
+    return await this.removeTeamMember.exec(memberId);
   }
 
   // invitation routes

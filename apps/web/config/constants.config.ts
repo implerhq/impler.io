@@ -56,15 +56,15 @@ export const MODAL_KEYS = {
 
   INVITE_MEMBERS: 'INVITE_MEMBERS',
   ACCEPT_INVITATION: 'ACCEPT_INVITATION',
-  CONFIRM_DELETE_TEAM_MEMBER: 'CONFIRM_DELETE_TEAM_MEMBER',
   MANAGE_PROJECT_MODAL: 'MANAGE_PROJECT_MODAL',
   CONFIRM_PROJECT_DELETE: 'CONFIRM_PROJECT_DELETE',
+  CONFIRM_REMOVE_TEAM_MEMBER: 'CONFIRM_REMOVE_TEAM_MEMBER',
 };
 
 interface IntegrateOption {
+  key: string;
   name: IntegrationEnum;
   Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  key: string;
 }
 
 export const INTEGRATE_IMPORT: IntegrateOption[] = [
@@ -345,7 +345,7 @@ export enum SubjectsEnum {
 }
 
 export const ROLE_BADGES = {
-  [UserRolesEnum.ADMIN]: 'red',
+  [UserRolesEnum.ADMIN]: 'cyan',
   [UserRolesEnum.TECH]: 'blue',
   [UserRolesEnum.FINANCE]: 'green',
 };

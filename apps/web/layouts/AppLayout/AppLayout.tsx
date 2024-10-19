@@ -8,24 +8,24 @@ import { Flex, Group, LoadingOverlay, Text, Stack, Title, UnstyledButton, useMan
 import { ActionsEnum, colors, ROUTES, SubjectsEnum, TEXTS } from '@config';
 import useStyles from './AppLayout.styles';
 import { HomeIcon } from '@assets/icons/Home.icon';
+import { PeopleIcon } from '@assets/icons/People.icon';
 import { LogoutIcon } from '@assets/icons/Logout.icon';
 import { ImportIcon } from '@assets/icons/Import.icon';
 import { OutLinkIcon } from '@assets/icons/OutLink.icon';
-import { SettingsIcon } from '@assets/icons/Settings.icon';
-import { ActivitiesIcon } from '@assets/icons/Activities.icon';
-import { PeopleIcon } from '@assets/icons/People.icon';
 import LogoBlack from '@assets/images/full-logo-dark.png';
+import { SettingsIcon } from '@assets/icons/Settings.icon';
 import LogoWhite from '@assets/images/full-logo-light.png';
+import { ActivitiesIcon } from '@assets/icons/Activities.icon';
 
 import { NavItem } from '@ui/nav-item';
-import { UserMenu } from '@ui/user-menu';
 import { track } from '@libs/amplitude';
+import { UserMenu } from '@ui/user-menu';
 import { Can } from 'store/ability.context';
-import { ColorSchemeToggle } from '@ui/toggle-color-scheme';
-import { EditImportIcon } from '@assets/icons/EditImport.icon';
+import { useProject } from '@hooks/useProject';
 import { useAppState } from 'store/app.context';
 import { useLogout } from '@hooks/auth/useLogout';
-import { useProject } from '@hooks/useProject';
+import { ColorSchemeToggle } from '@ui/toggle-color-scheme';
+import { EditProjectIcon } from '@assets/icons/EditImport.icon';
 
 const Support = dynamic(() => import('components/common/Support').then((mod) => mod.Support), {
   ssr: false,
@@ -67,18 +67,19 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
             <Image src={colorScheme === 'dark' ? LogoWhite : LogoBlack} alt="Impler Logo" width={140} />
           </div>
           <UnstyledButton
+            w="100%"
             onClick={onEditImportClick}
+            px="sm"
+            py="xs"
             style={{
-              width: '100%',
-              border: `1px solid ${colors.StrokeLight}`,
-              padding: '8px 12px',
+              border: `1px solid ${colors.lightGrey}`,
             }}
           >
-            <Group position="apart">
-              <Text>
+            <Group position="apart" color={colors.TXTGray}>
+              <Text color={colors.TXTGray}>
                 {projects?.find((project) => project._id === profileInfo?._projectId)?.name || 'No Project Selected'}
               </Text>
-              <EditImportIcon />
+              <EditProjectIcon color={colors.TXTGray} />
             </Group>
           </UnstyledButton>
           <Stack spacing="sm" py="xs">

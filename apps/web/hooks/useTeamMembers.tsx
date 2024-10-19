@@ -7,7 +7,7 @@ import { commonApi } from '@libs/api';
 import { IErrorObject } from '@impler/shared';
 import { useAppState } from 'store/app.context';
 import { API_KEYS, NOTIFICATION_KEYS, MODAL_KEYS } from '@config';
-import { DeleteTeamMemberModal } from '@components/TeamMembers/DeleteTeamMemberModal';
+import { RemoveTeamMemberModal } from '@components/TeamMembers/RemoveTeamMemberModal';
 
 interface UpdateRoleParams {
   memberId: string;
@@ -42,7 +42,7 @@ export function useTeamMembers() {
     }
   );
 
-  const { mutate: deleteTeamMember, isLoading: isTeamMemberDeleting } = useMutation<IProfileData, IErrorObject, string>(
+  const { mutate: removeTeamMember, isLoading: isTeamMemberDeleting } = useMutation<IProfileData, IErrorObject, string>(
     (teamMemberId) =>
       commonApi(API_KEYS.DELETE_TEAM_MEMBER as any, {
         parameters: [teamMemberId],
@@ -98,14 +98,14 @@ export function useTeamMembers() {
 
   const openDeleteModal = (userId: string, userName: string) => {
     modals.open({
-      title: 'Confirm Team Member Deletion',
-      id: MODAL_KEYS.CONFIRM_DELETE_TEAM_MEMBER,
+      title: 'Confirm Team Member Remove',
+      id: MODAL_KEYS.CONFIRM_REMOVE_TEAM_MEMBER,
       children: (
-        <DeleteTeamMemberModal
+        <RemoveTeamMemberModal
           userId={userId}
           userName={userName}
           onDeleteConfirm={() => {
-            deleteTeamMember(userId);
+            removeTeamMember(userId);
             modals.closeAll();
           }}
           onCancel={() => modals.closeAll()}

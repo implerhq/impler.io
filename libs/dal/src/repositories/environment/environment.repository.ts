@@ -106,7 +106,7 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
     return environment.apiKeys;
   }
 
-  async deleteTeamMember(memberId: string) {
+  async removeTeamMember(memberId: string) {
     const result = await Environment.updateOne(
       {
         'apiKeys._id': memberId,
