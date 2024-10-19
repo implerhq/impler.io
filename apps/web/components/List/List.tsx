@@ -3,8 +3,8 @@ import { Table, Text } from '@mantine/core';
 import { getListStyles } from './List.styles';
 
 interface IHeadingItem<T> {
-  title: string;
   key: string;
+  title: string;
   width?: number | string;
   Cell?: (item: T) => React.ReactNode;
 }
@@ -12,10 +12,10 @@ interface IHeadingItem<T> {
 interface IListProps<T> {
   data?: T[];
   emptyDataText?: string;
+  selectedItemId?: string;
   headings?: IHeadingItem<T>[];
   style?: React.CSSProperties;
   extraContent?: React.ReactNode;
-  selectedItemId?: string;
   onItemClick?: (item: T) => void;
 }
 

@@ -5,16 +5,10 @@ export const getListStyles = createStyles((theme) => ({
     width: '100%',
   },
   header: {
-    padding: theme.spacing.md,
     borderBottom: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]}`,
-    textAlign: 'left',
-    marginBottom: theme.spacing.xl,
   },
   row: {
     borderBottom: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]}`,
-    '&:last-child': {
-      borderBottom: 'none',
-    },
     cursor: 'pointer',
   },
   td: {
@@ -22,7 +16,8 @@ export const getListStyles = createStyles((theme) => ({
     textAlign: 'left',
   },
   th: {
-    padding: theme.spacing.sm,
+    textAlign: 'left',
+    padding: theme.spacing.xs,
   },
   selectedRow: {
     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
