@@ -71,6 +71,7 @@ export function useProject() {
     {
       onSuccess() {
         refetchMeData();
+        queryClient.invalidateQueries([API_KEYS.LIST_TEAM_MEMBERS]);
         modals.close(MODAL_KEYS.MANAGE_PROJECT_MODAL);
       },
     }
