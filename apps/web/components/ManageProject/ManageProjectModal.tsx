@@ -99,8 +99,8 @@ export function ManageProjectModal() {
             </Button>
           </Flex>
           <Flex gap="xs">
-            <InformationIcon size="md" color={colors.yellow} />
-            <Text>You will be switched to the project once created.</Text>
+            <InformationIcon size="sm" color={colors.yellow} />
+            <Text size="sm">You will be switched to the project once created.</Text>
           </Flex>
         </Stack>
       </form>

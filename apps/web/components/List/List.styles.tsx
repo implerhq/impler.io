@@ -9,11 +9,10 @@ export const getListStyles = createStyles((theme) => ({
   },
   row: {
     borderBottom: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]}`,
-    cursor: 'pointer',
   },
   td: {
-    padding: theme.spacing.sm,
     textAlign: 'left',
+    padding: `${theme.spacing.sm} !important`,
   },
   th: {
     textAlign: 'left',

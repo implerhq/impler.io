@@ -61,7 +61,7 @@ export function List<T extends { _id?: string }>(props: IListProps<T>) {
       );
 
     return (
-      <>
+      <tbody>
         {data.map((item: T) => (
           <tr
             key={item._id}
@@ -79,7 +79,7 @@ export function List<T extends { _id?: string }>(props: IListProps<T>) {
             ))}
           </tr>
         ))}
-      </>
+      </tbody>
     );
   };
 
