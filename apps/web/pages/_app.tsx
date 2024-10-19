@@ -41,7 +41,8 @@ const client = new QueryClient({
         const path = window.location.pathname;
         const isApplicationPath =
           ![ROUTES.SIGNIN, ROUTES.SIGNUP, ROUTES.REQUEST_FORGOT_PASSWORD].includes(path) &&
-          !path.startsWith(ROUTES.RESET_PASSWORD);
+          !path.startsWith(ROUTES.RESET_PASSWORD) &&
+          !path.startsWith('/auth/invitation');
         if (err && err.message === 'Failed to fetch') {
           track({
             name: 'ERROR',

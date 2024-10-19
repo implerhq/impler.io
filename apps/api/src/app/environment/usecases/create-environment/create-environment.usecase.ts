@@ -13,13 +13,16 @@ export class CreateEnvironment {
 
   async execute(command: CreateEnvironmentCommand) {
     const key = await this.generateUniqueApiKey.execute();
-
     const environment = await this.environmentRepository.create({
       _projectId: command.projectId,
+      key,
       apiKeys: [
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore // _id will be added automatically
         {
-          key,
           _userId: command._userId,
+          role: command.role,
+          isOwner: !!command.isOwner,
         },
       ],
     });

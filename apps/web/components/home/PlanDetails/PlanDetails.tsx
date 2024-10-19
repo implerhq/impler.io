@@ -1,27 +1,39 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { modals } from '@mantine/modals';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useContext, useEffect } from 'react';
 import { Title, Text, Flex, Button, Skeleton, Stack } from '@mantine/core';
 
-import { useApp } from '@hooks/useApp';
 import { track } from '@libs/amplitude';
 import { numberFormatter } from '@impler/shared';
 import { SelectCardModal } from '@components/settings';
 import { usePlanDetails } from '@hooks/usePlanDetails';
 import { TooltipLink } from '@components/guide-point';
 import { PlansModal } from '@components/UpgradePlan/PlansModal';
-import { CONSTANTS, MODAL_KEYS, ROUTES, colors, DOCUMENTATION_REFERENCE_LINKS } from '@config';
+import {
+  CONSTANTS,
+  MODAL_KEYS,
+  ROUTES,
+  colors,
+  DOCUMENTATION_REFERENCE_LINKS,
+  ActionsEnum,
+  SubjectsEnum,
+  AppAbility,
+} from '@config';
+import { AbilityContext, Can } from 'store/ability.context';
+import { useAppState } from 'store/app.context';
 
 export function PlanDetails() {
   const router = useRouter();
 
-  const { profile } = useApp();
+  const { profileInfo } = useAppState();
+  useContext<AppAbility | null>(AbilityContext);
+
   const { [CONSTANTS.PLAN_CODE_QUERY_KEY]: selectedPlan, [CONSTANTS.EXPLORE_PLANS_QUERY_LEY]: explorePlans } =
     router.query;
 
   const { activePlanDetails, isActivePlanLoading } = usePlanDetails({
-    email: profile?.email ?? '',
+    projectId: profileInfo?._projectId ?? '',
   });
 
   const showPlans = useCallback(() => {
@@ -34,7 +46,7 @@ export function PlanDetails() {
       modalId: MODAL_KEYS.PAYMENT_PLANS,
       children: (
         <PlansModal
-          userProfile={profile!}
+          userProfile={profileInfo!}
           activePlanCode={activePlanDetails?.plan?.code}
           canceledOn={activePlanDetails?.plan.canceledOn}
           expiryDate={activePlanDetails?.expiryDate}
@@ -43,22 +55,24 @@ export function PlanDetails() {
       size: '2xl',
       withCloseButton: true,
     });
-  }, [activePlanDetails, profile]);
+  }, [activePlanDetails, profileInfo]);
 
   useEffect(() => {
-    if (selectedPlan && profile) {
+    if (selectedPlan && profileInfo) {
       modals.open({
         size: '2xl',
         withCloseButton: false,
         id: MODAL_KEYS.SELECT_CARD,
         modalId: MODAL_KEYS.SELECT_CARD,
-        children: <SelectCardModal planCode={selectedPlan as string} email={profile.email} onClose={modals.closeAll} />,
+        children: (
+          <SelectCardModal planCode={selectedPlan as string} email={profileInfo.email} onClose={modals.closeAll} />
+        ),
       });
       router.push(ROUTES.HOME, {}, { shallow: true });
     } else if (explorePlans) {
       showPlans();
     }
-  }, [profile, selectedPlan, router, explorePlans, showPlans]);
+  }, [profileInfo, selectedPlan, router, explorePlans, showPlans]);
 
   if (isActivePlanLoading) return <Skeleton width="100%" height="200" />;
 
@@ -155,18 +169,22 @@ export function PlanDetails() {
             Expiry Date
           </Text>
         </Flex>
-        <Flex direction="column" gap={5} align="center">
-          <Button
-            onClick={showPlans}
-            color={isLessThanZero || activePlanDetails.usage.IMPORTED_ROWS > numberOfRecords ? 'red' : 'blue'}
-          >
-            Choose Plan
-          </Button>
-          <Text component={Link} href="/transactions" color={colors.yellow} td="underline">
-            View all transactions
-          </Text>
-        </Flex>
+
+        <Can I={ActionsEnum.BUY} a={SubjectsEnum.PLAN}>
+          <Flex direction="column" gap={5} align="center">
+            <Button
+              onClick={showPlans}
+              color={isLessThanZero || activePlanDetails.usage.IMPORTED_ROWS > numberOfRecords ? 'red' : 'blue'}
+            >
+              Choose Plan
+            </Button>
+            <Text component={Link} href="/transactions" color={colors.yellow} td="underline">
+              View all transactions
+            </Text>
+          </Flex>
+        </Can>
       </Flex>
+
       <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.subscriptionInformation} iconSize="md" />
     </Flex>
   );

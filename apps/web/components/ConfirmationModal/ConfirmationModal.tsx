@@ -1,8 +1,9 @@
 import React from 'react';
 import Lottie from 'lottie-react';
 import { modals } from '@mantine/modals';
-import { CONSTANTS, colors } from '@config';
-import { Button, Stack, Text } from '@mantine/core';
+import { CONSTANTS } from '@config';
+import { Button } from '@ui/button';
+import { Stack, Text } from '@mantine/core';
 
 import FailedAnimationData from './failed-animation-data.json';
 import SuccessAnimationData from './success-animation-data.json';
@@ -23,7 +24,7 @@ export const ConfirmationModal = ({ status }: ConfirmationModalProps) => {
           ? CONSTANTS.PAYMENT_SUCCESS_MESSAGE
           : CONSTANTS.PAYMENT_FAILED_MESSAGE}
       </Text>
-      <Button fullWidth color={colors.danger} onClick={() => modals.closeAll()}>
+      <Button fullWidth onClick={() => modals.closeAll()}>
         Ok
       </Button>
     </Stack>

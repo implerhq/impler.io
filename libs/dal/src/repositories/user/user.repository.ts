@@ -29,7 +29,7 @@ export class UserRepository extends BaseRepository<UserEntity> {
       },
     ]);
 
-    return environment?.[0]?.apiKeys[0]?._userId?.email;
+    return (environment?.[0]?.apiKeys[0]?._userId as unknown as UserEntity)?.email;
   }
 
   async findUserByToken(token: string) {

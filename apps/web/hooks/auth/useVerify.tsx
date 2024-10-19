@@ -5,11 +5,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
-import { useApp } from '@hooks/useApp';
 import { track } from '@libs/amplitude';
 import { API_KEYS, NOTIFICATION_KEYS } from '@config';
 import { handleRouteBasedOnScreenResponse } from '@shared/helpers';
 import { IErrorObject, IScreenResponse, SCREENS } from '@impler/shared';
+import { useAppState } from 'store/app.context';
 
 interface IVerifyFormData {
   otp: string;
@@ -29,7 +29,7 @@ const RESEND_SECONDS = 120;
 
 export function useVerify() {
   const { push } = useRouter();
-  const { profile } = useApp();
+  const { profileInfo } = useAppState();
   const timerRef = useRef<any>();
   const {
     reset,
@@ -79,7 +79,7 @@ export function useVerify() {
         title: 'Verification code sent!',
         message: (
           <>
-            Verification code sent successully to <b>{profile?.email}</b>
+            Verification code sent successully to <b>{profileInfo?.email}</b>
           </>
         ),
       });
@@ -151,7 +151,7 @@ export function useVerify() {
     state,
     verify,
     errors,
-    profile,
+    profileInfo,
     register,
     setState,
     resendOTP,

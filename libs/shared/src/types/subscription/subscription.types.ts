@@ -20,6 +20,10 @@ export interface ISubscriptionData {
   expiryDate: string;
   meta: {
     IMPORTED_ROWS: number;
+    REMOVE_BRANDING: boolean;
+    AUTOMATIC_IMPORTS: boolean;
+    ADVANCED_VALIDATORS: boolean;
+    TEAM_MEMBERS: number;
   };
 }
 
