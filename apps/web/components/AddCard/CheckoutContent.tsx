@@ -15,7 +15,7 @@ interface CheckoutContentProps {
 export function CheckoutContent({ checkoutData, isCheckoutDataLoading }: CheckoutContentProps) {
   return (
     <Card bg={colors.black} shadow="sm" padding="lg" w="50%" radius={0}>
-      <Stack>
+      <Stack spacing="sm">
         <Button
           leftIcon={<BackArrowIcon />}
           variant="outline"
@@ -28,7 +28,7 @@ export function CheckoutContent({ checkoutData, isCheckoutDataLoading }: Checkou
         <Title order={1} fw="bold" color={colors.white}>
           ${checkoutData?.planAmount}
           <Text color={colors.grey} component="span" size="sm">
-            {' / '} {getPlanType(checkoutData!.interval)}
+            {' / '} {getPlanType(checkoutData?.interval)}
           </Text>
         </Title>
         <Divider />
