@@ -416,6 +416,7 @@ export const HOW_HEARD_ABOUT_US = [
   { value: 'Bubble.io', label: 'Bubble.io' },
   { value: 'Colleague', label: 'Colleague' },
   { value: 'Linkdin', label: 'Linkdin' },
+  { value: 'Invitation', label: 'Invitation' },
 ];
 
 export const PLACEHOLDERS = {
