@@ -9,15 +9,15 @@ interface UseCheckoutProps {
   paymentMethodId?: string;
 }
 
-export function useCheckout({ couponCode, planCode }: UseCheckoutProps) {
+export function useCheckout({ couponCode, planCode, paymentMethodId }: UseCheckoutProps) {
   const { data: checkoutData, isLoading: isCheckoutDataLoading } = useQuery<
     unknown,
     IErrorObject,
     ICheckoutData,
     (string | undefined)[]
   >(
-    [API_KEYS.CHECKOUT, couponCode, planCode],
-    () => commonApi(API_KEYS.CHECKOUT as any, { query: { couponCode, planCode } }),
+    [API_KEYS.CHECKOUT, couponCode, planCode, paymentMethodId],
+    () => commonApi(API_KEYS.CHECKOUT as any, { query: { couponCode, planCode, paymentMethodId } }),
     {
       enabled: !!planCode,
     }
