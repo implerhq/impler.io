@@ -1,11 +1,12 @@
-import { createStyles } from '@mantine/core';
+import { createStyles, MantineTheme } from '@mantine/core';
 
-const getWrapperStyles = (): React.CSSProperties => ({
-  alignItems: 'center',
-});
-
-export default createStyles((): Record<string, any> => {
+export default createStyles((theme: MantineTheme): Record<string, any> => {
   return {
-    wrapper: getWrapperStyles(),
+    wrapper: {
+      alignItems: 'center',
+    },
+    icon: {
+      marginRight: theme.spacing.xs,
+    },
   };
 });
