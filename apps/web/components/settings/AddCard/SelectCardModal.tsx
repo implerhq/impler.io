@@ -16,15 +16,16 @@ interface SelectCardModalProps {
 
 export function SelectCardModal({ email, planCode, paymentMethodId }: SelectCardModalProps) {
   const {
-    appliedCouponCode,
-    setAppliedCouponCode,
-    handlePaymentMethodChange,
     handleProceed,
+    paymentMethods,
+    appliedCouponCode,
+    isPurchaseLoading,
+    setAppliedCouponCode,
+    selectedPaymentMethod,
     isCouponFeatureEnabled,
     isPaymentMethodsFetching,
     isPaymentMethodsLoading,
-    selectedPaymentMethod,
-    paymentMethods,
+    handlePaymentMethodChange,
   } = useSubscribe({
     email,
     planCode,
@@ -52,6 +53,7 @@ export function SelectCardModal({ email, planCode, paymentMethodId }: SelectCard
 
           <PaymentMethods
             paymentMethods={paymentMethods}
+            isAddCardDisabled={isPurchaseLoading}
             selectedPaymentMethod={selectedPaymentMethod}
             handlePaymentMethodChange={handlePaymentMethodChange}
           />
@@ -63,8 +65,8 @@ export function SelectCardModal({ email, planCode, paymentMethodId }: SelectCard
 
             <CheckoutDetails checkoutData={checkoutData} isCheckoutDataLoading={isCheckoutDataLoading} />
 
-            <Button onClick={handleProceed} fullWidth mt="md">
-              Confirm
+            <Button onClick={handleProceed} fullWidth mt="md" loading={isPurchaseLoading}>
+              {isPurchaseLoading ? 'Processing...' : 'Confirm'}
             </Button>
           </Stack>
         </>
