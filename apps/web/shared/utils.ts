@@ -31,7 +31,7 @@ export const getColorForText = (text: string) => {
   return colors[colorIndex];
 };
 
-export function getPlanType(CODE: string): string | undefined {
+export function getPlanType(CODE?: string): string | undefined {
   switch (CODE) {
     case 'MONTHLY':
       return 'Month';
