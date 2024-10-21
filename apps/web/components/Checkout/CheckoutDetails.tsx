@@ -34,7 +34,7 @@ export function CheckoutDetails({ checkoutData, isCheckoutDataLoading }: Checkou
           <Text>{checkoutData.planName}</Text>
         </Group>
         <Group position="apart">
-          <Text>Plan Amount (Recurring)</Text>
+          <Text>Plan Amount</Text>
           <Text>{`${checkoutData.planAmount} (${checkoutData.currency.toUpperCase()})`}</Text>
         </Group>
 
@@ -49,6 +49,13 @@ export function CheckoutDetails({ checkoutData, isCheckoutDataLoading }: Checkou
           <Text>Outstanding Charges</Text>
           <Text>{`${checkoutData.outstandingAmount} (${checkoutData.currency.toUpperCase()})`}</Text>
         </Group>
+
+        {checkoutData.taxAmount ? (
+          <Group position="apart">
+            <Text>Tax {`(${checkoutData.taxLabel} ${checkoutData.taxPercentage}%)`}</Text>
+            <Text>{`${checkoutData.taxAmount} (${checkoutData.currency.toUpperCase()})`}</Text>
+          </Group>
+        ) : null}
 
         {checkoutData.discount ? (
           <Group position="apart">
