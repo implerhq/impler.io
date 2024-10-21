@@ -30,14 +30,14 @@ function SelectCardModalContent({ email, planCode }: SelectCardModalContentProps
   const { refetchPaymentMethods, paymentMethods, isPaymentMethodsLoading } = usePaymentMethods();
 
   const {
-    appliedCouponCode,
-    setAppliedCouponCode,
-    handlePaymentMethodChange,
     handleProceed,
+    appliedCouponCode,
+    isPurchaseLoading,
+    setAppliedCouponCode,
+    selectedPaymentMethod,
     isCouponFeatureEnabled,
     isPaymentMethodsFetching,
-    selectedPaymentMethod,
-    isPurchaseLoading,
+    handlePaymentMethodChange,
   } = useSubscribe({
     email,
     planCode,
@@ -52,9 +52,9 @@ function SelectCardModalContent({ email, planCode }: SelectCardModalContentProps
   const stripe = useStripe();
   const elements = useElements();
 
-  const { addPaymentMethod, isPaymentMethodLoading, setIsPaymentMethodLoading } = useAddCard({
-    planCode,
-    refetchPaymentMethods: () => refetchPaymentMethods(),
+  const { addPaymentMethod, isAddPaymentMethodLoading, setIsPaymentMethodLoading } = useAddCard({
+    refetchPaymentMethods,
+    handleProceed,
   });
 
   const handleAddCard = async () => {
@@ -71,8 +71,7 @@ function SelectCardModalContent({ email, planCode }: SelectCardModalContentProps
     });
 
     if (paymentMethod) {
-      await addPaymentMethod(paymentMethod.id);
-      await refetchPaymentMethods();
+      addPaymentMethod(paymentMethod.id);
     }
 
     if (error) {
@@ -82,8 +81,6 @@ function SelectCardModalContent({ email, planCode }: SelectCardModalContentProps
         color: 'red',
       });
     }
-
-    setIsPaymentMethodLoading(false);
   };
 
   return (
@@ -97,18 +94,18 @@ function SelectCardModalContent({ email, planCode }: SelectCardModalContentProps
           <CheckoutContent checkoutData={checkoutData} isCheckoutDataLoading={isCheckoutDataLoading} />
 
           <PaymentMethodForm
-            paymentMethods={paymentMethods}
-            handleAddCard={handleAddCard}
             email={email}
             planCode={planCode}
-            isPaymentMethodLoading={isPaymentMethodLoading}
-            selectedPaymentMethod={selectedPaymentMethod}
-            handlePaymentMethodChange={handlePaymentMethodChange}
-            isCouponFeatureEnabled={isCouponFeatureEnabled}
-            appliedCouponCode={appliedCouponCode}
-            setAppliedCouponCode={setAppliedCouponCode}
-            isPurchaseLoading={isPurchaseLoading}
+            handleAddCard={handleAddCard}
             handleProceed={handleProceed}
+            paymentMethods={paymentMethods}
+            appliedCouponCode={appliedCouponCode}
+            isPurchaseLoading={isPurchaseLoading}
+            setAppliedCouponCode={setAppliedCouponCode}
+            selectedPaymentMethod={selectedPaymentMethod}
+            isCouponFeatureEnabled={isCouponFeatureEnabled}
+            isAddPaymentMethodLoading={isAddPaymentMethodLoading}
+            handlePaymentMethodChange={handlePaymentMethodChange}
           />
         </Flex>
       )}
