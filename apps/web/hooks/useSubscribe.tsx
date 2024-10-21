@@ -13,7 +13,6 @@ const { publicRuntimeConfig } = getConfig();
 interface UseSubscribeProps {
   email: string;
   planCode: string;
-  paymentMethodId?: string;
 }
 
 interface ISubscribeResponse {
@@ -22,29 +21,29 @@ interface ISubscribeResponse {
   success: boolean;
 }
 
-export const useSubscribe = ({ email, planCode, paymentMethodId }: UseSubscribeProps) => {
+export const useSubscribe = ({ email, planCode }: UseSubscribeProps) => {
   const queryClient = useQueryClient();
   const isCouponFeatureEnabled = publicRuntimeConfig.NEXT_PUBLIC_COUPON_ENABLED;
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | undefined>(paymentMethodId);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | undefined>();
   const [appliedCouponCode, setAppliedCouponCode] = useState<string | undefined>(undefined);
 
   const {
     data: paymentMethods,
     isLoading: isPaymentMethodsLoading,
     isFetching: isPaymentMethodsFetching,
-  } = useQuery<unknown, IErrorObject, ICardData[], [string]>(
+  } = useQuery<ICardData[], IErrorObject, ICardData[], [string]>(
     [API_KEYS.PAYMENT_METHOD_LIST],
     () => commonApi<ICardData[]>(API_KEYS.PAYMENT_METHOD_LIST as any, {}),
     {
       onSuccess(data) {
+        // If a new payment method is added, make it the default selection
         if (data?.length) {
-          setSelectedPaymentMethod(data[0].paymentMethodId);
-        } else {
-          return;
+          setSelectedPaymentMethod((prevMethod) => prevMethod || data[0].paymentMethodId);
         }
       },
     }
   );
+
   const { mutate: subscribe, isLoading: isPurchaseLoading } = useMutation<
     ISubscribeResponse,
     IErrorObject,
@@ -68,6 +67,7 @@ export const useSubscribe = ({ email, planCode, paymentMethodId }: UseSubscribeP
           });
 
           modals.close(MODAL_KEYS.SELECT_CARD);
+          modals.close(MODAL_KEYS.PAYMENT_PLANS);
         }
       },
       onError: (error: IErrorObject) => {
@@ -87,18 +87,19 @@ export const useSubscribe = ({ email, planCode, paymentMethodId }: UseSubscribeP
     }
   );
 
-  const handleProceed = () => {
+  const handleProceed = (createdPaymentMethodId?: string) => {
+    console.log(createdPaymentMethodId, selectedPaymentMethod);
     if (selectedPaymentMethod) {
       subscribe({
         email,
         planCode,
-        selectedPaymentMethod,
+        selectedPaymentMethod: createdPaymentMethodId || selectedPaymentMethod,
       });
     }
   };
 
-  const handlePaymentMethodChange = (paymnentMethodId: string) => {
-    setSelectedPaymentMethod(paymnentMethodId);
+  const handlePaymentMethodChange = (paymentMethod: string) => {
+    setSelectedPaymentMethod(paymentMethod);
   };
 
   return {
