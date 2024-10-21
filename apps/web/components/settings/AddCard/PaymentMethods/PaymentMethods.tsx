@@ -8,6 +8,7 @@ import { MODAL_KEYS, ROUTES } from '@config';
 import { PaymentMethodOption } from './PaymentMethodOption';
 
 interface PaymentMethodsProps {
+  isAddCardDisabled?: boolean;
   paymentMethods: ICardData[] | undefined;
   selectedPaymentMethod: string | undefined;
   handlePaymentMethodChange: (methodId: string) => void;
@@ -15,6 +16,7 @@ interface PaymentMethodsProps {
 
 export function PaymentMethods({
   paymentMethods,
+  isAddCardDisabled,
   selectedPaymentMethod,
   handlePaymentMethodChange,
 }: PaymentMethodsProps) {
@@ -44,7 +46,7 @@ export function PaymentMethods({
         ))}
       </Radio.Group>
 
-      <Button variant="outline" color="yellow" fullWidth onClick={handleAddMoreCard}>
+      <Button variant="outline" color="yellow" fullWidth onClick={handleAddMoreCard} disabled={isAddCardDisabled}>
         + Add Card
       </Button>
     </>

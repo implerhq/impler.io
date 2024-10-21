@@ -122,8 +122,20 @@ export function useProject() {
   );
 
   const onProjectIdChange = (id: string) => {
-    switchProject(id);
-    track({ name: 'PROJECT SWITCH', properties: {} });
+    const project = projects?.find((item) => item._id === id);
+    if (project) {
+      switchProject(id);
+      track({ name: 'PROJECT SWITCH', properties: {} });
+      notify(NOTIFICATION_KEYS.PROJECT_SWITCHED, {
+        title: 'Project switched',
+        message: (
+          <>
+            You&apos;re switched to <b>{project.name}</b> project.
+          </>
+        ),
+        color: 'green',
+      });
+    }
   };
 
   const sortedProjects = projects ? projects.sort((a) => (a._id === profileData?._projectId ? -1 : 1)) : [];

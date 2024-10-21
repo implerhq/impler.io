@@ -4,12 +4,6 @@ import { modals } from '@mantine/modals';
 import { useCallback, useContext, useEffect } from 'react';
 import { Title, Text, Flex, Button, Skeleton, Stack } from '@mantine/core';
 
-import { track } from '@libs/amplitude';
-import { numberFormatter } from '@impler/shared';
-import { SelectCardModal } from '@components/settings';
-import { usePlanDetails } from '@hooks/usePlanDetails';
-import { TooltipLink } from '@components/guide-point';
-import { PlansModal } from '@components/UpgradePlan/PlansModal';
 import {
   CONSTANTS,
   MODAL_KEYS,
@@ -20,8 +14,16 @@ import {
   SubjectsEnum,
   AppAbility,
 } from '@config';
-import { AbilityContext, Can } from 'store/ability.context';
+import { Alert } from '@ui/Alert';
+import { track } from '@libs/amplitude';
+import { numberFormatter } from '@impler/shared';
+import { TooltipLink } from '@components/guide-point';
+import { SelectCardModal } from '@components/settings';
+import { usePlanDetails } from '@hooks/usePlanDetails';
+import { PlansModal } from '@components/UpgradePlan/PlansModal';
 import { useAppState } from 'store/app.context';
+import { AbilityContext, Can } from 'store/ability.context';
+import { InformationIcon } from '@assets/icons/Information.icon';
 
 export function PlanDetails() {
   const router = useRouter();
@@ -118,74 +120,79 @@ export function PlanDetails() {
     isLessThanZero || activePlanDetails!.usage.IMPORTED_ROWS > numberOfRecords ? colors.danger : colors.yellow;
 
   return (
-    <Flex
-      p="sm"
-      gap="sm"
-      direction="row"
-      align="center"
-      style={{
-        border: `1px solid ${
-          isLessThanZero || activePlanDetails.usage.IMPORTED_ROWS > numberOfRecords ? colors.danger : colors.yellow
-        }`,
-        backgroundColor: backgroundColor + '20',
-      }}
-    >
-      <Flex gap={5} justify="space-between" w="100%">
-        <Flex direction="column" gap={5} align="center">
-          <Title order={3} fw="bold">
-            {numberFormatter(activePlanDetails!.usage.IMPORTED_ROWS)}
-            {'/'}
-            {numberFormatter(numberOfRecords)}
-          </Title>
-          <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
-            Records Imported
-          </Text>
-        </Flex>
-        <Flex direction="column" gap={5} align="center">
-          <Title order={3} fw="bold">
-            {activePlanDetails.plan.name}
-          </Title>
-          <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
-            Active Plan
-          </Text>
-        </Flex>
-        {Number(activePlanDetails.plan.charge) ? (
-          <>
-            <Flex direction="column" gap={5} align="center">
-              <Title order={3} fw="bold">
-                {'$' + activePlanDetails.plan.charge}
-              </Title>
-              <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
-                Outstanding Amount
-              </Text>
-            </Flex>
-          </>
-        ) : null}
-        <Flex direction="column" gap={5} align="center">
-          <Title order={3} fw="bold">
-            <>{activePlanDetails!.expiryDate}</>
-          </Title>
-          <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
-            Expiry Date
-          </Text>
-        </Flex>
-
-        <Can I={ActionsEnum.BUY} a={SubjectsEnum.PLAN}>
+    <>
+      <Alert color="yellow" icon={<InformationIcon size="md" />} p="xs">
+        You&apos;re viewing details of <b>{profileInfo?.projectName}</b> project
+      </Alert>
+      <Flex
+        p="sm"
+        gap="sm"
+        direction="row"
+        align="center"
+        style={{
+          border: `1px solid ${
+            isLessThanZero || activePlanDetails.usage.IMPORTED_ROWS > numberOfRecords ? colors.danger : colors.yellow
+          }`,
+          backgroundColor: backgroundColor + '20',
+        }}
+      >
+        <Flex gap={5} justify="space-between" w="100%">
           <Flex direction="column" gap={5} align="center">
-            <Button
-              onClick={showPlans}
-              color={isLessThanZero || activePlanDetails.usage.IMPORTED_ROWS > numberOfRecords ? 'red' : 'blue'}
-            >
-              Choose Plan
-            </Button>
-            <Text component={Link} href="/transactions" color={colors.yellow} td="underline">
-              View all transactions
+            <Title order={3} fw="bold">
+              {numberFormatter(activePlanDetails!.usage.IMPORTED_ROWS)}
+              {'/'}
+              {numberFormatter(numberOfRecords)}
+            </Title>
+            <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
+              Records Imported
             </Text>
           </Flex>
-        </Can>
-      </Flex>
+          <Flex direction="column" gap={5} align="center">
+            <Title order={3} fw="bold">
+              {activePlanDetails.plan.name}
+            </Title>
+            <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
+              Active Plan
+            </Text>
+          </Flex>
+          {Number(activePlanDetails.plan.charge) ? (
+            <>
+              <Flex direction="column" gap={5} align="center">
+                <Title order={3} fw="bold">
+                  {'$' + activePlanDetails.plan.charge}
+                </Title>
+                <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
+                  Outstanding Amount
+                </Text>
+              </Flex>
+            </>
+          ) : null}
+          <Flex direction="column" gap={5} align="center">
+            <Title order={3} fw="bold">
+              <>{activePlanDetails!.expiryDate}</>
+            </Title>
+            <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
+              Expiry Date
+            </Text>
+          </Flex>
 
-      <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.subscriptionInformation} iconSize="md" />
-    </Flex>
+          <Can I={ActionsEnum.BUY} a={SubjectsEnum.PLAN}>
+            <Flex direction="column" gap={5} align="center">
+              <Button
+                onClick={showPlans}
+                color={isLessThanZero || activePlanDetails.usage.IMPORTED_ROWS > numberOfRecords ? 'red' : 'blue'}
+              >
+                Choose Plan
+              </Button>
+              <Text component={Link} href="/transactions" color={colors.yellow} td="underline">
+                View all transactions
+              </Text>
+            </Flex>
+          </Can>
+        </Flex>
+
+        <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.subscriptionInformation} iconSize="md" />
+      </Flex>
+    </>
   );
 }

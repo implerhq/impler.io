@@ -192,6 +192,7 @@ export const NOTIFICATION_KEYS = {
 
   PROJECT_CREATED: 'PROJECT_CREATED',
   PROJECT_DELETED: 'PROJECT_DELETED',
+  PROJECT_SWITCHED: 'PROJECT_SWITCHED',
   OUTPUT_UPDATED: 'OUTPUT_UPDATED',
   DESTINATION_UPDATED: 'DESTINATION_UPDATED',
 
@@ -415,6 +416,7 @@ export const HOW_HEARD_ABOUT_US = [
   { value: 'Bubble.io', label: 'Bubble.io' },
   { value: 'Colleague', label: 'Colleague' },
   { value: 'Linkdin', label: 'Linkdin' },
+  { value: 'Invitation', label: 'Invitation' },
 ];
 
 export const PLACEHOLDERS = {

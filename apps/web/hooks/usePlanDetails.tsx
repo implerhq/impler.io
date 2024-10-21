@@ -10,12 +10,11 @@ interface UsePlanDetailProps {
 
 export function usePlanDetails({ projectId }: UsePlanDetailProps) {
   const { meta, setPlanMeta } = usePlanMetaData();
-  const { data: activePlanDetails, isLoading: isActivePlanLoading } = useQuery<
-    unknown,
-    IErrorObject,
-    ISubscriptionData,
-    [string, string]
-  >(
+  const {
+    data: activePlanDetails,
+    isLoading: isActivePlanLoading,
+    refetch: refetchActivePlanDetails,
+  } = useQuery<unknown, IErrorObject, ISubscriptionData, [string, string]>(
     [API_KEYS.FETCH_ACTIVE_SUBSCRIPTION, projectId],
     () =>
       commonApi<ISubscriptionData>(API_KEYS.FETCH_ACTIVE_SUBSCRIPTION as any, {
@@ -42,5 +41,6 @@ export function usePlanDetails({ projectId }: UsePlanDetailProps) {
     meta,
     activePlanDetails,
     isActivePlanLoading,
+    refetchActivePlanDetails,
   };
 }
