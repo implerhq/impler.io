@@ -8,23 +8,25 @@ import { IErrorObject } from '@impler/shared';
 import { API_KEYS, NOTIFICATION_KEYS } from '@config';
 
 interface UseAddCardProps {
-  planCode?: string | null;
   refetchPaymentMethods: () => void;
+  handleProceed: (paymentMethodId: string) => void;
 }
 
-export function useAddCard({ refetchPaymentMethods }: UseAddCardProps) {
+export function useAddCard({ refetchPaymentMethods, handleProceed }: UseAddCardProps) {
   const stripe = useStripe();
   const [isPaymentMethodLoading, setIsPaymentMethodLoading] = useState<boolean>(false);
-  const { mutate: addPaymentMethod } = useMutation<any, IErrorObject, string>(
+
+  const { mutate: addPaymentMethod, isLoading: isAddPaymentMethodLoading } = useMutation<any, IErrorObject, string>(
     [API_KEYS.ADD_PAYMENT_METHOD],
     async (paymentMethodId) =>
       commonApi(API_KEYS.ADD_PAYMENT_METHOD as any, {
         parameters: [paymentMethodId],
       }),
     {
-      async onSuccess(data: any) {
+      async onSuccess(data: any, paymentMethodId) {
         if (data && data.status === 'succeeded') {
           notify(NOTIFICATION_KEYS.CARD_ADDED);
+          handleProceed(paymentMethodId);
           refetchPaymentMethods();
         }
 
@@ -40,10 +42,9 @@ export function useAddCard({ refetchPaymentMethods }: UseAddCardProps) {
             await stripe?.confirmCardSetup(data.client_secret);
 
             notify(NOTIFICATION_KEYS.CARD_ADDED);
-            await saveIntentId(data.intentId);
+            saveIntentId(data.intentId, paymentMethodId);
           }
         }
-        refetchPaymentMethods();
       },
       onError(error: any) {
         notify(NOTIFICATION_KEYS.ERROR_ADDING_PAYMENT_METHOD, {
@@ -56,17 +57,18 @@ export function useAddCard({ refetchPaymentMethods }: UseAddCardProps) {
     }
   );
 
-  const saveIntentId = async (intentId: string) => {
+  const saveIntentId = async (intentId: string, paymentMethodId: string) => {
     await commonApi(API_KEYS.SAVE_INTENT_ID as any, {
       parameters: [intentId],
     });
     refetchPaymentMethods();
+    handleProceed(paymentMethodId);
   };
 
   return {
     addPaymentMethod,
     isPaymentMethodLoading,
     setIsPaymentMethodLoading,
-    refetchPaymentMethods,
+    isAddPaymentMethodLoading,
   };
 }
