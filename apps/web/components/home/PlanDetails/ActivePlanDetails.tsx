@@ -6,13 +6,13 @@ import { Button } from '@ui/button';
 import Link from 'next/link';
 import React from 'react';
 import { PlanDetailCard } from './PlanDetailsCard';
-import { modals } from '@mantine/modals';
-import { CancelSubscriptionModal } from './CancelSubscriptionModal'; // Adjust the import path as necessary
+import { useCancelPlan } from '@hooks/useCancelPlan';
 
 interface ActivePlanDetailsProps {
   activePlanDetails: any;
   numberOfRecords: number;
-  showWarning: any;
+  showWarning?: boolean;
+  email?: string;
   showPlans: () => void;
 }
 
@@ -21,12 +21,10 @@ export function ActivePlanDetails({
   numberOfRecords,
   showWarning,
   showPlans,
+  email,
 }: ActivePlanDetailsProps) {
-  const openCancelModal = () => {
-    modals.open({
-      children: <CancelSubscriptionModal />,
-    });
-  };
+  const { openCancelPlanModal } = useCancelPlan({ email: email as string });
+  const openCancelModal = () => openCancelPlanModal();
 
   return (
     <Stack>
