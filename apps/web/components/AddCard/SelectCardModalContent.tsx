@@ -10,9 +10,9 @@ import { NOTIFICATION_KEYS } from '@config';
 
 import { notify } from '@libs/notify';
 import { useAddCard } from '@hooks/useAddCard';
-import { usePaymentMethods } from '@hooks/usePaymentMethods';
-import { PaymentMethodForm } from './PaymentMethodForm';
 import { CheckoutContent } from './CheckoutContent';
+import { PaymentMethodForm } from './PaymentMethodForm';
+import { usePaymentMethods } from '@hooks/usePaymentMethods';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -34,18 +34,15 @@ function SelectCardModalContent({ email, planCode }: SelectCardModalContentProps
     appliedCouponCode,
     isPurchaseLoading,
     setAppliedCouponCode,
-    selectedPaymentMethod,
     isCouponFeatureEnabled,
     isPaymentMethodsFetching,
-    handlePaymentMethodChange,
   } = useSubscribe({
     email,
     planCode,
   });
 
-  const { checkoutData, isCheckoutDataLoading } = useCheckout({
+  const { getCheckoutData, checkoutData, isCheckoutDataLoading } = useCheckout({
     couponCode: appliedCouponCode,
-    paymentMethodId: selectedPaymentMethod,
     planCode,
   });
 
@@ -99,13 +96,12 @@ function SelectCardModalContent({ email, planCode }: SelectCardModalContentProps
             handleAddCard={handleAddCard}
             handleProceed={handleProceed}
             paymentMethods={paymentMethods}
+            getCheckoutData={getCheckoutData}
             appliedCouponCode={appliedCouponCode}
             isPurchaseLoading={isPurchaseLoading}
             setAppliedCouponCode={setAppliedCouponCode}
-            selectedPaymentMethod={selectedPaymentMethod}
             isCouponFeatureEnabled={isCouponFeatureEnabled}
             isAddPaymentMethodLoading={isAddPaymentMethodLoading}
-            handlePaymentMethodChange={handlePaymentMethodChange}
           />
         </Flex>
       )}
