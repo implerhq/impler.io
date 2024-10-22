@@ -20,7 +20,6 @@ export function CheckoutDetails({ checkoutData, isCheckoutDataLoading }: Checkou
           <Skeleton height={20} radius={0} />
           <Skeleton height={20} radius={0} />
           <Skeleton height={20} radius={0} />
-          <Divider />
           <Skeleton height={20} radius={0} />
         </Stack>
       </Box>
@@ -33,6 +32,7 @@ export function CheckoutDetails({ checkoutData, isCheckoutDataLoading }: Checkou
           <Text>Plan Name</Text>
           <Text>{checkoutData.planName}</Text>
         </Group>
+        <Divider />
         <Group position="apart">
           <Text>Plan Amount</Text>
           <Text>{`${checkoutData.planAmount} (${checkoutData.currency.toUpperCase()})`}</Text>
@@ -56,7 +56,6 @@ export function CheckoutDetails({ checkoutData, isCheckoutDataLoading }: Checkou
             <Text>{`${checkoutData.taxAmount} (${checkoutData.currency.toUpperCase()})`}</Text>
           </Group>
         ) : null}
-
         {checkoutData.discount ? (
           <Group position="apart">
             <Text>Coupon Discount</Text>
