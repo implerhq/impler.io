@@ -34,8 +34,8 @@ export function useCancelPlan({ email }: UseCancelPlanProps) {
   const openCancelPlanModal = () => {
     modals.open({
       children: <CancelSubscriptionModal />,
-      size: '2xl',
       withCloseButton: false,
+      centered: true,
     });
   };
 
