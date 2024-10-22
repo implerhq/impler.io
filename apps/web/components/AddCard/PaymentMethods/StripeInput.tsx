@@ -15,8 +15,8 @@ export function StripeInput({ label, StripeElement, isFullWidth = false }: Strip
         {label}
       </Text>
       <Box
-        sx={{
-          border: `1px solid ${colors.black}`,
+        style={{
+          border: `1px solid ${colors.grey}`,
           borderRadius: '4px',
           padding: '8px',
           backgroundColor: colors.white,
