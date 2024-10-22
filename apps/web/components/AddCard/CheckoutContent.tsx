@@ -24,7 +24,13 @@ export function CheckoutContent({ checkoutData, isCheckoutDataLoading }: Checkou
         >
           Back
         </Button>
-        <Text size="md">Subscribe to Transaction {checkoutData?.planName}</Text>
+        <Text size="md">
+          Get{' '}
+          <Text component="span" color={colors.yellow}>
+            {checkoutData?.planName}
+          </Text>{' '}
+          Benefits
+        </Text>
         <Title order={1} fw="bold" color={colors.white}>
           ${checkoutData?.planAmount}
           <Text color={colors.grey} component="span" size="sm">
