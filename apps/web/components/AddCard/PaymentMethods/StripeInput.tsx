@@ -11,7 +11,7 @@ interface StripeInputProps {
 export function StripeInput({ label, StripeElement, isFullWidth = false }: StripeInputProps) {
   return (
     <Box w={isFullWidth ? '100%' : 'auto'}>
-      <Text size="sm" weight={500} color={colors.blackGrey}>
+      <Text size="sm" weight={500} color={colors.blackGrey} mb={6}>
         {label}
       </Text>
       <Box
