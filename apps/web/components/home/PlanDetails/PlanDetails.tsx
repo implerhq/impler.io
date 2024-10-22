@@ -59,6 +59,7 @@ export function PlanDetails() {
           numberOfRecords={numberOfRecords}
           showPlans={showPlans}
           showWarning={showWarning}
+          email={profileInfo?.email}
         />
       ) : (
         <InactiveMembership showPlans={showPlans} />
