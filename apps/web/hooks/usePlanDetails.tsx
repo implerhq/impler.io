@@ -8,6 +8,7 @@ import { PlansModal } from '@components/UpgradePlan/PlansModal';
 import { useAppState } from 'store/app.context';
 import { modals } from '@mantine/modals';
 import { track } from '@libs/amplitude';
+import { SelectCardModal } from '@components/AddCard/SelectCardModalContent';
 
 interface UsePlanDetailProps {
   email: string;
@@ -61,10 +62,27 @@ export function usePlanDetails({ email }: UsePlanDetailProps) {
     });
   }, [activePlanDetails, profileInfo]);
 
+  const onChoosePlanButtonClick = (code: string) => {
+    modals.open({
+      size: 'calc(70vw - 40px)',
+      withCloseButton: false,
+      id: MODAL_KEYS.SELECT_CARD,
+      modalId: MODAL_KEYS.SELECT_CARD,
+      centered: true,
+      styles: {
+        body: {
+          padding: 0,
+        },
+      },
+      children: <SelectCardModal email={email} planCode={code} onClose={modals.closeAll} />,
+    });
+  };
+
   return {
     meta,
     activePlanDetails,
     isActivePlanLoading,
     showPlans,
+    onChoosePlanButtonClick,
   };
 }
