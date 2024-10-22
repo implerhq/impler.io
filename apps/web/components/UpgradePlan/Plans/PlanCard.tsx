@@ -1,12 +1,11 @@
 import React from 'react';
 import { Card, Text, Badge, Stack, Divider } from '@mantine/core';
-import { modals } from '@mantine/modals';
 import { PlanFeature } from './PlanFeature';
 import { Plan } from './Plans';
 import useStyles from './Plans.styles';
 import { Button } from '@ui/button';
-import { colors, MODAL_KEYS } from '@config';
-import { SelectCardModal } from '@components/AddCard/SelectCardModalContent';
+import { colors, PLANCODEENUM } from '@config';
+import { usePlanDetails } from '@hooks/usePlanDetails';
 
 interface PlanCardProps {
   plan: Plan;
@@ -17,22 +16,7 @@ interface PlanCardProps {
 
 export function PlanCard({ plan, isYearly, activePlanCode, email }: PlanCardProps) {
   const { classes } = useStyles();
-
-  const onPlanButtonClick = (code: string) => {
-    modals.open({
-      size: 'calc(70vw - 40px)',
-      withCloseButton: false,
-      id: MODAL_KEYS.SELECT_CARD,
-      modalId: MODAL_KEYS.SELECT_CARD,
-      centered: true,
-      styles: {
-        body: {
-          padding: 0,
-        },
-      },
-      children: <SelectCardModal email={email} planCode={code} onClose={modals.closeAll} />,
-    });
-  };
+  const { onChoosePlanButtonClick } = usePlanDetails({ email });
 
   return (
     <Card
@@ -41,8 +25,8 @@ export function PlanCard({ plan, isYearly, activePlanCode, email }: PlanCardProp
       bg={plan.name === 'Growth' ? colors.faintGrey : 'black'}
       style={{ width: '340px', position: 'relative' }}
     >
-      <Stack mt="sm">
-        {plan.name === 'Growth' && (
+      <Stack mt="md">
+        {(plan.code === PLANCODEENUM.GROWTH || plan.code === PLANCODEENUM.GROWTH_YEARLY) && (
           <Badge color="blue" variant="gradient" className={classes.recommendedBadge}>
             Recommended
           </Badge>
@@ -54,14 +38,14 @@ export function PlanCard({ plan, isYearly, activePlanCode, email }: PlanCardProp
         <Button
           className={classes.button}
           fullWidth
-          onClick={() => onPlanButtonClick(plan.code)}
-          disabled={activePlanCode === plan.code || plan.code === 'STARTER'}
+          onClick={() => onChoosePlanButtonClick(plan.code)}
+          disabled={plan.code === PLANCODEENUM.STARTER || activePlanCode === plan.code}
         >
           {activePlanCode === plan.code ? 'Active Plan' : 'Choose Plan'}
         </Button>
         <Divider />
       </Stack>
-      <Stack spacing={4}>
+      <Stack spacing={10}>
         <Divider />
         {Object.entries(plan.content).map(([category, items], categoryIndex) => (
           <React.Fragment key={category}>
