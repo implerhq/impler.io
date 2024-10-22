@@ -2,7 +2,7 @@ import React from 'react';
 import { BackArrowIcon } from '@assets/icons/BackArrow.icon';
 import { CheckoutDetails } from '@components/Checkout';
 import { colors, MODAL_KEYS } from '@config';
-import { Card, Divider, Stack, Title, Text } from '@mantine/core';
+import { Card, Stack, Title, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { getPlanType } from '@shared/utils';
 import { Button } from '@ui/button';
@@ -31,7 +31,6 @@ export function CheckoutContent({ checkoutData, isCheckoutDataLoading }: Checkou
             {' / '} {getPlanType(checkoutData?.interval)}
           </Text>
         </Title>
-        <Divider />
         <CheckoutDetails checkoutData={checkoutData} isCheckoutDataLoading={isCheckoutDataLoading} />
       </Stack>
     </Card>
