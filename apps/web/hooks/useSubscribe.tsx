@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import getConfig from 'next/config';
+import { modals } from '@mantine/modals';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { notify } from '@libs/notify';
 import { commonApi } from '@libs/api';
-import { API_KEYS, CONSTANTS, MODAL_KEYS, NOTIFICATION_KEYS } from '@config';
-import { modals } from '@mantine/modals';
 import { ICardData, IErrorObject } from '@impler/shared';
 import { ConfirmationModal } from '@components/ConfirmationModal';
+import { API_KEYS, CONSTANTS, MODAL_KEYS, NOTIFICATION_KEYS } from '@config';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -24,24 +25,14 @@ interface ISubscribeResponse {
 export const useSubscribe = ({ email, planCode }: UseSubscribeProps) => {
   const queryClient = useQueryClient();
   const isCouponFeatureEnabled = publicRuntimeConfig.NEXT_PUBLIC_COUPON_ENABLED;
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | undefined>();
   const [appliedCouponCode, setAppliedCouponCode] = useState<string | undefined>(undefined);
 
   const {
     data: paymentMethods,
     isLoading: isPaymentMethodsLoading,
     isFetching: isPaymentMethodsFetching,
-  } = useQuery<ICardData[], IErrorObject, ICardData[], [string]>(
-    [API_KEYS.PAYMENT_METHOD_LIST],
-    () => commonApi<ICardData[]>(API_KEYS.PAYMENT_METHOD_LIST as any, {}),
-    {
-      onSuccess(data) {
-        // If a new payment method is added, make it the default selection
-        if (data?.length) {
-          setSelectedPaymentMethod((prevMethod) => prevMethod || data[0].paymentMethodId);
-        }
-      },
-    }
+  } = useQuery<ICardData[], IErrorObject, ICardData[], [string]>([API_KEYS.PAYMENT_METHOD_LIST], () =>
+    commonApi<ICardData[]>(API_KEYS.PAYMENT_METHOD_LIST as any, {})
   );
 
   const { mutate: subscribe, isLoading: isPurchaseLoading } = useMutation<
@@ -49,10 +40,10 @@ export const useSubscribe = ({ email, planCode }: UseSubscribeProps) => {
     IErrorObject,
     ISubscribeData
   >(
-    [API_KEYS.SUBSCRIBE, selectedPaymentMethod, email, planCode],
-    () =>
+    [API_KEYS.SUBSCRIBE, email, planCode],
+    (paymentData) =>
       commonApi<ISubscribeResponse>(API_KEYS.SUBSCRIBE as any, {
-        query: { paymentMethodId: selectedPaymentMethod, email, planCode },
+        query: { ...paymentData },
       }),
     {
       onSuccess: (response) => {
@@ -87,31 +78,24 @@ export const useSubscribe = ({ email, planCode }: UseSubscribeProps) => {
     }
   );
 
-  const handleProceed = (createdPaymentMethodId?: string) => {
-    console.log(createdPaymentMethodId, selectedPaymentMethod);
-    if (selectedPaymentMethod) {
+  const handleProceed = (createdPaymentMethodId: string) => {
+    if (createdPaymentMethodId) {
       subscribe({
         email,
         planCode,
-        selectedPaymentMethod: createdPaymentMethodId || selectedPaymentMethod,
+        paymentMethodId: createdPaymentMethodId,
       });
     }
   };
 
-  const handlePaymentMethodChange = (paymentMethod: string) => {
-    setSelectedPaymentMethod(paymentMethod);
-  };
-
   return {
-    paymentMethods,
-    isPaymentMethodsFetching,
-    isPaymentMethodsLoading,
     handleProceed,
-    handlePaymentMethodChange,
+    paymentMethods,
+    isPurchaseLoading,
     appliedCouponCode,
     setAppliedCouponCode,
-    selectedPaymentMethod,
-    isPurchaseLoading,
     isCouponFeatureEnabled,
+    isPaymentMethodsLoading,
+    isPaymentMethodsFetching,
   };
 };
