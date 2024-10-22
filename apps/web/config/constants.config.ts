@@ -163,6 +163,7 @@ export const NOTIFICATION_KEYS = {
   ERROR_AUTHORIZING_PAYMENT_METHOD: 'ERROR_AUTHORIZING_PAYMENT_METHOD',
 
   PAYMENT_INTENT_ID_UPDATED: 'PAYMENT_INTENT_ID_UPDATED',
+  ERROR_SAVING_INTENT_ID: 'ERROR_SAVING_INTENT_ID',
 
   MEMBERSHIP_CANCELLED: 'MEMBERSHIP_CANCELLED',
   MEMBERSHIP_PURCHASED: 'MEMBERSHIP_PURCHASED',
@@ -185,6 +186,7 @@ export const NOTIFICATION_KEYS = {
   CARD_ADDED: 'CARD_ADDED',
   CARD_REMOVED: 'CARD_REMOVED',
   PURCHASE_FAILED: 'PURCHASE_FAILED',
+  NO_CARD_SELECTED: 'NO_CARD_SELECTED',
 
   COLUMN_ERRROR: 'COLUMN_ERRROR',
 };
@@ -335,6 +337,28 @@ export const PLACEHOLDERS = {
   source: 'Google Search, Recommendation...',
   about: 'Google Search',
 };
+
+export const stripeElementsOptions = {
+  style: {
+    base: {
+      fontSize: '16px',
+      color: '#495057',
+      '::placeholder': {
+        color: '#6c757d',
+      },
+      backgroundColor: '#fff',
+    },
+    invalid: {
+      color: 'red',
+    },
+  },
+};
+
+export enum PLANCODEENUM {
+  GROWTH = 'GROWTH-MONTHLY',
+  GROWTH_YEARLY = 'GROWTH-YEARLY',
+  STARTER = 'STARTER',
+}
 export const plans: { monthly: Plan[]; yearly: Plan[] } = {
   monthly: [
     {
