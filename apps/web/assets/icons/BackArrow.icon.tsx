@@ -11,9 +11,9 @@ export const BackArrowIcon = ({ size = 'lg' }: IconType) => {
       fill="none"
     >
       <g clip-path="url(#clip0_4907_2321)">
-        <path d="M5 12H19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-        <path d="M5 12L9 16" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-        <path d="M5 12L9 8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M5 12H19" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M5 12L9 16" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M5 12L9 8" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       </g>
       <defs>
         <clipPath id="clip0_4907_2321">
