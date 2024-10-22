@@ -156,7 +156,7 @@ interface ICheckoutData {
 }
 
 interface ISubscribeData {
-  selectedPaymentMethod: string | undefined;
+  paymentMethodId: string;
   email: string;
   planCode: string;
 }
