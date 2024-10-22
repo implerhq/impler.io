@@ -2,6 +2,7 @@ import { ICardData } from '@impler/shared';
 import { Radio, SimpleGrid, useMantineTheme } from '@mantine/core';
 
 import { PaymentMethodOption } from './PaymentMethodOption';
+import { useStyles } from './PaymentMethods.styles';
 
 interface PaymentMethodsProps {
   paymentMethods: ICardData[] | undefined;
@@ -15,12 +16,14 @@ export function PaymentMethods({
   handlePaymentMethodChange,
 }: PaymentMethodsProps) {
   const theme = useMantineTheme();
+  const { classes } = useStyles();
 
   return (
     <Radio.Group
       name="paymentMethod"
       value={selectedPaymentMethod || undefined}
       onChange={(event) => handlePaymentMethodChange(event)}
+      className={classes.radio}
     >
       <SimpleGrid
         cols={2}
