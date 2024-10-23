@@ -44,23 +44,6 @@ export function useProject() {
     },
   });
 
-  const onSubmit = (data: ICreateProjectData) => {
-    if (data.name.trim()) {
-      createProject(
-        { name: data.name.trim() },
-        {
-          onSuccess: () => {
-            queryClient.invalidateQueries([API_KEYS.PROJECTS_LIST]);
-            reset();
-          },
-          onError: () => {},
-        }
-      );
-    } else {
-      setError('name', { type: 'manual', message: 'Project name is required' });
-    }
-  };
-
   const { data: projects, isLoading: isProjectsLoading } = useQuery<IProjectPayload[], IErrorObject>(
     [API_KEYS.PROJECTS_LIST],
     () => commonApi<IProjectPayload[]>(API_KEYS.PROJECTS_LIST as any, {})
@@ -83,10 +66,12 @@ export function useProject() {
     ICreateProjectData
   >([API_KEYS.PROJECT_CREATE], (data) => commonApi(API_KEYS.PROJECT_CREATE as any, { body: data }), {
     onSuccess: ({ project }) => {
+      reset();
       queryClient.setQueryData<IProjectPayload[]>([API_KEYS.PROJECTS_LIST], () => [...(projects || []), project]);
       track({ name: 'PROJECT CREATE', properties: { duringOnboard: false } });
       replace(ROUTES.HOME);
       refetchMeData();
+      modals.close(MODAL_KEYS.MANAGE_PROJECT_MODAL);
       notify(NOTIFICATION_KEYS.PROJECT_CREATED, {
         title: 'Project created',
         message: `Project ${project.name} created successfully`,
@@ -184,6 +169,14 @@ export function useProject() {
           />
         ),
       });
+    }
+  };
+
+  const onSubmit = (data: ICreateProjectData) => {
+    if (data.name.trim()) {
+      createProject({ name: data.name.trim() });
+    } else {
+      setError('name', { type: 'manual', message: 'Project name is required' });
     }
   };
 
