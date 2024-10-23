@@ -12,8 +12,8 @@ export function useSubscriptionInfo() {
     if (!meta) return COLUMN_TYPES;
 
     return COLUMN_TYPES.map((item) => {
-      if (item.label === 'Image' && item.value === 'Image' && !meta.IMAGE_UPLOAD) {
-        return { ...item, disabled: true, label: 'Image - Scale Plan Feature' };
+      if (item.label === 'Image' && item.value === 'Image' && !meta.IMAGE_IMPORT) {
+        return { ...item, disabled: true, label: 'Image - Premium Feature' };
       }
 
       return item;

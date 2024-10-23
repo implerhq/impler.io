@@ -82,7 +82,7 @@ export function useColumnsEditor({ templateId }: UseSchemaProps) {
       return setError('columns', { type: 'JSON', message: 'Provided JSON is invalid!' });
     }
 
-    if (!meta?.IMAGE_UPLOAD) {
+    if (!meta?.IMAGE_IMPORT) {
       const imageColumnExists = parsedColumns.some((column: IColumn) => column.type === 'Image');
 
       if (imageColumnExists) {
