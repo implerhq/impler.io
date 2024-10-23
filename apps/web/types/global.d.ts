@@ -61,7 +61,7 @@ interface ISubscriptionData {
   };
   expiryDate: Date;
   meta: {
-    IMAGE_UPLOAD: boolean;
+    IMAGE_IMPORT: boolean;
     IMPORTED_ROWS: Array<{
       flat_fee: number;
       per_unit: number;

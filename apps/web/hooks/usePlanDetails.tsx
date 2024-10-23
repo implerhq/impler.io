@@ -24,12 +24,7 @@ export function usePlanDetails({ projectId }: UsePlanDetailProps) {
       onSuccess(data) {
         if (data && data.meta) {
           setPlanMeta({
-            AUTOMATIC_IMPORTS: data.meta.AUTOMATIC_IMPORTS,
-            IMAGE_UPLOAD: data.meta.IMAGE_UPLOAD,
-            IMPORTED_ROWS: data.meta.IMPORTED_ROWS,
-            REMOVE_BRANDING: data.meta.REMOVE_BRANDING,
-            ADVANCED_VALIDATORS: data.meta.ADVANCED_VALIDATORS,
-            TEAM_MEMBERS: data.meta.TEAM_MEMBERS,
+            ...data.meta,
           });
         }
       },
