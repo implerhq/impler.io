@@ -60,7 +60,7 @@ export function ManageProjectModal() {
             title: 'Actions',
             Cell: (item) => (
               <Flex justify="flex-end" gap="xs">
-                {item._id === currentProjectId ? (
+                {item._id !== currentProjectId ? (
                   <IconButton label="Switch Project" onClick={() => onProjectIdChange(item._id as string)}>
                     <SwapIcon size="md" />
                   </IconButton>
