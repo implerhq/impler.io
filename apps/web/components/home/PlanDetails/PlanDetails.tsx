@@ -40,7 +40,8 @@ export function PlanDetails() {
 
   return (
     <Stack
-      p="lg"
+      p="sm"
+      spacing="sm"
       bg={colors.stoneGrey}
       style={{
         borderRadius: '10px',
