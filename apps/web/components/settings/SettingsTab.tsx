@@ -43,7 +43,7 @@ export function SettingsTab() {
   const defaultTab = router.query.tab as string;
   const selectedTab = validTabValues.includes(defaultTab)
     ? defaultTab
-    : validTabValues[0] || (ability && ability.can(ActionsEnum.READ, SubjectsEnum.ACCESS_TOKEN))
+    : ability && ability.can(ActionsEnum.READ, SubjectsEnum.ACCESS_TOKEN)
     ? 'accesstoken'
     : 'addcard';
 
