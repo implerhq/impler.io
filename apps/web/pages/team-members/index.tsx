@@ -1,12 +1,10 @@
 import { Title } from '@mantine/core';
 
-import { SubjectsEnum } from '@config';
 import { AppLayout } from '@layouts/AppLayout';
 import { Team } from '@components/TeamMembers';
 import { useInvitation } from '@hooks/useInvitation';
-import { withProtectedResource } from '@components/hoc';
 
-function TeamMembers() {
+export default function TeamMembers() {
   useInvitation();
 
   return (
@@ -17,14 +15,6 @@ function TeamMembers() {
   );
 }
 
-const EnhancedTeamMembers = withProtectedResource(TeamMembers, {
-  subject: SubjectsEnum.TEAM_MEMBERS,
-});
-
-export default function TeamMembersPage() {
-  return <EnhancedTeamMembers />;
-}
-
 export async function getServerSideProps() {
   return {
     props: {
@@ -33,4 +23,4 @@ export async function getServerSideProps() {
   };
 }
 
-TeamMembersPage.Layout = AppLayout;
+TeamMembers.Layout = AppLayout;

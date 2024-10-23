@@ -104,14 +104,12 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
               icon={<SettingsIcon size="lg" />}
               title="Settings"
             />
-            <Can I={ActionsEnum.READ} a={SubjectsEnum.TEAM_MEMBERS}>
-              <NavItem
-                active={pathname.includes('/team-members')}
-                href="/team-members"
-                icon={<PeopleIcon size="lg" />}
-                title="Team Members"
-              />
-            </Can>
+            <NavItem
+              active={pathname.includes('/team-members')}
+              href="/team-members"
+              icon={<PeopleIcon size="lg" />}
+              title="Team Members"
+            />
             <Can I={ActionsEnum.READ} a={SubjectsEnum.DOCUMENTATION}>
               <NavItem
                 target="_blank"
