@@ -60,24 +60,16 @@ export function ManageProjectModal() {
             title: 'Actions',
             Cell: (item) => (
               <Flex justify="flex-end" gap="xs">
-                <IconButton
-                  label="Switch Project"
-                  disabled={item._id === currentProjectId}
-                  onClick={() => {
-                    onProjectIdChange(item._id as string);
-                  }}
-                >
-                  <SwapIcon size="md" />
-                </IconButton>
-                <IconButton
-                  label="Delete Project"
-                  disabled={!item.isOwner}
-                  onClick={() => {
-                    handleDeleteProject(item._id as string);
-                  }}
-                >
-                  <DeleteIcon size="md" />
-                </IconButton>
+                {item._id === currentProjectId ? (
+                  <IconButton label="Switch Project" onClick={() => onProjectIdChange(item._id as string)}>
+                    <SwapIcon size="md" />
+                  </IconButton>
+                ) : null}
+                {item.isOwner ? (
+                  <IconButton label="Delete Project" onClick={() => handleDeleteProject(item._id as string)}>
+                    <DeleteIcon size="md" />
+                  </IconButton>
+                ) : null}
               </Flex>
             ),
           },
