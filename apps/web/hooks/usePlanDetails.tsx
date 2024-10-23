@@ -5,7 +5,7 @@ import { IErrorObject } from '@impler/shared';
 import { usePlanMetaData } from 'store/planmeta.store.context';
 
 interface UsePlanDetailProps {
-  projectId: string;
+  projectId?: string;
 }
 
 export function usePlanDetails({ projectId }: UsePlanDetailProps) {
@@ -14,11 +14,11 @@ export function usePlanDetails({ projectId }: UsePlanDetailProps) {
     data: activePlanDetails,
     isLoading: isActivePlanLoading,
     refetch: refetchActivePlanDetails,
-  } = useQuery<unknown, IErrorObject, ISubscriptionData, [string, string]>(
+  } = useQuery<unknown, IErrorObject, ISubscriptionData, [string, string | undefined]>(
     [API_KEYS.FETCH_ACTIVE_SUBSCRIPTION, projectId],
     () =>
       commonApi<ISubscriptionData>(API_KEYS.FETCH_ACTIVE_SUBSCRIPTION as any, {
-        parameters: [projectId],
+        parameters: [projectId!],
       }),
     {
       onSuccess(data) {

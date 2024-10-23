@@ -11,9 +11,9 @@ import { GenerateAccessToken } from './GenerateAccessToken';
 import { ActionsEnum, AppAbility, SubjectsEnum } from '@config';
 
 export function SettingsTab() {
-  const ability = useContext<AppAbility | null>(AbilityContext);
   const router = useRouter();
   const { publicRuntimeConfig } = getConfig();
+  const ability = useContext<AppAbility | null>(AbilityContext);
 
   const stripePromise =
     publicRuntimeConfig.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY &&
@@ -40,8 +40,12 @@ export function SettingsTab() {
   ].filter(Boolean);
 
   const validTabValues = tabItems.map((item) => item.value);
-  const defaultTab = (router.query.tab as string) || 'accesstoken';
-  const selectedTab = validTabValues.includes(defaultTab) ? defaultTab : validTabValues[0] || 'accesstoken';
+  const defaultTab = router.query.tab as string;
+  const selectedTab = validTabValues.includes(defaultTab)
+    ? defaultTab
+    : ability && ability.can(ActionsEnum.READ, SubjectsEnum.ACCESS_TOKEN)
+    ? 'accesstoken'
+    : 'addcard';
 
   return <OutlinedTabs defaultValue={selectedTab} items={tabItems} />;
 }

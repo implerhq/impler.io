@@ -343,6 +343,7 @@ export enum SubjectsEnum {
   CARDS = 'Cards',
   ROLE = 'Role',
   ALL = 'all',
+  DOCUMENTATION = 'Documentation',
 }
 
 export const ROLE_BADGES = {
@@ -363,6 +364,7 @@ export const ROLE_BASED_ACCESS = {
     { action: ActionsEnum.READ, subject: SubjectsEnum.SETTINGS },
     { action: ActionsEnum.READ, subject: SubjectsEnum.ACCESS_TOKEN },
     { action: ActionsEnum.READ, subject: SubjectsEnum.TEAM_MEMBERS },
+    { action: ActionsEnum.READ, subject: SubjectsEnum.DOCUMENTATION },
   ],
   [UserRolesEnum.FINANCE]: [
     { action: ActionsEnum.READ, subject: SubjectsEnum.HOMEPAGE },
