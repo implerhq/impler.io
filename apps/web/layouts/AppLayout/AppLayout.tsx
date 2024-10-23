@@ -26,6 +26,7 @@ import { useAppState } from 'store/app.context';
 import { useLogout } from '@hooks/auth/useLogout';
 import { ColorSchemeToggle } from '@ui/toggle-color-scheme';
 import { EditProjectIcon } from '@assets/icons/EditImport.icon';
+import { usePlanDetails } from '@hooks/usePlanDetails';
 
 const Support = dynamic(() => import('components/common/Support').then((mod) => mod.Support), {
   ssr: false,
@@ -36,17 +37,16 @@ interface PageProps {
 }
 
 export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps: PageProps }>) {
-  const router = useRouter();
-
-  const { replace } = useRouter();
-
   const { classes } = useStyles();
   const navRef = useRef<HTMLElement>(null);
+  const { replace, pathname } = useRouter();
   const { colorScheme } = useMantineColorScheme();
-  const { profileInfo } = useAppState();
+
   const { logout } = useLogout({
     onLogout: () => replace(ROUTES.SIGNIN),
   });
+  const { profileInfo } = useAppState();
+  usePlanDetails({ projectId: profileInfo?._projectId });
   const { projects, onEditImportClick, isProjectsLoading, isProfileLoading } = useProject();
 
   return (
@@ -83,41 +83,43 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
             </Group>
           </UnstyledButton>
           <Stack spacing="sm" py="xs">
-            <NavItem active={router.pathname === '/'} href="/" icon={<HomeIcon size="lg" />} title="Home" />
+            <NavItem active={pathname === '/'} href="/" icon={<HomeIcon size="lg" />} title="Home" />
 
             <NavItem
-              active={router.pathname.includes('/imports')}
+              active={pathname.includes('/imports')}
               href="/imports"
               icon={<ImportIcon size="lg" />}
               title="Imports"
             />
 
             <NavItem
-              active={router.pathname.includes('/activities')}
+              active={pathname.includes('/activities')}
               href="/activities"
               icon={<ActivitiesIcon size="lg" />}
               title="Activities"
             />
             <NavItem
-              active={router.pathname.includes('/settings')}
+              active={pathname.includes('/settings')}
               href="/settings"
               icon={<SettingsIcon size="lg" />}
               title="Settings"
             />
             <Can I={ActionsEnum.READ} a={SubjectsEnum.TEAM_MEMBERS}>
               <NavItem
-                active={router.pathname.includes('/team-members')}
+                active={pathname.includes('/team-members')}
                 href="/team-members"
                 icon={<PeopleIcon size="lg" />}
                 title="Team Members"
               />
             </Can>
-            <NavItem
-              target="_blank"
-              title="Documentation"
-              href="https://docs.impler.io"
-              icon={<OutLinkIcon size="lg" />}
-            />
+            <Can I={ActionsEnum.READ} a={SubjectsEnum.DOCUMENTATION}>
+              <NavItem
+                target="_blank"
+                title="Documentation"
+                href="https://docs.impler.io"
+                icon={<OutLinkIcon size="lg" />}
+              />
+            </Can>
           </Stack>
         </aside>
         <main className={classes.main}>
