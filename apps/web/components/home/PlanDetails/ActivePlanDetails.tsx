@@ -29,7 +29,7 @@ export function ActivePlanDetails({
   return (
     <Stack>
       <Group grow>
-        <Title order={2}>{activePlanDetails.plan.name}</Title>
+        <Title order={4}>{activePlanDetails.plan.name}</Title>
         <Group spacing="sm" position="right">
           <Button component={Link} href="/transactions" variant="filled">
             View all transactions
@@ -41,7 +41,7 @@ export function ActivePlanDetails({
       </Group>
 
       <Divider />
-      <Stack spacing="lg">
+      <Stack spacing="sm">
         <Group grow align="flex-start">
           <PlanDetailCard
             title="Records Imported"
