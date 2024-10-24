@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Stack, Text, Group, Badge, Switch, Title, Divider } from '@mantine/core';
+import { Stack, Text, Group, Badge, Title, Divider, Switch } from '@mantine/core';
 
 import { colors, plans } from '@config';
 import { PlanCard } from './PlanCard';
