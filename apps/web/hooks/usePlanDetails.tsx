@@ -8,10 +8,11 @@ import { PlansModal } from '@components/UpgradePlan/PlansModal';
 import { useAppState } from 'store/app.context';
 import { modals } from '@mantine/modals';
 import { track } from '@libs/amplitude';
-import { SelectCardModal } from '@components/AddCard/SelectCardModalContent';
+import { PaymentModal } from '@components/AddCard/PaymentModal';
 
 interface UsePlanDetailProps {
   email: string;
+  paymentMethodId?: string;
 }
 
 export function usePlanDetails({ email }: UsePlanDetailProps) {
@@ -62,7 +63,8 @@ export function usePlanDetails({ email }: UsePlanDetailProps) {
     });
   }, [activePlanDetails, profileInfo]);
 
-  const onChoosePlanButtonClick = (code: string) => {
+  const onOpenPaymentModal = ({ code, modalId }: { code: string; modalId: string }) => {
+    console.log(modalId);
     modals.open({
       size: 'calc(70vw - 40px)',
       withCloseButton: false,
@@ -74,7 +76,7 @@ export function usePlanDetails({ email }: UsePlanDetailProps) {
           padding: 0,
         },
       },
-      children: <SelectCardModal email={email} planCode={code} onClose={modals.closeAll} />,
+      children: <PaymentModal email={email} planCode={code} onClose={modals.closeAll} modalId={modalId} />,
     });
   };
 
@@ -83,6 +85,6 @@ export function usePlanDetails({ email }: UsePlanDetailProps) {
     activePlanDetails,
     isActivePlanLoading,
     showPlans,
-    onChoosePlanButtonClick,
+    onOpenPaymentModal,
   };
 }
