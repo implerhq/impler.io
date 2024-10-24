@@ -2,6 +2,7 @@
 import { Types } from 'mongoose';
 import { subMonths, subWeeks, subYears, format, subDays } from 'date-fns';
 
+import { UserEntity } from '../user';
 import { Upload } from './upload.schema';
 import { Environment } from '../environment';
 import { UploadEntity } from './upload.entity';
@@ -302,6 +303,6 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
       },
     ]);
 
-    return environment[0].apiKeys[0]._userId.email;
+    return (environment[0].apiKeys[0]._userId as unknown as UserEntity).email;
   }
 }

@@ -14,12 +14,14 @@ export class UserJobPause {
   ) {}
 
   async execute(_jobId: string): Promise<UserJobEntity> {
-    const userJob = this.schedulerRegistry.getCronJob(this.nameService.getCronName(_jobId));
-
+    const userJob = await this.userJobRepository.findById(_jobId);
     if (!userJob) {
-      throw new DocumentNotFoundException(`Userjob`, _jobId);
+      throw new DocumentNotFoundException('Userjob', _jobId);
     }
-    userJob.stop();
+
+    const userCronJob = this.schedulerRegistry.getCronJob(this.nameService.getCronName(_jobId));
+
+    userCronJob.stop();
 
     const updatedUserJob = await this.userJobRepository.findOneAndUpdate(
       { _id: _jobId },

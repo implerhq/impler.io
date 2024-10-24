@@ -13,7 +13,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 
-import { IJwtPayload } from '@impler/shared';
+import { constructQueryString, IJwtPayload, UserRolesEnum } from '@impler/shared';
 import { AuthService } from './services/auth.service';
 import { IStrategyResponse } from '@shared/types/auth.types';
 import { CONSTANTS, COOKIE_CONFIG } from '@shared/constants';
@@ -37,8 +37,6 @@ import {
   OnboardUser,
   RegisterUser,
   ResetPassword,
-  LoginUserCommand,
-  RegisterUserCommand,
   ResetPasswordCommand,
   RequestForgotPassword,
   RequestForgotPasswordCommand,
@@ -76,7 +74,10 @@ export class AuthController {
 
   @Get('/github/callback')
   @UseGuards(AuthGuard('github'))
-  async githubCallback(@StrategyUser() strategyUser: IStrategyResponse, @Res() response: Response) {
+  async githubCallback(
+    @Res({ passthrough: true }) response: Response,
+    @StrategyUser() strategyUser: IStrategyResponse
+  ) {
     if (!strategyUser || !strategyUser.token) {
       return response.redirect(`${process.env.WEB_BASE_URL}/auth/signin?error=AuthenticationError`);
     }
@@ -88,11 +89,7 @@ export class AuthController {
     if (strategyUser.showAddProject) {
       queryObj.showAddProject = true;
     }
-    for (const key in queryObj) {
-      if (queryObj.hasOwnProperty(key)) {
-        url += `${url.includes('?') ? '&' : '?'}${key}=${queryObj[key]}`;
-      }
-    }
+    url += constructQueryString(queryObj);
 
     response.cookie(CONSTANTS.AUTH_COOKIE_NAME, strategyUser.token, {
       ...COOKIE_CONFIG,
@@ -133,7 +130,7 @@ export class AuthController {
 
   @Post('/register')
   async register(@Body() body: RegisterUserDto, @Res() response: Response) {
-    const registeredUser = await this.registerUser.execute(RegisterUserCommand.create(body));
+    const registeredUser = await this.registerUser.execute(body);
 
     response.cookie(CONSTANTS.AUTH_COOKIE_NAME, registeredUser.token, {
       ...COOKIE_CONFIG,
@@ -170,15 +167,21 @@ export class AuthController {
       },
       user.email
     );
+
+    const userApiKey = projectWithEnvironment.environment.apiKeys.find(
+      (apiKey) => apiKey._userId.toString() === user._id
+    );
+
     const token = this.authService.getSignedToken(
       {
         _id: user._id,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        role: userApiKey.role as UserRolesEnum,
         profilePicture: user.profilePicture,
         isEmailVerified: user.isEmailVerified,
-        accessToken: projectWithEnvironment.environment.apiKeys[0].key,
+        accessToken: projectWithEnvironment.environment.key,
       },
       projectWithEnvironment.project._id
     );
@@ -192,12 +195,11 @@ export class AuthController {
 
   @Post('/login')
   async login(@Body() body: LoginUserDto, @Res() response: Response) {
-    const loginUser = await this.loginUser.execute(
-      LoginUserCommand.create({
-        email: body.email,
-        password: body.password,
-      })
-    );
+    const loginUser = await this.loginUser.execute({
+      email: body.email,
+      password: body.password,
+      invitationId: body.invitationId,
+    });
 
     response.cookie(CONSTANTS.AUTH_COOKIE_NAME, loginUser.token, {
       ...COOKIE_CONFIG,

@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import getConfig from 'next/config';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
+import { modals } from '@mantine/modals';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { notify } from '@libs/notify';
 import { commonApi } from '@libs/api';
-import { API_KEYS, CONSTANTS, NOTIFICATION_KEYS, ROUTES } from '@config';
-import { modals } from '@mantine/modals';
 import { ICardData, IErrorObject } from '@impler/shared';
 import { ConfirmationModal } from '@components/ConfirmationModal';
+import { API_KEYS, CONSTANTS, NOTIFICATION_KEYS, ROUTES } from '@config';
+import { useAppState } from 'store/app.context';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -24,11 +26,12 @@ interface ISubscribeResponse {
 }
 
 export const useSubscribe = ({ email, planCode, paymentMethodId }: UseSubscribeProps) => {
-  const queryClient = useQueryClient();
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const { profileInfo } = useAppState();
   const isCouponFeatureEnabled = publicRuntimeConfig.NEXT_PUBLIC_COUPON_ENABLED;
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | undefined>(paymentMethodId);
   const [appliedCouponCode, setAppliedCouponCode] = useState<string | undefined>(undefined);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | undefined>(paymentMethodId);
 
   const {
     data: paymentMethods,
@@ -65,7 +68,8 @@ export const useSubscribe = ({ email, planCode, paymentMethodId }: UseSubscribeP
       }),
     {
       onSuccess: (response) => {
-        queryClient.invalidateQueries([API_KEYS.FETCH_ACTIVE_SUBSCRIPTION, email]);
+        queryClient.invalidateQueries([API_KEYS.FETCH_ACTIVE_SUBSCRIPTION, profileInfo?._projectId]);
+        modals.closeAll();
         if (response && response.status) {
           modals.open({
             title:
@@ -77,12 +81,12 @@ export const useSubscribe = ({ email, planCode, paymentMethodId }: UseSubscribeP
         }
       },
       onError: (error: IErrorObject) => {
+        modals.closeAll();
         notify(NOTIFICATION_KEYS.PURCHASE_FAILED, {
           title: 'Purchase Failed',
           message: error.message,
           color: 'red',
         });
-        queryClient.invalidateQueries([API_KEYS.FETCH_ACTIVE_SUBSCRIPTION, email]);
         if (error && error.statusCode) {
           modals.open({
             title: CONSTANTS.SUBSCRIPTION_FAILED_TITLE,
@@ -94,7 +98,6 @@ export const useSubscribe = ({ email, planCode, paymentMethodId }: UseSubscribeP
   );
 
   const handleProceed = () => {
-    modals.closeAll();
     if (selectedPaymentMethod) {
       subscribe({
         email,

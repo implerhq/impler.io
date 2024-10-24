@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { APIMessages } from '@shared/constants';
 import { PaymentAPIService } from '@impler/services';
-import { ColumnRepository, TemplateRepository } from '@impler/dal';
 import { UpdateImageColumns, SaveSampleFile } from '@shared/usecases';
+import { AVAILABLE_BILLABLEMETRIC_CODE_ENUM, ColumnTypesEnum } from '@impler/shared';
+import { ColumnRepository, CustomizationRepository, TemplateRepository } from '@impler/dal';
 import { AddColumnCommand } from 'app/column/commands/add-column.command';
 import { UniqueColumnException } from '@shared/exceptions/unique-column.exception';
-import { AVAILABLE_BILLABLEMETRIC_CODE_ENUM, ColumnTypesEnum } from '@impler/shared';
 import { UpdateCustomization } from '../update-customization/update-customization.usecase';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
 
@@ -17,8 +17,9 @@ export class UpdateTemplateColumns {
     private columnRepository: ColumnRepository,
     private paymentAPIService: PaymentAPIService,
     private templateRepository: TemplateRepository,
+    private updateImageTemplates: UpdateImageColumns,
     private updateCustomization: UpdateCustomization,
-    private updateImageTemplates: UpdateImageColumns
+    private customizationRepository: CustomizationRepository
   ) {}
 
   async execute(userColumns: AddColumnCommand[], _templateId: string, email: string) {
@@ -34,10 +35,16 @@ export class UpdateTemplateColumns {
     await this.updateImageTemplates.execute(columns, _templateId);
 
     const template = await this.templateRepository.findById(_templateId, 'destination');
-    await this.updateCustomization.createOrReset(_templateId, {
-      recordVariables: this.listRecordVariables(userColumns),
-      destination: template.destination,
-    });
+    const customization = await this.customizationRepository.findOne(
+      { _templateId },
+      'isRecordFormatUpdated isCombinedFormatUpdated'
+    );
+    if (!customization.isRecordFormatUpdated && !customization.isCombinedFormatUpdated) {
+      await this.updateCustomization.createOrReset(_templateId, {
+        recordVariables: this.listRecordVariables(userColumns),
+        destination: template.destination,
+      });
+    }
 
     return columns;
   }

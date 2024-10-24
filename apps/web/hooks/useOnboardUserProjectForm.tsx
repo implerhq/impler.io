@@ -1,10 +1,10 @@
 import { useRouter } from 'next/router';
 import { useMutation } from '@tanstack/react-query';
-
-import { API_KEYS } from '@config';
 import { commonApi } from '@libs/api';
 import { track } from '@libs/amplitude';
+import { getCookie } from '@shared/utils';
 import { useAppState } from 'store/app.context';
+import { API_KEYS, CONSTANTS, ROUTES } from '@config';
 import { IErrorObject, IEnvironmentData } from '@impler/shared';
 
 export function useOnboardUserProjectForm() {
@@ -41,10 +41,18 @@ export function useOnboardUserProjectForm() {
             source: onboardData.source,
           },
         });
-        push('/');
+        const redirectUrl = getCookie(CONSTANTS.INVITATION_URL_COOKIE);
+        if (redirectUrl) {
+          push(ROUTES.TEAM_MEMBERS);
+        } else {
+          push(ROUTES.HOME);
+        }
       },
     }
   );
 
-  return { onboardUser, isUserOnboardLoading };
+  return {
+    onboardUser,
+    isUserOnboardLoading,
+  };
 }

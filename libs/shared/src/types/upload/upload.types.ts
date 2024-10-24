@@ -99,7 +99,8 @@ export type SendWebhookData = {
 };
 
 export type SendImportJobData = {
-  importJobHistoryId: string;
+  _jobId: string;
+  allDataFilePath: string;
   cache?: SendImportJobCachedData;
 };
 

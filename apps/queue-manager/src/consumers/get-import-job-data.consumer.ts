@@ -28,11 +28,12 @@ export class GetImportJobDataConsumer extends BaseConsumer {
     const data = JSON.parse(message.content) as { _jobId: string };
     const importJobHistoryId = this.commonRepository.generateMongoId().toString();
     const importedData = await this.getJobImportedData(data._jobId);
+    const allDataFilePath = this.fileNameService.getAllJsonDataFilePath(importJobHistoryId);
     await this.convertRecordsToJsonFile(importJobHistoryId, importedData);
     await this.importJobHistoryRepository.create({
       _id: importJobHistoryId,
       _jobId: data._jobId,
-      allDataFilePath: this.fileNameService.getAllJsonDataFilePath(importJobHistoryId),
+      allDataFilePath,
       status: ImportJobHistoryStatusEnum.PROCESSING,
     });
     const userJobInfo = await this.userJobRepository.getUserJobWithTemplate(data._jobId);
@@ -42,7 +43,7 @@ export class GetImportJobDataConsumer extends BaseConsumer {
     });
 
     if (webhookDestination?.callbackUrl) {
-      publishToQueue(QueuesEnum.SEND_IMPORT_JOB_DATA, { importJobHistoryId });
+      publishToQueue(QueuesEnum.SEND_IMPORT_JOB_DATA, { _jobId: data._jobId, allDataFilePath });
     }
 
     return;

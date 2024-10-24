@@ -12,7 +12,7 @@ interface TooltipLinkProps {
   iconColor?: string;
 }
 
-export function TooltipLink({ label = 'Read More', link, iconSize = 'sm' }: TooltipLinkProps) {
+export function TooltipLink({ label = 'Know More', link, iconSize = 'sm' }: TooltipLinkProps) {
   const theme = useMantineColorScheme();
 
   return (

@@ -7,12 +7,13 @@ import { ActionIcon, Flex, Group, LoadingOverlay, Title, useMantineTheme, Select
 import { track } from '@libs/amplitude';
 import { useImpler } from '@impler/react';
 import { TemplateModeEnum } from '@impler/shared';
-import { IMPORT_MODES, ROUTES, colors } from '@config';
+import { IMPORT_MODES, ROUTES, SubjectsEnum, colors } from '@config';
 import { useImportDetails } from '@hooks/useImportDetails';
 
 import { Tabs } from '@ui/Tabs';
 import { Button } from '@ui/button';
 import { Schema } from '@components/imports/schema';
+import { withProtectedResource } from '@components/hoc';
 import { Destination } from '@components/imports/destination';
 
 import { AppLayout } from '@layouts/AppLayout';
@@ -28,7 +29,7 @@ const Validator = dynamic(() => import('@components/imports/validator').then((mo
   ssr: false,
 });
 
-export default function ImportDetails({}) {
+function ImportDetails() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'schema' | 'destination' | 'snippet' | 'validator' | 'output'>();
   const { colorScheme } = useMantineTheme();
@@ -145,4 +146,20 @@ export default function ImportDetails({}) {
   );
 }
 
-ImportDetails.Layout = AppLayout;
+const EnhancedImportDetails = withProtectedResource(ImportDetails, {
+  subject: SubjectsEnum.IMPORTS,
+});
+
+export default function ImportDetailsPage() {
+  return <EnhancedImportDetails />;
+}
+
+ImportDetailsPage.Layout = AppLayout;
+
+export async function getServerSideProps() {
+  return {
+    props: {
+      title: 'Import Details',
+    },
+  };
+}

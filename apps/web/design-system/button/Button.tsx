@@ -2,7 +2,7 @@ import { PropsWithChildren } from 'react';
 import useStyles from './Button.styles';
 import { Button as MantineButton, MantineSize, ButtonProps as MantineButtonProps } from '@mantine/core';
 
-export type ButtonColors = 'blue' | 'invariant' | 'red' | 'green' | 'yellow';
+export type ButtonColors = 'blue' | 'invariant' | 'red' | 'green' | 'yellow' | 'grey';
 export type ButtonVariants = 'filled' | 'outline';
 
 interface ButtonProps extends MantineButtonProps {

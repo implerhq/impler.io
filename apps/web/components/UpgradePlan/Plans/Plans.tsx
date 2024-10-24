@@ -5,12 +5,13 @@ import { Switch, Stack, Table, Button, Text, Group, useMantineColorScheme } from
 import useStyles from './Plans.styles';
 import { Badge } from '@ui/badge';
 import { track } from '@libs/amplitude';
-import { MODAL_KEYS, colors } from '@config';
 import { numberFormatter } from '@impler/shared';
 import { TickIcon } from '@assets/icons/Tick.icon';
 import { CrossIcon } from '@assets/icons/Cross.icon';
 import { useCancelPlan } from '@hooks/useCancelPlan';
 import { SelectCardModal } from '@components/settings';
+import { TooltipLink } from '@components/guide-point';
+import { DOCUMENTATION_REFERENCE_LINKS, MODAL_KEYS, colors } from '@config';
 
 interface PlansProps {
   profile: IProfileData;
@@ -23,9 +24,13 @@ interface PlanItem {
   name: string;
   code: string;
   price: number;
+  seats: number;
   yearlyPrice: number;
+  autoImport: boolean;
+  imageImport: boolean;
   rowsIncluded: number;
   removeBranding: boolean;
+  advancedValidations: boolean;
   extraChargeOverheadTenThusandRecords?: number;
 }
 
@@ -36,15 +41,23 @@ const plans: Record<string, PlanItem[]> = {
       code: 'STARTER',
       rowsIncluded: 5000,
       price: 0,
+      seats: 1,
       yearlyPrice: 0,
+      autoImport: false,
+      imageImport: false,
       extraChargeOverheadTenThusandRecords: 1,
       removeBranding: false,
+      advancedValidations: false,
     },
     {
       name: 'Growth',
       code: 'GROWTH-MONTHLY',
       price: 42,
       yearlyPrice: 0,
+      seats: 4,
+      autoImport: false,
+      imageImport: false,
+      advancedValidations: true,
       rowsIncluded: 500000,
       extraChargeOverheadTenThusandRecords: 0.7,
       removeBranding: true,
@@ -53,6 +66,10 @@ const plans: Record<string, PlanItem[]> = {
       name: 'Scale',
       code: 'SCALE-MONTHLY',
       price: 90,
+      seats: 10,
+      autoImport: true,
+      imageImport: true,
+      advancedValidations: true,
       yearlyPrice: 0,
       rowsIncluded: 1500000,
       extraChargeOverheadTenThusandRecords: 0.5,
@@ -65,6 +82,10 @@ const plans: Record<string, PlanItem[]> = {
       code: 'STARTER',
       rowsIncluded: 5000,
       price: 0,
+      seats: 1,
+      autoImport: false,
+      imageImport: false,
+      advancedValidations: false,
       yearlyPrice: 0,
       extraChargeOverheadTenThusandRecords: 1,
       removeBranding: false,
@@ -73,6 +94,10 @@ const plans: Record<string, PlanItem[]> = {
       name: 'Growth',
       code: 'GROWTH-YEARLY',
       price: 35,
+      seats: 4,
+      autoImport: false,
+      imageImport: false,
+      advancedValidations: true,
       yearlyPrice: 420,
       rowsIncluded: 6000000,
       extraChargeOverheadTenThusandRecords: 0.7,
@@ -82,6 +107,10 @@ const plans: Record<string, PlanItem[]> = {
       name: 'Scale',
       code: 'SCALE-YEARLY',
       price: 75,
+      seats: 10,
+      advancedValidations: true,
+      autoImport: true,
+      imageImport: true,
       yearlyPrice: 900,
       rowsIncluded: 18000000,
       extraChargeOverheadTenThusandRecords: 0.5,
@@ -197,6 +226,12 @@ export const Plans = ({ profile, activePlanCode, canceledOn, expiryDate }: Plans
             ))}
           </tr>
           <tr>
+            <td>Team Members</td>
+            {plans[showYearly ? 'yearly' : 'monthly'].map((plan, index) => (
+              <td key={index}>{plan.seats}</td>
+            ))}
+          </tr>
+          <tr>
             <td>Theming</td>
             {plans[showYearly ? 'yearly' : 'monthly'].map((plan, index) => (
               <td key={index}>
@@ -205,9 +240,23 @@ export const Plans = ({ profile, activePlanCode, canceledOn, expiryDate }: Plans
             ))}
           </tr>
           <tr>
-            <td>Projects</td>
+            <td>
+              Custom Validation <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.customValidation} />
+            </td>
             {plans[showYearly ? 'yearly' : 'monthly'].map((plan, index) => (
-              <td key={index}>Unlimited</td>
+              <td key={index}>
+                <TickIcon />
+              </td>
+            ))}
+          </tr>
+          <tr>
+            <td>
+              Output Customization <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.outputCustomization} />
+            </td>
+            {plans[showYearly ? 'yearly' : 'monthly'].map((plan, index) => (
+              <td key={index}>
+                <TickIcon />
+              </td>
             ))}
           </tr>
           <tr>
@@ -216,21 +265,28 @@ export const Plans = ({ profile, activePlanCode, canceledOn, expiryDate }: Plans
               <td key={index}>{plan.removeBranding ? <TickIcon /> : <CrossIcon size="lg" />}</td>
             ))}
           </tr>
-
           <tr>
-            <td>Custom Validation</td>
+            <td>
+              Advanced Validations <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.advancedValidations} />
+            </td>
             {plans[showYearly ? 'yearly' : 'monthly'].map((plan, index) => (
-              <td key={index}>
-                <TickIcon />
-              </td>
+              <td key={index}>{plan.advancedValidations ? <TickIcon /> : <CrossIcon size="lg" />}</td>
             ))}
           </tr>
           <tr>
-            <td>Output Customization</td>
+            <td>
+              Auto Import <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.autoImport} />
+            </td>
             {plans[showYearly ? 'yearly' : 'monthly'].map((plan, index) => (
-              <td key={index}>
-                <TickIcon />
-              </td>
+              <td key={index}>{plan.autoImport ? <TickIcon /> : <CrossIcon size="lg" />}</td>
+            ))}
+          </tr>
+          <tr>
+            <td>
+              Image Import <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.imageImport} />
+            </td>
+            {plans[showYearly ? 'yearly' : 'monthly'].map((plan, index) => (
+              <td key={index}>{plan.imageImport ? <TickIcon /> : <CrossIcon size="lg" />}</td>
             ))}
           </tr>
           <tr>

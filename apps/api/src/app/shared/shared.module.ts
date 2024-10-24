@@ -18,6 +18,7 @@ import {
   BubbleDestinationRepository,
   UserJobRepository,
   JobMappingRepository,
+  ProjectInvitationRepository,
 } from '@impler/dal';
 import { CSVFileService2, ExcelFileService } from './services/file/file.service';
 import {
@@ -46,6 +47,7 @@ const DAL_MODELS = [
   JobMappingRepository,
   UserJobRepository,
   SchedulerRegistry,
+  ProjectInvitationRepository,
 ];
 const UTILITY_SERVICES = [CSVFileService2, FileNameService, NameService, ExcelFileService];
 

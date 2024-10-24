@@ -1,27 +1,41 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { modals } from '@mantine/modals';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useContext, useEffect } from 'react';
 import { Title, Text, Flex, Button, Skeleton, Stack } from '@mantine/core';
 
-import { useApp } from '@hooks/useApp';
+import {
+  CONSTANTS,
+  MODAL_KEYS,
+  ROUTES,
+  colors,
+  DOCUMENTATION_REFERENCE_LINKS,
+  ActionsEnum,
+  SubjectsEnum,
+  AppAbility,
+} from '@config';
+import { Alert } from '@ui/Alert';
 import { track } from '@libs/amplitude';
 import { numberFormatter } from '@impler/shared';
+import { TooltipLink } from '@components/guide-point';
 import { SelectCardModal } from '@components/settings';
 import { usePlanDetails } from '@hooks/usePlanDetails';
-import { TooltipLink } from '@components/guide-point';
 import { PlansModal } from '@components/UpgradePlan/PlansModal';
-import { CONSTANTS, MODAL_KEYS, ROUTES, colors, DOCUMENTATION_REFERENCE_LINKS } from '@config';
+import { useAppState } from 'store/app.context';
+import { AbilityContext, Can } from 'store/ability.context';
+import { InformationIcon } from '@assets/icons/Information.icon';
 
 export function PlanDetails() {
   const router = useRouter();
 
-  const { profile } = useApp();
+  const { profileInfo } = useAppState();
+  useContext<AppAbility | null>(AbilityContext);
+
   const { [CONSTANTS.PLAN_CODE_QUERY_KEY]: selectedPlan, [CONSTANTS.EXPLORE_PLANS_QUERY_LEY]: explorePlans } =
     router.query;
 
   const { activePlanDetails, isActivePlanLoading } = usePlanDetails({
-    email: profile?.email ?? '',
+    projectId: profileInfo?._projectId ?? '',
   });
 
   const showPlans = useCallback(() => {
@@ -34,7 +48,7 @@ export function PlanDetails() {
       modalId: MODAL_KEYS.PAYMENT_PLANS,
       children: (
         <PlansModal
-          userProfile={profile!}
+          userProfile={profileInfo!}
           activePlanCode={activePlanDetails?.plan?.code}
           canceledOn={activePlanDetails?.plan.canceledOn}
           expiryDate={activePlanDetails?.expiryDate}
@@ -43,22 +57,24 @@ export function PlanDetails() {
       size: '2xl',
       withCloseButton: true,
     });
-  }, [activePlanDetails, profile]);
+  }, [activePlanDetails, profileInfo]);
 
   useEffect(() => {
-    if (selectedPlan && profile) {
+    if (selectedPlan && profileInfo) {
       modals.open({
         size: '2xl',
         withCloseButton: false,
         id: MODAL_KEYS.SELECT_CARD,
         modalId: MODAL_KEYS.SELECT_CARD,
-        children: <SelectCardModal planCode={selectedPlan as string} email={profile.email} onClose={modals.closeAll} />,
+        children: (
+          <SelectCardModal planCode={selectedPlan as string} email={profileInfo.email} onClose={modals.closeAll} />
+        ),
       });
       router.push(ROUTES.HOME, {}, { shallow: true });
     } else if (explorePlans) {
       showPlans();
     }
-  }, [profile, selectedPlan, router, explorePlans, showPlans]);
+  }, [profileInfo, selectedPlan, router, explorePlans, showPlans]);
 
   if (isActivePlanLoading) return <Skeleton width="100%" height="200" />;
 
@@ -104,70 +120,79 @@ export function PlanDetails() {
     isLessThanZero || activePlanDetails!.usage.IMPORTED_ROWS > numberOfRecords ? colors.danger : colors.yellow;
 
   return (
-    <Flex
-      p="sm"
-      gap="sm"
-      direction="row"
-      align="center"
-      style={{
-        border: `1px solid ${
-          isLessThanZero || activePlanDetails.usage.IMPORTED_ROWS > numberOfRecords ? colors.danger : colors.yellow
-        }`,
-        backgroundColor: backgroundColor + '20',
-      }}
-    >
-      <Flex gap={5} justify="space-between" w="100%">
-        <Flex direction="column" gap={5} align="center">
-          <Title order={3} fw="bold">
-            {numberFormatter(activePlanDetails!.usage.IMPORTED_ROWS)}
-            {'/'}
-            {numberFormatter(numberOfRecords)}
-          </Title>
-          <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
-            Records Imported
-          </Text>
-        </Flex>
-        <Flex direction="column" gap={5} align="center">
-          <Title order={3} fw="bold">
-            {activePlanDetails.plan.name}
-          </Title>
-          <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
-            Active Plan
-          </Text>
-        </Flex>
-        {Number(activePlanDetails.plan.charge) ? (
-          <>
+    <>
+      <Alert color="yellow" icon={<InformationIcon size="md" />} p="xs">
+        You&apos;re viewing details of <b>{profileInfo?.projectName}</b> project
+      </Alert>
+      <Flex
+        p="sm"
+        gap="sm"
+        direction="row"
+        align="center"
+        style={{
+          border: `1px solid ${
+            isLessThanZero || activePlanDetails.usage.IMPORTED_ROWS > numberOfRecords ? colors.danger : colors.yellow
+          }`,
+          backgroundColor: backgroundColor + '20',
+        }}
+      >
+        <Flex gap={5} justify="space-between" w="100%">
+          <Flex direction="column" gap={5} align="center">
+            <Title order={3} fw="bold">
+              {numberFormatter(activePlanDetails!.usage.IMPORTED_ROWS)}
+              {'/'}
+              {numberFormatter(numberOfRecords)}
+            </Title>
+            <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
+              Records Imported
+            </Text>
+          </Flex>
+          <Flex direction="column" gap={5} align="center">
+            <Title order={3} fw="bold">
+              {activePlanDetails.plan.name}
+            </Title>
+            <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
+              Active Plan
+            </Text>
+          </Flex>
+          {Number(activePlanDetails.plan.charge) ? (
+            <>
+              <Flex direction="column" gap={5} align="center">
+                <Title order={3} fw="bold">
+                  {'$' + activePlanDetails.plan.charge}
+                </Title>
+                <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
+                  Outstanding Amount
+                </Text>
+              </Flex>
+            </>
+          ) : null}
+          <Flex direction="column" gap={5} align="center">
+            <Title order={3} fw="bold">
+              <>{activePlanDetails!.expiryDate}</>
+            </Title>
+            <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
+              Expiry Date
+            </Text>
+          </Flex>
+
+          <Can I={ActionsEnum.BUY} a={SubjectsEnum.PLAN}>
             <Flex direction="column" gap={5} align="center">
-              <Title order={3} fw="bold">
-                {'$' + activePlanDetails.plan.charge}
-              </Title>
-              <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
-                Outstanding Amount
+              <Button
+                onClick={showPlans}
+                color={isLessThanZero || activePlanDetails.usage.IMPORTED_ROWS > numberOfRecords ? 'red' : 'blue'}
+              >
+                Choose Plan
+              </Button>
+              <Text component={Link} href="/transactions" color={colors.yellow} td="underline">
+                View all transactions
               </Text>
             </Flex>
-          </>
-        ) : null}
-        <Flex direction="column" gap={5} align="center">
-          <Title order={3} fw="bold">
-            <>{activePlanDetails!.expiryDate}</>
-          </Title>
-          <Text size="sm" fw="bold" color={colors.TXTSecondaryDark}>
-            Expiry Date
-          </Text>
+          </Can>
         </Flex>
-        <Flex direction="column" gap={5} align="center">
-          <Button
-            onClick={showPlans}
-            color={isLessThanZero || activePlanDetails.usage.IMPORTED_ROWS > numberOfRecords ? 'red' : 'blue'}
-          >
-            Choose Plan
-          </Button>
-          <Text component={Link} href="/transactions" color={colors.yellow} td="underline">
-            View all transactions
-          </Text>
-        </Flex>
+
+        <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.subscriptionInformation} iconSize="md" />
       </Flex>
-      <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.subscriptionInformation} iconSize="md" />
-    </Flex>
+    </>
   );
 }

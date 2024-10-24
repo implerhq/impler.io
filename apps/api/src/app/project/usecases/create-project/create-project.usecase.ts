@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ProjectRepository } from '@impler/dal';
-import { ColumnTypesEnum, IntegrationEnum } from '@impler/shared';
 
-import { CreateProjectCommand } from './create-project.command';
 import { CreateEnvironment } from 'app/environment/usecases';
+import { CreateProjectCommand } from './create-project.command';
 import { CreateTemplate, UpdateTemplateColumns } from 'app/template/usecases';
+import { ColumnTypesEnum, IntegrationEnum, UserRolesEnum } from '@impler/shared';
 
 @Injectable()
 export class CreateProject {
@@ -21,6 +21,8 @@ export class CreateProject {
     const environment = await this.createEnvironment.execute({
       projectId: project._id,
       _userId: command._userId,
+      role: UserRolesEnum.ADMIN,
+      isOwner: true,
     });
 
     if (command.onboarding) {

@@ -12,4 +12,8 @@ export class CreateUserJobDto {
   @IsString()
   @IsOptional()
   extra?: string;
+
+  @IsString()
+  @IsOptional()
+  authHeaderValue?: string;
 }

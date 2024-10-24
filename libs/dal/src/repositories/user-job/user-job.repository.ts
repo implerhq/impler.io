@@ -3,6 +3,7 @@ import { UserJobEntity } from './user-job.entity';
 import { BaseRepository } from '../base-repository';
 import { Environment } from '../environment';
 import { TemplateEntity } from '../template';
+import { UserEntity } from '../user/user.entity';
 
 export class UserJobRepository extends BaseRepository<UserJobEntity> {
   constructor() {
@@ -25,6 +26,6 @@ export class UserJobRepository extends BaseRepository<UserJobEntity> {
       },
     ]);
 
-    return environment[0].apiKeys[0]._userId.email;
+    return (environment[0].apiKeys[0]._userId as unknown as UserEntity).email;
   }
 }
