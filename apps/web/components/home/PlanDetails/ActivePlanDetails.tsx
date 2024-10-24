@@ -1,5 +1,5 @@
 import { TooltipLink } from '@components/guide-point';
-import { DOCUMENTATION_REFERENCE_LINKS } from '@config';
+import { DOCUMENTATION_REFERENCE_LINKS, MODAL_KEYS, PLANCODEENUM } from '@config';
 import { numberFormatter } from '@impler/shared';
 import { Stack, Group, Divider, Title } from '@mantine/core';
 import { Button } from '@ui/button';
@@ -7,9 +7,10 @@ import Link from 'next/link';
 import React from 'react';
 import { PlanDetailCard } from './PlanDetailsCard';
 import { useCancelPlan } from '@hooks/useCancelPlan';
+import { usePlanDetails } from '@hooks/usePlanDetails';
 
 interface ActivePlanDetailsProps {
-  activePlanDetails: any;
+  activePlanDetails: ISubscriptionData;
   numberOfRecords: number;
   showWarning?: boolean;
   email?: string;
@@ -24,6 +25,9 @@ export function ActivePlanDetails({
   email,
 }: ActivePlanDetailsProps) {
   const { openCancelPlanModal } = useCancelPlan({ email: email as string });
+  const { onOpenPaymentModal } = usePlanDetails({
+    email: email!,
+  });
   const openCancelModal = () => openCancelPlanModal();
 
   return (
@@ -34,9 +38,20 @@ export function ActivePlanDetails({
           <Button component={Link} href="/transactions" variant="filled">
             View all transactions
           </Button>
-          <Button variant="filled" color="green">
-            Change Card
-          </Button>
+          {!(activePlanDetails.plan.code === PLANCODEENUM.STARTER || activePlanDetails.plan.canceledOn) ? (
+            <Button
+              onClick={() => {
+                onOpenPaymentModal({
+                  code: activePlanDetails.plan.code,
+                  modalId: MODAL_KEYS.CHANGE_CARD,
+                });
+              }}
+              variant="filled"
+              color="green"
+            >
+              Change Card
+            </Button>
+          ) : null}
         </Group>
       </Group>
 
@@ -62,7 +77,7 @@ export function ActivePlanDetails({
             Upgrade Plan
           </Button>
 
-          {activePlanDetails?.plan.code != 'STARTER' && (
+          {activePlanDetails?.plan.code != PLANCODEENUM.STARTER && (
             <Button variant="outline" onClick={openCancelModal}>
               Cancel Plan
             </Button>
