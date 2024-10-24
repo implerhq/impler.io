@@ -1,5 +1,5 @@
-import { Container, Stack, Title } from '@mantine/core';
 import React from 'react';
+import { Container, Stack, Title } from '@mantine/core';
 import { Plans } from './Plans';
 
 interface PlanProps {
