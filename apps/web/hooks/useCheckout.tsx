@@ -4,7 +4,7 @@ import { IErrorObject } from '@impler/shared';
 import { useMutation } from '@tanstack/react-query';
 
 interface UseCheckoutProps {
-  planCode: string;
+  planCode?: string;
   couponCode?: string;
 }
 
