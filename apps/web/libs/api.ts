@@ -33,6 +33,12 @@ const routes: Record<string, Route> = {
     url: (paymentMethodId: string) => `/v1/user/setup-intent/${paymentMethodId}`,
     method: 'PUT',
   },
+
+  [API_KEYS.UPDATE_PAYMENT_METHOD]: {
+    url: (paymentMethodId: string) => `/v1/user/payment-method/${paymentMethodId}`,
+    method: 'PUT',
+  },
+
   [API_KEYS.SAVE_INTENT_ID]: {
     url: (intentId: string) => `/v1/user/confirm-payment-intent-id/${intentId}`,
     method: 'PUT',
