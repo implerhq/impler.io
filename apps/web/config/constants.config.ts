@@ -386,7 +386,11 @@ export const DOCUMENTATION_REFERENCE_LINKS = {
   subscriptionInformation: 'https://docs.impler.io/platform/how-subscription-works',
   customValidation: 'https://docs.impler.io/features/custom-validation',
   rangeValidator: 'https://docs.impler.io/validations/advanced#range',
+  autoImport: 'https://docs.impler.io/features/automated-import',
+  imageImport: 'https://docs.impler.io/features/import-excel-with-image',
+  advancedValidations: 'https://docs.impler.io/validations/advanced',
   lengthValidator: 'https://docs.impler.io/validations/advanced#length',
+  outputCustomization: 'https://docs.impler.io/features/output-customization',
   uniqueWithValidator: 'https://docs.impler.io/validations/advanced#unique-across-multiple-fields',
 };
 
