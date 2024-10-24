@@ -43,6 +43,8 @@ interface ISubscriptionData {
   plan: {
     code: string;
     name: string;
+    fixedCost: number;
+    interval: string;
     charges: {
       billableMetric: {
         code: string;
