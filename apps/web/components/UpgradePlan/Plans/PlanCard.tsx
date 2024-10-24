@@ -4,7 +4,7 @@ import { PlanFeature } from './PlanFeature';
 import { Plan } from './Plans';
 import useStyles from './Plans.styles';
 import { Button } from '@ui/button';
-import { colors, PLANCODEENUM } from '@config';
+import { colors, MODAL_KEYS, PLANCODEENUM } from '@config';
 import { usePlanDetails } from '@hooks/usePlanDetails';
 
 interface PlanCardProps {
@@ -16,7 +16,7 @@ interface PlanCardProps {
 
 export function PlanCard({ plan, isYearly, activePlanCode, email }: PlanCardProps) {
   const { classes } = useStyles();
-  const { onChoosePlanButtonClick } = usePlanDetails({ email });
+  const { onOpenPaymentModal } = usePlanDetails({ email });
 
   return (
     <Card
@@ -38,7 +38,7 @@ export function PlanCard({ plan, isYearly, activePlanCode, email }: PlanCardProp
         <Button
           className={classes.button}
           fullWidth
-          onClick={() => onChoosePlanButtonClick(plan.code)}
+          onClick={() => onOpenPaymentModal({ code: plan.code, modalId: MODAL_KEYS.SELECT_CARD })}
           disabled={plan.code === PLANCODEENUM.STARTER || activePlanCode === plan.code}
         >
           {activePlanCode === plan.code ? 'Active Plan' : 'Choose Plan'}
