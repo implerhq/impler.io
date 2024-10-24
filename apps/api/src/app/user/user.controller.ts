@@ -77,6 +77,14 @@ export class UserController {
     return this.updatePaymentMethod.execute(user.email, paymentId);
   }
 
+  @Put('/payment-method/:paymentMethodId')
+  @ApiOperation({
+    summary: 'Update User Payment Method',
+  })
+  async updatePaymentMethodRoute(@UserSession() user: IJwtPayload, @Param('paymentMethodId') paymentMethodId: string) {
+    return this.updatePaymentMethod.execute(user.email, paymentMethodId);
+  }
+
   @Put('/confirm-payment-intent-id/:intentId')
   @ApiOperation({
     summary: 'Pass the Payment Intent Id If user cancels the E-Mandate Authorization',
