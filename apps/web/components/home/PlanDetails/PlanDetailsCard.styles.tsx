@@ -9,18 +9,15 @@ export const usePlanDetailCardStyles = createStyles((theme, { isWarning }: PlanD
   container: {
     border: `1px solid ${isWarning ? 'red' : 'rgba(255, 198, 77, 0.9)'}`,
     borderRadius: '8px',
-    background: isWarning ? 'rgba(255, 0, 0, 0.2)' : 'rgba(51, 42, 25, 0.7)',
-    backdropFilter: 'blur(8px)',
-    minWidth: '250px',
-    padding: theme.spacing.lg,
+    background: isWarning ? colors.lightRed : colors.faintYellow,
+    padding: theme.spacing.md,
   },
   title: {
-    color: colors.StrokeLight,
     marginBottom: theme.spacing.xs,
     fontSize: theme.fontSizes.sm,
   },
   value: {
-    color: colors.white,
+    color: colors.StrokeLight,
   },
   warningValue: {
     color: colors.danger,
