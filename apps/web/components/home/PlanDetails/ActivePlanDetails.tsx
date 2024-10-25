@@ -1,6 +1,6 @@
 import { TooltipLink } from '@components/guide-point';
 import { DOCUMENTATION_REFERENCE_LINKS, MODAL_KEYS, PLANCODEENUM } from '@config';
-import { numberFormatter } from '@impler/shared';
+import { ISubscriptionData, numberFormatter } from '@impler/shared';
 import { Stack, Group, Divider, Title } from '@mantine/core';
 import { Button } from '@ui/button';
 import Link from 'next/link';
