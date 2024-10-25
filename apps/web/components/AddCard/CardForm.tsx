@@ -47,7 +47,7 @@ export function CardForm({
             <AddNewPaymentMethodForm />
           </>
         ) : (
-          <>
+          <Stack spacing="sm">
             <CurrentCardSection
               activeCard={activeCard}
               hasPaymentMethods={Boolean(paymentMethods?.length)}
@@ -62,12 +62,12 @@ export function CardForm({
               selectedPaymentMethod={selectedPaymentMethod}
               handlePaymentMethodChange={onPaymentMethodChange}
             />
-          </>
+          </Stack>
         )}
-        <Button fullWidth size="md" color="blue" loading={isLoading} onClick={onSubmit}>
-          {showForm ? 'Add Card' : 'Change Card'}
-        </Button>
       </Stack>
+      <Button fullWidth size="md" color="blue" loading={isLoading} onClick={onSubmit} mt="auto">
+        {showForm ? 'Add Card' : 'Change Card'}
+      </Button>
     </Flex>
   );
 }
