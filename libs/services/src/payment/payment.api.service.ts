@@ -193,6 +193,23 @@ export class PaymentAPIService {
     return response.data;
   }
 
+  async updatePaymentMethodId(externalId, paymentMethodId) {
+    if (!this.PAYMENT_API_BASE_URL) return;
+
+    const url = `${this.PAYMENT_API_BASE_URL}/api/v1/subscription/${externalId}/payment-method/${paymentMethodId}`;
+    const response = await axios.put(
+      url,
+      {},
+      {
+        headers: {
+          [this.AUTH_KEY]: this.AUTH_VALUE,
+        },
+      }
+    );
+
+    return response.data;
+  }
+
   async confirmPaymentIntentId(email: string, intentId: string): Promise<any> {
     if (!this.PAYMENT_API_BASE_URL) return;
 
