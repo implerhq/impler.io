@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { commonApi } from '@libs/api';
 import { API_KEYS, MODAL_KEYS } from '@config';
-import { IErrorObject } from '@impler/shared';
+import { IErrorObject, ISubscriptionData } from '@impler/shared';
 import { usePlanMetaData } from 'store/planmeta.store.context';
 import { useCallback } from 'react';
 import { PlansModal } from '@components/UpgradePlan/PlansModal';
