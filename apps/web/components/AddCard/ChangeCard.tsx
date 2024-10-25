@@ -10,7 +10,7 @@ import { useUpdatePaymentMethod } from '@hooks/useUpdatePaymentMethod';
 import { PaymentMethods } from './PaymentMethods';
 import { AddNewPaymentMethodForm } from './PaymentMethods/AddNewPaymentMethodForm';
 import { useStripe, useElements, CardNumberElement } from '@stripe/react-stripe-js';
-import { useSimpleAddCard } from '@hooks/useSimpleAddCard';
+import { useAddCard } from '@hooks/useAddCard';
 
 export interface ChangeCardModalContentProps {
   email: string;
@@ -24,7 +24,7 @@ export function ChangeCard({ email }: ChangeCardModalContentProps) {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | undefined>();
   const [showForm, setShowForm] = useState(false);
   const { updatePaymentMethod, isUpdatePaymentMethodLoading } = useUpdatePaymentMethod();
-  const { addPaymentMethod, isAddPaymentMethodLoading } = useSimpleAddCard({ refetchPaymentMethods });
+  const { addPaymentMethod, isAddPaymentMethodLoading } = useAddCard({ refetchPaymentMethods });
 
   const stripe = useStripe();
   const elements = useElements();
@@ -32,7 +32,7 @@ export function ChangeCard({ email }: ChangeCardModalContentProps) {
   const toggleFormVisibility = () => {
     setShowForm((prev) => {
       if (!prev) {
-        setSelectedPaymentMethod(undefined); // Reset selection if showing form
+        setSelectedPaymentMethod(undefined);
       }
 
       return !prev;
@@ -51,8 +51,8 @@ export function ChangeCard({ email }: ChangeCardModalContentProps) {
     });
 
     if (paymentMethod) {
-      await addPaymentMethod(paymentMethod.id); // Await the mutation
-      setShowForm(false); // Hide the form after successful addition
+      await addPaymentMethod(paymentMethod.id);
+      setShowForm(false);
     }
   };
 
