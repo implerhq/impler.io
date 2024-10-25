@@ -1,6 +1,6 @@
 import React from 'react';
 import { CardNumberElement, useElements, useStripe } from '@stripe/react-stripe-js';
-import { Flex, Loader } from '@mantine/core';
+import { Flex } from '@mantine/core';
 
 import { useCheckout } from '@hooks/useCheckout';
 import { useSubscribe } from '@hooks/useSubscribe';
@@ -64,29 +64,25 @@ export function SubscribeToPlan({ email, planCode }: SelectCardModalContentProps
 
   return (
     <>
-      {isPaymentMethodsLoading || isPaymentMethodsFetching ? (
-        <Flex align="center" justify="center" style={{ minHeight: '200px' }}>
-          <Loader />
-        </Flex>
-      ) : (
-        <Flex gap={0}>
-          <CheckoutContent checkoutData={checkoutData} isCheckoutDataLoading={isCheckoutDataLoading} />
+      <Flex gap={0}>
+        <CheckoutContent checkoutData={checkoutData} isCheckoutDataLoading={isCheckoutDataLoading} />
 
-          <PaymentMethodForm
-            email={email}
-            planCode={planCode}
-            handleAddCard={handleAddCard}
-            handleProceed={handleProceed}
-            paymentMethods={paymentMethods}
-            getCheckoutData={getCheckoutData}
-            appliedCouponCode={appliedCouponCode}
-            isPurchaseLoading={isPurchaseLoading}
-            setAppliedCouponCode={setAppliedCouponCode}
-            isCouponFeatureEnabled={isCouponFeatureEnabled}
-            isAddPaymentMethodLoading={isAddPaymentMethodLoading}
-          />
-        </Flex>
-      )}
+        <PaymentMethodForm
+          email={email}
+          planCode={planCode}
+          handleAddCard={handleAddCard}
+          handleProceed={handleProceed}
+          paymentMethods={paymentMethods}
+          getCheckoutData={getCheckoutData}
+          appliedCouponCode={appliedCouponCode}
+          isPurchaseLoading={isPurchaseLoading}
+          setAppliedCouponCode={setAppliedCouponCode}
+          isCouponFeatureEnabled={isCouponFeatureEnabled}
+          isAddPaymentMethodLoading={isAddPaymentMethodLoading}
+          isPaymentMethodsLoading={isPaymentMethodsLoading}
+          isPaymentMethodsFetching={isPaymentMethodsFetching}
+        />
+      </Flex>
     </>
   );
 }
