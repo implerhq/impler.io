@@ -73,7 +73,7 @@ export function ChangeCard({ email }: ChangeCardModalContentProps) {
 
   const handleChangeCard = async () => {
     if (selectedPaymentMethod) {
-      await updatePaymentMethod({ paymentMethodId: selectedPaymentMethod, email });
+      updatePaymentMethod({ paymentMethodId: selectedPaymentMethod, email });
       const newActiveCard = paymentMethods?.find(
         (method: ICardData) => method.paymentMethodId === selectedPaymentMethod
       );
