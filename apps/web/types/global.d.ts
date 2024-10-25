@@ -39,42 +39,6 @@ interface ChargeItem {
   per_unit: number;
 }
 
-interface ISubscriptionData {
-  plan: {
-    code: string;
-    name: string;
-    fixedCost: number;
-    interval: string;
-    charges: {
-      billableMetric: {
-        code: string;
-        name: string;
-      };
-      chargeModal: 'FIXED' | 'VOLUME_BASED' | 'BINARY';
-      properties: Record<string, string | number>;
-    }[];
-    charge: number;
-    canceledOn?: string;
-  };
-  isActive: boolean;
-  usage: {
-    IMPORTED_ROWS: number;
-  };
-  expiryDate: string;
-  meta: {
-    IMAGE_UPLOAD: boolean;
-    IMPORTED_ROWS: Array<{
-      flat_fee: number;
-      per_unit: number;
-      last_unit: number | string;
-      first_unit: number;
-    }>;
-    REMOVE_BRANDING: boolean;
-    AUTOMATIC_IMPORTS: boolean;
-    ADVANCED_VALIDATORS: boolean;
-  };
-}
-
 interface ICreateProjectData {
   name: string;
 }
