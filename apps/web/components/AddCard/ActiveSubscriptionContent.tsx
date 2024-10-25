@@ -17,8 +17,6 @@ export function ActiveSubscriptionContent({
   activePlanDetails,
   isActivePlanDetailsLoading,
 }: ActiveSubscriptionContentProps) {
-  console.log(activePlanDetails?.customer?.paymentMethodCurrency);
-
   return (
     <Card bg={colors.black} shadow="sm" w="50%" radius={0}>
       <Stack spacing="lg">
@@ -48,7 +46,6 @@ export function ActiveSubscriptionContent({
 
             <Stack spacing="lg">
               <Group position="apart">
-                {/* Added spacing here */}
                 <Text>Plan Name</Text>
                 <Text>{activePlanDetails?.plan.name}</Text>
               </Group>
