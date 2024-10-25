@@ -14,6 +14,8 @@ interface PaymentMethodFormProps {
   planCode: string;
   handleAddCard: () => void;
   isPurchaseLoading: boolean;
+  isPaymentMethodsLoading: boolean;
+  isPaymentMethodsFetching: boolean;
   appliedCouponCode?: string;
   paymentMethods?: ICardData[];
   isCouponFeatureEnabled: string;
@@ -29,6 +31,8 @@ export function PaymentMethodForm({
   handleProceed,
   paymentMethods,
   getCheckoutData,
+  isPaymentMethodsFetching,
+  isPaymentMethodsLoading,
   isPurchaseLoading,
   appliedCouponCode,
   setAppliedCouponCode,
@@ -84,7 +88,9 @@ export function PaymentMethodForm({
           fullWidth
           size="md"
           color="blue"
-          loading={isAddPaymentMethodLoading || isPurchaseLoading}
+          loading={
+            isAddPaymentMethodLoading || isPurchaseLoading || isPaymentMethodsLoading || isPaymentMethodsFetching
+          }
           onClick={() => (selectedPaymentMethod ? handleProceed(selectedPaymentMethod) : handleAddCard())}
         >
           Subscribe
