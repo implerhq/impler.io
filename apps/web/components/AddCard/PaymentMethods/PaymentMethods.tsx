@@ -5,7 +5,7 @@ import { PaymentMethodOption } from './PaymentMethodOption';
 import { useStyles } from './PaymentMethods.styles';
 
 interface PaymentMethodsProps {
-  paymentMethods: ICardData[] | undefined;
+  paymentMethods?: ICardData[] | undefined;
   selectedPaymentMethod: string | undefined;
   handlePaymentMethodChange: (methodId: string) => void;
 }
