@@ -32,6 +32,8 @@ export interface ISubscriptionData {
     paymentMethodCurrency?: string;
     paymentMethodId?: string;
   };
+  tax: number;
+  amount: number;
 }
 
 export interface ICardData {
