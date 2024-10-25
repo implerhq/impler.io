@@ -34,8 +34,8 @@ const routes: Record<string, Route> = {
     method: 'PUT',
   },
 
-  [API_KEYS.UPDATE_PAYMENT_METHOD]: {
-    url: (paymentMethodId: string) => `/v1/user/payment-method/${paymentMethodId}`,
+  [API_KEYS.UPDATE_SUBSCRIPTION_PAYMENT_METHOD]: {
+    url: (paymentMethodId: string) => `/v1/user/subscription-payment-method/${paymentMethodId}`,
     method: 'PUT',
   },
 
