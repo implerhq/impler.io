@@ -64,10 +64,10 @@ export function CardForm({
             />
           </>
         )}
+        <Button fullWidth size="md" color="blue" loading={isLoading} onClick={onSubmit}>
+          {showForm ? 'Add Card' : 'Change Card'}
+        </Button>
       </Stack>
-      <Button fullWidth size="md" color="blue" loading={isLoading} onClick={onSubmit}>
-        {showForm ? 'Add Card' : 'Change Card'}
-      </Button>
     </Flex>
   );
 }
