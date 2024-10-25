@@ -39,7 +39,7 @@ export class UpdateTemplateColumns {
       { _templateId },
       'isRecordFormatUpdated isCombinedFormatUpdated'
     );
-    if (!customization.isRecordFormatUpdated && !customization.isCombinedFormatUpdated) {
+    if (customization && !customization.isRecordFormatUpdated && !customization.isCombinedFormatUpdated) {
       await this.updateCustomization.createOrReset(_templateId, {
         recordVariables: this.listRecordVariables(userColumns),
         destination: template.destination,
