@@ -33,7 +33,7 @@ export interface ISubscriptionData {
     paymentMethodId?: string;
   };
   tax?: number;
-  amount: number;
+  amount?: number;
 }
 
 export interface ICardData {
