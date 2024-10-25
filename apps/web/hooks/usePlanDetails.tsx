@@ -64,7 +64,6 @@ export function usePlanDetails({ email }: UsePlanDetailProps) {
   }, [activePlanDetails, profileInfo]);
 
   const onOpenPaymentModal = ({ code, modalId }: { code: string; modalId: string }) => {
-    console.log(modalId);
     modals.open({
       size: 'calc(70vw - 40px)',
       withCloseButton: false,
