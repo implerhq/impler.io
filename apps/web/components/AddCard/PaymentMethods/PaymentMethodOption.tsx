@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { colors } from '@config';
 import { capitalizeFirstLetter } from '@shared/utils';
 import { Flex, Group, Radio, Stack, Text, useMantineTheme } from '@mantine/core';
+import { useStyles } from './PaymentMethods.styles';
 
 interface PaymentMethodOptionProps {
   method: {
@@ -18,6 +19,8 @@ interface PaymentMethodOptionProps {
 
 export function PaymentMethodOption({ method, selected, onChange }: PaymentMethodOptionProps) {
   const theme = useMantineTheme();
+  const { classes } = useStyles();
+
   const cardBrandsSrc = method.brand.toLowerCase().replaceAll(' ', '_') || 'default';
 
   const handleClick = () => {
@@ -42,6 +45,7 @@ export function PaymentMethodOption({ method, selected, onChange }: PaymentMetho
             id={method.paymentMethodId}
             onChange={handleClick}
             value={method.paymentMethodId}
+            className={classes.radio}
           />
           <Stack spacing={4}>
             <Text color={colors.grey} size="xs">
