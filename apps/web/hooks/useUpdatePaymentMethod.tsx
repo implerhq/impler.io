@@ -5,11 +5,7 @@ import { API_KEYS, NOTIFICATION_KEYS } from '@config';
 import { IErrorObject } from '@impler/shared';
 import { notify } from '@libs/notify';
 
-interface UseUpdatePaymentMethodProps {
-  refetchPaymentMethods: () => void;
-}
-
-export function useUpdatePaymentMethod({ refetchPaymentMethods }: UseUpdatePaymentMethodProps) {
+export function useUpdatePaymentMethod() {
   const [updatedPaymentMethodId, setUpdatedPaymentMethodId] = useState<string | undefined>(undefined);
 
   const { mutate: updatePaymentMethod, isLoading: isUpdatePaymentMethodLoading } = useMutation<
@@ -23,9 +19,8 @@ export function useUpdatePaymentMethod({ refetchPaymentMethods }: UseUpdatePayme
         parameters: [paymentMethodId, email],
       }),
     {
-      onSuccess(_, { paymentMethodId }) {
-        setUpdatedPaymentMethodId(paymentMethodId);
-        refetchPaymentMethods();
+      onSuccess() {
+        setUpdatedPaymentMethodId(updatedPaymentMethodId);
         notify(NOTIFICATION_KEYS.PAYMENT_METHOD_UPDATED, {
           title: 'Payment Method Updated',
           message: 'Your payment method has been successfully updated.',
