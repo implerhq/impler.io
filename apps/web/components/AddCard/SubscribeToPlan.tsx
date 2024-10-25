@@ -5,7 +5,7 @@ import { Flex, Loader } from '@mantine/core';
 import { useCheckout } from '@hooks/useCheckout';
 import { useSubscribe } from '@hooks/useSubscribe';
 
-import { useAddCard } from '@hooks/useAddCard';
+import { useAddCardAndSubscribe } from '@hooks/useAddCardAndSubscribe';
 import { CheckoutContent } from './CheckoutContent';
 import { PaymentMethodForm } from './PaymentMethodForm';
 import { usePaymentMethods } from '@hooks/usePaymentMethods';
@@ -39,7 +39,7 @@ export function SubscribeToPlan({ email, planCode }: SelectCardModalContentProps
   const stripe = useStripe();
   const elements = useElements();
 
-  const { addPaymentMethod, isAddPaymentMethodLoading, setIsPaymentMethodLoading } = useAddCard({
+  const { addPaymentMethod, isAddPaymentMethodLoading, setIsPaymentMethodLoading } = useAddCardAndSubscribe({
     refetchPaymentMethods,
     handleProceed,
   });
