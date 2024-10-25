@@ -32,7 +32,7 @@ export interface ISubscriptionData {
     paymentMethodCurrency?: string;
     paymentMethodId?: string;
   };
-  tax: number;
+  tax?: number;
   amount: number;
 }
 
