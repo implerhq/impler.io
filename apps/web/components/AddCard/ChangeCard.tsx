@@ -1,17 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { Flex, Loader, Stack, Group, Title, Text, Card } from '@mantine/core';
-import { usePaymentMethods } from '@hooks/usePaymentMethods';
-import { ActiveSubscriptionContent } from './ActiveSubscriptionContent';
-import { usePlanDetails } from '@hooks/usePlanDetails';
+import { Card, Flex } from '@mantine/core';
+import { CardForm } from './CardForm';
 import { colors } from '@config';
-import { Button } from '@ui/button';
-import { useUpdatePaymentMethod } from '@hooks/useUpdatePaymentMethod';
-import { PaymentMethodOption, PaymentMethods } from './PaymentMethods';
-import { AddNewPaymentMethodForm } from './PaymentMethods/AddNewPaymentMethodForm';
-import { useStripe, useElements, CardNumberElement } from '@stripe/react-stripe-js';
-import { useAddCard } from '@hooks/useAddCard';
+import { ActiveSubscriptionContent } from './ActiveSubscriptionContent';
 import { ICardData } from '@impler/shared';
+import { CardNumberElement, useElements, useStripe } from '@stripe/react-stripe-js';
+import { useAddCard } from '@hooks/useAddCard';
+import { usePaymentMethods } from '@hooks/usePaymentMethods';
+import { usePlanDetails } from '@hooks/usePlanDetails';
+import { useUpdatePaymentMethod } from '@hooks/useUpdatePaymentMethod';
+import { useState, useEffect } from 'react';
 
 export interface ChangeCardModalContentProps {
   email: string;
@@ -48,6 +45,14 @@ export function ChangeCard({ email }: ChangeCardModalContentProps) {
     });
   };
 
+  const handleSubmit = async () => {
+    if (showForm) {
+      await handleAddCard();
+    } else {
+      await handleChangeCard();
+    }
+  };
+
   const handleAddCard = async () => {
     if (!stripe || !elements) return;
 
@@ -69,89 +74,32 @@ export function ChangeCard({ email }: ChangeCardModalContentProps) {
   const handleChangeCard = async () => {
     if (selectedPaymentMethod) {
       await updatePaymentMethod({ paymentMethodId: selectedPaymentMethod, email });
-      const newActiveCard = paymentMethods?.find((method) => method.paymentMethodId === selectedPaymentMethod);
+      const newActiveCard = paymentMethods?.find(
+        (method: ICardData) => method.paymentMethodId === selectedPaymentMethod
+      );
       setActiveCard(newActiveCard);
     }
   };
 
-  if (isActivePlanLoading || isPaymentMethodsLoading) {
-    return (
-      <Flex align="center" justify="center" h={200}>
-        <Loader />
-      </Flex>
-    );
-  }
-
   return (
     <Flex bg={colors.white} gap={0}>
-      <ActiveSubscriptionContent activePlanDetails={activePlanDetails} email={email} />
+      <ActiveSubscriptionContent
+        activePlanDetails={activePlanDetails}
+        email={email}
+        isActivePlanDetailsLoading={isActivePlanLoading}
+      />
 
       <Card bg={colors.white} withBorder shadow="sm" w="50%" radius={0}>
-        <Flex direction="column" h="100%" justify="space-between">
-          <Stack spacing="lg">
-            {showForm ? (
-              <>
-                <Group position="apart">
-                  <Title color={colors.black} fw="bold" order={3}>
-                    Add New Card
-                  </Title>
-                  <Link href="#" onClick={toggleFormVisibility}>
-                    <Text weight={500} color={colors.blue}>
-                      Show Added Cards
-                    </Text>
-                  </Link>
-                </Group>
-                <AddNewPaymentMethodForm />
-              </>
-            ) : (
-              <>
-                <Group position="apart">
-                  <Title color={colors.black} fw="bold" order={3}>
-                    Change Card
-                  </Title>
-                  {paymentMethods && paymentMethods.length > 0 ? (
-                    <Link href="#" onClick={toggleFormVisibility}>
-                      <Text weight={500} color={colors.blue}>
-                        + Add New Card
-                      </Text>
-                    </Link>
-                  ) : null}
-                </Group>
-
-                {activeCard && (
-                  <PaymentMethodOption
-                    method={{
-                      paymentMethodId: activeCard.paymentMethodId,
-                      brand: activeCard.brand,
-                      last4Digits: activeCard.last4Digits,
-                      expMonth: activeCard.expMonth,
-                      expYear: activeCard.expYear,
-                    }}
-                    selected={true}
-                    onChange={() => {}}
-                  />
-                )}
-
-                <PaymentMethods
-                  paymentMethods={paymentMethods}
-                  selectedPaymentMethod={selectedPaymentMethod}
-                  handlePaymentMethodChange={(id) => {
-                    setSelectedPaymentMethod(id);
-                  }}
-                />
-              </>
-            )}
-            <Button
-              fullWidth
-              size="md"
-              color="blue"
-              loading={isAddPaymentMethodLoading || isUpdatePaymentMethodLoading}
-              onClick={showForm ? handleAddCard : handleChangeCard}
-            >
-              {showForm ? 'Add Card' : 'Change Card'}
-            </Button>
-          </Stack>
-        </Flex>
+        <CardForm
+          showForm={showForm}
+          activeCard={activeCard}
+          paymentMethods={paymentMethods}
+          selectedPaymentMethod={selectedPaymentMethod}
+          isLoading={isAddPaymentMethodLoading || isUpdatePaymentMethodLoading || isPaymentMethodsLoading}
+          onToggleForm={toggleFormVisibility}
+          onPaymentMethodChange={setSelectedPaymentMethod}
+          onSubmit={handleSubmit}
+        />
       </Card>
     </Flex>
   );
