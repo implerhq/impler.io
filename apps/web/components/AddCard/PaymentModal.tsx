@@ -6,7 +6,7 @@ import { Elements } from '@stripe/react-stripe-js';
 import { MODAL_KEYS } from '@config';
 
 import { modals } from '@mantine/modals';
-import { ChangeCardModalContent } from './ChangeCardModalContent';
+import { ChangeCard } from './ChangeCard';
 import { SubscribeToPlan } from './SubscribeToPlan';
 
 const { publicRuntimeConfig } = getConfig();
@@ -42,7 +42,7 @@ export function PaymentModal(props: PaymentModalProps) {
           </Elements>
         ) : (
           <Elements stripe={stripePromise}>
-            <ChangeCardModalContent {...props} />
+            <ChangeCard {...props} />
           </Elements>
         ),
     });
