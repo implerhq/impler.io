@@ -27,6 +27,10 @@ export interface ISubscriptionData {
       last_unit: string | number;
       first_unit: number;
     }[];
+    IMAGE_UPLOAD: boolean;
+    REMOVE_BRANDING: boolean;
+    AUTOMATIC_IMPORTS: boolean;
+    ADVANCED_VALIDATORS: boolean;
   };
   customer?: {
     paymentMethodCurrency?: string;
