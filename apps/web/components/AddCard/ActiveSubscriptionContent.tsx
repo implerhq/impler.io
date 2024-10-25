@@ -17,6 +17,12 @@ export function ActiveSubscriptionContent({
   activePlanDetails,
   isActivePlanDetailsLoading,
 }: ActiveSubscriptionContentProps) {
+  const planAmount = Number(activePlanDetails?.plan?.fixedCost) || 0;
+  const outstandingCharges = Number(activePlanDetails?.plan?.charge) || 0;
+  const tax = Number(activePlanDetails?.tax) || 0;
+
+  const totalAmount = planAmount + outstandingCharges + tax;
+
   return (
     <Card bg={colors.black} shadow="sm" w="50%" radius={0}>
       <Stack spacing="lg">
@@ -38,7 +44,7 @@ export function ActiveSubscriptionContent({
         ) : activePlanDetails ? (
           <>
             <Title order={1} fw="bold" color={colors.white}>
-              ${activePlanDetails?.plan?.fixedCost}
+              ${planAmount}
               <Text color={colors.grey} component="span" size="sm">
                 {' / '} {getPlanType(activePlanDetails.plan?.interval)}
               </Text>
@@ -52,33 +58,33 @@ export function ActiveSubscriptionContent({
               <Divider />
               <Group position="apart">
                 <Text>Plan Amount</Text>
-                <Text>{`${activePlanDetails?.plan
-                  .fixedCost} (${activePlanDetails.customer?.paymentMethodCurrency?.toUpperCase()})`}</Text>
+                <Text>{`${planAmount} (${activePlanDetails.customer?.paymentMethodCurrency?.toUpperCase()})`}</Text>
               </Group>
-              {activePlanDetails.plan.charges && (
+              {outstandingCharges > 0 && (
                 <Group position="apart">
-                  {' '}
                   <Text>Outstanding Charges</Text>
                   <Text>
-                    {activePlanDetails?.plan?.charge}
+                    {outstandingCharges}
                     <Text component="span" color={colors.grey}>
                       {` (${activePlanDetails.customer?.paymentMethodCurrency?.toUpperCase()})`}
                     </Text>
                   </Text>
                 </Group>
               )}
-              {activePlanDetails && (
+
+              {tax > 0 && (
                 <Group position="apart">
-                  <Text>Renew Amount</Text>
-                  <Text>
-                    {activePlanDetails
-                      ? `${
-                          Number(activePlanDetails?.plan.charge) + Number(activePlanDetails.plan?.fixedCost)
-                        } (${activePlanDetails.customer?.paymentMethodCurrency?.toUpperCase()})`
-                      : null}
-                  </Text>
+                  <Text>Tax</Text>
+                  <Text>{`${tax} (${activePlanDetails.customer?.paymentMethodCurrency?.toUpperCase()})`}</Text>
                 </Group>
               )}
+
+              <Group position="apart">
+                <Text>Total Amount</Text>
+                <Text>
+                  {`${totalAmount.toFixed(2)} (${activePlanDetails.customer?.paymentMethodCurrency?.toUpperCase()})`}
+                </Text>
+              </Group>
             </Stack>
           </>
         ) : null}
