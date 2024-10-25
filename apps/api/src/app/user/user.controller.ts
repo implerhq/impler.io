@@ -12,6 +12,7 @@ import {
   ApplyCoupon,
   Checkout,
   Subscription,
+  UpdateSubscriptionPaymentMethod,
 } from './usecases';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { IJwtPayload, ACCESS_KEY_NAME } from '@impler/shared';
@@ -34,7 +35,8 @@ export class UserController {
     private getTransactionHistory: GetTransactionHistory,
     private retrivePaymentMethods: RetrievePaymentMethods,
     private deleteUserPaymentMethod: DeleteUserPaymentMethod,
-    private subscription: Subscription
+    private subscription: Subscription,
+    private updateSubscriptionPaymentMethod: UpdateSubscriptionPaymentMethod
   ) {}
 
   @Get('/import-count')
@@ -83,6 +85,17 @@ export class UserController {
   })
   async updatePaymentMethodRoute(@UserSession() user: IJwtPayload, @Param('paymentMethodId') paymentMethodId: string) {
     return this.updatePaymentMethod.execute(user.email, paymentMethodId);
+  }
+
+  @Put('/subscription-payment-method/:paymentMethodId')
+  @ApiOperation({
+    summary: 'Update User Payment Method',
+  })
+  async updateSubscriptionPaymentMethodRoute(
+    @UserSession() user: IJwtPayload,
+    @Param('paymentMethodId') paymentMethodId: string
+  ) {
+    return this.updateSubscriptionPaymentMethod.execute(user.email, paymentMethodId);
   }
 
   @Put('/confirm-payment-intent-id/:intentId')
