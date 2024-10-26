@@ -1,11 +1,12 @@
 import React from 'react';
-import { BackArrowIcon } from '@assets/icons/BackArrow.icon';
-import { CheckoutDetails } from '@components/Checkout';
+import Link from 'next/link';
+import { Card, Stack, Title, Text, Flex } from '@mantine/core';
+
 import { colors, MODAL_KEYS } from '@config';
-import { Card, Stack, Title, Text } from '@mantine/core';
-import { modals } from '@mantine/modals';
 import { getPlanType } from '@shared/utils';
-import { Button } from '@ui/button';
+import { CheckoutDetails } from '@components/Checkout';
+import { LeftArrowIcon } from '@assets/icons/LeftArrow.icon';
+import { modals } from '@mantine/modals';
 
 interface CheckoutContentProps {
   checkoutData?: ICheckoutData;
@@ -16,14 +17,13 @@ export function CheckoutContent({ checkoutData, isCheckoutDataLoading }: Checkou
   return (
     <Card bg={colors.black} shadow="sm" padding="lg" w="50%" radius={0}>
       <Stack spacing="sm">
-        <Button
-          leftIcon={<BackArrowIcon />}
-          variant="outline"
-          size="md"
-          onClick={() => modals.close(MODAL_KEYS.SELECT_CARD)}
-        >
-          Back
-        </Button>
+        <Link onClick={() => modals.close(MODAL_KEYS.SELECT_CARD)} href="#">
+          <Flex align="center" gap={5}>
+            <LeftArrowIcon size="lg" color="currentColor" />
+            <Text size="xl">Back</Text>
+          </Flex>
+        </Link>
+
         <Text size="md">
           Get{' '}
           <Text component="span" color={colors.yellow}>
