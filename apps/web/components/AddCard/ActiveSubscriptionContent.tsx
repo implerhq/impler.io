@@ -1,10 +1,10 @@
 import React from 'react';
-import { BackArrowIcon } from '@assets/icons/BackArrow.icon';
+import Link from 'next/link';
 import { colors } from '@config';
-import { Card, Stack, Title, Text, Skeleton, Box, Group, Divider } from '@mantine/core';
+import { LeftArrowIcon } from '@assets/icons/LeftArrow.icon';
+import { Card, Stack, Title, Text, Skeleton, Box, Group, Divider, Flex } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { getPlanType } from '@shared/utils';
-import { Button } from '@ui/button';
 import { ISubscriptionData } from '@impler/shared';
 
 interface ActiveSubscriptionContentProps {
@@ -17,7 +17,7 @@ export function ActiveSubscriptionContent({
   activePlanDetails,
   isActivePlanDetailsLoading,
 }: ActiveSubscriptionContentProps) {
-  const planAmount = Number(activePlanDetails?.plan?.fixedCost) || 0;
+  const planAmount = Number(activePlanDetails?.amount) || 0;
   const outstandingCharges = Number(activePlanDetails?.plan?.charge) || 0;
   const tax = Number(activePlanDetails?.tax) || 0;
 
@@ -26,9 +26,12 @@ export function ActiveSubscriptionContent({
   return (
     <Card bg={colors.black} shadow="sm" w="50%" radius={0}>
       <Stack spacing="lg">
-        <Button leftIcon={<BackArrowIcon />} variant="outline" size="md" onClick={() => modals.closeAll()}>
-          Back
-        </Button>
+        <Link onClick={() => modals.closeAll()} href="#">
+          <Flex align="center" gap={5}>
+            <LeftArrowIcon size="lg" color="currentColor" />
+            <Text size="xl">Back</Text>
+          </Flex>
+        </Link>
 
         {isActivePlanDetailsLoading ? (
           <Box p="xs">
