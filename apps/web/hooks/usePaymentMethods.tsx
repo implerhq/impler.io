@@ -2,17 +2,20 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { notify } from '@libs/notify';
 import { commonApi } from '@libs/api';
+import { useAppState } from 'store/app.context';
 import { ICardData, IErrorObject } from '@impler/shared';
 import { API_KEYS, NOTIFICATION_KEYS } from '@config';
 
 export function usePaymentMethods() {
+  const { profileInfo } = useAppState();
   const {
     data: paymentMethods,
     refetch: refetchPaymentMethods,
     isFetching: isPaymentMethodsLoading,
     isFetched: isPaymentMethodsFetched,
-  } = useQuery<unknown, IErrorObject, ICardData[], [string]>([API_KEYS.PAYMENT_METHOD_LIST], () =>
-    commonApi<ICardData[]>(API_KEYS.PAYMENT_METHOD_LIST as any, {})
+  } = useQuery<unknown, IErrorObject, ICardData[], [string, string | undefined]>(
+    [API_KEYS.PAYMENT_METHOD_LIST, profileInfo?.email],
+    () => commonApi<ICardData[]>(API_KEYS.PAYMENT_METHOD_LIST as any, {})
   );
 
   const { mutate: deletePaymentMethod, isLoading: isDeletePaymentMethodLoading } = useMutation<
