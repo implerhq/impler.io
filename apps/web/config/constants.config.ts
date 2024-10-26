@@ -4,6 +4,7 @@ import { AngularIcon } from '@assets/icons/Angular.icon';
 import { BubbleIcon } from '@assets/icons/Bubble.icon';
 import { IntegrationEnum } from '@impler/shared';
 import { Plan } from '@components/UpgradePlan/Plans';
+import { colors } from './theme.config';
 
 export const CONSTANTS = {
   EXPLORE_PLANS_QUERY_LEY: 'explore_plans',
@@ -346,9 +347,9 @@ export const stripeElementsOptions = {
   style: {
     base: {
       fontSize: '16px',
-      color: '#495057',
+      color: colors.black,
       '::placeholder': {
-        color: '#6c757d',
+        color: colors.black,
       },
       backgroundColor: '#fff',
     },
