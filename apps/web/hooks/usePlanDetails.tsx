@@ -70,11 +70,6 @@ export function usePlanDetails({ email }: UsePlanDetailProps) {
       id: MODAL_KEYS.SELECT_CARD,
       modalId: MODAL_KEYS.SELECT_CARD,
       centered: true,
-      styles: {
-        body: {
-          padding: 0,
-        },
-      },
       children: <PaymentModal email={email} planCode={code} onClose={modals.closeAll} modalId={modalId} />,
     });
   };
