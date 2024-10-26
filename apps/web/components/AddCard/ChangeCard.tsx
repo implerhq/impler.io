@@ -82,7 +82,7 @@ export function ChangeCard({ email }: ChangeCardModalContentProps) {
   };
 
   return (
-    <Flex style={{ margin: '-20px' }} bg={colors.white} gap={0}>
+    <Flex m={-20} bg={colors.white} gap={0}>
       <ActiveSubscriptionContent
         activePlanDetails={activePlanDetails}
         email={email}
