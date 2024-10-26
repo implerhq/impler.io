@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Text } from '@mantine/core';
 import { colors, stripeElementsOptions } from '@config';
 
@@ -6,24 +6,48 @@ interface StripeInputProps {
   label: string;
   StripeElement: React.ComponentType<any>;
   isFullWidth?: boolean;
+  error?: string;
+  required?: boolean;
+  onChange: (event: any) => void;
 }
 
-export function StripeInput({ label, StripeElement, isFullWidth = false }: StripeInputProps) {
+export function StripeInput({
+  label,
+  StripeElement,
+  isFullWidth = false,
+  error,
+  required = false,
+  onChange,
+}: StripeInputProps) {
+  const [isClicked, setIsClicked] = useState(false);
+
   return (
     <Box w={isFullWidth ? '100%' : 'auto'}>
-      <Text size="sm" weight={500} color={colors.blackGrey} mb={6}>
-        {label}
+      <Text size="sm" weight={500} color={error ? colors.danger : colors.blackGrey} mb={6}>
+        {label} {required && <span style={{ color: colors.danger }}>*</span>}
       </Text>
       <Box
         style={{
-          border: `1px solid ${colors.grey}`,
+          border: `1px solid ${error && isClicked ? colors.danger : colors.black}`,
           borderRadius: '4px',
           padding: '8px',
           backgroundColor: colors.white,
         }}
       >
-        <StripeElement options={stripeElementsOptions} />
+        <StripeElement
+          options={stripeElementsOptions}
+          onChange={(event: any) => {
+            setIsClicked(true);
+            onChange(event);
+          }}
+          onBlur={() => setIsClicked(true)}
+        />
       </Box>
+      {error && isClicked && (
+        <Text size="xs" color="red" mt={4}>
+          {error}
+        </Text>
+      )}
     </Box>
   );
 }
