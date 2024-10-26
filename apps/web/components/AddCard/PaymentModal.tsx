@@ -27,14 +27,10 @@ export function PaymentModal(props: PaymentModalProps) {
     const modalId = props.modalId;
     modals.open({
       modalId,
-      size: 'calc(70vw - 40px)',
+      size: '50vw',
       withCloseButton: false,
       centered: true,
-      styles: {
-        body: {
-          padding: 0,
-        },
-      },
+
       children:
         modalId === MODAL_KEYS.SELECT_CARD ? (
           <Elements stripe={stripePromise}>
