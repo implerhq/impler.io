@@ -10,7 +10,7 @@ import { CurrentCardSection } from './CurrentCardSection';
 
 interface CardFormProps {
   showForm: boolean;
-  activeCard: ICardData | undefined;
+  activeCard?: ICardData;
   paymentMethods?: ICardData[];
   selectedPaymentMethod: string | undefined;
   isLoading: boolean;
@@ -21,13 +21,13 @@ interface CardFormProps {
 
 export function CardForm({
   showForm,
-  activeCard,
   paymentMethods,
   selectedPaymentMethod,
   isLoading,
   onToggleForm,
   onPaymentMethodChange,
   onSubmit,
+  activeCard,
 }: CardFormProps) {
   const [isFormValid, setIsFormValid] = useState(false);
 
@@ -62,9 +62,17 @@ export function CardForm({
               hasPaymentMethods={Boolean(paymentMethods?.length)}
               onAddNewClick={onToggleForm}
             />
-            <Title color={colors.black} fw="bold" order={3}>
-              New Card
-            </Title>
+            <Group position="apart">
+              <Title color={colors.black} fw="bold" order={3}>
+                Change Card
+              </Title>
+              <Link href="#" onClick={() => onToggleForm()}>
+                <Text weight={500} color={colors.blue}>
+                  + Add New Card
+                </Text>
+              </Link>
+            </Group>
+
             <PaymentMethods
               paymentMethods={paymentMethods}
               selectedPaymentMethod={selectedPaymentMethod}
