@@ -40,19 +40,39 @@ export function PaymentMethodForm({
   isAddPaymentMethodLoading,
 }: PaymentMethodFormProps) {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | undefined>();
+  const [showAddNewCardForm, setShowAddNewCardForm] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(false);
 
   const toggleFormVisibility = () => {
-    setSelectedPaymentMethod((paymentMethod) => (paymentMethod ? undefined : paymentMethods?.[0]?.paymentMethodId));
+    setShowAddNewCardForm(!showAddNewCardForm);
+    if (!showAddNewCardForm) {
+      setSelectedPaymentMethod(undefined);
+      /*
+       * } else {
+       *   setSelectedPaymentMethod(paymentMethods?.[0]?.paymentMethodId);
+       * }
+       */
+    }
   };
 
+  const handleSubmit = async () => {
+    if (showAddNewCardForm) {
+      if (isFormValid) {
+        handleAddCard();
+      }
+    } else if (selectedPaymentMethod) {
+      handleProceed(selectedPaymentMethod);
+    }
+  };
   useEffect(() => {
     if (paymentMethods?.[0]) {
-      setSelectedPaymentMethod(paymentMethods?.[0]?.paymentMethodId);
-      getCheckoutData(paymentMethods?.[0]?.paymentMethodId);
+      setSelectedPaymentMethod(undefined);
+      getCheckoutData();
     } else {
+      setShowAddNewCardForm(true);
       getCheckoutData();
     }
-  }, []);
+  }, [paymentMethods]);
 
   return (
     <Card bg={colors.white} withBorder shadow="sm" w="50%" radius={0}>
@@ -62,21 +82,23 @@ export function PaymentMethodForm({
             Payment Method
           </Title>
           {paymentMethods && paymentMethods.length > 0 ? (
-            <Link color={colors.blue} href="#" onClick={toggleFormVisibility}>
-              <Text weight={500}>{selectedPaymentMethod ? '+ Add New Card' : 'Show Added Cards'}</Text>
+            <Link href="#" onClick={toggleFormVisibility}>
+              <Text color={colors.blue} weight={500}>
+                {showAddNewCardForm ? 'Show Added Cards' : '+ Add New Card'}
+              </Text>
             </Link>
           ) : null}
         </Group>
 
         <Stack spacing="md" style={{ flexGrow: 1 }}>
-          {selectedPaymentMethod ? (
+          {showAddNewCardForm ? (
+            <AddNewPaymentMethodForm setIsValid={setIsFormValid} />
+          ) : (
             <PaymentMethods
               paymentMethods={paymentMethods}
               selectedPaymentMethod={selectedPaymentMethod}
               handlePaymentMethodChange={setSelectedPaymentMethod}
             />
-          ) : (
-            <AddNewPaymentMethodForm />
           )}
 
           {isCouponFeatureEnabled === 'false' && (
@@ -91,9 +113,9 @@ export function PaymentMethodForm({
           loading={
             isAddPaymentMethodLoading || isPurchaseLoading || isPaymentMethodsLoading || isPaymentMethodsFetching
           }
-          onClick={() => (selectedPaymentMethod ? handleProceed(selectedPaymentMethod) : handleAddCard())}
+          onClick={handleSubmit}
         >
-          Subscribe
+          {showAddNewCardForm ? 'Add Card and Subscribe' : 'Subscribe'}
         </Button>
       </Stack>
     </Card>
