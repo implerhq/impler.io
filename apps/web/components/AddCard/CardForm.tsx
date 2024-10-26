@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Stack, Group, Title, Text, Flex } from '@mantine/core';
 import Link from 'next/link';
 import { Button } from '@ui/button';
@@ -29,6 +29,15 @@ export function CardForm({
   onPaymentMethodChange,
   onSubmit,
 }: CardFormProps) {
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  const handleSubmit = () => {
+    if (showForm && !isFormValid) {
+      return;
+    }
+    onSubmit();
+  };
+
   return (
     <Flex direction="column" h="100%">
       <Stack spacing="lg" style={{ flex: 1 }}>
@@ -44,7 +53,7 @@ export function CardForm({
                 </Text>
               </Link>
             </Group>
-            <AddNewPaymentMethodForm />
+            <AddNewPaymentMethodForm setIsValid={setIsFormValid} />
           </>
         ) : (
           <Stack spacing="sm">
@@ -53,7 +62,6 @@ export function CardForm({
               hasPaymentMethods={Boolean(paymentMethods?.length)}
               onAddNewClick={onToggleForm}
             />
-
             <Title color={colors.black} fw="bold" order={3}>
               New Card
             </Title>
@@ -65,9 +73,12 @@ export function CardForm({
           </Stack>
         )}
       </Stack>
-      <Button fullWidth size="md" color="blue" loading={isLoading} onClick={onSubmit} mt="auto">
-        {showForm ? 'Add Card' : 'Change Card'}
-      </Button>
+
+      <Stack spacing="sm" mt="lg">
+        <Button fullWidth size="md" color="blue" loading={isLoading} onClick={handleSubmit}>
+          {showForm ? 'Add Card' : 'Change Card'}
+        </Button>
+      </Stack>
     </Flex>
   );
 }
