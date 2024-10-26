@@ -1,7 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
 import { colors } from '@config';
-import { capitalizeFirstLetter } from '@shared/utils';
 import { Flex, Group, Radio, Stack, Text, useMantineTheme } from '@mantine/core';
 import { useStyles } from './PaymentMethods.styles';
 
@@ -38,7 +37,7 @@ export function PaymentMethodOption({ method, selected, onChange }: PaymentMetho
       onClick={handleClick}
     >
       <Flex gap="xs" align="top" justify="space-between">
-        <Group align="top">
+        <Group align="top" spacing={4}>
           <Radio
             size="xs"
             checked={selected}
@@ -52,7 +51,7 @@ export function PaymentMethodOption({ method, selected, onChange }: PaymentMetho
               Expires {`${method.expMonth}/${method.expYear}`}
             </Text>
             <Text color={colors.black} fw={700} size="md">
-              {capitalizeFirstLetter(method.brand)} **** {method.last4Digits}
+              #### {method.last4Digits}
             </Text>
           </Stack>
         </Group>
