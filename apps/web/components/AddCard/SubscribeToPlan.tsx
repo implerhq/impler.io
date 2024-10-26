@@ -63,26 +63,24 @@ export function SubscribeToPlan({ email, planCode }: SelectCardModalContentProps
   };
 
   return (
-    <>
-      <Flex gap={0}>
-        <CheckoutContent checkoutData={checkoutData} isCheckoutDataLoading={isCheckoutDataLoading} />
+    <Flex m={-20} gap={0}>
+      <CheckoutContent checkoutData={checkoutData} isCheckoutDataLoading={isCheckoutDataLoading} />
 
-        <PaymentMethodForm
-          email={email}
-          planCode={planCode}
-          handleAddCard={handleAddCard}
-          handleProceed={handleProceed}
-          paymentMethods={paymentMethods}
-          getCheckoutData={getCheckoutData}
-          appliedCouponCode={appliedCouponCode}
-          isPurchaseLoading={isPurchaseLoading}
-          setAppliedCouponCode={setAppliedCouponCode}
-          isCouponFeatureEnabled={isCouponFeatureEnabled}
-          isAddPaymentMethodLoading={isAddPaymentMethodLoading}
-          isPaymentMethodsLoading={isPaymentMethodsLoading}
-          isPaymentMethodsFetching={isPaymentMethodsFetching}
-        />
-      </Flex>
-    </>
+      <PaymentMethodForm
+        email={email}
+        planCode={planCode}
+        handleAddCard={handleAddCard}
+        handleProceed={handleProceed}
+        paymentMethods={paymentMethods}
+        getCheckoutData={getCheckoutData}
+        appliedCouponCode={appliedCouponCode}
+        isPurchaseLoading={isPurchaseLoading}
+        setAppliedCouponCode={setAppliedCouponCode}
+        isCouponFeatureEnabled={isCouponFeatureEnabled}
+        isAddPaymentMethodLoading={isAddPaymentMethodLoading}
+        isPaymentMethodsLoading={isPaymentMethodsLoading}
+        isPaymentMethodsFetching={isPaymentMethodsFetching}
+      />
+    </Flex>
   );
 }
