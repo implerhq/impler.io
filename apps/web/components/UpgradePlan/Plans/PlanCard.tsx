@@ -19,12 +19,16 @@ export function PlanCard({ plan, isYearly, activePlanCode, projectId }: PlanCard
   const { classes } = useStyles();
   const { onOpenPaymentModal } = usePlanDetails({ projectId });
 
+  console.log(plan.name === PLANCODEENUM.GROWTH);
+
   return (
     <Card
       shadow="sm"
       withBorder
-      bg={plan.name === 'Growth' ? colors.faintGrey : 'black'}
-      style={{ width: '340px', position: 'relative' }}
+      bg={
+        plan.code === PLANCODEENUM.GROWTH || plan.code === PLANCODEENUM.GROWTH_YEARLY ? colors.faintGrey : colors.black
+      }
+      style={{ width: '400px', position: 'relative' }}
     >
       <Stack mt="md">
         {(plan.code === PLANCODEENUM.GROWTH || plan.code === PLANCODEENUM.GROWTH_YEARLY) && (
