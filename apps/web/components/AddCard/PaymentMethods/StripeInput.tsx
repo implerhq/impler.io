@@ -1,6 +1,7 @@
+// StripeInput.tsx
 import React, { useState } from 'react';
 import { Box, Text } from '@mantine/core';
-import { colors, stripeElementsOptions } from '@config';
+import { colors } from '@config';
 
 interface StripeInputProps {
   label: string;
@@ -9,6 +10,7 @@ interface StripeInputProps {
   error?: string;
   required?: boolean;
   onChange: (event: any) => void;
+  options?: any;
 }
 
 export function StripeInput({
@@ -18,6 +20,7 @@ export function StripeInput({
   error,
   required = false,
   onChange,
+  options,
 }: StripeInputProps) {
   const [isClicked, setIsClicked] = useState(false);
 
@@ -35,7 +38,7 @@ export function StripeInput({
         }}
       >
         <StripeElement
-          options={stripeElementsOptions}
+          options={options}
           onChange={(event: any) => {
             setIsClicked(true);
             onChange(event);
