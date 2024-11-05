@@ -80,7 +80,7 @@ export function ActivePlanDetails({
           </Button>
 
           {activePlanDetails?.plan.code != PLANCODEENUM.STARTER && (
-            <Button variant="outline" onClick={openCancelModal}>
+            <Button color="red" variant="outline" onClick={openCancelModal}>
               Cancel Plan
             </Button>
           )}
