@@ -1,7 +1,7 @@
 import React from 'react';
 import Lottie from 'lottie-react';
 import { modals } from '@mantine/modals';
-import { CONSTANTS } from '@config';
+import { colors, CONSTANTS } from '@config';
 import { Stack, Text } from '@mantine/core';
 
 import FailedAnimationData from './failed-animation-data.json';
@@ -13,8 +13,16 @@ interface ConfirmationModalProps {
 }
 
 export const ConfirmationModal = ({ status }: ConfirmationModalProps) => {
+  const title =
+    status === CONSTANTS.PAYMENT_SUCCCESS_CODE
+      ? CONSTANTS.SUBSCRIPTION_ACTIVATED_TITLE
+      : CONSTANTS.SUBSCRIPTION_FAILED_TITLE;
+
   return (
-    <Stack spacing="md">
+    <Stack spacing="xs">
+      <Text color={colors.white} size="md" weight={700} align="center">
+        {title}
+      </Text>
       <Lottie
         animationData={status === CONSTANTS.PAYMENT_SUCCCESS_CODE ? SuccessAnimationData : FailedAnimationData}
         loop={true}
