@@ -47,11 +47,6 @@ export function PaymentMethodForm({
     setShowAddNewCardForm(!showAddNewCardForm);
     if (!showAddNewCardForm) {
       setSelectedPaymentMethod(undefined);
-      /*
-       * } else {
-       *   setSelectedPaymentMethod(paymentMethods?.[0]?.paymentMethodId);
-       * }
-       */
     }
   };
 
@@ -65,14 +60,17 @@ export function PaymentMethodForm({
     }
   };
   useEffect(() => {
-    if (paymentMethods?.[0]) {
-      setSelectedPaymentMethod(undefined);
-      getCheckoutData();
-    } else {
+    if (paymentMethods?.length === 0) {
       setShowAddNewCardForm(true);
       getCheckoutData();
     }
-  }, [paymentMethods]);
+    if (selectedPaymentMethod) {
+      getCheckoutData(selectedPaymentMethod);
+    } else if (paymentMethods?.length) {
+      setSelectedPaymentMethod(paymentMethods[0].paymentMethodId);
+      getCheckoutData(paymentMethods[0].paymentMethodId);
+    }
+  }, [selectedPaymentMethod, paymentMethods, getCheckoutData]);
 
   return (
     <Card bg={colors.white} withBorder shadow="sm" w="50%" radius={0}>
