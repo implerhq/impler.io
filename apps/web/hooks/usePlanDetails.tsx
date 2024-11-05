@@ -10,36 +10,35 @@ import { modals } from '@mantine/modals';
 import { track } from '@libs/amplitude';
 import { PaymentModal } from '@components/AddCard/PaymentModal';
 import { Center } from '@mantine/core';
+import { IPlanMeta } from '@types';
 
 interface UsePlanDetailProps {
-  email: string;
+  projectId?: string;
   paymentMethodId?: string;
 }
 
-export function usePlanDetails({ email }: UsePlanDetailProps) {
+export function usePlanDetails({ projectId }: UsePlanDetailProps) {
   const { profileInfo } = useAppState();
   const { meta, setPlanMeta } = usePlanMetaData();
-  const { data: activePlanDetails, isLoading: isActivePlanLoading } = useQuery<
-    unknown,
-    IErrorObject,
-    ISubscriptionData,
-    [string, string]
-  >(
-    [API_KEYS.FETCH_ACTIVE_SUBSCRIPTION, email],
-    () => commonApi<ISubscriptionData>(API_KEYS.FETCH_ACTIVE_SUBSCRIPTION as any, {}),
+  const {
+    data: activePlanDetails,
+    isLoading: isActivePlanLoading,
+    refetch: refetchActivePlanDetails,
+  } = useQuery<unknown, IErrorObject, ISubscriptionData, [string, string | undefined]>(
+    [API_KEYS.FETCH_ACTIVE_SUBSCRIPTION, projectId],
+    () =>
+      commonApi<ISubscriptionData>(API_KEYS.FETCH_ACTIVE_SUBSCRIPTION as any, {
+        parameters: [projectId!],
+      }),
     {
       onSuccess(data) {
         if (data && data.meta) {
           setPlanMeta({
-            AUTOMATIC_IMPORTS: data.meta.AUTOMATIC_IMPORTS,
-            IMAGE_UPLOAD: data.meta.IMAGE_UPLOAD,
-            IMPORTED_ROWS: data.meta.IMPORTED_ROWS,
-            REMOVE_BRANDING: data.meta.REMOVE_BRANDING,
-            ADVANCED_VALIDATORS: data.meta.ADVANCED_VALIDATORS,
+            ...(data.meta as IPlanMeta),
           });
         }
       },
-      enabled: !!email,
+      enabled: !!projectId,
     }
   );
 
@@ -74,7 +73,7 @@ export function usePlanDetails({ email }: UsePlanDetailProps) {
       id: MODAL_KEYS.SELECT_CARD,
       modalId: MODAL_KEYS.SELECT_CARD,
       centered: true,
-      children: <PaymentModal email={email} planCode={code} onClose={modals.closeAll} modalId={modalId} />,
+      children: <PaymentModal email={profileInfo!.email} planCode={code} onClose={modals.closeAll} modalId={modalId} />,
     });
   };
 
@@ -84,5 +83,6 @@ export function usePlanDetails({ email }: UsePlanDetailProps) {
     isActivePlanLoading,
     showPlans,
     onOpenPaymentModal,
+    refetchActivePlanDetails,
   };
 }

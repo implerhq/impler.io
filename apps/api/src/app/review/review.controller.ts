@@ -15,7 +15,7 @@ import {
 import { APIMessages } from '@shared/constants';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { validateUploadStatus } from '@shared/helpers/upload.helpers';
-import { Defaults, ACCESS_KEY_NAME, UploadStatusEnum, ReviewDataTypesEnum, IJwtPayload } from '@impler/shared';
+import { Defaults, ACCESS_KEY_NAME, UploadStatusEnum, ReviewDataTypesEnum } from '@impler/shared';
 
 import {
   Replace,
@@ -29,7 +29,6 @@ import {
   UpdateRecords,
 } from './usecases';
 
-import { UserSession } from '@shared/framework/user.decorator';
 import { validateNotFound } from '@shared/helpers/common.helper';
 import { DeleteRecordsDto, UpdateRecordDto, ReplaceDto } from './dtos';
 import { PaginationResponseDto } from '@shared/dtos/pagination-response.dto';
@@ -124,7 +123,7 @@ export class ReviewController {
   @ApiOperation({
     summary: 'Confirm review data for uploaded file',
   })
-  async doConfirmReview(@UserSession() user: IJwtPayload, @Param('uploadId', ValidateMongoId) _uploadId: string) {
+  async doConfirmReview(@Param('uploadId', ValidateMongoId) _uploadId: string) {
     const uploadInformation = await this.getUpload.execute({
       uploadId: _uploadId,
       select: 'status _validDataFileId _invalidDataFileId totalRecords invalidRecords _templateId',
@@ -136,7 +135,7 @@ export class ReviewController {
     // upload files with status reviewing can only be confirmed
     validateUploadStatus(uploadInformation.status as UploadStatusEnum, [UploadStatusEnum.REVIEWING]);
 
-    return this.startProcess.execute(_uploadId, user.email);
+    return this.startProcess.execute(_uploadId);
   }
 
   @Put(':uploadId/record')

@@ -97,9 +97,13 @@ export class TemplateController {
     type: TemplateResponseDto,
   })
   async getTemplateDetailsRoute(
-    @Param('templateId', ValidateMongoId) templateId: string
+    @UserSession() user: IJwtPayload,
+    @Param('templateId', ValidateMongoId) _templateId: string
   ): Promise<TemplateResponseDto> {
-    return this.getTemplateDetails.execute(templateId);
+    return this.getTemplateDetails.execute({
+      _templateId,
+      _projectId: user._projectId,
+    });
   }
 
   @Post(':templateId/sample')

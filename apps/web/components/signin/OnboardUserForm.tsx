@@ -3,12 +3,12 @@ import { Controller, useForm } from 'react-hook-form';
 import { Title, Text, Stack, TextInput, Select, Radio, Group, Container, Flex, Box, FocusTrap } from '@mantine/core';
 
 import { Button } from '@ui/button';
-import { useApp } from '@hooks/useApp';
-import { colors, COMPANY_SIZES, HOW_HEARD_ABOUT_US, PLACEHOLDERS, ROLES } from '@config';
+import { useAppState } from 'store/app.context';
 import { useOnboardUserProjectForm } from '@hooks/useOnboardUserProjectForm';
+import { colors, COMPANY_SIZES, HOW_HEARD_ABOUT_US, PLACEHOLDERS, ROLES } from '@config';
 
 export function OnboardUserForm() {
-  const { profile } = useApp();
+  const { profileInfo } = useAppState();
   const [role] = useState(ROLES);
   const [about, setAbout] = useState(HOW_HEARD_ABOUT_US);
 
@@ -29,7 +29,7 @@ export function OnboardUserForm() {
       <Title mb="md">
         <Group position="left">
           <span style={{ fontSize: '30px' }}>👋</span>
-          <span>Welcome {profile?.firstName}</span>
+          <span>Welcome {profileInfo?.firstName}</span>
         </Group>
       </Title>
       <Text size="md" color="dimmed" align="left" mb="lg">

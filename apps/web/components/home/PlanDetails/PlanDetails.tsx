@@ -1,17 +1,20 @@
 import { Skeleton, Stack } from '@mantine/core';
 
 import { usePlanDetails } from '@hooks/usePlanDetails';
-import { colors } from '@config';
+import { AppAbility, colors } from '@config';
 import { useAppState } from 'store/app.context';
 import { InactiveMembership } from './InactiveMembership';
 import { ActivePlanDetails } from './ActivePlanDetails';
 import { PlanCancelled } from './PlanCancelled';
+import { useContext } from 'react';
+import { AbilityContext } from 'store/ability.context';
 
 export function PlanDetails() {
   const { profileInfo } = useAppState();
+  useContext<AppAbility | null>(AbilityContext);
 
   const { activePlanDetails, isActivePlanLoading, showPlans } = usePlanDetails({
-    email: profileInfo?.email ?? '',
+    projectId: profileInfo?._projectId ?? '',
   });
 
   if (isActivePlanLoading) {
@@ -60,7 +63,7 @@ export function PlanDetails() {
           numberOfRecords={numberOfRecords}
           showPlans={showPlans}
           showWarning={showWarning}
-          email={profileInfo?.email}
+          projectId={profileInfo?._projectId}
         />
       ) : (
         <InactiveMembership showPlans={showPlans} />

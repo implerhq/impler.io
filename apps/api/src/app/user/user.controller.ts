@@ -12,12 +12,12 @@ import {
   ApplyCoupon,
   Checkout,
   Subscription,
+  RetrievePaymentMethods,
   UpdateSubscriptionPaymentMethod,
 } from './usecases';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { IJwtPayload, ACCESS_KEY_NAME } from '@impler/shared';
 import { UserSession } from '@shared/framework/user.decorator';
-import { RetrievePaymentMethods } from './usecases/retrive-payment-methods/retrive-payment-methods.usecase';
 
 @ApiTags('User')
 @Controller('/user')
@@ -43,6 +43,7 @@ export class UserController {
   @ApiOperation({
     summary: 'Get Import Count',
   })
+  @UseGuards(JwtAuthGuard)
   async getImportCountRoute(
     @UserSession() user: IJwtPayload,
     @Query('start') start: string,
@@ -55,12 +56,12 @@ export class UserController {
     });
   }
 
-  @Get('/subscription')
+  @Get('/:projectId/subscription')
   @ApiOperation({
     summary: 'Get Active Subscription Information',
   })
-  async getActiveSubscriptionRoute(@UserSession() user: IJwtPayload) {
-    return this.getActiveSubscription.execute(user.email);
+  async getActiveSubscriptionRoute(@Param('projectId') projectId: string) {
+    return this.getActiveSubscription.execute(projectId);
   }
 
   @Delete('/subscription')

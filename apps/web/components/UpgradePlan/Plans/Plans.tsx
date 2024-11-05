@@ -26,11 +26,12 @@ export interface Plan {
 interface PlansProps {
   activePlanCode: string;
   email: string;
+  projectId?: string;
   canceledOn?: string;
   expiryDate?: string;
 }
 
-export function Plans({ activePlanCode, email }: PlansProps) {
+export function Plans({ activePlanCode, email, projectId }: PlansProps) {
   const [showYearly, setShowYearly] = useState(true);
 
   return (
@@ -55,7 +56,14 @@ export function Plans({ activePlanCode, email }: PlansProps) {
       <Divider />
       <Group grow align="flex-start">
         {plans[showYearly ? 'yearly' : 'monthly'].map((plan) => (
-          <PlanCard key={plan.code} plan={plan} isYearly={showYearly} activePlanCode={activePlanCode} email={email} />
+          <PlanCard
+            key={plan.code}
+            plan={plan}
+            isYearly={showYearly}
+            activePlanCode={activePlanCode}
+            email={email}
+            projectId={projectId}
+          />
         ))}
       </Group>
     </Stack>

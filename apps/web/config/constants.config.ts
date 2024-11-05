@@ -1,16 +1,18 @@
-import { JavaScriptIcon } from '@assets/icons/Javascript.icon';
+import { MongoAbility } from '@casl/ability';
 import { ReactIcon } from '@assets/icons/React.icon';
-import { AngularIcon } from '@assets/icons/Angular.icon';
 import { BubbleIcon } from '@assets/icons/Bubble.icon';
-import { IntegrationEnum } from '@impler/shared';
-import { Plan } from '@components/UpgradePlan/Plans';
+import { AngularIcon } from '@assets/icons/Angular.icon';
+import { JavaScriptIcon } from '@assets/icons/Javascript.icon';
+import { UserRolesEnum, IntegrationEnum } from '@impler/shared';
 import { colors } from './theme.config';
+import { Plan } from '@components/UpgradePlan/Plans';
 
 export const CONSTANTS = {
   EXPLORE_PLANS_QUERY_LEY: 'explore_plans',
   PLAN_CODE_QUERY_KEY: 'plan_code',
   GITHUB_LOGIN_URL: '/v1/auth/github',
   AUTH_COOKIE_NAME: 'authentication',
+  INVITATION_URL_COOKIE: 'redirectUrl',
   AUTHENTICATION_ERROR_CODE: 'AuthenticationError',
   PROFILE_STORAGE_NAME: 'profile',
   REACT_DOCUMENTATION_URL: 'https://docs.impler.io/widget/react-component#props',
@@ -54,12 +56,18 @@ export const MODAL_KEYS = {
   VALIDATIONS_OUTPUT: 'VALIDATIONS_OUTPUT',
   PAYMENT_PLANS: 'PAYMENT_PLANS',
   PAYMENT_DETAILS_ADD: 'PAYMENT_PLANS',
+
+  INVITE_MEMBERS: 'INVITE_MEMBERS',
+  ACCEPT_INVITATION: 'ACCEPT_INVITATION',
+  MANAGE_PROJECT_MODAL: 'MANAGE_PROJECT_MODAL',
+  CONFIRM_PROJECT_DELETE: 'CONFIRM_PROJECT_DELETE',
+  CONFIRM_REMOVE_TEAM_MEMBER: 'CONFIRM_REMOVE_TEAM_MEMBER',
 };
 
 interface IntegrateOption {
+  key: string;
   name: IntegrationEnum;
   Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  key: string;
 }
 
 export const INTEGRATE_IMPORT: IntegrateOption[] = [
@@ -116,7 +124,18 @@ export const API_KEYS = {
   PROJECT_SWITCH: 'PROJECT_SWITCH',
   PROJECTS_LIST: 'PROJECT_LIST',
   PROJECT_CREATE: 'PROJECT_CREATE',
+  PROJECT_DELETE: 'PROJECT_DELETE',
   PROJECT_ENVIRONMENT: 'PROJECT_ENVIRONMENT',
+  PROJECT_INVITATION: 'PROJECT_INVITATION',
+  SENT_TEAM_INVITATIONS: 'SENT_TEAM_INVITATIONS',
+  GET_TEAM_INVITATIONS: 'GET_TEAM_INVITATIONS',
+  ACCEPT_TEAM_INVITATION: 'INVITATION_ACCEPTED',
+  DECLINE_TEAM_INVITATION: 'DECLINE_TEAM_INVITATION',
+  LIST_TEAM_MEMBERS: 'LIST_TEAM_MEMBERS',
+  UPDATE_TEAM_MEMBER_ROLE: 'UPDATE_TEAM_MEMBER_ROLE',
+  DELETE_TEAM_MEMBER: 'DELETE_TEAM_MEMBER',
+  REVOKE_INVITATION: 'REVOKE_INVITATION',
+  TEAM_MEMBER_META: 'TEAM_MEMBER_META',
 
   LOGOUT: 'LOGOUT',
   SIGNIN: 'SIGNIN',
@@ -179,6 +198,8 @@ export const NOTIFICATION_KEYS = {
   IMPORT_DELETED: 'IMPORT_DELETED',
 
   PROJECT_CREATED: 'PROJECT_CREATED',
+  PROJECT_DELETED: 'PROJECT_DELETED',
+  PROJECT_SWITCHED: 'PROJECT_SWITCHED',
   OUTPUT_UPDATED: 'OUTPUT_UPDATED',
   DESTINATION_UPDATED: 'DESTINATION_UPDATED',
 
@@ -194,6 +215,20 @@ export const NOTIFICATION_KEYS = {
   NO_CARD_SELECTED: 'NO_CARD_SELECTED',
 
   COLUMN_ERRROR: 'COLUMN_ERRROR',
+  INVITATION_ACCEPTED: 'INVITATION_ACCEPTED',
+
+  VALID_INVITATION: 'VALID_INVITATION',
+  ERROR_FETCHING_INVITATION: 'ERROR_FETCHING_INVITATION',
+  TEAM_MEMBER_ROLE_UPDATED: 'TEAM_MEMBER_ROLE_UPDATED',
+  ERROR_CHANGING_MEMBER_ROLE: 'ERROR_CHANGING_MEMBER_ROLE',
+  TEAM_MEMBER_DELETED: 'TEAM_MEMBER_DELETED',
+  ERROR_DELETING_TEAM_MEMBER: 'ERROR_DELETING_TEAM_MEMBER',
+  ERROR_INVITING_TEAM_MEMBER: 'ERROR_INVITING_TEAM_MEMBER',
+  ERROR_LISTING_TEAM_MEMBERS: 'ERROR_LISTING_TEAM_MEMBERS',
+  INVITATION_LINK_COPIED: 'INVITATION_LINK_COPIED',
+  INVITATION_DELETED: 'INVITATION_DELETED',
+  ERROR_DELETING_INVITATION: 'INVITATION_DELETED',
+  PERMISSION_DENIED_WHILE_DELETING_PROJECT: 'PERMISSION_DENIED_WHILE_DELETING_PROJECT',
 };
 
 export const ROUTES = {
@@ -206,14 +241,17 @@ export const ROUTES = {
   REQUEST_FORGOT_PASSWORD: '/auth/reset/request',
   IMPORTS: '/imports',
   SETTINGS: '/settings',
+  TEAM_MEMBERS: '/team-members',
   ACTIVITIES: '/activities',
   ADD_CARD: '/settings?tab=addcard&action=addcardmodal',
   EXPLORE_PLANS: '/?explore_plans=true',
   TRANSACTIONS: '/transactions',
+  INVITATION: '/auth/invitation/:id',
 };
 
 export const REGULAR_EXPRESSIONS = {
   URL: /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/gm,
+  EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
 };
 
 export const COLUMN_TYPES = [
@@ -278,6 +316,73 @@ export const IMPORT_MODES = [
   { value: 'automatic', label: 'Automatic' },
 ];
 
+export const INVITATION_FORM_ROLES = [UserRolesEnum.ADMIN, UserRolesEnum.FINANCE, UserRolesEnum.TECH];
+
+export const TAB_KEYS = {
+  MEMBERS: 'members',
+  SENT_INVITATIONS: 'sentinvitation',
+  INVITATION_REQUESTS: 'invitation-requests',
+};
+
+export const TAB_TITLES = {
+  [TAB_KEYS.MEMBERS]: 'Members',
+  [TAB_KEYS.SENT_INVITATIONS]: 'Sent Invitations',
+  [TAB_KEYS.INVITATION_REQUESTS]: 'Invitation Requests',
+};
+
+export const MEMBER_ROLE = [UserRolesEnum.ADMIN, UserRolesEnum.TECH, UserRolesEnum.FINANCE];
+
+export enum ActionsEnum {
+  MANAGE = 'manage',
+  READ = 'read',
+  CREATE = 'create',
+  UPDATE = 'update',
+  BUY = 'buy',
+}
+
+export enum SubjectsEnum {
+  HOMEPAGE = 'Homepage',
+  IMPORTS = 'Imports',
+  ANALYTICS = 'Analytics',
+  SETTINGS = 'Settings',
+  PLAN = 'Plan',
+  FILE = 'File',
+  TEAM_MEMBERS = 'TeamMembers',
+  ACCESS_TOKEN = 'AccessToken',
+  CARDS = 'Cards',
+  ROLE = 'Role',
+  ALL = 'all',
+  DOCUMENTATION = 'Documentation',
+}
+
+export const ROLE_BADGES = {
+  [UserRolesEnum.ADMIN]: 'cyan',
+  [UserRolesEnum.TECH]: 'blue',
+  [UserRolesEnum.FINANCE]: 'green',
+};
+
+export type AppAbility = MongoAbility<[ActionsEnum, SubjectsEnum]>;
+
+export const ROLE_BASED_ACCESS = {
+  [UserRolesEnum.ADMIN]: [{ action: ActionsEnum.MANAGE, subject: SubjectsEnum.ALL }],
+  [UserRolesEnum.TECH]: [
+    { action: ActionsEnum.READ, subject: SubjectsEnum.HOMEPAGE },
+    { action: ActionsEnum.CREATE, subject: SubjectsEnum.IMPORTS },
+    { action: ActionsEnum.READ, subject: SubjectsEnum.IMPORTS },
+    { action: ActionsEnum.READ, subject: SubjectsEnum.ANALYTICS },
+    { action: ActionsEnum.READ, subject: SubjectsEnum.SETTINGS },
+    { action: ActionsEnum.READ, subject: SubjectsEnum.ACCESS_TOKEN },
+    { action: ActionsEnum.READ, subject: SubjectsEnum.TEAM_MEMBERS },
+    { action: ActionsEnum.READ, subject: SubjectsEnum.DOCUMENTATION },
+  ],
+  [UserRolesEnum.FINANCE]: [
+    { action: ActionsEnum.READ, subject: SubjectsEnum.HOMEPAGE },
+    { action: ActionsEnum.READ, subject: SubjectsEnum.SETTINGS },
+    { action: ActionsEnum.BUY, subject: SubjectsEnum.PLAN },
+    { action: ActionsEnum.READ, subject: SubjectsEnum.CARDS },
+  ],
+};
+
 export const DOCUMENTATION_REFERENCE_LINKS = {
   columnDescription: 'https://docs.impler.io/features/column-description',
   defaultValue: 'https://docs.impler.io/platform/default-value',
@@ -290,7 +395,11 @@ export const DOCUMENTATION_REFERENCE_LINKS = {
   subscriptionInformation: 'https://docs.impler.io/platform/how-subscription-works',
   customValidation: 'https://docs.impler.io/features/custom-validation',
   rangeValidator: 'https://docs.impler.io/validations/advanced#range',
+  autoImport: 'https://docs.impler.io/features/automated-import',
+  imageImport: 'https://docs.impler.io/features/import-excel-with-image',
+  advancedValidations: 'https://docs.impler.io/validations/advanced',
   lengthValidator: 'https://docs.impler.io/validations/advanced#length',
+  outputCustomization: 'https://docs.impler.io/features/output-customization',
   uniqueWithValidator: 'https://docs.impler.io/validations/advanced#unique-across-multiple-fields',
 };
 
@@ -322,6 +431,7 @@ export const HOW_HEARD_ABOUT_US = [
   { value: 'Bubble.io', label: 'Bubble.io' },
   { value: 'Colleague', label: 'Colleague' },
   { value: 'Linkdin', label: 'Linkdin' },
+  { value: 'Invitation', label: 'Invitation' },
 ];
 
 export const MEMBERSHIP_CANCELLATION_REASONS = [
@@ -483,4 +593,9 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       },
     },
   ],
+};
+
+export const DATE_FORMATS = {
+  SHORT: 'DD/MM/YYYY',
+  LONG: 'DD MMM YYYY',
 };

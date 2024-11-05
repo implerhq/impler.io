@@ -9,6 +9,7 @@ import { usePaymentMethods } from '@hooks/usePaymentMethods';
 import { usePlanDetails } from '@hooks/usePlanDetails';
 import { useUpdatePaymentMethod } from '@hooks/useUpdatePaymentMethod';
 import { useState, useEffect } from 'react';
+import { useAppState } from 'store/app.context';
 
 export interface ChangeCardModalContentProps {
   email: string;
@@ -17,8 +18,9 @@ export interface ChangeCardModalContentProps {
 }
 
 export function ChangeCard({ email }: ChangeCardModalContentProps) {
+  const { profileInfo } = useAppState();
   const { paymentMethods, isPaymentMethodsLoading, refetchPaymentMethods } = usePaymentMethods();
-  const { activePlanDetails, isActivePlanLoading } = usePlanDetails({ email });
+  const { activePlanDetails, isActivePlanLoading } = usePlanDetails({ projectId: profileInfo!._projectId });
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | undefined>();
   const [activeCard, setActiveCard] = useState<ICardData | undefined>(undefined);
   const [showForm, setShowForm] = useState(false);

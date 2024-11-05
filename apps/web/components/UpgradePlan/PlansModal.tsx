@@ -17,7 +17,7 @@ export const PlansModal = ({ userProfile, activePlanCode }: PlanProps) => {
           Choose the plan that works best for you
         </Title>
 
-        <Plans email={userProfile.email} activePlanCode={activePlanCode as string} />
+        <Plans email={userProfile.email} projectId={userProfile._projectId} activePlanCode={activePlanCode as string} />
       </Stack>
     </Flex>
   );

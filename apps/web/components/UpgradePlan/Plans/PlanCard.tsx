@@ -12,11 +12,12 @@ interface PlanCardProps {
   isYearly: boolean;
   activePlanCode: string;
   email: string;
+  projectId?: string;
 }
 
-export function PlanCard({ plan, isYearly, activePlanCode, email }: PlanCardProps) {
+export function PlanCard({ plan, isYearly, activePlanCode, projectId }: PlanCardProps) {
   const { classes } = useStyles();
-  const { onOpenPaymentModal } = usePlanDetails({ email });
+  const { onOpenPaymentModal } = usePlanDetails({ projectId });
 
   return (
     <Card

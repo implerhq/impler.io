@@ -8,6 +8,7 @@ import { commonApi } from '@libs/api';
 import { ICardData, IErrorObject } from '@impler/shared';
 import { ConfirmationModal } from '@components/ConfirmationModal';
 import { API_KEYS, CONSTANTS, MODAL_KEYS, NOTIFICATION_KEYS } from '@config';
+import { useAppState } from 'store/app.context';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -23,6 +24,7 @@ interface ISubscribeResponse {
 }
 
 export const useSubscribe = ({ email, planCode }: UseSubscribeProps) => {
+  const { profileInfo } = useAppState();
   const queryClient = useQueryClient();
   const isCouponFeatureEnabled = publicRuntimeConfig.NEXT_PUBLIC_COUPON_ENABLED;
   const [appliedCouponCode, setAppliedCouponCode] = useState<string | undefined>(undefined);
@@ -47,7 +49,8 @@ export const useSubscribe = ({ email, planCode }: UseSubscribeProps) => {
       }),
     {
       onSuccess: (response) => {
-        queryClient.invalidateQueries([API_KEYS.FETCH_ACTIVE_SUBSCRIPTION, email]);
+        queryClient.invalidateQueries([API_KEYS.FETCH_ACTIVE_SUBSCRIPTION, profileInfo?._projectId]);
+        modals.closeAll();
         if (response && response.status) {
           modals.open({
             children: <ConfirmationModal status={response.status as string} />,
@@ -59,12 +62,12 @@ export const useSubscribe = ({ email, planCode }: UseSubscribeProps) => {
         }
       },
       onError: (error: IErrorObject) => {
+        modals.closeAll();
         notify(NOTIFICATION_KEYS.PURCHASE_FAILED, {
           title: 'Purchase Failed',
           message: error.message,
           color: 'red',
         });
-        queryClient.invalidateQueries([API_KEYS.FETCH_ACTIVE_SUBSCRIPTION, email]);
         if (error && error.statusCode) {
           modals.open({
             title: CONSTANTS.SUBSCRIPTION_FAILED_TITLE,

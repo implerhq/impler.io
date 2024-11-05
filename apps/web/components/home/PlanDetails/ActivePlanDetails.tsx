@@ -14,6 +14,7 @@ interface ActivePlanDetailsProps {
   numberOfRecords: number;
   showWarning?: boolean;
   email?: string;
+  projectId?: string;
   showPlans: () => void;
 }
 
@@ -23,10 +24,11 @@ export function ActivePlanDetails({
   showWarning,
   showPlans,
   email,
+  projectId,
 }: ActivePlanDetailsProps) {
   const { openCancelPlanModal } = useCancelPlan({ email: email as string });
   const { onOpenPaymentModal } = usePlanDetails({
-    email: email!,
+    projectId: projectId!,
   });
   const openCancelModal = () => openCancelPlanModal();
 

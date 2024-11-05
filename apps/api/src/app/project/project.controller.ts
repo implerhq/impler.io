@@ -2,7 +2,7 @@ import { Response } from 'express';
 import { ApiOperation, ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res, UseGuards } from '@nestjs/common';
 
-import { ACCESS_KEY_NAME, Defaults, IJwtPayload, PaginationResult } from '@impler/shared';
+import { ACCESS_KEY_NAME, Defaults, IJwtPayload, PaginationResult, UserRolesEnum } from '@impler/shared';
 import { UserSession } from '@shared/framework/user.decorator';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 
@@ -51,7 +51,7 @@ export class ProjectController {
   @ApiOkResponse({
     type: [ProjectResponseDto],
   })
-  getProjects(@UserSession() user: IJwtPayload): Promise<ProjectResponseDto[]> {
+  getProjects(@UserSession() user: IJwtPayload) {
     return this.getProjectsUsecase.execute(user._id);
   }
 
@@ -122,15 +122,20 @@ export class ProjectController {
       }),
       user.email
     );
+    const userApiKey = projectWithEnvironment.environment.apiKeys.find(
+      (apiKey) => apiKey._userId.toString() === user._id
+    );
+
     const token = this.authService.getSignedToken(
       {
         _id: user._id,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        role: userApiKey.role as UserRolesEnum,
         profilePicture: user.profilePicture,
         isEmailVerified: user.isEmailVerified,
-        accessToken: projectWithEnvironment.environment.apiKeys[0].key,
+        accessToken: projectWithEnvironment.environment.key,
       },
       projectWithEnvironment.project._id
     );
@@ -152,15 +157,18 @@ export class ProjectController {
     @Res({ passthrough: true }) res: Response
   ) {
     const projectEnvironment = await this.getEnvironment.execute(projectId);
+    const userApiKey = projectEnvironment.apiKeys.find((apiKey) => apiKey._userId.toString() === user._id.toString());
+
     const token = this.authService.getSignedToken(
       {
         _id: user._id,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        role: userApiKey.role as UserRolesEnum,
         isEmailVerified: user.isEmailVerified,
         profilePicture: user.profilePicture,
-        accessToken: projectEnvironment.apiKeys[0].key,
+        accessToken: projectEnvironment.key,
       },
       projectEnvironment._projectId
     );
@@ -169,7 +177,7 @@ export class ProjectController {
       domain: process.env.COOKIE_DOMAIN,
     });
 
-    return;
+    return {};
   }
 
   @Put(':projectId')
