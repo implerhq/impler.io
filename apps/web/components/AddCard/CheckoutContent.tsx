@@ -32,7 +32,7 @@ export function CheckoutContent({ checkoutData, isCheckoutDataLoading }: Checkou
           Benefits
         </Text>
         <Title order={1} fw="bold" color={colors.white}>
-          ${checkoutData?.planAmount}
+          {checkoutData?.currency.toUpperCase()} {checkoutData?.planAmount}
           <Text color={colors.grey} component="span" size="sm">
             {' / '} {getPlanType(checkoutData?.interval)}
           </Text>
