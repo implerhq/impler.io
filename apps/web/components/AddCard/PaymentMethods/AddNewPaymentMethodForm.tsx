@@ -1,66 +1,92 @@
 import React, { useEffect, useState } from 'react';
 import { Group, Stack } from '@mantine/core';
-import { CardNumberElement, CardExpiryElement, CardCvcElement, useElements } from '@stripe/react-stripe-js';
+import { CardNumberElement, CardExpiryElement, CardCvcElement } from '@stripe/react-stripe-js';
 import { StripeInput } from './StripeInput';
+import { colors } from '@config';
+
 interface AddNewPaymentMethodFormProps {
   setIsValid: (isValid: boolean) => void;
 }
 
+const stripeElementStyle = {
+  style: {
+    base: {
+      color: colors.black,
+      '::placeholder': {
+        color: colors.black,
+      },
+    },
+    invalid: {
+      color: colors.danger,
+    },
+  },
+};
+
+const stripeElementOptions = {
+  cardNumber: {
+    ...stripeElementStyle,
+    showIcon: true,
+  },
+  cardExpiry: {
+    ...stripeElementStyle,
+  },
+  cardCvc: {
+    ...stripeElementStyle,
+  },
+};
+
 export function AddNewPaymentMethodForm({ setIsValid }: AddNewPaymentMethodFormProps) {
-  const elements = useElements();
-  const [errors, setErrors] = useState({
-    cardNumber: '',
-    cardExpiry: '',
-    cardCvc: '',
+  const [fields, setFields] = useState({
+    cardNumber: {
+      complete: false,
+      error: '',
+      touched: false,
+    },
+    cardExpiry: {
+      complete: false,
+      error: '',
+      touched: false,
+    },
+    cardCvc: {
+      complete: false,
+      error: '',
+      touched: false,
+    },
   });
 
-  const handleChange = (event: any, field: keyof typeof errors) => {
-    if (event.error) {
-      setErrors((prev) => ({
+  const handleElementChange = (event: any, fieldName: keyof typeof fields) => {
+    setFields((prev) => {
+      const newFields = {
         ...prev,
-        [field]: event.error.message,
-      }));
-      setIsValid(false);
-    } else {
-      setErrors((prev) => ({
-        ...prev,
-        [field]: '',
-      }));
-      const allFieldsValid = Object.values(errors).every((error) => !error);
-      setIsValid(allFieldsValid);
-    }
-  };
+        [fieldName]: {
+          complete: event.complete,
+          error: event.error?.message || '',
+          touched: true,
+        },
+      };
 
-  const validateForm = () => {
-    const cardNumber = elements?.getElement('cardNumber');
-    const cardExpiry = elements?.getElement('cardExpiry');
-    const cardCvc = elements?.getElement('cardCvc');
-
-    let isValid = true;
-    const newErrors = { ...errors };
-
-    if (!cardNumber) {
-      newErrors.cardNumber = 'Card number is required';
-      isValid = false;
-    }
-    if (!cardExpiry) {
-      newErrors.cardExpiry = 'Expiry date is required';
-      isValid = false;
-    }
-    if (!cardCvc) {
-      newErrors.cardCvc = 'CVC is required';
-      isValid = false;
-    }
-
-    setErrors(newErrors);
-    setIsValid(isValid);
-
-    return isValid;
+      return newFields;
+    });
   };
 
   useEffect(() => {
-    validateForm();
-  }, []);
+    const isFormValid = Object.values(fields).every((field) => {
+      const fieldValid = field.complete && !field.error;
+
+      return fieldValid;
+    });
+
+    setIsValid(isFormValid);
+  }, [fields, setIsValid]);
+
+  const getFieldError = (fieldName: keyof typeof fields) => {
+    const field = fields[fieldName];
+    if (!field.touched) return '';
+    if (field.error) return field.error;
+    if (!field.complete) return 'This field is required';
+
+    return '';
+  };
 
   return (
     <Stack spacing="md">
@@ -69,23 +95,26 @@ export function AddNewPaymentMethodForm({ setIsValid }: AddNewPaymentMethodFormP
         StripeElement={CardNumberElement}
         isFullWidth
         required
-        error={errors.cardNumber}
-        onChange={(event) => handleChange(event, 'cardNumber')}
+        error={getFieldError('cardNumber')}
+        onChange={(event) => handleElementChange(event, 'cardNumber')}
+        options={stripeElementOptions.cardNumber}
       />
       <Group grow>
         <StripeInput
           label="Expiry Date"
           StripeElement={CardExpiryElement}
           required
-          error={errors.cardExpiry}
-          onChange={(event) => handleChange(event, 'cardExpiry')}
+          error={getFieldError('cardExpiry')}
+          onChange={(event) => handleElementChange(event, 'cardExpiry')}
+          options={stripeElementOptions.cardExpiry}
         />
         <StripeInput
           label="CVV"
           StripeElement={CardCvcElement}
           required
-          error={errors.cardCvc}
-          onChange={(event) => handleChange(event, 'cardCvc')}
+          error={getFieldError('cardCvc')}
+          onChange={(event) => handleElementChange(event, 'cardCvc')}
+          options={stripeElementOptions.cardCvc}
         />
       </Group>
     </Stack>
