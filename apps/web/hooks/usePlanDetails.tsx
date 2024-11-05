@@ -9,6 +9,7 @@ import { useAppState } from 'store/app.context';
 import { modals } from '@mantine/modals';
 import { track } from '@libs/amplitude';
 import { PaymentModal } from '@components/AddCard/PaymentModal';
+import { Center } from '@mantine/core';
 
 interface UsePlanDetailProps {
   email: string;
@@ -51,13 +52,16 @@ export function usePlanDetails({ email }: UsePlanDetailProps) {
       id: MODAL_KEYS.PAYMENT_PLANS,
       modalId: MODAL_KEYS.PAYMENT_PLANS,
       children: (
-        <PlansModal
-          userProfile={profileInfo!}
-          activePlanCode={activePlanDetails?.plan?.code}
-          canceledOn={activePlanDetails?.plan.canceledOn}
-          expiryDate={activePlanDetails?.expiryDate}
-        />
+        <Center>
+          <PlansModal
+            userProfile={profileInfo!}
+            activePlanCode={activePlanDetails?.plan?.code}
+            canceledOn={activePlanDetails?.plan.canceledOn}
+            expiryDate={activePlanDetails?.expiryDate}
+          />
+        </Center>
       ),
+      centered: true,
       size: 'calc(60vw - 3rem)',
       withCloseButton: true,
     });
