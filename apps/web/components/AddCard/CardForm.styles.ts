@@ -22,21 +22,24 @@ export const useStyles = createStyles((theme, { numOfPaymentMethods }: { numOfPa
     '&[data-orientation="vertical"]': {
       width: 10,
       backgroundColor: colors.StrokeLight,
-      opacity: 0,
+      opacity: 1,
       height: '100%',
     },
+
     '&[data-orientation="vertical"] .mantine-ScrollArea-thumb': {
       backgroundColor: colors.blue,
-      opacity: 0,
+      opacity: 1,
+      transition: 'opacity 0.3s ease',
+      height: 'auto',
       '&:hover': {
         backgroundColor: colors.blue,
       },
-
-      height: '100%',
     },
+
     '&:hover': {
       opacity: 1,
     },
+
     '&[data-orientation="vertical"]:hover .mantine-ScrollArea-thumb': {
       opacity: 1,
     },
