@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Stack, Group, Title, Text, Flex } from '@mantine/core';
+import { Stack, Group, Title, Text, Flex, ScrollArea } from '@mantine/core';
 import Link from 'next/link';
 import { Button } from '@ui/button';
 import { PaymentMethods } from './PaymentMethods';
@@ -7,6 +7,7 @@ import { AddNewPaymentMethodForm } from './PaymentMethods/AddNewPaymentMethodFor
 import { colors } from '@config';
 import { ICardData } from '@impler/shared';
 import { CurrentCardSection } from './CurrentCardSection';
+import { useStyles } from './CardForm.styles';
 
 interface CardFormProps {
   showForm: boolean;
@@ -30,6 +31,7 @@ export function CardForm({
   activeCard,
 }: CardFormProps) {
   const [isFormValid, setIsFormValid] = useState(false);
+  const { classes } = useStyles({ numOfPaymentMethods: paymentMethods?.length || 0 });
 
   const handleSubmit = () => {
     if (showForm && !isFormValid) {
@@ -66,18 +68,21 @@ export function CardForm({
               <Title color={colors.black} fw="bold" order={3}>
                 Change Card
               </Title>
-              <Link href="#" onClick={() => onToggleForm()}>
-                <Text weight={500} color={colors.blue}>
-                  + Add New Card
-                </Text>
-              </Link>
             </Group>
 
-            <PaymentMethods
-              paymentMethods={paymentMethods}
-              selectedPaymentMethod={selectedPaymentMethod}
-              handlePaymentMethodChange={onPaymentMethodChange}
-            />
+            <ScrollArea
+              className={classes.scrollArea}
+              scrollbarSize={8}
+              classNames={{
+                scrollbar: classes.scrollbar,
+              }}
+            >
+              <PaymentMethods
+                paymentMethods={paymentMethods}
+                selectedPaymentMethod={selectedPaymentMethod}
+                handlePaymentMethodChange={onPaymentMethodChange}
+              />
+            </ScrollArea>
           </Stack>
         )}
       </Stack>
