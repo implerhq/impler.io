@@ -50,11 +50,8 @@ export const useSubscribe = ({ email, planCode }: UseSubscribeProps) => {
         queryClient.invalidateQueries([API_KEYS.FETCH_ACTIVE_SUBSCRIPTION, email]);
         if (response && response.status) {
           modals.open({
-            title:
-              response.status === CONSTANTS.PAYMENT_SUCCCESS_CODE
-                ? CONSTANTS.SUBSCRIPTION_ACTIVATED_TITLE
-                : CONSTANTS.SUBSCRIPTION_FAILED_TITLE,
             children: <ConfirmationModal status={response.status as string} />,
+            withCloseButton: false,
           });
 
           modals.close(MODAL_KEYS.SELECT_CARD);
