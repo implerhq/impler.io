@@ -1,7 +1,7 @@
 import { IconType } from '@types';
 import { IconSizes } from 'config';
 
-export const CrossCircle = ({ size = 'sm', color, style }: IconType) => {
+export const CrossCircle = ({ size = 'md', color, style }: IconType) => {
   return (
     <svg
       style={style}
