@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Group, Stack } from '@mantine/core';
+import { Group, Stack, useMantineTheme } from '@mantine/core';
 import { CardNumberElement, CardExpiryElement, CardCvcElement } from '@stripe/react-stripe-js';
 import { StripeInput } from './StripeInput';
 import { colors } from '@config';
@@ -8,34 +8,8 @@ interface AddNewPaymentMethodFormProps {
   setIsValid: (isValid: boolean) => void;
 }
 
-const stripeElementStyle = {
-  style: {
-    base: {
-      color: colors.black,
-      '::placeholder': {
-        color: colors.black,
-      },
-    },
-    invalid: {
-      color: colors.danger,
-    },
-  },
-};
-
-const stripeElementOptions = {
-  cardNumber: {
-    ...stripeElementStyle,
-    showIcon: true,
-  },
-  cardExpiry: {
-    ...stripeElementStyle,
-  },
-  cardCvc: {
-    ...stripeElementStyle,
-  },
-};
-
 export function AddNewPaymentMethodForm({ setIsValid }: AddNewPaymentMethodFormProps) {
+  const theme = useMantineTheme();
   const [fields, setFields] = useState({
     cardNumber: {
       complete: false,
@@ -53,6 +27,34 @@ export function AddNewPaymentMethodForm({ setIsValid }: AddNewPaymentMethodFormP
       touched: false,
     },
   });
+
+  const stripeElementStyle = {
+    style: {
+      base: {
+        fontSize: theme.fontSizes.lg,
+        color: colors.black,
+        '::placeholder': {
+          color: colors.black,
+        },
+      },
+      invalid: {
+        color: colors.danger,
+      },
+    },
+  };
+
+  const stripeElementOptions = {
+    cardNumber: {
+      ...stripeElementStyle,
+      showIcon: true,
+    },
+    cardExpiry: {
+      ...stripeElementStyle,
+    },
+    cardCvc: {
+      ...stripeElementStyle,
+    },
+  };
 
   const handleElementChange = (event: any, fieldName: keyof typeof fields) => {
     setFields((prev) => {
