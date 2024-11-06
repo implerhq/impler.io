@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Stack, Text, Group, Badge, Title, Divider, Switch } from '@mantine/core';
 
-import { colors, plans } from '@config';
+import { plans } from '@config';
 import { PlanCard } from './PlanCard';
 
 export interface PlanFeatureContent {
@@ -36,7 +36,7 @@ export function Plans({ activePlanCode, email, projectId }: PlansProps) {
   const [showYearly, setShowYearly] = useState(true);
 
   return (
-    <Stack align="center" bg={colors.black}>
+    <Stack spacing="xs" align="center">
       <Group position="center">
         <Text weight={500} color="white">
           Monthly
