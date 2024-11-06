@@ -7,6 +7,7 @@ import { PlanCard } from './PlanCard';
 export interface PlanFeatureContent {
   check: boolean;
   title: string;
+  tooltipLink?: string;
 }
 
 export interface PlanContent {
