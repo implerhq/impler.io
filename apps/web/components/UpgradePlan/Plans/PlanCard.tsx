@@ -2,8 +2,8 @@ import React from 'react';
 import { Card, Text, Badge, Stack, Divider } from '@mantine/core';
 import { PlanFeature } from './PlanFeature';
 import { Plan } from './Plans';
-import useStyles from './Plans.styles';
 import { Button } from '@ui/button';
+import useStyles from './Plans.styles';
 import { colors, MODAL_KEYS, PLANCODEENUM } from '@config';
 import { usePlanDetails } from '@hooks/usePlanDetails';
 
@@ -21,12 +21,12 @@ export function PlanCard({ plan, isYearly, activePlanCode, projectId }: PlanCard
 
   return (
     <Card
+      style={{ width: '800px' }}
       shadow="sm"
       withBorder
       bg={
         plan.code === PLANCODEENUM.GROWTH || plan.code === PLANCODEENUM.GROWTH_YEARLY ? colors.faintGrey : colors.black
       }
-      style={{ width: '400px', position: 'relative' }}
     >
       <Stack mt="md">
         {(plan.code === PLANCODEENUM.GROWTH || plan.code === PLANCODEENUM.GROWTH_YEARLY) && (
@@ -56,7 +56,7 @@ export function PlanCard({ plan, isYearly, activePlanCode, projectId }: PlanCard
             {items.map(({ check, title, tooltipLink }, index) => (
               <PlanFeature key={`${category}-${index}`} included={check} value={title} tooltipLink={tooltipLink} />
             ))}
-            {category !== 'Features' && categoryIndex < Object.keys(plan.content).length - 1 && <Divider my="sm" />}
+            {category !== 'Features' && categoryIndex < Object.keys(plan.content).length - 1 && <Divider my={5} />}
           </React.Fragment>
         ))}
       </Stack>
