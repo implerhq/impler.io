@@ -19,8 +19,6 @@ export function PlanCard({ plan, isYearly, activePlanCode, projectId }: PlanCard
   const { classes } = useStyles();
   const { onOpenPaymentModal } = usePlanDetails({ projectId });
 
-  console.log(plan.name === PLANCODEENUM.GROWTH);
-
   return (
     <Card
       shadow="sm"
@@ -55,8 +53,8 @@ export function PlanCard({ plan, isYearly, activePlanCode, projectId }: PlanCard
         {Object.entries(plan.content).map(([category, items], categoryIndex) => (
           <React.Fragment key={category}>
             {category !== 'Features' && <Text>{category}</Text>}
-            {items.map(({ check, title }, index) => (
-              <PlanFeature key={`${category}-${index}`} included={check} value={title} />
+            {items.map(({ check, title, tooltipLink }, index) => (
+              <PlanFeature key={`${category}-${index}`} included={check} value={title} tooltipLink={tooltipLink} />
             ))}
             {category !== 'Features' && categoryIndex < Object.keys(plan.content).length - 1 && <Divider my="sm" />}
           </React.Fragment>
