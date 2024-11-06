@@ -4,7 +4,6 @@ import { BubbleIcon } from '@assets/icons/Bubble.icon';
 import { AngularIcon } from '@assets/icons/Angular.icon';
 import { JavaScriptIcon } from '@assets/icons/Javascript.icon';
 import { UserRolesEnum, IntegrationEnum } from '@impler/shared';
-import { colors } from './theme.config';
 import { Plan } from '@components/UpgradePlan/Plans';
 
 export const CONSTANTS = {
@@ -398,6 +397,7 @@ export const DOCUMENTATION_REFERENCE_LINKS = {
   autoImport: 'https://docs.impler.io/features/automated-import',
   imageImport: 'https://docs.impler.io/features/import-excel-with-image',
   advancedValidations: 'https://docs.impler.io/validations/advanced',
+  teamMembers: 'https://docs.impler.io/platform/make-your-team',
   lengthValidator: 'https://docs.impler.io/validations/advanced#length',
   outputCustomization: 'https://docs.impler.io/features/output-customization',
   uniqueWithValidator: 'https://docs.impler.io/validations/advanced#unique-across-multiple-fields',
@@ -453,20 +453,9 @@ export const PLACEHOLDERS = {
   about: 'Google Search',
 };
 
-export const stripeElementsOptions = {
-  style: {
-    base: {
-      fontSize: '16px',
-      color: colors.black,
-      '::placeholder': {
-        color: colors.black,
-      },
-      backgroundColor: '#fff',
-    },
-    invalid: {
-      color: 'red',
-    },
-  },
+export const DATE_FORMATS = {
+  SHORT: 'DD/MM/YYYY',
+  LONG: 'DD MMM YYYY',
 };
 
 export enum PLANCODEENUM {
@@ -486,12 +475,35 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       content: {
         'Rows Included': [{ check: true, title: '5K' }],
         'For extra 10K Records': [{ check: true, title: '$1 (Billed monthly)' }],
-        Projects: [{ check: true, title: 'Unlimited' }],
+        'Team Members': [{ check: true, title: '1', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
         Features: [
           { check: true, title: 'Theming' },
+          {
+            check: true,
+            title: 'Custom Validation',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation,
+          },
+          {
+            check: true,
+            title: 'Output Customization',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
+          },
           { check: false, title: 'Remove Branding' },
-          { check: true, title: 'Custom Validation' },
-          { check: true, title: 'Output Customization' },
+          {
+            check: false,
+            title: 'Advanced Validations',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
+          },
+          {
+            check: false,
+            title: 'Auto Import',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport,
+          },
+          {
+            check: false,
+            title: 'Image Import',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport,
+          },
         ],
       },
     },
@@ -505,12 +517,35 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       content: {
         'Rows Included': [{ check: true, title: '500K' }],
         'For extra 10K Records': [{ check: true, title: '$0.70 (Billed monthly)' }],
-        Projects: [{ check: true, title: 'Unlimited' }],
+        'Team Members': [{ check: true, title: '4', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
         Features: [
           { check: true, title: 'Theming' },
+          {
+            check: true,
+            title: 'Custom Validation',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation,
+          },
+          {
+            check: true,
+            title: 'Output Customization',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
+          },
           { check: true, title: 'Remove Branding' },
-          { check: true, title: 'Custom Validation' },
-          { check: true, title: 'Output Customization' },
+          {
+            check: true,
+            title: 'Advanced Validations',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
+          },
+          {
+            check: false,
+            title: 'Auto Import',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport,
+          },
+          {
+            check: false,
+            title: 'Image Import',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport,
+          },
         ],
       },
     },
@@ -524,12 +559,23 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       content: {
         'Rows Included': [{ check: true, title: '1.5M' }],
         'For extra 10K Records': [{ check: true, title: '$0.50 (Billed monthly)' }],
-        Projects: [{ check: true, title: 'Unlimited' }],
+        'Team Members': [{ check: true, title: '10', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
         Features: [
           { check: true, title: 'Theming' },
+          { check: true, title: 'Custom Validation', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation },
+          {
+            check: true,
+            title: 'Output Customization',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
+          },
           { check: true, title: 'Remove Branding' },
-          { check: true, title: 'Custom Validation' },
-          { check: true, title: 'Output Customization' },
+          {
+            check: true,
+            title: 'Advanced Validations',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
+          },
+          { check: true, title: 'Auto Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport },
+          { check: true, title: 'Image Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport },
         ],
       },
     },
@@ -545,12 +591,23 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       content: {
         'Rows Included': [{ check: true, title: '5K' }],
         'For extra 10K Records': [{ check: true, title: '$1 (Billed yearly)' }],
-        Projects: [{ check: true, title: 'Unlimited' }],
+        'Team Members': [{ check: true, title: '1', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
         Features: [
           { check: true, title: 'Theming' },
+          { check: true, title: 'Custom Validation', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation },
+          {
+            check: true,
+            title: 'Output Customization',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
+          },
           { check: false, title: 'Remove Branding' },
-          { check: true, title: 'Custom Validation' },
-          { check: true, title: 'Output Customization' },
+          {
+            check: false,
+            title: 'Advanced Validations',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
+          },
+          { check: false, title: 'Auto Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport },
+          { check: false, title: 'Image Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport },
         ],
       },
     },
@@ -564,12 +621,23 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       content: {
         'Rows Included': [{ check: true, title: '6M' }],
         'For extra 10K Records': [{ check: true, title: '$0.70 (Billed yearly)' }],
-        Projects: [{ check: true, title: 'Unlimited' }],
+        'Team Members': [{ check: true, title: '4', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
         Features: [
           { check: true, title: 'Theming' },
+          { check: true, title: 'Custom Validation', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation },
+          {
+            check: true,
+            title: 'Output Customization',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
+          },
           { check: true, title: 'Remove Branding' },
-          { check: true, title: 'Custom Validation' },
-          { check: true, title: 'Output Customization' },
+          {
+            check: true,
+            title: 'Advanced Validations',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
+          },
+          { check: false, title: 'Auto Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport },
+          { check: false, title: 'Image Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport },
         ],
       },
     },
@@ -583,19 +651,25 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       content: {
         'Rows Included': [{ check: true, title: '18M' }],
         'For extra 10K Records': [{ check: true, title: '$0.50 (Billed yearly)' }],
-        Projects: [{ check: true, title: 'Unlimited' }],
+        'Team Members': [{ check: true, title: '10', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
         Features: [
           { check: true, title: 'Theming' },
+          { check: true, title: 'Custom Validation', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation },
+          {
+            check: true,
+            title: 'Output Customization',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
+          },
           { check: true, title: 'Remove Branding' },
-          { check: true, title: 'Custom Validation' },
-          { check: true, title: 'Output Customization' },
+          {
+            check: true,
+            title: 'Advanced Validations',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
+          },
+          { check: true, title: 'Auto Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport },
+          { check: true, title: 'Image Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport },
         ],
       },
     },
   ],
-};
-
-export const DATE_FORMATS = {
-  SHORT: 'DD/MM/YYYY',
-  LONG: 'DD MMM YYYY',
 };
