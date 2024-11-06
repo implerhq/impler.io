@@ -96,8 +96,8 @@ export function ActivePlanDetails({
 
             {activePlanDetails.plan.canceledOn ? (
               <Alert icon={<InformationIcon size="md" />} variant="filled" classNames={classes}>
-                Your Plan cancellation on {dayjs(activePlanDetails.plan.canceledOn).format(DATE_FORMATS.LONG)} and
-                Expire on {dayjs(activePlanDetails.expiryDate).format(DATE_FORMATS.LONG)}
+                Your Plan cancelled on {dayjs(activePlanDetails.plan.canceledOn).format(DATE_FORMATS.LONG)} and Expire
+                on {dayjs(activePlanDetails.expiryDate).format(DATE_FORMATS.LONG)}
               </Alert>
             ) : (
               activePlanDetails.plan.code !== PLANCODEENUM.STARTER && (
