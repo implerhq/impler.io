@@ -1,31 +1,18 @@
 import React from 'react';
 import { Checkbox, Flex, Text, Center, Stack } from '@mantine/core';
 import { Button } from '@ui/button';
-import { useForm, Controller } from 'react-hook-form';
-import { useCancelPlan } from '@hooks/useCancelPlan';
-import { useAppState } from 'store/app.context';
+import { Controller } from 'react-hook-form';
 import { modals } from '@mantine/modals';
 import { PlanCancelDetails } from './illustrations/PlanCancelDetails';
 import { colors, MEMBERSHIP_CANCELLATION_REASONS } from '@config';
 
-type FormData = {
-  reasons: string[];
-};
+interface CancelSubscriptionModalProps {
+  control: any;
+  handleSubmit: any;
+  isCancelPlanLoading: boolean;
+}
 
-export function CancelSubscriptionModal() {
-  const { profileInfo } = useAppState();
-  const { control, handleSubmit } = useForm<FormData>({
-    defaultValues: { reasons: [] },
-  });
-  const { cancelPlan, isCancelPlanLoading } = useCancelPlan({
-    email: profileInfo!.email,
-    projectId: profileInfo?._projectId,
-  });
-
-  const onSubmit = () => {
-    cancelPlan();
-  };
-
+export function CancelSubscriptionModal({ control, handleSubmit, isCancelPlanLoading }: CancelSubscriptionModalProps) {
   return (
     <Stack spacing="lg">
       <Text color={colors.white} size="md" weight={700} align="center">
@@ -36,7 +23,7 @@ export function CancelSubscriptionModal() {
         <PlanCancelDetails />
       </Center>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit}>
         <Flex direction="column" gap="xs">
           <Text color={colors.white} weight={600}>
             Reasons
@@ -53,7 +40,7 @@ export function CancelSubscriptionModal() {
                   checked={field.value.includes(reason)}
                   onChange={() => {
                     const newReasons = field.value.includes(reason)
-                      ? field.value.filter((resn) => resn !== reason)
+                      ? field.value.filter((cancallationReasons: string) => cancallationReasons !== reason)
                       : [...field.value, reason];
                     field.onChange(newReasons);
                   }}
