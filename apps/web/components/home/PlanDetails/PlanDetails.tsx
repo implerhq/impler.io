@@ -1,17 +1,16 @@
-import { Skeleton, Stack } from '@mantine/core';
+import { Alert, Skeleton, Stack, Text } from '@mantine/core';
 
 import { usePlanDetails } from '@hooks/usePlanDetails';
-import { AppAbility, colors } from '@config';
 import { useAppState } from 'store/app.context';
 import { InactiveMembership } from './InactiveMembership';
 import { ActivePlanDetails } from './ActivePlanDetails';
-import { PlanCancelled } from './PlanCancelled';
-import { useContext } from 'react';
-import { AbilityContext } from 'store/ability.context';
+import { InformationIcon } from '@assets/icons/Information.icon';
+import { useAlertStyles } from './PlanDetails.styles';
+import { colors } from '@config';
 
 export function PlanDetails() {
+  const { classes } = useAlertStyles();
   const { profileInfo } = useAppState();
-  useContext<AppAbility | null>(AbilityContext);
 
   const { activePlanDetails, isActivePlanLoading, showPlans } = usePlanDetails({
     projectId: profileInfo?._projectId ?? '',
@@ -42,32 +41,45 @@ export function PlanDetails() {
   }
 
   return (
-    <Stack
-      p="sm"
-      spacing="sm"
-      bg={colors.stoneGrey}
-      style={{
-        borderRadius: '10px',
-      }}
-    >
-      {activePlanDetails?.plan.canceledOn ? (
-        <PlanCancelled
-          cancellationDate={activePlanDetails.plan.canceledOn}
-          expiryDate={activePlanDetails.expiryDate}
-          planName={activePlanDetails.plan.name}
-          showPlans={showPlans}
-        />
-      ) : activePlanDetails ? (
-        <ActivePlanDetails
-          activePlanDetails={activePlanDetails}
-          numberOfRecords={numberOfRecords}
-          showPlans={showPlans}
-          showWarning={showWarning}
-          projectId={profileInfo?._projectId}
-        />
-      ) : (
-        <InactiveMembership showPlans={showPlans} />
-      )}
-    </Stack>
+    <>
+      <Stack
+        p="sm"
+        spacing="sm"
+        bg={colors.stoneGrey}
+        style={{
+          borderRadius: '10px',
+        }}
+      >
+        {activePlanDetails ? (
+          <ActivePlanDetails
+            activePlanDetails={activePlanDetails}
+            numberOfRecords={numberOfRecords}
+            showPlans={showPlans}
+            showWarning={showWarning}
+            projectId={profileInfo?._projectId}
+            projectName={profileInfo?.projectName}
+          />
+        ) : (
+          <InactiveMembership showPlans={showPlans} />
+        )}
+      </Stack>
+      <Alert
+        icon={<InformationIcon size="md" className={classes.icon} />}
+        classNames={{
+          root: classes.alert,
+          wrapper: classes.wrapper,
+          icon: classes.icon,
+          message: classes.message,
+        }}
+      >
+        <Text className={classes.message}>
+          You&apos;re viewing details of{' '}
+          <Text component="span" weight={700}>
+            {profileInfo?.projectName}
+          </Text>{' '}
+          project
+        </Text>
+      </Alert>
+    </>
   );
 }
