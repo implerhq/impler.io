@@ -376,9 +376,9 @@ export const ROLE_BASED_ACCESS = {
   ],
   [UserRolesEnum.FINANCE]: [
     { action: ActionsEnum.READ, subject: SubjectsEnum.HOMEPAGE },
+    { action: ActionsEnum.UPDATE, subject: SubjectsEnum.CARDS },
     { action: ActionsEnum.READ, subject: SubjectsEnum.SETTINGS },
     { action: ActionsEnum.BUY, subject: SubjectsEnum.PLAN },
-    { action: ActionsEnum.READ, subject: SubjectsEnum.CARDS },
   ],
 };
 
