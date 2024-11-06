@@ -12,7 +12,7 @@ interface PlanFeatureProps {
 
 export function PlanFeature({ included, value = '', tooltipLink }: PlanFeatureProps) {
   return (
-    <Flex align="center">
+    <Flex align="center" gap="xs">
       {included ? <CheckCircle /> : <CrossCircle />}
       <Text fw="bolder">{value}</Text>
       {tooltipLink && <TooltipLink link={tooltipLink} iconSize="md" />}
