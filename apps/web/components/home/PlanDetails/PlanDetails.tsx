@@ -69,10 +69,9 @@ export function PlanDetails() {
           root: classes.alert,
           wrapper: classes.wrapper,
           icon: classes.icon,
-          message: classes.message,
         }}
       >
-        <Text className={classes.message}>
+        <Text>
           You&apos;re viewing details of{' '}
           <Text component="span" weight={700}>
             {profileInfo?.projectName}
