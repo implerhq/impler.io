@@ -9,17 +9,12 @@ export const useAlertStyles = createStyles((theme) => ({
     padding: theme.spacing.sm,
   },
   icon: {
-    marginRight: theme.spacing.xs,
+    marginRight: 0,
     color: colors.goldenYellow,
     display: 'flex',
     alignItems: 'center',
   },
-  message: {
-    margin: 0,
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.2rem',
-  },
+
   wrapper: {
     display: 'flex',
     alignItems: 'center',
