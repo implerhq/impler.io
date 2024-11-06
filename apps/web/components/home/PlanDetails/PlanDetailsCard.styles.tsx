@@ -7,7 +7,7 @@ interface PlanDetailCardStylesParams {
 
 export const usePlanDetailCardStyles = createStyles((theme, { isWarning }: PlanDetailCardStylesParams) => ({
   container: {
-    border: `1px solid ${isWarning ? 'red' : 'rgba(255, 198, 77, 0.9)'}`,
+    border: `1px solid ${isWarning ? colors.danger : colors.goldenYellow}`,
     borderRadius: '8px',
     background: isWarning ? colors.lightRed : colors.faintYellow,
     padding: theme.spacing.md,
