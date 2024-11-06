@@ -19,6 +19,7 @@ export function CancelSubscriptionModal() {
   });
   const { cancelPlan, isCancelPlanLoading } = useCancelPlan({
     email: profileInfo!.email,
+    projectId: profileInfo?._projectId,
   });
 
   const onSubmit = () => {
@@ -26,52 +27,51 @@ export function CancelSubscriptionModal() {
   };
 
   return (
-    <>
-      <Stack spacing="lg">
-        <Text color={colors.white} size="md" weight={700} align="center">
-          Cancel Subscription
-        </Text>
+    <Stack spacing="lg">
+      <Text color={colors.white} size="md" weight={700} align="center">
+        Cancel Subscription
+      </Text>
 
-        <Center>
-          <PlanCancelDetails />
-        </Center>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Flex direction="column" gap="xs">
-            <Text color={colors.white} weight={600}>
-              Reasons
-            </Text>
-            {MEMBERSHIP_CANCELLATION_REASONS.map((reason) => (
-              <Controller
-                key={reason}
-                name="reasons"
-                control={control}
-                render={({ field }) => (
-                  <Checkbox
-                    label={<Text color={colors.white}>{reason}</Text>}
-                    value={reason}
-                    checked={field.value.includes(reason)}
-                    onChange={() => {
-                      const newReasons = field.value.includes(reason)
-                        ? field.value.filter((resn) => resn !== reason)
-                        : [...field.value, reason];
-                      field.onChange(newReasons);
-                    }}
-                  />
-                )}
-              />
-            ))}
-          </Flex>
+      <Center>
+        <PlanCancelDetails />
+      </Center>
 
-          <Flex mt="sm" gap="md">
-            <Button onClick={() => modals.closeAll()} fullWidth variant="outline">
-              Close
-            </Button>
-            <Button type="submit" loading={isCancelPlanLoading} fullWidth>
-              Cancel Subscription
-            </Button>
-          </Flex>
-        </form>
-      </Stack>
-    </>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Flex direction="column" gap="xs">
+          <Text color={colors.white} weight={600}>
+            Reasons
+          </Text>
+          {MEMBERSHIP_CANCELLATION_REASONS.map((reason) => (
+            <Controller
+              key={reason}
+              name="reasons"
+              control={control}
+              render={({ field }) => (
+                <Checkbox
+                  label={<Text color={colors.white}>{reason}</Text>}
+                  value={reason}
+                  checked={field.value.includes(reason)}
+                  onChange={() => {
+                    const newReasons = field.value.includes(reason)
+                      ? field.value.filter((resn) => resn !== reason)
+                      : [...field.value, reason];
+                    field.onChange(newReasons);
+                  }}
+                />
+              )}
+            />
+          ))}
+        </Flex>
+
+        <Flex mt="sm" gap="md">
+          <Button onClick={() => modals.closeAll()} fullWidth variant="outline">
+            Close
+          </Button>
+          <Button type="submit" loading={isCancelPlanLoading} fullWidth>
+            Cancel Subscription
+          </Button>
+        </Flex>
+      </form>
+    </Stack>
   );
 }
