@@ -49,23 +49,25 @@ export function ActivePlanDetails({
       <Group grow>
         <Title order={4}>{activePlanDetails.plan.name}</Title>
         <Group spacing="sm" position="right">
-          <Button component={Link} href="/transactions" variant="filled">
-            View all transactions
-          </Button>
-          {!(activePlanDetails.plan.code === PLANCODEENUM.STARTER || activePlanDetails.plan.canceledOn) && (
-            <Button
-              onClick={() => {
-                onOpenPaymentModal({
-                  code: activePlanDetails.plan.code,
-                  modalId: MODAL_KEYS.CHANGE_CARD,
-                });
-              }}
-              variant="filled"
-              color="green"
-            >
-              Change Card
+          <Can I={ActionsEnum.UPDATE} a={SubjectsEnum.CARDS}>
+            <Button component={Link} href="/transactions" variant="filled">
+              View all transactions
             </Button>
-          )}
+            {!(activePlanDetails.plan.code === PLANCODEENUM.STARTER || activePlanDetails.plan.canceledOn) && (
+              <Button
+                onClick={() => {
+                  onOpenPaymentModal({
+                    code: activePlanDetails.plan.code,
+                    modalId: MODAL_KEYS.CHANGE_CARD,
+                  });
+                }}
+                variant="filled"
+                color="green"
+              >
+                Change Card
+              </Button>
+            )}
+          </Can>
         </Group>
       </Group>
 
