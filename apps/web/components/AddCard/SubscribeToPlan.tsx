@@ -34,6 +34,7 @@ export function SubscribeToPlan({ email, planCode }: SelectCardModalContentProps
   const { getCheckoutData, checkoutData, isCheckoutDataLoading } = useCheckout({
     couponCode: appliedCouponCode,
     planCode,
+    email,
   });
 
   const stripe = useStripe();
