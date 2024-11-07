@@ -4,7 +4,8 @@ import { Button } from '@ui/button';
 import { Controller } from 'react-hook-form';
 import { modals } from '@mantine/modals';
 import { PlanCancelDetails } from './illustrations/PlanCancelDetails';
-import { colors, MEMBERSHIP_CANCELLATION_REASONS } from '@config';
+import { colors } from '@config';
+import { MEMBERSHIP_CANCELLATION_REASONS } from '@impler/shared';
 
 interface CancelSubscriptionModalProps {
   control: any;
@@ -35,13 +36,15 @@ export function CancelSubscriptionModal({ control, handleSubmit, isCancelPlanLoa
               control={control}
               render={({ field }) => (
                 <Checkbox
-                  label={<Text color={colors.white}>{reason}</Text>}
+                  label={<Text color="white">{reason}</Text>}
                   value={reason}
-                  checked={field.value.includes(reason)}
+                  checked={Array.isArray(field.value) && field.value.includes(reason)}
                   onChange={() => {
-                    const newReasons = field.value.includes(reason)
-                      ? field.value.filter((cancallationReasons: string) => cancallationReasons !== reason)
-                      : [...field.value, reason];
+                    const newReasons = Array.isArray(field.value)
+                      ? field.value.includes(reason)
+                        ? field.value.filter((item) => item !== reason)
+                        : [...field.value, reason]
+                      : [reason];
                     field.onChange(newReasons);
                   }}
                 />
