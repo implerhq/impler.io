@@ -72,7 +72,7 @@ export function PlanDetails() {
         }}
       >
         <Text>
-          You&apos;re viewing details of{' '}
+          You&apos;re viewing and managing details of{' '}
           <Text component="span" weight={700}>
             {profileInfo?.projectName}
           </Text>{' '}
