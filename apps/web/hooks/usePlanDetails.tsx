@@ -24,12 +24,9 @@ export function usePlanDetails({ projectId }: UsePlanDetailProps) {
     data: activePlanDetails,
     isLoading: isActivePlanLoading,
     refetch: refetchActivePlanDetails,
-  } = useQuery<unknown, IErrorObject, ISubscriptionData, [string, string | undefined]>(
-    [API_KEYS.FETCH_ACTIVE_SUBSCRIPTION, projectId],
-    () =>
-      commonApi<ISubscriptionData>(API_KEYS.FETCH_ACTIVE_SUBSCRIPTION as any, {
-        parameters: [projectId!],
-      }),
+  } = useQuery<unknown, IErrorObject, ISubscriptionData, [string | undefined]>(
+    [API_KEYS.FETCH_ACTIVE_SUBSCRIPTION],
+    () => commonApi<ISubscriptionData>(API_KEYS.FETCH_ACTIVE_SUBSCRIPTION as any, {}),
     {
       onSuccess(data) {
         if (data && data.meta) {
@@ -73,7 +70,15 @@ export function usePlanDetails({ projectId }: UsePlanDetailProps) {
       id: MODAL_KEYS.SELECT_CARD,
       modalId: MODAL_KEYS.SELECT_CARD,
       centered: true,
-      children: <PaymentModal email={profileInfo!.email} planCode={code} onClose={modals.closeAll} modalId={modalId} />,
+      children: (
+        <PaymentModal
+          email={profileInfo!.email}
+          planCode={code}
+          projectId={profileInfo!._projectId}
+          onClose={modals.closeAll}
+          modalId={modalId}
+        />
+      ),
     });
   };
 
