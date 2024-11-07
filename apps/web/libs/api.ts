@@ -54,7 +54,7 @@ const routes: Record<string, Route> = {
     method: 'GET',
   },
   [API_KEYS.CANCEL_SUBSCRIPTION]: {
-    url: () => `/v1/user/subscription`,
+    url: (projectId: string) => `/v1/user/${projectId}/subscription`,
     method: 'DELETE',
   },
   [API_KEYS.ONBOARD_USER]: {
