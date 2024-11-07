@@ -9,18 +9,17 @@ import { usePaymentMethods } from '@hooks/usePaymentMethods';
 import { usePlanDetails } from '@hooks/usePlanDetails';
 import { useUpdatePaymentMethod } from '@hooks/useUpdatePaymentMethod';
 import { useState, useEffect } from 'react';
-import { useAppState } from 'store/app.context';
 
 export interface ChangeCardModalContentProps {
   email: string;
+  projectId: string;
   planCode: string;
   onClose: () => void;
 }
 
-export function ChangeCard({ email }: ChangeCardModalContentProps) {
-  const { profileInfo } = useAppState();
+export function ChangeCard({ email, projectId }: ChangeCardModalContentProps) {
   const { paymentMethods, isPaymentMethodsLoading, refetchPaymentMethods } = usePaymentMethods();
-  const { activePlanDetails, isActivePlanLoading } = usePlanDetails({ projectId: profileInfo!._projectId });
+  const { activePlanDetails, isActivePlanLoading } = usePlanDetails({ projectId });
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | undefined>();
   const [activeCard, setActiveCard] = useState<ICardData | undefined>(undefined);
   const [showForm, setShowForm] = useState(false);
