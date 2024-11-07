@@ -450,6 +450,14 @@ export const DATE_FORMATS = {
   LONG: 'DD MMM YYYY',
 };
 
+export const MEMBERSHIP_CANCELLATION_REASONS = [
+  'Not liking service',
+  'Building my own data importer',
+  'No more need of data importer',
+  'Moving to another service provider',
+  'Something else',
+];
+
 export enum PLANCODEENUM {
   GROWTH = 'GROWTH-MONTHLY',
   GROWTH_YEARLY = 'GROWTH-YEARLY',
