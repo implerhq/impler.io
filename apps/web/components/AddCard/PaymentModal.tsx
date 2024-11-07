@@ -18,6 +18,7 @@ const stripePromise =
 export interface PaymentModalProps {
   email: string;
   planCode: string;
+  projectId: string;
   onClose: () => void;
   modalId: string;
 }
