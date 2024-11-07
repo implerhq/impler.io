@@ -2,15 +2,24 @@ import * as dayjs from 'dayjs';
 import { Injectable } from '@nestjs/common';
 import { DATE_FORMATS } from '@shared/constants';
 import { PaymentAPIService } from '@impler/services';
+import { EnvironmentRepository } from '@impler/dal';
 
 @Injectable()
 export class CancelSubscription {
-  constructor(private paymentApiService: PaymentAPIService) {}
+  constructor(
+    private paymentApiService: PaymentAPIService,
+    private environmentRepository: EnvironmentRepository
+  ) {}
 
-  async execute(userEmail: string) {
-    const cancelledSubscription = await this.paymentApiService.cancelSubscription(userEmail);
-    cancelledSubscription.expiryDate = dayjs(cancelledSubscription.expiryDate).format(DATE_FORMATS.COMMON);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+  async execute(projectId: string, cancellationReasons: string[]) {
+    const teamOwner = await this.environmentRepository.getTeamOwnerDetails(projectId);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    const canceledSubscription = await this.paymentApiService.cancelSubscription(teamOwner._userId.email);
 
-    return cancelledSubscription;
+    canceledSubscription.expiryDate = dayjs(canceledSubscription.expiryDate).format(DATE_FORMATS.COMMON);
+
+    return canceledSubscription;
   }
 }
