@@ -57,31 +57,31 @@ export class UserController {
     });
   }
 
-  @Get('/:projectId/subscription')
+  @Get('/subscription')
   @ApiOperation({
     summary: 'Get Active Subscription Information',
   })
-  async getActiveSubscriptionRoute(@Param('projectId') projectId: string) {
-    return this.getActiveSubscription.execute(projectId);
+  async getActiveSubscriptionRoute(@UserSession() user: IJwtPayload) {
+    return this.getActiveSubscription.execute(user._projectId);
   }
 
-  @Delete('/:projectId/subscription')
+  @Delete('/subscription')
   @ApiOperation({
     summary: 'Cancel active subscription for user',
   })
   async cancelSubscriptionRoute(
-    @Param('projectId') projectId: string,
+    @UserSession() user: IJwtPayload,
     @Body() cancelSubscriptionDto: CancelSubscriptionDto
   ) {
-    return this.cancelSubscription.execute(projectId, cancelSubscriptionDto.reasons);
+    return this.cancelSubscription.execute(user._projectId, cancelSubscriptionDto.reasons);
   }
 
-  @Put('/setup-intent/:paymentId')
+  @Put('/setup-intent/:paymentMethodId')
   @ApiOperation({
     summary: 'Setup User Payment Intent',
   })
-  async setupEmandateIntent(@UserSession() user: IJwtPayload, @Param('paymentId') paymentId: string) {
-    return this.updatePaymentMethod.execute(user.email, paymentId);
+  async setupEmandateIntent(@UserSession() user: IJwtPayload, @Param('paymentMethodId') paymentMethodId: string) {
+    return this.updatePaymentMethod.execute(user._projectId, paymentMethodId);
   }
 
   @Put('/payment-method/:paymentMethodId')
@@ -89,7 +89,7 @@ export class UserController {
     summary: 'Update User Payment Method',
   })
   async updatePaymentMethodRoute(@UserSession() user: IJwtPayload, @Param('paymentMethodId') paymentMethodId: string) {
-    return this.updatePaymentMethod.execute(user.email, paymentMethodId);
+    return this.updatePaymentMethod.execute(user._projectId, paymentMethodId);
   }
 
   @Put('/subscription-payment-method/:paymentMethodId')
@@ -100,7 +100,7 @@ export class UserController {
     @UserSession() user: IJwtPayload,
     @Param('paymentMethodId') paymentMethodId: string
   ) {
-    return this.updateSubscriptionPaymentMethod.execute(user.email, paymentMethodId);
+    return this.updateSubscriptionPaymentMethod.execute(user._projectId, paymentMethodId);
   }
 
   @Put('/confirm-payment-intent-id/:intentId')
@@ -108,7 +108,7 @@ export class UserController {
     summary: 'Pass the Payment Intent Id If user cancels the E-Mandate Authorization',
   })
   async savePaymentIntentIdRoute(@UserSession() user: IJwtPayload, @Param('intentId') intentId: string) {
-    return this.confirmIntentId.execute(user.email, intentId);
+    return this.confirmIntentId.execute(user._projectId, intentId);
   }
 
   @Get('/payment-methods')
@@ -116,7 +116,7 @@ export class UserController {
     summary: 'Retrieve the cards of the User',
   })
   async retriveUserPaymentMethods(@UserSession() user: IJwtPayload) {
-    return this.retrivePaymentMethods.execute(user.email);
+    return this.retrivePaymentMethods.execute(user._projectId);
   }
 
   @Delete('/payment-methods/:paymentMethodId')
@@ -132,7 +132,7 @@ export class UserController {
     summary: 'Get Transaction History for User',
   })
   async getTransactionHistoryRoute(@UserSession() user: IJwtPayload) {
-    return this.getTransactionHistory.execute(user.email);
+    return this.getTransactionHistory.execute(user._projectId);
   }
 
   @Get('/coupons/:couponCode/apply/:planCode')
@@ -150,7 +150,7 @@ export class UserController {
 
   @Get('/checkout')
   @ApiOperation({
-    summary: 'Make successfull checkout once the coupon is successfully applied',
+    summary: 'Get Tax Information and checkout details',
   })
   async checkoutRoute(
     @Query('planCode') planCode: string,
@@ -160,7 +160,7 @@ export class UserController {
   ) {
     return this.checkout.execute({
       planCode: planCode,
-      externalId: user.email,
+      projectId: user._projectId,
       paymentMethodId: paymentMethodId,
       couponCode: couponCode,
     });
@@ -177,7 +177,7 @@ export class UserController {
     @Query('couponCode') couponCode?: string
   ) {
     return await this.subscription.execute({
-      email: user.email,
+      projectId: user._projectId,
       planCode,
       selectedPaymentMethod: paymentMethodId,
       couponCode,
