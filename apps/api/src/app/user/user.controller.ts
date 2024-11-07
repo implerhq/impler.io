@@ -1,5 +1,5 @@
 import { ApiTags, ApiOperation, ApiSecurity } from '@nestjs/swagger';
-import { Controller, Delete, Get, Param, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Put, Query, UseGuards } from '@nestjs/common';
 
 import {
   GetImportCounts,
@@ -18,6 +18,7 @@ import {
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { IJwtPayload, ACCESS_KEY_NAME } from '@impler/shared';
 import { UserSession } from '@shared/framework/user.decorator';
+import { CancelSubscriptionDto } from './dto/cancel-subscription.dto';
 
 @ApiTags('User')
 @Controller('/user')
@@ -64,12 +65,15 @@ export class UserController {
     return this.getActiveSubscription.execute(projectId);
   }
 
-  @Delete('/subscription')
+  @Delete('/:projectId/subscription')
   @ApiOperation({
     summary: 'Cancel active subscription for user',
   })
-  async cancelSubscriptionRoute(@UserSession() user: IJwtPayload) {
-    return this.cancelSubscription.execute(user.email);
+  async cancelSubscriptionRoute(
+    @Param('projectId') projectId: string,
+    @Body() cancelSubscriptionDto: CancelSubscriptionDto
+  ) {
+    return this.cancelSubscription.execute(projectId, cancelSubscriptionDto.reasons);
   }
 
   @Put('/setup-intent/:paymentId')
