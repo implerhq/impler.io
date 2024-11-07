@@ -1,12 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { PaymentAPIService } from '@impler/services';
+import { EnvironmentRepository } from '@impler/dal';
 
 @Injectable()
 export class GetTransactionHistory {
-  constructor(private paymentApiService: PaymentAPIService) {}
+  constructor(
+    private paymentApiService: PaymentAPIService,
+    private environmentRepository: EnvironmentRepository
+  ) {}
 
-  async execute(email: string) {
-    const transactions = await this.paymentApiService.getTransactionHistory(email);
+  async execute(projectId: string) {
+    const teamOwner = await this.environmentRepository.getTeamOwnerDetails(projectId);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    const transactions = await this.paymentApiService.getTransactionHistory(teamOwner._userId.email);
 
     return transactions.map((transactionItem) => ({
       transactionDate: transactionItem.transactionDate,
