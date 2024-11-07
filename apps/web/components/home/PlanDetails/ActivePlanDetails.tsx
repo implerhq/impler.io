@@ -35,11 +35,10 @@ export function ActivePlanDetails({
   numberOfRecords,
   showWarning,
   showPlans,
-  email,
   projectId,
 }: ActivePlanDetailsProps) {
   const { classes } = useAlertStyles();
-  const { openCancelPlanModal } = useCancelPlan({ email: email as string, projectId });
+  const { openCancelPlanModal } = useCancelPlan({ projectId });
   const { onOpenPaymentModal } = usePlanDetails({
     projectId: projectId!,
   });
