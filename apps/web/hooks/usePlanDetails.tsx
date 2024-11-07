@@ -59,7 +59,7 @@ export function usePlanDetails({ projectId }: UsePlanDetailProps) {
       ),
       centered: true,
       size: 'calc(60vw - 3rem)',
-      withCloseButton: true,
+      withCloseButton: false,
     });
   }, [activePlanDetails, profileInfo]);
 
