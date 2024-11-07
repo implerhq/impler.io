@@ -46,7 +46,7 @@ export function ActivePlanDetails({
   return (
     <Stack>
       <Group grow>
-        <Title order={4}>{activePlanDetails.plan.name}</Title>
+        <Title order={3}>{activePlanDetails.plan.name}</Title>
         <Group spacing="sm" position="right">
           <Can I={ActionsEnum.UPDATE} a={SubjectsEnum.CARDS}>
             <Button component={Link} href="/transactions" variant="filled">
