@@ -50,11 +50,11 @@ const routes: Record<string, Route> = {
   },
 
   [API_KEYS.FETCH_ACTIVE_SUBSCRIPTION]: {
-    url: (projectId: string) => `/v1/user/${projectId}/subscription`,
+    url: () => `/v1/user/subscription`,
     method: 'GET',
   },
   [API_KEYS.CANCEL_SUBSCRIPTION]: {
-    url: (projectId: string) => `/v1/user/${projectId}/subscription`,
+    url: () => `/v1/user/subscription`,
     method: 'DELETE',
   },
   [API_KEYS.ONBOARD_USER]: {
