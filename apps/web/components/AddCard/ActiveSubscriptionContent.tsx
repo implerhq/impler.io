@@ -19,6 +19,8 @@ export function ActiveSubscriptionContent({
 }: ActiveSubscriptionContentProps) {
   const planAmount = Number(activePlanDetails?.amount) || 0;
   const outstandingCharges = Number(activePlanDetails?.plan?.charge) || 0;
+  const paymentMethodCurrency = activePlanDetails?.customer?.paymentMethodCurrency || 'USD';
+
   const tax = Number(activePlanDetails?.tax) || 0;
 
   const totalAmount = planAmount + outstandingCharges + tax;
@@ -47,7 +49,7 @@ export function ActiveSubscriptionContent({
         ) : activePlanDetails ? (
           <>
             <Title order={1} fw="bold" color={colors.white}>
-              ${planAmount}
+              {paymentMethodCurrency.toUpperCase()} {planAmount}
               <Text color={colors.grey} component="span" size="sm">
                 {' / '} {getPlanType(activePlanDetails.plan?.interval)}
               </Text>
