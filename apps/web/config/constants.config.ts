@@ -434,14 +434,6 @@ export const HOW_HEARD_ABOUT_US = [
   { value: 'Invitation', label: 'Invitation' },
 ];
 
-export const MEMBERSHIP_CANCELLATION_REASONS = [
-  'Not liking service',
-  'Building my own data importer',
-  'No more need of data importer',
-  'Moving to another service provider',
-  'Something else',
-];
-
 export const PLACEHOLDERS = {
   email: 'johndoe@acme.inc',
   password: '********',
