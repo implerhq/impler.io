@@ -1,4 +1,3 @@
-// StripeInput.tsx
 import React, { useState } from 'react';
 import { Box, Text } from '@mantine/core';
 import { colors } from '@config';
@@ -32,7 +31,6 @@ export function StripeInput({
       <Box
         style={{
           border: `1px solid ${error && isClicked ? colors.danger : colors.black}`,
-          borderRadius: '4px',
           padding: '8px',
           backgroundColor: colors.white,
         }}
