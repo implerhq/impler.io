@@ -46,7 +46,7 @@ export function PlanDetails() {
     <>
       <Alert
         p="xs"
-        icon={<InformationIcon size="sm" className={classes.icon} />}
+        icon={<InformationIcon size="md" className={classes.icon} />}
         classNames={{
           root: classes.alert,
           wrapper: classes.wrapper,
@@ -54,7 +54,7 @@ export function PlanDetails() {
         }}
       >
         <Text size="sm" weight={400}>
-          You&apos;re viewing and managing details of{' '}
+          You&apos;re viewing and managing the details of{' '}
           <Text component="span" weight={900}>
             {profileInfo?.projectName}
           </Text>{' '}
