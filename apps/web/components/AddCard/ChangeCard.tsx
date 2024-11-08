@@ -94,7 +94,7 @@ export function ChangeCard({ email, projectId }: ChangeCardModalContentProps) {
       const sortedMethods = orderPaymentMethods();
       setDisplayedPaymentMethods(sortedMethods);
 
-      await updatePaymentMethod({ paymentMethodId: selectedPaymentMethod, email });
+      await updatePaymentMethod({ paymentMethodId: selectedPaymentMethod });
       const newActiveCard = paymentMethods?.find(
         (method: ICardData) => method.paymentMethodId === selectedPaymentMethod
       );
