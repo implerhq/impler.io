@@ -8,12 +8,12 @@ export function useUpdatePaymentMethod() {
   const { mutate: updatePaymentMethod, isLoading: isUpdatePaymentMethodLoading } = useMutation<
     any,
     IErrorObject,
-    { paymentMethodId: string; email: string }
+    { paymentMethodId: string }
   >(
     [API_KEYS.UPDATE_SUBSCRIPTION_PAYMENT_METHOD],
-    async ({ paymentMethodId, email }) =>
+    ({ paymentMethodId }) =>
       commonApi(API_KEYS.UPDATE_SUBSCRIPTION_PAYMENT_METHOD as any, {
-        parameters: [paymentMethodId, email],
+        parameters: [paymentMethodId],
       }),
     {
       onSuccess(data) {
