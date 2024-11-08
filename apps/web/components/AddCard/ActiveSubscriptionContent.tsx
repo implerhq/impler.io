@@ -27,13 +27,19 @@ export function ActiveSubscriptionContent({
 
   return (
     <Card bg={colors.black} shadow="sm" w="50%" radius={0}>
-      <Stack spacing="lg">
+      <Stack spacing="md">
         <Link onClick={() => modals.closeAll()} href="#">
           <Flex align="center" gap={5}>
             <LeftArrowIcon size="lg" color="currentColor" />
-            <Text size="xl">Back</Text>
+            <Text color="dimmed" size="xl">
+              Back
+            </Text>
           </Flex>
         </Link>
+
+        <Text size="sm" color="dimmed">
+          As Per Your Current Card
+        </Text>
 
         {isActivePlanDetailsLoading ? (
           <Box p="xs">
