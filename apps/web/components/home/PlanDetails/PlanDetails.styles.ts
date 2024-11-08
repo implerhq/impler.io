@@ -1,6 +1,7 @@
-import { createStyles } from '@mantine/core';
 import { colors } from '@config';
-export const useAlertStyles = createStyles((theme) => ({
+import { createStyles } from '@mantine/core';
+
+export default createStyles((theme) => ({
   alert: {
     display: 'flex',
     alignItems: 'center',
