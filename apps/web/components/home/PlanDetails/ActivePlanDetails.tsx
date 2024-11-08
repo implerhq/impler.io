@@ -17,7 +17,7 @@ import { PlanDetailCard } from './PlanDetailsCard';
 import { useCancelPlan } from '@hooks/useCancelPlan';
 import { usePlanDetails } from '@hooks/usePlanDetails';
 import { InformationIcon } from '@assets/icons/Information.icon';
-import { useAlertStyles } from './ActivePlanDetails.styles';
+import useActivePlanDetailsStyle from './ActivePlanDetails.styles';
 import { Can } from 'store/ability.context';
 
 interface ActivePlanDetailsProps {
@@ -37,7 +37,7 @@ export function ActivePlanDetails({
   showPlans,
   projectId,
 }: ActivePlanDetailsProps) {
-  const { classes } = useAlertStyles();
+  const { classes } = useActivePlanDetailsStyle();
   const { openCancelPlanModal } = useCancelPlan();
   const { onOpenPaymentModal } = usePlanDetails({
     projectId: projectId!,
