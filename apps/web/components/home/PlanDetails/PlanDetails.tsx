@@ -1,16 +1,18 @@
-import { Alert, Skeleton, Stack, Text } from '@mantine/core';
+import { Alert, Skeleton, Stack, Text, useMantineTheme } from '@mantine/core';
 
-import { usePlanDetails } from '@hooks/usePlanDetails';
-import { useAppState } from 'store/app.context';
-import { InactiveMembership } from './InactiveMembership';
-import { ActivePlanDetails } from './ActivePlanDetails';
-import { InformationIcon } from '@assets/icons/Information.icon';
-import { useAlertStyles } from './PlanDetails.styles';
 import { colors } from '@config';
+import usePlanDetailsStyles from './PlanDetails.styles';
+
+import { useAppState } from 'store/app.context';
+import { usePlanDetails } from '@hooks/usePlanDetails';
+import { ActivePlanDetails } from './ActivePlanDetails';
+import { InactiveMembership } from './InactiveMembership';
+import { InformationIcon } from '@assets/icons/Information.icon';
 
 export function PlanDetails() {
-  const { classes } = useAlertStyles();
+  const theme = useMantineTheme();
   const { profileInfo } = useAppState();
+  const { classes } = usePlanDetailsStyles();
 
   const { activePlanDetails, isActivePlanLoading, showPlans } = usePlanDetails({
     projectId: profileInfo?._projectId ?? '',
@@ -42,12 +44,29 @@ export function PlanDetails() {
 
   return (
     <>
+      <Alert
+        p="xs"
+        icon={<InformationIcon size="sm" className={classes.icon} />}
+        classNames={{
+          root: classes.alert,
+          wrapper: classes.wrapper,
+          icon: classes.icon,
+        }}
+      >
+        <Text size="sm" weight={400}>
+          You&apos;re viewing and managing details of{' '}
+          <Text component="span" weight={900}>
+            {profileInfo?.projectName}
+          </Text>{' '}
+          project
+        </Text>
+      </Alert>
       <Stack
         p="sm"
         spacing="sm"
         bg={colors.stoneGrey}
         style={{
-          borderRadius: '10px',
+          borderRadius: theme.radius.xs,
         }}
       >
         {activePlanDetails ? (
@@ -63,22 +82,6 @@ export function PlanDetails() {
           <InactiveMembership showPlans={showPlans} />
         )}
       </Stack>
-      <Alert
-        icon={<InformationIcon size="md" className={classes.icon} />}
-        classNames={{
-          root: classes.alert,
-          wrapper: classes.wrapper,
-          icon: classes.icon,
-        }}
-      >
-        <Text>
-          You&apos;re viewing and managing details of{' '}
-          <Text component="span" weight={700}>
-            {profileInfo?.projectName}
-          </Text>{' '}
-          project
-        </Text>
-      </Alert>
     </>
   );
 }
