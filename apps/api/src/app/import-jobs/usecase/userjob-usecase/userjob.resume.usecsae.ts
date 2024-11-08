@@ -32,11 +32,12 @@ export class UserJobResume {
     const existingJob = this.schedulerRegistry.getCronJob(this.nameService.getCronName(_jobId));
 
     if (existingJob) {
-      existingJob.setTime(new CronTime(cronExpression));
+      existingJob.setTime(new CronTime(cronExpression) as any);
       existingJob.start();
     } else {
       const newJob = new CronJob(cronExpression, () => this.userJobTriggerService.execute(_jobId));
-      this.schedulerRegistry.addCronJob(this.nameService.getCronName(_jobId), newJob);
+
+      this.schedulerRegistry.addCronJob(this.nameService.getCronName(_jobId), newJob as any);
       newJob.start();
     }
 
