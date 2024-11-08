@@ -30,10 +30,8 @@ export function ActiveSubscriptionContent({
       <Stack spacing="md">
         <Link onClick={() => modals.closeAll()} href="#">
           <Flex align="center" gap={5}>
-            <LeftArrowIcon size="lg" color="currentColor" />
-            <Text color="dimmed" size="xl">
-              Back
-            </Text>
+            <LeftArrowIcon size="lg" />
+            <Text size="xl">Back</Text>
           </Flex>
         </Link>
 

@@ -19,7 +19,7 @@ export function CheckoutContent({ checkoutData, isCheckoutDataLoading }: Checkou
       <Stack spacing="sm">
         <Link onClick={() => modals.close(MODAL_KEYS.SELECT_CARD)} href="#">
           <Flex align="center" gap={5}>
-            <LeftArrowIcon size="lg" color="currentColor" />
+            <LeftArrowIcon size="lg" />
             <Text size="xl">Back</Text>
           </Flex>
         </Link>
