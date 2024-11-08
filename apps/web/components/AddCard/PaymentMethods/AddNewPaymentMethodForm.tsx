@@ -28,13 +28,13 @@ export function AddNewPaymentMethodForm({ setIsValid }: AddNewPaymentMethodFormP
     },
   });
 
-  const stripeElementStyle = {
+  const baseStyle = {
     style: {
       base: {
         fontSize: theme.fontSizes.lg,
         color: colors.black,
         '::placeholder': {
-          color: colors.black,
+          color: colors.grey,
         },
       },
       invalid: {
@@ -45,14 +45,17 @@ export function AddNewPaymentMethodForm({ setIsValid }: AddNewPaymentMethodFormP
 
   const stripeElementOptions = {
     cardNumber: {
-      ...stripeElementStyle,
+      style: baseStyle.style,
       showIcon: true,
+      placeholder: 'Enter your card number',
     },
     cardExpiry: {
-      ...stripeElementStyle,
+      style: baseStyle.style,
+      placeholder: 'MM/YY',
     },
     cardCvc: {
-      ...stripeElementStyle,
+      style: baseStyle.style,
+      placeholder: 'CVC',
     },
   };
 
