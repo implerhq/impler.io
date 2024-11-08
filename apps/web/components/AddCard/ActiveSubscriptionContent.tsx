@@ -35,7 +35,7 @@ export function ActiveSubscriptionContent({
           </Flex>
         </Link>
 
-        <Text size="sm" color="dimmed">
+        <Text size="md" color="dimmed">
           As Per Your Current Card
         </Text>
 
