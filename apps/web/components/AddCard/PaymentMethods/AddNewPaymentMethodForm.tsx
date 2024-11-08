@@ -47,7 +47,7 @@ export function AddNewPaymentMethodForm({ setIsValid }: AddNewPaymentMethodFormP
     cardNumber: {
       style: baseStyle.style,
       showIcon: true,
-      placeholder: 'Enter your card number',
+      placeholder: 'Enter your Card Number',
     },
     cardExpiry: {
       style: baseStyle.style,
