@@ -1,7 +1,7 @@
 import { colors } from '@config';
 import { createStyles } from '@mantine/core';
 
-export const useAlertStyles = createStyles(() => ({
+export default createStyles(() => ({
   root: {
     backgroundColor: colors.lightRed,
     border: `1px solid ${colors.danger}`,
