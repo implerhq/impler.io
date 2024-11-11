@@ -38,6 +38,7 @@ export function CurrentCardSection({ activeCard, hasPaymentMethods, onAddNewClic
           }}
           selected={true}
           onChange={() => {}}
+          showRadio={false}
         />
       )}
     </>
