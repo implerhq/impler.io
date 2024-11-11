@@ -1,8 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
+import { Card, Stack, Title, Text, Skeleton, Box, Group, Divider, Flex } from '@mantine/core';
 import { colors } from '@config';
 import { LeftArrowIcon } from '@assets/icons/LeftArrow.icon';
-import { Card, Stack, Title, Text, Skeleton, Box, Group, Divider, Flex } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { getPlanType } from '@shared/utils';
 import { ISubscriptionData } from '@impler/shared';

@@ -1,13 +1,15 @@
 import { Alert, Skeleton, Stack, Text, useMantineTheme } from '@mantine/core';
 
 import { colors } from '@config';
-import usePlanDetailsStyles from './PlanDetails.styles';
 
 import { useAppState } from 'store/app.context';
 import { usePlanDetails } from '@hooks/usePlanDetails';
+
 import { ActivePlanDetails } from './ActivePlanDetails';
 import { InactiveMembership } from './InactiveMembership';
 import { InformationIcon } from '@assets/icons/Information.icon';
+
+import usePlanDetailsStyles from './PlanDetails.styles';
 
 export function PlanDetails() {
   const theme = useMantineTheme();

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Card, Text, Badge, Stack, Divider } from '@mantine/core';
-import { PlanFeature } from './PlanFeature';
-import { Plan } from './Plans';
 import { Button } from '@ui/button';
-import useStyles from './Plans.styles';
 import { colors, MODAL_KEYS, PLANCODEENUM } from '@config';
+import { Plan } from './Plans';
+import { PlanFeature } from './PlanFeature';
+import useStyles from './Plans.styles';
 import { usePlanDetails } from '@hooks/usePlanDetails';
 
 interface PlanCardProps {

@@ -1,8 +1,8 @@
-import { colors, ROUTES } from '@config';
+import React from 'react';
+import Link from 'next/link';
 import { Divider, Stack, Text, Title, Center, Group } from '@mantine/core';
 import { Button } from '@ui/button';
-import Link from 'next/link';
-import React from 'react';
+import { colors, ROUTES } from '@config';
 
 interface InactiveMembershipProps {
   showPlans: () => void;

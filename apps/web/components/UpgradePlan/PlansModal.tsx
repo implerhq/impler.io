@@ -1,5 +1,5 @@
-import { Flex, Title } from '@mantine/core';
 import React from 'react';
+import { Flex, Title } from '@mantine/core';
 import { Plans } from './Plans';
 
 interface PlanProps {

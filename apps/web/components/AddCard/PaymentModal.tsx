@@ -1,11 +1,9 @@
-import getConfig from 'next/config';
 import React, { useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
-
-import { MODAL_KEYS } from '@config';
-
+import getConfig from 'next/config';
 import { modals } from '@mantine/modals';
+import { MODAL_KEYS } from '@config';
 import { ChangeCard } from './ChangeCard';
 import { SubscribeToPlan } from './SubscribeToPlan';
 

@@ -1,7 +1,8 @@
 import React from 'react';
 import Image from 'next/image';
-import { colors } from '@config';
 import { Flex, Group, Radio, Stack, Text, useMantineTheme } from '@mantine/core';
+
+import { colors } from '@config';
 import { useStyles } from './PaymentMethods.styles';
 
 interface PaymentMethodOptionProps {

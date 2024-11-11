@@ -13,7 +13,6 @@ export interface IPlanMeta {
   }>;
   REMOVE_BRANDING: boolean;
   AUTOMATIC_IMPORTS: boolean;
-  IMAGE_UPLOAD: boolean;
   ADVANCED_VALIDATORS: boolean;
   TEAM_MEMBERS: number;
 }

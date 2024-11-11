@@ -1,14 +1,14 @@
+import { useState, useEffect } from 'react';
 import { Card, Flex } from '@mantine/core';
-import { CardForm } from './CardForm';
-import { colors } from '@config';
-import { ActiveSubscriptionContent } from './ActiveSubscriptionContent';
-import { ICardData } from '@impler/shared';
 import { CardNumberElement, useElements, useStripe } from '@stripe/react-stripe-js';
+import { colors } from '@config';
+import { ICardData } from '@impler/shared';
+import { CardForm } from './CardForm';
 import { useAddCard } from '@hooks/useAddCard';
 import { usePaymentMethods } from '@hooks/usePaymentMethods';
 import { usePlanDetails } from '@hooks/usePlanDetails';
 import { useUpdatePaymentMethod } from '@hooks/useUpdatePaymentMethod';
-import { useState, useEffect } from 'react';
+import { ActiveSubscriptionContent } from './ActiveSubscriptionContent';
 
 export interface ChangeCardModalContentProps {
   email: string;

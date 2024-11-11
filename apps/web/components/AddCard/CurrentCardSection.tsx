@@ -1,9 +1,9 @@
 import React from 'react';
-import { Group, Title, Text } from '@mantine/core';
 import Link from 'next/link';
-import { PaymentMethodOption } from './PaymentMethods';
+import { Group, Title, Text } from '@mantine/core';
 import { colors } from '@config';
 import { ICardData } from '@impler/shared';
+import { PaymentMethodOption } from './PaymentMethods';
 
 interface CurrentCardSectionProps {
   activeCard: ICardData | undefined;

@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { colors } from '@config';
 import { Card, Group, Stack, Title, Text } from '@mantine/core';
-import { ICardData } from '@impler/shared';
-
-import { Coupon } from './Coupon';
+import { colors } from '@config';
 import { Button } from '@ui/button';
+import { ICardData } from '@impler/shared';
+import { Coupon } from './Coupon';
 import { PaymentMethods } from './PaymentMethods';
 import { AddNewPaymentMethodForm } from './PaymentMethods/AddNewPaymentMethodForm';
 

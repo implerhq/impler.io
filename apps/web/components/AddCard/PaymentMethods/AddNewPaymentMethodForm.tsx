@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Group, Stack, useMantineTheme } from '@mantine/core';
 import { CardNumberElement, CardExpiryElement, CardCvcElement } from '@stripe/react-stripe-js';
-import { StripeInput } from './StripeInput';
 import { colors } from '@config';
+import { StripeInput } from './StripeInput';
 
 interface AddNewPaymentMethodFormProps {
   setIsValid: (isValid: boolean) => void;

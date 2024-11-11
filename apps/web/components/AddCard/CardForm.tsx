@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { Stack, Group, Title, Text, Flex, ScrollArea } from '@mantine/core';
 import Link from 'next/link';
+import { Stack, Group, Title, Text, Flex, ScrollArea } from '@mantine/core';
+import { colors } from '@config';
 import { Button } from '@ui/button';
+import { ICardData } from '@impler/shared';
+import { useStyles } from './CardForm.styles';
+import { CurrentCardSection } from './CurrentCardSection';
 import { PaymentMethods } from './PaymentMethods';
 import { AddNewPaymentMethodForm } from './PaymentMethods/AddNewPaymentMethodForm';
-import { colors } from '@config';
-import { ICardData } from '@impler/shared';
-import { CurrentCardSection } from './CurrentCardSection';
-import { useStyles } from './CardForm.styles';
 
 interface CardFormProps {
   showForm: boolean;
