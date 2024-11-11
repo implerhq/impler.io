@@ -11,7 +11,7 @@ export function usePaymentMethods() {
     refetch: refetchPaymentMethods,
     isFetching: isPaymentMethodsLoading,
     isFetched: isPaymentMethodsFetched,
-  } = useQuery<unknown, IErrorObject, ICardData[], [string]>([API_KEYS.PAYMENT_METHOD_LIST], () =>
+  } = useQuery<unknown, IErrorObject, ICardData[], [string | undefined]>([API_KEYS.PAYMENT_METHOD_LIST], () =>
     commonApi<ICardData[]>(API_KEYS.PAYMENT_METHOD_LIST as any, {})
   );
 

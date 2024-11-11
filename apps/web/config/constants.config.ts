@@ -4,6 +4,7 @@ import { BubbleIcon } from '@assets/icons/Bubble.icon';
 import { AngularIcon } from '@assets/icons/Angular.icon';
 import { JavaScriptIcon } from '@assets/icons/Javascript.icon';
 import { UserRolesEnum, IntegrationEnum } from '@impler/shared';
+import { Plan } from '@components/UpgradePlan/Plans';
 
 export const CONSTANTS = {
   EXPLORE_PLANS_QUERY_LEY: 'explore_plans',
@@ -41,6 +42,7 @@ export const VARIABLES = {
 
 export const MODAL_KEYS = {
   SELECT_CARD: 'SELECT_CARD',
+  CHANGE_CARD: 'CHANGE_CARD',
   PAYMENT_SUCCEED: 'successfull_payment',
 
   IMPORT_DUPLICATE: 'IMPORT_DUPLICATE',
@@ -112,6 +114,7 @@ export const API_KEYS = {
   PAYMENT_METHOD_LIST: 'PAYMENT_METHOD_LIST',
 
   ADD_PAYMENT_METHOD: 'ADD_PAYMENT_METHOD',
+  UPDATE_SUBSCRIPTION_PAYMENT_METHOD: 'UPDATE_PAYMENT_METHOD',
   SAVE_INTENT_ID: 'SAVE_SETUP_INTENT_ID',
 
   FETCH_ACTIVE_SUBSCRIPTION: 'FETCH_ACTIVE_SUBSCRIPTION',
@@ -181,6 +184,9 @@ export const NOTIFICATION_KEYS = {
   ERROR_AUTHORIZING_PAYMENT_METHOD: 'ERROR_AUTHORIZING_PAYMENT_METHOD',
 
   PAYMENT_INTENT_ID_UPDATED: 'PAYMENT_INTENT_ID_UPDATED',
+  PAYMENT_METHOD_UPDATED: 'PAYMENT_METHOD_UPDATED',
+  ERROR_SAVING_INTENT_ID: 'ERROR_SAVING_INTENT_ID',
+  ERROR_UPDATING_PAYMENT_METHOD: 'ERROR_UPDATING_PAYMENT_METHOD',
 
   MEMBERSHIP_CANCELLED: 'MEMBERSHIP_CANCELLED',
   MEMBERSHIP_PURCHASED: 'MEMBERSHIP_PURCHASED',
@@ -205,6 +211,7 @@ export const NOTIFICATION_KEYS = {
   CARD_ADDED: 'CARD_ADDED',
   CARD_REMOVED: 'CARD_REMOVED',
   PURCHASE_FAILED: 'PURCHASE_FAILED',
+  NO_CARD_SELECTED: 'NO_CARD_SELECTED',
 
   COLUMN_ERRROR: 'COLUMN_ERRROR',
   INVITATION_ACCEPTED: 'INVITATION_ACCEPTED',
@@ -237,6 +244,7 @@ export const ROUTES = {
   ACTIVITIES: '/activities',
   ADD_CARD: '/settings?tab=addcard&action=addcardmodal',
   EXPLORE_PLANS: '/?explore_plans=true',
+  TRANSACTIONS: '/transactions',
   INVITATION: '/auth/invitation/:id',
 };
 
@@ -368,9 +376,9 @@ export const ROLE_BASED_ACCESS = {
   ],
   [UserRolesEnum.FINANCE]: [
     { action: ActionsEnum.READ, subject: SubjectsEnum.HOMEPAGE },
+    { action: ActionsEnum.UPDATE, subject: SubjectsEnum.CARDS },
     { action: ActionsEnum.READ, subject: SubjectsEnum.SETTINGS },
     { action: ActionsEnum.BUY, subject: SubjectsEnum.PLAN },
-    { action: ActionsEnum.READ, subject: SubjectsEnum.CARDS },
   ],
 };
 
@@ -389,6 +397,7 @@ export const DOCUMENTATION_REFERENCE_LINKS = {
   autoImport: 'https://docs.impler.io/features/automated-import',
   imageImport: 'https://docs.impler.io/features/import-excel-with-image',
   advancedValidations: 'https://docs.impler.io/validations/advanced',
+  teamMembers: 'https://docs.impler.io/platform/make-your-team',
   lengthValidator: 'https://docs.impler.io/validations/advanced#length',
   outputCustomization: 'https://docs.impler.io/features/output-customization',
   uniqueWithValidator: 'https://docs.impler.io/validations/advanced#unique-across-multiple-fields',
@@ -439,4 +448,228 @@ export const PLACEHOLDERS = {
 export const DATE_FORMATS = {
   SHORT: 'DD/MM/YYYY',
   LONG: 'DD MMM YYYY',
+};
+
+export const MEMBERSHIP_CANCELLATION_REASONS = [
+  'Not liking service',
+  'Building my own data importer',
+  'No more need of data importer',
+  'Moving to another service provider',
+  'Something else',
+];
+
+export enum PLANCODEENUM {
+  GROWTH = 'GROWTH-MONTHLY',
+  GROWTH_YEARLY = 'GROWTH-YEARLY',
+  STARTER = 'STARTER',
+}
+export const plans: { monthly: Plan[]; yearly: Plan[] } = {
+  monthly: [
+    {
+      name: 'Starter (Default)',
+      code: 'STARTER',
+      rowsIncluded: 5000,
+      price: 0,
+      extraChargeOverheadTenThusandRecords: 1,
+      removeBranding: false,
+      content: {
+        'Rows Included': [{ check: true, title: '5K' }],
+        'For extra 10K Records': [{ check: true, title: '$1 (Billed monthly)' }],
+        'Team Members': [{ check: true, title: '1', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
+        Features: [
+          { check: true, title: 'Theming' },
+          {
+            check: true,
+            title: 'Custom Validation',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation,
+          },
+          {
+            check: true,
+            title: 'Output Customization',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
+          },
+          { check: false, title: 'Remove Branding' },
+          {
+            check: false,
+            title: 'Advanced Validations',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
+          },
+          {
+            check: false,
+            title: 'Auto Import',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport,
+          },
+          {
+            check: false,
+            title: 'Image Import',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport,
+          },
+        ],
+      },
+    },
+    {
+      name: 'Growth',
+      code: 'GROWTH-MONTHLY',
+      price: 42,
+      rowsIncluded: 500000,
+      extraChargeOverheadTenThusandRecords: 0.7,
+      removeBranding: true,
+      content: {
+        'Rows Included': [{ check: true, title: '500K' }],
+        'For extra 10K Records': [{ check: true, title: '$0.70 (Billed monthly)' }],
+        'Team Members': [{ check: true, title: '4', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
+        Features: [
+          { check: true, title: 'Theming' },
+          {
+            check: true,
+            title: 'Custom Validation',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation,
+          },
+          {
+            check: true,
+            title: 'Output Customization',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
+          },
+          { check: true, title: 'Remove Branding' },
+          {
+            check: true,
+            title: 'Advanced Validations',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
+          },
+          {
+            check: false,
+            title: 'Auto Import',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport,
+          },
+          {
+            check: false,
+            title: 'Image Import',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport,
+          },
+        ],
+      },
+    },
+    {
+      name: 'Scale',
+      code: 'SCALE-MONTHLY',
+      price: 90,
+      rowsIncluded: 1500000,
+      extraChargeOverheadTenThusandRecords: 0.5,
+      removeBranding: true,
+      content: {
+        'Rows Included': [{ check: true, title: '1.5M' }],
+        'For extra 10K Records': [{ check: true, title: '$0.50 (Billed monthly)' }],
+        'Team Members': [{ check: true, title: '10', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
+        Features: [
+          { check: true, title: 'Theming' },
+          { check: true, title: 'Custom Validation', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation },
+          {
+            check: true,
+            title: 'Output Customization',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
+          },
+          { check: true, title: 'Remove Branding' },
+          {
+            check: true,
+            title: 'Advanced Validations',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
+          },
+          { check: true, title: 'Auto Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport },
+          { check: true, title: 'Image Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport },
+        ],
+      },
+    },
+  ],
+  yearly: [
+    {
+      name: 'Starter (Default)',
+      code: 'STARTER',
+      rowsIncluded: 5000,
+      price: 0,
+      extraChargeOverheadTenThusandRecords: 1,
+      removeBranding: false,
+      content: {
+        'Rows Included': [{ check: true, title: '5K' }],
+        'For extra 10K Records': [{ check: true, title: '$1 (Billed yearly)' }],
+        'Team Members': [{ check: true, title: '1', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
+        Features: [
+          { check: true, title: 'Theming' },
+          { check: true, title: 'Custom Validation', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation },
+          {
+            check: true,
+            title: 'Output Customization',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
+          },
+          { check: false, title: 'Remove Branding' },
+          {
+            check: false,
+            title: 'Advanced Validations',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
+          },
+          { check: false, title: 'Auto Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport },
+          { check: false, title: 'Image Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport },
+        ],
+      },
+    },
+    {
+      name: 'Growth',
+      code: 'GROWTH-YEARLY',
+      price: 420,
+      rowsIncluded: 6000000,
+      extraChargeOverheadTenThusandRecords: 0.7,
+      removeBranding: true,
+      content: {
+        'Rows Included': [{ check: true, title: '6M' }],
+        'For extra 10K Records': [{ check: true, title: '$0.70 (Billed yearly)' }],
+        'Team Members': [{ check: true, title: '4', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
+        Features: [
+          { check: true, title: 'Theming' },
+          { check: true, title: 'Custom Validation', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation },
+          {
+            check: true,
+            title: 'Output Customization',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
+          },
+          { check: true, title: 'Remove Branding' },
+          {
+            check: true,
+            title: 'Advanced Validations',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
+          },
+          { check: false, title: 'Auto Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport },
+          { check: false, title: 'Image Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport },
+        ],
+      },
+    },
+    {
+      name: 'Scale',
+      code: 'SCALE-YEARLY',
+      price: 900,
+      rowsIncluded: 18000000,
+      extraChargeOverheadTenThusandRecords: 0.5,
+      removeBranding: true,
+      content: {
+        'Rows Included': [{ check: true, title: '18M' }],
+        'For extra 10K Records': [{ check: true, title: '$0.50 (Billed yearly)' }],
+        'Team Members': [{ check: true, title: '10', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
+        Features: [
+          { check: true, title: 'Theming' },
+          { check: true, title: 'Custom Validation', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation },
+          {
+            check: true,
+            title: 'Output Customization',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
+          },
+          { check: true, title: 'Remove Branding' },
+          {
+            check: true,
+            title: 'Advanced Validations',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
+          },
+          { check: true, title: 'Auto Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport },
+          { check: true, title: 'Image Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport },
+        ],
+      },
+    },
+  ],
 };

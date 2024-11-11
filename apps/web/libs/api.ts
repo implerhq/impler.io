@@ -33,6 +33,12 @@ const routes: Record<string, Route> = {
     url: (paymentMethodId: string) => `/v1/user/setup-intent/${paymentMethodId}`,
     method: 'PUT',
   },
+
+  [API_KEYS.UPDATE_SUBSCRIPTION_PAYMENT_METHOD]: {
+    url: (paymentMethodId: string) => `/v1/user/subscription-payment-method/${paymentMethodId}`,
+    method: 'PUT',
+  },
+
   [API_KEYS.SAVE_INTENT_ID]: {
     url: (intentId: string) => `/v1/user/confirm-payment-intent-id/${intentId}`,
     method: 'PUT',
@@ -44,7 +50,7 @@ const routes: Record<string, Route> = {
   },
 
   [API_KEYS.FETCH_ACTIVE_SUBSCRIPTION]: {
-    url: (projectId: string) => `/v1/user/${projectId}/subscription`,
+    url: () => `/v1/user/subscription`,
     method: 'GET',
   },
   [API_KEYS.CANCEL_SUBSCRIPTION]: {

@@ -40,41 +40,6 @@ interface ChargeItem {
   per_unit: number;
 }
 
-interface ISubscriptionData {
-  plan: {
-    code: string;
-    name: string;
-    charges: {
-      billableMetric: {
-        code: string;
-        name: string;
-      };
-      chargeModal: 'FIXED' | 'VOLUME_BASED' | 'BINARY';
-      properties: Record<string, string | number>;
-    }[];
-    charge: number;
-    canceledOn?: Date;
-  };
-  isActive: boolean;
-  usage: {
-    IMPORTED_ROWS: number;
-  };
-  expiryDate: Date;
-  meta: {
-    IMAGE_IMPORT: boolean;
-    IMPORTED_ROWS: Array<{
-      flat_fee: number;
-      per_unit: number;
-      last_unit: number | string;
-      first_unit: number;
-    }>;
-    REMOVE_BRANDING: boolean;
-    AUTOMATIC_IMPORTS: boolean;
-    ADVANCED_VALIDATORS: boolean;
-    TEAM_MEMBERS: number;
-  };
-}
-
 interface ICreateProjectData {
   name: string;
 }
@@ -152,10 +117,14 @@ interface ICheckoutData {
   totalPrice: number;
   discount?: number;
   proratedRefund?: number;
+  interval?: string;
+  taxAmount?: number;
+  taxLabel?: string;
+  taxPercentage?: number;
 }
 
 interface ISubscribeData {
-  selectedPaymentMethod: string | undefined;
+  paymentMethodId: string;
   email: string;
   planCode: string;
 }
