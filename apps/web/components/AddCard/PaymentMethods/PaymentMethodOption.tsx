@@ -15,9 +15,10 @@ interface PaymentMethodOptionProps {
   };
   selected: boolean;
   onChange: (methodId: string) => void;
+  showRadio?: boolean;
 }
 
-export function PaymentMethodOption({ method, selected, onChange }: PaymentMethodOptionProps) {
+export function PaymentMethodOption({ method, selected, onChange, showRadio = true }: PaymentMethodOptionProps) {
   const theme = useMantineTheme();
   const { classes } = useStyles();
 
@@ -39,14 +40,17 @@ export function PaymentMethodOption({ method, selected, onChange }: PaymentMetho
     >
       <Flex gap="xs" align="top" justify="space-between">
         <Group align="top" spacing={4}>
-          <Radio
-            size="xs"
-            checked={selected}
-            id={method.paymentMethodId}
-            onChange={handleClick}
-            value={method.paymentMethodId}
-            className={classes.radio}
-          />
+          {showRadio && (
+            <Radio
+              size="xs"
+              checked={selected}
+              id={method.paymentMethodId}
+              onChange={handleClick}
+              value={method.paymentMethodId}
+              className={classes.radio}
+            />
+          )}
+
           <Stack spacing={4}>
             <Text color={colors.grey} size="xs">
               Expires {`${method.expMonth}/${method.expYear}`}
