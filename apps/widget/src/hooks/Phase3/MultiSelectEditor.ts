@@ -66,7 +66,7 @@ export class MultiSelectEditor extends BaseEditor {
     this.value.add(value);
     const span = this.hot.rootDocument.createElement('span') as HTMLElement;
     span.tabIndex = 0;
-    (span as HTMLElement).role = 'button';
+    span.setAttribute('role', 'button');
     span.classList.add('item');
     span.dataset.value = value;
     span.dataset.displayText = value;
