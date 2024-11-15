@@ -44,7 +44,7 @@ export default function ResetPasswordPage({ }) {
             Back to <Link href={ROUTES.SIGNIN}>Signin</Link>
           </Text>
         </Stack>
-        {isError && (
+        {isError || errors.password.message && (
           <Text mt={20} size="md" align="center" color={colors.danger}>
             {error?.message || errors.password.message}
           </Text>
