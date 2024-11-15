@@ -5,7 +5,7 @@ import 'tippy.js/dist/tippy.css';
 import 'tippy.js/animations/shift-away.css';
 import { variables } from '@config';
 import { WIDGET_TEXTS, isObject } from '@impler/client';
-import { convertStringToJson, downloadFile } from '@impler/shared';
+import { convertStringToJson, downloadFile, FileMimeTypesEnum } from '@impler/shared';
 
 // eslint-disable-next-line no-magic-numbers
 export function formatBytes(bytes, decimals = 2) {
@@ -151,3 +151,15 @@ export function memoize<T extends (...args: any[]) => any>(fn: T): T {
     return result;
   } as T;
 }
+
+export const isValidFileType = (sampleFile: Blob): boolean => {
+  if (
+    sampleFile instanceof Blob &&
+    [FileMimeTypesEnum.CSV, FileMimeTypesEnum.EXCEL, FileMimeTypesEnum.EXCELM, FileMimeTypesEnum.EXCELX].includes(
+      sampleFile.type as FileMimeTypesEnum
+    )
+  )
+    return true;
+
+  return false;
+};
