@@ -8,7 +8,7 @@ import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { useImplerState } from '@store/impler.context';
 import { IUpload, WIDGET_TEXTS } from '@impler/client';
-import { IErrorObject, ITemplate, FileMimeTypesEnum, IColumn } from '@impler/shared';
+import { IErrorObject, ITemplate, FileMimeTypesEnum, IColumn, downloadFile } from '@impler/shared';
 
 import { variables } from '@config';
 import { useSample } from '@hooks/useSample';
@@ -40,7 +40,7 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
   const { templateId, authHeaderValue, extra } = useImplerState();
   const [excelSheetNames, setExcelSheetNames] = useState<string[]>([]);
   const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
-  const { setUploadInfo, setTemplateInfo, output, schema, data, importId, imageSchema } = useAppState();
+  const { setUploadInfo, setTemplateInfo, output, schema, data, importId, imageSchema, file } = useAppState();
 
   const selectedTemplateId = watch('templateId');
 
@@ -73,7 +73,8 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
     string[],
     IErrorObject,
     { file: File }
-  >(['getExcelSheetNames'], (file) => api.getExcelSheetNames(file), {
+    // eslint-disable-next-line prettier/prettier
+    >(['getExcelSheetNames'], (excelSheetFile) => api.getExcelSheetNames(excelSheetFile), {
     onSuccess(sheetNames) {
       if (sheetNames.length <= 1) {
         setValue('selectedSheetName', sheetNames[0]);
@@ -107,6 +108,12 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
     }
   };
   const onDownloadClick = async () => {
+    if (file) {
+      const fileName = (file as File).name;
+      const fileBaseName = fileName.split('.')[0];
+      downloadFile(file as Blob, fileBaseName);
+    }
+
     setIsDownloadInProgress(true);
     const isTemplateValid = await trigger('templateId');
     if (!isTemplateValid) {
@@ -148,9 +155,12 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
       });
     }
   };
-  const onSubmit = async (file?: File) => {
-    if (file && [FileMimeTypesEnum.EXCEL, FileMimeTypesEnum.EXCELX].includes(file.type as FileMimeTypesEnum)) {
-      getExcelSheetNames({ file: file });
+  const onSubmit = async (uploadedFile?: File) => {
+    if (
+      uploadedFile &&
+      [FileMimeTypesEnum.EXCEL, FileMimeTypesEnum.EXCELX].includes(uploadedFile.type as FileMimeTypesEnum)
+    ) {
+      getExcelSheetNames({ file: uploadedFile });
     } else {
       handleSubmit(uploadFile)();
     }
