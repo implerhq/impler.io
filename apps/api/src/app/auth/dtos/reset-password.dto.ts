@@ -4,7 +4,7 @@ import { IsDefined, IsString, IsUUID, MaxLength } from 'class-validator';
 export class ResetPasswordDto {
   @IsString()
   @IsDefined()
-  @MaxLength(70)
+  @MaxLength(24)
   @ApiProperty({
     description: 'New password of the user',
   })

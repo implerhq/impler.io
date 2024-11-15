@@ -28,7 +28,7 @@ export class RegisterUserDto {
   })
   @IsString()
   @IsDefined()
-  @MaxLength(70)
+  @MaxLength(24)
   password: string;
 
   @ApiProperty({
