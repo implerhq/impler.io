@@ -61,7 +61,7 @@ export class ValidRequest {
 
         if (columnKeysSet.size !== parsedSchema.length) {
           throw new UniqueColumnException(
-            `${APIMessages.COLUMN_KEY_DUPLICATED} Duplicate Keys Found - ${duplicateKeys.join(', ')}`
+            `${APIMessages.COLUMN_KEY_DUPLICATED} Duplicate Keys Found for  ${duplicateKeys.join(', ')}`
           );
         }
 
