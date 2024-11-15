@@ -79,9 +79,10 @@ export function useImpler({
   const showWidget = async ({
     colorScheme,
     data,
+    file,
     schema,
     output,
-  }: Pick<IShowWidgetProps, 'colorScheme' | 'data' | 'schema' | 'output'> = {}) => {
+  }: Pick<IShowWidgetProps, 'colorScheme' | 'data' | 'schema' | 'output' | 'file'> = {}) => {
     if (window.impler && isImplerInitiated) {
       const payload: IShowWidgetProps & { uuid: string; host: string } = {
         uuid,
@@ -91,6 +92,7 @@ export function useImpler({
         accessToken,
         schema,
         data,
+        file,
         output,
         title,
         extra,
