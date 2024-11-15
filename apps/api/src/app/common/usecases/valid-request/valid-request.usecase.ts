@@ -55,9 +55,14 @@ export class ValidRequest {
           );
         }
 
-        const columnKeysSet = new Set(parsedSchema.map((column) => column.key));
+        const columnKeys = parsedSchema.map((column) => column.key);
+        const columnKeysSet = new Set(columnKeys);
+        const duplicateKeys = columnKeys.filter((key, index) => columnKeys.indexOf(key) !== index);
+
         if (columnKeysSet.size !== parsedSchema.length) {
-          throw new UniqueColumnException(APIMessages.COLUMN_KEY_TAKEN);
+          throw new UniqueColumnException(
+            `${APIMessages.COLUMN_KEY_DUPLICATED} Duplicate Keys Found - ${duplicateKeys.join(', ')}`
+          );
         }
 
         for (const item of parsedSchema) {
@@ -115,6 +120,16 @@ export class ValidRequest {
 
       return { success: true };
     } catch (error) {
+      if (error instanceof UniqueColumnException) {
+        throw new HttpException(
+          {
+            message: error.message,
+            errorCode: error.getStatus(),
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY
+        );
+      }
+
       if (error instanceof DocumentNotFoundException) {
         throw new HttpException(
           {
