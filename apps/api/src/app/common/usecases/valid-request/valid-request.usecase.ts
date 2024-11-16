@@ -57,16 +57,14 @@ export class ValidRequest {
 
         const columnKeysSet = new Set();
         const duplicateKeys = parsedSchema.reduce((acc, item) => {
-          if (columnKeysSet.has(item.key) && !acc.includes(item.key)) {
-            acc.push(item.key);
-          }
+          if (columnKeysSet.has(item.key)) acc.add(item.key);
           columnKeysSet.add(item.key);
 
           return acc;
-        }, []);
+        }, new Set());
         if (columnKeysSet.size !== parsedSchema.length) {
           throw new UniqueColumnException(
-            `${APIMessages.COLUMN_KEY_DUPLICATED} Duplicate Keys Found for ${duplicateKeys.join(', ')}`
+            `${APIMessages.COLUMN_KEY_DUPLICATED} Duplicate Keys Found for ${[...duplicateKeys].join(', ')}`
           );
         }
 
