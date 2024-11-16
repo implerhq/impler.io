@@ -9,7 +9,7 @@ export interface ICommonShowPayload {
   primaryColor?: string;
   colorScheme?: string;
   title?: string;
-  file?: File | Blob;
+  sampleFile?: File | Blob;
   projectId: string;
   accessToken: string;
   uuid: string;

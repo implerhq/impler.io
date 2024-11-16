@@ -51,7 +51,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
       setSecondaryPayload({
         accessToken: data.value.accessToken,
         host: data.value.host,
-        file: data.value.file,
+        sampleFile: data.value.sampleFile,
         projectId: data.value.projectId,
         uuid: data.value.uuid,
         extra: isObject(data.value.extra) ? JSON.stringify(data.value.extra) : data.value.extra,
@@ -340,7 +340,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
           authHeaderValue={secondaryPayload?.authHeaderValue}
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           primaryColor={secondaryPayload.primaryColor!}
-          file={secondaryPayload?.file}
+          sampleFile={secondaryPayload?.sampleFile}
         >
           {children}
         </Provider>

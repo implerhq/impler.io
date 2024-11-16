@@ -40,7 +40,7 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
   const { templateId, authHeaderValue, extra } = useImplerState();
   const [excelSheetNames, setExcelSheetNames] = useState<string[]>([]);
   const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
-  const { setUploadInfo, setTemplateInfo, output, schema, data, importId, imageSchema, file } = useAppState();
+  const { setUploadInfo, setTemplateInfo, output, schema, data, importId, imageSchema, sampleFile } = useAppState();
 
   const selectedTemplateId = watch('templateId');
 
@@ -108,10 +108,10 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
     }
   };
   const onDownloadClick = async () => {
-    if (file) {
-      const fileName = (file as File).name;
+    if (sampleFile) {
+      const fileName = (sampleFile as File).name;
       const fileBaseName = fileName.split('.')[0];
-      downloadFile(file as Blob, fileBaseName);
+      downloadFile(sampleFile as Blob, fileBaseName);
     }
 
     setIsDownloadInProgress(true);

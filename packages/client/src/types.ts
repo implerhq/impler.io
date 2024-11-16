@@ -163,7 +163,7 @@ export interface IShowWidgetProps {
   projectId: string;
   templateId: string;
   accessToken: string;
-  file?: File | Blob;
+  sampleFile?: File | Blob;
   texts?: CustomTexts;
   title?: string;
   primaryColor?: string;

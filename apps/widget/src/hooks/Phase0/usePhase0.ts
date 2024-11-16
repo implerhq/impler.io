@@ -16,7 +16,7 @@ export function usePhase0({ goNext }: IUsePhase0Props) {
   const { api } = useAPIState();
   const { projectId, templateId } = useImplerState();
   const [fileError, setFileError] = useState<string | null>(null);
-  const { schema, setImportConfig, showWidget, setFlow, file } = useAppState();
+  const { schema, setImportConfig, showWidget, setFlow, sampleFile } = useAppState();
 
   const { mutate: fetchImportConfig } = useMutation<IImportConfig, IErrorObject, void>(
     ['importConfig', projectId, templateId],
@@ -34,7 +34,7 @@ export function usePhase0({ goNext }: IUsePhase0Props) {
           FileMimeTypesEnum.EXCELX,
         ];
 
-        if (file && !isValidFileType(file as Blob)) {
+        if (sampleFile && !isValidFileType(sampleFile as Blob)) {
           setFileError(`Only ${allowedTypes.join(',')} are supported`);
         } else {
           goNext();
