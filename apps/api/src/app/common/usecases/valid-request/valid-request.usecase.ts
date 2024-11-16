@@ -55,10 +55,13 @@ export class ValidRequest {
           );
         }
 
-        const columnKeys = parsedSchema.map((column) => column.key);
-        const columnKeysSet = new Set(columnKeys);
-        const duplicateKeys = columnKeys.filter((key, index) => columnKeys.indexOf(key) !== index);
+        const columnKeysSet = new Set();
+        const duplicateKeys = parsedSchema.reduce((acc, item) => {
+          if (columnKeysSet.has(item.key)) acc.push(item.key);
+          else columnKeysSet.add(item.key);
 
+          return acc;
+        }, []);
         if (columnKeysSet.size !== parsedSchema.length) {
           throw new UniqueColumnException(
             `${APIMessages.COLUMN_KEY_DUPLICATED} Duplicate Keys Found for  ${duplicateKeys.join(', ')}`
