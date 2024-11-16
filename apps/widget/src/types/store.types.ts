@@ -40,6 +40,7 @@ export interface IAppStore {
   schema?: string;
   output?: string;
   flow: FlowsEnum;
+  sampleFile?: File | Blob;
   showWidget: boolean;
   importConfig: IImportConfig;
   setFlow: (flow: FlowsEnum) => void;
