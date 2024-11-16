@@ -1,11 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
-
+import { useState } from 'react';
 import { FlowsEnum } from '@types';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { identifyImportIntent } from '@amplitude';
 import { useImplerState } from '@store/impler.context';
-import { IErrorObject, IImportConfig, TemplateModeEnum } from '@impler/shared';
+import { FileMimeTypesEnum, IErrorObject, IImportConfig, TemplateModeEnum } from '@impler/shared';
+import { isValidFileType } from 'util/helpers/common.helpers';
 
 interface IUsePhase0Props {
   goNext: () => void;
@@ -14,7 +15,8 @@ interface IUsePhase0Props {
 export function usePhase0({ goNext }: IUsePhase0Props) {
   const { api } = useAPIState();
   const { projectId, templateId } = useImplerState();
-  const { schema, setImportConfig, showWidget, setFlow } = useAppState();
+  const [fileError, setFileError] = useState<string | null>(null);
+  const { schema, setImportConfig, showWidget, setFlow, sampleFile } = useAppState();
 
   const { mutate: fetchImportConfig } = useMutation<IImportConfig, IErrorObject, void>(
     ['importConfig', projectId, templateId],
@@ -25,10 +27,22 @@ export function usePhase0({ goNext }: IUsePhase0Props) {
           importConfigData.mode === TemplateModeEnum.AUTOMATIC ? FlowsEnum.AUTO_IMPORT : FlowsEnum.STRAIGHT_IMPORT
         );
         setImportConfig(importConfigData);
-        goNext();
+        const allowedTypes = [
+          FileMimeTypesEnum.CSV,
+          FileMimeTypesEnum.EXCEL,
+          FileMimeTypesEnum.EXCELM,
+          FileMimeTypesEnum.EXCELX,
+        ];
+
+        if (sampleFile && !isValidFileType(sampleFile as Blob)) {
+          setFileError(`Only ${allowedTypes.join(',')} are supported`);
+        } else {
+          goNext();
+        }
       },
     }
   );
+
   const {
     error,
     isLoading,
@@ -47,11 +61,12 @@ export function usePhase0({ goNext }: IUsePhase0Props) {
   );
 
   const handleValidate = async () => {
-    return checkIsRequestvalid({ projectId, templateId, schema: schema });
+    return checkIsRequestvalid({ projectId, templateId, schema });
   };
 
   return {
     error,
+    fileError,
     isLoading,
     handleValidate,
     isWidgetOpened: showWidget,
