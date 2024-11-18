@@ -1,8 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import getConfig from 'next/config';
-import { modals } from '@mantine/modals';
 import { MODAL_KEYS } from '@config';
 import { ChangeCard } from './ChangeCard';
 import { SubscribeToPlan } from './SubscribeToPlan';
@@ -22,26 +21,9 @@ export interface PaymentModalProps {
 }
 
 export function PaymentModal(props: PaymentModalProps) {
-  useEffect(() => {
-    const modalId = props.modalId;
-    modals.open({
-      modalId,
-      size: '50vw',
-      withCloseButton: false,
-      centered: true,
-
-      children:
-        modalId === MODAL_KEYS.SELECT_CARD ? (
-          <Elements stripe={stripePromise}>
-            <SubscribeToPlan {...props} />
-          </Elements>
-        ) : (
-          <Elements stripe={stripePromise}>
-            <ChangeCard {...props} />
-          </Elements>
-        ),
-    });
-  }, [props.modalId, props]);
-
-  return null;
+  return (
+    <Elements stripe={stripePromise}>
+      {props.modalId === MODAL_KEYS.SELECT_CARD ? <SubscribeToPlan {...props} /> : <ChangeCard {...props} />}
+    </Elements>
+  );
 }
