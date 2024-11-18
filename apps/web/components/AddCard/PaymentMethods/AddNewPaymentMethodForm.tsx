@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Group, Stack, useMantineTheme } from '@mantine/core';
+import { Group, Stack } from '@mantine/core';
 import { CardNumberElement, CardExpiryElement, CardCvcElement } from '@stripe/react-stripe-js';
 import { colors } from '@config';
 import { StripeInput } from './StripeInput';
@@ -9,7 +9,6 @@ interface AddNewPaymentMethodFormProps {
 }
 
 export function AddNewPaymentMethodForm({ setIsValid }: AddNewPaymentMethodFormProps) {
-  const theme = useMantineTheme();
   const [fields, setFields] = useState({
     cardNumber: {
       complete: false,
@@ -31,7 +30,7 @@ export function AddNewPaymentMethodForm({ setIsValid }: AddNewPaymentMethodFormP
   const baseStyle = {
     style: {
       base: {
-        fontSize: theme.fontSizes.lg,
+        fontSize: '16px',
         color: colors.black,
         '::placeholder': {
           color: colors.grey,

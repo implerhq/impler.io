@@ -34,7 +34,7 @@ export function CancelSubscriptionModal({
       <form onSubmit={handleSubmit}>
         <Flex direction="column" gap="xs">
           <Text color={colors.white} weight={600}>
-            Reasons
+            Can you let us know the reason for cancellation ?
           </Text>
 
           <Controller
