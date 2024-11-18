@@ -87,9 +87,6 @@ export function useProjectInvitationForm({ refetchInvitations }: UseProjectInvit
       }),
     {
       enabled: !!profileInfo?._projectId,
-      onSuccess: (data) => {
-        console.log('API DATA', data);
-      },
     }
   );
 

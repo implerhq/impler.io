@@ -1,30 +1,27 @@
 import { API_KEYS } from '@config';
 import { commonApi } from '@libs/api';
 import { IErrorObject } from '@impler/shared';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 
 interface UseCheckoutProps {
-  planCode: string;
+  planCode?: string;
   couponCode?: string;
-  paymentMethodId?: string;
+  email?: string;
 }
 
-export function useCheckout({ couponCode, planCode, paymentMethodId }: UseCheckoutProps) {
-  const { data: checkoutData, isLoading: isCheckoutDataLoading } = useQuery<
-    unknown,
-    IErrorObject,
-    ICheckoutData,
-    (string | undefined)[]
-  >(
-    [API_KEYS.CHECKOUT, couponCode, planCode, paymentMethodId],
-    () => commonApi(API_KEYS.CHECKOUT as any, { query: { couponCode, planCode, paymentMethodId } }),
-    {
-      enabled: !!paymentMethodId && !!planCode,
-    }
+export function useCheckout({ couponCode, planCode, email }: UseCheckoutProps) {
+  const {
+    mutate: getCheckoutData,
+    data: checkoutData,
+    isLoading: isCheckoutDataLoading,
+  } = useMutation<ICheckoutData, IErrorObject, string | undefined, (string | undefined)[]>(
+    [API_KEYS.CHECKOUT, couponCode, planCode, email],
+    (paymentMethodId) => commonApi(API_KEYS.CHECKOUT as any, { query: { couponCode, planCode, paymentMethodId } })
   );
 
   return {
     checkoutData,
+    getCheckoutData,
     isCheckoutDataLoading,
   };
 }

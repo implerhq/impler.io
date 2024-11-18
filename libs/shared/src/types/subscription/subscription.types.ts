@@ -2,16 +2,18 @@ export interface ISubscriptionData {
   plan: {
     code: string;
     name: string;
+    fixedCost: number;
+    interval: string;
     charges: {
       billableMetric: {
         code: string;
         name: string;
       };
-      chargeModal: 'FIXED' | 'VOLUME_BASED';
+      chargeModal: 'FIXED' | 'VOLUME_BASED' | 'BINARY';
       properties: Record<string, string | number>;
     }[];
     charge: number;
-    canceledOn?: Date;
+    canceledOn?: string;
   };
   isActive: boolean;
   usage: {
@@ -19,12 +21,24 @@ export interface ISubscriptionData {
   };
   expiryDate: string;
   meta: {
-    IMPORTED_ROWS: number;
+    IMPORTED_ROWS: {
+      flat_fee: number;
+      per_unit: number;
+      last_unit: string | number;
+      first_unit: number;
+    }[];
     REMOVE_BRANDING: boolean;
     AUTOMATIC_IMPORTS: boolean;
     ADVANCED_VALIDATORS: boolean;
     TEAM_MEMBERS: number;
+    IMAGE_IMPORT: boolean;
   };
+  customer?: {
+    paymentMethodCurrency?: string;
+    paymentMethodId?: string;
+  };
+  tax?: number;
+  amount?: number;
 }
 
 export interface ICardData {

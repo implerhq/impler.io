@@ -23,7 +23,7 @@ export class StartProcess {
     private paymentAPIService: PaymentAPIService
   ) {}
 
-  async execute(_uploadId: string, email: string) {
+  async execute(_uploadId: string) {
     let uploadInfo = await this.uploadRepository.getUploadWithTemplate(_uploadId, ['destination']);
     let importedData;
     const destination = (uploadInfo._templateId as unknown as TemplateEntity)?.destination;
@@ -72,7 +72,7 @@ export class StartProcess {
       uploadedFileId: uploadInfo._uploadedFileId,
     });
 
-    return { uploadInfo, importedData, email };
+    return { uploadInfo, importedData };
   }
 
   async getImportedData({

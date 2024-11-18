@@ -32,8 +32,6 @@ export function TeamInvitationModal() {
     refetchTeamMemberMeta();
   }, [refetchTeamMemberMeta]);
 
-  console.log('avail', availableInvites);
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing="lg">

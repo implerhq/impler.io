@@ -107,3 +107,16 @@ export function setRedirectCookie({
     cookieName,
   };
 }
+
+export function getPlanType(CODE?: string): string | undefined {
+  switch (CODE) {
+    case 'MONTHLY':
+      return 'Month';
+    case 'WEEKLY':
+      return 'Week';
+    case 'YEARLY':
+      return 'Year';
+    default:
+      return undefined;
+  }
+}
