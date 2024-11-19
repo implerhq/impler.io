@@ -791,8 +791,8 @@ importers:
         specifier: '>=12.0.0'
         version: 18.2.11(rxjs@7.8.1)(zone.js@0.14.10)
       '@impler/client':
-        specifier: ^0.27.0
-        version: 0.27.0
+        specifier: ^0.27.1
+        version: 0.27.1
     devDependencies:
       '@angular/compiler':
         specifier: ^12.0.0
@@ -858,8 +858,8 @@ importers:
   packages/react:
     dependencies:
       '@impler/client':
-        specifier: ^0.27.0
-        version: 0.27.0
+        specifier: ^0.27.1
+        version: 0.27.1
       react:
         specifier: '>=16.8.0'
         version: 18.2.0
@@ -2268,8 +2268,8 @@ packages:
     resolution: {integrity: sha512-H9XAx3hc0BQHY6l+IFSWHDySypcXsvsuLhgYLUGywmJ5pswRVQJUHpOsobnLYp2ZUaUlKiKDrgWWhosOwAEM8Q==}
     engines: {node: '>=6.9.0'}
 
-  '@impler/client@0.27.0':
-    resolution: {integrity: sha512-SM4FFM3sXsJ18OsbBDAvIv7Gi53ld+sLaJ/ZGFW6gjtmpKSgAr29/HmrEKDdlvIHEG/6F9uv7yd3EdDn9gldNg==}
+  '@impler/client@0.27.1':
+    resolution: {integrity: sha512-5nU1rZwgRVq1ZK75lsA7yeBLElcmiqPpQ2yOb5rkaI1VlPS3ntKPH4yGNPKU1pVNqSKE51z2sZD17T3/0C8TQg==}
     engines: {node: '>=10'}
 
   '@isaacs/cliui@8.0.2':
@@ -15280,7 +15280,7 @@ snapshots:
 
   '@hutson/parse-repository-url@3.0.2': {}
 
-  '@impler/client@0.27.0': {}
+  '@impler/client@0.27.1': {}
 
   '@isaacs/cliui@8.0.2':
     dependencies:
