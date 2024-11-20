@@ -3,7 +3,7 @@ import { Checkbox, Flex, Text, Center, Stack } from '@mantine/core';
 import { Button } from '@ui/button';
 import { Controller } from 'react-hook-form';
 
-import { PlanCancelDetails } from './illustrations/PlanCancelDetails';
+import { PlanCancelIllustration } from './illustrations/PlanCancelIllustration';
 
 import { colors, MEMBERSHIP_CANCELLATION_REASONS } from '@config';
 
@@ -28,7 +28,7 @@ export function CancelSubscriptionModal({
       </Text>
 
       <Center>
-        <PlanCancelDetails />
+        <PlanCancelIllustration />
       </Center>
 
       <form onSubmit={handleSubmit}>
