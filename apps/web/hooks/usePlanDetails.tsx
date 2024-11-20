@@ -64,18 +64,21 @@ export function usePlanDetails({ projectId }: UsePlanDetailProps) {
   }, [activePlanDetails, profileInfo]);
 
   const onOpenPaymentModal = ({ code, modalId }: { code: string; modalId: string }) => {
+    modals.closeAll();
     modals.open({
       size: 'calc(70vw - 40px)',
       withCloseButton: false,
-      id: MODAL_KEYS.SELECT_CARD,
-      modalId: MODAL_KEYS.SELECT_CARD,
+      id: modalId,
+      modalId,
       centered: true,
+      closeOnClickOutside: true,
+      closeOnEscape: true,
       children: (
         <PaymentModal
           email={profileInfo!.email}
           planCode={code}
           projectId={profileInfo!._projectId}
-          onClose={modals.closeAll}
+          onClose={() => modals.close(modalId)}
           modalId={modalId}
         />
       ),
