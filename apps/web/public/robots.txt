@@ -1,7 +1,4 @@
-# https://www.robotstxt.org/robotstxt.html
-User-agent: *
+User-agent: *    
 Disallow:
-
-User-agent: *
 Allow: /auth/signin
 Allow: /auth/signup
