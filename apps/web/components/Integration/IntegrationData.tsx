@@ -944,7 +944,7 @@ export class AppComponent {
     ),
   },
   [IntegrationEnum.BUBBLE]: {
-    'Integration Steps': () => (
+    '1) Integration Steps': () => (
       <>
         <List type="ordered" styles={{ item: { margin: '10px 0', paddingLeft: '20px' } }}>
           <List.Item>
@@ -998,6 +998,27 @@ export class AppComponent {
             Visit Documentation with Detailed Steps
           </ModifiedText>
         </Link>
+      </>
+    ),
+    '2) Add Import Button': ({ accessToken, projectId, templateId }) => (
+      <>
+        <ModifiedText>
+          Now add Import Button provided by <Code>@impler/react</Code> which opens the Widget
+        </ModifiedText>
+        <CodeBlock
+          height={HEIGHTS.WITH_TEXT}
+          code={`
+import { useImpler } from "@impler/react";
+
+const { showWidget, isImplerInitiated } = useImpler({
+  projectId: "${projectId}",
+  templateId: "${templateId}",
+  accessToken: "${accessToken}",
+});
+
+<button disabled={!isImplerInitiated} onClick={showWidget}>Import</button>`}
+          language="javascript"
+        />
       </>
     ),
   },
