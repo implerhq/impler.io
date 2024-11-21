@@ -1,5 +1,6 @@
 import { WIDGET_TEXTS } from './config';
 
+// used for export
 export const ColumnTypes = {
   STRING: 'String',
   NUMBER: 'Number',
@@ -10,6 +11,27 @@ export const ColumnTypes = {
   ANY: 'Any',
   DOUBLE: 'Double',
   IMAGE: 'Image',
+} as const;
+
+// used for export
+export const ValidationTypes = {
+  RANGE: 'range',
+  LENGTH: 'length',
+  UNIQUE_WITH: 'unique_with',
+} as const;
+
+// used for export
+export const EventTypes = {
+  INIT_IFRAME: 'INIT_IFRAME',
+  WIDGET_READY: 'WIDGET_READY',
+  CLOSE_WIDGET: 'CLOSE_WIDGET',
+  AUTHENTICATION_VALID: 'AUTHENTICATION_VALID',
+  AUTHENTICATION_ERROR: 'AUTHENTICATION_ERROR',
+  UPLOAD_STARTED: 'UPLOAD_STARTED',
+  UPLOAD_TERMINATED: 'UPLOAD_TERMINATED',
+  UPLOAD_COMPLETED: 'UPLOAD_COMPLETED',
+  DATA_IMPORTED: 'DATA_IMPORTED',
+  IMPORT_JOB_CREATED: 'IMPORT_JOB_CREATED',
 } as const;
 
 export interface IUpload {
@@ -36,17 +58,44 @@ export interface IUpload {
   customChunkFormat: string;
 }
 
-export const EventTypes = {
-  INIT_IFRAME: 'INIT_IFRAME',
-  WIDGET_READY: 'WIDGET_READY',
-  CLOSE_WIDGET: 'CLOSE_WIDGET',
-  AUTHENTICATION_VALID: 'AUTHENTICATION_VALID',
-  AUTHENTICATION_ERROR: 'AUTHENTICATION_ERROR',
-  UPLOAD_STARTED: 'UPLOAD_STARTED',
-  UPLOAD_TERMINATED: 'UPLOAD_TERMINATED',
-  UPLOAD_COMPLETED: 'UPLOAD_COMPLETED',
-  DATA_IMPORTED: 'DATA_IMPORTED',
-} as const;
+export interface IUserJob {
+  _id: string;
+  url: string;
+  _templateId: string;
+  headings: string[];
+  cron: string;
+}
+
+export enum ValidationTypesEnum {
+  RANGE = 'range',
+  LENGTH = 'length',
+  UNIQUE_WITH = 'unique_with',
+}
+
+export type RangeValidationType = {
+  validate: 'range' | ValidationTypesEnum.RANGE;
+  min?: number;
+  max?: number;
+  errorMessage?: string;
+};
+
+export type LengthValidationType = {
+  validate: 'length' | ValidationTypesEnum.LENGTH;
+  min?: number;
+  max?: number;
+  errorMessage?: string;
+};
+
+export type UniqueWithValidationType = {
+  validate: 'unique_with' | ValidationTypesEnum.UNIQUE_WITH;
+  uniqueKey: string;
+  errorMessage?: string;
+};
+
+export type ValidationType =
+  | RangeValidationType
+  | LengthValidationType
+  | UniqueWithValidationType;
 
 export interface ISchemaItem {
   key: string;
@@ -66,9 +115,10 @@ export interface ISchemaItem {
     | '<<false>>';
   selectValues?: string[];
   dateFormats?: string[];
-  type?: keyof typeof ColumnTypes;
+  type?: ValueOf<typeof ColumnTypes>;
   regex?: string;
   allowMultiSelect?: boolean;
+  validations?: ValidationType[];
 }
 
 export type UploadTemplateData = {
@@ -95,6 +145,10 @@ export type EventCalls =
       value: Record<string, any>[];
     }
   | {
+      type: typeof EventTypes.IMPORT_JOB_CREATED;
+      value: IUserJob;
+    }
+  | {
       type: typeof EventTypes.CLOSE_WIDGET;
     }
   | {
@@ -109,6 +163,7 @@ export interface IShowWidgetProps {
   projectId: string;
   templateId: string;
   accessToken: string;
+  sampleFile?: File | Blob;
   texts?: CustomTexts;
   title?: string;
   primaryColor?: string;
@@ -121,6 +176,8 @@ export type DeepPartial<T> = T extends object
       [P in keyof T]?: DeepPartial<T[P]>;
     }
   : T;
+
+export type ValueOf<T> = T[keyof T];
 
 export type CustomTexts = DeepPartial<typeof WIDGET_TEXTS>;
 
@@ -138,4 +195,5 @@ export interface IUseImplerProps {
   onUploadComplete?: (value: IUpload) => void;
   onDataImported?: (importedData: Record<string, any>[]) => void;
   onWidgetClose?: () => void;
+  onImportJobCreated?: (jobInfo: IUserJob) => void;
 }

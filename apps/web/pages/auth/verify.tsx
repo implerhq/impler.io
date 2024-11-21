@@ -20,6 +20,7 @@ import { EditIcon } from '@assets/icons/Edit.icon';
 import { useVerify } from '@hooks/auth/useVerify';
 import { OnboardLayout } from '@layouts/OnboardLayout';
 import { Button } from '@ui/button';
+import { useAppState } from 'store/app.context';
 
 export default function OtpVerifyPage() {
   const {
@@ -28,7 +29,6 @@ export default function OtpVerifyPage() {
     countdown,
     verify,
     register,
-    profile,
     state,
     errors,
     setState,
@@ -37,6 +37,7 @@ export default function OtpVerifyPage() {
     isUpdateEmailLoading,
     isVerificationLoading,
   } = useVerify();
+  const { profileInfo } = useAppState();
   const commonStyles = {
     color: isButtonDisabled ? colors.white : colors.blue,
     cursor: isButtonDisabled ? 'not-allowed' : 'pointer',
@@ -45,7 +46,7 @@ export default function OtpVerifyPage() {
 
   return (
     <>
-      <LoadingOverlay visible={!profile} />
+      <LoadingOverlay visible={!profileInfo} />
       <Container size="md" p="md">
         <Title align="left" order={1} weight="bolder">
           We sent a verification code to your email
@@ -55,7 +56,7 @@ export default function OtpVerifyPage() {
             Please enter the 6-digit verification code sent to your email{' '}
             <UnstyledButton onClick={() => setState(ScreenStatesEnum.UPDATE_EMAIL)} disabled={isUpdateEmailLoading}>
               <Text mr={5} component="span" fw="bold" color={colors.blue}>
-                {profile?.email}
+                {profileInfo?.email}
               </Text>
               <EditIcon color={colors.blue} style={{ verticalAlign: 'middle' }} />
             </UnstyledButton>
@@ -97,7 +98,8 @@ export default function OtpVerifyPage() {
                   <Input
                     {...register('email', {
                       validate: {
-                        notSame: (value) => value !== profile?.email || 'Email cannot be the same as the current email',
+                        notSame: (value) =>
+                          value !== profileInfo?.email || 'Email cannot be the same as the current email',
                       },
                     })}
                     required

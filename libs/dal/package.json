@@ -1,9 +1,8 @@
 {
   "name": "@impler/dal",
-  "version": "0.24.1",
+  "version": "0.27.1",
   "author": "implerhq",
   "license": "MIT",
-  "private": true,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -16,7 +15,7 @@
     "lint:fix": "eslint src --fix"
   },
   "dependencies": {
-    "@impler/shared": "^0.24.1",
+    "@impler/shared": "workspace:^",
     "class-transformer": "^0.5.1",
     "date-fns": "^2.30.0",
     "mongoose": "8.0.1",

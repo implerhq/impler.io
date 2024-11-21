@@ -1,4 +1,5 @@
 import * as XLSX from 'xlsx';
+import * as exceljs from 'exceljs';
 import { cwd } from 'node:process';
 import * as xlsxPopulate from 'xlsx-populate';
 import { CONSTANTS } from '@shared/constants';
@@ -154,31 +155,13 @@ export class ExcelFileService {
   getExcelRowsColumnsCount(file: Express.Multer.File, sheetName?: string): Promise<{ rows: number; columns: number }> {
     return new Promise(async (resolve, reject) => {
       try {
-        const wb = XLSX.read(file.buffer);
-        const ws = sheetName && wb.SheetNames.includes(sheetName) ? wb.Sheets[sheetName] : wb.Sheets[wb.SheetNames[0]];
-        const range = ws['!ref'];
-        const regex = /([A-Z]+)(\d+):([A-Z]+)(\d+)/;
-        const match = range.match(regex);
-
-        if (!match) reject(new InvalidFileException());
-
-        const [, startCol, startRow, endCol, endRow] = match;
-
-        function columnToNumber(col: string) {
-          let num = 0;
-          for (let i = 0; i < col.length; i++) {
-            num = num * 26 + (col.charCodeAt(i) - 64);
-          }
-
-          return num;
-        }
-
-        const columns = columnToNumber(endCol) - columnToNumber(startCol) + 1;
-        const rows = parseInt(endRow) - parseInt(startRow) + 1;
+        const workbook = new exceljs.Workbook();
+        await workbook.xlsx.load(file.buffer);
+        const worksheet = workbook.getWorksheet(sheetName || workbook.worksheets[0].name);
 
         resolve({
-          columns,
-          rows,
+          columns: worksheet.actualColumnCount,
+          rows: worksheet.actualRowCount,
         });
       } catch (error) {
         reject(error);

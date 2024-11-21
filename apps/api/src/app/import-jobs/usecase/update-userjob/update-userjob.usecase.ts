@@ -28,7 +28,7 @@ export class UpdateUserJob {
 
   private scheduleRssImportJob(jobId: string, cronExpression: string) {
     const job = new CronJob(cronExpression, () => this.userJobTriggerService.execute(jobId));
-    this.schedulerRegistry.addCronJob(this.nameService.getCronName(jobId), job);
+    this.schedulerRegistry.addCronJob(this.nameService.getCronName(jobId), job as any);
 
     job.start();
   }

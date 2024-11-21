@@ -18,25 +18,26 @@ export class UserJobResume {
   ) {}
 
   async execute(_jobId: string): Promise<UserJobEntity> {
-    const userJob = await this.userJobRepository.findOne({ _id: _jobId });
+    const userJob = await this.userJobRepository.findById(_jobId);
 
     if (!userJob) {
       throw new DocumentNotFoundException(`Userjob`, _jobId);
     }
 
     if (userJob.status !== UserJobImportStatusEnum.PAUSED) {
-      throw new BadRequestException(`Job ${_jobId} is not paused. Current status: ${userJob.status}`);
+      throw new BadRequestException(`Userjob with id ${_jobId} is not paused. Current status: ${userJob.status}`);
     }
 
     const cronExpression = userJob.cron;
     const existingJob = this.schedulerRegistry.getCronJob(this.nameService.getCronName(_jobId));
 
     if (existingJob) {
-      existingJob.setTime(new CronTime(cronExpression));
+      existingJob.setTime(new CronTime(cronExpression) as any);
       existingJob.start();
     } else {
       const newJob = new CronJob(cronExpression, () => this.userJobTriggerService.execute(_jobId));
-      this.schedulerRegistry.addCronJob(this.nameService.getCronName(_jobId), newJob);
+
+      this.schedulerRegistry.addCronJob(this.nameService.getCronName(_jobId), newJob as any);
       newJob.start();
     }
 
@@ -45,10 +46,6 @@ export class UserJobResume {
       { $set: { status: UserJobImportStatusEnum.RUNNING } },
       { returnDocument: 'after' }
     );
-
-    if (!updatedUserJob) {
-      throw new DocumentNotFoundException(`No User Job was found with the given _jobId ${_jobId}`, _jobId);
-    }
 
     return updatedUserJob;
   }

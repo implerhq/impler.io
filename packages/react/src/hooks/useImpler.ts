@@ -15,6 +15,7 @@ export function useImpler({
   onUploadStart,
   onDataImported,
   onUploadTerminate,
+  onImportJobCreated,
 }: IUseImplerProps) {
   const [uuid] = useState(generateUuid());
   const [isImplerInitiated, setIsImplerInitiated] = useState(false);
@@ -36,6 +37,9 @@ export function useImpler({
           break;
         case EventTypes.CLOSE_WIDGET:
           if (onWidgetClose) onWidgetClose();
+          break;
+        case EventTypes.IMPORT_JOB_CREATED:
+          if (onImportJobCreated) onImportJobCreated(eventData.value);
           break;
       }
     },
@@ -75,9 +79,10 @@ export function useImpler({
   const showWidget = async ({
     colorScheme,
     data,
+    sampleFile,
     schema,
     output,
-  }: Pick<IShowWidgetProps, 'colorScheme' | 'data' | 'schema' | 'output'> = {}) => {
+  }: Pick<IShowWidgetProps, 'colorScheme' | 'data' | 'schema' | 'output' | 'sampleFile'> = {}) => {
     if (window.impler && isImplerInitiated) {
       const payload: IShowWidgetProps & { uuid: string; host: string } = {
         uuid,
@@ -87,6 +92,7 @@ export function useImpler({
         accessToken,
         schema,
         data,
+        sampleFile,
         output,
         title,
         extra,

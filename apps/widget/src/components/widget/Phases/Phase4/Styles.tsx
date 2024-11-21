@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
+import React from 'react';
 import { colors } from '@config';
 import { createStyles, MantineTheme } from '@mantine/core';
-import React from 'react';
 
-export const getWrapperStyles = (theme: MantineTheme): React.CSSProperties => ({
+const getWrapperStyles = (): React.CSSProperties => ({
   flexDirection: 'column',
   textAlign: 'center',
   alignItems: 'center',
@@ -14,7 +13,7 @@ export const getWrapperStyles = (theme: MantineTheme): React.CSSProperties => ({
   gap: 0,
 });
 
-export const getCheckIconStyles = (theme: MantineTheme): React.CSSProperties => ({
+const getCheckIconStyles = (theme: MantineTheme): React.CSSProperties => ({
   backgroundColor: colors.success,
   color: colors.white,
   borderRadius: '100%',
@@ -26,25 +25,25 @@ export const getCheckIconStyles = (theme: MantineTheme): React.CSSProperties => 
   },
 });
 
-export const getTitleStyles = (theme: MantineTheme): React.CSSProperties => ({
+const getTitleStyles = (theme: MantineTheme): React.CSSProperties => ({
   fontSize: theme.fontSizes.xl,
   [`@media (min-width: ${theme.breakpoints.md}px)`]: {
     fontSize: 30,
   },
 });
 
-export const getSubTitleStyles = (theme: MantineTheme): React.CSSProperties => ({
+const getSubTitleStyles = (theme: MantineTheme): React.CSSProperties => ({
   fontSize: theme.fontSizes.lg,
   [`@media (min-width: ${theme.breakpoints.md}px)`]: {
     fontSize: 25,
   },
 });
 
-export default createStyles((theme: MantineTheme, params, getRef): Record<string, any> => {
+export default createStyles((theme: MantineTheme): Record<string, any> => {
   return {
     subTitle: getSubTitleStyles(theme),
     title: getTitleStyles(theme),
-    wrapper: getWrapperStyles(theme),
+    wrapper: getWrapperStyles(),
     check: getCheckIconStyles(theme),
   };
 });

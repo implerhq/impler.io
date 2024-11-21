@@ -1,20 +1,19 @@
 import { useState } from 'react';
 import getConfig from 'next/config';
+import { modals } from '@mantine/modals';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/router';
+
 import { notify } from '@libs/notify';
 import { commonApi } from '@libs/api';
-import { API_KEYS, CONSTANTS, NOTIFICATION_KEYS, ROUTES } from '@config';
-import { modals } from '@mantine/modals';
 import { ICardData, IErrorObject } from '@impler/shared';
 import { ConfirmationModal } from '@components/ConfirmationModal';
+import { API_KEYS, CONSTANTS, MODAL_KEYS, NOTIFICATION_KEYS } from '@config';
 
 const { publicRuntimeConfig } = getConfig();
 
 interface UseSubscribeProps {
   email: string;
   planCode: string;
-  paymentMethodId?: string;
 }
 
 interface ISubscribeResponse {
@@ -23,66 +22,50 @@ interface ISubscribeResponse {
   success: boolean;
 }
 
-export const useSubscribe = ({ email, planCode, paymentMethodId }: UseSubscribeProps) => {
+export const useSubscribe = ({ email, planCode }: UseSubscribeProps) => {
   const queryClient = useQueryClient();
-  const router = useRouter();
   const isCouponFeatureEnabled = publicRuntimeConfig.NEXT_PUBLIC_COUPON_ENABLED;
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | undefined>(paymentMethodId);
   const [appliedCouponCode, setAppliedCouponCode] = useState<string | undefined>(undefined);
 
   const {
     data: paymentMethods,
     isLoading: isPaymentMethodsLoading,
     isFetching: isPaymentMethodsFetching,
-  } = useQuery<unknown, IErrorObject, ICardData[], [string]>(
-    [API_KEYS.PAYMENT_METHOD_LIST],
-    () => commonApi<ICardData[]>(API_KEYS.PAYMENT_METHOD_LIST as any, {}),
-    {
-      onSuccess(data) {
-        if (data?.length === 0) {
-          notify(NOTIFICATION_KEYS.NO_PAYMENT_METHOD_FOUND, {
-            title: 'No Cards Found!',
-            message: 'Please Add your Card first. Redirecting you to cards!',
-            color: 'red',
-          });
-          modals.closeAll();
-          router.push(ROUTES.ADD_CARD + `&${CONSTANTS.PLAN_CODE_QUERY_KEY}=${planCode}`);
-        } else {
-          setSelectedPaymentMethod(data[0].paymentMethodId);
-        }
-      },
-    }
+  } = useQuery<ICardData[], IErrorObject, ICardData[], [string]>([API_KEYS.PAYMENT_METHOD_LIST], () =>
+    commonApi<ICardData[]>(API_KEYS.PAYMENT_METHOD_LIST as any, {})
   );
+
   const { mutate: subscribe, isLoading: isPurchaseLoading } = useMutation<
     ISubscribeResponse,
     IErrorObject,
     ISubscribeData
   >(
-    [API_KEYS.SUBSCRIBE, selectedPaymentMethod, email, planCode],
-    () =>
+    [API_KEYS.SUBSCRIBE, email, planCode],
+    (paymentData) =>
       commonApi<ISubscribeResponse>(API_KEYS.SUBSCRIBE as any, {
-        query: { paymentMethodId: selectedPaymentMethod, email, planCode },
+        query: { ...paymentData },
       }),
     {
       onSuccess: (response) => {
-        queryClient.invalidateQueries([API_KEYS.FETCH_ACTIVE_SUBSCRIPTION, email]);
+        queryClient.invalidateQueries([API_KEYS.FETCH_ACTIVE_SUBSCRIPTION]);
+        modals.closeAll();
         if (response && response.status) {
           modals.open({
-            title:
-              response.status === CONSTANTS.PAYMENT_SUCCCESS_CODE
-                ? CONSTANTS.SUBSCRIPTION_ACTIVATED_TITLE
-                : CONSTANTS.SUBSCRIPTION_FAILED_TITLE,
             children: <ConfirmationModal status={response.status as string} />,
+            withCloseButton: false,
           });
+
+          modals.close(MODAL_KEYS.SELECT_CARD);
+          modals.close(MODAL_KEYS.PAYMENT_PLANS);
         }
       },
       onError: (error: IErrorObject) => {
+        modals.closeAll();
         notify(NOTIFICATION_KEYS.PURCHASE_FAILED, {
           title: 'Purchase Failed',
           message: error.message,
           color: 'red',
         });
-        queryClient.invalidateQueries([API_KEYS.FETCH_ACTIVE_SUBSCRIPTION, email]);
         if (error && error.statusCode) {
           modals.open({
             title: CONSTANTS.SUBSCRIPTION_FAILED_TITLE,
@@ -93,31 +76,24 @@ export const useSubscribe = ({ email, planCode, paymentMethodId }: UseSubscribeP
     }
   );
 
-  const handleProceed = () => {
-    modals.closeAll();
-    if (selectedPaymentMethod) {
+  const handleProceed = (createdPaymentMethodId: string) => {
+    if (createdPaymentMethodId) {
       subscribe({
         email,
         planCode,
-        selectedPaymentMethod,
+        paymentMethodId: createdPaymentMethodId,
       });
     }
   };
 
-  const handlePaymentMethodChange = (paymnentMethodId: string) => {
-    setSelectedPaymentMethod(paymnentMethodId);
-  };
-
   return {
-    paymentMethods,
-    isPaymentMethodsFetching,
-    isPaymentMethodsLoading,
     handleProceed,
-    handlePaymentMethodChange,
+    paymentMethods,
+    isPurchaseLoading,
     appliedCouponCode,
     setAppliedCouponCode,
-    selectedPaymentMethod,
-    isPurchaseLoading,
     isCouponFeatureEnabled,
+    isPaymentMethodsLoading,
+    isPaymentMethodsFetching,
   };
 };

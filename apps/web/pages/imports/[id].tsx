@@ -7,24 +7,20 @@ import { ActionIcon, Flex, Group, LoadingOverlay, Title, useMantineTheme, Select
 import { track } from '@libs/amplitude';
 import { useImpler } from '@impler/react';
 import { TemplateModeEnum } from '@impler/shared';
-import { IMPORT_MODES, ROUTES, colors } from '@config';
+import { IMPORT_MODES, ROUTES, SubjectsEnum, colors } from '@config';
 import { useImportDetails } from '@hooks/useImportDetails';
 
 import { Tabs } from '@ui/Tabs';
 import { Button } from '@ui/button';
 import { Schema } from '@components/imports/schema';
-import { Snippet } from '@components/imports/Snippet';
+import { withProtectedResource } from '@components/hoc';
 import { Destination } from '@components/imports/destination';
 
 import { AppLayout } from '@layouts/AppLayout';
-import { OneIcon } from '@assets/icons/One.icon';
-import { TwoIcon } from '@assets/icons/Two.icon';
 import { EditIcon } from '@assets/icons/Edit.icon';
-import { FiveIcon } from '@assets/icons/Five.icon';
-import { FourIcon } from '@assets/icons/Four.icon';
-import { ThreeIcon } from '@assets/icons/Three.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
 import { LeftArrowIcon } from '@assets/icons/LeftArrow.icon';
+import { IntegrationIcon } from '@assets/icons/Integration.icon';
 
 const Editor = dynamic(() => import('@components/imports/editor').then((mod) => mod.OutputEditor), {
   ssr: false,
@@ -33,20 +29,21 @@ const Validator = dynamic(() => import('@components/imports/validator').then((mo
   ssr: false,
 });
 
-export default function ImportDetails({}) {
+function ImportDetails() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'schema' | 'destination' | 'snippet' | 'validator' | 'output'>();
   const { colorScheme } = useMantineTheme();
   const {
+    meta,
     columns,
     profileInfo,
+    updateImport,
     templateData,
     onUpdateClick,
     onDeleteClick,
+    onIntegrationClick,
     isTemplateDataLoading,
     onSpreadsheetImported,
-    updateImport,
-    meta,
   } = useImportDetails({
     templateId: router.query.id as string,
   });
@@ -62,7 +59,9 @@ export default function ImportDetails({}) {
       name: 'IMPORT CLICK',
       properties: {},
     });
-    showWidget({ colorScheme });
+    showWidget({
+      colorScheme,
+    });
   };
 
   return (
@@ -101,6 +100,9 @@ export default function ImportDetails({}) {
           >
             Import
           </Button>
+          <Button leftIcon={<IntegrationIcon />} id="integration" onClick={onIntegrationClick}>
+            Integrate
+          </Button>
           <Button variant="outline" color="red" onClick={onDeleteClick}>
             <DeleteIcon />
           </Button>
@@ -116,41 +118,24 @@ export default function ImportDetails({}) {
               id: 'schema',
               value: 'schema',
               title: 'Schema',
-              icon: <OneIcon size="xs" />,
               content: <Schema templateId={templateData._id} />,
             },
             {
               id: 'destination',
               value: 'destination',
               title: 'Destination',
-              icon: <TwoIcon size="xs" />,
               content: <Destination template={templateData} />,
-            },
-            {
-              id: 'snippet',
-              value: 'snippet',
-              title: 'Snippet',
-              icon: <ThreeIcon size="xs" />,
-              content: (
-                <Snippet
-                  templateId={templateData._id}
-                  projectId={templateData._projectId}
-                  accessToken={profileInfo?.accessToken}
-                />
-              ),
             },
             {
               id: 'validator',
               value: 'validator',
               title: 'Validator',
-              icon: <FourIcon size="xs" />,
               content: <Validator templateId={templateData._id} />,
             },
             {
               id: 'output',
               value: 'output',
               title: 'Output',
-              icon: <FiveIcon size="xs" />,
               content: <Editor templateId={templateData._id} switchToDestination={() => setActiveTab('destination')} />,
             },
           ]}
@@ -161,4 +146,20 @@ export default function ImportDetails({}) {
   );
 }
 
-ImportDetails.Layout = AppLayout;
+const EnhancedImportDetails = withProtectedResource(ImportDetails, {
+  subject: SubjectsEnum.IMPORTS,
+});
+
+export default function ImportDetailsPage() {
+  return <EnhancedImportDetails />;
+}
+
+ImportDetailsPage.Layout = AppLayout;
+
+export async function getServerSideProps() {
+  return {
+    props: {
+      title: 'Import Details',
+    },
+  };
+}

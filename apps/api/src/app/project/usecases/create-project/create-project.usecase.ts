@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ProjectRepository } from '@impler/dal';
-import { ColumnTypesEnum } from '@impler/shared';
 
-import { CreateProjectCommand } from './create-project.command';
 import { CreateEnvironment } from 'app/environment/usecases';
+import { CreateProjectCommand } from './create-project.command';
 import { CreateTemplate, UpdateTemplateColumns } from 'app/template/usecases';
+import { ColumnTypesEnum, IntegrationEnum, UserRolesEnum } from '@impler/shared';
 
 @Injectable()
 export class CreateProject {
@@ -15,16 +15,18 @@ export class CreateProject {
     private readonly updateTemplateColumns: UpdateTemplateColumns
   ) {}
 
-  async execute(command: CreateProjectCommand) {
+  async execute(command: CreateProjectCommand, email: string) {
     const project = await this.projectRepository.create(command);
 
     const environment = await this.createEnvironment.execute({
       projectId: project._id,
       _userId: command._userId,
+      role: UserRolesEnum.ADMIN,
+      isOwner: true,
     });
 
     if (command.onboarding) {
-      await this.createSampleImport(project._id);
+      await this.createSampleImport(project._id, email);
     }
 
     return {
@@ -33,11 +35,12 @@ export class CreateProject {
     };
   }
 
-  async createSampleImport(_projectId: string) {
+  async createSampleImport(_projectId: string, email: string) {
     const template = await this.createTemplate.execute({
       _projectId,
       chunkSize: 100,
       name: 'Sales Data Import',
+      integration: IntegrationEnum.JAVASCRIPT,
     });
     await this.updateTemplateColumns.execute(
       [
@@ -127,7 +130,8 @@ export class CreateProject {
           isUnique: false,
         },
       ],
-      template._id
+      template._id,
+      email
     );
   }
 }

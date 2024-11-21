@@ -4,12 +4,12 @@ import { Injectable, HttpStatus, HttpException, UnauthorizedException } from '@n
 
 import { APIMessages } from '@shared/constants';
 import { SchemaDto } from 'app/common/dtos/Schema.dto';
+import { PaymentAPIService } from '@impler/services';
 import { ValidRequestCommand } from './valid-request.command';
 import { ProjectRepository, TemplateRepository, UserEntity } from '@impler/dal';
 import { UniqueColumnException } from '@shared/exceptions/unique-column.exception';
-import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
-import { PaymentAPIService } from '@impler/services';
 import { AVAILABLE_BILLABLEMETRIC_CODE_ENUM, ColumnTypesEnum } from '@impler/shared';
+import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
 
 @Injectable()
 export class ValidRequest {
@@ -55,9 +55,17 @@ export class ValidRequest {
           );
         }
 
-        const columnKeysSet = new Set(parsedSchema.map((column) => column.key));
+        const columnKeysSet = new Set();
+        const duplicateKeys = parsedSchema.reduce((acc, item) => {
+          if (columnKeysSet.has(item.key)) acc.add(item.key);
+          columnKeysSet.add(item.key);
+
+          return acc;
+        }, new Set());
         if (columnKeysSet.size !== parsedSchema.length) {
-          throw new UniqueColumnException(APIMessages.COLUMN_KEY_TAKEN);
+          throw new UniqueColumnException(
+            `${APIMessages.COLUMN_KEY_DUPLICATED} Duplicate Keys Found for ${[...duplicateKeys].join(', ')}`
+          );
         }
 
         for (const item of parsedSchema) {
@@ -79,19 +87,35 @@ export class ValidRequest {
         }
 
         const hasImageColumns = parsedSchema.some((column) => column.type === ColumnTypesEnum.IMAGE);
-        if (hasImageColumns) {
+        const hasValidations = parsedSchema.some(
+          (column) => Array.isArray(column.validations) && column.validations.length > 0
+        );
+        let email: string;
+        if (hasImageColumns || hasValidations) {
           const project = await this.projectRepository.getUserOfProject(command.projectId);
-
-          const isBillableMetricAvailable = await this.paymentAPIService.checkEvent({
-            email: (project._userId as unknown as UserEntity).email,
-            billableMetricCode: AVAILABLE_BILLABLEMETRIC_CODE_ENUM.IMAGE_UPLOAD,
+          email = (project._userId as unknown as UserEntity).email;
+        }
+        if (hasImageColumns && email) {
+          const imageImportAvailable = await this.paymentAPIService.checkEvent({
+            email,
+            billableMetricCode: AVAILABLE_BILLABLEMETRIC_CODE_ENUM.IMAGE_IMPORT,
           });
 
-          if (!isBillableMetricAvailable) {
+          if (!imageImportAvailable) {
+            throw new DocumentNotFoundException('Schema', command.schema, APIMessages.FEATURE_UNAVAILABLE.IMAGE_IMPORT);
+          }
+        }
+        if (hasValidations && email) {
+          const validationsAvailable = await this.paymentAPIService.checkEvent({
+            email,
+            billableMetricCode: AVAILABLE_BILLABLEMETRIC_CODE_ENUM.ADVANCED_VALIDATORS,
+          });
+
+          if (!validationsAvailable) {
             throw new DocumentNotFoundException(
               'Schema',
               command.schema,
-              APIMessages.ERROR_ACCESSING_FEATURE.IMAGE_UPLOAD
+              APIMessages.FEATURE_UNAVAILABLE.ADVANCED_VALIDATIONS
             );
           }
         }
@@ -99,6 +123,16 @@ export class ValidRequest {
 
       return { success: true };
     } catch (error) {
+      if (error instanceof UniqueColumnException) {
+        throw new HttpException(
+          {
+            message: error.message,
+            errorCode: error.getStatus(),
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY
+        );
+      }
+
       if (error instanceof DocumentNotFoundException) {
         throw new HttpException(
           {

@@ -2,20 +2,20 @@ import { ApiTags, ApiSecurity, ApiOperation } from '@nestjs/swagger';
 import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, UseGuards } from '@nestjs/common';
 import {
   CreateUserJob,
-  GetColumnSchemaMapping,
-  CreateJobMapping,
   UpdateUserJob,
+  CreateJobMapping,
+  GetColumnSchemaMapping,
   GetUserJob,
   UserJobPause,
+  UserJobDelete,
   UserJobResume,
   UserJobTerminate,
-  UserJobDelete,
 } from './usecase';
 import { ACCESS_KEY_NAME } from '@impler/shared';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { UpdateJobDto, CreateUserJobDto, UpdateJobMappingDto } from './dtos';
 
-@ApiTags('Import-Jobs')
+@ApiTags('Import Jobs')
 @Controller('/import-jobs')
 @UseGuards(JwtAuthGuard)
 @ApiSecurity(ACCESS_KEY_NAME)
@@ -35,10 +35,13 @@ export class ImportJobsController {
   @Post(':templateId')
   @ApiOperation({ summary: 'Create User-Job' })
   @ApiSecurity(ACCESS_KEY_NAME)
-  async createUserJobRoute(@Param('templateId') templateId: string, @Body() createUserJobData: CreateUserJobDto) {
+  async createUserJobRoute(@Param('templateId') templateId: string, @Body() jobData: CreateUserJobDto) {
     return this.createUserJob.execute({
       _templateId: templateId,
-      url: createUserJobData.url,
+      url: jobData.url,
+      extra: jobData.extra,
+      externalUserId: jobData.externalUserId,
+      authHeaderValue: jobData.authHeaderValue,
     });
   }
 

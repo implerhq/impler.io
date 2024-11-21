@@ -1,6 +1,7 @@
 export class CreateUserJobCommand {
   url: string;
+  extra?: string;
   _templateId: string;
   externalUserId?: string;
-  extra?: string;
+  authHeaderValue?: string;
 }

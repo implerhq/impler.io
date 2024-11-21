@@ -1,24 +1,32 @@
 import { PaymentAPIService } from '@impler/services';
 import { Injectable } from '@nestjs/common';
+import { EnvironmentRepository } from '@impler/dal';
 
 @Injectable()
 export class Subscription {
-  constructor(private paymentApiService: PaymentAPIService) {}
+  constructor(
+    private paymentApiService: PaymentAPIService,
+    private environmentRepository: EnvironmentRepository
+  ) {}
 
   async execute({
-    email,
+    projectId,
     planCode,
     selectedPaymentMethod,
     couponCode,
   }: {
-    email: string;
+    projectId: string;
     planCode: string;
     selectedPaymentMethod: string;
     couponCode?: string;
   }) {
+    const teamOwner = await this.environmentRepository.getTeamOwnerDetails(projectId);
+
     return await this.paymentApiService.subscribe({
       planCode,
-      email,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+      email: teamOwner._userId.email,
       selectedPaymentMethod,
       couponCode,
     });

@@ -10,10 +10,12 @@ import {
   IsNotEmpty,
   Validate,
   ArrayMinSize,
+  ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ColumnTypesEnum, Defaults } from '@impler/shared';
 import { IsValidRegex } from '@shared/framework/is-valid-regex.validator';
+import { ValidationDto } from 'app/column/dtos/column-request.dto';
 
 export class SchemaDto {
   @ApiProperty({
@@ -107,4 +109,13 @@ export class SchemaDto {
   @IsNumber()
   @IsOptional()
   sequence: number;
+
+  @ApiPropertyOptional({
+    description: 'Validations for column',
+  })
+  @IsArray()
+  @IsOptional()
+  @Type(() => ValidationDto)
+  @ValidateNested({ each: true })
+  validations?: ValidationDto[];
 }

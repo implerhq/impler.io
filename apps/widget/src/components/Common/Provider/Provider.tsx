@@ -12,6 +12,7 @@ interface IProviderProps {
   texts: typeof WIDGET_TEXTS;
   primaryColor: string;
   output?: string;
+  sampleFile?: File | Blob;
   schema?: string;
   data?: string;
   host: string;
@@ -31,6 +32,7 @@ export function Provider(props: PropsWithChildren<IProviderProps>) {
     api,
     data,
     title,
+    sampleFile,
     texts,
     output,
     projectId,
@@ -58,6 +60,7 @@ export function Provider(props: PropsWithChildren<IProviderProps>) {
             host={host}
             data={data}
             title={title}
+            sampleFile={sampleFile}
             texts={texts}
             output={output}
             schema={schema}

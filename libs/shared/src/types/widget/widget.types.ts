@@ -9,6 +9,7 @@ export interface ICommonShowPayload {
   primaryColor?: string;
   colorScheme?: string;
   title?: string;
+  sampleFile?: File | Blob;
   projectId: string;
   accessToken: string;
   uuid: string;
@@ -41,6 +42,7 @@ export enum EventTypesEnum {
   UPLOAD_TERMINATED = 'UPLOAD_TERMINATED',
   UPLOAD_COMPLETED = 'UPLOAD_COMPLETED',
   DATA_IMPORTED = 'DATA_IMPORTED',
+  IMPORT_JOB_CREATED = 'IMPORT_JOB_CREATED',
 }
 
 export enum WidgetEventTypesEnum {

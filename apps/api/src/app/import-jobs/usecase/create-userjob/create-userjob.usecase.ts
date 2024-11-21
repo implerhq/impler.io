@@ -12,7 +12,13 @@ export class CreateUserJob {
     private readonly userJobRepository: UserJobRepository
   ) {}
 
-  async execute({ _templateId, url, externalUserId, extra }: CreateUserJobCommand): Promise<UserJobEntity> {
+  async execute({
+    url,
+    extra,
+    _templateId,
+    externalUserId,
+    authHeaderValue,
+  }: CreateUserJobCommand): Promise<UserJobEntity> {
     const mimeType = await this.rssService.getMimeType(url);
     if (mimeType === FileMimeTypesEnum.XML || mimeType === FileMimeTypesEnum.TEXTXML) {
       const { rssKeyHeading } = await this.rssService.parseRssFeed(url);
@@ -23,9 +29,10 @@ export class CreateUserJob {
 
       return await this.userJobRepository.create({
         url,
+        extra,
+        authHeaderValue,
         headings: rssKeyHeading,
         _templateId: _templateId,
-        extra,
         externalUserId: externalUserId || (formattedExtra as unknown as Record<string, any>)?.externalUserId,
       });
     } else {

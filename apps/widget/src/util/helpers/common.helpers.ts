@@ -5,7 +5,7 @@ import 'tippy.js/dist/tippy.css';
 import 'tippy.js/animations/shift-away.css';
 import { variables } from '@config';
 import { WIDGET_TEXTS, isObject } from '@impler/client';
-import { convertStringToJson, downloadFile } from '@impler/shared';
+import { convertStringToJson, downloadFile, FileMimeTypesEnum } from '@impler/shared';
 
 // eslint-disable-next-line no-magic-numbers
 export function formatBytes(bytes, decimals = 2) {
@@ -123,3 +123,43 @@ export function deepMerge(
     return mergedResult;
   }
 }
+
+export function debounce(func: (...args: any[]) => void, wait: number) {
+  let timeout: any;
+
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+export function memoize<T extends (...args: any[]) => any>(fn: T): T {
+  const cache = new Map<string, ReturnType<T>>();
+
+  return function (this: any, ...args: Parameters<T>): ReturnType<T> {
+    const key = JSON.stringify(args);
+    if (cache.has(key)) {
+      return cache.get(key)!;
+    }
+    const result = fn.apply(this, args);
+    cache.set(key, result);
+
+    return result;
+  } as T;
+}
+
+export const isValidFileType = (sampleFile: Blob): boolean => {
+  if (
+    sampleFile instanceof Blob &&
+    [FileMimeTypesEnum.CSV, FileMimeTypesEnum.EXCEL, FileMimeTypesEnum.EXCELM, FileMimeTypesEnum.EXCELX].includes(
+      sampleFile.type as FileMimeTypesEnum
+    )
+  )
+    return true;
+
+  return false;
+};

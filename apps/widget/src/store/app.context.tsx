@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-import { IAppStore } from '../types';
+import { FlowsEnum, IAppStore } from '../types';
 import { IUpload } from '@impler/client';
 import { IImportConfig, ITemplate } from '@impler/shared';
 
@@ -10,6 +10,8 @@ interface AppContextProviderProps
       | 'uploadInfo'
       | 'setUploadInfo'
       | 'reset'
+      | 'flow'
+      | 'setFlow'
       | 'templateInfo'
       | 'importConfig'
       | 'setTemplateInfo'
@@ -28,6 +30,7 @@ const AppContextProvider = ({
   title,
   texts,
   data,
+  sampleFile,
   schema,
   output,
   host,
@@ -37,6 +40,7 @@ const AppContextProvider = ({
   const [importId, setImportId] = useState<string>();
   const [imageSchema, setImageSchema] = useState<string>();
   const [uploadInfo, setUploadInfo] = useState<IUpload>({} as IUpload);
+  const [flow, setFlow] = useState<FlowsEnum>(FlowsEnum.STRAIGHT_IMPORT);
   const [templateInfo, setTemplateInfo] = useState<ITemplate>({} as ITemplate);
   const [importConfig, setImportConfig] = useState<IImportConfig>({} as IImportConfig);
 
@@ -54,13 +58,16 @@ const AppContextProvider = ({
         host,
         reset,
         data,
+        flow,
         schema,
         output,
+        setFlow,
         importId,
         showWidget,
         uploadInfo,
         setImportId,
         imageSchema,
+        sampleFile,
         templateInfo,
         importConfig,
         primaryColor,

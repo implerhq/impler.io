@@ -12,12 +12,12 @@ interface TooltipLinkProps {
   iconColor?: string;
 }
 
-export function TooltipLink({ label = 'Read More', link, iconSize = 'sm' }: TooltipLinkProps) {
+export function TooltipLink({ label = 'Know More', link, iconSize = 'sm' }: TooltipLinkProps) {
   const theme = useMantineColorScheme();
 
   return (
     <Tooltip label={label} withArrow>
-      <Link href={link} target="_blank" rel="noopener noreferrer">
+      <Link href={link} target="_blank" rel="referrer">
         <GuidePointIcon
           size={iconSize}
           color={theme.colorScheme === 'dark' ? colors.BGPrimaryLight : colors.BGPrimaryDark}

@@ -12,9 +12,10 @@ import { IErrorObject, ILoginResponse, SCREENS } from '@impler/shared';
 import { handleRouteBasedOnScreenResponse } from '@shared/helpers';
 
 export function useSignin() {
-  const { push } = useRouter();
+  const { push, query } = useRouter();
   const { setProfileInfo } = useAppState();
   const { register, handleSubmit } = useForm<ISigninData>();
+  const invitationId = query.invitationId as string | undefined;
   const [errorMessage, setErrorMessage] = useState<IErrorObject | undefined>(undefined);
 
   const { mutate: login, isLoading: isLoginLoading } = useMutation<
@@ -34,7 +35,7 @@ export function useSignin() {
         },
       });
       setProfileInfo(profileData);
-      handleRouteBasedOnScreenResponse(data.screen as SCREENS, push);
+      handleRouteBasedOnScreenResponse(data.screen as SCREENS, push, invitationId ? [invitationId] : []);
     },
     onError(error) {
       setErrorMessage(error);
@@ -42,7 +43,7 @@ export function useSignin() {
   });
 
   const onLogin = (data: ISigninData) => {
-    login(data);
+    login({ ...data, invitationId });
   };
 
   return {

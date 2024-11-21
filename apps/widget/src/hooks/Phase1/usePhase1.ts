@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { logAmplitudeEvent } from '@amplitude';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
+import { logAmplitudeEvent } from '@amplitude';
 import { notifier, ParentWindow } from '@util';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { useImplerState } from '@store/impler.context';
 import { IUpload, WIDGET_TEXTS } from '@impler/client';
-import { IErrorObject, ITemplate, FileMimeTypesEnum } from '@impler/shared';
+import { IErrorObject, ITemplate, FileMimeTypesEnum, IColumn, downloadFile } from '@impler/shared';
 
 import { variables } from '@config';
 import { useSample } from '@hooks/useSample';
@@ -18,10 +18,12 @@ import { IFormvalues, IUploadValues } from '@types';
 interface IUsePhase1Props {
   goNext: () => void;
   texts: typeof WIDGET_TEXTS;
+  onManuallyEnterData: () => void;
 }
 
-export function usePhase1({ goNext, texts }: IUsePhase1Props) {
+export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Props) {
   const {
+    watch,
     control,
     register,
     trigger,
@@ -38,16 +40,27 @@ export function usePhase1({ goNext, texts }: IUsePhase1Props) {
   const { templateId, authHeaderValue, extra } = useImplerState();
   const [excelSheetNames, setExcelSheetNames] = useState<string[]>([]);
   const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
-  const { setUploadInfo, setTemplateInfo, output, schema, data, importId, imageSchema } = useAppState();
+  const { setUploadInfo, setTemplateInfo, output, schema, data, importId, imageSchema, sampleFile } = useAppState();
+
+  const selectedTemplateId = watch('templateId');
+
+  const { data: columns, isLoading: isColumnListLoading } = useQuery<unknown, IErrorObject, IColumn[], [string]>(
+    [`template-columns:${selectedTemplateId}`],
+    () => api.getTemplateColun(selectedTemplateId),
+    {
+      enabled: !!selectedTemplateId,
+    }
+  );
 
   const { isLoading: isUploadLoading, mutate: submitUpload } = useMutation<IUpload, IErrorObject, IUploadValues>(
     ['upload'],
-    (values: any) => api.uploadFile(values),
+    (values: IUploadValues) => api.uploadFile(values),
     {
-      onSuccess(uploadData) {
+      onSuccess(uploadData, uploadValues) {
         ParentWindow.UploadStarted({ templateId: uploadData._templateId, uploadId: uploadData._id });
         setUploadInfo(uploadData);
-        goNext();
+        if (uploadValues.file) goNext();
+        else onManuallyEnterData();
       },
       onError(error: IErrorObject) {
         resetField('file');
@@ -60,7 +73,8 @@ export function usePhase1({ goNext, texts }: IUsePhase1Props) {
     string[],
     IErrorObject,
     { file: File }
-  >(['getExcelSheetNames'], (file) => api.getExcelSheetNames(file), {
+    // eslint-disable-next-line prettier/prettier
+    >(['getExcelSheetNames'], (excelSheetFile) => api.getExcelSheetNames(excelSheetFile), {
     onSuccess(sheetNames) {
       if (sheetNames.length <= 1) {
         setValue('selectedSheetName', sheetNames[0]);
@@ -94,6 +108,12 @@ export function usePhase1({ goNext, texts }: IUsePhase1Props) {
     }
   };
   const onDownloadClick = async () => {
+    if (sampleFile) {
+      const fileName = (sampleFile as File).name;
+      const fileBaseName = fileName.split('.')[0];
+      downloadFile(sampleFile as Blob, fileBaseName);
+    }
+
     setIsDownloadInProgress(true);
     const isTemplateValid = await trigger('templateId');
     if (!isTemplateValid) {
@@ -119,8 +139,8 @@ export function usePhase1({ goNext, texts }: IUsePhase1Props) {
     if (foundTemplate) {
       submitData.templateId = foundTemplate._id;
       logAmplitudeEvent('UPLOAD', {
-        fileSize: submitData.file.size,
-        fileType: submitData.file.type,
+        fileSize: submitData.file?.size,
+        fileType: submitData.file?.type,
         hasData: !!data,
         hasExtra: !!extra,
       });
@@ -135,11 +155,12 @@ export function usePhase1({ goNext, texts }: IUsePhase1Props) {
       });
     }
   };
-  const onSubmit = async () => {
-    await trigger();
-    const file = getValues('file');
-    if (file && [FileMimeTypesEnum.EXCEL, FileMimeTypesEnum.EXCELX].includes(file.type as FileMimeTypesEnum)) {
-      getExcelSheetNames({ file: file });
+  const onSubmit = async (uploadedFile?: File) => {
+    if (
+      uploadedFile &&
+      [FileMimeTypesEnum.EXCEL, FileMimeTypesEnum.EXCELX].includes(uploadedFile.type as FileMimeTypesEnum)
+    ) {
+      getExcelSheetNames({ file: uploadedFile });
     } else {
       handleSubmit(uploadFile)();
     }
@@ -157,6 +178,7 @@ export function usePhase1({ goNext, texts }: IUsePhase1Props) {
   return {
     control,
     errors,
+    columns,
     setError,
     register,
     onSubmit,
@@ -165,6 +187,7 @@ export function usePhase1({ goNext, texts }: IUsePhase1Props) {
     excelSheetNames,
     isUploadLoading,
     onTemplateChange,
+    isColumnListLoading,
     isDownloadInProgress,
     onSelectSheetModalReset,
     isExcelSheetNamesLoading,

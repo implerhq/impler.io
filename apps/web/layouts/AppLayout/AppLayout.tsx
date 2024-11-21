@@ -3,24 +3,30 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { PropsWithChildren, useRef } from 'react';
-import { Flex, Group, LoadingOverlay, Select, Stack, Title, useMantineColorScheme } from '@mantine/core';
+import { Flex, Group, LoadingOverlay, Text, Stack, Title, UnstyledButton, useMantineColorScheme } from '@mantine/core';
 
-import { TEXTS } from '@config';
+import { ActionsEnum, colors, ROUTES, SubjectsEnum, TEXTS } from '@config';
 import useStyles from './AppLayout.styles';
 import { HomeIcon } from '@assets/icons/Home.icon';
+import { PeopleIcon } from '@assets/icons/People.icon';
 import { LogoutIcon } from '@assets/icons/Logout.icon';
 import { ImportIcon } from '@assets/icons/Import.icon';
 import { OutLinkIcon } from '@assets/icons/OutLink.icon';
-import { SettingsIcon } from '@assets/icons/Settings.icon';
-import { ActivitiesIcon } from '@assets/icons/Activities.icon';
 import LogoBlack from '@assets/images/full-logo-dark.png';
+import { SettingsIcon } from '@assets/icons/Settings.icon';
 import LogoWhite from '@assets/images/full-logo-light.png';
+import { ActivitiesIcon } from '@assets/icons/Activities.icon';
 
-import { useApp } from '@hooks/useApp';
 import { NavItem } from '@ui/nav-item';
-import { UserMenu } from '@ui/user-menu';
 import { track } from '@libs/amplitude';
+import { UserMenu } from '@ui/user-menu';
+import { Can } from 'store/ability.context';
+import { useProject } from '@hooks/useProject';
+import { useAppState } from 'store/app.context';
+import { useLogout } from '@hooks/auth/useLogout';
 import { ColorSchemeToggle } from '@ui/toggle-color-scheme';
+import { EditProjectIcon } from '@assets/icons/EditImport.icon';
+import { usePlanDetails } from '@hooks/usePlanDetails';
 
 const Support = dynamic(() => import('components/common/Support').then((mod) => mod.Support), {
   ssr: false,
@@ -31,12 +37,17 @@ interface PageProps {
 }
 
 export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps: PageProps }>) {
-  const router = useRouter();
-
   const { classes } = useStyles();
   const navRef = useRef<HTMLElement>(null);
+  const { replace, pathname } = useRouter();
   const { colorScheme } = useMantineColorScheme();
-  const { profile, projects, createProject, logout, setProjectId, isProjectsLoading, isProfileLoading } = useApp();
+
+  const { logout } = useLogout({
+    onLogout: () => replace(ROUTES.SIGNIN),
+  });
+  const { profileInfo } = useAppState();
+  usePlanDetails({ projectId: profileInfo?._projectId });
+  const { projects, onEditImportClick, isProjectsLoading, isProfileLoading } = useProject();
 
   return (
     <>
@@ -55,66 +66,74 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
           <div className={classes.logoContainer}>
             <Image src={colorScheme === 'dark' ? LogoWhite : LogoBlack} alt="Impler Logo" width={140} />
           </div>
-          <Select
-            data={projects?.map((project) => ({ label: project.name, value: project._id })) || []}
-            placeholder="Select Project"
-            nothingFound="No projects found"
-            searchable
-            creatable
-            pl="sm"
-            id="project-manager"
-            radius={0}
-            value={profile?._projectId}
-            getCreateLabel={(query) => `+ Create "${query}"`}
-            onChange={(value: string) => setProjectId(value)}
-            onCreate={(value: string) => {
-              createProject({ name: value });
-
-              return { value, label: value };
+          <UnstyledButton
+            w="100%"
+            onClick={onEditImportClick}
+            px="sm"
+            py="xs"
+            style={{
+              border: `1px solid ${colors.lightGrey}`,
             }}
-          />
+          >
+            <Group position="apart" color={colors.TXTGray}>
+              <Text color={colors.TXTGray}>
+                {projects?.find((project) => project._id === profileInfo?._projectId)?.name || 'No Project Selected'}
+              </Text>
+              <EditProjectIcon color={colors.TXTGray} />
+            </Group>
+          </UnstyledButton>
           <Stack spacing="sm" py="xs">
-            <NavItem active={router.pathname === '/'} href="/" icon={<HomeIcon size="lg" />} title="Home" />
+            <NavItem active={pathname === '/'} href="/" icon={<HomeIcon size="lg" />} title="Home" />
+
             <NavItem
-              active={router.pathname.includes('/imports')}
+              active={pathname.includes('/imports')}
               href="/imports"
               icon={<ImportIcon size="lg" />}
               title="Imports"
             />
+
             <NavItem
-              active={router.pathname.includes('/activities')}
+              active={pathname.includes('/activities')}
               href="/activities"
               icon={<ActivitiesIcon size="lg" />}
               title="Activities"
             />
             <NavItem
-              active={router.pathname.includes('/settings')}
+              active={pathname.includes('/settings')}
               href="/settings"
               icon={<SettingsIcon size="lg" />}
               title="Settings"
             />
             <NavItem
-              target="_blank"
-              title="Documentation"
-              href="https://docs.impler.io"
-              icon={<OutLinkIcon size="lg" />}
+              active={pathname.includes('/team-members')}
+              href="/team-members"
+              icon={<PeopleIcon size="lg" />}
+              title="Team Members"
             />
+            <Can I={ActionsEnum.READ} a={SubjectsEnum.DOCUMENTATION}>
+              <NavItem
+                target="_blank"
+                title="Documentation"
+                href="https://docs.impler.io"
+                icon={<OutLinkIcon size="lg" />}
+              />
+            </Can>
           </Stack>
         </aside>
         <main className={classes.main}>
           <nav ref={navRef}>
-            {profile && (
+            {profileInfo && (
               <Flex justify="space-between">
                 <Title order={2}>
-                  Welcome, {profile.firstName} {profile.lastName}
+                  Welcome, {profileInfo.firstName} {profileInfo.lastName}
                 </Title>
                 <Group>
                   <ColorSchemeToggle onChange={(theme) => track({ name: 'TOGGLE THEME', properties: { theme } })} />
                   <UserMenu
                     user={{
-                      name: `${profile.firstName} ${profile.lastName}`,
-                      email: profile.email,
-                      image: profile.profilePicture,
+                      name: `${profileInfo.firstName} ${profileInfo.lastName}`,
+                      email: profileInfo.email,
+                      image: profileInfo.profilePicture,
                     }}
                     menus={[
                       {
@@ -133,7 +152,7 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
           </div>
         </main>
       </div>
-      <Support profile={profile} />
+      <Support profile={profileInfo} />
     </>
   );
 }

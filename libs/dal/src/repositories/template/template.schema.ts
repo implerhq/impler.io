@@ -38,6 +38,10 @@ const templateSchema = new Schema(
       type: Schema.Types.String,
       default: 'manual',
     },
+
+    integration: {
+      type: Schema.Types.String,
+    },
   },
   { ...schemaOptions }
 );

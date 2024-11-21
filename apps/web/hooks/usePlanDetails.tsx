@@ -1,41 +1,96 @@
 import { useQuery } from '@tanstack/react-query';
 import { commonApi } from '@libs/api';
-import { API_KEYS } from '@config';
-import { IErrorObject } from '@impler/shared';
+import { API_KEYS, MODAL_KEYS } from '@config';
+import { IErrorObject, ISubscriptionData } from '@impler/shared';
 import { usePlanMetaData } from 'store/planmeta.store.context';
+import { useCallback } from 'react';
+import { PlansModal } from '@components/UpgradePlan/PlansModal';
+import { useAppState } from 'store/app.context';
+import { modals } from '@mantine/modals';
+import { track } from '@libs/amplitude';
+import { PaymentModal } from '@components/AddCard/PaymentModal';
+import { Center } from '@mantine/core';
+import { IPlanMeta } from '@types';
 
 interface UsePlanDetailProps {
-  email: string;
+  projectId?: string;
+  paymentMethodId?: string;
 }
 
-export function usePlanDetails({ email }: UsePlanDetailProps) {
+export function usePlanDetails({ projectId }: UsePlanDetailProps) {
+  const { profileInfo } = useAppState();
   const { meta, setPlanMeta } = usePlanMetaData();
-  const { data: activePlanDetails, isLoading: isActivePlanLoading } = useQuery<
-    unknown,
-    IErrorObject,
-    ISubscriptionData,
-    [string, string]
-  >(
-    [API_KEYS.FETCH_ACTIVE_SUBSCRIPTION, email],
+  const {
+    data: activePlanDetails,
+    isLoading: isActivePlanLoading,
+    refetch: refetchActivePlanDetails,
+  } = useQuery<unknown, IErrorObject, ISubscriptionData, [string | undefined]>(
+    [API_KEYS.FETCH_ACTIVE_SUBSCRIPTION],
     () => commonApi<ISubscriptionData>(API_KEYS.FETCH_ACTIVE_SUBSCRIPTION as any, {}),
     {
       onSuccess(data) {
         if (data && data.meta) {
           setPlanMeta({
-            AUTOMATIC_IMPORTS: data.meta.AUTOMATIC_IMPORTS,
-            IMAGE_UPLOAD: data.meta.IMAGE_UPLOAD,
-            IMPORTED_ROWS: data.meta.IMPORTED_ROWS,
-            REMOVE_BRANDING: data.meta.REMOVE_BRANDING,
+            ...(data.meta as IPlanMeta),
           });
         }
       },
-      enabled: !!email,
+      enabled: !!projectId,
     }
   );
 
+  const showPlans = useCallback(() => {
+    track({
+      name: 'VIEW PLANS',
+      properties: {},
+    });
+    modals.open({
+      id: MODAL_KEYS.PAYMENT_PLANS,
+      modalId: MODAL_KEYS.PAYMENT_PLANS,
+      children: (
+        <Center>
+          <PlansModal
+            userProfile={profileInfo!}
+            activePlanCode={activePlanDetails?.plan?.code}
+            canceledOn={activePlanDetails?.plan.canceledOn}
+            expiryDate={activePlanDetails?.expiryDate}
+          />
+        </Center>
+      ),
+      centered: true,
+      size: 'calc(60vw - 3rem)',
+      withCloseButton: false,
+    });
+  }, [activePlanDetails, profileInfo]);
+
+  const onOpenPaymentModal = ({ code, modalId }: { code: string; modalId: string }) => {
+    modals.closeAll();
+    modals.open({
+      size: 'calc(70vw - 40px)',
+      withCloseButton: false,
+      id: modalId,
+      modalId,
+      centered: true,
+      closeOnClickOutside: true,
+      closeOnEscape: true,
+      children: (
+        <PaymentModal
+          email={profileInfo!.email}
+          planCode={code}
+          projectId={profileInfo!._projectId}
+          onClose={() => modals.close(modalId)}
+          modalId={modalId}
+        />
+      ),
+    });
+  };
+
   return {
-    activePlanDetails,
     meta,
+    activePlanDetails,
     isActivePlanLoading,
+    showPlans,
+    onOpenPaymentModal,
+    refetchActivePlanDetails,
   };
 }

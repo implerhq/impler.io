@@ -5,6 +5,7 @@ import { Injectable, BadRequestException, InternalServerErrorException } from '@
 import { APIMessages } from '@shared/constants';
 import { EMAIL_SUBJECT } from '@impler/shared';
 import { BaseReview } from './base-review.usecase';
+import { UniqueWithValidationType, ValidationTypesEnum } from '@impler/client';
 import { BATCH_LIMIT } from '@shared/services/sandbox';
 import { StorageService, PaymentAPIService, EmailService } from '@impler/services';
 import { ColumnTypesEnum, UploadStatusEnum, ITemplateSchemaItem, ColumnDelimiterEnum } from '@impler/shared';
@@ -15,6 +16,7 @@ import {
   DalService,
   TemplateEntity,
   TemplateRepository,
+  RecordEntity,
 } from '@impler/dal';
 
 interface ISaveResults {
@@ -27,7 +29,7 @@ interface ISaveResults {
 
 @Injectable()
 export class DoReview extends BaseReview {
-  private _modal: Model<unknown>;
+  private _modal: Model<RecordEntity>;
 
   constructor(
     private templateRepository: TemplateRepository,
@@ -43,7 +45,7 @@ export class DoReview extends BaseReview {
   }
 
   async execute(_uploadId: string) {
-    this._modal = await this.dalService.createRecordCollection(_uploadId);
+    this._modal = this.dalService.getRecordCollection(_uploadId);
     const userEmail = await this.uploadRepository.getUserEmailFromUploadId(_uploadId);
 
     const uploadInfo = await this.uploadRepository.getUploadWithTemplate(_uploadId, ['name']);
@@ -55,18 +57,50 @@ export class DoReview extends BaseReview {
     const columns = JSON.parse(uploadInfo.customSchema);
     const multiSelectColumnHeadings: Record<string, string> = {};
     const numberColumnHeadings = new Set<string>();
+    const validationErrorMessages = {};
+    const uniqueColumnKeysCombinationMap = new Map<string, Set<string>>();
     (columns as ITemplateSchemaItem[]).forEach((column) => {
       if (column.type === ColumnTypesEnum.SELECT && column.allowMultiSelect)
         multiSelectColumnHeadings[column.key] = column.delimiter || ColumnDelimiterEnum.COMMA;
       if (column.type === ColumnTypesEnum.NUMBER || column.type === ColumnTypesEnum.DOUBLE)
         numberColumnHeadings.add(column.key);
+      if (Array.isArray(column.validations) && column.validations.length > 0) {
+        validationErrorMessages[column.key] = {};
+        column.validations.forEach((validation) => {
+          validationErrorMessages[column.key][validation.validate] = validation.errorMessage;
+          if (validation.validate === ValidationTypesEnum.UNIQUE_WITH) {
+            if (uniqueColumnKeysCombinationMap.has((validation as UniqueWithValidationType).uniqueKey)) {
+              uniqueColumnKeysCombinationMap.set(
+                (validation as UniqueWithValidationType).uniqueKey,
+                new Set([
+                  ...uniqueColumnKeysCombinationMap.get((validation as UniqueWithValidationType).uniqueKey),
+                  column.key,
+                ])
+              );
+            } else {
+              uniqueColumnKeysCombinationMap.set(
+                (validation as UniqueWithValidationType).uniqueKey,
+                new Set([column.key])
+              );
+            }
+          }
+        });
+      }
     });
     const schema = this.buildAJVSchema({
       columns,
       dateFormats,
       uniqueItems,
     });
-    const ajv = this.getAjvValidator(dateFormats, uniqueItems);
+
+    const uniqueCombinations = {};
+    uniqueColumnKeysCombinationMap.forEach((value, key) => {
+      if (value.size > 1) {
+        uniqueCombinations[this.getUniqueKey(key)] = Array.from(value);
+        schema[this.getUniqueKey(key)] = true;
+      }
+    });
+    const ajv = this.getAjvValidator(dateFormats, uniqueItems, uniqueCombinations);
     const validator = ajv.compile(schema);
 
     const uploadedFileInfo = await this.fileRepository.findById(uploadInfo._uploadedFileId, 'path');
@@ -101,8 +135,11 @@ export class DoReview extends BaseReview {
         extra: uploadInfo.extra,
         dataStream, // not-used
         dateFormats,
+        uniqueCombinations,
         numberColumnHeadings,
         multiSelectColumnHeadings,
+        validationErrorMessages,
+        headerRow: uploadInfo.headerRow,
       });
 
       await this.processBatches({
@@ -145,8 +182,11 @@ export class DoReview extends BaseReview {
         uploadId: _uploadId,
         validator,
         dateFormats,
+        uniqueCombinations,
         numberColumnHeadings,
+        validationErrorMessages,
         multiSelectColumnHeadings,
+        headerRow: uploadInfo.headerRow,
       });
       response.invalidRecords = invalidRecords;
       response.totalRecords = totalRecords;

@@ -1,3 +1,5 @@
+import { ValidationType } from '@impler/client';
+
 export enum ColumnTypesEnum {
   'STRING' = 'String',
   'NUMBER' = 'Number',
@@ -30,6 +32,7 @@ export interface ISchemaItem {
   regex?: string;
   delimiter?: ColumnDelimiterEnum;
   defaultValue?: string | number;
+  validations?: ValidationType[];
 }
 
 export interface ITemplateSchemaItem extends ISchemaItem {

@@ -21,6 +21,7 @@ namespace NodeJS {
 
 interface IProfileData {
   _id: string;
+  projectName: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -39,39 +40,6 @@ interface ChargeItem {
   per_unit: number;
 }
 
-interface ISubscriptionData {
-  plan: {
-    code: string;
-    name: string;
-    charges: {
-      billableMetric: {
-        code: string;
-        name: string;
-      };
-      chargeModal: 'FIXED' | 'VOLUME_BASED' | 'BINARY';
-      properties: Record<string, string | number>;
-    }[];
-    charge: number;
-    canceledOn?: Date;
-  };
-  isActive: boolean;
-  usage: {
-    IMPORTED_ROWS: number;
-  };
-  expiryDate: Date;
-  meta: {
-    IMAGE_UPLOAD: boolean;
-    IMPORTED_ROWS: Array<{
-      flat_fee: number;
-      per_unit: number;
-      last_unit: number | string;
-      first_unit: number;
-    }>;
-    REMOVE_BRANDING: boolean;
-    AUTOMATIC_IMPORTS: boolean;
-  };
-}
-
 interface ICreateProjectData {
   name: string;
 }
@@ -81,7 +49,7 @@ interface IOnboardUserData {
   companySize: string;
   role: string;
   source: string;
-  onboarding: boolean;
+  onboarding?: boolean;
 }
 
 interface ICstringemplateData {
@@ -93,11 +61,12 @@ interface IDuplicateTemplateData {
   duplicateColumns?: boolean;
   duplicateDestination?: boolean;
   duplicateWebhook?: boolean;
-  duplicateValidator?: boolean;
+  duplicateValidations?: boolean;
 }
 interface IUpdateTemplateData {
   mode?: string;
   name?: string;
+  integration?: string;
 }
 
 interface Window {
@@ -107,6 +76,7 @@ interface Window {
 interface ISigninData {
   email: string;
   password: string;
+  invitationId?: string;
 }
 
 interface ISignupData {
@@ -147,10 +117,32 @@ interface ICheckoutData {
   totalPrice: number;
   discount?: number;
   proratedRefund?: number;
+  interval?: string;
+  taxAmount?: number;
+  taxLabel?: string;
+  taxPercentage?: number;
 }
 
 interface ISubscribeData {
-  selectedPaymentMethod: string | undefined;
+  paymentMethodId: string;
   email: string;
   planCode: string;
+}
+
+interface SentProjectInvitation {
+  _id: string;
+  invitationToEmail: string;
+  invitedOn: string;
+  role: string;
+  invitedBy: string;
+  token: string;
+  invitationLink: string;
+}
+
+interface TeamMember {
+  _id: string;
+  _userId: IProfileData;
+  joinedDate: string;
+  role: string;
+  isCurrentUser: string;
 }

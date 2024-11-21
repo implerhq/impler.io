@@ -27,6 +27,7 @@ const columnSchema = new Schema(
     },
     defaultValue: Schema.Types.Mixed,
     type: String,
+    validations: Schema.Types.Mixed,
   },
   { ...schemaOptions }
 );

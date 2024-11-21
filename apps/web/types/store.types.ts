@@ -4,7 +4,7 @@ export interface IAppStore {
 }
 
 export interface IPlanMeta {
-  IMAGE_UPLOAD: boolean;
+  IMAGE_IMPORT: boolean;
   IMPORTED_ROWS: Array<{
     flat_fee: number;
     per_unit: number;
@@ -13,6 +13,8 @@ export interface IPlanMeta {
   }>;
   REMOVE_BRANDING: boolean;
   AUTOMATIC_IMPORTS: boolean;
+  ADVANCED_VALIDATORS: boolean;
+  TEAM_MEMBERS: number;
 }
 
 export interface IPlanMetaContext {

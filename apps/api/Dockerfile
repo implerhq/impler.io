@@ -1,4 +1,4 @@
-FROM node:18.16.1-bullseye-slim
+FROM node:20.13.1-bullseye-slim
 
 COPY apps/api/src/config/default.cf /usr/local/etc/isolate
 

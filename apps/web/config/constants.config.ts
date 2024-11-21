@@ -1,7 +1,17 @@
+import { MongoAbility } from '@casl/ability';
+import { ReactIcon } from '@assets/icons/React.icon';
+import { BubbleIcon } from '@assets/icons/Bubble.icon';
+import { AngularIcon } from '@assets/icons/Angular.icon';
+import { JavaScriptIcon } from '@assets/icons/Javascript.icon';
+import { UserRolesEnum, IntegrationEnum } from '@impler/shared';
+import { Plan } from '@components/UpgradePlan/Plans';
+
 export const CONSTANTS = {
+  EXPLORE_PLANS_QUERY_LEY: 'explore_plans',
   PLAN_CODE_QUERY_KEY: 'plan_code',
   GITHUB_LOGIN_URL: '/v1/auth/github',
   AUTH_COOKIE_NAME: 'authentication',
+  INVITATION_URL_COOKIE: 'redirectUrl',
   AUTHENTICATION_ERROR_CODE: 'AuthenticationError',
   PROFILE_STORAGE_NAME: 'profile',
   REACT_DOCUMENTATION_URL: 'https://docs.impler.io/widget/react-component#props',
@@ -32,6 +42,7 @@ export const VARIABLES = {
 
 export const MODAL_KEYS = {
   SELECT_CARD: 'SELECT_CARD',
+  CHANGE_CARD: 'CHANGE_CARD',
   PAYMENT_SUCCEED: 'successfull_payment',
 
   IMPORT_DUPLICATE: 'IMPORT_DUPLICATE',
@@ -39,11 +50,40 @@ export const MODAL_KEYS = {
   IMPORT_UPDATE: 'IMPORT_UPDATE',
   COLUMN_UPDATE: 'COLUMN_UPDATE',
   COLUMN_DELETE: 'COLUMN_DELETE',
+  INTEGRATION_DETAILS: 'Integration Details',
 
   VALIDATIONS_OUTPUT: 'VALIDATIONS_OUTPUT',
   PAYMENT_PLANS: 'PAYMENT_PLANS',
   PAYMENT_DETAILS_ADD: 'PAYMENT_PLANS',
+
+  INVITE_MEMBERS: 'INVITE_MEMBERS',
+  ACCEPT_INVITATION: 'ACCEPT_INVITATION',
+  MANAGE_PROJECT_MODAL: 'MANAGE_PROJECT_MODAL',
+  CONFIRM_PROJECT_DELETE: 'CONFIRM_PROJECT_DELETE',
+  CONFIRM_REMOVE_TEAM_MEMBER: 'CONFIRM_REMOVE_TEAM_MEMBER',
 };
+
+interface IntegrateOption {
+  key: string;
+  name: IntegrationEnum;
+  Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+}
+
+export const INTEGRATE_IMPORT: IntegrateOption[] = [
+  { name: IntegrationEnum.JAVASCRIPT, Icon: JavaScriptIcon, key: IntegrationEnum.JAVASCRIPT },
+  { name: IntegrationEnum.REACT, Icon: ReactIcon, key: IntegrationEnum.REACT },
+  { name: IntegrationEnum.ANGULAR, Icon: AngularIcon, key: IntegrationEnum.ANGULAR },
+  { name: IntegrationEnum.BUBBLE, Icon: BubbleIcon, key: IntegrationEnum.BUBBLE },
+];
+
+export const INTEGRATION_GUIDE = [
+  { value: IntegrationEnum.JAVASCRIPT, label: IntegrationEnum.JAVASCRIPT },
+  { value: IntegrationEnum.ANGULAR, label: IntegrationEnum.ANGULAR },
+  { value: IntegrationEnum.REACT, label: IntegrationEnum.REACT },
+  { value: IntegrationEnum.BUBBLE, label: IntegrationEnum.BUBBLE },
+];
+
+export type IntegrationLanguage = 'javascript' | 'jsx' | 'typescript' | 'markup' | 'bash';
 
 export const MODAL_TITLES = {
   IMPORT_DUPLICATE: 'Duplicate Import',
@@ -52,6 +92,7 @@ export const MODAL_TITLES = {
   IMPORT_DELETE: 'Delete Import',
   COLUMN_UPDATE: 'Configure Column',
   COLUMN_DELETE: 'Delete Column',
+  INTEGRATION_DETAILS: 'Integrate',
 
   VALIDATIONS_OUTPUT: 'Test code output',
 };
@@ -73,6 +114,7 @@ export const API_KEYS = {
   PAYMENT_METHOD_LIST: 'PAYMENT_METHOD_LIST',
 
   ADD_PAYMENT_METHOD: 'ADD_PAYMENT_METHOD',
+  UPDATE_SUBSCRIPTION_PAYMENT_METHOD: 'UPDATE_PAYMENT_METHOD',
   SAVE_INTENT_ID: 'SAVE_SETUP_INTENT_ID',
 
   FETCH_ACTIVE_SUBSCRIPTION: 'FETCH_ACTIVE_SUBSCRIPTION',
@@ -81,7 +123,18 @@ export const API_KEYS = {
   PROJECT_SWITCH: 'PROJECT_SWITCH',
   PROJECTS_LIST: 'PROJECT_LIST',
   PROJECT_CREATE: 'PROJECT_CREATE',
+  PROJECT_DELETE: 'PROJECT_DELETE',
   PROJECT_ENVIRONMENT: 'PROJECT_ENVIRONMENT',
+  PROJECT_INVITATION: 'PROJECT_INVITATION',
+  SENT_TEAM_INVITATIONS: 'SENT_TEAM_INVITATIONS',
+  GET_TEAM_INVITATIONS: 'GET_TEAM_INVITATIONS',
+  ACCEPT_TEAM_INVITATION: 'INVITATION_ACCEPTED',
+  DECLINE_TEAM_INVITATION: 'DECLINE_TEAM_INVITATION',
+  LIST_TEAM_MEMBERS: 'LIST_TEAM_MEMBERS',
+  UPDATE_TEAM_MEMBER_ROLE: 'UPDATE_TEAM_MEMBER_ROLE',
+  DELETE_TEAM_MEMBER: 'DELETE_TEAM_MEMBER',
+  REVOKE_INVITATION: 'REVOKE_INVITATION',
+  TEAM_MEMBER_META: 'TEAM_MEMBER_META',
 
   LOGOUT: 'LOGOUT',
   SIGNIN: 'SIGNIN',
@@ -131,6 +184,9 @@ export const NOTIFICATION_KEYS = {
   ERROR_AUTHORIZING_PAYMENT_METHOD: 'ERROR_AUTHORIZING_PAYMENT_METHOD',
 
   PAYMENT_INTENT_ID_UPDATED: 'PAYMENT_INTENT_ID_UPDATED',
+  PAYMENT_METHOD_UPDATED: 'PAYMENT_METHOD_UPDATED',
+  ERROR_SAVING_INTENT_ID: 'ERROR_SAVING_INTENT_ID',
+  ERROR_UPDATING_PAYMENT_METHOD: 'ERROR_UPDATING_PAYMENT_METHOD',
 
   MEMBERSHIP_CANCELLED: 'MEMBERSHIP_CANCELLED',
   MEMBERSHIP_PURCHASED: 'MEMBERSHIP_PURCHASED',
@@ -141,6 +197,8 @@ export const NOTIFICATION_KEYS = {
   IMPORT_DELETED: 'IMPORT_DELETED',
 
   PROJECT_CREATED: 'PROJECT_CREATED',
+  PROJECT_DELETED: 'PROJECT_DELETED',
+  PROJECT_SWITCHED: 'PROJECT_SWITCHED',
   OUTPUT_UPDATED: 'OUTPUT_UPDATED',
   DESTINATION_UPDATED: 'DESTINATION_UPDATED',
 
@@ -153,8 +211,23 @@ export const NOTIFICATION_KEYS = {
   CARD_ADDED: 'CARD_ADDED',
   CARD_REMOVED: 'CARD_REMOVED',
   PURCHASE_FAILED: 'PURCHASE_FAILED',
+  NO_CARD_SELECTED: 'NO_CARD_SELECTED',
 
   COLUMN_ERRROR: 'COLUMN_ERRROR',
+  INVITATION_ACCEPTED: 'INVITATION_ACCEPTED',
+
+  VALID_INVITATION: 'VALID_INVITATION',
+  ERROR_FETCHING_INVITATION: 'ERROR_FETCHING_INVITATION',
+  TEAM_MEMBER_ROLE_UPDATED: 'TEAM_MEMBER_ROLE_UPDATED',
+  ERROR_CHANGING_MEMBER_ROLE: 'ERROR_CHANGING_MEMBER_ROLE',
+  TEAM_MEMBER_DELETED: 'TEAM_MEMBER_DELETED',
+  ERROR_DELETING_TEAM_MEMBER: 'ERROR_DELETING_TEAM_MEMBER',
+  ERROR_INVITING_TEAM_MEMBER: 'ERROR_INVITING_TEAM_MEMBER',
+  ERROR_LISTING_TEAM_MEMBERS: 'ERROR_LISTING_TEAM_MEMBERS',
+  INVITATION_LINK_COPIED: 'INVITATION_LINK_COPIED',
+  INVITATION_DELETED: 'INVITATION_DELETED',
+  ERROR_DELETING_INVITATION: 'INVITATION_DELETED',
+  PERMISSION_DENIED_WHILE_DELETING_PROJECT: 'PERMISSION_DENIED_WHILE_DELETING_PROJECT',
 };
 
 export const ROUTES = {
@@ -167,12 +240,17 @@ export const ROUTES = {
   REQUEST_FORGOT_PASSWORD: '/auth/reset/request',
   IMPORTS: '/imports',
   SETTINGS: '/settings',
+  TEAM_MEMBERS: '/team-members',
   ACTIVITIES: '/activities',
   ADD_CARD: '/settings?tab=addcard&action=addcardmodal',
+  EXPLORE_PLANS: '/?explore_plans=true',
+  TRANSACTIONS: '/transactions',
+  INVITATION: '/auth/invitation/:id',
 };
 
 export const REGULAR_EXPRESSIONS = {
   URL: /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/gm,
+  EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
 };
 
 export const COLUMN_TYPES = [
@@ -237,17 +315,92 @@ export const IMPORT_MODES = [
   { value: 'automatic', label: 'Automatic' },
 ];
 
+export const INVITATION_FORM_ROLES = [UserRolesEnum.ADMIN, UserRolesEnum.FINANCE, UserRolesEnum.TECH];
+
+export const TAB_KEYS = {
+  MEMBERS: 'members',
+  SENT_INVITATIONS: 'sentinvitation',
+  INVITATION_REQUESTS: 'invitation-requests',
+};
+
+export const TAB_TITLES = {
+  [TAB_KEYS.MEMBERS]: 'Members',
+  [TAB_KEYS.SENT_INVITATIONS]: 'Sent Invitations',
+  [TAB_KEYS.INVITATION_REQUESTS]: 'Invitation Requests',
+};
+
+export const MEMBER_ROLE = [UserRolesEnum.ADMIN, UserRolesEnum.TECH, UserRolesEnum.FINANCE];
+
+export enum ActionsEnum {
+  MANAGE = 'manage',
+  READ = 'read',
+  CREATE = 'create',
+  UPDATE = 'update',
+  BUY = 'buy',
+}
+
+export enum SubjectsEnum {
+  HOMEPAGE = 'Homepage',
+  IMPORTS = 'Imports',
+  ANALYTICS = 'Analytics',
+  SETTINGS = 'Settings',
+  PLAN = 'Plan',
+  FILE = 'File',
+  TEAM_MEMBERS = 'TeamMembers',
+  ACCESS_TOKEN = 'AccessToken',
+  CARDS = 'Cards',
+  ROLE = 'Role',
+  ALL = 'all',
+  DOCUMENTATION = 'Documentation',
+}
+
+export const ROLE_BADGES = {
+  [UserRolesEnum.ADMIN]: 'cyan',
+  [UserRolesEnum.TECH]: 'blue',
+  [UserRolesEnum.FINANCE]: 'green',
+};
+
+export type AppAbility = MongoAbility<[ActionsEnum, SubjectsEnum]>;
+
+export const ROLE_BASED_ACCESS = {
+  [UserRolesEnum.ADMIN]: [{ action: ActionsEnum.MANAGE, subject: SubjectsEnum.ALL }],
+  [UserRolesEnum.TECH]: [
+    { action: ActionsEnum.READ, subject: SubjectsEnum.HOMEPAGE },
+    { action: ActionsEnum.CREATE, subject: SubjectsEnum.IMPORTS },
+    { action: ActionsEnum.READ, subject: SubjectsEnum.IMPORTS },
+    { action: ActionsEnum.READ, subject: SubjectsEnum.ANALYTICS },
+    { action: ActionsEnum.READ, subject: SubjectsEnum.SETTINGS },
+    { action: ActionsEnum.READ, subject: SubjectsEnum.ACCESS_TOKEN },
+    { action: ActionsEnum.READ, subject: SubjectsEnum.TEAM_MEMBERS },
+    { action: ActionsEnum.READ, subject: SubjectsEnum.DOCUMENTATION },
+  ],
+  [UserRolesEnum.FINANCE]: [
+    { action: ActionsEnum.READ, subject: SubjectsEnum.HOMEPAGE },
+    { action: ActionsEnum.UPDATE, subject: SubjectsEnum.CARDS },
+    { action: ActionsEnum.READ, subject: SubjectsEnum.SETTINGS },
+    { action: ActionsEnum.BUY, subject: SubjectsEnum.PLAN },
+  ],
+};
+
 export const DOCUMENTATION_REFERENCE_LINKS = {
   columnDescription: 'https://docs.impler.io/features/column-description',
   defaultValue: 'https://docs.impler.io/platform/default-value',
-  primaryValidation: 'https://docs.impler.io/platform/validators',
+  primaryValidation: 'https://docs.impler.io/validations/base',
   multiSelectDropDown: 'https://docs.impler.io/features/multiselect-dropdown',
   freezeColumns: 'https://docs.impler.io/features/freeze-columns',
   frontendEndCallback: 'https://docs.impler.io/data-retrieval/using-frontend-callback',
   webhook: 'https://docs.impler.io/data-retrieval/using-webhook',
-  bubbleIo: 'https://docs.impler.io/widget/bubble.io-embed',
+  bubbleIo: 'https://docs.impler.io/importer/bubble.io-embed',
   subscriptionInformation: 'https://docs.impler.io/platform/how-subscription-works',
   customValidation: 'https://docs.impler.io/features/custom-validation',
+  rangeValidator: 'https://docs.impler.io/validations/advanced#range',
+  autoImport: 'https://docs.impler.io/features/automated-import',
+  imageImport: 'https://docs.impler.io/features/import-excel-with-image',
+  advancedValidations: 'https://docs.impler.io/validations/advanced',
+  teamMembers: 'https://docs.impler.io/platform/make-your-team',
+  lengthValidator: 'https://docs.impler.io/validations/advanced#length',
+  outputCustomization: 'https://docs.impler.io/features/output-customization',
+  uniqueWithValidator: 'https://docs.impler.io/validations/advanced#unique-across-multiple-fields',
 };
 
 export const COMPANY_SIZES = [
@@ -278,10 +431,11 @@ export const HOW_HEARD_ABOUT_US = [
   { value: 'Bubble.io', label: 'Bubble.io' },
   { value: 'Colleague', label: 'Colleague' },
   { value: 'Linkdin', label: 'Linkdin' },
+  { value: 'Invitation', label: 'Invitation' },
 ];
 
 export const PLACEHOLDERS = {
-  email: 'johndoe@company.org',
+  email: 'johndoe@acme.inc',
   password: '********',
   project: 'Acme Inc',
   fullName: 'John Doe',
@@ -289,4 +443,233 @@ export const PLACEHOLDERS = {
   role: 'Engineer, Manager, Founder...',
   source: 'Google Search, Recommendation...',
   about: 'Google Search',
+};
+
+export const DATE_FORMATS = {
+  SHORT: 'DD/MM/YYYY',
+  LONG: 'DD MMM YYYY',
+};
+
+export const MEMBERSHIP_CANCELLATION_REASONS = [
+  'Not liking service',
+  'Building my own data importer',
+  'No more need of data importer',
+  'Moving to another service provider',
+  'Something else',
+];
+
+export enum PLANCODEENUM {
+  GROWTH = 'GROWTH-MONTHLY',
+  GROWTH_YEARLY = 'GROWTH-YEARLY',
+  STARTER = 'STARTER',
+}
+export const plans: { monthly: Plan[]; yearly: Plan[] } = {
+  monthly: [
+    {
+      name: 'Starter (Default)',
+      code: 'STARTER',
+      rowsIncluded: 5000,
+      price: 0,
+      extraChargeOverheadTenThusandRecords: 1,
+      removeBranding: false,
+      content: {
+        'Rows Included': [{ check: true, title: '5K' }],
+        'For extra 10K Records': [{ check: true, title: '$1 (Billed monthly)' }],
+        'Team Members': [{ check: true, title: '1', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
+        Features: [
+          { check: true, title: 'Theming' },
+          {
+            check: true,
+            title: 'Custom Validation',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation,
+          },
+          {
+            check: true,
+            title: 'Output Customization',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
+          },
+          { check: false, title: 'Remove Branding' },
+          {
+            check: false,
+            title: 'Advanced Validations',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
+          },
+          {
+            check: false,
+            title: 'Auto Import',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport,
+          },
+          {
+            check: false,
+            title: 'Image Import',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport,
+          },
+        ],
+      },
+    },
+    {
+      name: 'Growth',
+      code: 'GROWTH-MONTHLY',
+      price: 42,
+      rowsIncluded: 500000,
+      extraChargeOverheadTenThusandRecords: 0.7,
+      removeBranding: true,
+      content: {
+        'Rows Included': [{ check: true, title: '500K' }],
+        'For extra 10K Records': [{ check: true, title: '$0.70 (Billed monthly)' }],
+        'Team Members': [{ check: true, title: '4', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
+        Features: [
+          { check: true, title: 'Theming' },
+          {
+            check: true,
+            title: 'Custom Validation',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation,
+          },
+          {
+            check: true,
+            title: 'Output Customization',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
+          },
+          { check: true, title: 'Remove Branding' },
+          {
+            check: true,
+            title: 'Advanced Validations',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
+          },
+          {
+            check: false,
+            title: 'Auto Import',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport,
+          },
+          {
+            check: false,
+            title: 'Image Import',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport,
+          },
+        ],
+      },
+    },
+    {
+      name: 'Scale',
+      code: 'SCALE-MONTHLY',
+      price: 90,
+      rowsIncluded: 1500000,
+      extraChargeOverheadTenThusandRecords: 0.5,
+      removeBranding: true,
+      content: {
+        'Rows Included': [{ check: true, title: '1.5M' }],
+        'For extra 10K Records': [{ check: true, title: '$0.50 (Billed monthly)' }],
+        'Team Members': [{ check: true, title: '10', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
+        Features: [
+          { check: true, title: 'Theming' },
+          { check: true, title: 'Custom Validation', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation },
+          {
+            check: true,
+            title: 'Output Customization',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
+          },
+          { check: true, title: 'Remove Branding' },
+          {
+            check: true,
+            title: 'Advanced Validations',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
+          },
+          { check: true, title: 'Auto Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport },
+          { check: true, title: 'Image Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport },
+        ],
+      },
+    },
+  ],
+  yearly: [
+    {
+      name: 'Starter (Default)',
+      code: 'STARTER',
+      rowsIncluded: 5000,
+      price: 0,
+      extraChargeOverheadTenThusandRecords: 1,
+      removeBranding: false,
+      content: {
+        'Rows Included': [{ check: true, title: '5K' }],
+        'For extra 10K Records': [{ check: true, title: '$1 (Billed yearly)' }],
+        'Team Members': [{ check: true, title: '1', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
+        Features: [
+          { check: true, title: 'Theming' },
+          { check: true, title: 'Custom Validation', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation },
+          {
+            check: true,
+            title: 'Output Customization',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
+          },
+          { check: false, title: 'Remove Branding' },
+          {
+            check: false,
+            title: 'Advanced Validations',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
+          },
+          { check: false, title: 'Auto Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport },
+          { check: false, title: 'Image Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport },
+        ],
+      },
+    },
+    {
+      name: 'Growth',
+      code: 'GROWTH-YEARLY',
+      price: 420,
+      rowsIncluded: 6000000,
+      extraChargeOverheadTenThusandRecords: 0.7,
+      removeBranding: true,
+      content: {
+        'Rows Included': [{ check: true, title: '6M' }],
+        'For extra 10K Records': [{ check: true, title: '$0.70 (Billed yearly)' }],
+        'Team Members': [{ check: true, title: '4', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
+        Features: [
+          { check: true, title: 'Theming' },
+          { check: true, title: 'Custom Validation', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation },
+          {
+            check: true,
+            title: 'Output Customization',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
+          },
+          { check: true, title: 'Remove Branding' },
+          {
+            check: true,
+            title: 'Advanced Validations',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
+          },
+          { check: false, title: 'Auto Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport },
+          { check: false, title: 'Image Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport },
+        ],
+      },
+    },
+    {
+      name: 'Scale',
+      code: 'SCALE-YEARLY',
+      price: 900,
+      rowsIncluded: 18000000,
+      extraChargeOverheadTenThusandRecords: 0.5,
+      removeBranding: true,
+      content: {
+        'Rows Included': [{ check: true, title: '18M' }],
+        'For extra 10K Records': [{ check: true, title: '$0.50 (Billed yearly)' }],
+        'Team Members': [{ check: true, title: '10', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
+        Features: [
+          { check: true, title: 'Theming' },
+          { check: true, title: 'Custom Validation', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation },
+          {
+            check: true,
+            title: 'Output Customization',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
+          },
+          { check: true, title: 'Remove Branding' },
+          {
+            check: true,
+            title: 'Advanced Validations',
+            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
+          },
+          { check: true, title: 'Auto Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport },
+          { check: true, title: 'Image Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport },
+        ],
+      },
+    },
+  ],
 };

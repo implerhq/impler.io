@@ -9,6 +9,7 @@ import { GetTransactionHistory } from './get-transaction-history/get-transaction
 import { ApplyCoupon } from './apply-coupon/apply-coupon.usecase';
 import { Checkout } from './checkout/checkout.usecase';
 import { Subscription } from './subscription/subscription.usecase';
+import { UpdateSubscriptionPaymentMethod } from './subscription/update-payment-method.usecase';
 
 export const USE_CASES = [
   GetImportCounts,
@@ -22,6 +23,8 @@ export const USE_CASES = [
   ApplyCoupon,
   Checkout,
   Subscription,
+  UpdatePaymentMethod,
+  UpdateSubscriptionPaymentMethod,
   //
 ];
 
@@ -37,4 +40,5 @@ export {
   ApplyCoupon,
   Checkout,
   Subscription,
+  UpdateSubscriptionPaymentMethod,
 };
