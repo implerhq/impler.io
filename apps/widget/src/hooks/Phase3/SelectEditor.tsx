@@ -188,7 +188,6 @@ export class SelectEditor extends BaseEditor {
       this.selectInput.value = highlighted.dataset.value;
       this.finishEditing();
     } else {
-      // If no option is highlighted, select the first option
       const firstOption = this.selectUl.querySelector('li.option');
       if (firstOption) {
         this.selectInput.value = firstOption.dataset.value;
