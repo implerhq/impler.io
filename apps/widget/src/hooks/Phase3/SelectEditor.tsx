@@ -9,6 +9,7 @@ export class SelectEditor extends BaseEditor {
   }
   close() {
     this._opened = false;
+    this.selectInput.value = '';
     this.listDiv.classList.remove('open');
   }
   getValue() {
