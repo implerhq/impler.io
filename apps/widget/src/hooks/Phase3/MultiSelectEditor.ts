@@ -126,10 +126,34 @@ export class MultiSelectEditor extends BaseEditor {
     const input = this.hot.rootDocument.createElement('input');
     input.classList.add('dd-searchbox');
     input.type = 'search';
-    input.onkeydown = () => {
-      this.timer = this.hot.rootWindow.setTimeout(() => {
-        this.search();
-      }, 250);
+    input.onkeydown = (e) => {
+      e.stopPropagation();
+
+      switch (e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          this.highlightNextOption();
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          this.highlightPreviousOption();
+          break;
+        case 'Enter':
+          e.preventDefault();
+          this.selectHighlightedOption();
+          break;
+        case 'Escape':
+          e.preventDefault();
+          this.close();
+          break;
+        default:
+          if (this.timer) {
+            clearTimeout(this.timer);
+          }
+          this.timer = setTimeout(() => {
+            this.search();
+          }, 200);
+      }
     };
 
     inputWrapper.appendChild(input);
@@ -160,5 +184,52 @@ export class MultiSelectEditor extends BaseEditor {
     this.crossSvg = crossSvg;
 
     this.hot.rootElement.appendChild(this.listDiv);
+  }
+
+  highlightNextOption() {
+    const options = Array.from(this.selectUl.querySelectorAll('li.option'));
+    if (!options.length) return;
+
+    const currentIndex = options.findIndex((option: any) => {
+      return option.classList.contains('highlighted');
+    });
+
+    const nextIndex = currentIndex >= options.length - 1 ? 0 : currentIndex + 1;
+    this.updateHighlight(options as any, currentIndex, nextIndex);
+  }
+
+  highlightPreviousOption() {
+    const options = Array.from(this.selectUl.querySelectorAll('li.option'));
+    if (!options.length) return;
+
+    const currentIndex = options.findIndex((option: any) => {
+      return option.classList.contains('highlighted');
+    });
+
+    const previousIndex = currentIndex <= 0 ? options.length - 1 : currentIndex - 1;
+    this.updateHighlight(options as any, currentIndex, previousIndex);
+  }
+
+  updateHighlight(options: HTMLElement[], currentIndex: number, newIndex: number) {
+    if (currentIndex >= 0) {
+      options[currentIndex].classList.remove('highlighted');
+    }
+
+    if (newIndex >= 0 && newIndex < options.length) {
+      options[newIndex].classList.add('highlighted');
+      options[newIndex].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  }
+
+  selectHighlightedOption() {
+    const highlighted = this.selectUl.querySelector('li.highlighted');
+    if (highlighted) {
+      const value = highlighted.dataset.value;
+      if (this.value.has(value)) {
+        this.removeItem(value);
+      } else {
+        this.appendItem(value);
+      }
+    }
   }
 }
