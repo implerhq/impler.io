@@ -944,7 +944,7 @@ export class AppComponent {
     ),
   },
   [IntegrationEnum.BUBBLE]: {
-    'Integration Steps': () => (
+    '1) Integration Steps': () => (
       <>
         <List type="ordered" styles={{ item: { margin: '10px 0', paddingLeft: '20px' } }}>
           <List.Item>
@@ -998,6 +998,19 @@ export class AppComponent {
             Visit Documentation with Detailed Steps
           </ModifiedText>
         </Link>
+      </>
+    ),
+    '2) Add Import Button': ({ accessToken, projectId, templateId }) => (
+      <>
+        <CodeBlock
+          height={HEIGHTS.WITH_TEXT}
+          code={`
+projectId: "${projectId}",
+templateId: "${templateId}",
+accessToken: "${accessToken}",
+`}
+          language="javascript"
+        />
       </>
     ),
   },
