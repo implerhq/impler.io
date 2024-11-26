@@ -96,6 +96,10 @@ export function useProject() {
           const remainingProjects = projects?.filter((project) => project._id !== deletedProjectId);
           if (remainingProjects?.length) {
             switchProject(remainingProjects[0]._id);
+            setProfileInfo({
+              ...profileInfo,
+              _projectId: remainingProjects[0]._id,
+            });
           } else {
             replace(ROUTES.HOME);
           }
