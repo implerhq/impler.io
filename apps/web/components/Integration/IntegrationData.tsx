@@ -1002,21 +1002,13 @@ export class AppComponent {
     ),
     '2) Add Import Button': ({ accessToken, projectId, templateId }) => (
       <>
-        <ModifiedText>
-          Now add Import Button provided by <Code>@impler/react</Code> which opens the Widget
-        </ModifiedText>
         <CodeBlock
           height={HEIGHTS.WITH_TEXT}
           code={`
-import { useImpler } from "@impler/react";
-
-const { showWidget, isImplerInitiated } = useImpler({
-  projectId: "${projectId}",
-  templateId: "${templateId}",
-  accessToken: "${accessToken}",
-});
-
-<button disabled={!isImplerInitiated} onClick={showWidget}>Import</button>`}
+projectId: "${projectId}",
+templateId: "${templateId}",
+accessToken: "${accessToken}",
+`}
           language="javascript"
         />
       </>
