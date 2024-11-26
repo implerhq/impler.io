@@ -1,0 +1,103 @@
+0 silly argv {
+0 silly argv   _: [ 'version' ],
+0 silly argv   push: false,
+0 silly argv   lernaVersion: '8.1.9',
+0 silly argv   '$0': 'node_modules/lerna/dist/cli.js',
+0 silly argv   bump: 'patch'
+0 silly argv }
+1 notice cli v8.1.9
+2 verbose packageConfigs Explicit "packages" configuration found in lerna.json. Resolving packages using the configured glob(s): ["apps/*","libs/*","packages/*"]
+3 verbose rootPath /home/administration/Desktop/impler.io
+4 info current version 0.27.1
+5 silly isAnythingCommitted
+6 verbose isAnythingCommitted 1
+7 silly getCurrentBranch
+8 verbose currentBranch release/0.27.2
+9 silly hasTags
+10 verbose hasTags true
+11 silly git-describe.sync "ad5828ab" => {"refCount":"3676","sha":"ad5828ab","isDirty":false}
+12 info Assuming all packages changed
+13 verbose updated @impler/api
+14 verbose updated @impler/queue-manager
+15 verbose updated @impler/web
+16 verbose updated @impler/widget
+17 verbose updated @impler/dal
+18 verbose updated @impler/embed
+19 verbose updated @impler/services
+20 verbose updated @impler/shared
+21 verbose updated @impler/angular
+22 verbose updated @impler/client
+23 verbose updated @impler/react
+24 verbose git-describe undefined => "ad5828ab"
+25 silly git-describe parsed => {"refCount":"3676","sha":"ad5828ab","isDirty":false}
+26 info execute Skipping git push
+27 info execute Skipping releases
+28 silly lifecycle No script for "preversion" in "impler.io", continuing
+29 silly lifecycle No script for "preversion" in "@impler/embed", continuing
+30 silly lifecycle No script for "preversion" in "@impler/client", continuing
+31 verbose version @impler/embed has no lockfile. Skipping lockfile update.
+32 verbose version @impler/client has no lockfile. Skipping lockfile update.
+33 silly lifecycle No script for "version" in "@impler/embed", continuing
+34 silly lifecycle No script for "version" in "@impler/client", continuing
+35 silly lifecycle No script for "preversion" in "@impler/shared", continuing
+36 silly lifecycle No script for "preversion" in "@impler/angular", continuing
+37 silly lifecycle No script for "preversion" in "@impler/react", continuing
+38 verbose version @impler/shared has no lockfile. Skipping lockfile update.
+39 verbose version @impler/angular has no lockfile. Skipping lockfile update.
+40 verbose version @impler/react has no lockfile. Skipping lockfile update.
+41 silly lifecycle No script for "version" in "@impler/react", continuing
+42 silly lifecycle No script for "version" in "@impler/shared", continuing
+43 silly lifecycle No script for "preversion" in "@impler/web", continuing
+44 silly lifecycle No script for "preversion" in "@impler/widget", continuing
+45 silly lifecycle No script for "preversion" in "@impler/dal", continuing
+46 silly lifecycle No script for "preversion" in "@impler/services", continuing
+47 silly lifecycle No script for "version" in "@impler/angular", continuing
+48 verbose version @impler/web has no lockfile. Skipping lockfile update.
+49 verbose version @impler/widget has no lockfile. Skipping lockfile update.
+50 verbose version @impler/services has no lockfile. Skipping lockfile update.
+51 verbose version @impler/dal has no lockfile. Skipping lockfile update.
+52 silly lifecycle No script for "version" in "@impler/web", continuing
+53 silly lifecycle No script for "version" in "@impler/widget", continuing
+54 silly lifecycle No script for "version" in "@impler/dal", continuing
+55 silly lifecycle No script for "version" in "@impler/services", continuing
+56 silly lifecycle No script for "preversion" in "@impler/api", continuing
+57 silly lifecycle No script for "preversion" in "@impler/queue-manager", continuing
+58 verbose version @impler/api has no lockfile. Skipping lockfile update.
+59 verbose version @impler/queue-manager has no lockfile. Skipping lockfile update.
+60 silly lifecycle No script for "version" in "@impler/api", continuing
+61 silly lifecycle No script for "version" in "@impler/queue-manager", continuing
+62 silly lifecycle No script for "version" in "impler.io", continuing
+63 verbose version Updating root pnpm-lock.yaml
+64 error Error: Command failed with exit code 1: pnpm install --lockfile-only --ignore-scripts
+64 error Scope: all 12 workspace projects
+64 error  WARN  `node_modules` is present. Lockfile only installation will make it out-of-date
+64 error Progress: resolved 1, reused 0, downloaded 0, added 0
+64 error apps/api                                 |  WARN  deprecated rimraf@3.0.2
+64 error apps/web                                 |  WARN  deprecated eslint@8.57.1
+64 error packages/angular                         |  WARN  deprecated rollup-plugin-terser@7.0.2
+64 error Progress: resolved 165, reused 1, downloaded 0, added 0
+64 error
+64 error    ╭──────────────────────────────────────────────────────────────────╮
+64 error    │                                                                  │
+64 error    │                Update available! 9.4.0 → 9.14.2.                 │
+64 error    │   Changelog: https://github.com/pnpm/pnpm/releases/tag/v9.14.2   │
+64 error    │                Run "pnpm add -g pnpm" to update.                 │
+64 error    │                                                                  │
+64 error    │         Follow @pnpmjs for updates: https://x.com/pnpmjs         │
+64 error    │                                                                  │
+64 error    ╰──────────────────────────────────────────────────────────────────╯
+64 error
+64 error Progress: resolved 186, reused 1, downloaded 0, added 0
+64 error /home/administration/Desktop/impler.io/packages/angular:
+64 error  ERR_PNPM_NO_MATCHING_VERSION  No matching version found for @impler/client@^0.27.2
+64 error
+64 error This error happened while installing a direct dependency of /home/administration/Desktop/impler.io/packages/angular
+64 error
+64 error The latest release of @impler/client is "0.27.1".
+64 error
+64 error If you need the full list of all 7 published versions run "$ pnpm view @impler/client versions".
+64 error     at makeError (/home/administration/Desktop/impler.io/node_modules/.pnpm/execa@5.0.0/node_modules/execa/lib/error.js:59:11)
+64 error     at handlePromise (/home/administration/Desktop/impler.io/node_modules/.pnpm/execa@5.0.0/node_modules/execa/index.js:114:26)
+64 error     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+64 error     at async VersionCommand.updatePackageVersions (/home/administration/Desktop/impler.io/node_modules/.pnpm/lerna@8.1.9_babel-plugin-macros@3.1.0_encoding@0.1.13/node_modules/lerna/dist/index.js:9866:11)
+64 error     at async Promise.all (index 0)
