@@ -88,6 +88,7 @@
 }
 
 .list-wrapper {
+    width: auto;
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
     background-color: #fff;
     visibility: hidden;
@@ -96,7 +97,21 @@
 }
 .list-wrapper.open {
     visibility: visible;
+    position: absolute;
+    width: auto;
+    min-width: fit-content;
+    max-width: 100%;
+    z-index: 300;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+    background: white;
+    overflow: hidden;
+    box-sizing: border-box;
+    top: 100%;
+    left: 0;
+    margin: 0;
 }
+
 
 .list-wrapper ul {
     position: fixed;
@@ -108,9 +123,22 @@
     border: 1px solid #ddd;
 }
 
+.list-wrapper.open ul {
+    width: 100%;
+    max-width: none;
+    height: auto;
+    max-height: 50vh;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0;
+    border: none;
+    position: relative;
+}
+
 .list-wrapper:hover .option:not(:hover) {
     background-color: transparent !important;
 }
+
 .list-dropdown {
     max-height: 250px;
     overflow: auto;
@@ -118,7 +146,7 @@
     top: 100%;
     left: 0;
     border: 1px solid #ddd;
-    
+    width: 100%;
 }
 /* .ht_clone_left {
     box-shadow: 2px 0px 6px 0px rgb(0 0 0 / 20%);
@@ -126,15 +154,16 @@
 
   
 .dd-searchbox {
-  padding: 0.5rem;
-  background-color: #fff;
-  color: #000;
-  border: none;
-  outline: none;
-}
-
-.list-wrapper ul {
-    padding: 0;
+    padding: 0.5rem;
+    background-color: #fff;
+    color: #000;
+    border: none;
+    outline: none;
+    width: 100%;
+    min-width: min-content;
+    max-width: 100%;
+    box-sizing: border-box;
+    text-overflow: ellipsis;
 }
 
 .option {
@@ -142,13 +171,17 @@
     outline: none;
     padding: 0.5rem;
     list-style: none;
+    width: 100%;
 }
 
-.option:hover, .option:focus {
-    background-color: #f6f6f6 !important;
+.option:hover,
+.option:focus {
+    background-color: #d3d3d3 !important;
 }
 
 .option.selected {
+    overflow: hidden;
+    width: 100%;
     font-weight: 600;
     background-color: #f6f6f6 !important;
 }
@@ -159,7 +192,9 @@
     flex-wrap: wrap;
     padding: 3px;
     gap: 2px;
-    overflow: hidden;
+    max-width: fit-content;
+    box-sizing: border-box;
+    position: relative;
 }
 .item {
     display: flex;
@@ -182,4 +217,7 @@
     gap: 2px;
     display: flex;
     flex-wrap: wrap;
+}
+li.option.highlighted {
+    background-color: #d3d3d3 !important;
 }

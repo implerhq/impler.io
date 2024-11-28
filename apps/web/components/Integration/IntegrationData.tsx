@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import React, { ReactNode } from 'react';
-import { Code, List } from '@mantine/core';
+import { Code, List, Text } from '@mantine/core';
 
 import { colors, DOCUMENTATION_REFERENCE_LINKS } from '@config';
 import { CodeBlock } from './ContentBlock';
@@ -944,7 +944,7 @@ export class AppComponent {
     ),
   },
   [IntegrationEnum.BUBBLE]: {
-    'Integration Steps': () => (
+    '1) Integration Steps': () => (
       <>
         <List type="ordered" styles={{ item: { margin: '10px 0', paddingLeft: '20px' } }}>
           <List.Item>
@@ -998,6 +998,20 @@ export class AppComponent {
             Visit Documentation with Detailed Steps
           </ModifiedText>
         </Link>
+      </>
+    ),
+    '2) Add Import Button': ({ accessToken, projectId, templateId }) => (
+      <>
+        <Text>Here are the projectId, templateId and accessToken for the Bubble Integration</Text>
+        <CodeBlock
+          height={HEIGHTS.WITH_TEXT}
+          code={`
+projectId: "${projectId}",
+templateId: "${templateId}",
+accessToken: "${accessToken}",
+`}
+          language="javascript"
+        />
       </>
     ),
   },
