@@ -1,21 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { PaymentAPIService } from '@impler/services';
 import { EnvironmentRepository } from '@impler/dal';
+import { PaginationCommand } from '@shared/commands/pagination.command';
+import { PaginationResult } from '@impler/shared';
+import { GetTransactionHistoryCommand } from './get-transaction-command';
 
 @Injectable()
-export class GetTransactionHistory {
+export class GetTransactionHistory extends PaginationCommand {
   constructor(
     private paymentApiService: PaymentAPIService,
     private environmentRepository: EnvironmentRepository
-  ) {}
+  ) {
+    super();
+  }
 
-  async execute(projectId: string) {
+  async execute({ projectId, limit, page }: GetTransactionHistoryCommand): Promise<PaginationResult> {
     const teamOwner = await this.environmentRepository.getTeamOwnerDetails(projectId);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
-    const transactions = await this.paymentApiService.getTransactionHistory(teamOwner._userId.email);
+    const transactions = await this.paymentApiService.getTransactionHistory({
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+      email: teamOwner._userId.email,
+      limit,
+      page,
+    });
 
-    return transactions.map((transactionItem) => ({
+    const data = transactions.data.map((transactionItem) => ({
       transactionDate: transactionItem.transactionDate,
       planName: transactionItem.planName,
       transactionStatus: transactionItem.transactionStatus,
@@ -27,5 +36,13 @@ export class GetTransactionHistory {
       currency: transactionItem.currency,
       _id: transactionItem.id,
     }));
+
+    return {
+      data,
+      limit,
+      page,
+      totalPages: transactions.totalPages,
+      totalRecords: transactions.data.length,
+    };
   }
 }

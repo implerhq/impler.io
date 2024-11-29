@@ -2,9 +2,10 @@ import Link from 'next/link';
 import { Group, LoadingOverlay, Stack, Title } from '@mantine/core';
 
 import dayjs from 'dayjs';
-import { ROUTES, DATE_FORMATS } from '@config';
+import { ROUTES, DATE_FORMATS, VARIABLES } from '@config';
 import { Table } from '@ui/table';
 import { Button } from '@ui/button';
+import { Pagination } from '@ui/pagination';
 import { Checkbox } from '@ui/checkbox';
 import { AppLayout } from '@layouts/AppLayout';
 import { capitalizeFirstLetter } from '@shared/utils';
@@ -12,7 +13,7 @@ import { LeftArrowIcon } from '@assets/icons/LeftArrow.icon';
 import { useTransactionHistory } from '@hooks/useTransactionHistory';
 
 export default function Transactions() {
-  const { transactions, isTransactionsLoading } = useTransactionHistory();
+  const { transactions, isTransactionsLoading, onLimitChange, onPageChange } = useTransactionHistory();
 
   return (
     <Stack spacing="xs">
@@ -83,9 +84,19 @@ export default function Transactions() {
               },
             },
           ]}
-          data={transactions || []}
+          data={transactions?.data || []}
         />
       </Stack>
+      <Pagination
+        dataLength={transactions?.data?.length || VARIABLES.ZERO}
+        limit={transactions?.limit || VARIABLES.ZERO}
+        onLimitChange={onLimitChange}
+        page={transactions?.page || VARIABLES.ZERO}
+        size="sm"
+        setPage={onPageChange}
+        totalPages={transactions?.totalPages || VARIABLES.ZERO}
+        totalRecords={transactions?.totalRecords || VARIABLES.ZERO}
+      />
     </Stack>
   );
 }

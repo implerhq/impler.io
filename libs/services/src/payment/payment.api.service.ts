@@ -1,5 +1,10 @@
 import axios from 'axios';
-import { ISubscriptionData, AVAILABLE_BILLABLEMETRIC_CODE_ENUM, constructQueryString } from '@impler/shared';
+import {
+  ISubscriptionData,
+  AVAILABLE_BILLABLEMETRIC_CODE_ENUM,
+  constructQueryString,
+  PaginationResult,
+} from '@impler/shared';
 
 interface ICheckData {
   uploadId: string;
@@ -251,17 +256,36 @@ export class PaymentAPIService {
 
     return response.data;
   }
-
-  async getTransactionHistory(email: string) {
+  async getTransactionHistory({
+    email,
+    limit,
+    page,
+  }: {
+    email: string;
+    limit: number;
+    page: number;
+  }): Promise<PaginationResult> {
     if (!this.PAYMENT_API_BASE_URL) return;
     const url = `${this.PAYMENT_API_BASE_URL}/api/v1/transaction/${email}/history`;
     const response = await axios.get(url, {
       headers: {
         [this.AUTH_KEY]: this.AUTH_VALUE,
       },
+      params: {
+        page,
+        limit,
+      },
     });
 
-    return response.data;
+    const { data, metadata } = response.data;
+
+    return {
+      data,
+      limit,
+      page,
+      totalPages: metadata.totalPages,
+      totalRecords: metadata.total,
+    };
   }
 
   async checkAppliedCoupon(couponCode: string, userEmail: string, planCode: string) {
