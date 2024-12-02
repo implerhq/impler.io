@@ -1,6 +1,6 @@
 {
   "name": "@impler/angular",
-  "version": "0.27.1",
+  "version": "0.27.2",
   "description": "Angular library to show CSV Excel Importer in angular applications",
   "license": "MIT",
   "author": "implerhq",
@@ -52,6 +52,6 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "@impler/client": "^0.27.1"
+    "@impler/client": "^0.27.2"
   }
 }
