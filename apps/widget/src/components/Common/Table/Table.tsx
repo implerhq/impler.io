@@ -279,7 +279,7 @@ export const Table = forwardRef<HotTableClass, TableProps>(
         }}
         stretchH="all"
         renderAllColumns
-        manualColumnResize
+        // manualColumnResize
         columns={columnDefs}
         colHeaders={headings}
         rowHeaders={rowHeaders}
