@@ -18,10 +18,31 @@ export class BaseRepository<T> {
     }
 
     const sanitizedQuery: Record<string, any> = {};
+
     for (const key of Object.keys(query)) {
-      sanitizedQuery[key] = { $eq: query[key] };
+      const value = query[key];
+
+      if (key.startsWith('$')) {
+        sanitizedQuery[key] = value;
+        continue;
+      }
+
+      if (value === null) {
+        sanitizedQuery[key] = { $eq: null };
+      } else if (Array.isArray(value)) {
+        sanitizedQuery[key] = { $in: value };
+      } else if (value instanceof RegExp) {
+        sanitizedQuery[key] = value;
+      } else if (typeof value === 'object' && value.$regex !== undefined) {
+        sanitizedQuery[key] = value;
+      } else if (typeof value === 'object') {
+        sanitizedQuery[key] = value;
+      } else {
+        sanitizedQuery[key] = { $eq: value };
+      }
     }
-    return sanitizedQuery as FilterQuery<T & Document>;
+
+    return sanitizedQuery;
   }
 
   public static createObjectId() {
@@ -30,6 +51,7 @@ export class BaseRepository<T> {
 
   async count(query: FilterQuery<T & Document>): Promise<number> {
     const sanitizedQuery = this.sanitizeQuery(query);
+
     return await this.MongooseModel.countDocuments(sanitizedQuery);
   }
 
@@ -58,11 +80,13 @@ export class BaseRepository<T> {
   async delete(query: FilterQuery<T & Document>) {
     const sanitizedQuery = this.sanitizeQuery(query);
     const data = await this.MongooseModel.findOneAndDelete(sanitizedQuery);
+
     return data;
   }
 
-  async deleteMany(query: FilterQuery<T & Document>): Promise<{ acknowledged: boolean; deletedCount: number; }> {
-    const data = await this.MongooseModel.deleteMany(query);
+  async deleteMany(query: FilterQuery<T & Document>): Promise<{ acknowledged: boolean; deletedCount: number }> {
+    const sanitizedQuery = this.sanitizeQuery(query);
+    const data = await this.MongooseModel.deleteMany(sanitizedQuery);
 
     return data;
   }
@@ -70,7 +94,7 @@ export class BaseRepository<T> {
   async find(
     query: FilterQuery<T & Document>,
     select = '',
-    options: { limit?: number; sort?: any; skip?: number; } = {}
+    options: { limit?: number; sort?: any; skip?: number } = {}
   ): Promise<T[]> {
     const data = await this.MongooseModel.find(query, select, {
       sort: options.sort || null,
@@ -86,7 +110,7 @@ export class BaseRepository<T> {
   async paginate(
     query: FilterQuery<T & Document>,
     select = '',
-    options: { limit?: number; sort?: any; skip?: number; } = {}
+    options: { limit?: number; sort?: any; skip?: number } = {}
   ): Promise<{
     data: T[];
     total: number;
@@ -111,7 +135,7 @@ export class BaseRepository<T> {
   async *findBatch(
     query: FilterQuery<T & Document>,
     select = '',
-    options: { limit?: number; sort?: any; skip?: number; } = {},
+    options: { limit?: number; sort?: any; skip?: number } = {},
     batchSize = 500
   ) {
     for await (const doc of this._model
@@ -159,6 +183,7 @@ export class BaseRepository<T> {
     options: QueryOptions<T> = { new: true } // By default return updated document
   ): Promise<T> {
     const sanitizedQuery = this.sanitizeQuery(query);
+
     return this.MongooseModel.findOneAndUpdate(sanitizedQuery, updateBody, options);
   }
 
