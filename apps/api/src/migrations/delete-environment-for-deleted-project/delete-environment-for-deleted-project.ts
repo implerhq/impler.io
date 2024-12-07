@@ -23,7 +23,7 @@ export async function run() {
   const deletedProjectsInEnvironments = await environmentRepository.aggregate([
     {
       $lookup: {
-        from: 'project',
+        from: 'projects',
         localField: '_projectId',
         foreignField: '_id',
         as: 'project',

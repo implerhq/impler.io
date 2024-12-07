@@ -12,12 +12,37 @@ export class BaseRepository<T> {
     this._model = MongooseModel;
   }
 
+  private sanitizeQuery(query: FilterQuery<T & Document>): FilterQuery<T & Document> {
+    if (typeof query !== 'object' || Array.isArray(query)) {
+      throw new Error('Invalid query format');
+    }
+
+    const sanitizedQuery: Record<string, any> = {};
+    for (const key of Object.keys(query)) {
+      const value = query[key];
+
+      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+        const hasOperators = Object.keys(value).some((subKey) => subKey.startsWith('$'));
+        if (hasOperators) {
+          sanitizedQuery[key] = value;
+          continue;
+        }
+      }
+
+      sanitizedQuery[key] = { $eq: value };
+    }
+
+    return sanitizedQuery as FilterQuery<T & Document>;
+  }
+
   public static createObjectId() {
     return new Types.ObjectId().toString();
   }
 
   async count(query: FilterQuery<T & Document>): Promise<number> {
-    return await this.MongooseModel.countDocuments(query);
+    const sanitizedQuery = this.sanitizeQuery(query);
+
+    return await this.MongooseModel.countDocuments(sanitizedQuery);
   }
 
   async aggregate(query: any[]): Promise<any> {
@@ -36,20 +61,24 @@ export class BaseRepository<T> {
   }
 
   async findOne(query: FilterQuery<T & Document>, select?: string) {
-    const data = await this.MongooseModel.findOne(query, select);
+    const sanitizedQuery = this.sanitizeQuery(query);
+    const data = await this.MongooseModel.findOne(sanitizedQuery, select);
     if (!data) return null;
 
     return this.mapEntity(data.toObject());
   }
 
   async delete(query: FilterQuery<T & Document>) {
-    const data = await this.MongooseModel.findOneAndDelete(query);
+    const sanitizedQuery = this.sanitizeQuery(query);
+    const data = await this.MongooseModel.findOneAndDelete(sanitizedQuery); //just return data
 
     return data;
   }
 
   async deleteMany(query: FilterQuery<T & Document>): Promise<{ acknowledged: boolean; deletedCount: number }> {
-    const data = await this.MongooseModel.deleteMany(query);
+    const sanitizedQuery = this.sanitizeQuery(query);
+
+    const data = await this.MongooseModel.deleteMany(sanitizedQuery);
 
     return data;
   }
@@ -59,7 +88,9 @@ export class BaseRepository<T> {
     select = '',
     options: { limit?: number; sort?: any; skip?: number } = {}
   ): Promise<T[]> {
-    const data = await this.MongooseModel.find(query, select, {
+    const sanitizedQuery = this.sanitizeQuery(query);
+
+    const data = await this.MongooseModel.find(sanitizedQuery, select, {
       sort: options.sort || null,
     })
       .skip(options.skip)
@@ -78,7 +109,9 @@ export class BaseRepository<T> {
     data: T[];
     total: number;
   } | null> {
-    const data = await this.MongooseModel.find(query, select, {
+    const sanitizedQuery = this.sanitizeQuery(query);
+
+    const data = await this.MongooseModel.find(sanitizedQuery, select, {
       sort: options.sort || null,
     })
       .skip(options.skip)
@@ -101,8 +134,10 @@ export class BaseRepository<T> {
     options: { limit?: number; sort?: any; skip?: number } = {},
     batchSize = 500
   ) {
+    const sanitizedQuery = this.sanitizeQuery(query);
+
     for await (const doc of this._model
-      .find(query, select, {
+      .find(sanitizedQuery, select, {
         sort: options.sort || null,
       })
       .batchSize(batchSize)
@@ -129,7 +164,8 @@ export class BaseRepository<T> {
     matched: number;
     modified: number;
   }> {
-    const saved = await this.MongooseModel.updateMany(query, updateBody, {
+    const sanitizedQuery = this.sanitizeQuery(query);
+    const saved = await this.MongooseModel.updateMany(sanitizedQuery, updateBody, {
       multi: true,
     });
 
@@ -144,7 +180,9 @@ export class BaseRepository<T> {
     updateBody: UpdateQuery<T>,
     options: QueryOptions<T> = { new: true } // By default return updated document
   ): Promise<T> {
-    return this.MongooseModel.findOneAndUpdate(query, updateBody, options);
+    const sanitizedQuery = this.sanitizeQuery(query);
+
+    return this.MongooseModel.findOneAndUpdate(sanitizedQuery, updateBody, options);
   }
 
   protected mapEntity(data: any): T {
