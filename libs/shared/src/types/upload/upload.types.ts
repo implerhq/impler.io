@@ -27,6 +27,7 @@ export enum FileMimeTypesEnum {
   'EXCELM' = 'application/vnd.ms-excel.sheet.macroenabled.12',
   'JSON' = 'application/json',
   'XML' = 'application/rss+xml',
+  'APPLICATION_XML' = 'application/xml',
   'TEXTXML' = 'text/xml',
   'PNG' = 'image/png',
   'JPG' = 'image/jpeg',
