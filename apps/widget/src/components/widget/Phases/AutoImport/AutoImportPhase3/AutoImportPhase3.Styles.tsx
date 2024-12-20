@@ -23,11 +23,15 @@ const getTabStyles = (theme: MantineTheme): CSSObject => ({
   },
 });
 
-const getStackStyles = (): CSSObject => ({
-  height: '100%',
-  justifyContent: 'space-between',
+const getStackStyles = (theme: MantineTheme): CSSObject => ({
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  height: 'auto',
+  width: '50%',
   border: `1px solid ${colors.lightGrey}`,
-  borderRadius: '12px',
+  borderRadius: theme.radius.md,
 });
 
 const getNeverEndsLabelStyles = (): CSSObject => ({
@@ -37,6 +41,6 @@ const getNeverEndsLabelStyles = (): CSSObject => ({
 
 export default createStyles((theme: MantineTheme) => ({
   tab: getTabStyles(theme),
-  stack: getStackStyles(),
+  stack: getStackStyles(theme),
   neverEndsLabel: getNeverEndsLabelStyles(),
 }));
