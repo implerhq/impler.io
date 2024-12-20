@@ -213,21 +213,23 @@ export function SchedulerFrequency({ autoImportFrequency, control }: SchedulerFr
                 value="onDay"
                 label={
                   <>
-                    <span>On day</span>
-                    <Controller
-                      name="yearlyDayNumber"
-                      control={control}
-                      defaultValue={1}
-                      render={({ field: dayField }) => (
-                        <NumberInput
-                          {...dayField}
-                          min={1}
-                          max={31}
-                          style={{ width: 80 }}
-                          onChange={(val) => dayField.onChange(val)}
-                        />
-                      )}
-                    />
+                    <Group align="center">
+                      <span style={{ color: colors.StrokeLight, fontWeight: 400 }}>On day</span>
+                      <Controller
+                        name="yearlyDayNumber"
+                        control={control}
+                        defaultValue={1}
+                        render={({ field: dayField }) => (
+                          <NumberInput
+                            {...dayField}
+                            min={1}
+                            max={31}
+                            style={{ width: 80 }}
+                            onChange={(val) => dayField.onChange(val)}
+                          />
+                        )}
+                      />
+                    </Group>
                   </>
                 }
               />
