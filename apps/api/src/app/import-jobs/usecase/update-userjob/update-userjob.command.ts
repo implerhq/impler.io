@@ -5,6 +5,8 @@ export class UpdateUserJobCommand {
 
   cron: string;
 
+  endsOn?: Date;
+
   headings: string[];
 
   status: string;

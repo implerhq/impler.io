@@ -48,6 +48,7 @@ const DAL_MODELS = [
   UserJobRepository,
   SchedulerRegistry,
   ProjectInvitationRepository,
+  UserJobRepository,
 ];
 const UTILITY_SERVICES = [CSVFileService2, FileNameService, NameService, ExcelFileService];
 

@@ -1,4 +1,4 @@
-import { IsArray, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsDateString, IsOptional, IsString } from 'class-validator';
 
 export class UpdateJobDto {
   @IsString()
@@ -12,6 +12,10 @@ export class UpdateJobDto {
   @IsString()
   @IsOptional()
   cron: string;
+
+  @IsDateString()
+  @IsOptional()
+  endsOn?: Date;
 
   @IsArray()
   @IsOptional()
