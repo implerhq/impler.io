@@ -46,13 +46,6 @@ export class AutoImportJobsSchedular {
   }
 
   async scheduleUpdateNextRun(userJobId: string, nextRunSchedule: dayjs.Dayjs, endsOn: dayjs.Dayjs) {
-    await this.userJobRepository.findOneAndUpdate(
-      { _id: userJobId },
-      {
-        $set: { nextRun: nextRunSchedule.toDate() },
-      },
-      { new: true }
-    );
     const nextRunValue = dayjs(nextRunSchedule).isAfter(endsOn) && endsOn ? undefined : nextRunSchedule;
 
     await this.userJobRepository.update({ _id: userJobId }, { $set: { nextRun: nextRunValue } });
@@ -84,7 +77,7 @@ export class AutoImportJobsSchedular {
     });
 
     if (!webhookDestination) {
-      return;
+      return false;
     }
 
     const { _id, callbackUrl } = webhookDestination;
