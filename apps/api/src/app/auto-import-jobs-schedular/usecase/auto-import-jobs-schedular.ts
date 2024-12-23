@@ -77,7 +77,7 @@ export class AutoImportJobsSchedular {
     });
 
     if (!webhookDestination) {
-      return;
+      return false;
     }
 
     const { _id, callbackUrl } = webhookDestination;
