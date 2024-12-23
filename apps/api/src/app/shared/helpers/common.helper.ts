@@ -83,3 +83,15 @@ export function captureException(error: any) {
     Sentry.captureException(error);
   } else console.error(error);
 }
+
+export function isValidXMLMimeType(mimeType: string): boolean {
+  if (
+    mimeType === FileMimeTypesEnum.XML ||
+    mimeType === FileMimeTypesEnum.TEXTXML ||
+    mimeType === FileMimeTypesEnum.APPLICATION_XML
+  ) {
+    return true;
+  }
+
+  return false;
+}
