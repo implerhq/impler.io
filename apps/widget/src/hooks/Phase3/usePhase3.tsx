@@ -65,8 +65,6 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     disableSrNo = false,
   } = extra ? { ...defaultValues, ...JSON.parse(extra as string) } : defaultValues;
 
-  console.log(disableFindAndReplace, disableCheckBox, disableSrNo);
-
   useQuery<unknown, IErrorObject, ISchemaColumn[], [string, string]>(
     [`columns:${uploadInfo._id}`, uploadInfo._id],
     () => api.getColumns(uploadInfo._id),
