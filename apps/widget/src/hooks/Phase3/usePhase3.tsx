@@ -57,13 +57,11 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
   const [showAllDataValidModal, setShowAllDataValidModal] = useState<boolean | undefined>(undefined);
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState<boolean | undefined>(undefined);
 
-  const defaultValues = { disableFindAndReplace: false, disableCheckBox: false, disableSrNo: false };
-
   const {
     disableFindAndReplace = false,
     disableCheckBox = false,
     disableSrNo = false,
-  } = extra ? { ...defaultValues, ...JSON.parse(extra as string) } : defaultValues;
+  } = extra ? JSON.parse(extra as string) : {};
 
   useQuery<unknown, IErrorObject, ISchemaColumn[], [string, string]>(
     [`columns:${uploadInfo._id}`, uploadInfo._id],
