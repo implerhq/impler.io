@@ -22,6 +22,7 @@ import { SelectEditor } from './SelectEditor';
 import { MultiSelectEditor } from './MultiSelectEditor';
 import { useCompleteImport } from '@hooks/useCompleteImport';
 import { useUploadInfo } from '@hooks/useUploadInfo';
+import { useImplerState } from '@store/impler.context';
 
 interface IUsePhase3Props {
   onNext: (uploadData: IUpload, importedData?: Record<string, any>[]) => void;
@@ -34,6 +35,7 @@ interface IRecordExtended extends IRecord {
 }
 
 export function usePhase3({ onNext }: IUsePhase3Props) {
+  const { extra } = useImplerState();
   const { api } = useAPIState();
   const [page, setPage] = useState<number>(defaultPage);
   const [headings, setHeadings] = useState<string[]>([]);
@@ -55,31 +57,51 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
   const [showAllDataValidModal, setShowAllDataValidModal] = useState<boolean | undefined>(undefined);
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState<boolean | undefined>(undefined);
 
+  const defaultValues = { disableFindAndReplace: false, disableCheckBox: false, disableSrNo: false };
+
+  const {
+    disableFindAndReplace = false,
+    disableCheckBox = false,
+    disableSrNo = false,
+  } = extra ? { ...defaultValues, ...JSON.parse(extra as string) } : defaultValues;
+
+  console.log(disableFindAndReplace, disableCheckBox, disableSrNo);
+
   useQuery<unknown, IErrorObject, ISchemaColumn[], [string, string]>(
     [`columns:${uploadInfo._id}`, uploadInfo._id],
     () => api.getColumns(uploadInfo._id),
     {
       onSuccess(data) {
-        let updatedFrozenColumns = 2;
+        let updatedFrozenColumns = 0;
         const dataColumns: IOption[] = [{ value: '', label: 'All columns' }];
         const newColumnDefs: HotItemSchema[] = [];
-        const newHeadings: string[] = ['*', 'Sr. No.'];
-        newColumnDefs.push({
-          type: 'text',
-          data: 'record.index',
-          readOnly: true,
-          editor: false,
-          renderer: 'check',
-          className: 'check-cell',
-          disableVisualSelection: true,
-        });
-        newColumnDefs.push({
-          type: 'text',
-          data: 'index',
-          readOnly: true,
-          className: 'index-cell',
-          disableVisualSelection: true,
-        });
+        const newHeadings: string[] = [];
+
+        if (!disableCheckBox) {
+          newHeadings.push('*');
+          updatedFrozenColumns++;
+          newColumnDefs.push({
+            type: 'text',
+            data: 'record.index',
+            readOnly: true,
+            editor: false,
+            renderer: 'check',
+            className: 'check-cell',
+            disableVisualSelection: true,
+          });
+        }
+
+        if (!disableSrNo) {
+          newHeadings.push('Sr. No.');
+          updatedFrozenColumns++;
+          newColumnDefs.push({
+            type: 'text',
+            data: 'index',
+            readOnly: true,
+            className: 'index-cell',
+            disableVisualSelection: true,
+          });
+        }
         data.forEach((column: ISchemaColumn) => {
           if (column.isFrozen) updatedFrozenColumns++;
           newHeadings.push(column.name);
@@ -294,5 +316,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     totalRecords: uploadInfo.totalRecords ?? undefined,
     invalidRecords: uploadInfo.invalidRecords ?? undefined,
     refetchReviewData: () => refetchReviewData([page, type]),
+    disableFindAndReplace,
+    disableCheckBox,
   };
 }
