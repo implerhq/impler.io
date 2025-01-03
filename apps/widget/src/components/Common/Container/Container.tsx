@@ -61,6 +61,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
         colorScheme: data.value.colorScheme,
         title: data.value.title,
         texts: deepMerge(WIDGET_TEXTS, data.value.texts),
+        config: data.value.config,
         schema:
           typeof data.value.schema === 'string'
             ? data.value.schema
@@ -330,6 +331,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
           schema={secondaryPayload?.schema}
           title={secondaryPayload?.title}
           texts={secondaryPayload.texts as typeof WIDGET_TEXTS}
+          config={secondaryPayload.config}
           // api
           api={api}
           // impler-context

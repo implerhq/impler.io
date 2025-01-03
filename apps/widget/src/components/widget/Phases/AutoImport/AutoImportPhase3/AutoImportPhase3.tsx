@@ -64,7 +64,7 @@ export function AutoImportPhase3({ onNextClick }: IAutoImportPhase3Props) {
                   <Tabs.List>
                     {autoImportSchedulerFrequency.map((type) => (
                       <Tabs.Tab key={type} value={type}>
-                        {type.charAt(0).toUpperCase() + type.slice(1)}
+                        <Text size="md">{type.charAt(0).toUpperCase() + type.slice(1)}</Text>
                       </Tabs.Tab>
                     ))}
                   </Tabs.List>
