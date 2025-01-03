@@ -123,17 +123,16 @@ export function Phase3(props: IPhase3Props) {
 
             {!disableDeleteButton && (
               <Button
-              color="red"
-              disabled={!selectedRowsRef.current.size}
-              onClick={() => setShowDeleteConfirmModal(true)}
-            >
-              {texts.COMMON.DELETE}
-              <Badge variant="light" ml="xs" color="red">
-                {numberFormatter(selectedRowsRef.current.size)}
-              </Badge>
-            </Button>
+                color="red"
+                disabled={!selectedRowsRef.current.size}
+                onClick={() => setShowDeleteConfirmModal(true)}
+              >
+                {texts.COMMON.DELETE}
+                <Badge variant="light" ml="xs" color="red">
+                  {numberFormatter(selectedRowsRef.current.size)}
+                </Badge>
+              </Button>
             )}
-            
           </Group>
         </Flex>
         <Table
