@@ -61,7 +61,8 @@ export function Phase3(props: IPhase3Props) {
     isCompleteImportLoading,
     setShowAllDataValidModal,
     setShowDeleteConfirmModal,
-    disableFindAndReplace,
+    disableFindAndReplaceButton,
+    disableDeleteButton,
     disableCheckBox,
   } = usePhase3({ onNext: onNextClick });
   const tableWrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
@@ -116,10 +117,12 @@ export function Phase3(props: IPhase3Props) {
             ]}
           />
           <Group spacing="xs">
-            {!disableFindAndReplace && (
+            {!disableFindAndReplaceButton && (
               <Button onClick={() => setShowFindReplaceModal(true)}>{texts.PHASE3.FIND_REPLACE}</Button>
             )}
-            <Button
+
+            {!disableDeleteButton && (
+              <Button
               color="red"
               disabled={!selectedRowsRef.current.size}
               onClick={() => setShowDeleteConfirmModal(true)}
@@ -129,6 +132,8 @@ export function Phase3(props: IPhase3Props) {
                 {numberFormatter(selectedRowsRef.current.size)}
               </Badge>
             </Button>
+            )}
+            
           </Group>
         </Flex>
         <Table
