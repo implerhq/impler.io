@@ -171,6 +171,7 @@ interface TableProps {
   onCheckAll?: (checked: boolean) => void;
   onValueChange?: (row: number, prop: string, oldVal: any, newVal: any) => void;
   onRowCheck?: (rowIndex: number, recordIndex: number, checked: boolean) => void;
+  disableCheckBox?: boolean;
 }
 
 export const Table = forwardRef<HotTableClass, TableProps>(
@@ -182,6 +183,7 @@ export const Table = forwardRef<HotTableClass, TableProps>(
       headings,
       columnDefs,
       data,
+      disableCheckBox,
       beforePaste,
       columnDescriptions,
       allChecked,
@@ -191,7 +193,8 @@ export const Table = forwardRef<HotTableClass, TableProps>(
       minSpareRows,
       frozenColumns = 2,
       onValueChange,
-      selectEnabled = true,
+      // Conditionally set selectEnabled based on disableCheckBox
+      selectEnabled = disableCheckBox === undefined ? true : !disableCheckBox,
     }: TableProps,
     gridRef
   ) => {
@@ -244,15 +247,15 @@ export const Table = forwardRef<HotTableClass, TableProps>(
 
           if (!selectEnabled && i < 0) {
             TH.innerHTML = '#';
-          } else if (selectEnabled && i === 0) {
-            TH.classList.add('check-all-cell');
+          } else if (selectEnabled && i === 0 && selectEnabled) {
             TH.innerHTML = `
-              <div class="checkbox">
-                <input type="checkbox" ${allChecked ? 'checked' : ''} class="checkbox__control">
-                <svg class="checkbox__control-icon" xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 24 24">
-                  <path fill="currentColor" d="M 20.292969 5.2929688 L 9 16.585938 L 4.7070312 12.292969 L 3.2929688 13.707031 L 9 19.414062 L 21.707031 6.7070312 L 20.292969 5.2929688 z"></path>
-                </svg>
-              </div>`;
+            <div class="checkbox">
+              <input type="checkbox" ${allChecked ? 'checked' : ''} class="checkbox__control">
+              <svg class="checkbox__control-icon" xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 24 24">
+                <path fill="currentColor" d="M 20.292969 5.2929688 L 9 16.585938 L 4.7070312 12.292969 L 3.2929688 13.707031 L 9 19.414062 L 21.707031 6.7070312 L 20.292969 5.2929688 z"></path>
+              </svg>
+            </div>
+          `;
           } else {
             if (columnDescriptions && columnDescriptions[i]) {
               // Create the SVG icon element

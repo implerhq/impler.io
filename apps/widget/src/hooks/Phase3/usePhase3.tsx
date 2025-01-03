@@ -44,7 +44,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     valid: new Set(),
     invalid: new Set(),
   });
-  const { uploadInfo, setUploadInfo } = useAppState();
+  const { uploadInfo, setUploadInfo, config } = useAppState();
   const [allChecked, setAllChecked] = useState<boolean>(false);
   const [reviewData, setReviewData] = useState<IRecordExtended[]>([]);
   const [columnDefs, setColumnDefs] = useState<HotItemSchema[]>([]);
@@ -60,26 +60,36 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     () => api.getColumns(uploadInfo._id),
     {
       onSuccess(data) {
-        let updatedFrozenColumns = 2;
+        let updatedFrozenColumns = 0;
         const dataColumns: IOption[] = [{ value: '', label: 'All columns' }];
         const newColumnDefs: HotItemSchema[] = [];
-        const newHeadings: string[] = ['*', 'Sr. No.'];
-        newColumnDefs.push({
-          type: 'text',
-          data: 'record.index',
-          readOnly: true,
-          editor: false,
-          renderer: 'check',
-          className: 'check-cell',
-          disableVisualSelection: true,
-        });
-        newColumnDefs.push({
-          type: 'text',
-          data: 'index',
-          readOnly: true,
-          className: 'index-cell',
-          disableVisualSelection: true,
-        });
+        const newHeadings: string[] = [];
+
+        if (!config?.disableCheckBox) {
+          newHeadings.push('*');
+          updatedFrozenColumns++;
+          newColumnDefs.push({
+            type: 'text',
+            data: 'record.index',
+            readOnly: true,
+            editor: false,
+            renderer: 'check',
+            className: 'check-cell',
+            disableVisualSelection: true,
+          });
+        }
+
+        if (!config?.disableSrNo) {
+          newHeadings.push('Sr. No.');
+          updatedFrozenColumns++;
+          newColumnDefs.push({
+            type: 'text',
+            data: 'index',
+            readOnly: true,
+            className: 'index-cell',
+            disableVisualSelection: true,
+          });
+        }
         data.forEach((column: ISchemaColumn) => {
           if (column.isFrozen) updatedFrozenColumns++;
           newHeadings.push(column.name);
@@ -294,5 +304,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     totalRecords: uploadInfo.totalRecords ?? undefined,
     invalidRecords: uploadInfo.invalidRecords ?? undefined,
     refetchReviewData: () => refetchReviewData([page, type]),
+    disableFindAndReplace: config?.disableFindAndReplace,
+    disableCheckBox: config?.disableCheckBox,
   };
 }

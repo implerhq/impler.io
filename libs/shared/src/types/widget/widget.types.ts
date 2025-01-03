@@ -1,4 +1,4 @@
-import { WIDGET_TEXTS } from '@impler/client';
+import { WIDGET_TEXTS, WidgetConfig } from '@impler/client';
 import { ISchemaItem } from '../column';
 
 export interface ICommonShowPayload {
@@ -16,6 +16,7 @@ export interface ICommonShowPayload {
 }
 export interface IWidgetShowPayload extends ICommonShowPayload {
   texts?: typeof WIDGET_TEXTS;
+  config?: WidgetConfig;
   data?: string;
   schema?: string;
   output?: string;
@@ -23,6 +24,7 @@ export interface IWidgetShowPayload extends ICommonShowPayload {
 
 export interface IUserShowPayload extends ICommonShowPayload {
   texts?: string | typeof WIDGET_TEXTS;
+  config?: WidgetConfig;
   data?: string | Record<string, string | number>[];
   schema?: string | ISchemaItem[];
   output?: string | Record<string, string | number>;
