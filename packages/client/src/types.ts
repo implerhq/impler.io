@@ -181,7 +181,8 @@ export type DeepPartial<T> = T extends object
 export type ValueOf<T> = T[keyof T];
 
 export declare type WidgetConfig = {
-  disableFindAndReplace?: boolean;
+  disableFindAndReplaceButton?: boolean;
+  disableDeleteButton?: boolean;
   disableCheckBox?: boolean;
   disableSrNo?: boolean;
 };
