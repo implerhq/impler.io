@@ -304,7 +304,8 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     totalRecords: uploadInfo.totalRecords ?? undefined,
     invalidRecords: uploadInfo.invalidRecords ?? undefined,
     refetchReviewData: () => refetchReviewData([page, type]),
-    disableFindAndReplace: config?.disableFindAndReplace,
+    disableFindAndReplaceButton: config?.disableFindAndReplaceButton,
+    disableDeleteButton: config?.disableDeleteButton,
     disableCheckBox: config?.disableCheckBox,
   };
 }
