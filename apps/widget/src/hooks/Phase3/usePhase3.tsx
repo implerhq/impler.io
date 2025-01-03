@@ -22,7 +22,6 @@ import { SelectEditor } from './SelectEditor';
 import { MultiSelectEditor } from './MultiSelectEditor';
 import { useCompleteImport } from '@hooks/useCompleteImport';
 import { useUploadInfo } from '@hooks/useUploadInfo';
-import { useImplerState } from '@store/impler.context';
 
 interface IUsePhase3Props {
   onNext: (uploadData: IUpload, importedData?: Record<string, any>[]) => void;
@@ -35,7 +34,6 @@ interface IRecordExtended extends IRecord {
 }
 
 export function usePhase3({ onNext }: IUsePhase3Props) {
-  const { extra } = useImplerState();
   const { api } = useAPIState();
   const [page, setPage] = useState<number>(defaultPage);
   const [headings, setHeadings] = useState<string[]>([]);
@@ -46,7 +44,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     valid: new Set(),
     invalid: new Set(),
   });
-  const { uploadInfo, setUploadInfo } = useAppState();
+  const { uploadInfo, setUploadInfo, config } = useAppState();
   const [allChecked, setAllChecked] = useState<boolean>(false);
   const [reviewData, setReviewData] = useState<IRecordExtended[]>([]);
   const [columnDefs, setColumnDefs] = useState<HotItemSchema[]>([]);
@@ -56,12 +54,6 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
   const [showFindReplaceModal, setShowFindReplaceModal] = useState<boolean | undefined>(undefined);
   const [showAllDataValidModal, setShowAllDataValidModal] = useState<boolean | undefined>(undefined);
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState<boolean | undefined>(undefined);
-
-  const {
-    disableFindAndReplace = false,
-    disableCheckBox = false,
-    disableSrNo = false,
-  } = extra ? JSON.parse(extra as string) : {};
 
   useQuery<unknown, IErrorObject, ISchemaColumn[], [string, string]>(
     [`columns:${uploadInfo._id}`, uploadInfo._id],
@@ -73,7 +65,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
         const newColumnDefs: HotItemSchema[] = [];
         const newHeadings: string[] = [];
 
-        if (!disableCheckBox) {
+        if (!config?.disableCheckBox) {
           newHeadings.push('*');
           updatedFrozenColumns++;
           newColumnDefs.push({
@@ -87,7 +79,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
           });
         }
 
-        if (!disableSrNo) {
+        if (!config?.disableSrNo) {
           newHeadings.push('Sr. No.');
           updatedFrozenColumns++;
           newColumnDefs.push({
@@ -312,7 +304,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     totalRecords: uploadInfo.totalRecords ?? undefined,
     invalidRecords: uploadInfo.invalidRecords ?? undefined,
     refetchReviewData: () => refetchReviewData([page, type]),
-    disableFindAndReplace,
-    disableCheckBox,
+    disableFindAndReplace: config?.disableFindAndReplace,
+    disableCheckBox: config?.disableCheckBox,
   };
 }

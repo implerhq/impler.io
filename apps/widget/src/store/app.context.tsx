@@ -29,6 +29,7 @@ const AppContextProvider = ({
   primaryColor,
   title,
   texts,
+  config,
   data,
   sampleFile,
   schema,
@@ -55,6 +56,7 @@ const AppContextProvider = ({
       value={{
         title,
         texts,
+        config,
         host,
         reset,
         data,
