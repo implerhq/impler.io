@@ -65,7 +65,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
         const newColumnDefs: HotItemSchema[] = [];
         const newHeadings: string[] = [];
 
-        if (!config?.disableCheckBox) {
+        if (!config?.hideCheckBox) {
           newHeadings.push('*');
           updatedFrozenColumns++;
           newColumnDefs.push({
@@ -79,7 +79,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
           });
         }
 
-        if (!config?.disableSrNo) {
+        if (!config?.hideSrNo) {
           newHeadings.push('Sr. No.');
           updatedFrozenColumns++;
           newColumnDefs.push({
@@ -304,8 +304,8 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     totalRecords: uploadInfo.totalRecords ?? undefined,
     invalidRecords: uploadInfo.invalidRecords ?? undefined,
     refetchReviewData: () => refetchReviewData([page, type]),
-    disableFindAndReplaceButton: config?.disableFindAndReplaceButton,
-    disableDeleteButton: config?.disableDeleteButton,
-    disableCheckBox: config?.disableCheckBox,
+    hideFindAndReplaceButton: config?.hideFindAndReplaceButton,
+    hideDeleteButton: config?.hideDeleteButton,
+    hideCheckBox: config?.hideCheckBox,
   };
 }
