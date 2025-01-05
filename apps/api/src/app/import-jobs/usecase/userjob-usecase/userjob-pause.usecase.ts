@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { NameService } from '@impler/services';
 import { UserJobImportStatusEnum } from '@impler/shared';
@@ -19,7 +19,12 @@ export class UserJobPause {
       throw new DocumentNotFoundException('Userjob', _jobId);
     }
 
-    const userCronJob = this.schedulerRegistry.getCronJob(this.nameService.getCronName(_jobId));
+    const cronName = this.nameService.getCronName(_jobId);
+
+    const userCronJob = this.schedulerRegistry.getCronJob(cronName);
+    if (!userCronJob) {
+      throw new NotFoundException(`Cron job with name ${cronName} not found.`);
+    }
 
     userCronJob.stop();
 

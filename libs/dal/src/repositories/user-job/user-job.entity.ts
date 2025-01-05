@@ -7,6 +7,10 @@ export class UserJobEntity {
 
   cron: string;
 
+  nextRun: Date;
+
+  endsOn: Date;
+
   headings: string[];
 
   extra: string;

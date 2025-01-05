@@ -14,6 +14,8 @@ export const colors = {
   yellow: '#F7B801',
   // lightGray: '#EFEFEF',
   lightGray: '#F8F8F8',
+  lightGrey: '#E3E3E3',
+  StrokeLight: '#666',
 
   lightBlue: '#5462ff',
   softBlue: '#edf3ff',

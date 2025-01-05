@@ -1,8 +1,8 @@
+import { Text, Stack, Paper } from '@mantine/core';
+const parseCronExpression = require('@impler/shared/src/utils/cronstrue');
 import { colors } from '@config';
 import { CheckIcon } from '@icons';
-import { Text, Stack, Paper } from '@mantine/core';
 import { useJobsInfo } from '@store/jobinfo.context';
-const parseCronExpression = require('util/helpers/cronstrue');
 
 import { PhasesEnum } from '@types';
 import { Footer } from 'components/Common/Footer';

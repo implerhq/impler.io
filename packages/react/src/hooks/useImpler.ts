@@ -10,6 +10,7 @@ export function useImpler({
   title,
   texts,
   extra,
+  config,
   onUploadComplete,
   onWidgetClose,
   onUploadStart,
@@ -96,6 +97,7 @@ export function useImpler({
         output,
         title,
         extra,
+        config,
         colorScheme,
         primaryColor,
       };

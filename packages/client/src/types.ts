@@ -165,6 +165,7 @@ export interface IShowWidgetProps {
   accessToken: string;
   sampleFile?: File | Blob;
   texts?: CustomTexts;
+  config?: WidgetConfig;
   title?: string;
   primaryColor?: string;
   extra?: string | Record<string, any>;
@@ -179,6 +180,13 @@ export type DeepPartial<T> = T extends object
 
 export type ValueOf<T> = T[keyof T];
 
+export declare type WidgetConfig = {
+  disableFindAndReplaceButton?: boolean;
+  disableDeleteButton?: boolean;
+  disableCheckBox?: boolean;
+  disableSrNo?: boolean;
+};
+
 export type CustomTexts = DeepPartial<typeof WIDGET_TEXTS>;
 
 export interface IUseImplerProps {
@@ -189,6 +197,7 @@ export interface IUseImplerProps {
   accessToken?: string;
   primaryColor?: string;
   extra?: string | Record<string, any>;
+  config?: WidgetConfig;
   authHeaderValue?: string | (() => string) | (() => Promise<string>);
   onUploadStart?: (value: UploadTemplateData) => void;
   onUploadTerminate?: (value: UploadData) => void;

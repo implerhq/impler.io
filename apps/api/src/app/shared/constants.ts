@@ -90,3 +90,9 @@ export enum LEAD_SIGNUP_USING {
   GITHUB = 'Github',
   EMAIL = 'Email',
 }
+
+export const CRON_SCHEDULE = {
+  DEFAULT_CRON_TIME: '45 23 * * *',
+  TEST_CRON_TIME: '* * * * *',
+  CRON_TIME: '45 23 * * *',
+};
