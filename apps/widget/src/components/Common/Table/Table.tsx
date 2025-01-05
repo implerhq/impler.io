@@ -171,7 +171,7 @@ interface TableProps {
   onCheckAll?: (checked: boolean) => void;
   onValueChange?: (row: number, prop: string, oldVal: any, newVal: any) => void;
   onRowCheck?: (rowIndex: number, recordIndex: number, checked: boolean) => void;
-  disableCheckBox?: boolean;
+  hideCheckBox?: boolean;
 }
 
 export const Table = forwardRef<HotTableClass, TableProps>(
@@ -183,7 +183,7 @@ export const Table = forwardRef<HotTableClass, TableProps>(
       headings,
       columnDefs,
       data,
-      disableCheckBox,
+      hideCheckBox,
       beforePaste,
       columnDescriptions,
       allChecked,
@@ -193,8 +193,8 @@ export const Table = forwardRef<HotTableClass, TableProps>(
       minSpareRows,
       frozenColumns = 2,
       onValueChange,
-      // Conditionally set selectEnabled based on disableCheckBox
-      selectEnabled = disableCheckBox === undefined ? true : !disableCheckBox,
+      // Conditionally set selectEnabled based on hideCheckBox
+      selectEnabled = hideCheckBox === undefined ? true : !hideCheckBox,
     }: TableProps,
     gridRef
   ) => {
