@@ -7,6 +7,7 @@ const RecordSchema = new Schema({
   },
   isValid: Boolean,
   errors: Schema.Types.Mixed,
+  warnings: Schema.Types.Mixed,
   record: Schema.Types.Mixed,
   updated: Schema.Types.Mixed,
 });

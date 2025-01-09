@@ -42,7 +42,26 @@ function processErrors(batchData, errors) {
   if(!Array.isArray(errors) || (Array.isArray(errors) && errors.length === 0)) {
     return batchData;
   }
-  let rowIndexToUpdate, combinedErrors, isErrorsEmpty;
+
+  errors.forEach(error => {
+    if (error.warnings && typeof error.warnings === 'object') {
+      const rowIndexToUpdate = batchData.data.findIndex(data => data.index === error.index);
+
+      if (rowIndexToUpdate > -1) {
+        // Initialize warnings object if it doesn't exist
+        if (!batchData.data[rowIndexToUpdate].warnings) {
+          batchData.data[rowIndexToUpdate].warnings = {};
+        }
+
+        batchData.data[rowIndexToUpdate].warnings = {
+          ...batchData.data[rowIndexToUpdate].warnings,
+          ...error.warnings
+        };
+      }
+    }
+  });
+
+  let rowIndexToUpdate, combinedErrors, isErrorsEmpty, combinedWarnings;
   errors.forEach(error => {
     rowIndexToUpdate = batchData.data.findIndex(data => data.index === error.index);
     if(
@@ -50,9 +69,11 @@ function processErrors(batchData, errors) {
       (typeof error.errors === 'object' && !Array.isArray(error.errors) && error.errors !== null)
     ) {
       combinedErrors = Object.assign(batchData.data[rowIndexToUpdate]?.errors || {}, error.errors);
+      combinedWarnings = batchData.data[rowIndexToUpdate]?.warnings || {};
       isErrorsEmpty = isObjectEmpty(combinedErrors);
       batchData.data[rowIndexToUpdate] = {
         ...batchData.data[rowIndexToUpdate],
+        warnings: combinedWarnings,
         errors: combinedErrors,
         isValid: isErrorsEmpty
       }
