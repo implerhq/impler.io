@@ -257,6 +257,7 @@ export const Table = forwardRef<HotTableClass, TableProps>(
           if (!selectEnabled && i < 0) {
             TH.innerHTML = '#';
           } else if (selectEnabled && i === 0 && selectEnabled) {
+            TH.classList.add('check-all-cell');
             TH.innerHTML = `
             <div class="checkbox">
               <input type="checkbox" ${allChecked ? 'checked' : ''} class="checkbox__control">
