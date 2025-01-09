@@ -64,6 +64,7 @@ const createErrorSvg = memoize(() => {
 const memoizedStyles = {
   errorUpdated: 'vertical-align: middle;float: right;cursor: pointer;color:#795e00;',
   errorOnly: 'vertical-align: middle;float: right;cursor: pointer;color:#ff1111;',
+  warningOnly: 'vertical-align: middle;float: right;cursor: pointer;#795e00;',
 };
 
 Handsontable.renderers.registerRenderer(
@@ -72,6 +73,7 @@ Handsontable.renderers.registerRenderer(
     const name = String(prop).replace('record.', '');
     const sourceData = instance.getSourceDataAtRow(row) as IRecord;
     const hasError = sourceData.errors?.[name];
+    const hasWarnings = sourceData.warnings?.[name];
     const isUpdated = sourceData.updated?.[name];
 
     TD.className = 'custom-cell';
@@ -109,6 +111,13 @@ Handsontable.renderers.registerRenderer(
       errorSvg.setAttribute('style', memoizedStyles.errorOnly);
       TD.appendChild(errorSvg);
       TD.style.backgroundColor = '#fdebeb';
+    } else if (hasWarnings) {
+      TD.ariaLabel = hasWarnings;
+      TD.dataset.cooltipzDir = row < 5 ? 'bottom' : 'top';
+      TD.dataset.cooltipzSize = 'fit';
+      errorSvg.setAttribute('style', hasWarnings ? memoizedStyles.warningOnly : memoizedStyles.errorUpdated);
+      TD.appendChild(errorSvg);
+      TD.style.backgroundColor = '#ffda5b';
     }
 
     return TD;
@@ -248,6 +257,7 @@ export const Table = forwardRef<HotTableClass, TableProps>(
           if (!selectEnabled && i < 0) {
             TH.innerHTML = '#';
           } else if (selectEnabled && i === 0 && selectEnabled) {
+            TH.classList.add('check-all-cell');
             TH.innerHTML = `
             <div class="checkbox">
               <input type="checkbox" ${allChecked ? 'checked' : ''} class="checkbox__control">
@@ -269,6 +279,7 @@ export const Table = forwardRef<HotTableClass, TableProps>(
                 'vertical-align: middle;float: right;cursor: pointer;color:#fffff; margin-right:4px;'
               );
               const infoIconPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
               infoIconPath.setAttribute(
                 'd',
                 'M10 20C4.477 20 0 15.523 0 10S4.477 0 10 0s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-10a1 1 0 0 1 1 1v5a1 1 0 0 1-2 0V9a1 1 0 0 1 1-1zm0-1a1 1 0 1 1 0-2 1 1 0 0 1 0 2z'

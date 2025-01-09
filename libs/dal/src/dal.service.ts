@@ -57,7 +57,7 @@ export class DalService {
     const conditions = type === 'all' ? {} : { isValid: type === 'valid' };
 
     return model
-      .find(conditions, 'index isValid errors record updated')
+      .find(conditions, 'index isValid errors warnings record updated')
       .skip(Math.max(0, (page - 1) * limit)) // when page is 0, it was skiping 0*n records
       .limit(limit)
       .exec();
@@ -132,7 +132,7 @@ export class DalService {
     const model = this.getRecordCollection(_uploadId);
     if (!model) return;
 
-    return model.find({}, 'index isValid errors record');
+    return model.find({}, 'index isValid errors warnings record');
   }
   getFieldData(_uploadId: string, fields: string[]) {
     const model = this.getRecordCollection(_uploadId);

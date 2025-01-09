@@ -28,6 +28,7 @@ interface ISaveResults {
 interface IDataItem {
   index: number;
   errors?: Record<string, string>;
+  wanings?: Record<string, string>;
   isValid: boolean;
   record: Record<string, any>;
   updated: Record<string, boolean>;
@@ -268,6 +269,7 @@ export class DoReReview extends BaseReview {
             update: {
               $set: {
                 errors: record.errors,
+                warnings: record.warnings,
                 isValid: record.isValid,
                 updated: {},
               },
