@@ -64,6 +64,7 @@ const createErrorSvg = memoize(() => {
 const memoizedStyles = {
   errorUpdated: 'vertical-align: middle;float: right;cursor: pointer;color:#795e00;',
   errorOnly: 'vertical-align: middle;float: right;cursor: pointer;color:#ff1111;',
+  warningOnly: 'vertical-align: middle;float: right;cursor: pointer;#795e00;',
 };
 
 Handsontable.renderers.registerRenderer(
@@ -72,6 +73,7 @@ Handsontable.renderers.registerRenderer(
     const name = String(prop).replace('record.', '');
     const sourceData = instance.getSourceDataAtRow(row) as IRecord;
     const hasError = sourceData.errors?.[name];
+    const hasWarnings = sourceData.warnings?.[name];
     const isUpdated = sourceData.updated?.[name];
 
     TD.className = 'custom-cell';
@@ -109,6 +111,13 @@ Handsontable.renderers.registerRenderer(
       errorSvg.setAttribute('style', memoizedStyles.errorOnly);
       TD.appendChild(errorSvg);
       TD.style.backgroundColor = '#fdebeb';
+    } else if (hasWarnings) {
+      TD.ariaLabel = hasWarnings;
+      TD.dataset.cooltipzDir = row < 5 ? 'bottom' : 'top';
+      TD.dataset.cooltipzSize = 'fit';
+      errorSvg.setAttribute('style', hasWarnings ? memoizedStyles.warningOnly : memoizedStyles.errorUpdated);
+      TD.appendChild(errorSvg);
+      TD.style.backgroundColor = '#ffda5b';
     }
 
     return TD;
