@@ -796,7 +796,7 @@ importers:
         specifier: '>=12.0.0'
         version: 12.2.17(rxjs@7.8.1)(zone.js@0.11.8)
       '@impler/client':
-        specifier: ^0.27.5
+        specifier: ^0.28.0
         version: link:../client
     devDependencies:
       '@angular/compiler':
@@ -863,7 +863,7 @@ importers:
   packages/react:
     dependencies:
       '@impler/client':
-        specifier: ^0.27.5
+        specifier: ^0.28.0
         version: link:../client
       react:
         specifier: '>=16.8.0'
