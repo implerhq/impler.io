@@ -1,4 +1,4 @@
-import { Stack, SegmentedControl, Box, Text } from '@mantine/core';
+import { Stack, SegmentedControl, Box, List, Text } from '@mantine/core';
 import { Control, Controller, FieldErrors, UseFormSetError } from 'react-hook-form';
 import { UploadDropzone } from '@ui/UploadDropzone';
 import { WIDGET_TEXTS } from '@impler/client';
@@ -23,10 +23,18 @@ export default function ImportColumnsSection({ control, setError, errors }: Impo
           name="file"
           control={control}
           render={({ field, fieldState }) => (
-            <Stack spacing="lg">
+            <Stack spacing="md">
               {templateSchema && templateSchema.length > 0 ? (
-                <Stack spacing="xs">
+                <Stack spacing="md">
                   <OnboardTemplateSchemaTable data={templateSchema} />
+                  <List spacing="xs">
+                    <List.Item>
+                      <Text size="md">You will be able to Edit and delete Columns in Next Step</Text>
+                    </List.Item>
+                    <List.Item>
+                      <Text size="md">Your filewon&apos;t be stored anywhere</Text>
+                    </List.Item>
+                  </List>
                 </Stack>
               ) : (
                 <>
@@ -46,10 +54,6 @@ export default function ImportColumnsSection({ control, setError, errors }: Impo
                     error={fieldState.error?.message}
                     loading={isLoading}
                   />
-                  <Text size="sm" align="center">
-                    Your file won&apos;t be stored anywhere. You can edit, and delete columns on the import details
-                    page.
-                  </Text>
                 </>
               )}
             </Stack>
