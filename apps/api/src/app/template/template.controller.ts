@@ -46,6 +46,7 @@ import {
   UpdateDestinationCommand,
   DuplicateTemplateCommand,
   UpdateValidationsCommand,
+  GetImportFileSchema,
 } from './usecases';
 
 import { TemplateResponseDto } from './dtos/template-response.dto';
@@ -63,6 +64,7 @@ import { UpdateValidationResponseDto } from './dtos/update-validation-response.d
 import { UpdateValidationsRequestDto } from './dtos/update-validations-request.dto';
 import { UpdateCustomizationRequestDto } from './dtos/update-customization-request.dto';
 import { UserSession } from '@shared/framework/user.decorator';
+import { ValidImportFile } from '@shared/validations/valid-import-file.validation';
 
 @Controller('/template')
 @ApiTags('Template')
@@ -86,7 +88,8 @@ export class TemplateController {
     private getTemplateDetails: GetTemplateDetails,
     private mapBubbleIoColumns: MapBubbleIoColumns,
     private updateCustomization: UpdateCustomization,
-    private updateTemplateColumns: UpdateTemplateColumns
+    private updateTemplateColumns: UpdateTemplateColumns,
+    private getImportFileSchema: GetImportFileSchema
   ) {}
 
   @Get(':templateId')
@@ -104,6 +107,20 @@ export class TemplateController {
       _templateId,
       _projectId: user._projectId,
     });
+  }
+
+  @Post('/schema')
+  @ApiOperation({
+    summary: 'Upload an Excel or CSV File to get the Column name and type',
+  })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('file'))
+  async getSchemaRoute(
+    @UserSession() user: IJwtPayload,
+    @Res({ passthrough: true }) res: Response,
+    @UploadedFile('file', ValidImportFile) file: Express.Multer.File
+  ) {
+    return this.getImportFileSchema.exec({ file });
   }
 
   @Post(':templateId/sample')
@@ -147,16 +164,29 @@ export class TemplateController {
   @ApiOkResponse({
     type: TemplateResponseDto,
   })
-  createTemplate(@Body() body: CreateTemplateRequestDto): Promise<TemplateResponseDto> {
-    return this.createTemplateUsecase.execute(
+  async createTemplate(
+    @Body() body: CreateTemplateRequestDto,
+    @UserSession() user: IJwtPayload
+  ): Promise<TemplateResponseDto> {
+    const template = await this.createTemplateUsecase.execute(
       CreateTemplateCommand.create({
         _projectId: body._projectId,
         callbackUrl: body.callbackUrl,
         chunkSize: body.chunkSize,
         name: body.name,
-        integration: body.integration as IntegrationEnum,
+        importIntegration: body.integration as IntegrationEnum,
       })
     );
+    await this.updateTemplateColumns.execute(
+      body.columns.map((columnData) => ({
+        _templateId: template._id,
+        ...columnData,
+      })),
+      template._id,
+      user.email
+    );
+
+    return template;
   }
 
   @Post(':templateId/duplicate')
