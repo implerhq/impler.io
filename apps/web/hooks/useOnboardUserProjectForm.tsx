@@ -1,38 +1,43 @@
-import { useRouter } from 'next/router';
+/* eslint-disable multiline-comment-style */
 import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/router';
 import { commonApi } from '@libs/api';
 import { track } from '@libs/amplitude';
 import { getCookie } from '@shared/utils';
 import { useAppState } from 'store/app.context';
 import { API_KEYS, CONSTANTS, ROUTES } from '@config';
-import { IErrorObject, IEnvironmentData } from '@impler/shared';
+import { IErrorObject, IEnvironmentData, IProjectPayload } from '@impler/shared';
+import { UseFormSetError } from 'react-hook-form';
+interface UseOnboardUserProjectFormProps {
+  setError?: UseFormSetError<CreateOnboardImportFormData>;
+}
 
-export function useOnboardUserProjectForm() {
-  const { push } = useRouter();
+export function useOnboardUserProjectForm({ setError }: UseOnboardUserProjectFormProps) {
+  const { push, replace } = useRouter();
   const { profileInfo, setProfileInfo } = useAppState();
 
   const { mutate: onboardUser, isLoading: isUserOnboardLoading } = useMutation<
-    { onboard: IOnboardUserData; environment: IEnvironmentData },
+    { onboard: IOnboardUserData; environment: IEnvironmentData; p: IProjectPayload },
     IErrorObject,
-    IOnboardUserData,
+    ProjectOnboardFormData,
     string[]
   >(
     [API_KEYS.ONBOARD_USER],
     (apiData) => commonApi(API_KEYS.ONBOARD_USER as any, { body: { ...apiData, onboarding: true } }),
     {
-      onSuccess: (_, onboardData) => {
+      onSuccess: (onboardResponseData, onboardData) => {
         if (profileInfo) {
           setProfileInfo({
             ...profileInfo,
-            _projectId: profileInfo._projectId,
+            _projectId: onboardResponseData.environment._projectId,
+            accessToken: onboardResponseData.environment.key,
           });
         }
         track({
           name: 'PROJECT CREATE',
-          properties: {
-            duringOnboard: true,
-          },
+          properties: { duringOnboard: true },
         });
+
         track({
           name: 'ONBOARD',
           properties: {
@@ -45,7 +50,17 @@ export function useOnboardUserProjectForm() {
         if (redirectUrl) {
           push(ROUTES.TEAM_MEMBERS);
         } else {
-          push(ROUTES.HOME);
+          replace(ROUTES.ONBOARD_TEMPLATE);
+
+          return;
+        }
+      },
+      onError: (error: IErrorObject) => {
+        if (setError) {
+          setError('file', {
+            message: error.message,
+            type: 'manual',
+          });
         }
       },
     }
