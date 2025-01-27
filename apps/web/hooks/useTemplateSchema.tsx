@@ -54,9 +54,9 @@ export function useTemplateSchema({ setError }: UseTemplateSchemaProps) {
     IErrorObject,
     { name: string; columns: IColumn[] | ITemplateSchema[] | IColumn | undefined; _projectId: string }
   >(
-    [API_KEYS.TEMPLATE_SAMPLE_GET],
+    [API_KEYS.TEMPLATE_SAMPLE_CREATE],
     (payload) =>
-      commonApi(API_KEYS.TEMPLATE_SAMPLE_GET as any, {
+      commonApi(API_KEYS.TEMPLATE_SAMPLE_CREATE as any, {
         body: {
           name: payload.name,
           columns: payload.columns,
