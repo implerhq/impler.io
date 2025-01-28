@@ -101,6 +101,5 @@ export const CRON_SCHEDULE = {
   CRON_TIME: '45 23 * * *',
 };
 
-export const SAMPLE_IMPORT_NAME = 'Product Data Import';
 export const TYPE_CHECK_SAMPLE = 10;
 export const MAX_FILE_SIZE = 10 * 1024 * 1024;

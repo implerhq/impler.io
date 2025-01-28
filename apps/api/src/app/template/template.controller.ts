@@ -177,14 +177,16 @@ export class TemplateController {
         importIntegration: body.integration as IntegrationEnum,
       })
     );
-    await this.updateTemplateColumns.execute(
-      body.columns.map((columnData) => ({
-        _templateId: template._id,
-        ...columnData,
-      })),
-      template._id,
-      user.email
-    );
+    if (body.columns) {
+      await this.updateTemplateColumns.execute(
+        body.columns.map((columnData) => ({
+          _templateId: template._id,
+          ...columnData,
+        })),
+        template._id,
+        user.email
+      );
+    }
 
     return template;
   }

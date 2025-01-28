@@ -4,7 +4,7 @@ import { CreateImportForm } from './CreateImportForm';
 import { useForm } from 'react-hook-form';
 import { useTemplateSchema } from '@hooks/useTemplateSchema';
 import { useAppState } from 'store/app.context';
-import { sampleColumns } from '@config';
+import { CONSTANTS, sampleColumns } from '@config';
 
 export default function OnboardImportForm() {
   const { profileInfo } = useAppState();
@@ -28,7 +28,7 @@ export default function OnboardImportForm() {
   const handleCreateImportFormSubmit = async (createImportFormData: CreateOnboardImportFormData) => {
     if (createImportFormData.onboardCreateTemplateMode === OnboardCreateTemplateModeEnum.SAMPLE_COLUMN) {
       createOnboardTemplateSample({
-        name: createImportFormData.importName,
+        name: CONSTANTS.SAMPLE_IMPORT_NAME,
         _projectId: profileInfo!._projectId,
         columns: sampleColumns as IColumn[],
       });

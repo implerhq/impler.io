@@ -24,6 +24,7 @@ export const CONSTANTS = {
     'An error occurred with the payment. No amount has been deducted. Please try again later or contact the support team.',
   SUBSCRIPTION_ACTIVATED_TITLE: 'Subscription activated',
   SUBSCRIPTION_FAILED_TITLE: 'Payment failed',
+  SAMPLE_IMPORT_NAME: 'Product Data Import',
 };
 
 export const VARIABLES = {
