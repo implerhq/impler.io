@@ -1,4 +1,4 @@
-import { IsBoolean, IsDefined, IsString } from 'class-validator';
+import { IsBoolean, IsDefined, IsOptional, IsString } from 'class-validator';
 import { AuthenticatedCommand } from '@shared/commands/authenticated.command';
 
 export class CreateProjectCommand extends AuthenticatedCommand {
@@ -7,6 +7,6 @@ export class CreateProjectCommand extends AuthenticatedCommand {
   name: string;
 
   @IsBoolean()
-  @IsDefined()
-  onboarding: boolean;
+  @IsOptional()
+  onboarding?: boolean;
 }

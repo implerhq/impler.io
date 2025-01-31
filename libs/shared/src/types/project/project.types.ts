@@ -3,6 +3,8 @@ export interface IProjectPayload {
   name: string;
   isOwner: boolean;
   role: UserRolesEnum;
+  importName: string;
+  onboarding?: boolean;
 }
 
 export enum UserRolesEnum {

@@ -229,6 +229,16 @@ const routes: Record<string, Route> = {
     method: 'PUT',
   },
 
+  [API_KEYS.TEMPLATE_SCHEMA_GET]: {
+    url: () => `/v1/template/schema`,
+    method: 'POST',
+  },
+
+  [API_KEYS.TEMPLATE_SAMPLE_CREATE]: {
+    url: () => `/v1/template`,
+    method: 'POST',
+  },
+
   // Destination
   [API_KEYS.DESTINATION_FETCH]: {
     url: (templateId) => `/v1/template/${templateId}/destination`,
@@ -342,10 +352,10 @@ export async function commonApi<T>(
 
     const response = await fetch(url, {
       method,
-      body: JSON.stringify(body),
+      body: body instanceof FormData ? body : JSON.stringify(body),
       ...(credentials ? { credentials: credentials } : {}),
       headers: {
-        'Content-Type': 'application/json',
+        ...(!(body instanceof FormData) && { 'Content-Type': 'application/json' }),
         ...(headers ? headers : {}),
         ...(cookie ? { Cookie: cookie } : {}),
       },

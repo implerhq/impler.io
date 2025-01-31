@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { ActionIcon, Flex, Group, LoadingOverlay, Title, useMantineTheme, Select } from '@mantine/core';
@@ -63,6 +63,12 @@ function ImportDetails() {
       colorScheme,
     });
   };
+
+  useEffect(() => {
+    if (isImplerInitiated && router.query.showWidget) {
+      onImportClick();
+    }
+  }, [isImplerInitiated]);
 
   return (
     <Flex gap="sm" direction="column" h="100%" style={{ position: 'relative' }}>

@@ -1,4 +1,4 @@
-import { IntegrationEnum } from '../../types';
+import { ColumnTypesEnum, IntegrationEnum } from '../../types';
 
 export interface ITemplate {
   _id: string;
@@ -15,6 +15,12 @@ export interface ITemplate {
   totalInvalidRecords: number;
   mode: string;
   integration: IntegrationEnum;
+}
+
+export interface ITemplateSchema {
+  name: string;
+  key: string;
+  type: ColumnTypesEnum;
 }
 
 export interface IImport {

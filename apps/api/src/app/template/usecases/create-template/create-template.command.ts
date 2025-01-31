@@ -1,6 +1,6 @@
 import { IsDefined, IsString, IsNumber, IsOptional, IsEnum } from 'class-validator';
 import { BaseCommand } from '@shared/commands/base.command';
-import { IntegrationEnum } from '@impler/shared';
+import { IColumn, IntegrationEnum } from '@impler/shared';
 
 export class CreateTemplateCommand extends BaseCommand {
   @IsDefined()
@@ -10,7 +10,7 @@ export class CreateTemplateCommand extends BaseCommand {
   @IsOptional()
   @IsOptional()
   @IsEnum(IntegrationEnum)
-  integration: IntegrationEnum;
+  importIntegration: IntegrationEnum;
 
   @IsString()
   @IsOptional()
@@ -23,4 +23,7 @@ export class CreateTemplateCommand extends BaseCommand {
   @IsString()
   @IsDefined()
   _projectId: string;
+
+  @IsOptional()
+  columns?: IColumn[];
 }
