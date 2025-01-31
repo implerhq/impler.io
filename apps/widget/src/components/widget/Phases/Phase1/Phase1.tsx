@@ -50,6 +50,7 @@ export function Phase1({
     isDownloadInProgress,
     onSelectSheetModalReset,
     isExcelSheetNamesLoading,
+    hideDownloadSampleButton,
   } = usePhase1({
     goNext,
     texts,
@@ -84,14 +85,17 @@ export function Phase1({
             )}
           />
         )}
+        {}
         <div className={classes.download}>
-          <Button
-            onClick={onDownload}
-            loading={isDownloadInProgress}
-            leftIcon={hasImageUpload ? <BackIcon /> : <DownloadIcon />}
-          >
-            {hasImageUpload ? texts.PHASE1.GENERATE_TEMPLATE : texts.PHASE1.DOWNLOAD_SAMPLE}
-          </Button>
+          {!hideDownloadSampleButton ? (
+            <Button
+              onClick={onDownload}
+              loading={isDownloadInProgress}
+              leftIcon={hasImageUpload ? <BackIcon /> : <DownloadIcon />}
+            >
+              {hasImageUpload ? texts.PHASE1.GENERATE_TEMPLATE : texts.PHASE1.DOWNLOAD_SAMPLE}
+            </Button>
+          ) : null}
         </div>
       </Group>
 

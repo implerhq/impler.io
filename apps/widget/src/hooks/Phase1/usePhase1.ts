@@ -40,7 +40,8 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
   const { templateId, authHeaderValue, extra } = useImplerState();
   const [excelSheetNames, setExcelSheetNames] = useState<string[]>([]);
   const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
-  const { setUploadInfo, setTemplateInfo, output, schema, data, importId, imageSchema, sampleFile } = useAppState();
+  const { setUploadInfo, setTemplateInfo, output, schema, data, importId, imageSchema, sampleFile, config } =
+    useAppState();
 
   const selectedTemplateId = watch('templateId');
 
@@ -193,5 +194,6 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
     isExcelSheetNamesLoading,
     showSelectTemplate: !templateId,
     onSelectExcelSheet: handleSubmit(uploadFile),
+    hideDownloadSampleButton: config?.hideDownloadSampleButton,
   };
 }
