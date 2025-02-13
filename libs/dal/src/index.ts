@@ -18,3 +18,4 @@ export * from './repositories/jobmapping';
 export * from './repositories/user-job';
 export * from './repositories/import-job-history';
 export * from './repositories/project-invitation';
+export * from './repositories/failed-webhook-retry-requests';
