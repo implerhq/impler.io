@@ -10,7 +10,6 @@ export class SendFailedWebhookDataConsumer extends BaseConsumer {
   async message(message: { content: string }): Promise<void> {
     const fetchedId = JSON.parse(message.content);
     const apiData = await this.failedWebhookRetryRequestsRepository.findOne({ _id: fetchedId });
-    console.log(fetchedId, apiData);
     const response = await this.makeApiCall(apiData.dataContent as unknown as ISendDataParameters);
 
     if (response.status === StatusEnum.FAILED && apiData.retryCount > 1) {
