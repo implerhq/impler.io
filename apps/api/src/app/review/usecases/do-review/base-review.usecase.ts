@@ -409,7 +409,7 @@ export class BaseReview {
         validRecords = 0;
       Papa.parse(csvFileStream, {
         dynamicTyping: false,
-        skipEmptyLines: true,
+        skipEmptyLines: 'greedy',
         step: (results: Papa.ParseStepResult<any>) => {
           totalRecords++;
           const record = results.data;
@@ -597,7 +597,7 @@ export class BaseReview {
 
         Papa.parse(csvFileStream, {
           dynamicTyping: false,
-          skipEmptyLines: true,
+          skipEmptyLines: 'greedy',
           step: (results: Papa.ParseStepResult<any>) => {
             recordsCount++;
             const record = results.data;

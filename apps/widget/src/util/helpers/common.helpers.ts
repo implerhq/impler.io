@@ -166,7 +166,6 @@ export const isValidFileType = (sampleFile: Blob): boolean => {
 };
 
 const calculateMonthlyPattern = (frequency: number, consecutiveMonths = 1, inputDay: number): string => {
-  // Validate inputs
   if (frequency < 1 || frequency > 12) {
     throw new Error('Frequency must be between 1 and 12 months');
   }
@@ -174,40 +173,45 @@ const calculateMonthlyPattern = (frequency: number, consecutiveMonths = 1, input
     throw new Error('Consecutive months must be between 1 and the frequency');
   }
 
-  // Get the current month and day
   const currentDate = new Date();
-  const currentMonth = currentDate.getMonth() + 1; // 1-based month
-  const currentDay = currentDate.getDate(); // Day of the month (1-31)
+  const currentMonth = currentDate.getMonth() + 1;
+  const currentDay = currentDate.getDate();
 
-  // Determine the starting month
   let startMonth = currentMonth;
   if (inputDay < currentDay) {
-    // If inputDay is less than the current day, shift to the next month
-    startMonth = (currentMonth % 12) + 1; // Move to next month, wrapping around to January if needed
+    startMonth = (currentMonth % 12) + 1;
   }
 
   const monthGroups: number[] = [];
 
-  // Generate month patterns based on the frequency
   for (let i = 0; i < 12; i++) {
-    const nextMonth = ((startMonth - 1 + i * frequency) % 12) + 1; // Loop back to 1 after December
+    const nextMonth = ((startMonth - 1 + i * frequency) % 12) + 1;
     monthGroups.push(nextMonth);
   }
 
-  // Remove duplicates and sort for cleaner cron expressions
   const uniqueMonths = [...new Set(monthGroups)].sort((a, b) => a - b);
 
   return uniqueMonths.join(',');
 };
 
 export const generateCronExpression = (data: RecurrenceFormData): string => {
-  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-  const endsOn = data.endsNever ? null : data.endsOn;
-  // Default to 45 minutes past 11 PM
   const minutes = 45;
   const hours = 23;
 
-  // Helper function to get week day index
+  const getMonthlyWeekDayIndex = (dayName?: string): number => {
+    if (!dayName) return 0;
+    const matchedDay = weekDays.find((weekDay) => weekDay.full.toLowerCase() === dayName.toLowerCase());
+
+    return matchedDay ? weekDays.indexOf(matchedDay) : 0;
+  };
+
+  const getYearlyWeekDayIndex = (dayName?: string): number => {
+    if (!dayName) return 0;
+    const matchedDay = weekDays.find((weekDay) => weekDay.full.toLowerCase() === dayName.toLowerCase());
+
+    return matchedDay ? weekDays.indexOf(matchedDay) : 0;
+  };
+
   const getWeekDayIndex = (dayName?: string): number => {
     if (!dayName) return 0;
     const matchedDay = weekDays.find((weekDay) => weekDay.full.toLowerCase() === dayName.toLowerCase());
@@ -215,34 +219,43 @@ export const generateCronExpression = (data: RecurrenceFormData): string => {
     return matchedDay ? weekDays.indexOf(matchedDay) : 0;
   };
 
-  // Helper function to convert day position to cron syntax
   const getDayPositionCron = (position?: string, dayIndex?: number): string => {
     if (!position || dayIndex === undefined) return '*';
 
     const positionCron = positionMap[position] || '1';
 
-    // For last occurrence, append 'L' to the day index
     if (positionCron === positionMap.Last) {
-      return `${dayIndex}L`; // Add 1 because cron uses 1-7 for days, not 0-6
+      return `${dayIndex}L`;
     }
 
-    // For specific numbered occurrences, use '#' notation
-    return `${dayIndex + 1}#${positionCron}`;
+    return `${dayIndex}#${positionCron}`;
   };
 
-  // Handle "on the" type (specific day of week in month)
   if (data.monthlyType === 'onThe' && data.monthlyDayPosition && data.monthlyDayOfWeek) {
     const weekDayIndex = getWeekDayIndex(data.monthlyDayOfWeek);
     const dayPositionCron = getDayPositionCron(data.monthlyDayPosition, weekDayIndex);
 
     const frequency = Math.min(Math.max(1, data.frequency || 1), 12);
 
-    // For regular monthly execution (every month)
     if (frequency === 1) {
       return `${minutes} ${hours} * * ${dayPositionCron}`;
     }
 
-    // For custom frequency with consecutive months
+    const monthPattern = calculateMonthlyPattern(frequency, frequency, 1);
+
+    return `${minutes} ${hours} ${dayPositionCron} ${monthPattern} *`;
+  }
+
+  if (data.monthlyType === 'onThe' && data.monthlyDayPosition && data.monthlyDayOfWeek) {
+    const weekDayIndex = getWeekDayIndex(data.monthlyDayOfWeek);
+    const dayPositionCron = getDayPositionCron(data.monthlyDayPosition, weekDayIndex);
+
+    const frequency = Math.min(Math.max(1, data.frequency || 1), 12);
+
+    if (frequency === 1) {
+      return `${minutes} ${hours} * * ${dayPositionCron}`;
+    }
+
     const monthPattern = calculateMonthlyPattern(frequency, frequency, 1);
 
     return `${minutes} ${hours} ${dayPositionCron} ${monthPattern} *`;
@@ -251,82 +264,72 @@ export const generateCronExpression = (data: RecurrenceFormData): string => {
   switch (data.recurrenceType) {
     case AUTOIMPORTSCHEDULERFREQUENCY.DAILY: {
       if (data.dailyType === 'weekdays') {
-        // Runs Monday to Friday
         return `${minutes} ${hours} * * 1-5`;
       }
 
       if (data.dailyType === 'every' && data.dailyFrequency > 0) {
-        // Runs every 'n' days
         return `${minutes} ${hours} */${data.dailyFrequency} * *`;
       }
 
-      // Default daily: Runs every day
       return `${minutes} ${hours} * * *`;
     }
-
     case AUTOIMPORTSCHEDULERFREQUENCY.WEEKLY: {
       const selectedDayIndexes = (data.selectedDays || [])
-        .map((selectedDay) => weekDays.findIndex((weekDay) => weekDay.full === selectedDay))
-        .filter((index) => index !== -1)
-        .join(',');
+        .map((selectedDay) => {
+          const index = weekDays.findIndex((weekDay) => weekDay.full === selectedDay);
 
-      // If no days are selected, return default daily schedule
-      if (!selectedDayIndexes) {
-        return `${minutes} ${hours} * * *`; // Default daily schedule
-      }
+          return index;
+        })
+        .filter((index) => index !== -1)
+        .sort((a, b) => a - b);
 
       const frequency = Math.max(1, data.frequency || 1);
 
-      // If frequency is 1 (standard weekly recurrence), just use the selected days
-      if (frequency === 1) {
-        return `${minutes} ${hours} * * ${selectedDayIndexes}`;
-      } else {
-        // For bi-weekly or more, apply the frequency to the selected days
-        const daysWithSteps = selectedDayIndexes
-          .split(',')
-          .map((day) => `${day}/${frequency}`)
-          .join(',');
+      if (selectedDayIndexes.length === 0) {
+        const cronExpression = frequency > 1 ? `${minutes} ${hours} * * */${frequency}` : `${minutes} ${hours} * * *`;
 
-        return `${minutes} ${hours} * * ${daysWithSteps}`;
+        return cronExpression;
       }
+
+      const cronDays = selectedDayIndexes.map((index) => (index === 0 ? 7 : index));
+
+      if (frequency > 1) {
+        const daysWithFrequency = cronDays.map((day) => `${day}/${frequency}`).join(',');
+
+        return `${minutes} ${hours} * * ${daysWithFrequency}`;
+      }
+
+      return `${minutes} ${hours} * * ${cronDays.join(',')}`;
     }
 
     case AUTOIMPORTSCHEDULERFREQUENCY.MONTHLY: {
-      // Handle regular day of month
       if (data.monthlyType === 'onDay' && data.monthlyDayNumber) {
         const day = Math.min(Math.max(1, data.monthlyDayNumber), 31);
         const frequency = Math.min(Math.max(1, data.frequency || 1), 12);
 
-        // For regular monthly execution
         if (frequency === 1) {
           return `${minutes} ${hours} ${day} * *`;
         }
 
-        // For custom frequency with dynamic consecutive months pattern
         const monthPattern = calculateMonthlyPattern(frequency, frequency, day);
 
         return `${minutes} ${hours} ${day} ${monthPattern} *`;
       }
 
-      // Handle "on the" type (specific day of week in month)
       if (data.monthlyType === 'onThe' && data.monthlyDayPosition && data.monthlyDayOfWeek) {
-        const weekDayIndex = getWeekDayIndex(data.monthlyDayOfWeek);
+        const weekDayIndex = getMonthlyWeekDayIndex(data.monthlyDayOfWeek);
         const dayPositionCron = getDayPositionCron(data.monthlyDayPosition, weekDayIndex);
-
         const frequency = Math.min(Math.max(1, data.frequency || 1), 12);
 
-        // For regular monthly execution (every month)
         if (frequency === 1) {
-          return `${minutes} ${hours} ${dayPositionCron} * *`;
+          return `${minutes} ${hours} * * ${dayPositionCron}`;
         }
 
-        // For custom frequency with consecutive months
         const monthPattern = calculateMonthlyPattern(frequency, frequency, 1);
 
         return `${minutes} ${hours} ${dayPositionCron} ${monthPattern} *`;
       }
 
-      // Default to first day of month if no specific configuration
       return `${minutes} ${hours} 1 * *`;
     }
 
@@ -334,27 +337,22 @@ export const generateCronExpression = (data: RecurrenceFormData): string => {
       const monthIndex = months.findIndex((month) => month === data.yearlyMonth) + 1;
       const validMonthIndex = monthIndex > 0 ? monthIndex : 1;
 
-      // Handle regular day of month
       if (data.yearlyType === 'onDay' && data.yearlyDayNumber) {
         return `${minutes} ${hours} ${data.yearlyDayNumber} ${validMonthIndex} *`;
       }
 
-      // Handle "on the" type for yearly recurrence
       if (data.yearlyType === 'onThe' && data.yearlyDayPosition && data.yearlyDayOfWeek) {
-        const weekDayIndex = getWeekDayIndex(data.yearlyDayOfWeek);
+        const weekDayIndex = getYearlyWeekDayIndex(data.yearlyDayOfWeek);
 
-        // For last occurrence of a specific day
         if (data.yearlyDayPosition === 'Last') {
-          return `${minutes} ${hours} * ${validMonthIndex} ${weekDayIndex + 1}L`;
+          return `${minutes} ${hours} * ${validMonthIndex} ${weekDayIndex}L`;
         }
 
-        // For other positions (First, Second, Third, Fourth)
         const positionCron = positionMap[data.yearlyDayPosition] || '1';
 
-        return `${minutes} ${hours} * ${validMonthIndex} ${weekDayIndex + 1}#${positionCron}`;
+        return `${minutes} ${hours} * ${validMonthIndex} ${weekDayIndex}#${positionCron}`;
       }
 
-      // Default to first day of the specified month
       return `${minutes} ${hours} 1 ${validMonthIndex} *`;
     }
 
