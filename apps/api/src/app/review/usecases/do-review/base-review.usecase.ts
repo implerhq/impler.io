@@ -155,7 +155,11 @@ export class BaseReview {
       case ColumnTypesEnum.REGEX:
         const [full, pattern, flags] = column.regex.match(/\/(.*)\/(.*)|(.*)/);
 
-        property = { type: 'string', regexp: { pattern: pattern || full, flags: flags || '' } };
+        property = {
+          type: ['string', 'null'],
+          default: null,
+          regexp: { pattern: pattern || full, flags: flags || '' },
+        };
         break;
       case ColumnTypesEnum.EMAIL:
         property = {
