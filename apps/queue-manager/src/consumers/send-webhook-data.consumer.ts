@@ -19,12 +19,13 @@ import {
   TemplateRepository,
   WebhookLogRepository,
   WebhookDestinationRepository,
+  FailedWebhookRetryRequestsRepository,
 } from '@impler/dal';
 
 import { BaseConsumer } from './base.consumer';
 import { publishToQueue } from '../bootstrap';
 import { IBuildSendDataParameters } from '../types/file-processing.types';
-import { getEmailServiceClass, getStorageServiceClass } from '../helpers/serivces.helper';
+import { getEmailServiceClass, getStorageServiceClass } from '../helpers/services.helper';
 
 const MIN_LIMIT = 0;
 const DEFAULT_PAGE = 1;
@@ -37,6 +38,8 @@ export class SendWebhookDataConsumer extends BaseConsumer {
   private webhookDestinationRepository: WebhookDestinationRepository = new WebhookDestinationRepository();
   private storageService: StorageService = getStorageServiceClass();
   private emailService: EmailService = getEmailServiceClass();
+  private failedWebhookRetryRequestsRepository: FailedWebhookRetryRequestsRepository =
+    new FailedWebhookRetryRequestsRepository();
 
   async message(message: { content: string }) {
     const data = JSON.parse(message.content) as SendWebhookData;
@@ -75,16 +78,26 @@ export class SendWebhookDataConsumer extends BaseConsumer {
           ? { [cachedData.authHeaderName]: cachedData.authHeaderValue }
           : null;
 
-      const response = await this.makeApiCall({
+      const allData = {
         data: sendData,
         uploadId,
         page,
         method: 'POST',
         url: cachedData.callbackUrl,
         headers,
-      });
+      };
 
-      await this.makeResponseEntry(response, cachedData.name, cachedData.callbackUrl, cachedData.email);
+      const response = await this.makeApiCall(allData);
+
+      await this.makeResponseEntry({
+        data: response,
+        importName: cachedData.name,
+        url: cachedData.callbackUrl,
+        userEmail: cachedData.email,
+        retryInterval: cachedData.retryInterval,
+        retryCount: cachedData.retryCount,
+        allData,
+      });
 
       const nextPageNumber = this.getNextPageNumber({
         totalRecords: allDataJson.length,
@@ -170,7 +183,7 @@ export class SendWebhookDataConsumer extends BaseConsumer {
   private async getInitialCachedData(_uploadId: string): Promise<SendWebhookCachedData> {
     // Get Upload Information
     const uploadata = await this.uploadRepository.getUploadProcessInformation(_uploadId);
-    if (uploadata._allDataFileId) return null;
+    if (uploadata?._allDataFileId) return null;
 
     const userEmail = await this.uploadRepository.getUserEmailFromUploadId(_uploadId);
 
@@ -200,6 +213,8 @@ export class SendWebhookDataConsumer extends BaseConsumer {
       page: 1,
       authHeaderName: webhookDestination?.authHeaderName,
       authHeaderValue: uploadata.authHeaderValue,
+      retryInterval: webhookDestination.retryInterval,
+      retryCount: webhookDestination.retryCount,
       allDataFilePath: this.fileNameService.getAllJsonDataFilePath(_uploadId),
       fileName: (uploadata._uploadedFileId as unknown as FileEntity)?.originalName,
       extra: uploadata.extra,
@@ -212,7 +227,24 @@ export class SendWebhookDataConsumer extends BaseConsumer {
     };
   }
 
-  private async makeResponseEntry(data: Partial<WebhookLogEntity>, importName: string, url: string, userEmail: string) {
+  private async makeResponseEntry({
+    data,
+    importName,
+    url,
+    allData,
+    userEmail,
+    retryInterval,
+    retryCount,
+  }: {
+    data: Partial<WebhookLogEntity>;
+    importName: string;
+    url: string;
+    userEmail: string;
+    retryCount?: number;
+    retryInterval?: number;
+    allData: Record<string, any>;
+  }) {
+    const webhookLog = await this.webhookLogRepository.create(data);
     if (data.status === StatusEnum.FAILED) {
       const emailContents = this.emailService.getEmailContent({
         type: 'ERROR_SENDING_WEBHOOK_DATA',
@@ -232,9 +264,22 @@ export class SendWebhookDataConsumer extends BaseConsumer {
         from: process.env.ALERT_EMAIL_FROM,
         senderName: process.env.EMAIL_FROM_NAME,
       });
+
+      if (retryCount && retryInterval) {
+        await this.failedWebhookRetryRequestsRepository.create({
+          _webhookLogId: webhookLog._id,
+          dataContent: allData,
+          retryCount,
+          retryInterval,
+          nextRequestTime: this.getNextTime(1).toDate(),
+          _uploadId: webhookLog._uploadId,
+          importName: importName,
+          error: webhookLog.error,
+        });
+      }
     }
 
-    return await this.webhookLogRepository.create(data);
+    return webhookLog;
   }
 
   private async finalizeUpload(uploadId: string) {
