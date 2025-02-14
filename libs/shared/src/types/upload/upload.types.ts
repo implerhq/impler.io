@@ -44,6 +44,7 @@ export enum FileEncodingsEnum {
 
 export enum QueuesEnum {
   'SEND_WEBHOOK_DATA' = 'SEND_WEBHOOK_DATA',
+  'SEND_FAILED_WEBHOOK_DATA' = 'SEND_FAILED_WEBHOOK_DATA',
   'SEND_BUBBLE_DATA' = 'SEND_BUBBLE_DATA',
   'END_IMPORT' = 'END_IMPORT',
   'GET_IMPORT_JOB_DATA' = 'GET_IMPORT_JOB_DATA',
@@ -59,6 +60,8 @@ export type CommonCachedData = {
   extra?: string;
   authHeaderName: string;
   authHeaderValue: string;
+  retryInterval?: number;
+  retryCount?: number;
   _templateId: string;
   allDataFilePath?: string;
   recordFormat?: string;
@@ -94,9 +97,23 @@ export type SendBubbleData = {
   cache: SendBubbleCachedData;
 };
 
+export interface ISendDataParameters {
+  data: string | Record<string, unknown>;
+  url: string;
+  page: number;
+  method?: 'POST' | string;
+  uploadId: string;
+  headers?: Record<string, string>;
+}
+
 export type SendWebhookData = {
   uploadId: string;
   cache?: SendWebhookCachedData;
+};
+
+export type SendFailedWebhookData = {
+  webhookLogId: string;
+  data: ISendDataParameters;
 };
 
 export type SendImportJobData = {

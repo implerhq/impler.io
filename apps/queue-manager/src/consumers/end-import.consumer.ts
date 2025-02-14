@@ -5,7 +5,7 @@ import { FileNameService, PaymentAPIService, StorageService } from '@impler/serv
 import { BaseConsumer } from './base.consumer';
 import { publishToQueue } from '../bootstrap';
 import * as Papa from 'papaparse';
-import { getStorageServiceClass } from '../helpers/serivces.helper';
+import { getStorageServiceClass } from '../helpers/services.helper';
 
 export class EndImportConsumer extends BaseConsumer {
   private dalService: DalService = new DalService();

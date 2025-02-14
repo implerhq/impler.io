@@ -21,7 +21,7 @@ import {
 
 import { BaseConsumer } from './base.consumer';
 import { publishToQueue } from '../bootstrap';
-import { getEmailServiceClass, getStorageServiceClass } from '../helpers/serivces.helper';
+import { getEmailServiceClass, getStorageServiceClass } from '../helpers/services.helper';
 import { IBaseSendDataParameters } from '../types/file-processing.types';
 
 const MIN_LIMIT = 0;
