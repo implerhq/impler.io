@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
 import { QueuesEnum } from '@impler/shared';
@@ -7,17 +7,15 @@ import { FailedWebhookRetryRequestsEntity, FailedWebhookRetryRequestsRepository 
 
 @Injectable()
 export class FailedWebhookRetry {
-  private readonly logger = new Logger(FailedWebhookRetry.name);
-
   constructor(
     private failedWebhookRetryRequestsRepository: FailedWebhookRetryRequestsRepository = new FailedWebhookRetryRequestsRepository(),
     private queueService: QueueService
   ) {}
 
-  @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_5_MINUTES)
   async processWebhookRetries() {
     try {
-      const failedWebhooks = await this.failedWebhookRetryRequestsRepository.find({
+      const failedWebhooks: FailedWebhookRetryRequestsEntity[] = await this.failedWebhookRetryRequestsRepository.find({
         nextRequestTime: { $lt: new Date() },
       });
 
@@ -25,7 +23,7 @@ export class FailedWebhookRetry {
         return;
       }
 
-      await Promise.allSettled(failedWebhooks.map(this.processWebhook));
+      await Promise.allSettled(failedWebhooks.map((wbh) => this.processWebhook(wbh)));
     } catch (error) {
       throw error;
     }
@@ -33,7 +31,7 @@ export class FailedWebhookRetry {
 
   private async processWebhook(webhook: FailedWebhookRetryRequestsEntity) {
     try {
-      this.queueService.publishToQueue(QueuesEnum.SEND_FAILED_WEBHOOK_DATA, webhook._id);
+      this.queueService.publishToQueue(QueuesEnum.SEND_FAILED_WEBHOOK_DATA, webhook._id as string);
     } catch (error) {
       throw error;
     }
