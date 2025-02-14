@@ -271,7 +271,7 @@ export class SendWebhookDataConsumer extends BaseConsumer {
           dataContent: allData,
           retryCount,
           retryInterval,
-          nextRequestTime: this.getNextTime(1).toDate(),
+          nextRequestTime: this.getNextTime(retryInterval).toDate(),
           _uploadId: webhookLog._uploadId,
           importName: importName,
           error: webhookLog.error,
