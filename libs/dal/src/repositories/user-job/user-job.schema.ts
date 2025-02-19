@@ -14,6 +14,14 @@ const userJobSchema = new Schema(
     cron: {
       type: Schema.Types.String,
     },
+
+    nextRun: {
+      type: Schema.Types.Date,
+    },
+
+    endsOn: {
+      type: Schema.Types.Date,
+    },
     headings: {
       type: [Schema.Types.String],
     },

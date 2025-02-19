@@ -18,6 +18,14 @@ const webhookDestinationSchema = new Schema(
       ref: 'Template',
       index: true,
     },
+
+    retryInterval: {
+      type: Schema.Types.Number,
+    },
+
+    retryCount: {
+      type: Schema.Types.Number,
+    },
   },
   { ...schemaOptions }
 );

@@ -1,31 +1,35 @@
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Title, Text, Stack, TextInput, Select, Radio, Group, Container, Flex, Box, FocusTrap } from '@mantine/core';
-
+import { Title, Text, Stack, TextInput, Select, Radio, Group, Flex, Box, FocusTrap } from '@mantine/core';
 import { Button } from '@ui/button';
 import { useAppState } from 'store/app.context';
-import { useOnboardUserProjectForm } from '@hooks/useOnboardUserProjectForm';
 import { colors, COMPANY_SIZES, HOW_HEARD_ABOUT_US, PLACEHOLDERS, ROLES } from '@config';
 
-export function OnboardUserForm() {
+interface ProjectOnboardFormData {
+  projectName: string;
+  companySize: string;
+  role: string;
+  source: string;
+}
+
+interface ProjectOnboardFormProps {
+  onSubmit: (data: ProjectOnboardFormData) => void;
+  isLoading?: boolean;
+}
+
+export function ProjectOnboardForm({ onSubmit, isLoading }: ProjectOnboardFormProps) {
   const { profileInfo } = useAppState();
   const [role] = useState(ROLES);
   const [about, setAbout] = useState(HOW_HEARD_ABOUT_US);
-
-  const { onboardUser, isUserOnboardLoading } = useOnboardUserProjectForm();
 
   const {
     handleSubmit,
     formState: { errors },
     control,
-  } = useForm<IOnboardUserData>();
-
-  const onSubmit = (formData: IOnboardUserData) => {
-    onboardUser(formData);
-  };
+  } = useForm<ProjectOnboardFormData>();
 
   return (
-    <Container size="md" p="md">
+    <>
       <Title mb="md">
         <Group position="left">
           <span style={{ fontSize: '30px' }}>👋</span>
@@ -70,8 +74,8 @@ export function OnboardUserForm() {
                   required
                   value={field.value}
                   onBlur={field.onBlur}
-                  error={errors.companySize && errors.companySize.message}
-                  onChange={(value) => field.onChange(value as string)}
+                  error={errors.companySize?.message}
+                  onChange={(value) => field.onChange(value)}
                 >
                   <Flex gap="sm" wrap="wrap">
                     {COMPANY_SIZES.map((companySize) => (
@@ -89,6 +93,7 @@ export function OnboardUserForm() {
                 </Radio.Group>
               )}
             />
+
             <Controller
               name="role"
               control={control}
@@ -133,12 +138,14 @@ export function OnboardUserForm() {
               )}
             />
 
-            <Button type="submit" fullWidth loading={isUserOnboardLoading}>
+            <Button type="submit" fullWidth loading={isLoading}>
               Continue
             </Button>
           </Stack>
         </FocusTrap>
       </form>
-    </Container>
+    </>
   );
 }
+
+export default ProjectOnboardForm;

@@ -4,5 +4,6 @@ export interface IRecord {
   isValid: boolean;
   record: Record<string, any>;
   errors?: Record<string, string>;
+  warnings?: Record<string, any>;
   updated: Record<string, boolean>;
 }

@@ -1,6 +1,6 @@
 {
   "name": "@impler/queue-manager",
-  "version": "0.27.1",
+  "version": "0.28.0",
   "author": "implerhq",
   "license": "MIT",
   "private": true,
@@ -21,6 +21,7 @@
     "@impler/shared": "workspace:^",
     "@sentry/node": "^7.112.2",
     "axios": "1.6.2",
+    "dayjs": "^1.11.11",
     "dotenv": "^16.0.2",
     "envalid": "^7.3.1",
     "papaparse": "^5.4.1",

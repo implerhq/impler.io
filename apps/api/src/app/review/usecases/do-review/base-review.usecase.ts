@@ -155,7 +155,11 @@ export class BaseReview {
       case ColumnTypesEnum.REGEX:
         const [full, pattern, flags] = column.regex.match(/\/(.*)\/(.*)|(.*)/);
 
-        property = { type: 'string', regexp: { pattern: pattern || full, flags: flags || '' } };
+        property = {
+          type: ['string', 'null'],
+          default: null,
+          regexp: { pattern: pattern || full, flags: flags || '' },
+        };
         break;
       case ColumnTypesEnum.EMAIL:
         property = {
@@ -405,7 +409,7 @@ export class BaseReview {
         validRecords = 0;
       Papa.parse(csvFileStream, {
         dynamicTyping: false,
-        skipEmptyLines: true,
+        skipEmptyLines: 'greedy',
         step: (results: Papa.ParseStepResult<any>) => {
           totalRecords++;
           const record = results.data;
@@ -593,7 +597,7 @@ export class BaseReview {
 
         Papa.parse(csvFileStream, {
           dynamicTyping: false,
-          skipEmptyLines: true,
+          skipEmptyLines: 'greedy',
           step: (results: Papa.ParseStepResult<any>) => {
             recordsCount++;
             const record = results.data;

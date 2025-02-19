@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { FileMimeTypesEnum } from '@impler/shared';
+import { isValidXMLMimeType } from '@shared/helpers/common.helper';
 import { APIMessages } from '@shared/constants';
 import { UserJobEntity, UserJobRepository } from '@impler/dal';
 import { RSSService } from '@shared/services';
@@ -20,7 +20,7 @@ export class CreateUserJob {
     authHeaderValue,
   }: CreateUserJobCommand): Promise<UserJobEntity> {
     const mimeType = await this.rssService.getMimeType(url);
-    if (mimeType === FileMimeTypesEnum.XML || mimeType === FileMimeTypesEnum.TEXTXML) {
+    if (isValidXMLMimeType(mimeType)) {
       const { rssKeyHeading } = await this.rssService.parseRssFeed(url);
       let formattedExtra = extra || '{}';
       try {

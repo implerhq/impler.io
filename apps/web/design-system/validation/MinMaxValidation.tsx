@@ -45,7 +45,7 @@ export function MinMaxValidation({
           control={control}
           name={`validations.${index}.min`}
           rules={{
-            validate: (value, formValues) => validateMinMax(value, (formValues.validations?.[index] as any).max),
+            validate: (value, formValues) => validateMinMax(value, (formValues.validations?.[index] as any)?.max),
           }}
           render={({ field }) => (
             <NumberInput
@@ -53,8 +53,8 @@ export function MinMaxValidation({
               min={min}
               placeholder={minPlaceholder}
               error={(errors?.validations?.[index] as any)?.min?.message}
-              value={field.value}
-              onChange={(value) => (value === '' ? field.onChange(undefined) : field.onChange(value))}
+              value={field.value ? field.value : undefined}
+              onChange={(value) => field.onChange(value === '' ? undefined : value)}
             />
           )}
         />
@@ -62,7 +62,7 @@ export function MinMaxValidation({
           control={control}
           name={`validations.${index}.max`}
           rules={{
-            validate: (value, formValues) => validateMinMax((formValues.validations?.[index] as any).min, value),
+            validate: (value, formValues) => validateMinMax((formValues.validations?.[index] as any)?.min, value),
           }}
           render={({ field }) => (
             <NumberInput
@@ -70,8 +70,8 @@ export function MinMaxValidation({
               max={max}
               placeholder={maxPlaceholder}
               error={(errors?.validations?.[index] as any)?.max?.message}
-              value={field.value}
-              onChange={(value) => (value === '' ? field.onChange(undefined) : field.onChange(value))}
+              value={field.value ? field.value : undefined}
+              onChange={(value) => field.onChange(value === '' ? undefined : value)}
             />
           )}
         />

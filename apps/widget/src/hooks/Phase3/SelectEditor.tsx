@@ -4,12 +4,18 @@ import { CellProperties } from 'handsontable/settings';
 export class SelectEditor extends BaseEditor {
   [x: string]: any;
   timer: any;
+
   focus() {
     this.selectInput.focus();
   }
   close() {
     this._opened = false;
+    this.selectInput.value = '';
     this.listDiv.classList.remove('open');
+    const highlighted = this.selectUl.querySelector('li.highlighted');
+    if (highlighted) {
+      highlighted.classList.remove('highlighted');
+    }
   }
   getValue() {
     return this.selectInput.value;
@@ -31,6 +37,10 @@ export class SelectEditor extends BaseEditor {
     selectStyle.minWidth = `${width}px`;
     selectStyle[this.hot.isRtl() ? 'right' : 'left'] = `${start}px`;
     selectStyle.margin = '0px';
+    const firstOption = this.selectUl.querySelector('li.option');
+    if (firstOption) {
+      firstOption.classList.add('highlighted');
+    }
   }
   prepare(
     row: number,
@@ -51,11 +61,12 @@ export class SelectEditor extends BaseEditor {
 
     if (!options || !options.length) return;
 
+    let filteredOptions = options;
     if (search) {
-      options = options.filter((key) => key.toLowerCase().includes(search.toLowerCase()));
+      filteredOptions = options.filter((key) => key.toLowerCase().includes(search.toLowerCase()));
     }
 
-    options.forEach((key) => {
+    filteredOptions.forEach((key) => {
       const liElement = this.hot.rootDocument.createElement('li');
       liElement.classList.add('option');
       liElement.dataset.value = key;
@@ -67,10 +78,17 @@ export class SelectEditor extends BaseEditor {
       };
       this.selectUl.appendChild(liElement);
     });
+    const firstOption = this.selectUl.querySelector('li.option');
+    if (firstOption) {
+      firstOption.classList.add('highlighted');
+    }
   }
   search() {
-    const text = this.selectInput.value;
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
 
+    const text = this.selectInput.value;
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     this.prepareOptions(this.cellProperties.selectOptions, text);
@@ -82,10 +100,35 @@ export class SelectEditor extends BaseEditor {
     const input = this.hot.rootDocument.createElement('input');
     input.classList.add('dd-searchbox');
     input.type = 'search';
-    input.onkeydown = () => {
-      this.timer = setTimeout(() => {
-        this.search();
-      }, 200);
+
+    input.onkeydown = (e) => {
+      e.stopPropagation();
+
+      switch (e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          this.highlightNextOption();
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          this.highlightPreviousOption();
+          break;
+        case 'Enter':
+          e.preventDefault();
+          this.selectHighlightedOption();
+          break;
+        case 'Escape':
+          e.preventDefault();
+          this.close();
+          break;
+        default:
+          if (this.timer) {
+            clearTimeout(this.timer);
+          }
+          this.timer = setTimeout(() => {
+            this.search();
+          }, 200);
+      }
     };
 
     listDiv.appendChild(input);
@@ -100,5 +143,56 @@ export class SelectEditor extends BaseEditor {
     this.selectInput = input;
 
     this.hot.rootElement.appendChild(this.listDiv);
+  }
+
+  highlightNextOption() {
+    const options = Array.from(this.selectUl.querySelectorAll('li.option'));
+    if (!options.length) return;
+
+    const currentIndex = options.findIndex((option) => {
+      const liOption = option as HTMLLIElement;
+
+      return liOption.classList.contains('highlighted');
+    });
+
+    const nextIndex = currentIndex >= options.length - 1 ? 0 : currentIndex + 1;
+    this.updateHighlight(options, currentIndex, nextIndex);
+  }
+
+  highlightPreviousOption() {
+    const options = Array.from(this.selectUl.querySelectorAll('li.option'));
+    if (!options.length) return;
+
+    const currentIndex = options.findIndex((option) => {
+      const liOption = option as HTMLLIElement;
+
+      return liOption.classList.contains('highlighted');
+    });
+    const previousIndex = currentIndex <= 0 ? options.length - 1 : currentIndex - 1;
+    this.updateHighlight(options, currentIndex, previousIndex);
+  }
+
+  updateHighlight(options, currentIndex, newIndex) {
+    if (currentIndex >= 0) {
+      options[currentIndex].classList.remove('highlighted');
+    }
+    if (newIndex >= 0 && newIndex < options.length) {
+      options[newIndex].classList.add('highlighted');
+      options[newIndex].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  }
+
+  selectHighlightedOption() {
+    const highlighted = this.selectUl.querySelector('li.highlighted');
+    if (highlighted) {
+      this.selectInput.value = highlighted.dataset.value;
+      this.finishEditing();
+    } else {
+      const firstOption = this.selectUl.querySelector('li.option');
+      if (firstOption) {
+        this.selectInput.value = firstOption.dataset.value;
+        this.finishEditing();
+      }
+    }
   }
 }

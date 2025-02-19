@@ -28,6 +28,7 @@ interface ISaveResults {
 interface IDataItem {
   index: number;
   errors?: Record<string, string>;
+  wanings?: Record<string, string>;
   isValid: boolean;
   record: Record<string, any>;
   updated: Record<string, boolean>;
@@ -268,6 +269,7 @@ export class DoReReview extends BaseReview {
             update: {
               $set: {
                 errors: record.errors,
+                warnings: record.warnings,
                 isValid: record.isValid,
                 updated: {},
               },
@@ -348,7 +350,7 @@ export class DoReReview extends BaseReview {
         const emailContent = this.emailService.getEmailContent({
           type: 'ERROR_EXECUTING_CODE',
           data: {
-            error: JSON.stringify(error.output, null, 2).replace(/\\+"/g, '"'),
+            error: error.output ? JSON.stringify(error.output, null, 2).replace(/\\+"/g, '"') : 'Uncaught error',
             importId: uploadId,
             importName: name,
             time: new Date().toString(),

@@ -19,6 +19,8 @@ import {
   UserJobRepository,
   JobMappingRepository,
   ProjectInvitationRepository,
+  FailedWebhookRetryRequestsRepository,
+  WebhookLogRepository,
 } from '@impler/dal';
 import { CSVFileService2, ExcelFileService } from './services/file/file.service';
 import {
@@ -48,6 +50,9 @@ const DAL_MODELS = [
   UserJobRepository,
   SchedulerRegistry,
   ProjectInvitationRepository,
+  UserJobRepository,
+  FailedWebhookRetryRequestsRepository,
+  WebhookLogRepository,
 ];
 const UTILITY_SERVICES = [CSVFileService2, FileNameService, NameService, ExcelFileService];
 

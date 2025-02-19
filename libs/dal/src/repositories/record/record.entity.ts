@@ -7,6 +7,8 @@ export class RecordEntity {
 
   errors: Record<string, string>;
 
+  warnings: Record<string, string>;
+
   record: Record<string, any>;
 
   updated: Record<string, boolean>;

@@ -60,3 +60,24 @@ export interface IAutoImportValues {
   schema?: string;
   output?: string;
 }
+
+export type RecurrenceFormData = {
+  recurrenceType: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  dailyType: 'every' | 'weekdays';
+  dailyFrequency: number;
+  frequency: number;
+  selectedDays?: string[];
+  time: string;
+  endsNever: boolean;
+  endsOn?: Date;
+  monthlyType?: 'onDay' | 'onThe';
+  consecutiveMonths: any;
+  monthlyDayNumber?: number;
+  monthlyDayPosition?: string;
+  monthlyDayOfWeek?: string;
+  yearlyMonth?: string;
+  yearlyType?: 'onDay' | 'onThe';
+  yearlyDayNumber?: number;
+  yearlyDayPosition?: string;
+  yearlyDayOfWeek?: string;
+};

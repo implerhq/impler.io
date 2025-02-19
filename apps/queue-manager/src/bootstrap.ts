@@ -12,6 +12,7 @@ import {
   SendBubbleDataConsumer,
   GetImportJobDataConsumer,
   SendImportJobDataConsumer,
+  SendFailedWebhookDataConsumer,
 } from './consumers';
 
 let connection: IAmqpConnectionManager, chanelWrapper: ChannelWrapper;
@@ -45,6 +46,7 @@ export async function bootstrap() {
   const endImportConsumer = new EndImportConsumer();
   const sendBubbleDataConsumer = new SendBubbleDataConsumer();
   const sendWebhookdataConsumer = new SendWebhookDataConsumer();
+  const sendFailedWebhookDataConsumer = new SendFailedWebhookDataConsumer();
   const getImportJobbDataConsumer = new GetImportJobDataConsumer();
   const sendImportJobDataConsumer = new SendImportJobDataConsumer();
 
@@ -61,6 +63,16 @@ export async function bootstrap() {
       channel.consume(QueuesEnum.SEND_WEBHOOK_DATA, sendWebhookdataConsumer.message.bind(sendWebhookdataConsumer), {
         noAck: true,
       }),
+      channel.assertQueue(QueuesEnum.SEND_FAILED_WEBHOOK_DATA, {
+        durable: false,
+      }),
+      channel.consume(
+        QueuesEnum.SEND_FAILED_WEBHOOK_DATA,
+        sendFailedWebhookDataConsumer.message.bind(sendFailedWebhookDataConsumer),
+        {
+          noAck: true,
+        }
+      ),
       channel.assertQueue(QueuesEnum.SEND_BUBBLE_DATA, {
         durable: false,
       }),
