@@ -185,6 +185,7 @@ export declare type WidgetConfig = {
   hideDeleteButton?: boolean;
   hideCheckBox?: boolean;
   hideSrNo?: boolean;
+  hideDownloadSampleButton?: boolean;
 };
 
 export type CustomTexts = DeepPartial<typeof WIDGET_TEXTS>;
