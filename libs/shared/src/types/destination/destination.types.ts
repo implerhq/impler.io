@@ -13,6 +13,8 @@ export interface IWebhookData {
   callbackUrl: string;
   authHeaderName: string;
   chunkSize: number;
+  retryInterval?: number;
+  retryCount?: number;
 }
 
 export interface IBubbleData {

@@ -42,6 +42,7 @@ interface ChargeItem {
 
 interface ICreateProjectData {
   name: string;
+  onboarding?: boolean;
 }
 
 interface IOnboardUserData {
@@ -50,6 +51,27 @@ interface IOnboardUserData {
   role: string;
   source: string;
   onboarding?: boolean;
+}
+
+interface OnboardTemplateSchemaTable {
+  name: string;
+  type: string;
+  _id?: string;
+}
+
+interface ProjectOnboardFormData {
+  projectName: string;
+  companySize: string;
+  role: string;
+  source: string;
+  onboarding?: boolean;
+}
+
+interface CreateOnboardImportFormData {
+  importName: string;
+  importIntegration: IntegrationEnum;
+  onboardCreateTemplateMode: OnboardCreateTemplateModeEnum;
+  file?: File;
 }
 
 interface ICstringemplateData {

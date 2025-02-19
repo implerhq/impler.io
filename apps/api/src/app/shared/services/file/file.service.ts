@@ -185,7 +185,7 @@ export class CSVFileService2 {
       parse(fileContent, {
         ...(options || {}),
         dynamicTyping: false,
-        skipEmptyLines: true,
+        skipEmptyLines: 'greedy',
         step: function (results) {
           rows++;
           if (Array.isArray(results.data)) {
