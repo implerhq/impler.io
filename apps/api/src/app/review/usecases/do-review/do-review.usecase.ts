@@ -159,7 +159,7 @@ export class DoReview extends BaseReview {
           const emailContent = this.emailService.getEmailContent({
             type: 'ERROR_EXECUTING_CODE',
             data: {
-              error: JSON.stringify(error.output, null, 2).replace(/\\+"/g, '"'),
+              error: error.output ? JSON.stringify(error.output, null, 2).replace(/\\+"/g, '"') : 'Uncaught error',
               importId: _uploadId,
               importName: (uploadInfo._templateId as unknown as TemplateEntity).name,
               time: new Date().toString(),

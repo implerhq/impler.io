@@ -28,6 +28,14 @@ export class WebhookDestinationObject {
   })
   @IsDefined()
   chunkSize?: number;
+
+  @IsOptional()
+  @IsNumber()
+  retryInterval?: number;
+
+  @IsOptional()
+  @IsNumber()
+  retryCount?: number;
 }
 
 export class BubbleIoDestinationObject {
