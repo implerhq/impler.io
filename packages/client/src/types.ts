@@ -181,10 +181,11 @@ export type DeepPartial<T> = T extends object
 export type ValueOf<T> = T[keyof T];
 
 export declare type WidgetConfig = {
-  disableFindAndReplaceButton?: boolean;
-  disableDeleteButton?: boolean;
-  disableCheckBox?: boolean;
-  disableSrNo?: boolean;
+  hideFindAndReplaceButton?: boolean;
+  hideDeleteButton?: boolean;
+  hideCheckBox?: boolean;
+  hideSrNo?: boolean;
+  hideDownloadSampleButton?: boolean;
 };
 
 export type CustomTexts = DeepPartial<typeof WIDGET_TEXTS>;

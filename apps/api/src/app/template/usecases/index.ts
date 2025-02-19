@@ -24,6 +24,8 @@ import { UpdateDestinationCommand } from '../commands/update-destination.command
 import { DuplicateTemplateCommand } from './duplicate-template/duplicate-template.command';
 import { UpdateValidationsCommand } from './update-validations/update-validations.command';
 import { UpdateCustomizationCommand } from './update-customization/update-customization.command';
+import { GetImportFileSchema } from './get-column-types/get-import-file-schema.usecase';
+import { AddColumn } from 'app/column/usecases';
 
 export const USE_CASES = [
   CreateTemplate,
@@ -45,6 +47,8 @@ export const USE_CASES = [
   GetDestination,
   MapBubbleIoColumns,
   UpdateImageColumns,
+  GetImportFileSchema,
+  AddColumn,
   //
 ];
 
@@ -66,6 +70,8 @@ export {
   UpdateValidations,
   UpdateDestination,
   MapBubbleIoColumns,
+  GetImportFileSchema,
+  AddColumn,
 };
 export {
   CreateTemplateCommand,

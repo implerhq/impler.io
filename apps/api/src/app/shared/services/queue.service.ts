@@ -30,9 +30,10 @@ export class QueueService {
 
   publishToQueue(queueName: QueuesEnum.END_IMPORT, data: EndImportData): void;
   publishToQueue(queueName: QueuesEnum.SEND_WEBHOOK_DATA, data: SendWebhookData): void;
+  publishToQueue(queueName: QueuesEnum.SEND_FAILED_WEBHOOK_DATA, data: string): void;
   publishToQueue(queueName: QueuesEnum.GET_IMPORT_JOB_DATA, data: SendRSSXMLData): void;
 
-  async publishToQueue(queueName: QueuesEnum, data: PublishToQueueData | SendRSSXMLData) {
+  async publishToQueue(queueName: QueuesEnum, data: PublishToQueueData | SendRSSXMLData | string) {
     if (this.connection.isConnected()) {
       await this.chanelWrapper.sendToQueue(queueName, data, { durable: false });
     } else {

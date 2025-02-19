@@ -61,9 +61,9 @@ export function Phase3(props: IPhase3Props) {
     isCompleteImportLoading,
     setShowAllDataValidModal,
     setShowDeleteConfirmModal,
-    disableFindAndReplaceButton,
-    disableDeleteButton,
-    disableCheckBox,
+    hideFindAndReplaceButton,
+    hideDeleteButton,
+    hideCheckBox,
   } = usePhase3({ onNext: onNextClick });
   const tableWrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
   const [tableWrapperDimensions, setTableWrapperDimentions] = useState({
@@ -117,11 +117,11 @@ export function Phase3(props: IPhase3Props) {
             ]}
           />
           <Group spacing="xs">
-            {!disableFindAndReplaceButton && (
+            {!hideFindAndReplaceButton && (
               <Button onClick={() => setShowFindReplaceModal(true)}>{texts.PHASE3.FIND_REPLACE}</Button>
             )}
 
-            {!disableDeleteButton && (
+            {!hideDeleteButton && (
               <Button
                 color="red"
                 disabled={!selectedRowsRef.current.size}
@@ -209,7 +209,7 @@ export function Phase3(props: IPhase3Props) {
           columnDefs={columnDefs}
           allChecked={allChecked}
           columnDescriptions={columnDescriptions}
-          disableCheckBox={disableCheckBox}
+          hideCheckBox={hideCheckBox}
         />
       </Stack>
       <Pagination page={page} total={totalPages} onChange={onPageChange} />

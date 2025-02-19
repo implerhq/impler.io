@@ -69,12 +69,32 @@ export function SchedulerFrequency({ autoImportFrequency, control }: SchedulerFr
         name="frequency"
         control={control}
         defaultValue={1}
-        render={({ field }) => (
-          <Group align="center">
-            <span style={{ color: colors.StrokeLight, fontWeight: 400 }}>Every</span>
-            <NumberInput {...field} min={1} max={99} style={{ width: 80 }} onChange={(val) => field.onChange(val)} />
-            <span style={{ color: colors.StrokeLight, fontWeight: 400 }}>week(s) once</span>
-          </Group>
+        render={({ field: frequencyField }) => (
+          <Controller
+            name="selectedDays"
+            control={control}
+            defaultValue={[]}
+            render={({ field: selectedDaysField }) => (
+              <Group align="center">
+                <span style={{ color: colors.StrokeLight, fontWeight: 400 }}>Every</span>
+                <NumberInput
+                  {...frequencyField}
+                  min={1}
+                  max={5}
+                  style={{ width: 80 }}
+                  onChange={(val: number | '') => {
+                    const numValue = typeof val === 'number' ? val : 1;
+                    frequencyField.onChange(numValue);
+                    if (numValue > 1) {
+                      selectedDaysField.onChange([]);
+                    }
+                  }}
+                  disabled={(selectedDaysField.value?.length ?? 0) > 0}
+                />
+                <span style={{ color: colors.StrokeLight, fontWeight: 400 }}>week(s) once</span>
+              </Group>
+            )}
+          />
         )}
       />
       <Flex gap="md" wrap="wrap">
@@ -84,19 +104,30 @@ export function SchedulerFrequency({ autoImportFrequency, control }: SchedulerFr
             name="selectedDays"
             control={control}
             defaultValue={[]}
-            render={({ field }) => (
-              <Checkbox
-                style={{}}
-                label={weekDay.short}
-                checked={field.value?.includes(weekDay.full)}
-                onChange={(event) => {
-                  const isChecked = event.currentTarget.checked;
-                  const currentSelectedDays = field.value || [];
-                  const updatedDays = isChecked
-                    ? [...currentSelectedDays, weekDay.full]
-                    : currentSelectedDays.filter((day: string) => day !== weekDay.full);
-                  field.onChange(updatedDays);
-                }}
+            render={({ field: selectedDaysField }) => (
+              <Controller
+                name="frequency"
+                control={control}
+                render={({ field: frequencyField }) => (
+                  <Checkbox
+                    style={{}}
+                    label={weekDay.short}
+                    checked={selectedDaysField.value?.includes(weekDay.full) ?? false}
+                    disabled={Number(frequencyField.value) > 1}
+                    onChange={(event) => {
+                      const isChecked = event.currentTarget.checked;
+                      const currentSelectedDays = selectedDaysField.value ?? [];
+                      const updatedDays = isChecked
+                        ? [...currentSelectedDays, weekDay.full]
+                        : currentSelectedDays.filter((day: string) => day !== weekDay.full);
+
+                      selectedDaysField.onChange(updatedDays);
+                      if (updatedDays.length > 0) {
+                        frequencyField.onChange(1);
+                      }
+                    }}
+                  />
+                )}
               />
             )}
           />

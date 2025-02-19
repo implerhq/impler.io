@@ -6,6 +6,8 @@ export class DestinationResponseDto {
     callbackUrl?: string;
     authHeaderName?: string;
     chunkSize?: number;
+    retryInterval?: number;
+    retryCount?: number;
   };
   bubbleio?: {
     appName: string;

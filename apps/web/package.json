@@ -1,6 +1,6 @@
 {
   "name": "@impler/web",
-  "version": "0.27.4",
+  "version": "0.28.0",
   "author": "implerhq",
   "license": "MIT",
   "private": true,
@@ -27,6 +27,7 @@
     "@mantine/carousel": "6.0.21",
     "@mantine/core": "6.0.21",
     "@mantine/dates": "6.0.21",
+    "@mantine/dropzone": "6.0.21",
     "@mantine/hooks": "6.0.21",
     "@mantine/modals": "6.0.21",
     "@mantine/next": "6.0.21",
