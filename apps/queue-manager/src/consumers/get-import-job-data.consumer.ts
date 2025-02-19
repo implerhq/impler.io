@@ -12,7 +12,7 @@ import {
 } from '@impler/dal';
 import { BaseConsumer } from './base.consumer';
 import { publishToQueue } from '../bootstrap';
-import { getStorageServiceClass } from '../helpers/serivces.helper';
+import { getStorageServiceClass } from '../helpers/services.helper';
 
 export class GetImportJobDataConsumer extends BaseConsumer {
   private commonRepository: CommonRepository = new CommonRepository();
