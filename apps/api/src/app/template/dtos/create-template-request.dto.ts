@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Defaults, IntegrationEnum } from '@impler/shared';
 import { IsDefined, IsString, IsNumber, IsUrl, IsOptional, IsMongoId, IsEnum } from 'class-validator';
+import { ColumnRequestDto } from 'app/column/dtos/column-request.dto';
 
 export class CreateTemplateRequestDto {
   @ApiProperty({
@@ -38,4 +39,10 @@ export class CreateTemplateRequestDto {
   })
   @IsMongoId()
   _projectId: string;
+
+  @ApiProperty({
+    description: 'Callback URL of the template, gets called when sending data to the application',
+  })
+  @IsOptional()
+  columns: ColumnRequestDto[];
 }

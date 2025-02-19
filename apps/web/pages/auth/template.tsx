@@ -1,8 +1,8 @@
 import { OnboardLayout } from '@layouts/OnboardLayout';
-import OnboardProjectForm from './onboarding/OnboardProjectForm';
+import OnboardImportForm from './onboarding/OnboardImportForm';
 
 export default function Onboard() {
-  return <OnboardProjectForm />;
+  return <OnboardImportForm />;
 }
 
 Onboard.Layout = OnboardLayout;

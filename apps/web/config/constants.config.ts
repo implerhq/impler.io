@@ -3,7 +3,7 @@ import { ReactIcon } from '@assets/icons/React.icon';
 import { BubbleIcon } from '@assets/icons/Bubble.icon';
 import { AngularIcon } from '@assets/icons/Angular.icon';
 import { JavaScriptIcon } from '@assets/icons/Javascript.icon';
-import { UserRolesEnum, IntegrationEnum } from '@impler/shared';
+import { UserRolesEnum, IntegrationEnum, ColumnTypesEnum } from '@impler/shared';
 import { Plan } from '@components/UpgradePlan/Plans';
 
 export const CONSTANTS = {
@@ -24,6 +24,7 @@ export const CONSTANTS = {
     'An error occurred with the payment. No amount has been deducted. Please try again later or contact the support team.',
   SUBSCRIPTION_ACTIVATED_TITLE: 'Subscription activated',
   SUBSCRIPTION_FAILED_TITLE: 'Payment failed',
+  SAMPLE_IMPORT_NAME: 'Product Data Import',
 };
 
 export const VARIABLES = {
@@ -154,6 +155,8 @@ export const API_KEYS = {
   TEMPLATE_COLUMNS_UPDATE: 'TEMPLATE_COLUMNS_UPDATE',
   TEMPLATE_CUSTOMIZATION_UPDATE: 'CUSTOMIZATION_UPDATE',
   TEMPLATE_CUSTOMIZATION_SYNC: 'CUSTOMIZATION_SYNC',
+  TEMPLATE_SCHEMA_GET: 'TEMPLATE_SCHEMA_GET',
+  TEMPLATE_SAMPLE_CREATE: 'TEMPLATE_SAMPLE_CREATE',
 
   COLUMN_CREATE: 'COLUMN_CREATE',
   COLUMN_UPDATE: 'COLUMN_UPDATE',
@@ -235,6 +238,7 @@ export const ROUTES = {
   SIGNUP: '/auth/signup',
   SIGNIN: '/auth/signin',
   SIGNUP_ONBOARDING: '/auth/onboard',
+  ONBOARD_TEMPLATE: '/auth/template',
   OTP_VERIFY: '/auth/verify',
   RESET_PASSWORD: '/auth/reset',
   REQUEST_FORGOT_PASSWORD: '/auth/reset/request',
@@ -443,6 +447,7 @@ export const PLACEHOLDERS = {
   role: 'Engineer, Manager, Founder...',
   source: 'Google Search, Recommendation...',
   about: 'Google Search',
+  importName: 'Products, Employees, Assets...',
 };
 
 export const DATE_FORMATS = {
@@ -673,3 +678,46 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
     },
   ],
 };
+
+export const sampleColumns = [
+  {
+    name: 'Product Name/ID',
+    key: 'Product Name/ID *',
+    description: 'The name or ID of the product purchased',
+    type: ColumnTypesEnum.STRING,
+    isRequired: true,
+    isUnique: false,
+  },
+  {
+    name: 'Quantity',
+    key: 'Quantity *',
+    description: 'The amount of the product purchased',
+    type: ColumnTypesEnum.NUMBER,
+    isRequired: true,
+    isUnique: false,
+  },
+  {
+    name: 'Unit Price',
+    key: 'Unit Price *',
+    description: 'The price of a single unit of the product',
+    type: ColumnTypesEnum.NUMBER,
+    isRequired: true,
+    isUnique: false,
+  },
+  {
+    name: 'Total Price',
+    key: 'Total Price',
+    description: 'The total cost of the products purchased',
+    type: ColumnTypesEnum.NUMBER,
+    isRequired: false,
+    isUnique: false,
+  },
+  {
+    name: 'Category',
+    key: 'Category',
+    description: 'The category of the product',
+    type: ColumnTypesEnum.SELECT,
+    isRequired: false,
+    isUnique: false,
+  },
+];
