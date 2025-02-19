@@ -1,6 +1,6 @@
 {
   "name": "@impler/dal",
-  "version": "0.27.2",
+  "version": "0.28.0",
   "author": "implerhq",
   "license": "MIT",
   "main": "dist/index.js",
@@ -18,7 +18,7 @@
     "@impler/shared": "workspace:^",
     "class-transformer": "^0.5.1",
     "date-fns": "^2.30.0",
-    "mongoose": "8.0.1",
+    "mongoose": "8.9.5",
     "rimraf": "^3.0.2"
   },
   "devDependencies": {

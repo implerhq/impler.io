@@ -49,7 +49,7 @@ type PnpmCommand = PnpmCoreCommand | PnpmDependencyCommand;
 
 export class Sandbox {
   private static readonly isolateExecutableName = getIsolateExecutableName();
-  private static readonly sandboxRunTimeSeconds = 10;
+  private static readonly sandboxRunTimeSeconds = 60;
 
   public readonly boxId: number;
   public used: boolean;

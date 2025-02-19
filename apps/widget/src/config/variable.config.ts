@@ -39,85 +39,6 @@ export const AMPLITUDE = {
   IMPORT_INTENT: 'Import Intent',
 };
 
-export const cronExampleBadges = [
-  '*/5 * * * *',
-  '*/8 * * * *',
-  '*/00 * * * *',
-  '*/0 * 6 * *',
-  '*/8 * * 5 *',
-  '*/00 * 4 * *',
-  '*/0 * 6 * *',
-];
-
-export const cronExamples = [
-  { expression: '*', description: 'Any value' },
-  { expression: ',', description: 'Value list separator' },
-  { expression: '-', description: 'Range of values' },
-  { expression: '/', description: 'Step values' },
-];
-
-export type ScheduleFormValues = {
-  Minute: string;
-  Hour: string;
-  Day: string;
-  Month: string;
-  Days: string;
-};
-
-export const defaultCronValues: ScheduleFormValues = {
-  Minute: '45',
-  Hour: '23',
-  Day: '*',
-  Month: '*',
-  Days: '0',
-};
-
-export const cronFieldDefinitions = [
-  {
-    Minute: {
-      values: ['*', '/', '-', '0-59'],
-      description: ['Any value', 'Step values', 'Range of values', 'Range of allowed values'],
-    },
-  },
-  {
-    Hour: {
-      values: ['*', '/', '-', '0-23'],
-      description: ['Any value', 'Step values', 'Range of values', 'Range of allowed values'],
-    },
-  },
-  {
-    Day: {
-      values: ['*', '/', '-', '?', '1-31'],
-      description: ['Any value', 'Step values', 'Range of values', 'No specific value', 'Range of allowed values'],
-    },
-  },
-  {
-    Month: {
-      values: ['*', '/', '-', '1-12', 'JAN-DEC'],
-      description: [
-        'Any value',
-        'Step values',
-        'Range of values',
-        'Range of allowed values',
-        'Alternative single values',
-      ],
-    },
-  },
-  {
-    Days: {
-      values: ['*', '/', '-', '?', '0-7', 'SUN-SAT'],
-      description: [
-        'Any value',
-        'Step values',
-        'Range of values',
-        'No specific value',
-        'Range of allowed values (0-7)',
-        'Alternative single values',
-      ],
-    },
-  },
-];
-
 export const keysToOmit = new Set([
   'rss > channel > atom:id',
   'rss > $ > xmlns:opensearch',
@@ -165,3 +86,50 @@ export const keysToOmit = new Set([
   'rss > channel[] > atom:link[] > $ > type',
   'rss > channel[] > atom:link[] > $ > href',
 ]);
+
+export const enum AUTOIMPORTSCHEDULERFREQUENCY {
+  DAILY = 'daily',
+  WEEKLY = 'weekly',
+  MONTHLY = 'monthly',
+  YEARLY = 'yearly',
+}
+export const autoImportSchedulerFrequency: AUTOIMPORTSCHEDULERFREQUENCY[] = [
+  AUTOIMPORTSCHEDULERFREQUENCY.DAILY,
+  AUTOIMPORTSCHEDULERFREQUENCY.WEEKLY,
+  AUTOIMPORTSCHEDULERFREQUENCY.MONTHLY,
+  AUTOIMPORTSCHEDULERFREQUENCY.YEARLY,
+];
+export const weekDays = [
+  { short: 'S', full: 'Sunday' },
+  { short: 'M', full: 'Monday' },
+  { short: 'T', full: 'Tuesday' },
+  { short: 'W', full: 'Wednesday' },
+  { short: 'T', full: 'Thursday' },
+  { short: 'F', full: 'Friday' },
+  { short: 'S', full: 'Saturday' },
+];
+export const months = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
+
+export const positionMap: { [key: string]: string } = {
+  First: '1',
+  Second: '2',
+  Third: '3',
+  Fourth: '4',
+  Last: 'L',
+};
+
+export const monthlyDayPositions = ['First', 'Second', 'Third', 'Fourth', 'Last'];
+export const yearlyDayPositions = ['First', 'Second', 'Third', 'Fourth', 'Last'];

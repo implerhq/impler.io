@@ -3,9 +3,10 @@ import axios from 'axios';
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/animations/shift-away.css';
-import { variables } from '@config';
+import { AUTOIMPORTSCHEDULERFREQUENCY, months, positionMap, variables, weekDays } from '@config';
 import { WIDGET_TEXTS, isObject } from '@impler/client';
 import { convertStringToJson, downloadFile, FileMimeTypesEnum } from '@impler/shared';
+import { RecurrenceFormData } from 'types/component.types';
 
 // eslint-disable-next-line no-magic-numbers
 export function formatBytes(bytes, decimals = 2) {
@@ -162,4 +163,200 @@ export const isValidFileType = (sampleFile: Blob): boolean => {
     return true;
 
   return false;
+};
+
+const calculateMonthlyPattern = (frequency: number, consecutiveMonths = 1, inputDay: number): string => {
+  if (frequency < 1 || frequency > 12) {
+    throw new Error('Frequency must be between 1 and 12 months');
+  }
+  if (consecutiveMonths < 1 || consecutiveMonths > frequency) {
+    throw new Error('Consecutive months must be between 1 and the frequency');
+  }
+
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth() + 1;
+  const currentDay = currentDate.getDate();
+
+  let startMonth = currentMonth;
+  if (inputDay < currentDay) {
+    startMonth = (currentMonth % 12) + 1;
+  }
+
+  const monthGroups: number[] = [];
+
+  for (let i = 0; i < 12; i++) {
+    const nextMonth = ((startMonth - 1 + i * frequency) % 12) + 1;
+    monthGroups.push(nextMonth);
+  }
+
+  const uniqueMonths = [...new Set(monthGroups)].sort((a, b) => a - b);
+
+  return uniqueMonths.join(',');
+};
+
+export const generateCronExpression = (data: RecurrenceFormData): string => {
+  const minutes = 45;
+  const hours = 23;
+
+  const getMonthlyWeekDayIndex = (dayName?: string): number => {
+    if (!dayName) return 0;
+    const matchedDay = weekDays.find((weekDay) => weekDay.full.toLowerCase() === dayName.toLowerCase());
+
+    return matchedDay ? weekDays.indexOf(matchedDay) : 0;
+  };
+
+  const getYearlyWeekDayIndex = (dayName?: string): number => {
+    if (!dayName) return 0;
+    const matchedDay = weekDays.find((weekDay) => weekDay.full.toLowerCase() === dayName.toLowerCase());
+
+    return matchedDay ? weekDays.indexOf(matchedDay) : 0;
+  };
+
+  const getWeekDayIndex = (dayName?: string): number => {
+    if (!dayName) return 0;
+    const matchedDay = weekDays.find((weekDay) => weekDay.full.toLowerCase() === dayName.toLowerCase());
+
+    return matchedDay ? weekDays.indexOf(matchedDay) : 0;
+  };
+
+  const getDayPositionCron = (position?: string, dayIndex?: number): string => {
+    if (!position || dayIndex === undefined) return '*';
+
+    const positionCron = positionMap[position] || '1';
+
+    if (positionCron === positionMap.Last) {
+      return `${dayIndex}L`;
+    }
+
+    return `${dayIndex}#${positionCron}`;
+  };
+
+  if (data.monthlyType === 'onThe' && data.monthlyDayPosition && data.monthlyDayOfWeek) {
+    const weekDayIndex = getWeekDayIndex(data.monthlyDayOfWeek);
+    const dayPositionCron = getDayPositionCron(data.monthlyDayPosition, weekDayIndex);
+
+    const frequency = Math.min(Math.max(1, data.frequency || 1), 12);
+
+    if (frequency === 1) {
+      return `${minutes} ${hours} * * ${dayPositionCron}`;
+    }
+
+    const monthPattern = calculateMonthlyPattern(frequency, frequency, 1);
+
+    return `${minutes} ${hours} ${dayPositionCron} ${monthPattern} *`;
+  }
+
+  if (data.monthlyType === 'onThe' && data.monthlyDayPosition && data.monthlyDayOfWeek) {
+    const weekDayIndex = getWeekDayIndex(data.monthlyDayOfWeek);
+    const dayPositionCron = getDayPositionCron(data.monthlyDayPosition, weekDayIndex);
+
+    const frequency = Math.min(Math.max(1, data.frequency || 1), 12);
+
+    if (frequency === 1) {
+      return `${minutes} ${hours} * * ${dayPositionCron}`;
+    }
+
+    const monthPattern = calculateMonthlyPattern(frequency, frequency, 1);
+
+    return `${minutes} ${hours} ${dayPositionCron} ${monthPattern} *`;
+  }
+
+  switch (data.recurrenceType) {
+    case AUTOIMPORTSCHEDULERFREQUENCY.DAILY: {
+      if (data.dailyType === 'weekdays') {
+        return `${minutes} ${hours} * * 1-5`;
+      }
+
+      if (data.dailyType === 'every' && data.dailyFrequency > 0) {
+        return `${minutes} ${hours} */${data.dailyFrequency} * *`;
+      }
+
+      return `${minutes} ${hours} * * *`;
+    }
+    case AUTOIMPORTSCHEDULERFREQUENCY.WEEKLY: {
+      const selectedDayIndexes = (data.selectedDays || [])
+        .map((selectedDay) => {
+          const index = weekDays.findIndex((weekDay) => weekDay.full === selectedDay);
+
+          return index;
+        })
+        .filter((index) => index !== -1)
+        .sort((a, b) => a - b);
+
+      const frequency = Math.max(1, data.frequency || 1);
+
+      if (selectedDayIndexes.length === 0) {
+        const cronExpression = frequency > 1 ? `${minutes} ${hours} * * */${frequency}` : `${minutes} ${hours} * * *`;
+
+        return cronExpression;
+      }
+
+      const cronDays = selectedDayIndexes.map((index) => (index === 0 ? 7 : index));
+
+      if (frequency > 1) {
+        const daysWithFrequency = cronDays.map((day) => `${day}/${frequency}`).join(',');
+
+        return `${minutes} ${hours} * * ${daysWithFrequency}`;
+      }
+
+      return `${minutes} ${hours} * * ${cronDays.join(',')}`;
+    }
+
+    case AUTOIMPORTSCHEDULERFREQUENCY.MONTHLY: {
+      if (data.monthlyType === 'onDay' && data.monthlyDayNumber) {
+        const day = Math.min(Math.max(1, data.monthlyDayNumber), 31);
+        const frequency = Math.min(Math.max(1, data.frequency || 1), 12);
+
+        if (frequency === 1) {
+          return `${minutes} ${hours} ${day} * *`;
+        }
+
+        const monthPattern = calculateMonthlyPattern(frequency, frequency, day);
+
+        return `${minutes} ${hours} ${day} ${monthPattern} *`;
+      }
+
+      if (data.monthlyType === 'onThe' && data.monthlyDayPosition && data.monthlyDayOfWeek) {
+        const weekDayIndex = getMonthlyWeekDayIndex(data.monthlyDayOfWeek);
+        const dayPositionCron = getDayPositionCron(data.monthlyDayPosition, weekDayIndex);
+        const frequency = Math.min(Math.max(1, data.frequency || 1), 12);
+
+        if (frequency === 1) {
+          return `${minutes} ${hours} * * ${dayPositionCron}`;
+        }
+
+        const monthPattern = calculateMonthlyPattern(frequency, frequency, 1);
+
+        return `${minutes} ${hours} ${dayPositionCron} ${monthPattern} *`;
+      }
+
+      return `${minutes} ${hours} 1 * *`;
+    }
+
+    case AUTOIMPORTSCHEDULERFREQUENCY.YEARLY: {
+      const monthIndex = months.findIndex((month) => month === data.yearlyMonth) + 1;
+      const validMonthIndex = monthIndex > 0 ? monthIndex : 1;
+
+      if (data.yearlyType === 'onDay' && data.yearlyDayNumber) {
+        return `${minutes} ${hours} ${data.yearlyDayNumber} ${validMonthIndex} *`;
+      }
+
+      if (data.yearlyType === 'onThe' && data.yearlyDayPosition && data.yearlyDayOfWeek) {
+        const weekDayIndex = getYearlyWeekDayIndex(data.yearlyDayOfWeek);
+
+        if (data.yearlyDayPosition === 'Last') {
+          return `${minutes} ${hours} * ${validMonthIndex} ${weekDayIndex}L`;
+        }
+
+        const positionCron = positionMap[data.yearlyDayPosition] || '1';
+
+        return `${minutes} ${hours} * ${validMonthIndex} ${weekDayIndex}#${positionCron}`;
+      }
+
+      return `${minutes} ${hours} 1 ${validMonthIndex} *`;
+    }
+
+    default:
+      return `${minutes} ${hours} * * *`;
+  }
 };

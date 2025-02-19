@@ -1,7 +1,7 @@
 import axios from 'axios';
+import dayjs from 'dayjs';
 import { WebhookLogEntity } from '@impler/dal';
-import { StatusEnum } from '@impler/shared';
-import { ISendDataParameters } from '../types/file-processing.types';
+import { StatusEnum, ISendDataParameters } from '@impler/shared';
 
 export abstract class BaseConsumer {
   protected DEFAULT_PAGE = 1;
@@ -25,6 +25,10 @@ export abstract class BaseConsumer {
 
   protected getTotalPages(totalRecords: number, pageSize: number): number {
     return Math.ceil(totalRecords / pageSize);
+  }
+
+  protected getNextTime(delayInMinutes: number) {
+    return dayjs().add(delayInMinutes, 'minutes');
   }
 
   protected async makeApiCall({

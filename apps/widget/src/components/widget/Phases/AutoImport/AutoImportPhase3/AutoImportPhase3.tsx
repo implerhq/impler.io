@@ -1,146 +1,185 @@
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { Group, Text, Stack, Flex, Container } from '@mantine/core';
-
-const parseCronExpression = require('util/helpers/cronstrue');
-import { PhasesEnum } from '@types';
+import { useState, useEffect } from 'react';
+import { Group, Text, Stack, Tabs, Radio, Container } from '@mantine/core';
+import { Controller, useForm } from 'react-hook-form';
+import { PhasesEnum, RecurrenceFormData } from '@types';
+import { DatePickerInput } from '@mantine/dates';
 import { IUserJob } from '@impler/shared';
 import { WIDGET_TEXTS } from '@impler/client';
-import { TooltipBadge } from './TooltipBadge';
 import { Footer } from 'components/Common/Footer';
-import { CronScheduleInputTextBox } from './CronScheduleInputTextBox';
-import { CollapsibleExplanationTable } from './CollapsibleExplanationTable';
 import { useAutoImportPhase3 } from '@hooks/AutoImportPhase3/useAutoImportPhase3';
-import { colors, cronExampleBadges, cronExamples, ScheduleFormValues, defaultCronValues } from '@config';
+const parseCronExpression = require('@impler/shared/src/utils/cronstrue');
+import { autoImportSchedulerFrequency, AUTOIMPORTSCHEDULERFREQUENCY, colors } from '@config';
+import { SchedulerFrequency } from './SchedularFrequency';
+import useStyles from './AutoImportPhase3.Styles';
+
+import { generateCronExpression } from 'util/helpers/common.helpers';
 
 interface IAutoImportPhase3Props {
   onNextClick: (importJob: IUserJob) => void;
   texts: typeof WIDGET_TEXTS;
 }
 
-export function AutoImportPhase3({ onNextClick, texts }: IAutoImportPhase3Props) {
-  const [tableOpened, setTableOpened] = useState(false);
-  const { control, watch, setValue } = useForm<ScheduleFormValues>({
-    defaultValues: defaultCronValues,
-  });
-  const scheduleData = watch();
-  const [cronDescription, setCronDescription] = useState({ description: '', isError: false });
-  const [focusedField, setFocusedField] = useState<keyof ScheduleFormValues | null>(null);
+const getDefaultValuesForFrequency = (frequency: AUTOIMPORTSCHEDULERFREQUENCY): Partial<RecurrenceFormData> => {
+  const baseDefaults = {
+    recurrenceType: frequency,
+    endsNever: true,
+    endsOn: undefined,
+  };
 
-  const { updateUserJob, isUpdateUserJobLoading } = useAutoImportPhase3({ onImportJobCreate: onNextClick });
+  switch (frequency) {
+    case AUTOIMPORTSCHEDULERFREQUENCY.DAILY:
+      return {
+        ...baseDefaults,
+        dailyType: 'every',
+        dailyFrequency: 1,
+      };
+    case AUTOIMPORTSCHEDULERFREQUENCY.WEEKLY:
+      return {
+        ...baseDefaults,
+        frequency: 1,
+        selectedDays: [],
+      };
+    case AUTOIMPORTSCHEDULERFREQUENCY.MONTHLY:
+      return {
+        ...baseDefaults,
+        frequency: 1,
+        monthlyType: 'onDay',
+        monthlyDayNumber: 1,
+        monthlyDayPosition: 'First',
+        monthlyDayOfWeek: 'Monday',
+      };
+    case AUTOIMPORTSCHEDULERFREQUENCY.YEARLY:
+      return {
+        ...baseDefaults,
+        yearlyMonth: 'January',
+        yearlyType: 'onDay',
+        yearlyDayNumber: 1,
+        yearlyDayPosition: 'First',
+        yearlyDayOfWeek: 'Monday',
+      };
+    default:
+      return baseDefaults;
+  }
+};
+
+export function AutoImportPhase3({ onNextClick }: IAutoImportPhase3Props) {
+  const { classes } = useStyles();
+
+  const [cronExpression, setCronExpression] = useState<string>();
+
+  const { control, watch, reset } = useForm<RecurrenceFormData>({
+    defaultValues: getDefaultValuesForFrequency(AUTOIMPORTSCHEDULERFREQUENCY.DAILY),
+  });
+
+  const { updateUserJob, isUpdateUserJobLoading } = useAutoImportPhase3({
+    onImportJobCreate: onNextClick,
+  });
+
+  const formValues = watch();
+
+  const handleTabChange = (newFrequency: AUTOIMPORTSCHEDULERFREQUENCY) => {
+    reset(getDefaultValuesForFrequency(newFrequency));
+  };
 
   useEffect(() => {
-    const cronExpression = `${scheduleData.Minute} ${scheduleData.Hour} ${scheduleData.Day} ${scheduleData.Month} ${scheduleData.Days}`;
-    const result = getCronDescriptionfromCronExpression(cronExpression);
-    setCronDescription(result);
-  }, [scheduleData]);
-
-  const handleBadgeClick = (cronExpression: string) => {
-    const [minute, hour, day, month, days] = cronExpression.split(' ');
-    setValue('Minute', minute);
-    setValue('Hour', hour);
-    setValue('Day', day);
-    setValue('Month', month);
-    setValue('Days', days);
-  };
-
-  const getCronDescriptionfromCronExpression = (cronExpression: string): { description: string; isError: boolean } => {
-    try {
-      if (!cronExpression) {
-        return { description: '', isError: false };
-      }
-      const description: string = parseCronExpression.toString(cronExpression);
-      if (description.includes('undefined')) {
-        return { description: texts.AUTOIMPORT_PHASE3.INVALID_CRON_MESSAGE, isError: true };
-      }
-
-      return { description, isError: false };
-    } catch (error) {
-      return {
-        description: texts.AUTOIMPORT_PHASE3.INVALID_CRON_MESSAGE,
-        isError: true,
-      };
-    }
-  };
+    const newCronExpression = generateCronExpression(formValues);
+    setCronExpression(newCronExpression);
+  }, [formValues]);
 
   const handleNextClick = () => {
-    const cronExpression = `${scheduleData.Minute} ${scheduleData.Hour} ${scheduleData.Day} ${scheduleData.Month} ${scheduleData.Days}`;
     updateUserJob({
-      cron: cronExpression,
+      cron: '* * * * *', // cronExpression,
+      endsOn: formValues.endsNever ? undefined : formValues.endsOn,
     });
-  };
-
-  const handleFocus = (fieldName: keyof ScheduleFormValues) => {
-    setFocusedField(fieldName);
-    setTableOpened(true);
-  };
-
-  const handleBlur = () => {
-    setFocusedField(null);
-  };
-
-  const toggleTable = () => {
-    if (focusedField) {
-      setFocusedField(null);
-    }
-    setTableOpened(!tableOpened);
   };
 
   return (
     <>
       <Container style={{ flexGrow: 1 }} px={0}>
-        <Stack spacing="lg">
-          <Group noWrap mx="auto">
-            <CronScheduleInputTextBox
-              name="Minute"
+        <Stack p="sm" className={classes.stack}>
+          <form style={{ flexFlow: '1' }}>
+            <Controller
+              name="recurrenceType"
               control={control}
-              onFocus={() => handleFocus('Minute')}
-              onBlur={handleBlur}
+              render={({ field }) => (
+                <Tabs
+                  value={field.value}
+                  onTabChange={(val) => {
+                    field.onChange(val);
+                    handleTabChange(val as AUTOIMPORTSCHEDULERFREQUENCY);
+                  }}
+                  classNames={{ tab: classes.tab }}
+                >
+                  <Tabs.List>
+                    {autoImportSchedulerFrequency.map((type) => (
+                      <Tabs.Tab key={type} value={type}>
+                        <Text size="md">{type.charAt(0).toUpperCase() + type.slice(1)}</Text>
+                      </Tabs.Tab>
+                    ))}
+                  </Tabs.List>
+
+                  {autoImportSchedulerFrequency.map((schedularFrequency) => (
+                    <Tabs.Panel key={schedularFrequency} value={schedularFrequency}>
+                      <SchedulerFrequency
+                        autoImportFrequency={schedularFrequency as AUTOIMPORTSCHEDULERFREQUENCY}
+                        control={control}
+                      />
+                    </Tabs.Panel>
+                  ))}
+                </Tabs>
+              )}
             />
-            <CronScheduleInputTextBox
-              name="Hour"
-              control={control}
-              onFocus={() => handleFocus('Hour')}
-              onBlur={handleBlur}
-            />
-            <CronScheduleInputTextBox
-              name="Day"
-              control={control}
-              onFocus={() => handleFocus('Day')}
-              onBlur={handleBlur}
-            />
-            <CronScheduleInputTextBox
-              name="Month"
-              control={control}
-              onFocus={() => handleFocus('Month')}
-              onBlur={handleBlur}
-            />
-            <CronScheduleInputTextBox
-              name="Days"
-              control={control}
-              onFocus={() => handleFocus('Days')}
-              onBlur={handleBlur}
-            />
-          </Group>
-          <Text color={cronDescription.isError ? colors.red : ''} size="xl" fw="bolder" align="center">
-            {cronDescription.description}
-          </Text>
-          <Flex gap="lg" justify="center" wrap="wrap">
-            {cronExampleBadges.map((badgeInfo, index) => (
-              <TooltipBadge
-                tooltipLabel={parseCronExpression.toString(badgeInfo)}
-                key={index}
-                badge={badgeInfo}
-                onBadgeClick={handleBadgeClick}
+            <Stack>
+              <Controller
+                name="endsNever"
+                control={control}
+                render={({ field }) => (
+                  <Radio.Group value={field.value ? 'never' : 'on'} onChange={(val) => field.onChange(val === 'never')}>
+                    <Stack mt="sm">
+                      <Radio
+                        value="never"
+                        label={<span style={{ color: colors.StrokeLight, fontWeight: 400 }}>Never ends</span>}
+                      />
+                      <Radio
+                        value="on"
+                        label={
+                          <Group align="center">
+                            <span>Ends on</span>
+                            {!field.value && (
+                              <Controller
+                                name="endsOn"
+                                control={control}
+                                render={({ field: dateField }) => (
+                                  <DatePickerInput
+                                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                    //@ts-ignore
+                                    placeholder="End Date"
+                                    value={dateField.value ? new Date(dateField.value) : null}
+                                    onChange={(date) => dateField.onChange(date?.toISOString())}
+                                    minDate={new Date()}
+                                    clearable
+                                    maw={400}
+                                  />
+                                )}
+                              />
+                            )}
+                          </Group>
+                        }
+                      />
+                    </Stack>
+                  </Radio.Group>
+                )}
               />
-            ))}
-          </Flex>
-          <CollapsibleExplanationTable
-            opened={tableOpened}
-            toggle={toggleTable}
-            cronExamples={cronExamples}
-            focusedField={focusedField}
-          />
+
+              <Stack spacing="xl">
+                {cronExpression && (
+                  <Text fw="bolder" color={colors.StrokeLight}>
+                    Current Schedule: {parseCronExpression.toString(cronExpression)}
+                  </Text>
+                )}
+              </Stack>
+            </Stack>
+          </form>
         </Stack>
       </Container>
       <Footer

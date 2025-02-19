@@ -1,6 +1,6 @@
 import { Controller } from 'react-hook-form';
 import { DestinationsEnum, ITemplate } from '@impler/shared';
-import { Stack, TextInput as Input, Group } from '@mantine/core';
+import { Stack, TextInput as Input, Group, Select } from '@mantine/core';
 
 import { Button } from '@ui/button';
 import { NumberInput } from '@ui/number-input';
@@ -92,6 +92,46 @@ export function Destination({ template }: DestinationProps) {
                 />
               )}
             />
+            <Group grow>
+              <Controller
+                name="webhook.retryInterval"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    label="Retry Interval"
+                    description="specify how long the system waits in minutes before sending the next request after a failure."
+                    placeholder="Retry Interval"
+                    data={[
+                      { value: '5', label: '5 minutes' },
+                      { value: '15', label: '15 minutes' },
+                      { value: '30', label: '30 minutes' },
+                    ]}
+                    value={String(field.value) || ''}
+                    onChange={(value) => field.onChange(Number(value))}
+                    error={errors.webhook?.message}
+                  />
+                )}
+              />
+              <Controller
+                name="webhook.retryCount"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    label="Retry Count"
+                    description="Maximum number of retry attempts allowed before the system stops retrying."
+                    placeholder="Retry Count"
+                    data={[
+                      { value: '2', label: '2' },
+                      { value: '5', label: '5' },
+                    ]}
+                    value={String(field.value) || ''}
+                    onChange={(value) => field.onChange(Number(value))}
+                    error={errors.webhook?.message}
+                  />
+                )}
+              />
+            </Group>
+
             <Button loading={isUpdateImportLoading} type="submit">
               Save
             </Button>

@@ -8,4 +8,8 @@ export class WebhookDestinationEntity {
   chunkSize: number;
 
   _templateId: string;
+
+  retryInterval: number;
+
+  retryCount: number;
 }

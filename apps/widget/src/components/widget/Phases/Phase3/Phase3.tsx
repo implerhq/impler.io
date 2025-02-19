@@ -61,6 +61,9 @@ export function Phase3(props: IPhase3Props) {
     isCompleteImportLoading,
     setShowAllDataValidModal,
     setShowDeleteConfirmModal,
+    hideFindAndReplaceButton,
+    hideDeleteButton,
+    hideCheckBox,
   } = usePhase3({ onNext: onNextClick });
   const tableWrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
   const [tableWrapperDimensions, setTableWrapperDimentions] = useState({
@@ -70,7 +73,6 @@ export function Phase3(props: IPhase3Props) {
   const columnDescriptions = columnDefs.map((column) => column.description || '');
 
   useEffect(() => {
-    //  setting wrapper height
     setTableWrapperDimentions({
       height: tableWrapperRef.current.getBoundingClientRect().height - 50,
       width: tableWrapperRef.current.getBoundingClientRect().width,
@@ -115,17 +117,22 @@ export function Phase3(props: IPhase3Props) {
             ]}
           />
           <Group spacing="xs">
-            <Button onClick={() => setShowFindReplaceModal(true)}>{texts.PHASE3.FIND_REPLACE}</Button>
-            <Button
-              color="red"
-              disabled={!selectedRowsRef.current.size}
-              onClick={() => setShowDeleteConfirmModal(true)}
-            >
-              {texts.COMMON.DELETE}
-              <Badge variant="light" ml="xs" color="red">
-                {numberFormatter(selectedRowsRef.current.size)}
-              </Badge>
-            </Button>
+            {!hideFindAndReplaceButton && (
+              <Button onClick={() => setShowFindReplaceModal(true)}>{texts.PHASE3.FIND_REPLACE}</Button>
+            )}
+
+            {!hideDeleteButton && (
+              <Button
+                color="red"
+                disabled={!selectedRowsRef.current.size}
+                onClick={() => setShowDeleteConfirmModal(true)}
+              >
+                {texts.COMMON.DELETE}
+                <Badge variant="light" ml="xs" color="red">
+                  {numberFormatter(selectedRowsRef.current.size)}
+                </Badge>
+              </Button>
+            )}
           </Group>
         </Flex>
         <Table
@@ -202,6 +209,7 @@ export function Phase3(props: IPhase3Props) {
           columnDefs={columnDefs}
           allChecked={allChecked}
           columnDescriptions={columnDescriptions}
+          hideCheckBox={hideCheckBox}
         />
       </Stack>
       <Pagination page={page} total={totalPages} onChange={onPageChange} />

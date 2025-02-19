@@ -20,7 +20,7 @@ import {
 
 import { publishToQueue } from '../bootstrap';
 import { BaseConsumer } from './base.consumer';
-import { getStorageServiceClass } from '../helpers/serivces.helper';
+import { getStorageServiceClass } from '../helpers/services.helper';
 
 const MIN_LIMIT = 0;
 const DEFAULT_PAGE = 1;

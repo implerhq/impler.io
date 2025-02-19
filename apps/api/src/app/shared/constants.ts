@@ -38,6 +38,10 @@ export const APIMessages = {
     ADVANCED_VALIDATIONS: 'Advanced validations are unavailable on your current plan',
   },
   INVALID_VERIFICATION_CODE: 'Code you entered is invalid! Please try again or request new verification code!',
+  ONBOARD_TEMPLATE_FILE_SIZE_EXCEED: 'File size exceeds the maximum limit of 10 MB',
+  ONBOARD_TEMPLATE_SHEET_NOT_FOUND: 'No sheets found in the workbook',
+  ONBOARD_TEMPLATE_FILE_EMPTY: 'File is empty or invalid',
+  ONBOARD_TEMPLATE_FILE_EMPTY_RECORDS: 'The file contains empty records',
 };
 
 export const CONSTANTS = {
@@ -90,3 +94,12 @@ export enum LEAD_SIGNUP_USING {
   GITHUB = 'Github',
   EMAIL = 'Email',
 }
+
+export const CRON_SCHEDULE = {
+  DEFAULT_CRON_TIME: '45 23 * * *',
+  TEST_CRON_TIME: '* * * * *',
+  CRON_TIME: '45 23 * * *',
+};
+
+export const TYPE_CHECK_SAMPLE = 10;
+export const MAX_FILE_SIZE = 10 * 1024 * 1024;
