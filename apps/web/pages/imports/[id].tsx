@@ -48,7 +48,7 @@ function ImportDetails() {
     templateId: router.query.id as string,
   });
   const { showWidget, isImplerInitiated } = useImpler({
-    primaryColor: colors.darkBlue,
+    primaryColor: colors.blue,
     templateId: templateData?._id,
     projectId: templateData?._projectId,
     accessToken: profileInfo?.accessToken,
