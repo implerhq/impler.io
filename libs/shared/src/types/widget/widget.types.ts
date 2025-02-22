@@ -1,4 +1,4 @@
-import { WIDGET_TEXTS, WidgetConfig } from '@impler/client';
+import { AppearanceConfig, WIDGET_TEXTS, WidgetConfig } from '@impler/client';
 import { ISchemaItem } from '../column';
 
 export interface ICommonShowPayload {
@@ -7,6 +7,7 @@ export interface ICommonShowPayload {
   templateId?: string;
   authHeaderValue?: string;
   primaryColor?: string;
+  appearance?: AppearanceConfig;
   colorScheme?: string;
   title?: string;
   sampleFile?: File | Blob;
