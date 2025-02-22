@@ -1,4 +1,5 @@
 import { WIDGET_TEXTS } from './config';
+import { ButtonConfig } from './config/appearance.config';
 
 // used for export
 export const ColumnTypes = {
@@ -166,6 +167,7 @@ export interface IShowWidgetProps {
   sampleFile?: File | Blob;
   texts?: CustomTexts;
   config?: WidgetConfig;
+  appearance?: AppearanceConfig;
   title?: string;
   primaryColor?: string;
   extra?: string | Record<string, any>;
@@ -188,6 +190,17 @@ export declare type WidgetConfig = {
   hideDownloadSampleButton?: boolean;
 };
 
+export declare type AppearanceConfig = {
+  widget?: {
+    backgroundColor?: string;
+  };
+  primaryColor?: string;
+  fontFamily?: string;
+  borderRadius?: string;
+  primaryButtonConfig?: ButtonConfig;
+  secondaryButtonConfig?: ButtonConfig;
+};
+
 export type CustomTexts = DeepPartial<typeof WIDGET_TEXTS>;
 
 export interface IUseImplerProps {
@@ -196,9 +209,14 @@ export interface IUseImplerProps {
   projectId?: string;
   templateId?: string;
   accessToken?: string;
+  /**
+   * @deprecated Use the `appearance.primaryColor` property instead.
+   * In future versions, the `primaryColor` property will be moved under `appearance` object.
+   */
   primaryColor?: string;
   extra?: string | Record<string, any>;
   config?: WidgetConfig;
+  appearance?: AppearanceConfig;
   authHeaderValue?: string | (() => string) | (() => Promise<string>);
   onUploadStart?: (value: UploadTemplateData) => void;
   onUploadTerminate?: (value: UploadData) => void;
