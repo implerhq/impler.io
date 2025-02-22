@@ -39,7 +39,7 @@ export function DirectEntryView({
           <Group>
             <Warning fill="var(--error-color)" />{' '}
             <Text>
-              {replaceVariablesInString(texts['PHASE1-2'].RECOMMANDED_LIMIT, {
+              {replaceVariablesInString(texts['PHASE1-2'].RECOMMENDED_LIMIT, {
                 records: numberFormatter(limit),
               })}
             </Text>
