@@ -6,6 +6,7 @@ export const colors = {
   lightDeem: '#CCCCCC',
   black: '#000000',
   red: '#f03e3e',
+  lightRed: '#ff6e6e',
   danger: '#AB3022',
   lightDanger: '#FDEBEB',
   light: '#F2F9FE',
@@ -17,7 +18,9 @@ export const colors = {
   lightGrey: '#E3E3E3',
   StrokeLight: '#666',
 
+  darkBlue: '#5263FA',
   lightBlue: '#5462ff',
+  faintBlue: '#a8c6ff59',
   softBlue: '#edf3ff',
   softGrey: '#868e96',
 };
