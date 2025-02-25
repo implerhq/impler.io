@@ -70,11 +70,11 @@ export const WIDGET_TEXTS = {
   SELECT_HEADER: {
     FILE_DONT_HAVE_HEADERS: 'File does not have headers',
     CONFIRM_AND_CONTINUE: 'Confirm selection and Continue',
-    INFO: 'Select Header Row from the table. Rows above the header will not be imported. Click on row to change selection.',
+    INFO: 'Select Header Row from the table. Rows above the header will not be imported. Click on the row to change selection.',
   },
   'PHASE1-2': {
     ENTER_DATA: 'Directly enter your data',
-    RECOMMANDED_LIMIT: 'Recommended upto {records} records',
+    RECOMMENDED_LIMIT: 'Recommended up to {records} records',
     FIX_INVALID_DATA: 'To complete import you need to fix invalid data',
   },
   PHASE2: {
