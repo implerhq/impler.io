@@ -89,7 +89,7 @@ export class SendBubbleDataConsumer extends BaseConsumer {
 
       if (nextPageNumber) {
         // Make next call
-        publishToQueue(QueuesEnum.SEND_WEBHOOK_DATA, {
+        publishToQueue(QueuesEnum.SEND_BUBBLE_DATA, {
           uploadId,
           cache: {
             ...cachedData,
