@@ -14,7 +14,7 @@ interface ConfirmationModalProps {
 
 export const ConfirmationModal = ({ status }: ConfirmationModalProps) => {
   const title =
-    status === CONSTANTS.PAYMENT_SUCCCESS_CODE
+    status === CONSTANTS.PAYMENT_INTENT_SUCCCESS_CODE
       ? CONSTANTS.SUBSCRIPTION_ACTIVATED_TITLE
       : CONSTANTS.SUBSCRIPTION_FAILED_TITLE;
 
@@ -24,11 +24,11 @@ export const ConfirmationModal = ({ status }: ConfirmationModalProps) => {
         {title}
       </Text>
       <Lottie
-        animationData={status === CONSTANTS.PAYMENT_SUCCCESS_CODE ? SuccessAnimationData : FailedAnimationData}
+        animationData={status === CONSTANTS.PAYMENT_INTENT_SUCCCESS_CODE ? SuccessAnimationData : FailedAnimationData}
         loop={true}
       />
       <Text align="center">
-        {status === CONSTANTS.PAYMENT_SUCCCESS_CODE
+        {status === CONSTANTS.PAYMENT_INTENT_SUCCCESS_CODE
           ? CONSTANTS.PAYMENT_SUCCESS_MESSAGE
           : CONSTANTS.PAYMENT_FAILED_MESSAGE}
       </Text>
