@@ -3,7 +3,7 @@ import { useOnboardUserProjectForm } from '@hooks/useOnboardUserProjectForm';
 import { ProjectOnboardForm } from './ProjectOnboardForm';
 
 export function OnboardProjectForm() {
-  const { onboardUser } = useOnboardUserProjectForm({});
+  const { onboardUser, isUserOnboardLoading } = useOnboardUserProjectForm({});
 
   const handleProjectOnboardFormSubmit = async (data: ProjectOnboardFormData) => {
     try {
@@ -13,7 +13,7 @@ export function OnboardProjectForm() {
 
   return (
     <Container size="md" p="md">
-      <ProjectOnboardForm onSubmit={handleProjectOnboardFormSubmit} />
+      <ProjectOnboardForm isLoading={isUserOnboardLoading} onSubmit={handleProjectOnboardFormSubmit} />
     </Container>
   );
 }
