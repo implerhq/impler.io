@@ -162,10 +162,10 @@ export function Container({ children }: PropsWithChildren<{}>) {
               '--button-primary-shadow': primaryButtonConfig?.buttonShadow ?? 'none',
 
               // Secondary Button Variables
-              '--button-secondary-color': secondaryButtonConfig?.textColor ?? colors.darkBlue,
+              '--button-secondary-color': secondaryButtonConfig?.textColor ?? primaryColor,
               '--button-secondary-background': secondaryButtonConfig?.backgroundColor ?? colors.white,
-              '--button-secondary-background-hover': secondaryButtonConfig?.hoverBackground ?? colors.faintBlue,
-              '--button-secondary-border-color': secondaryButtonConfig?.borderColor ?? colors.darkBlue,
+              '--button-secondary-background-hover': secondaryButtonConfig?.hoverBackground ?? primaryColorShades?.[0],
+              '--button-secondary-border-color': secondaryButtonConfig?.borderColor ?? primaryColor,
               '--button-secondary-border-hover': secondaryButtonConfig?.hoverBorderColor ?? colors.darkBlue,
               '--button-secondary-shadow': secondaryButtonConfig?.buttonShadow ?? 'none',
 
