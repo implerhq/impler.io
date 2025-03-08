@@ -9,6 +9,8 @@ import { useAddCardAndSubscribe } from '@hooks/useAddCardAndSubscribe';
 import { CheckoutContent } from './CheckoutContent';
 import { PaymentMethodForm } from './PaymentMethodForm';
 import { usePaymentMethods } from '@hooks/usePaymentMethods';
+import { notify } from '@libs/notify';
+import { NOTIFICATION_KEYS } from '@config';
 
 export interface SelectCardModalContentProps {
   email: string;
@@ -40,10 +42,11 @@ export function SubscribeToPlan({ email, planCode }: SelectCardModalContentProps
   const stripe = useStripe();
   const elements = useElements();
 
-  const { addPaymentMethod, isAddPaymentMethodLoading, setIsPaymentMethodLoading } = useAddCardAndSubscribe({
-    refetchPaymentMethods,
-    handleProceed,
-  });
+  const { isAddPaymentMethodLoading, setIsPaymentMethodLoading, addPaymentMethod, isCreateSubscriptionLoaiding } =
+    useAddCardAndSubscribe({
+      refetchPaymentMethods,
+      handleProceed,
+    });
 
   const handleAddCard = async () => {
     if (!stripe || !elements) return;
@@ -53,13 +56,27 @@ export function SubscribeToPlan({ email, planCode }: SelectCardModalContentProps
     if (!cardNumberElement) return;
 
     setIsPaymentMethodLoading(true);
-    const { paymentMethod } = await stripe.createPaymentMethod({
+    const response = await stripe.createPaymentMethod({
       type: 'card',
       card: cardNumberElement,
     });
 
-    if (paymentMethod) {
-      addPaymentMethod(paymentMethod.id);
+    if (response.error) {
+      notify(NOTIFICATION_KEYS.ERROR_ADDING_PAYMENT_METHOD, {
+        title: 'Failed to Add Card',
+        message: response.error.message || 'An unknown error occurred while adding your card.',
+        color: 'red',
+      });
+      setIsPaymentMethodLoading(false);
+
+      return;
+    }
+
+    if (response && response.paymentMethod?.id) {
+      addPaymentMethod({
+        planCode,
+        paymentMethodId: response?.paymentMethod?.id,
+      });
     }
   };
 
@@ -81,6 +98,7 @@ export function SubscribeToPlan({ email, planCode }: SelectCardModalContentProps
         isAddPaymentMethodLoading={isAddPaymentMethodLoading}
         isPaymentMethodsLoading={isPaymentMethodsLoading}
         isPaymentMethodsFetching={isPaymentMethodsFetching}
+        isCreateSubscriptionLoading={isCreateSubscriptionLoaiding}
       />
     </Flex>
   );
