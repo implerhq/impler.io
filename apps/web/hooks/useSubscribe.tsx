@@ -8,6 +8,7 @@ import { commonApi } from '@libs/api';
 import { ICardData, IErrorObject } from '@impler/shared';
 import { ConfirmationModal } from '@components/ConfirmationModal';
 import { API_KEYS, CONSTANTS, MODAL_KEYS, NOTIFICATION_KEYS } from '@config';
+import { useStripe } from '@stripe/react-stripe-js';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -16,14 +17,9 @@ interface UseSubscribeProps {
   planCode: string;
 }
 
-interface ISubscribeResponse {
-  url: string;
-  status: string;
-  success: boolean;
-}
-
 export const useSubscribe = ({ email, planCode }: UseSubscribeProps) => {
   const queryClient = useQueryClient();
+  const stripe = useStripe();
   const isCouponFeatureEnabled = publicRuntimeConfig.NEXT_PUBLIC_COUPON_ENABLED;
   const [appliedCouponCode, setAppliedCouponCode] = useState<string | undefined>(undefined);
 
@@ -46,17 +42,23 @@ export const useSubscribe = ({ email, planCode }: UseSubscribeProps) => {
         query: { ...paymentData },
       }),
     {
-      onSuccess: (response) => {
+      async onSuccess(response, { paymentMethodId }) {
         queryClient.invalidateQueries([API_KEYS.FETCH_ACTIVE_SUBSCRIPTION]);
+        const paymentResponse = await stripe?.confirmCardPayment(response.clientSecret, {
+          payment_method: paymentMethodId,
+          setup_future_usage: 'off_session',
+        });
+
         modals.closeAll();
-        if (response && response.status) {
+        if (paymentResponse?.paymentIntent?.status === CONSTANTS.PAYMENT_INTENT_SUCCCESS_CODE) {
           modals.open({
-            children: <ConfirmationModal status={response.status as string} />,
+            children: <ConfirmationModal status={paymentResponse.paymentIntent.status as string} />,
             withCloseButton: false,
           });
 
           modals.close(MODAL_KEYS.SELECT_CARD);
           modals.close(MODAL_KEYS.PAYMENT_PLANS);
+          queryClient.invalidateQueries([API_KEYS.FETCH_ACTIVE_SUBSCRIPTION]);
         }
       },
       onError: (error: IErrorObject) => {
@@ -72,6 +74,7 @@ export const useSubscribe = ({ email, planCode }: UseSubscribeProps) => {
             children: <ConfirmationModal status={String(error.statusCode)} />,
           });
         }
+        queryClient.invalidateQueries([API_KEYS.FETCH_ACTIVE_SUBSCRIPTION]);
       },
     }
   );
