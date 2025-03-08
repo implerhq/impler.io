@@ -151,6 +151,11 @@ interface ISubscribeData {
   planCode: string;
 }
 
+interface ISubscribeResponse {
+  clientSecret: string;
+  status: string;
+}
+
 interface SentProjectInvitation {
   _id: string;
   invitationToEmail: string;
