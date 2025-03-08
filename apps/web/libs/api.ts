@@ -7,6 +7,11 @@ interface Route {
 }
 
 const routes: Record<string, Route> = {
+  [API_KEYS.PAYMENT_METHOD_ADD]: {
+    url: (paymentMethodId: string) => `/v1/user/payment-method/${paymentMethodId}`,
+    method: 'PUT',
+  },
+
   [API_KEYS.PAYMENT_METHOD_LIST]: {
     url: () => `/v1/user/payment-methods`,
     method: 'GET',
@@ -29,12 +34,15 @@ const routes: Record<string, Route> = {
     method: 'GET',
   },
 
-  [API_KEYS.ADD_PAYMENT_METHOD]: {
-    url: (paymentMethodId: string) => `/v1/user/setup-intent/${paymentMethodId}`,
-    method: 'PUT',
-  },
+  /*
+   *
+   *[API_KEYS.ADD_PAYMENT_METHOD]: {
+   *  url: (paymentMethodId: string) => `/v1/user/setup-intent/${paymentMethodId}`,
+   *  method: 'PUT',
+   *},
+   */
 
-  [API_KEYS.UPDATE_SUBSCRIPTION_PAYMENT_METHOD]: {
+  [API_KEYS.UPDATE_DEFAULT_SUBSCRIPTION_PAYMENT_METHOD]: {
     url: (paymentMethodId: string) => `/v1/user/subscription-payment-method/${paymentMethodId}`,
     method: 'PUT',
   },
