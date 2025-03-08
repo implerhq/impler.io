@@ -166,7 +166,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
               '--button-secondary-background': secondaryButtonConfig?.backgroundColor ?? colors.white,
               '--button-secondary-background-hover': secondaryButtonConfig?.hoverBackground ?? primaryColorShades?.[0],
               '--button-secondary-border-color': secondaryButtonConfig?.borderColor ?? primaryColor,
-              '--button-secondary-border-hover': secondaryButtonConfig?.hoverBorderColor ?? colors.darkBlue,
+              '--button-secondary-border-hover': secondaryButtonConfig?.hoverBorderColor ?? primaryColor,
               '--button-secondary-shadow': secondaryButtonConfig?.buttonShadow ?? 'none',
 
               // counts
