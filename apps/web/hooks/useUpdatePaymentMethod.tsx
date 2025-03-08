@@ -1,8 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
 import { commonApi } from '@libs/api';
-import { API_KEYS, NOTIFICATION_KEYS } from '@config';
+import { API_KEYS, MODAL_KEYS, NOTIFICATION_KEYS } from '@config';
 import { IErrorObject } from '@impler/shared';
 import { notify } from '@libs/notify';
+import { modals } from '@mantine/modals';
 
 export function useUpdatePaymentMethod() {
   const { mutate: updatePaymentMethod, isLoading: isUpdatePaymentMethodLoading } = useMutation<
@@ -10,9 +11,9 @@ export function useUpdatePaymentMethod() {
     IErrorObject,
     { paymentMethodId: string }
   >(
-    [API_KEYS.UPDATE_SUBSCRIPTION_PAYMENT_METHOD],
+    [API_KEYS.UPDATE_DEFAULT_SUBSCRIPTION_PAYMENT_METHOD],
     ({ paymentMethodId }) =>
-      commonApi(API_KEYS.UPDATE_SUBSCRIPTION_PAYMENT_METHOD as any, {
+      commonApi(API_KEYS.UPDATE_DEFAULT_SUBSCRIPTION_PAYMENT_METHOD as any, {
         parameters: [paymentMethodId],
       }),
     {
@@ -23,6 +24,7 @@ export function useUpdatePaymentMethod() {
             message: data.message,
             color: 'green',
           });
+          modals.close(MODAL_KEYS.CHANGE_CARD);
         }
       },
       onError(error: IErrorObject) {
