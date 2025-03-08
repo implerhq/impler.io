@@ -1,74 +1,120 @@
+/* eslint-disable multiline-comment-style */
 import { useState } from 'react';
+import { modals } from '@mantine/modals';
 import { useStripe } from '@stripe/react-stripe-js';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
 import { IErrorObject } from '@impler/shared';
-import { API_KEYS, NOTIFICATION_KEYS } from '@config';
+import { ConfirmationModal } from '@components/ConfirmationModal';
+import { API_KEYS, CONSTANTS, MODAL_KEYS, NOTIFICATION_KEYS } from '@config';
 
 interface UseAddCardProps {
   refetchPaymentMethods: () => void;
   handleProceed: (paymentMethodId: string) => void;
 }
 
-export function useAddCardAndSubscribe({ refetchPaymentMethods, handleProceed }: UseAddCardProps) {
+export function useAddCardAndSubscribe({ refetchPaymentMethods }: UseAddCardProps) {
+  const queryClient = useQueryClient();
   const stripe = useStripe();
   const [isPaymentMethodLoading, setIsPaymentMethodLoading] = useState<boolean>(false);
 
-  const { mutate: addPaymentMethod, isLoading: isAddPaymentMethodLoading } = useMutation<any, IErrorObject, string>(
-    [API_KEYS.ADD_PAYMENT_METHOD],
-    async (paymentMethodId) =>
-      commonApi(API_KEYS.ADD_PAYMENT_METHOD as any, {
+  const { mutate: addPaymentMethod, isLoading: isAddPaymentMethodLoading } = useMutation<
+    any,
+    IErrorObject,
+    { planCode: string; paymentMethodId: string }
+  >(
+    [API_KEYS.PAYMENT_METHOD_ADD],
+    async ({ paymentMethodId }) =>
+      commonApi(API_KEYS.PAYMENT_METHOD_ADD as any, {
         parameters: [paymentMethodId],
       }),
     {
-      async onSuccess(data: any, paymentMethodId) {
-        if (data && data.status === 'succeeded') {
-          notify(NOTIFICATION_KEYS.CARD_ADDED);
-          handleProceed(paymentMethodId);
-          refetchPaymentMethods();
-        }
+      async onSuccess(data: any, { paymentMethodId, planCode }) {
+        notify(NOTIFICATION_KEYS.CARD_ADDED);
 
-        if (data && data.status === 'requires_action') {
-          const response = await stripe?.confirmCardSetup(data.client_secret);
-          if (response?.error?.type === 'invalid_request_error') {
-            notify(NOTIFICATION_KEYS.ERROR_AUTHORIZING_PAYMENT_METHOD, {
-              title: 'Error While Authorizing Card',
-              message: response?.error?.message || 'Error while saving card',
-              color: 'red',
-            });
-          } else {
-            await stripe?.confirmCardSetup(data.client_secret);
-
-            notify(NOTIFICATION_KEYS.CARD_ADDED);
-            saveIntentId(data.intentId, paymentMethodId);
-          }
-        }
-      },
-      onError(error: any) {
-        notify(NOTIFICATION_KEYS.ERROR_ADDING_PAYMENT_METHOD, {
-          title: 'Error while adding card',
-          message: error,
-          color: 'red',
+        createSubscription({
+          planCode,
+          paymentMethodId,
         });
-        setIsPaymentMethodLoading(false);
+
+        refetchPaymentMethods();
       },
     }
   );
 
-  const saveIntentId = async (intentId: string, paymentMethodId: string) => {
-    await commonApi(API_KEYS.SAVE_INTENT_ID as any, {
-      parameters: [intentId],
-    });
-    refetchPaymentMethods();
-    handleProceed(paymentMethodId);
-  };
+  const { mutate: createSubscription, isLoading: isCreateSubscriptionLoaiding } = useMutation<
+    ISubscribeResponse,
+    IErrorObject,
+    { planCode: string; paymentMethodId: string }
+  >(
+    [API_KEYS.SUBSCRIBE],
+    async ({ planCode, paymentMethodId }) =>
+      commonApi(API_KEYS.SUBSCRIBE as any, {
+        query: { planCode, paymentMethodId },
+      }),
+    {
+      async onSuccess(data: any, { paymentMethodId }) {
+        let paymentResponse = null;
+
+        if (data.clientSecret) {
+          paymentResponse = await stripe?.confirmCardPayment(data.clientSecret, {
+            setup_future_usage: 'off_session',
+            payment_method: paymentMethodId,
+          });
+        }
+        if (paymentResponse?.paymentIntent?.status === CONSTANTS.PAYMENT_INTENT_SUCCCESS_CODE) {
+          notify(NOTIFICATION_KEYS.MEMBERSHIP_PURCHASED, {
+            title: 'Successfully Purchased Membership',
+            message: 'Membership Activated',
+            color: 'green',
+          });
+
+          modals.closeAll();
+          modals.open({
+            children: <ConfirmationModal status={paymentResponse.paymentIntent.status as string} />,
+            withCloseButton: false,
+          });
+
+          modals.close(MODAL_KEYS.SELECT_CARD);
+          modals.close(MODAL_KEYS.PAYMENT_PLANS);
+
+          queryClient.invalidateQueries([API_KEYS.FETCH_ACTIVE_SUBSCRIPTION]);
+        }
+
+        if (paymentResponse?.error) {
+          notify(NOTIFICATION_KEYS.ERROR_ADDING_PAYMENT_METHOD, {
+            title: 'Error Confirming Payment',
+            message: paymentResponse?.error?.message || 'Error confirming payment',
+            color: 'red',
+          });
+        }
+      },
+      onError: (error: IErrorObject) => {
+        setIsPaymentMethodLoading(false);
+        modals.closeAll();
+        notify(NOTIFICATION_KEYS.PURCHASE_FAILED, {
+          title: 'Purchase Failed',
+          message: error.message,
+          color: 'red',
+        });
+        if (error && error.statusCode) {
+          modals.open({
+            title: CONSTANTS.SUBSCRIPTION_FAILED_TITLE,
+            children: <ConfirmationModal status={String(error.statusCode)} />,
+          });
+        }
+      },
+    }
+  );
 
   return {
     addPaymentMethod,
+    createSubscription,
     isPaymentMethodLoading,
-    setIsPaymentMethodLoading,
     isAddPaymentMethodLoading,
+    setIsPaymentMethodLoading,
+    isCreateSubscriptionLoaiding,
   };
 }
