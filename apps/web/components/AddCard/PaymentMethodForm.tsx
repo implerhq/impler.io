@@ -15,6 +15,7 @@ interface PaymentMethodFormProps {
   isPurchaseLoading: boolean;
   isPaymentMethodsLoading: boolean;
   isPaymentMethodsFetching: boolean;
+  isCreateSubscriptionLoading: boolean;
   appliedCouponCode?: string;
   paymentMethods?: ICardData[];
   isCouponFeatureEnabled: string;
@@ -33,6 +34,7 @@ export function PaymentMethodForm({
   isPaymentMethodsFetching,
   isPaymentMethodsLoading,
   isPurchaseLoading,
+  isCreateSubscriptionLoading,
   appliedCouponCode,
   setAppliedCouponCode,
   isCouponFeatureEnabled,
@@ -108,7 +110,11 @@ export function PaymentMethodForm({
           size="md"
           color="blue"
           loading={
-            isAddPaymentMethodLoading || isPurchaseLoading || isPaymentMethodsLoading || isPaymentMethodsFetching
+            isAddPaymentMethodLoading ||
+            isPurchaseLoading ||
+            isPaymentMethodsLoading ||
+            isPaymentMethodsFetching ||
+            isCreateSubscriptionLoading
           }
           onClick={handleSubmit}
         >
