@@ -32,7 +32,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
         families: [secondaryPayload.appearance?.fontFamily ?? 'Poppins'],
       },
     });
-  }, []);
+  }, [secondaryPayload.appearance?.fontFamily]);
 
   useEffect(() => {
     window.addEventListener('message', messageEventHandler);
