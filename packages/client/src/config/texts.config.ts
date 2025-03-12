@@ -74,7 +74,7 @@ export const WIDGET_TEXTS = {
   },
   'PHASE1-2': {
     ENTER_DATA: 'Directly enter your data',
-    RECOMMENDED_LIMIT: 'Recommended up to {records} records',
+    RECOMMENDED_LIMIT: 'Recommended upto {records} records',
     FIX_INVALID_DATA: 'To complete import you need to fix invalid data',
   },
   PHASE2: {

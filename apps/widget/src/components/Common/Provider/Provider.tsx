@@ -1,6 +1,6 @@
 import { PropsWithChildren } from 'react';
 import { ApiService } from '@api';
-import { WIDGET_TEXTS, WidgetConfig } from '@impler/client';
+import { AppearanceConfig, WIDGET_TEXTS, WidgetConfig } from '@impler/client';
 import APIContextProvider from '@store/api.context';
 import AppContextProvider from '@store/app.context';
 import { JobsInfoProvider } from '@store/jobinfo.context';
@@ -12,6 +12,7 @@ interface IProviderProps {
   texts: typeof WIDGET_TEXTS;
   config?: WidgetConfig;
   primaryColor: string;
+  appearance?: AppearanceConfig;
   output?: string;
   sampleFile?: File | Blob;
   schema?: string;
@@ -33,6 +34,7 @@ export function Provider(props: PropsWithChildren<IProviderProps>) {
     api,
     data,
     config,
+    appearance,
     title,
     sampleFile,
     texts,
@@ -64,6 +66,7 @@ export function Provider(props: PropsWithChildren<IProviderProps>) {
             title={title}
             sampleFile={sampleFile}
             config={config}
+            appearance={appearance}
             texts={texts}
             output={output}
             schema={schema}
