@@ -1,4 +1,4 @@
-import { Stack, SegmentedControl, Box, List, Text } from '@mantine/core';
+import { Stack, SegmentedControl, Box, Text, Flex } from '@mantine/core';
 import { Control, Controller, FieldErrors, UseFormSetError } from 'react-hook-form';
 import { UploadDropzone } from '@ui/UploadDropzone';
 import { WIDGET_TEXTS } from '@impler/client';
@@ -6,6 +6,8 @@ import { OnboardCreateTemplateModeEnum } from '@impler/shared';
 import { useTemplateSchema } from '@hooks/useTemplateSchema';
 import OnboardTemplateSchemaTable from './OnboardTemplateSchemaTable';
 import SampleColumnsTable from './SampleColumnsTable';
+import { colors } from '@config';
+import { InformationIcon } from '@assets/icons/Information.icon';
 
 interface ImportColumnsSectionProps {
   control: Control<CreateOnboardImportFormData>;
@@ -27,14 +29,10 @@ export default function ImportColumnsSection({ control, setError, errors }: Impo
               {templateSchema && templateSchema.length > 0 ? (
                 <Stack spacing="md">
                   <OnboardTemplateSchemaTable data={templateSchema} />
-                  <List spacing="xs">
-                    <List.Item>
-                      <Text size="md">You will be able to Edit and delete Columns in Next Step</Text>
-                    </List.Item>
-                    <List.Item>
-                      <Text size="md">Your filewon&apos;t be stored anywhere</Text>
-                    </List.Item>
-                  </List>
+                  <Flex gap="xs">
+                    <InformationIcon size="md" color={colors.yellow} />
+                    <Text color="dimmed">You will be able to Edit and delete Columns in Next Step</Text>
+                  </Flex>
                 </Stack>
               ) : (
                 <>
