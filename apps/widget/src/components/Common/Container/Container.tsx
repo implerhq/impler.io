@@ -136,6 +136,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
               '--border-radius': secondaryPayload.appearance?.borderRadius || '0.25rem',
               '--label-color': '#868e96',
               '--error-color': '#f03e3e',
+              '--border-color': colors.lightDeem,
               '--background-color': secondaryPayload.appearance?.widget?.backgroundColor ?? colors.white,
 
               // stepper
