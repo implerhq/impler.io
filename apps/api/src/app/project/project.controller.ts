@@ -117,10 +117,10 @@ export class ProjectController {
   ): Promise<{ project: ProjectResponseDto; environment: EnvironmentResponseDto }> {
     const projectWithEnvironment = await this.createProjectUsecase.execute(
       CreateProjectCommand.create({
-        ...body,
+        name: body.name,
+        onboarding: body.onboarding,
         _userId: user._id,
-      }),
-      user.email
+      })
     );
     const userApiKey = projectWithEnvironment.environment.apiKeys.find(
       (apiKey) => apiKey._userId.toString() === user._id

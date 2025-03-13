@@ -293,7 +293,7 @@ export const Table = forwardRef<HotTableClass, TableProps>(
         }}
         stretchH="all"
         renderAllColumns
-        manualColumnResize
+        // manualColumnResize //If the table's column is too large, expanding it may disrupt the column structure
         columns={columnDefs}
         colHeaders={headings}
         rowHeaders={rowHeaders}

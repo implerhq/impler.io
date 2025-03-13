@@ -1,6 +1,6 @@
 import { ApiService } from '@api';
 import { Dispatch, SetStateAction } from 'react';
-import { IUpload, WIDGET_TEXTS, WidgetConfig } from '@impler/client';
+import { AppearanceConfig, IUpload, WIDGET_TEXTS, WidgetConfig } from '@impler/client';
 import { ITemplate, IImportConfig } from '@impler/shared';
 
 export interface IImplerStore {
@@ -30,6 +30,7 @@ export interface IAppStore {
   title?: string;
   texts: typeof WIDGET_TEXTS;
   config?: WidgetConfig;
+  appearance?: AppearanceConfig;
   importId?: string;
   imageSchema?: string;
   data?: string;

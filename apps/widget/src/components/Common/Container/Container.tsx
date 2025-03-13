@@ -29,10 +29,10 @@ export function Container({ children }: PropsWithChildren<{}>) {
   useEffect(() => {
     WebFont.load({
       google: {
-        families: ['Poppins'],
+        families: [secondaryPayload.appearance?.fontFamily ?? 'Poppins'],
       },
     });
-  }, []);
+  }, [secondaryPayload.appearance?.fontFamily]);
 
   useEffect(() => {
     window.addEventListener('message', messageEventHandler);
@@ -62,6 +62,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
         title: data.value.title,
         texts: deepMerge(WIDGET_TEXTS, data.value.texts),
         config: data.value.config,
+        appearance: data.value.appearance,
         schema:
           typeof data.value.schema === 'string'
             ? data.value.schema
@@ -86,11 +87,15 @@ export function Container({ children }: PropsWithChildren<{}>) {
     }
   }
 
+  const primaryColor = secondaryPayload.appearance?.primaryColor ?? secondaryPayload.primaryColor ?? colors.primary;
+  const primaryButtonConfig = secondaryPayload.appearance?.primaryButtonConfig;
+  const secondaryButtonConfig = secondaryPayload.appearance?.secondaryButtonConfig;
+
   const primaryColorShades = useMemo(
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    () => generateShades(secondaryPayload.primaryColor),
-    [secondaryPayload.primaryColor]
+    () => generateShades(primaryColor),
+    [primaryColor]
   );
 
   return (
@@ -119,58 +124,20 @@ export function Container({ children }: PropsWithChildren<{}>) {
 
           /* Handle */
           '::-webkit-scrollbar-thumb': {
-            background: secondaryPayload.primaryColor,
+            background: primaryColor,
             borderRadius: '10px',
           },
+
           ...(secondaryPayload?.colorScheme && {
             ':root': {
               colorScheme: secondaryPayload.colorScheme,
-            },
-          }),
-          '.tippy-box[data-theme~="custom"]': {
-            color: 'black',
-            backgroundColor: 'white',
-            border: `2px solid ${secondaryPayload.primaryColor}`,
-            boxShadow: '0 0 10px rgba(0,0,0,0.2)',
-            borderRadius: 5,
-          },
-          '.tippy-box[data-theme~="custom"][data-placement^="top"] > .tippy-arrow::before': {
-            borderTopColor: secondaryPayload.primaryColor,
-          },
-          '.tippy-box[data-theme~="custom"][data-placement^="bottom"] > .tippy-arrow::before': {
-            borderBottomColor: secondaryPayload.primaryColor,
-          },
-          '.tippy-box[data-theme~="custom"][data-placement^="left"] > .tippy-arrow::before': {
-            borderLeftColor: secondaryPayload.primaryColor,
-          },
-          '.tippy-box[data-theme~="custom"][data-placement^="right"] > .tippy-arrow::before': {
-            borderRightColor: secondaryPayload.primaryColor,
-          },
-        }}
-      />
-      <MantineProvider
-        withGlobalStyles
-        withNormalizeCSS
-        theme={{
-          ...mantineConfig,
-          globalStyles: () => ({
-            ':root': {
-              // common
-              '--border-radius': '0.25rem',
+
+              //common
+              '--border-radius': secondaryPayload.appearance?.borderRadius || '0.25rem',
               '--label-color': '#868e96',
               '--error-color': '#f03e3e',
               '--border-color': colors.lightDeem,
-              '--primary-color': secondaryPayload.primaryColor,
-
-              '--primary-background': '#FFF',
-              '--secondary-background': colors.lightDeem,
-              '--primary-background-hover': '#FAFAFA',
-              '--secondary-background-hover': '#F4F4F4',
-
-              // counts
-              '--counts-background': '#f1f3f5',
-              '--counts-border-radius': '2rem',
-              '--counts-active-background': '#ffffff',
+              '--background-color': secondaryPayload.appearance?.widget?.backgroundColor ?? colors.white,
 
               // stepper
               '--stepper-background': '#f1f3f5',
@@ -181,65 +148,67 @@ export function Container({ children }: PropsWithChildren<{}>) {
               '--stepper-icon-completed-color': colors.white,
               '--stepper-border-color': '#f1f3f5',
               '--stepper-completed-border-color': colors.success,
-              '--stepper-progress-border-color': secondaryPayload.primaryColor,
+              '--stepper-progress-border-color': primaryColor,
               '--stepper-border-radius': '0px',
               '--stepper-color': '#666',
 
-              /*
-               * button
-               *
-               * '--button-primary-color': '#fff',
-               * '--button-primary-background': secondaryPayload.primaryColor,
-               * '--button-primary-background-hover': primaryColorShades?.[6],
-               * '--button-secondary-color': secondaryPayload.primaryColor,
-               * '--button-secondary-background': '#fff',
-               * '--button-secondary-background-hover': '#a8c6ff59',
-               */
+              // button
+
+              //Primary Button Variables
+              '--button-primary-color': primaryButtonConfig?.textColor ?? colors.white,
+              '--button-primary-background': primaryButtonConfig?.backgroundColor ?? primaryColor,
+              '--button-primary-background-hover': primaryButtonConfig?.hoverBackground ?? primaryColorShades?.[6],
+              '--button-primary-border-color': primaryButtonConfig?.borderColor ?? 'transparent',
+              '--button-primary-border-hover': primaryButtonConfig?.hoverBorderColor ?? 'transparent',
+              '--button-primary-shadow': primaryButtonConfig?.buttonShadow ?? 'none',
+
+              // Secondary Button Variables
+              '--button-secondary-color': secondaryButtonConfig?.textColor ?? primaryColor,
+              '--button-secondary-background': secondaryButtonConfig?.backgroundColor ?? colors.white,
+              '--button-secondary-background-hover': secondaryButtonConfig?.hoverBackground ?? primaryColorShades?.[0],
+              '--button-secondary-border-color': secondaryButtonConfig?.borderColor ?? primaryColor,
+              '--button-secondary-border-hover': secondaryButtonConfig?.hoverBorderColor ?? primaryColor,
+              '--button-secondary-shadow': secondaryButtonConfig?.buttonShadow ?? 'none',
+
+              // counts
+              '--counts-background': '#f1f3f5',
+              '--counts-border-radius': '2rem',
+              '--counts-active-background': '#ffffff',
+            },
+          }),
+          '.tippy-box[data-theme~="custom"]': {
+            color: 'black',
+            backgroundColor: 'white',
+            border: `2px solid ${primaryColor}`,
+            boxShadow: '0 0 10px rgba(0,0,0,0.2)',
+            borderRadius: 5,
+          },
+          '.tippy-box[data-theme~="custom"][data-placement^="top"] > .tippy-arrow::before': {
+            borderTopColor: primaryColor,
+          },
+          '.tippy-box[data-theme~="custom"][data-placement^="bottom"] > .tippy-arrow::before': {
+            borderBottomColor: primaryColor,
+          },
+          '.tippy-box[data-theme~="custom"][data-placement^="left"] > .tippy-arrow::before': {
+            borderLeftColor: primaryColor,
+          },
+          '.tippy-box[data-theme~="custom"][data-placement^="right"] > .tippy-arrow::before': {
+            borderRightColor: primaryColor,
+          },
+        }}
+      />
+      <MantineProvider
+        withGlobalStyles
+        withNormalizeCSS
+        theme={{
+          ...mantineConfig,
+          fontFamily: `${secondaryPayload.appearance?.fontFamily || 'Poppins'}, sans-serif`,
+          globalStyles: () => ({
+            '*': {
+              color: secondaryPayload.colorScheme, // textColor
             },
           }),
           components: {
-            Modal: {
-              styles: {
-                content: {
-                  borderRadius: 'var(--border-radius)',
-                  backgroundColor: 'var(--primary-background)',
-                },
-              },
-            },
-            Dropzone: {
-              styles: {
-                root: {
-                  borderRadius: 'var(--border-radius)',
-                  backgroundColor: `var(--stepper-background)`,
-                  '&:hover': {
-                    backgroundColor: `var(--secondary-background)`,
-                  },
-                },
-              },
-            },
-            InputWrapper: {
-              styles: {
-                label: {
-                  color: 'var(--label-color)',
-                },
-              },
-            },
-            Input: {
-              styles: {
-                input: {
-                  borderColor: 'var(--border-color)',
-                  borderRadius: 'var(--border-radius)',
-                },
-              },
-            },
-            Checkbox: {
-              styles: {
-                input: {
-                  borderColor: 'var(--border-color)',
-                  borderRadius: 'var(--border-radius)',
-                },
-              },
-            },
             Stepper: {
               styles: {
                 stepLabel: {
@@ -267,49 +236,128 @@ export function Container({ children }: PropsWithChildren<{}>) {
                 },
               },
             },
-            /*
-             * Button: {
-             *   styles: {
-             *     root: {
-             *       borderRadius: 'var(--border-radius)',
-             *       backgroundColor: 'var(--button-primary-background)',
-             *       '&:hover': {
-             *         backgroundColor: 'var(--button-primary-background-hover)',
-             *       },
-             *       '&[data-color=red]': {
-             *         backgroundColor: 'var(--button-secondary-background)',
-             *         borderColor: 'var(--error-color)',
-             *         '.mantine-Button-label': {
-             *           color: 'var(--error-color)',
-             *         },
-             *         '&:hover': {
-             *           backgroundColor: 'var(--button-secondary-background-hover)',
-             *         },
-             *       },
-             *       '&[data-variant=outline]': {
-             *         backgroundColor: 'var(--button-secondary-background)',
-             *         '.mantine-Button-label': {
-             *           color: 'var(--button-secondary-color)',
-             *         },
-             *         '&:hover': {
-             *           backgroundColor: 'var(--button-secondary-background-hover)',
-             *         },
-             *       },
-             *       '&:focus': {
-             *         outline: '0.125rem solid var(--button-primary-background)',
-             *       },
-             *     },
-             *     label: {
-             *       color: 'var(--button-primary-color)',
-             *     },
-             *     icon: {
-             *       svg: {
-             *         fill: 'var(--button-primary-color)',
-             *       },
-             *     },
-             *   },
-             * },
-             */
+
+            Modal: {
+              styles: {
+                content: {
+                  backgroundColor: 'var(--background-color)',
+                },
+              },
+            },
+            Button: {
+              styles: {
+                root: {
+                  borderRadius: 'var(--border-radius)',
+
+                  /*
+                   *'&[data-variant=filled]': {
+                   *backgroundColor: 'var(--button-primary-background)',
+                   *borderColor: 'var(--button-primary-border-color)',
+                   *border: '1px solid var(--button-primary-border-color)',
+                   *'.mantine-Button-label': {
+                   *  color: 'var(--button-primary-color)',
+                   *},
+                   *'&:hover': {
+                   *  backgroundColor: 'var(--button-primary-background-hover)',
+                   *  borderColor: 'var(--button-primary-border-hover)',
+                   *  border: '1px solid var(--button-primary-border-hover)',
+                   *  boxShadow: 'var(--button-primary-shadow)',
+                   *},
+                   *},
+                   */
+
+                  '&:not([data-variant])': {
+                    backgroundColor: 'var(--button-primary-background)',
+                    borderColor: 'var(--button-primary-border-color)',
+                    color: 'var(--button-primary-color)',
+                    border: '1px solid var(--button-primary-border-color)',
+
+                    '&:hover': {
+                      backgroundColor: 'var(--button-primary-background-hover)',
+                      borderColor: 'var(--button-primary-border-hover)',
+                      boxShadow: 'var(--button-primary-shadow)',
+                    },
+                  },
+
+                  '&[data-variant=outline]': {
+                    backgroundColor: 'var(--button-secondary-background)',
+                    borderColor: 'var(--button-secondary-border-color)',
+                    border: '1px solid var(--button-secondary-border-color)',
+                    '.mantine-Button-label': {
+                      color: 'var(--button-secondary-color)',
+                    },
+                    boxShadow: 'var(--button-secondary-shadow)',
+                    '&:hover': {
+                      backgroundColor: 'var(--button-secondary-background-hover)',
+                      borderColor: 'var(--button-secondary-border-hover)',
+                      border: '1px solid var(--button-secondary-border-hover)',
+                      boxShadow: 'var(--button-secondary-shadow)',
+                    },
+                  },
+
+                  '&[data-color="red"]': {
+                    backgroundColor: colors.lightRed,
+                    borderColor: 'var(--error-color)',
+                    '&:hover': {
+                      backgroundColor: colors.red,
+                    },
+                    '&[data-disabled]': {
+                      backgroundColor: `${colors.gray} !important`,
+                      borderColor: `${colors.white} !important`,
+                      cursor: 'not-allowed',
+                      '.mantine-Button-label': {
+                        color: `${colors.softGrey} !important`,
+                      },
+                    },
+                    '.mantine-Button-label': {
+                      color: colors.white,
+                    },
+                  },
+
+                  '&:focus': {
+                    outline: '0.125rem solid var(--button-primary-background)',
+                  },
+                },
+
+                label: {
+                  color: 'var(--button-primary-color)',
+                },
+
+                icon: {
+                  svg: {
+                    fill: 'var(--button-primary-color)',
+                  },
+                },
+              },
+            },
+
+            Dropzone: {
+              styles: {
+                root: {
+                  '&[data-has-error]': {
+                    borderColor: 'var(--error-color)',
+                    color: 'var(--error-color)',
+                    text: {
+                      color: 'var(--error-color)',
+                    },
+                  },
+                  '&:hover': {
+                    backgroundColor: 'lightgrey',
+                  },
+                  button: {
+                    '&[data-variant=filled]': {
+                      backgroundColor: 'var(--button-primary-background)',
+                      '.mantine-Button-label': {
+                        color: 'var(--button-primary-color)',
+                      },
+                      '&:hover': {
+                        backgroundColor: 'var(--button-primary-background-hover)',
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
           colors: {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -332,6 +380,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
           title={secondaryPayload?.title}
           texts={secondaryPayload.texts as typeof WIDGET_TEXTS}
           config={secondaryPayload.config}
+          appearance={secondaryPayload.appearance}
           // api
           api={api}
           // impler-context
@@ -340,9 +389,8 @@ export function Container({ children }: PropsWithChildren<{}>) {
           projectId={secondaryPayload.projectId}
           templateId={secondaryPayload.templateId}
           authHeaderValue={secondaryPayload?.authHeaderValue}
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          primaryColor={secondaryPayload.primaryColor!}
           sampleFile={secondaryPayload?.sampleFile}
+          primaryColor={secondaryPayload.primaryColor ?? secondaryPayload.appearance?.primaryColor ?? primaryColor}
         >
           {children}
         </Provider>

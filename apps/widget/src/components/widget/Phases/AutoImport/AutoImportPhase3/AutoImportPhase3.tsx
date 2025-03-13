@@ -19,18 +19,56 @@ interface IAutoImportPhase3Props {
   texts: typeof WIDGET_TEXTS;
 }
 
+const getDefaultValuesForFrequency = (frequency: AUTOIMPORTSCHEDULERFREQUENCY): Partial<RecurrenceFormData> => {
+  const baseDefaults = {
+    recurrenceType: frequency,
+    endsNever: true,
+    endsOn: undefined,
+  };
+
+  switch (frequency) {
+    case AUTOIMPORTSCHEDULERFREQUENCY.DAILY:
+      return {
+        ...baseDefaults,
+        dailyType: 'every',
+        dailyFrequency: 1,
+      };
+    case AUTOIMPORTSCHEDULERFREQUENCY.WEEKLY:
+      return {
+        ...baseDefaults,
+        frequency: 1,
+        selectedDays: [],
+      };
+    case AUTOIMPORTSCHEDULERFREQUENCY.MONTHLY:
+      return {
+        ...baseDefaults,
+        frequency: 1,
+        monthlyType: 'onDay',
+        monthlyDayNumber: 1,
+        monthlyDayPosition: 'First',
+        monthlyDayOfWeek: 'Monday',
+      };
+    case AUTOIMPORTSCHEDULERFREQUENCY.YEARLY:
+      return {
+        ...baseDefaults,
+        yearlyMonth: 'January',
+        yearlyType: 'onDay',
+        yearlyDayNumber: 1,
+        yearlyDayPosition: 'First',
+        yearlyDayOfWeek: 'Monday',
+      };
+    default:
+      return baseDefaults;
+  }
+};
+
 export function AutoImportPhase3({ onNextClick }: IAutoImportPhase3Props) {
   const { classes } = useStyles();
 
   const [cronExpression, setCronExpression] = useState<string>();
 
-  const { control, watch } = useForm<RecurrenceFormData>({
-    defaultValues: {
-      recurrenceType: AUTOIMPORTSCHEDULERFREQUENCY.DAILY,
-      frequency: 1,
-      selectedDays: [],
-      endsNever: true,
-    },
+  const { control, watch, reset } = useForm<RecurrenceFormData>({
+    defaultValues: getDefaultValuesForFrequency(AUTOIMPORTSCHEDULERFREQUENCY.DAILY),
   });
 
   const { updateUserJob, isUpdateUserJobLoading } = useAutoImportPhase3({
@@ -39,14 +77,18 @@ export function AutoImportPhase3({ onNextClick }: IAutoImportPhase3Props) {
 
   const formValues = watch();
 
+  const handleTabChange = (newFrequency: AUTOIMPORTSCHEDULERFREQUENCY) => {
+    reset(getDefaultValuesForFrequency(newFrequency));
+  };
+
   useEffect(() => {
     const newCronExpression = generateCronExpression(formValues);
     setCronExpression(newCronExpression);
-  }, [formValues, generateCronExpression]);
+  }, [formValues]);
 
   const handleNextClick = () => {
     updateUserJob({
-      cron: cronExpression,
+      cron: '* * * * *', // cronExpression,
       endsOn: formValues.endsNever ? undefined : formValues.endsOn,
     });
   };
@@ -60,7 +102,14 @@ export function AutoImportPhase3({ onNextClick }: IAutoImportPhase3Props) {
               name="recurrenceType"
               control={control}
               render={({ field }) => (
-                <Tabs value={field.value} onTabChange={(val) => field.onChange(val)} classNames={{ tab: classes.tab }}>
+                <Tabs
+                  value={field.value}
+                  onTabChange={(val) => {
+                    field.onChange(val);
+                    handleTabChange(val as AUTOIMPORTSCHEDULERFREQUENCY);
+                  }}
+                  classNames={{ tab: classes.tab }}
+                >
                   <Tabs.List>
                     {autoImportSchedulerFrequency.map((type) => (
                       <Tabs.Tab key={type} value={type}>

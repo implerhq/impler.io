@@ -14,7 +14,13 @@ import { RequestForgotPasswordCommand } from './request-forgot-password/request-
 import { CreateProject } from 'app/project/usecases';
 import { SaveSampleFile, UpdateImageColumns } from '@shared/usecases';
 import { CreateEnvironment, GenerateUniqueApiKey } from 'app/environment/usecases';
-import { CreateTemplate, UpdateCustomization, UpdateTemplateColumns } from 'app/template/usecases';
+import {
+  AddColumn,
+  CreateTemplate,
+  GetImportFileSchema,
+  UpdateCustomization,
+  UpdateTemplateColumns,
+} from 'app/template/usecases';
 
 export const USE_CASES = [
   Verify,
@@ -24,6 +30,8 @@ export const USE_CASES = [
   RegisterUser,
   ResetPassword,
   CreateProject,
+  GetImportFileSchema,
+  AddColumn,
   SaveSampleFile,
   CreateTemplate,
   CreateEnvironment,

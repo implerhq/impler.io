@@ -1,6 +1,7 @@
 import { MantineTheme, MantineThemeOverride } from '@mantine/core';
 
 export const colors = {
+  primary: '#24A0ED',
   danger: '#F64747',
   dangerDark: '#d53939',
   success: '#17B551',

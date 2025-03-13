@@ -17,6 +17,7 @@ import { UserModule } from './app/user/user.module';
 import { ImportJobsModule } from 'app/import-jobs/import-jobs.module';
 import { TeamModule } from 'app/team/team.module';
 import { AutoImportJobsSchedularModule } from 'app/auto-import-jobs-schedular/auto-import-jobs-schedular.module';
+import { FailedWebhookRetryModule } from 'app/failed-webhook-request-retry/failed-webhook-retry.module';
 
 const modules: Array<Type | DynamicModule | Promise<DynamicModule> | ForwardReference> = [
   ProjectModule,
@@ -35,6 +36,7 @@ const modules: Array<Type | DynamicModule | Promise<DynamicModule> | ForwardRefe
   ImportJobsModule,
   TeamModule,
   AutoImportJobsSchedularModule,
+  FailedWebhookRetryModule,
 ];
 
 const providers = [Logger];

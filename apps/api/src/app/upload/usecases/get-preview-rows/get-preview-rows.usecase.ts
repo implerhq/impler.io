@@ -12,7 +12,7 @@ export class GetPreviewRows {
     return new Promise((resolve, reject) => {
       Papa.parse(csvFileStream, {
         dynamicTyping: false,
-        skipEmptyLines: true,
+        skipEmptyLines: 'greedy',
         preview: 15,
         complete({ data }) {
           resolve(data);

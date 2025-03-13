@@ -28,11 +28,14 @@ export const WIDGET_TEXTS = {
     REVIEW_EDIT: 'Review & Edit',
   },
   FILE_DROP_AREA: {
-    DROP_FILE: 'Drop and drop a file here',
+    DROP_FILE: 'Drag and drop a file Here',
+    ONBOARD_DROP_FILE: 'Create Columns from the file',
     CHOOSE_FILE: 'Choose a file',
     IMAGE_FILE_SIZE:
       'Image size should be less than 5 MB. Supported formats are PNG, JPG and JPEG.',
     FILE_FORMATS: 'You can upload: csv, xlsx, xlsm',
+    ONBOARD_FILE_FORMATS:
+      'Drop a CSV or Excel file here and columns will be created automatically',
     FILE_SELECTED: 'File selected successfully',
   },
   'PHASE0-1': {
@@ -67,11 +70,11 @@ export const WIDGET_TEXTS = {
   SELECT_HEADER: {
     FILE_DONT_HAVE_HEADERS: 'File does not have headers',
     CONFIRM_AND_CONTINUE: 'Confirm selection and Continue',
-    INFO: 'Select Header Row from the table. Rows above the header will not be imported. Click on row to change selection.',
+    INFO: 'Select Header Row from the table. Rows above the header will not be imported. Click on the row to change selection.',
   },
   'PHASE1-2': {
     ENTER_DATA: 'Directly enter your data',
-    RECOMMANDED_LIMIT: 'Recommanded upto {records} records',
+    RECOMMENDED_LIMIT: 'Recommended upto {records} records',
     FIX_INVALID_DATA: 'To complete import you need to fix invalid data',
   },
   PHASE2: {
