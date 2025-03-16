@@ -2,13 +2,14 @@ import * as WebFont from 'webfontloader';
 import { Global } from '@emotion/react';
 import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
+import { generateColors } from '@mantine/colors-generator';
 import { useEffect, useState, PropsWithChildren, useMemo } from 'react';
 
 import { ApiService } from '@api';
 import { Provider } from '../Provider';
 import { MessageHandlerDataType } from '@types';
+import { ParentWindow, deepMerge } from '@util';
 import { WIDGET_TEXTS, isObject } from '@impler/client';
-import { generateShades, ParentWindow, deepMerge } from '@util';
 import { API_URL, colors, mantineConfig, variables } from '@config';
 import { IWidgetShowPayload, WidgetEventTypesEnum } from '@impler/shared';
 
@@ -47,6 +48,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
       if (data.value.accessToken) {
         api.setAuthorizationToken(data.value.accessToken);
       }
+      console.log(data.value.primaryColor || colors.primary);
       setShowWidget(true);
       setSecondaryPayload({
         accessToken: data.value.accessToken,
@@ -88,13 +90,18 @@ export function Container({ children }: PropsWithChildren<{}>) {
   }
 
   const primaryColor = secondaryPayload.appearance?.primaryColor ?? secondaryPayload.primaryColor ?? colors.primary;
+  console.log(
+    primaryColor,
+    secondaryPayload?.colorScheme,
+    secondaryPayload.appearance?.widget?.backgroundColor ?? colors.white
+  );
   const primaryButtonConfig = secondaryPayload.appearance?.primaryButtonConfig;
   const secondaryButtonConfig = secondaryPayload.appearance?.secondaryButtonConfig;
 
   const primaryColorShades = useMemo(
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    () => generateShades(primaryColor),
+    () => generateColors(primaryColor),
     [primaryColor]
   );
 
@@ -128,54 +135,56 @@ export function Container({ children }: PropsWithChildren<{}>) {
             borderRadius: '10px',
           },
 
-          ...(secondaryPayload?.colorScheme && {
-            ':root': {
-              colorScheme: secondaryPayload.colorScheme,
+          ':root': {
+            ...(secondaryPayload?.colorScheme
+              ? {
+                  colorScheme: secondaryPayload.colorScheme,
+                }
+              : {}),
 
-              //common
-              '--border-radius': secondaryPayload.appearance?.borderRadius || '0.25rem',
-              '--label-color': '#868e96',
-              '--error-color': '#f03e3e',
-              '--border-color': colors.lightDeem,
-              '--background-color': secondaryPayload.appearance?.widget?.backgroundColor ?? colors.white,
+            //common
+            '--border-radius': secondaryPayload.appearance?.borderRadius || '0.25rem',
+            '--label-color': '#868e96',
+            '--error-color': '#f03e3e',
+            '--border-color': colors.lightDeem,
+            '--background-color': secondaryPayload.appearance?.widget?.backgroundColor ?? colors.white,
 
-              // stepper
-              '--stepper-background': '#f1f3f5',
-              '--stepper-completed-background': colors.success,
-              '--stepper-progress-background': '#f1f3f5',
-              '--stepper-icon-color': '#495057',
-              '--stepper-icon-progress-color': '#495057',
-              '--stepper-icon-completed-color': colors.white,
-              '--stepper-border-color': '#f1f3f5',
-              '--stepper-completed-border-color': colors.success,
-              '--stepper-progress-border-color': primaryColor,
-              '--stepper-border-radius': '0px',
-              '--stepper-color': '#666',
+            // stepper
+            '--stepper-background': '#f1f3f5',
+            '--stepper-completed-background': colors.success,
+            '--stepper-progress-background': '#f1f3f5',
+            '--stepper-icon-color': '#495057',
+            '--stepper-icon-progress-color': '#495057',
+            '--stepper-icon-completed-color': colors.white,
+            '--stepper-border-color': '#f1f3f5',
+            '--stepper-completed-border-color': colors.success,
+            '--stepper-progress-border-color': primaryColor,
+            '--stepper-border-radius': '0px',
+            '--stepper-color': '#666',
 
-              // button
+            // button
 
-              //Primary Button Variables
-              '--button-primary-color': primaryButtonConfig?.textColor ?? colors.white,
-              '--button-primary-background': primaryButtonConfig?.backgroundColor ?? primaryColor,
-              '--button-primary-background-hover': primaryButtonConfig?.hoverBackground ?? primaryColorShades?.[6],
-              '--button-primary-border-color': primaryButtonConfig?.borderColor ?? 'transparent',
-              '--button-primary-border-hover': primaryButtonConfig?.hoverBorderColor ?? 'transparent',
-              '--button-primary-shadow': primaryButtonConfig?.buttonShadow ?? 'none',
+            //Primary Button Variables
+            '--button-primary-color': primaryButtonConfig?.textColor ?? colors.white,
+            '--button-primary-background': primaryButtonConfig?.backgroundColor ?? primaryColor,
+            '--button-primary-background-hover': primaryButtonConfig?.hoverBackground ?? primaryColorShades?.[7],
+            '--button-primary-border-color': primaryButtonConfig?.borderColor ?? 'transparent',
+            '--button-primary-border-hover': primaryButtonConfig?.hoverBorderColor ?? 'transparent',
+            '--button-primary-shadow': primaryButtonConfig?.buttonShadow ?? 'none',
 
-              // Secondary Button Variables
-              '--button-secondary-color': secondaryButtonConfig?.textColor ?? primaryColor,
-              '--button-secondary-background': secondaryButtonConfig?.backgroundColor ?? colors.white,
-              '--button-secondary-background-hover': secondaryButtonConfig?.hoverBackground ?? primaryColorShades?.[0],
-              '--button-secondary-border-color': secondaryButtonConfig?.borderColor ?? primaryColor,
-              '--button-secondary-border-hover': secondaryButtonConfig?.hoverBorderColor ?? primaryColor,
-              '--button-secondary-shadow': secondaryButtonConfig?.buttonShadow ?? 'none',
+            // Secondary Button Variables
+            '--button-secondary-color': secondaryButtonConfig?.textColor ?? primaryColor,
+            '--button-secondary-background': secondaryButtonConfig?.backgroundColor ?? colors.white,
+            '--button-secondary-background-hover': secondaryButtonConfig?.hoverBackground ?? primaryColorShades?.[0],
+            '--button-secondary-border-color': secondaryButtonConfig?.borderColor ?? primaryColor,
+            '--button-secondary-border-hover': secondaryButtonConfig?.hoverBorderColor ?? primaryColor,
+            '--button-secondary-shadow': secondaryButtonConfig?.buttonShadow ?? 'none',
 
-              // counts
-              '--counts-background': '#f1f3f5',
-              '--counts-border-radius': '2rem',
-              '--counts-active-background': '#ffffff',
-            },
-          }),
+            // counts
+            '--counts-background': '#f1f3f5',
+            '--counts-border-radius': '2rem',
+            '--counts-active-background': '#ffffff',
+          },
           '.tippy-box[data-theme~="custom"]': {
             color: 'black',
             backgroundColor: 'white',
