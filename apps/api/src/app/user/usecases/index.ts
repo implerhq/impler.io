@@ -10,6 +10,7 @@ import { ApplyCoupon } from './apply-coupon/apply-coupon.usecase';
 import { Checkout } from './checkout/checkout.usecase';
 import { Subscription } from './subscription/subscription.usecase';
 import { UpdateSubscriptionPaymentMethod } from './subscription/update-payment-method.usecase';
+import { PaymentIntentFailed } from './paymentintent-failed/payment-intent-failed.usecase';
 
 export const USE_CASES = [
   GetImportCounts,
@@ -24,6 +25,7 @@ export const USE_CASES = [
   Checkout,
   Subscription,
   UpdatePaymentMethod,
+  PaymentIntentFailed,
   UpdateSubscriptionPaymentMethod,
   //
 ];
@@ -40,5 +42,6 @@ export {
   ApplyCoupon,
   Checkout,
   Subscription,
+  PaymentIntentFailed,
   UpdateSubscriptionPaymentMethod,
 };

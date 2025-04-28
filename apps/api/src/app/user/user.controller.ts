@@ -14,6 +14,7 @@ import {
   Subscription,
   RetrievePaymentMethods,
   UpdateSubscriptionPaymentMethod,
+  PaymentIntentFailed,
 } from './usecases';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { IJwtPayload, ACCESS_KEY_NAME } from '@impler/shared';
@@ -37,6 +38,7 @@ export class UserController {
     private retrivePaymentMethods: RetrievePaymentMethods,
     private deleteUserPaymentMethod: DeleteUserPaymentMethod,
     private subscription: Subscription,
+    private paymentIntentFailed: PaymentIntentFailed,
     private updateSubscriptionPaymentMethod: UpdateSubscriptionPaymentMethod
   ) {}
 
@@ -74,6 +76,14 @@ export class UserController {
     @Body() cancelSubscriptionDto: CancelSubscriptionDto
   ) {
     return this.cancelSubscription.execute(user._projectId, cancelSubscriptionDto.reasons);
+  }
+
+  @Put('/payment-intent/failed/:paymentIntentId')
+  @ApiOperation({
+    summary: 'Setup User Payment Intent',
+  })
+  async paymentIntentFailedRoute(@UserSession() user: IJwtPayload, @Param('paymentIntentId') paymentIntentId?: string) {
+    return this.paymentIntentFailed.execute(user._projectId, paymentIntentId);
   }
 
   @Put('/setup-intent/:paymentMethodId')

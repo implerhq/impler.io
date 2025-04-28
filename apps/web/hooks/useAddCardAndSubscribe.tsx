@@ -1,4 +1,3 @@
-/* eslint-disable multiline-comment-style */
 import { useState } from 'react';
 import { modals } from '@mantine/modals';
 import { useStripe } from '@stripe/react-stripe-js';
@@ -40,6 +39,13 @@ export function useAddCardAndSubscribe({ refetchPaymentMethods }: UseAddCardProp
         });
 
         refetchPaymentMethods();
+      },
+      onError: (error: IErrorObject) => {
+        notify(NOTIFICATION_KEYS.ADD_CARD_FAILED, {
+          title: 'Failed to Add New Card in System',
+          message: error.message,
+          color: 'red',
+        });
       },
     }
   );
@@ -92,6 +98,7 @@ export function useAddCardAndSubscribe({ refetchPaymentMethods }: UseAddCardProp
         }
       },
       onError: (error: IErrorObject) => {
+        console.log('Geting error in useAddCardAndSubscribe as', error);
         setIsPaymentMethodLoading(false);
         modals.closeAll();
         notify(NOTIFICATION_KEYS.PURCHASE_FAILED, {

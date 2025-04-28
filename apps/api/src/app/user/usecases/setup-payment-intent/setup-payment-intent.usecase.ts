@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PaymentAPIService } from '@impler/services';
 import { EnvironmentRepository } from '@impler/dal';
 
@@ -10,10 +10,14 @@ export class UpdatePaymentMethod {
   ) {}
 
   async execute(projectId: string, paymentMethodId: string) {
-    const teamOwner = await this.environmentRepository.getTeamOwnerDetails(projectId);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
+    try {
+      const teamOwner = await this.environmentRepository.getTeamOwnerDetails(projectId);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
 
-    return await this.paymentApiService.updatePaymentMethod(teamOwner._userId.email, paymentMethodId);
+      return await this.paymentApiService.updatePaymentMethod(teamOwner._userId.email, paymentMethodId);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }

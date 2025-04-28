@@ -180,23 +180,58 @@ export class PaymentAPIService {
     if (!this.PAYMENT_API_BASE_URL) return;
 
     const url = `${this.PAYMENT_API_BASE_URL}/api/v1/customer/${email}/payment-id/${paymentMethodId}`;
-    const response = await axios.put(
-      url,
-      {},
-      {
-        headers: {
-          [this.AUTH_KEY]: this.AUTH_VALUE,
-        },
+    try {
+      const response = await axios.put(
+        url,
+        {},
+        {
+          headers: {
+            [this.AUTH_KEY]: this.AUTH_VALUE,
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        const errorMessage =
+          error.response.data?.message ||
+          (typeof error.response.data === 'string'
+            ? error.response.data
+            : 'An error occurred with the payment service');
+        throw new Error(errorMessage);
+      } else if (error.request) {
+        throw new Error('No response received from payment service');
+      } else {
+        throw new Error(error.message || 'Error connecting to payment service');
       }
-    );
-
-    return response.data;
+    }
   }
-
   async updatePaymentMethodId(externalId, paymentMethodId) {
     if (!this.PAYMENT_API_BASE_URL) return;
 
     const url = `${this.PAYMENT_API_BASE_URL}/api/v1/subscription/${externalId}/payment-method/${paymentMethodId}`;
+    try {
+      const response = await axios.put(
+        url,
+        {},
+        {
+          headers: {
+            [this.AUTH_KEY]: this.AUTH_VALUE,
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async paymentIntentFailed(email: string, paymentIntentId?: string): Promise<ISubscriptionData> {
+    if (!this.PAYMENT_API_BASE_URL) return;
+    const url = `${this.PAYMENT_API_BASE_URL}/api/v1/customer/${email}/payment-intent-failed/${paymentIntentId}`;
+
     const response = await axios.put(
       url,
       {},

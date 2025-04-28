@@ -12,6 +12,11 @@ const routes: Record<string, Route> = {
     method: 'PUT',
   },
 
+  [API_KEYS.PAYMENT_INTENT_FAILED]: {
+    url: (paymentIntentId?: string) => `/v1/user/payment-intent/failed/${paymentIntentId}`,
+    method: 'PUT',
+  },
+
   [API_KEYS.PAYMENT_METHOD_LIST]: {
     url: () => `/v1/user/payment-methods`,
     method: 'GET',

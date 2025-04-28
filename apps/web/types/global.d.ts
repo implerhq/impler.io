@@ -154,6 +154,9 @@ interface ISubscribeData {
 interface ISubscribeResponse {
   clientSecret: string;
   status: string;
+  success?: boolean;
+  currency?: string;
+  status?: string;
 }
 
 interface SentProjectInvitation {

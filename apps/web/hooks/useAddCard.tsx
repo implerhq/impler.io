@@ -43,6 +43,7 @@ export function useAddCard({ refetchPaymentMethods }: UseSimpleAddCardProps) {
         }
       },
       onError(error: any) {
+        console.log('Geting errororor as', error);
         notify(NOTIFICATION_KEYS.ERROR_ADDING_PAYMENT_METHOD, {
           title: 'Error while adding card',
           message: error.message,

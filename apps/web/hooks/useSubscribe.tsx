@@ -43,11 +43,26 @@ export const useSubscribe = ({ email, planCode }: UseSubscribeProps) => {
       }),
     {
       async onSuccess(response, { paymentMethodId }) {
+        if (response.success) {
+          queryClient.invalidateQueries([API_KEYS.FETCH_ACTIVE_SUBSCRIPTION]);
+          modals.closeAll();
+          modals.open({
+            children: <ConfirmationModal status={CONSTANTS.PAYMENT_INTENT_SUCCCESS_CODE} />,
+            withCloseButton: false,
+          });
+
+          return;
+        }
         queryClient.invalidateQueries([API_KEYS.FETCH_ACTIVE_SUBSCRIPTION]);
+
         const paymentResponse = await stripe?.confirmCardPayment(response.clientSecret, {
           payment_method: paymentMethodId,
           setup_future_usage: 'off_session',
         });
+
+        if (paymentResponse?.error && paymentResponse.error.payment_intent?.id) {
+          paymentIntentFailed({ paymentIntentId: paymentResponse.error.payment_intent?.id });
+        }
 
         modals.closeAll();
         if (paymentResponse?.paymentIntent?.status === CONSTANTS.PAYMENT_INTENT_SUCCCESS_CODE) {
@@ -79,6 +94,38 @@ export const useSubscribe = ({ email, planCode }: UseSubscribeProps) => {
     }
   );
 
+  const { mutate: paymentIntentFailed, isLoading: isPaymentIntentFailedLoading } = useMutation<
+    any,
+    IErrorObject,
+    { paymentIntentId: string }
+  >(
+    [API_KEYS.PAYMENT_INTENT_FAILED],
+
+    ({ paymentIntentId }) =>
+      commonApi<any>(API_KEYS.PAYMENT_INTENT_FAILED as any, {
+        parameters: [paymentIntentId],
+      }),
+    {
+      async onSuccess(response) {
+        if (response.success) {
+          queryClient.invalidateQueries([API_KEYS.FETCH_ACTIVE_SUBSCRIPTION]);
+          modals.closeAll();
+          modals.open({
+            children: <ConfirmationModal status={CONSTANTS.PAYMENT_FAILED_CODE} />,
+            withCloseButton: true,
+          });
+
+          return;
+        }
+        queryClient.invalidateQueries([API_KEYS.FETCH_ACTIVE_SUBSCRIPTION]);
+        modals.closeAll();
+        modals.close(MODAL_KEYS.SELECT_CARD);
+        modals.close(MODAL_KEYS.PAYMENT_PLANS);
+        queryClient.invalidateQueries([API_KEYS.FETCH_ACTIVE_SUBSCRIPTION]);
+      },
+    }
+  );
+
   const handleProceed = (createdPaymentMethodId: string) => {
     if (createdPaymentMethodId) {
       subscribe({
@@ -98,5 +145,6 @@ export const useSubscribe = ({ email, planCode }: UseSubscribeProps) => {
     isCouponFeatureEnabled,
     isPaymentMethodsLoading,
     isPaymentMethodsFetching,
+    isPaymentIntentFailedLoading,
   };
 };
