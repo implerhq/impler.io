@@ -48,7 +48,6 @@ export function Container({ children }: PropsWithChildren<{}>) {
       if (data.value.accessToken) {
         api.setAuthorizationToken(data.value.accessToken);
       }
-      console.log(data.value.primaryColor || colors.primary);
       setShowWidget(true);
       setSecondaryPayload({
         accessToken: data.value.accessToken,
@@ -90,11 +89,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
   }
 
   const primaryColor = secondaryPayload.appearance?.primaryColor ?? secondaryPayload.primaryColor ?? colors.primary;
-  console.log(
-    primaryColor,
-    secondaryPayload?.colorScheme,
-    secondaryPayload.appearance?.widget?.backgroundColor ?? colors.white
-  );
+
   const primaryButtonConfig = secondaryPayload.appearance?.primaryButtonConfig;
   const secondaryButtonConfig = secondaryPayload.appearance?.secondaryButtonConfig;
 
