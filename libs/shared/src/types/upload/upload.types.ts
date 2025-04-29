@@ -62,6 +62,7 @@ export type CommonCachedData = {
   authHeaderValue: string;
   retryInterval?: number;
   retryCount?: number;
+  projectId: string;
   _templateId: string;
   allDataFilePath?: string;
   recordFormat?: string;
