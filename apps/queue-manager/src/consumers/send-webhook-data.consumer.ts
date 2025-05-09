@@ -20,6 +20,7 @@ import {
   WebhookLogRepository,
   WebhookDestinationRepository,
   FailedWebhookRetryRequestsRepository,
+  EnvironmentRepository,
 } from '@impler/dal';
 
 import { BaseConsumer } from './base.consumer';
@@ -40,6 +41,7 @@ export class SendWebhookDataConsumer extends BaseConsumer {
   private emailService: EmailService = getEmailServiceClass();
   private failedWebhookRetryRequestsRepository: FailedWebhookRetryRequestsRepository =
     new FailedWebhookRetryRequestsRepository();
+  private environmentRepository: EnvironmentRepository = new EnvironmentRepository();
 
   async message(message: { content: string }) {
     const data = JSON.parse(message.content) as SendWebhookData;
@@ -91,9 +93,9 @@ export class SendWebhookDataConsumer extends BaseConsumer {
 
       await this.makeResponseEntry({
         data: response,
+        projectId: cachedData.projectId,
         importName: cachedData.name,
         url: cachedData.callbackUrl,
-        userEmail: cachedData.email,
         retryInterval: cachedData.retryInterval,
         retryCount: cachedData.retryCount,
         allData,
@@ -207,6 +209,7 @@ export class SendWebhookDataConsumer extends BaseConsumer {
 
     return {
       _templateId: uploadata._templateId,
+      projectId: templateData._projectId,
       callbackUrl: webhookDestination?.callbackUrl,
       chunkSize: webhookDestination?.chunkSize,
       name: templateData.name,
@@ -230,22 +233,26 @@ export class SendWebhookDataConsumer extends BaseConsumer {
   private async makeResponseEntry({
     data,
     importName,
+    projectId,
     url,
     allData,
-    userEmail,
     retryInterval,
     retryCount,
   }: {
     data: Partial<WebhookLogEntity>;
     importName: string;
+    projectId: string;
     url: string;
-    userEmail: string;
     retryCount?: number;
     retryInterval?: number;
     allData: Record<string, any>;
   }) {
     const webhookLog = await this.webhookLogRepository.create(data);
     if (data.status === StatusEnum.FAILED) {
+      const environment = await this.environmentRepository.getProjectTeamMembers(projectId);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const teamMemberEmails = environment.map((teamMember) => teamMember._userId.email);
       const emailContents = this.emailService.getEmailContent({
         type: 'ERROR_SENDING_WEBHOOK_DATA',
         data: {
@@ -256,13 +263,14 @@ export class SendWebhookDataConsumer extends BaseConsumer {
           importId: data._uploadId,
         },
       });
-
-      await this.emailService.sendEmail({
-        to: userEmail,
-        subject: `${EMAIL_SUBJECT.ERROR_SENDING_WEBHOOK_DATA} ${importName}`,
-        html: emailContents,
-        from: process.env.ALERT_EMAIL_FROM,
-        senderName: process.env.EMAIL_FROM_NAME,
+      teamMemberEmails.forEach(async (email) => {
+        await this.emailService.sendEmail({
+          to: email,
+          subject: `${EMAIL_SUBJECT.ERROR_SENDING_WEBHOOK_DATA} ${importName}`,
+          html: emailContents,
+          from: process.env.ALERT_EMAIL_FROM,
+          senderName: process.env.EMAIL_FROM_NAME,
+        });
       });
 
       if (retryCount && retryInterval) {

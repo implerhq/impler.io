@@ -537,6 +537,9 @@ importers:
       '@impler/shared':
         specifier: workspace:^
         version: link:../../libs/shared
+      '@mantine/colors-generator':
+        specifier: ^7.17.2
+        version: 7.17.2(chroma-js@3.1.2)
       '@mantine/core':
         specifier: 6.0.21
         version: 6.0.21(@emotion/react@11.11.4)(@mantine/hooks@6.0.21)(@types/react@18.3.3)(react-dom@18.2.0)(react@18.2.0)
@@ -567,6 +570,9 @@ importers:
       axios:
         specifier: 1.6.2
         version: 1.6.2
+      chroma-js:
+        specifier: ^3.1.2
+        version: 3.1.2
       cooltipz-css:
         specifier: ^2.3.0
         version: 2.3.0
@@ -803,7 +809,7 @@ importers:
         specifier: '>=12.0.0'
         version: 12.2.17(rxjs@7.8.1)(zone.js@0.11.8)
       '@impler/client':
-        specifier: ^0.28.0
+        specifier: ^0.29.0
         version: link:../client
     devDependencies:
       '@angular/compiler':
@@ -870,7 +876,7 @@ importers:
   packages/react:
     dependencies:
       '@impler/client':
-        specifier: ^0.28.0
+        specifier: ^0.29.0
         version: link:../client
       react:
         specifier: '>=16.8.0'
@@ -4814,6 +4820,14 @@ packages:
       '@mantine/utils': 6.0.21(react@18.2.0)
       embla-carousel-react: 7.1.0(react@18.2.0)
       react: 18.2.0
+    dev: false
+
+  /@mantine/colors-generator@7.17.2(chroma-js@3.1.2):
+    resolution: {integrity: sha512-wn4qmefWyQO9424nenN3k/zYcN4kPut1LVdv1ZyQ0Bz1giKc3PKTb96OOMzWlPCW08WjK/nwa2/VczC7YVKcQQ==}
+    peerDependencies:
+      chroma-js: '>=2.4.2'
+    dependencies:
+      chroma-js: 3.1.2
     dev: false
 
   /@mantine/core@6.0.21(@emotion/react@11.11.4)(@mantine/hooks@6.0.21)(@types/react@18.3.3)(react-dom@18.2.0)(react@18.2.0):
@@ -11654,6 +11668,10 @@ packages:
   /chownr@2.0.0:
     resolution: {integrity: sha512-bIomtDF5KGpdogkLd9VspvFzk9KfpyyGlS8YFVZl7TGPBHL5snIOnxeshwVgPteQ9b4Eydl+pVbIyE1DcvCWgQ==}
     engines: {node: '>=10'}
+
+  /chroma-js@3.1.2:
+    resolution: {integrity: sha512-IJnETTalXbsLx1eKEgx19d5L6SRM7cH4vINw/99p/M11HCuXGRWL+6YmCm7FWFGIo6dtWuQoQi1dc5yQ7ESIHg==}
+    dev: false
 
   /chrome-trace-event@1.0.4:
     resolution: {integrity: sha512-rNjApaLzuwaOTjCiT8lSDdGN1APCiqkChLMJxJPWLunPAt5fy8xgU9/jNOchV84wfIxrA0lRQB7oCT8jrn/wrQ==}

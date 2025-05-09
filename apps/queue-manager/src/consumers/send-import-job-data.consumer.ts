@@ -173,6 +173,7 @@ export class SendImportJobDataConsumer extends BaseConsumer {
       multiSelectHeadings,
       extra: userJob.extra,
       name: templateData.name,
+      projectId: templateData._projectId,
       _templateId: userJob._templateId,
       authHeaderValue: userJob.authHeaderValue,
       callbackUrl: webhookDestination?.callbackUrl,

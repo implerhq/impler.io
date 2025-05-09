@@ -1,16 +1,18 @@
 import React from 'react';
-import Lottie from 'lottie-react';
+import dynamic from 'next/dynamic';
 import { modals } from '@mantine/modals';
 import { colors, CONSTANTS } from '@config';
 import { Stack, Text } from '@mantine/core';
 
+import { Button } from '@ui/button';
 import FailedAnimationData from './failed-animation-data.json';
 import SuccessAnimationData from './success-animation-data.json';
-import { Button } from '@ui/button';
 
 interface ConfirmationModalProps {
   status: string;
 }
+
+const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 
 export const ConfirmationModal = ({ status }: ConfirmationModalProps) => {
   const title =
