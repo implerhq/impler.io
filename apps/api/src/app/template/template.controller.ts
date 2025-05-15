@@ -3,6 +3,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiTags, ApiOkResponse, ApiSecurity, ApiBody, ApiConsumes } from '@nestjs/swagger';
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -70,6 +71,7 @@ import { ValidImportFile } from '@shared/validations/valid-import-file.validatio
 @ApiTags('Template')
 @ApiSecurity(ACCESS_KEY_NAME)
 @UseGuards(JwtAuthGuard)
+@UseInterceptors(ClassSerializerInterceptor)
 export class TemplateController {
   constructor(
     private getUploads: GetUploads,

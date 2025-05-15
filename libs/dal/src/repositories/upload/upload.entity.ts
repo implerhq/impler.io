@@ -1,3 +1,5 @@
+import { Exclude } from 'class-transformer';
+
 export class UploadEntity {
   _id?: string;
 
@@ -42,4 +44,11 @@ export class UploadEntity {
   customChunkFormat: string;
 
   headerRow: number;
+
+  @Exclude()
+  createdAt: Date;
+  @Exclude()
+  updatedAt: Date;
+  @Exclude()
+  __v?: number;
 }

@@ -1,3 +1,5 @@
+import { Exclude } from 'class-transformer';
+
 export class ColumnEntity {
   _id?: string;
 
@@ -36,4 +38,10 @@ export class ColumnEntity {
   defaultValue?: string | number;
 
   validations?: any[];
+  @Exclude()
+  createdAt: Date;
+  @Exclude()
+  updatedAt: Date;
+  @Exclude()
+  __v?: number;
 }

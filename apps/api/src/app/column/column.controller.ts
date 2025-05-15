@@ -1,5 +1,15 @@
 import { ApiTags, ApiBody, ApiOperation, ApiSecurity } from '@nestjs/swagger';
-import { Controller, Put, Param, Body, UseGuards, Post, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Put,
+  Param,
+  Body,
+  UseGuards,
+  Post,
+  Delete,
+  ClassSerializerInterceptor,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 
 import { ACCESS_KEY_NAME } from '@impler/shared';
@@ -13,6 +23,7 @@ import { UpdateColumnCommand } from './commands/update-column.command';
 @ApiTags('Column')
 @UseGuards(JwtAuthGuard)
 @ApiSecurity(ACCESS_KEY_NAME)
+@UseInterceptors(ClassSerializerInterceptor)
 export class ColumnController {
   constructor(
     private addColumn: AddColumn,
