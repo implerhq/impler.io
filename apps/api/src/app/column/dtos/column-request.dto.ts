@@ -15,7 +15,6 @@ import { Type } from 'class-transformer';
 
 import { ValidationTypesEnum } from '@impler/client';
 import { IsValidRegex } from '@shared/framework/is-valid-regex.validator';
-import { IsGreaterThan } from '@shared/framework/is-greator-than.validator';
 import { IsNumberOrString } from '@shared/framework/number-or-string.validator';
 import { ColumnDelimiterEnum, ColumnTypesEnum, Defaults } from '@impler/shared';
 
@@ -48,9 +47,6 @@ export class ValidationDto {
   })
   @IsNumber()
   @IsOptional()
-  @IsGreaterThan('min', {
-    message: 'max must be greater than min',
-  })
   max?: number;
 
   @ApiPropertyOptional({
