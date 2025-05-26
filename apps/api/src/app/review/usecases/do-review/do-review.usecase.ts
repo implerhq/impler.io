@@ -16,7 +16,6 @@ import {
   DalService,
   TemplateEntity,
   TemplateRepository,
-  RecordEntity,
 } from '@impler/dal';
 
 interface ISaveResults {
@@ -29,7 +28,7 @@ interface ISaveResults {
 
 @Injectable()
 export class DoReview extends BaseReview {
-  private _modal: Model<RecordEntity>;
+  private _modal: Model<any>;
 
   constructor(
     private templateRepository: TemplateRepository,
