@@ -1,6 +1,6 @@
 import { Controller } from 'react-hook-form';
-import { useLocalStorage } from '@mantine/hooks';
-import { Alert, Flex, Stack, Text } from '@mantine/core';
+import { useLocalStorage, useMediaQuery } from '@mantine/hooks';
+import { Alert, Flex, Stack, Text, Box, useMantineTheme } from '@mantine/core';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 
 import { Warning } from '@icons';
@@ -11,6 +11,7 @@ import { colors, variables } from '@config';
 import { logAmplitudeEvent } from '@amplitude';
 import { FileDropzone } from '@ui/FileDropzone';
 import { Footer } from 'components/Common/Footer';
+import { useStyles } from './ImageUpload.Styles';
 import { useImageUpload } from '@hooks/ImageUpload/useImageUpload';
 import { ImageWithIndicator } from '@ui/ImageWithIndicator';
 
@@ -20,6 +21,10 @@ interface ImageUploadProps {
 }
 
 export function ImageUpload({ goToUpload, texts }: ImageUploadProps) {
+  const { classes } = useStyles();
+  const theme = useMantineTheme();
+  const isLargerThanSm = useMediaQuery(`(min-width: ${theme.breakpoints.sm}px)`);
+
   const [showAlert, setShowAlert] = useLocalStorage<boolean>({
     key: variables.SHOW_IMAGE_ALERT_STORAGE_KEY,
     defaultValue: true,
@@ -50,7 +55,7 @@ export function ImageUpload({ goToUpload, texts }: ImageUploadProps) {
     <>
       <Stack style={{ flexGrow: 1 }}>
         <Flex gap="sm" direction="column">
-          {showAlert && (
+          {showAlert && isLargerThanSm && (
             <Alert
               color="blue"
               withCloseButton
@@ -75,6 +80,7 @@ export function ImageUpload({ goToUpload, texts }: ImageUploadProps) {
             )}
           />
         </Flex>
+
         <FileDropzone texts={texts} title="Upload Image" onDrop={onImageSelect} error={errors.image?.message} />
         <Stack ref={wrapperRef} style={{ flexGrow: 1, overflow: 'auto' }} h={containerHeight}>
           {Object.entries(
@@ -111,11 +117,14 @@ export function ImageUpload({ goToUpload, texts }: ImageUploadProps) {
           ))}
         </Stack>
       </Stack>
-      <Footer
-        active={PhasesEnum.IMAGE_UPLOAD}
-        onNextClick={onGenerateTemplateClick}
-        primaryButtonLoading={isDownloadInProgress}
-      />
+
+      <Box className={classes.stickyFooter}>
+        <Footer
+          active={PhasesEnum.IMAGE_UPLOAD}
+          onNextClick={onGenerateTemplateClick}
+          primaryButtonLoading={isDownloadInProgress}
+        />
+      </Box>
     </>
   );
 }
