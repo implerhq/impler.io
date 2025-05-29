@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { notify } from '@libs/notify';
-import { API_KEYS, NOTIFICATION_KEYS, ROUTES } from '@config';
+import { API_KEYS, CONSTANTS, NOTIFICATION_KEYS, ROUTES } from '@config';
 import { commonApi } from '@libs/api';
 import { track } from '@libs/amplitude';
 import { useAppState } from 'store/app.context';
@@ -40,7 +40,7 @@ export function useSignup() {
   const [isInvitationLink, setIsInvitationLink] = useState<boolean | undefined>();
   const invitationId = query.invitationId as string | undefined;
 
-  const { isLoading: isAcceptingInvitation, isError } = useQuery<any, IErrorObject, { email: string }>(
+  const { isLoading: isAcceptingInvitation, isError } = useQuery<any, IErrorObject, { email: string; }>(
     [API_KEYS.GET_TEAM_INVITATIONS, invitationId],
     () =>
       commonApi(API_KEYS.GET_TEAM_INVITATIONS as any, {
@@ -99,6 +99,13 @@ export function useSignup() {
   });
 
   const onSignup = (data: ISignupFormData) => {
+    if (data.password && data.password.length > CONSTANTS.MAX_PASSWORD_LENGTH) {
+      setError("password", {
+        type: "manual",
+        message: `Password length must be less than ${CONSTANTS.MAX_PASSWORD_LENGTH}!`
+      });
+      return;
+    }
     const signupData: ISignupData = {
       firstName: data.fullName.split(' ')[0],
       lastName: data.fullName.split(' ')[1],
