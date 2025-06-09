@@ -23,7 +23,7 @@ export default function ResetPasswordPage({}) {
           md: 'flex-start',
         }}
       >
-        <Image src={DarkLogo} width={80} alt="Impler Logo" />
+        <Image src={DarkLogo} width={60} height={70} alt="Impler Logo" />
         <Title order={1} color="white">
           Reset your password
         </Title>
