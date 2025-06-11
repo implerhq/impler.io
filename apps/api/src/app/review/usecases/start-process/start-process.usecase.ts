@@ -11,7 +11,7 @@ import {
 import { PaymentAPIService } from '@impler/services';
 import { QueueService } from '@shared/services/queue.service';
 import { AmplitudeService } from '@shared/services/amplitude.service';
-import { DalService, TemplateEntity, UploadRepository } from '@impler/dal';
+import { DalService, TemplateEntity, TemplateRepository, UploadEntity, UploadRepository } from '@impler/dal';
 
 @Injectable()
 export class StartProcess {
@@ -20,7 +20,8 @@ export class StartProcess {
     private queueService: QueueService,
     private uploadRepository: UploadRepository,
     private amplitudeService: AmplitudeService,
-    private paymentAPIService: PaymentAPIService
+    private paymentAPIService: PaymentAPIService,
+    private templateRepository: TemplateRepository
   ) {}
 
   async execute(_uploadId: string) {
@@ -52,12 +53,16 @@ export class StartProcess {
         { _id: _uploadId },
         { status: UploadStatusEnum.COMPLETED }
       );
+
+      await this.updateTemplateStatistics({ uploadInfo, userEmail });
     } else {
       // if template destination has callbackUrl then start sending data to the callbackUrl
       uploadInfo = await this.uploadRepository.findOneAndUpdate(
         { _id: _uploadId },
         { status: UploadStatusEnum.PROCESSING }
       );
+
+      await this.updateTemplateStatistics({ uploadInfo, userEmail });
     }
 
     this.amplitudeService.recordsImported(userEmail, {
@@ -112,5 +117,34 @@ export class StartProcess {
     else importedData = importedData.map((obj) => obj.record);
 
     return importedData;
+  }
+
+  private async updateTemplateStatistics({ uploadInfo, userEmail }: { uploadInfo: UploadEntity; userEmail: string }) {
+    //if its a file based import do-review will handle the further process
+    if (uploadInfo._uploadedFileId || uploadInfo.originalFileName) {
+      return;
+    }
+    await this.templateRepository.findOneAndUpdate(
+      {
+        _id: uploadInfo._templateId,
+      },
+      {
+        $inc: {
+          totalUploads: uploadInfo.totalRecords,
+          totalRecords: uploadInfo.totalRecords,
+          totalInvalidRecords: uploadInfo.invalidRecords,
+        },
+      }
+    );
+
+    await this.paymentAPIService.createEvent(
+      {
+        uploadId: uploadInfo._id,
+        totalRecords: uploadInfo.totalRecords,
+        validRecords: uploadInfo.validRecords,
+        invalidRecords: uploadInfo.invalidRecords,
+      },
+      userEmail
+    );
   }
 }
