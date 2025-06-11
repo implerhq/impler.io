@@ -44,6 +44,8 @@ export class StartProcess {
       });
     }
 
+    await this.updateTemplateStatistics({ uploadInfo, userEmail });
+
     // if destination is frontend or not defined then complete the upload process
     if (
       !destination ||
@@ -53,16 +55,12 @@ export class StartProcess {
         { _id: _uploadId },
         { status: UploadStatusEnum.COMPLETED }
       );
-
-      await this.updateTemplateStatistics({ uploadInfo, userEmail });
     } else {
       // if template destination has callbackUrl then start sending data to the callbackUrl
       uploadInfo = await this.uploadRepository.findOneAndUpdate(
         { _id: _uploadId },
         { status: UploadStatusEnum.PROCESSING }
       );
-
-      await this.updateTemplateStatistics({ uploadInfo, userEmail });
     }
 
     this.amplitudeService.recordsImported(userEmail, {
