@@ -4,6 +4,16 @@ import * as sax from 'sax';
 interface IParsedElement {
   [key: string]: any;
 }
+
+interface IPathMapping {
+  key: string;
+  path: string;
+}
+
+interface IBatchExtractionResult {
+  [key: string]: any[];
+}
+
 export class RSSXMLService {
   private xmlUrl: string;
   private totalItemsProcessed = 0;
@@ -78,6 +88,151 @@ export class RSSXMLService {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
+  // NEW: Batch extraction method that traverses the XML structure only once
+  async getBatchXMLKeyValuesByPaths(
+    obj: Record<string, any>,
+    pathMappings: IPathMapping[]
+  ): Promise<IBatchExtractionResult> {
+    console.log('🚀 Starting batch extraction for', pathMappings.length, 'paths');
+    const startTime = Date.now();
+
+    const result: IBatchExtractionResult = {};
+
+    // Initialize result arrays for each mapping
+    pathMappings.forEach((mapping) => {
+      result[mapping.key] = [];
+    });
+
+    // Parse paths once
+    const parsedPaths = pathMappings.map((mapping) => ({
+      key: mapping.key,
+      pathArray: mapping.path.split('>').map((key) => key.trim()),
+    }));
+
+    // Single traversal to extract all values
+    this.extractMultiplePathsRecursive(obj, parsedPaths, result, []);
+
+    // Find the maximum length for normalization
+    const maxLength = Math.max(...Object.values(result).map((arr) => arr.length));
+
+    // Normalize arrays to same length (pad with undefined if needed)
+    Object.keys(result).forEach((key) => {
+      while (result[key].length < maxLength) {
+        result[key].push(undefined);
+      }
+    });
+
+    const endTime = Date.now();
+    console.log(`✅ Batch extraction completed in ${endTime - startTime}ms`);
+    console.log(`📊 Extracted ${maxLength} records for ${pathMappings.length} fields`);
+
+    return result;
+  }
+
+  private extractMultiplePathsRecursive(
+    current: any,
+    pathMappings: Array<{ key: string; pathArray: string[] }>,
+    result: IBatchExtractionResult,
+    currentPath: string[]
+  ): void {
+    // Check if current path matches any of our target paths
+    pathMappings.forEach((mapping) => {
+      if (this.pathMatches(currentPath, mapping.pathArray)) {
+        const value = this.extractValue(current);
+        if (value !== undefined) {
+          if (Array.isArray(value)) {
+            result[mapping.key].push(...value);
+          } else {
+            result[mapping.key].push(value);
+          }
+        }
+      }
+    });
+
+    // Continue traversing if current is an object
+    if (current && typeof current === 'object') {
+      if (Array.isArray(current)) {
+        current.forEach((item) => {
+          this.extractMultiplePathsRecursive(item, pathMappings, result, [...currentPath, '[]']);
+        });
+      } else {
+        Object.keys(current).forEach((key) => {
+          // Skip metadata keys
+          if (key === '$' || key === '_') return;
+
+          this.extractMultiplePathsRecursive(current[key], pathMappings, result, [...currentPath, key]);
+        });
+      }
+    }
+  }
+
+  private pathMatches(currentPath: string[], targetPath: string[]): boolean {
+    if (currentPath.length !== targetPath.length) return false;
+
+    for (let i = 0; i < currentPath.length; i++) {
+      const current = currentPath[i];
+      const target = targetPath[i];
+
+      // Handle array notation
+      if (target.endsWith('[]')) {
+        const targetKey = target.slice(0, -2);
+        if (current !== '[]' && current !== targetKey) return false;
+      } else if (current !== target) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  private extractValue(value: any): any {
+    if (value === null || value === undefined) return undefined;
+
+    // Handle objects with $ (attributes) and _ (text content)
+    if (typeof value === 'object' && !Array.isArray(value)) {
+      if (value._ !== undefined) return value._;
+      if (value.$ !== undefined && Object.keys(value).length === 1) return undefined;
+    }
+
+    // Return primitive values
+    if (typeof value === 'string' || typeof value === 'number') {
+      return value;
+    }
+
+    // Handle arrays
+    if (Array.isArray(value)) {
+      return value.map((item) => this.extractValue(item)).filter((v) => v !== undefined);
+    }
+
+    return undefined;
+  }
+
+  // OPTIMIZED: New mapping function that works with batch extracted data
+  async optimizedMappingFunction(mappingsData: IPathMapping[], batchResult: IBatchExtractionResult): Promise<any[]> {
+    console.log('🔄 Creating optimized mapping...', batchResult);
+
+    const result = [];
+    const keys = mappingsData.map((mapping) => mapping.key);
+
+    // Find the maximum length across all extracted arrays
+    const maxLength = Math.max(...keys.map((key) => batchResult[key]?.length || 0));
+
+    console.log('📊 Maximum length:', maxLength);
+
+    for (let i = 0; i < maxLength; i++) {
+      const item: any = {};
+      keys.forEach((key) => {
+        const values = batchResult[key];
+        item[key] = values && values.length > i ? values[i] : undefined;
+      });
+      result.push(item);
+    }
+
+    console.log(`✅ Created ${result.length} mapped records`);
+
+    return result;
+  }
+
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   async parseXMLAndExtractData(xmlUrl: string, dataPath?: string): Promise<any> {
     console.log('🚀 Starting XML parsing...');
@@ -101,7 +256,7 @@ export class RSSXMLService {
     }
   }
 
-  // Extract all key paths from structure
+  // Keep existing methods for backward compatibility
   extractKeys(obj: any, prefix = '', result: Set<string> = new Set()): string[] {
     if (Array.isArray(obj)) {
       obj.forEach((item) => {
@@ -372,10 +527,13 @@ export class RSSXMLService {
     }
   }
 
+  // Keep for backward compatibility - but mark as deprecated
   async getXMLKeyValueByPath(
     obj: Record<string, any>,
     path: string | undefined
   ): Promise<string | number | undefined | any> {
+    console.warn('⚠️  getXMLKeyValueByPath is deprecated. Use getBatchXMLKeyValuesByPaths for better performance.');
+
     if (!path) {
       return undefined;
     }
@@ -414,7 +572,10 @@ export class RSSXMLService {
     return undefined;
   }
 
+  // Keep for backward compatibility
   async mappingFunction(mappingsData: any, values: any[]): Promise<any[]> {
+    console.warn('⚠️  mappingFunction is deprecated. Use optimizedMappingFunction for better performance.');
+
     const result = [];
     const maxLength = Math.max(...values.map((value) => (Array.isArray(value) ? value.length : 1)));
 
@@ -448,6 +609,7 @@ export class RSSXMLService {
 
     return result;
   }
+
   async getMimeType(url: string): Promise<string | null> {
     try {
       const response = await axios.head(url);

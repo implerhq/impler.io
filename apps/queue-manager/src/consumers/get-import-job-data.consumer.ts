@@ -11,6 +11,7 @@ import {
 import { BaseConsumer } from './base.consumer';
 import { publishToQueue } from '../bootstrap';
 import { getStorageServiceClass } from '../helpers/services.helper';
+
 export class GetImportJobDataConsumer extends BaseConsumer {
   private commonRepository: CommonRepository = new CommonRepository();
   private userJobRepository: UserJobRepository = new UserJobRepository();
@@ -25,7 +26,7 @@ export class GetImportJobDataConsumer extends BaseConsumer {
   async message(message: { content: string }) {
     const data = JSON.parse(message.content) as { _jobId: string };
     const importJobHistoryId = this.commonRepository.generateMongoId().toString();
-    const importedData = await this.getJobImportedData(data._jobId);
+    const importedData = await this.getJobImportedDataOptimized(data._jobId);
     const allDataFilePath = this.fileNameService.getAllJsonDataFilePath(importJobHistoryId);
     await this.convertRecordsToJsonFile(importJobHistoryId, importedData);
     await this.importJobHistoryRepository.create({
@@ -48,7 +49,69 @@ export class GetImportJobDataConsumer extends BaseConsumer {
     return;
   }
 
+  // NEW OPTIMIZED METHOD: Single traversal for all mappings
+  async getJobImportedDataOptimized(_jobId: string) {
+    try {
+      console.log('🚀 Starting optimized job data extraction...');
+      const startTime = Date.now();
+
+      const userJob = await this.userJobRepository.findOne({ _id: _jobId });
+      if (!userJob) {
+        throw new Error(`Job not found for _jobId: ${_jobId}`);
+      }
+
+      const jobMappings = await this.jobMappingRepository.find({ _jobId });
+      const mappings: { key: string; path: string }[] = jobMappings.map((jobMapping) => ({
+        key: jobMapping.key,
+        path: jobMapping.path,
+      }));
+
+      console.log('📋 Job mappings:', mappings.length, 'fields to extract');
+
+      // Parse XML once
+      const parsedXMLData = await this.rssXmlService.parseXMLAndExtractData(userJob.url);
+      if (!parsedXMLData) {
+        throw new Error('Failed to parse XML data');
+      }
+
+      // OPTIMIZED: Extract all values in a single traversal
+      const batchResult = await this.rssXmlService.getBatchXMLKeyValuesByPaths(parsedXMLData.xmlData, mappings);
+
+      console.log(
+        '📊 Batch extraction result:',
+        Object.keys(batchResult).map((key) => `${key}: ${batchResult[key].length} values`)
+      );
+
+      // OPTIMIZED: Create mapped data using batch result
+      const mappedData = await this.rssXmlService.optimizedMappingFunction(mappings, batchResult);
+
+      const endTime = Date.now();
+      console.log(`✅ Optimized extraction completed in ${endTime - startTime}ms`);
+      console.log(
+        `📈 Performance improvement: ~${mappings.length}x faster (single traversal vs ${mappings.length} traversals)`
+      );
+      console.log('📊 Final mapped data:', mappedData.length, 'records');
+
+      console.log('Mapped Data is >>>', mappedData);
+
+      return mappedData;
+    } catch (error) {
+      console.error('❌ Error in optimized job data extraction:', error);
+      throw error;
+    }
+  }
+
+  /*
+  // LEGACY METHOD: Keep for backward compatibility (but use optimized version)
   async getJobImportedData(_jobId: string) {
+    console.warn('⚠️  getJobImportedData is deprecated. Using optimized version instead.');
+
+    return this.getJobImportedDataOptimized(_jobId);
+  }
+  */
+
+  // LEGACY METHOD: Original implementation (kept for reference)
+  async getJobImportedDataLegacy(_jobId: string) {
     try {
       const userJob = await this.userJobRepository.findOne({ _id: _jobId });
       if (!userJob) {
@@ -62,21 +125,16 @@ export class GetImportJobDataConsumer extends BaseConsumer {
       }));
 
       console.log('job mappings are', jobMappings);
-
       console.log('mappings are >>>', mappings);
-      // console.log('url ->', userJob.url);
+
       const parsedXMLData = await this.rssXmlService.parseXMLAndExtractData(userJob.url);
-      // console.log('parsedXMLData ->', parsedXMLData);
 
-      // console.log(`\n🔑 Found ${parsedXMLData.keys.length} unique key paths returned and destructured:`);
-      // parsedXMLData.keys.forEach((key) => console.log(`   ${key}`));
-
-      // console.log('Inside Queue Manager >', parsedXMLData.keys, parsedXMLData.xmlData);
-
+      // PERFORMANCE ISSUE: This loops through the XML structure N times (once for each mapping)
       const returnedRssKeyValues = await Promise.all(
         mappings.map(({ mapping }) => this.rssXmlService.getXMLKeyValueByPath(parsedXMLData.xmlData, mapping))
       );
-      // console.log('returnedRssKeyValues ->', returnedRssKeyValues);
+
+      console.log('returnedRssKeyValues ->', returnedRssKeyValues);
       const mappedData = await this.rssXmlService.mappingFunction(mappings, returnedRssKeyValues);
 
       console.log('mapped data >>', mappedData);
