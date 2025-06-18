@@ -1,7 +1,5 @@
-import axios from 'axios';
-import { parseStringPromise } from 'xml2js';
-
-import { StorageService, FileNameService } from '@impler/services';
+/* eslint-disable multiline-comment-style */
+import { StorageService, FileNameService, RSSXMLService } from '@impler/services';
 import { FileMimeTypesEnum, ImportJobHistoryStatusEnum, QueuesEnum } from '@impler/shared';
 import {
   UserJobRepository,
@@ -13,13 +11,13 @@ import {
 import { BaseConsumer } from './base.consumer';
 import { publishToQueue } from '../bootstrap';
 import { getStorageServiceClass } from '../helpers/services.helper';
-
 export class GetImportJobDataConsumer extends BaseConsumer {
   private commonRepository: CommonRepository = new CommonRepository();
   private userJobRepository: UserJobRepository = new UserJobRepository();
   private importJobHistoryRepository: ImportJobHistoryRepository = new ImportJobHistoryRepository();
   private jobMappingRepository: JobMappingRepository = new JobMappingRepository();
   private webhookDestinationRepository: WebhookDestinationRepository = new WebhookDestinationRepository();
+  private rssXmlService: RSSXMLService = new RSSXMLService();
 
   private storageService: StorageService = getStorageServiceClass();
   private fileNameService: FileNameService = new FileNameService();
@@ -43,76 +41,11 @@ export class GetImportJobDataConsumer extends BaseConsumer {
     });
 
     if (webhookDestination?.callbackUrl) {
+      console.log('All Data Cache ->', allDataFilePath);
       publishToQueue(QueuesEnum.SEND_IMPORT_JOB_DATA, { _jobId: data._jobId, allDataFilePath });
     }
 
     return;
-  }
-
-  getXMLJsonValueByPath(obj: Record<string, any>, path: string | undefined): string | number | undefined | any {
-    if (!path) {
-      return undefined;
-    }
-
-    const keys = path.split('>').map((key) => key.trim());
-    let current: any = obj;
-
-    for (const key of keys) {
-      if (current === undefined) return undefined;
-
-      const isArray = key.endsWith('[]');
-      const actualKey = isArray ? key.slice(0, -2) : key;
-
-      if (Array.isArray(current)) {
-        current = current.flatMap((item) => (item ? item[actualKey] : undefined)).filter(Boolean);
-      } else {
-        current = current ? current[actualKey] : undefined;
-      }
-
-      if (isArray && !Array.isArray(current)) {
-        current = current ? [current] : [];
-      }
-    }
-
-    if (Array.isArray(current)) {
-      return current.filter(
-        (item) =>
-          typeof item === 'string' ||
-          typeof item === 'number' ||
-          (Array.isArray(item) && (typeof item[0] === 'string' || typeof item[0] === 'number'))
-      );
-    } else if (typeof current === 'string' || typeof current === 'number') {
-      return current;
-    }
-
-    return undefined;
-  }
-
-  async parseXmlFromUrl(url: string): Promise<Record<string, any>> {
-    try {
-      const response = await axios.get(url);
-      const xmlData = response.data;
-
-      return await parseStringPromise(xmlData);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  mappingFunction(mappingsData: any, values: any[]): any[] {
-    const result = [];
-    const maxLength = Math.max(...values.map((value) => (Array.isArray(value) ? value.length : 1)));
-
-    for (let i = 0; i < maxLength; i++) {
-      const item: any = {};
-      mappingsData.forEach((mapping, index) => {
-        const value = values[index];
-        item[mapping.key] = Array.isArray(value) ? value[i] : value;
-      });
-      result.push(item);
-    }
-
-    return result;
   }
 
   async getJobImportedData(_jobId: string) {
@@ -128,10 +61,25 @@ export class GetImportJobDataConsumer extends BaseConsumer {
         mapping: jobMapping.path,
       }));
 
-      const xmlJsonData = await this.parseXmlFromUrl(userJob.url);
+      console.log('job mappings are', jobMappings);
 
-      const returnedValues = mappings.map(({ mapping }) => this.getXMLJsonValueByPath(xmlJsonData, mapping));
-      const mappedData = this.mappingFunction(mappings, returnedValues);
+      console.log('mappings are >>>', mappings);
+      // console.log('url ->', userJob.url);
+      const parsedXMLData = await this.rssXmlService.parseXMLAndExtractData(userJob.url);
+      // console.log('parsedXMLData ->', parsedXMLData);
+
+      // console.log(`\n🔑 Found ${parsedXMLData.keys.length} unique key paths returned and destructured:`);
+      // parsedXMLData.keys.forEach((key) => console.log(`   ${key}`));
+
+      // console.log('Inside Queue Manager >', parsedXMLData.keys, parsedXMLData.xmlData);
+
+      const returnedRssKeyValues = await Promise.all(
+        mappings.map(({ mapping }) => this.rssXmlService.getXMLKeyValueByPath(parsedXMLData.xmlData, mapping))
+      );
+      // console.log('returnedRssKeyValues ->', returnedRssKeyValues);
+      const mappedData = await this.rssXmlService.mappingFunction(mappings, returnedRssKeyValues);
+
+      console.log('mapped data >>', mappedData);
 
       return mappedData;
     } catch (error) {

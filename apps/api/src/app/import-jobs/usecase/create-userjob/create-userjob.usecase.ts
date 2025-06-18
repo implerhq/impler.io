@@ -1,14 +1,14 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { RSSXMLService } from '@impler/services';
 import { isValidXMLMimeType } from '@shared/helpers/common.helper';
 import { APIMessages } from '@shared/constants';
 import { UserJobEntity, UserJobRepository } from '@impler/dal';
-import { RSSService } from '@shared/services';
 import { CreateUserJobCommand } from './create-userjob.command';
 
 @Injectable()
 export class CreateUserJob {
   constructor(
-    private readonly rssService: RSSService,
+    private readonly rssService: RSSXMLService,
     private readonly userJobRepository: UserJobRepository
   ) {}
 
@@ -21,7 +21,9 @@ export class CreateUserJob {
   }: CreateUserJobCommand): Promise<UserJobEntity> {
     const mimeType = await this.rssService.getMimeType(url);
     if (isValidXMLMimeType(mimeType)) {
-      const { rssKeyHeading } = await this.rssService.parseRssFeed(url);
+      const rssXmlParsedDataKeys = await this.rssService.parseXMLAndExtractData(url);
+
+      console.log('Key Heading s ->', rssXmlParsedDataKeys);
       let formattedExtra = extra || '{}';
       try {
         formattedExtra = JSON.parse(extra);
@@ -31,7 +33,7 @@ export class CreateUserJob {
         url,
         extra,
         authHeaderValue,
-        headings: rssKeyHeading,
+        headings: rssXmlParsedDataKeys.keys,
         _templateId: _templateId,
         externalUserId: externalUserId || (formattedExtra as unknown as Record<string, any>)?.externalUserId,
       });
