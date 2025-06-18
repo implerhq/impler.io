@@ -88,7 +88,7 @@ export class RSSXMLService {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
-  // NEW: Batch extraction method that traverses the XML structure only once
+  // FIXED: Batch extraction method that properly handles RSS XML structure
   async getBatchXMLKeyValuesByPaths(
     obj: Record<string, any>,
     pathMappings: IPathMapping[]
@@ -103,24 +103,33 @@ export class RSSXMLService {
       result[mapping.key] = [];
     });
 
-    // Parse paths once
+    console.log('🔍 Path mappings to extract:', pathMappings);
+
+    // Parse paths and prepare for extraction
     const parsedPaths = pathMappings.map((mapping) => ({
       key: mapping.key,
       pathArray: mapping.path.split('>').map((key) => key.trim()),
+      originalPath: mapping.path,
     }));
+
+    console.log('🔍 Parsed paths:', parsedPaths);
 
     // Single traversal to extract all values
     this.extractMultiplePathsRecursive(obj, parsedPaths, result, []);
 
     // Find the maximum length for normalization
-    const maxLength = Math.max(...Object.values(result).map((arr) => arr.length));
+    const maxLength = Math.max(...Object.values(result).map((arr) => arr.length), 0);
 
-    // Normalize arrays to same length (pad with undefined if needed)
-    Object.keys(result).forEach((key) => {
-      while (result[key].length < maxLength) {
-        result[key].push(undefined);
-      }
-    });
+    console.log(
+      '📊 Extraction results before normalization:',
+      Object.keys(result).map((key) => `${key}: ${result[key].length} values`)
+    );
+
+    // If no data found, let's debug the structure
+    if (maxLength === 0) {
+      console.log('🔍 No data extracted. Debugging XML structure...');
+      this.debugXMLStructure(obj, '', 0, 3); // Show first 3 levels
+    }
 
     const endTime = Date.now();
     console.log(`✅ Batch extraction completed in ${endTime - startTime}ms`);
@@ -129,22 +138,27 @@ export class RSSXMLService {
     return result;
   }
 
+  // FIXED: Better recursive extraction with proper path matching
   private extractMultiplePathsRecursive(
     current: any,
-    pathMappings: Array<{ key: string; pathArray: string[] }>,
+    pathMappings: Array<{ key: string; pathArray: string[]; originalPath: string }>,
     result: IBatchExtractionResult,
     currentPath: string[]
   ): void {
     // Check if current path matches any of our target paths
     pathMappings.forEach((mapping) => {
-      if (this.pathMatches(currentPath, mapping.pathArray)) {
-        const value = this.extractValue(current);
-        if (value !== undefined) {
+      if (this.pathMatchesImproved(currentPath, mapping.pathArray)) {
+        console.log(
+          `✅ Path match found for ${mapping.key}: ${currentPath.join(' > ')} matches ${mapping.originalPath}`
+        );
+        const value = this.extractValueImproved(current);
+        if (value !== undefined && value !== null && value !== '') {
           if (Array.isArray(value)) {
             result[mapping.key].push(...value);
           } else {
             result[mapping.key].push(value);
           }
+          console.log(`📋 Extracted value for ${mapping.key}:`, value);
         }
       }
     });
@@ -152,31 +166,36 @@ export class RSSXMLService {
     // Continue traversing if current is an object
     if (current && typeof current === 'object') {
       if (Array.isArray(current)) {
-        current.forEach((item) => {
-          this.extractMultiplePathsRecursive(item, pathMappings, result, [...currentPath, '[]']);
+        // For arrays, we need to traverse each item
+        current.forEach((item, index) => {
+          this.extractMultiplePathsRecursive(item, pathMappings, result, currentPath);
         });
       } else {
         Object.keys(current).forEach((key) => {
-          // Skip metadata keys
-          if (key === '$' || key === '_') return;
-
-          this.extractMultiplePathsRecursive(current[key], pathMappings, result, [...currentPath, key]);
+          // Skip metadata keys but still traverse them for completeness
+          const nextPath = [...currentPath, key];
+          this.extractMultiplePathsRecursive(current[key], pathMappings, result, nextPath);
         });
       }
     }
   }
 
-  private pathMatches(currentPath: string[], targetPath: string[]): boolean {
-    if (currentPath.length !== targetPath.length) return false;
+  // FIXED: Improved path matching that handles RSS structure correctly
+  private pathMatchesImproved(currentPath: string[], targetPath: string[]): boolean {
+    if (currentPath.length !== targetPath.length) {
+      return false;
+    }
 
     for (let i = 0; i < currentPath.length; i++) {
       const current = currentPath[i];
       const target = targetPath[i];
 
-      // Handle array notation
+      // Handle array notation - if target has [], current path should match the base name
       if (target.endsWith('[]')) {
         const targetKey = target.slice(0, -2);
-        if (current !== '[]' && current !== targetKey) return false;
+        if (current !== targetKey) {
+          return false;
+        }
       } else if (current !== target) {
         return false;
       }
@@ -185,13 +204,29 @@ export class RSSXMLService {
     return true;
   }
 
-  private extractValue(value: any): any {
-    if (value === null || value === undefined) return undefined;
+  // FIXED: Better value extraction that handles RSS XML structure
+  private extractValueImproved(value: any): any {
+    if (value === null || value === undefined) {
+      return undefined;
+    }
 
     // Handle objects with $ (attributes) and _ (text content)
     if (typeof value === 'object' && !Array.isArray(value)) {
-      if (value._ !== undefined) return value._;
-      if (value.$ !== undefined && Object.keys(value).length === 1) return undefined;
+      // If it has text content (_), return that
+      if (value._ !== undefined) {
+        return value._;
+      }
+
+      // If it only has attributes ($) and no content, return undefined
+      if (value.$ !== undefined && Object.keys(value).length === 1) {
+        return undefined;
+      }
+
+      // If it's a complex object, try to extract meaningful content
+      const keys = Object.keys(value).filter((k) => k !== '$');
+      if (keys.length === 1 && typeof value[keys[0]] === 'string') {
+        return value[keys[0]];
+      }
     }
 
     // Return primitive values
@@ -201,10 +236,45 @@ export class RSSXMLService {
 
     // Handle arrays
     if (Array.isArray(value)) {
-      return value.map((item) => this.extractValue(item)).filter((v) => v !== undefined);
+      const extracted = value
+        .map((item) => this.extractValueImproved(item))
+        .filter((v) => v !== undefined && v !== null && v !== '');
+
+      return extracted.length > 0 ? extracted : undefined;
     }
 
     return undefined;
+  }
+
+  // DEBUG: Helper method to understand XML structure
+  private debugXMLStructure(obj: any, prefix = '', depth = 0, maxDepth = 3): void {
+    if (depth > maxDepth) return;
+
+    if (Array.isArray(obj)) {
+      console.log(`${'  '.repeat(depth)}${prefix}[] (Array with ${obj.length} items)`);
+      if (obj.length > 0) {
+        this.debugXMLStructure(obj[0], `${prefix}[0]`, depth + 1, maxDepth);
+      }
+    } else if (typeof obj === 'object' && obj !== null) {
+      Object.keys(obj).forEach((key) => {
+        const newPrefix = prefix ? `${prefix} > ${key}` : key;
+        const value = obj[key];
+
+        if (typeof value === 'string' || typeof value === 'number') {
+          console.log(`${'  '.repeat(depth)}${newPrefix}: ${typeof value} = "${value}"`);
+        } else if (Array.isArray(value)) {
+          console.log(`${'  '.repeat(depth)}${newPrefix}: Array[${value.length}]`);
+          if (value.length > 0 && depth < maxDepth) {
+            this.debugXMLStructure(value[0], `${newPrefix}[0]`, depth + 1, maxDepth);
+          }
+        } else if (typeof value === 'object') {
+          console.log(`${'  '.repeat(depth)}${newPrefix}: Object`);
+          this.debugXMLStructure(value, newPrefix, depth + 1, maxDepth);
+        }
+      });
+    } else {
+      console.log(`${'  '.repeat(depth)}${prefix}: ${typeof obj} = "${obj}"`);
+    }
   }
 
   // OPTIMIZED: New mapping function that works with batch extracted data
@@ -215,9 +285,16 @@ export class RSSXMLService {
     const keys = mappingsData.map((mapping) => mapping.key);
 
     // Find the maximum length across all extracted arrays
-    const maxLength = Math.max(...keys.map((key) => batchResult[key]?.length || 0));
+    const maxLength = Math.max(...keys.map((key) => batchResult[key]?.length || 0), 0);
 
     console.log('📊 Maximum length:', maxLength);
+
+    // If no data found, return empty array
+    if (maxLength === 0) {
+      console.log('⚠️ No data found to map');
+
+      return [];
+    }
 
     for (let i = 0; i < maxLength; i++) {
       const item: any = {};
@@ -233,7 +310,7 @@ export class RSSXMLService {
     return result;
   }
 
-  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+  // Rest of your existing methods remain the same...
   async parseXMLAndExtractData(xmlUrl: string, dataPath?: string): Promise<any> {
     console.log('🚀 Starting XML parsing...');
 
@@ -272,58 +349,6 @@ export class RSSXMLService {
     }
 
     return Array.from(result);
-  }
-
-  extractHeadings(node: any, path: string, headings: string[]): void {
-    if (typeof node === 'object') {
-      for (const key in node) {
-        const newPath = path ? `${path} > ${key}` : `$ > ${key}`;
-        headings.push(newPath);
-        if (Array.isArray(node[key])) {
-          node[key].forEach((item: any) => this.extractHeadings(item, newPath, headings));
-        } else {
-          this.extractHeadings(node[key], newPath, headings);
-        }
-      }
-    }
-  }
-
-  getValueByPath(obj: any, path: string): any {
-    if (!path) return undefined;
-
-    const keys = path.split('>').map((key) => key.trim());
-    let current = obj;
-
-    for (const key of keys) {
-      if (current === undefined) return undefined;
-
-      const isArray = key.endsWith('[]');
-      const actualKey = isArray ? key.slice(0, -2) : key;
-
-      if (Array.isArray(current)) {
-        current = current.flatMap((item) => (item ? item[actualKey] : undefined)).filter(Boolean);
-      } else {
-        current = current ? current[actualKey] : undefined;
-      }
-
-      if (isArray && !Array.isArray(current)) {
-        current = current ? [current] : [];
-      }
-    }
-
-    // Filter out complex objects, keep only strings, numbers, and arrays of strings/numbers
-    if (Array.isArray(current)) {
-      return current.filter(
-        (item) =>
-          typeof item === 'string' ||
-          typeof item === 'number' ||
-          (Array.isArray(item) && (typeof item[0] === 'string' || typeof item[0] === 'number'))
-      );
-    } else if (typeof current === 'string' || typeof current === 'number') {
-      return current;
-    }
-
-    return current;
   }
 
   async printKeys(obj: Record<string, any>, prefix = '', result: Set<string> = new Set()): Promise<string[]> {
@@ -586,25 +611,6 @@ export class RSSXMLService {
         item[mapping.key] = Array.isArray(value) ? value[i] : value;
       });
       result.push(item);
-    }
-
-    return result;
-  }
-
-  private extractDataByPath(node: any, pathArray: string[]): any[] {
-    if (pathArray.length === 0) return [node];
-
-    const [current, ...rest] = pathArray;
-    const result: any[] = [];
-
-    if (node[current]) {
-      if (Array.isArray(node[current])) {
-        node[current].forEach((item: any) => {
-          result.push(...this.extractDataByPath(item, rest));
-        });
-      } else {
-        result.push(...this.extractDataByPath(node[current], rest));
-      }
     }
 
     return result;
