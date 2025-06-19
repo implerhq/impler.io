@@ -1,13 +1,14 @@
+/* eslint-disable multiline-comment-style */
 import { useState } from 'react';
 import { modals } from '@mantine/modals';
 import { useStripe } from '@stripe/react-stripe-js';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
 import { IErrorObject } from '@impler/shared';
 import { ConfirmationModal } from '@components/ConfirmationModal';
-import { API_KEYS, CONSTANTS, MODAL_KEYS, NOTIFICATION_KEYS } from '@config';
+import { API_KEYS, CONSTANTS, NOTIFICATION_KEYS } from '@config';
 
 interface UseAddCardProps {
   refetchPaymentMethods: () => void;
@@ -15,7 +16,7 @@ interface UseAddCardProps {
 }
 
 export function useAddCardAndSubscribe({ refetchPaymentMethods }: UseAddCardProps) {
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
   const stripe = useStripe();
   const [isPaymentMethodLoading, setIsPaymentMethodLoading] = useState<boolean>(false);
 
@@ -31,6 +32,7 @@ export function useAddCardAndSubscribe({ refetchPaymentMethods }: UseAddCardProp
       }),
     {
       async onSuccess(data: any, { paymentMethodId, planCode }) {
+        console.log(data);
         notify(NOTIFICATION_KEYS.CARD_ADDED);
 
         createSubscription({
@@ -64,12 +66,21 @@ export function useAddCardAndSubscribe({ refetchPaymentMethods }: UseAddCardProp
       async onSuccess(data: any, { paymentMethodId }) {
         let paymentResponse = null;
 
+        if (data.setupIntentClientSecret) {
+          paymentResponse = await stripe?.confirmCardSetup(data.setupIntentClientSecret, {
+            payment_method: paymentMethodId,
+          });
+
+          console.log('Payment Response Is >>>', paymentResponse);
+        }
+
         if (data.clientSecret) {
           paymentResponse = await stripe?.confirmCardPayment(data.clientSecret, {
             setup_future_usage: 'off_session',
             payment_method: paymentMethodId,
           });
         }
+        /*
         if (paymentResponse?.paymentIntent?.status === CONSTANTS.PAYMENT_INTENT_SUCCCESS_CODE) {
           notify(NOTIFICATION_KEYS.MEMBERSHIP_PURCHASED, {
             title: 'Successfully Purchased Membership',
@@ -88,6 +99,8 @@ export function useAddCardAndSubscribe({ refetchPaymentMethods }: UseAddCardProp
 
           queryClient.invalidateQueries([API_KEYS.FETCH_ACTIVE_SUBSCRIPTION]);
         }
+
+        */
 
         if (paymentResponse?.error) {
           notify(NOTIFICATION_KEYS.ERROR_ADDING_PAYMENT_METHOD, {

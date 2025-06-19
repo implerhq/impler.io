@@ -100,7 +100,7 @@ export function PaymentMethodForm({
             />
           )}
 
-          {isCouponFeatureEnabled === 'false' && (
+          {isCouponFeatureEnabled === 'true' && (
             <Coupon planCode={planCode} couponCode={appliedCouponCode} setAppliedCouponCode={setAppliedCouponCode} />
           )}
         </Stack>
