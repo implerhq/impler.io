@@ -10,6 +10,8 @@ export class UserJobTriggerService {
   ) {}
 
   async execute(_jobId: string) {
+    console.log('Triggering job with Id', _jobId);
+
     if (_jobId) {
       const updatedJob = await this.userJobRepository.findOneAndUpdate(
         { _id: _jobId },

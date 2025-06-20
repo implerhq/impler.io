@@ -1,59 +1,50 @@
 /* eslint-disable multiline-comment-style */
-import { StorageService, FileNameService, RSSXMLService } from '@impler/services';
-import { FileMimeTypesEnum, ImportJobHistoryStatusEnum, QueuesEnum } from '@impler/shared';
+import { PassThrough } from 'stream';
+import { FileNameService, RSSXMLService } from '@impler/services';
 import {
-  UserJobRepository,
-  JobMappingRepository,
-  ImportJobHistoryRepository,
-  CommonRepository,
-  WebhookDestinationRepository,
-} from '@impler/dal';
-import { BaseConsumer } from './base.consumer';
-import { publishToQueue } from '../bootstrap';
-import { getStorageServiceClass } from '../helpers/services.helper';
+  FileMimeTypesEnum,
+  ImportJobHistoryStatusEnum /*, QueuesEnum*/,
+  SendImportJobCachedData,
+} from '@impler/shared';
+import { JobMappingRepository, CommonRepository } from '@impler/dal';
+// import { publishToQueue } from '../bootstrap';
+import { SendImportJobDataConsumer } from './send-import-job-data.consumer';
 
-export class GetImportJobDataConsumer extends BaseConsumer {
+export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
   private commonRepository: CommonRepository = new CommonRepository();
-  private userJobRepository: UserJobRepository = new UserJobRepository();
-  private importJobHistoryRepository: ImportJobHistoryRepository = new ImportJobHistoryRepository();
   private jobMappingRepository: JobMappingRepository = new JobMappingRepository();
-  private webhookDestinationRepository: WebhookDestinationRepository = new WebhookDestinationRepository();
   private rssXmlService: RSSXMLService = new RSSXMLService();
-
-  private storageService: StorageService = getStorageServiceClass();
   private fileNameService: FileNameService = new FileNameService();
 
   async message(message: { content: string }) {
     const data = JSON.parse(message.content) as { _jobId: string };
     const importJobHistoryId = this.commonRepository.generateMongoId().toString();
-    const importedData = await this.getJobImportedDataOptimized(data._jobId);
-    const allDataFilePath = this.fileNameService.getAllJsonDataFilePath(importJobHistoryId);
-    await this.convertRecordsToJsonFile(importJobHistoryId, importedData);
+    const importedData = await this.getJobImportedData(data._jobId);
+
+    // Create history entry
     await this.importJobHistoryRepository.create({
       _id: importJobHistoryId,
       _jobId: data._jobId,
-      allDataFilePath,
       status: ImportJobHistoryStatusEnum.PROCESSING,
     });
-    const userJobInfo = await this.userJobRepository.getUserJobWithTemplate(data._jobId);
 
+    const userJobInfo = await this.userJobRepository.getUserJobWithTemplate(data._jobId);
     const webhookDestination = await this.webhookDestinationRepository.findOne({
       _templateId: userJobInfo._templateId,
     });
 
+    // Direct API call logic here
     if (webhookDestination?.callbackUrl) {
-      console.log('All Data Cache ->', allDataFilePath);
-      publishToQueue(QueuesEnum.SEND_IMPORT_JOB_DATA, { _jobId: data._jobId, allDataFilePath });
+      console.log('🚀 Sending data directly to API...');
+      await this.sendDataImportData(data._jobId, importedData);
     }
 
     return;
   }
 
-  // NEW OPTIMIZED METHOD: Single traversal for all mappings
-  async getJobImportedDataOptimized(_jobId: string) {
+  async getJobImportedData(_jobId: string) {
     try {
       console.log('🚀 Starting optimized job data extraction...');
-      const startTime = Date.now();
 
       const userJob = await this.userJobRepository.findOne({ _id: _jobId });
       if (!userJob) {
@@ -67,6 +58,7 @@ export class GetImportJobDataConsumer extends BaseConsumer {
       }));
 
       console.log('📋 Job mappings:', mappings.length, 'fields to extract');
+      console.log(mappings);
 
       // Parse XML once
       const parsedXMLData = await this.rssXmlService.parseXMLAndExtractData(userJob.url);
@@ -74,26 +66,12 @@ export class GetImportJobDataConsumer extends BaseConsumer {
         throw new Error('Failed to parse XML data');
       }
 
-      // OPTIMIZED: Extract all values in a single traversal
       const batchResult = await this.rssXmlService.getBatchXMLKeyValuesByPaths(parsedXMLData.xmlData, mappings);
+      const mappedData = await this.rssXmlService.mappingFunction(mappings, batchResult);
 
-      console.log(
-        '📊 Batch extraction result:',
-        Object.keys(batchResult).map((key) => `${key}: ${batchResult[key].length} values`)
-      );
+      console.log('Mapped Data is >>>', mappedData.length);
 
-      // OPTIMIZED: Create mapped data using batch result
-      const mappedData = await this.rssXmlService.optimizedMappingFunction(mappings, batchResult);
-
-      const endTime = Date.now();
-      console.log(`✅ Optimized extraction completed in ${endTime - startTime}ms`);
-      console.log(
-        `📈 Performance improvement: ~${mappings.length}x faster (single traversal vs ${mappings.length} traversals)`
-      );
-      console.log('📊 Final mapped data:', mappedData.length, 'records');
-
-      console.log('Mapped Data is >>>', mappedData);
-
+      // CALL YOUR DIRECT SEND LOGIC HERE
       return mappedData;
     } catch (error) {
       console.error('❌ Error in optimized job data extraction:', error);
@@ -101,52 +79,120 @@ export class GetImportJobDataConsumer extends BaseConsumer {
     }
   }
 
-  /*
-  // LEGACY METHOD: Keep for backward compatibility (but use optimized version)
-  async getJobImportedData(_jobId: string) {
-    console.warn('⚠️  getJobImportedData is deprecated. Using optimized version instead.');
-
-    return this.getJobImportedDataOptimized(_jobId);
-  }
-  */
-
-  // LEGACY METHOD: Original implementation (kept for reference)
-  async getJobImportedDataLegacy(_jobId: string) {
+  private async sendDataImportData(
+    _jobId: string,
+    allDataJson: any[],
+    page = 1,
+    initialCachedData?: SendImportJobCachedData
+  ) {
     try {
-      const userJob = await this.userJobRepository.findOne({ _id: _jobId });
-      if (!userJob) {
-        throw new Error(`Job not found for _jobId: ${_jobId}`);
+      // Get cached data similar to the original SendImportJobDataConsumer
+      let cachedData = null;
+      if (!initialCachedData) {
+        console.log('called initial cache');
+        cachedData = await this.getInitialCachedData(_jobId, null);
+      } else {
+        // Use the passed cached data (which includes updated page number)
+        cachedData = initialCachedData;
       }
 
-      const jobMappings = await this.jobMappingRepository.find({ _jobId });
-      const mappings: { key: string; mapping: string }[] = jobMappings.map((jobMapping) => ({
-        key: jobMapping.key,
-        mapping: jobMapping.path,
-      }));
+      if (cachedData && cachedData.callbackUrl) {
+        const totalPages = this.getTotalPages(allDataJson.length, cachedData.chunkSize);
 
-      console.log('job mappings are', jobMappings);
-      console.log('mappings are >>>', mappings);
+        console.log(`📤 Sending ${allDataJson.length} records in ${cachedData.chunkSize} chunks... `);
 
-      const parsedXMLData = await this.rssXmlService.parseXMLAndExtractData(userJob.url);
+        // Use the current page parameter, not cachedData.page
+        const { sendData } = this.buildSendData({
+          data: allDataJson,
+          uploadId: _jobId,
+          page: page, // Use the page parameter passed to this function
+          chunkSize: cachedData.chunkSize,
+          recordFormat: cachedData.recordFormat,
+          chunkFormat: cachedData.chunkFormat,
+          ...cachedData,
+        });
 
-      // PERFORMANCE ISSUE: This loops through the XML structure N times (once for each mapping)
-      const returnedRssKeyValues = await Promise.all(
-        mappings.map(({ mapping }) => this.rssXmlService.getXMLKeyValueByPath(parsedXMLData.xmlData, mapping))
-      );
+        const headers =
+          cachedData.authHeaderName && cachedData.authHeaderValue
+            ? { [cachedData.authHeaderName]: cachedData.authHeaderValue }
+            : null;
 
-      console.log('returnedRssKeyValues ->', returnedRssKeyValues);
-      const mappedData = await this.rssXmlService.mappingFunction(mappings, returnedRssKeyValues);
+        console.log(`📡 Sending page ${page}/${totalPages}...`);
 
-      console.log('mapped data >>', mappedData);
+        console.log('CACHED DATA >>> ', cachedData);
 
-      return mappedData;
+        const response = await this.makeApiCall({
+          data: sendData,
+          uploadId: _jobId,
+          page: page, // Use the page parameter
+          method: 'POST',
+          url: 'http://localhost:3001/api/v1/webhook/test-webhook', // cachedData.callbackUrl,
+          headers,
+        });
+
+        await this.makeResponseEntry(response);
+
+        const nextPageNumber = this.getNextPageNumber({
+          totalRecords: allDataJson.length,
+          currentPage: page, // Use the current page parameter
+          chunkSize: cachedData.chunkSize,
+        });
+        console.log(cachedData);
+
+        console.log('=================== ', page, nextPageNumber);
+
+        if (nextPageNumber) {
+          // Recursively call for next page with updated page number
+          await this.sendDataImportData(_jobId, allDataJson, nextPageNumber, { ...cachedData, page: nextPageNumber });
+        } else {
+          // Processing is done
+          await this.finalizeUpload(_jobId);
+          console.log('✅ All data sent successfully!');
+        }
+      } else {
+        console.log('❌ No webhook destination found or callback URL missing');
+      }
     } catch (error) {
+      console.error('❌ Error sending data directly:', error);
       throw error;
     }
   }
 
-  private async convertRecordsToJsonFile(importJobId: string, importRecords: Record<string, any>[]) {
-    const allJsonDataFilePath = this.fileNameService.getAllJsonDataFilePath(importJobId);
-    await this.storageService.uploadFile(allJsonDataFilePath, JSON.stringify(importRecords), FileMimeTypesEnum.JSON);
+  private async convertRecordsToJsonFile(importJobId: string, importRecords: any[]) {
+    const path = this.fileNameService.getAllJsonDataFilePath(importJobId);
+    const stream = new PassThrough();
+    const upload = this.storageService.writeStream(path, stream, FileMimeTypesEnum.JSON);
+
+    try {
+      const chunkSize = 5000; // Tune this depending on record size / memory constraints
+
+      stream.write('[');
+
+      for (let i = 0; i < importRecords.length; i += chunkSize) {
+        const chunk = importRecords.slice(i, i + chunkSize);
+        const jsonChunk = chunk.map((record) => JSON.stringify(record)).join(',');
+
+        const isLast = i + chunkSize >= importRecords.length;
+        const finalChunk = isLast ? jsonChunk : jsonChunk + ',';
+
+        const canWrite = stream.write(finalChunk);
+        if (!canWrite) {
+          await new Promise((resolve) => stream.once('drain', resolve));
+        }
+
+        // Yield control to event loop to prevent blocking
+        // eslint-disable-next-line @typescript-eslint/no-loop-func
+        await new Promise((resolve) => setImmediate(resolve));
+      }
+
+      stream.write(']');
+      stream.end();
+
+      await upload.done(); // Complete the stream upload
+      console.log('✅ Upload complete');
+    } catch (err) {
+      console.error('❌ Upload failed:', err);
+      throw err;
+    }
   }
 }

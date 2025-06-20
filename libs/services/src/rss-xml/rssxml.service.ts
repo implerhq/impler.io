@@ -31,7 +31,6 @@ export class RSSXMLService {
 
   private showProgress(): void {
     const now = Date.now();
-    const elapsed = (now - this.startTime) / 1000; // in seconds
 
     // Only update every 1 second
     if (now - this.lastProgressTime > 1000) {
@@ -71,24 +70,23 @@ export class RSSXMLService {
   }
 
   private formatBytesPerSecond(bytesPerSec: number): string {
-    const k = 1024;
+    const kilob = 1024;
     const sizes = ['B/s', 'KB/s', 'MB/s', 'GB/s', 'TB/s'];
-    const i = Math.floor(Math.log(bytesPerSec) / Math.log(k));
-    const value = bytesPerSec / Math.pow(k, i);
+    const i = Math.floor(Math.log(bytesPerSec) / Math.log(kilob));
+    const value = bytesPerSec / Math.pow(kilob, i);
 
     return `${value.toFixed(2)} ${sizes[i]}`;
   }
 
   private formatBytes(bytes: number): string {
     if (bytes === 0) return '0 Bytes';
-    const k = 1024;
+    const kilob = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    const i = Math.floor(Math.log(bytes) / Math.log(kilob));
 
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(kilob, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
-  // FIXED: Batch extraction method that properly handles RSS XML structure
   async getBatchXMLKeyValuesByPaths(
     obj: Record<string, any>,
     pathMappings: IPathMapping[]
@@ -138,7 +136,6 @@ export class RSSXMLService {
     return result;
   }
 
-  // FIXED: Better recursive extraction with proper path matching
   private extractMultiplePathsRecursive(
     current: any,
     pathMappings: Array<{ key: string; pathArray: string[]; originalPath: string }>,
@@ -147,18 +144,14 @@ export class RSSXMLService {
   ): void {
     // Check if current path matches any of our target paths
     pathMappings.forEach((mapping) => {
-      if (this.pathMatchesImproved(currentPath, mapping.pathArray)) {
-        console.log(
-          `✅ Path match found for ${mapping.key}: ${currentPath.join(' > ')} matches ${mapping.originalPath}`
-        );
-        const value = this.extractValueImproved(current);
+      if (this.isPathMatches(currentPath, mapping.pathArray)) {
+        const value = this.extractValue(current);
         if (value !== undefined && value !== null && value !== '') {
           if (Array.isArray(value)) {
             result[mapping.key].push(...value);
           } else {
             result[mapping.key].push(value);
           }
-          console.log(`📋 Extracted value for ${mapping.key}:`, value);
         }
       }
     });
@@ -167,7 +160,7 @@ export class RSSXMLService {
     if (current && typeof current === 'object') {
       if (Array.isArray(current)) {
         // For arrays, we need to traverse each item
-        current.forEach((item, index) => {
+        current.forEach((item) => {
           this.extractMultiplePathsRecursive(item, pathMappings, result, currentPath);
         });
       } else {
@@ -180,8 +173,7 @@ export class RSSXMLService {
     }
   }
 
-  // FIXED: Improved path matching that handles RSS structure correctly
-  private pathMatchesImproved(currentPath: string[], targetPath: string[]): boolean {
+  private isPathMatches(currentPath: string[], targetPath: string[]): boolean {
     if (currentPath.length !== targetPath.length) {
       return false;
     }
@@ -204,8 +196,7 @@ export class RSSXMLService {
     return true;
   }
 
-  // FIXED: Better value extraction that handles RSS XML structure
-  private extractValueImproved(value: any): any {
+  private extractValue(value: any): any {
     if (value === null || value === undefined) {
       return undefined;
     }
@@ -223,7 +214,7 @@ export class RSSXMLService {
       }
 
       // If it's a complex object, try to extract meaningful content
-      const keys = Object.keys(value).filter((k) => k !== '$');
+      const keys = Object.keys(value).filter((key) => key !== '$');
       if (keys.length === 1 && typeof value[keys[0]] === 'string') {
         return value[keys[0]];
       }
@@ -237,8 +228,8 @@ export class RSSXMLService {
     // Handle arrays
     if (Array.isArray(value)) {
       const extracted = value
-        .map((item) => this.extractValueImproved(item))
-        .filter((v) => v !== undefined && v !== null && v !== '');
+        .map((item) => this.extractValue(item))
+        .filter((val) => val !== undefined && val !== null && val !== '');
 
       return extracted.length > 0 ? extracted : undefined;
     }
@@ -277,8 +268,7 @@ export class RSSXMLService {
     }
   }
 
-  // OPTIMIZED: New mapping function that works with batch extracted data
-  async optimizedMappingFunction(mappingsData: IPathMapping[], batchResult: IBatchExtractionResult): Promise<any[]> {
+  async mappingFunction(mappingsData: IPathMapping[], batchResult: IBatchExtractionResult): Promise<any[]> {
     console.log('🔄 Creating optimized mapping...', batchResult);
 
     const result = [];
@@ -311,7 +301,7 @@ export class RSSXMLService {
   }
 
   // Rest of your existing methods remain the same...
-  async parseXMLAndExtractData(xmlUrl: string, dataPath?: string): Promise<any> {
+  async parseXMLAndExtractData(xmlUrl: string): Promise<any> {
     console.log('🚀 Starting XML parsing...');
 
     const parser = new RSSXMLService(xmlUrl);
@@ -550,70 +540,6 @@ export class RSSXMLService {
       console.error('🔴 Request error:', error);
       throw error;
     }
-  }
-
-  // Keep for backward compatibility - but mark as deprecated
-  async getXMLKeyValueByPath(
-    obj: Record<string, any>,
-    path: string | undefined
-  ): Promise<string | number | undefined | any> {
-    console.warn('⚠️  getXMLKeyValueByPath is deprecated. Use getBatchXMLKeyValuesByPaths for better performance.');
-
-    if (!path) {
-      return undefined;
-    }
-
-    const keys = path.split('>').map((key) => key.trim());
-    let current: any = obj;
-
-    for (const key of keys) {
-      if (current === undefined) return undefined;
-
-      const isArray = key.endsWith('[]');
-      const actualKey = isArray ? key.slice(0, -2) : key;
-
-      if (Array.isArray(current)) {
-        current = current.flatMap((item) => (item ? item[actualKey] : undefined)).filter(Boolean);
-      } else {
-        current = current ? current[actualKey] : undefined;
-      }
-
-      if (isArray && !Array.isArray(current)) {
-        current = current ? [current] : [];
-      }
-    }
-
-    if (Array.isArray(current)) {
-      return current.filter(
-        (item) =>
-          typeof item === 'string' ||
-          typeof item === 'number' ||
-          (Array.isArray(item) && (typeof item[0] === 'string' || typeof item[0] === 'number'))
-      );
-    } else if (typeof current === 'string' || typeof current === 'number') {
-      return current;
-    }
-
-    return undefined;
-  }
-
-  // Keep for backward compatibility
-  async mappingFunction(mappingsData: any, values: any[]): Promise<any[]> {
-    console.warn('⚠️  mappingFunction is deprecated. Use optimizedMappingFunction for better performance.');
-
-    const result = [];
-    const maxLength = Math.max(...values.map((value) => (Array.isArray(value) ? value.length : 1)));
-
-    for (let i = 0; i < maxLength; i++) {
-      const item: any = {};
-      mappingsData.forEach((mapping, index) => {
-        const value = values[index];
-        item[mapping.key] = Array.isArray(value) ? value[i] : value;
-      });
-      result.push(item);
-    }
-
-    return result;
   }
 
   async getMimeType(url: string): Promise<string | null> {
