@@ -1,6 +1,30 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import axios from 'axios';
 import * as sax from 'sax';
 
+export interface IProgressData {
+  sessionId: string;
+  percentage: number;
+  processedBytes: number;
+  totalBytes: number;
+  elementsProcessed: number;
+  speedMBps: number;
+  eta: string;
+  stage: 'fetching' | 'parsing' | 'extracting' | 'mapping' | 'completed' | 'error';
+  message?: string;
+  error?: string;
+}
+
+export interface IParseXMLAndExtractData {
+  xmlUrl: string;
+  sessionId?: string;
+  sendProgress?: (sessionId: string, progressData: IProgressData) => void;
+  sendError?: (sessionId: string, error: string) => void;
+  sendCompletion?: (sessionId: string, result: any) => void;
+  abortSignal?: AbortSignal;
+}
 interface IParsedElement {
   [key: string]: any;
 }
@@ -24,6 +48,11 @@ export class RSSXMLService {
   private lastBytesProcessed = 0;
   private lastSpeedCheckTime = 0;
   private currentSpeedMBps = 0;
+  private sessionId?: string;
+  private sendProgress?: (sessionId: string, progressData: IProgressData) => void;
+  private sendError?: (sessionId: string, error: string) => void;
+  private sendCompletion?: (sessionId: string, result: any) => void;
+  private abortSignal?: AbortSignal;
 
   constructor(xmlUrl?: string) {
     this.xmlUrl = xmlUrl;
@@ -57,13 +86,26 @@ export class RSSXMLService {
         const secs = Math.floor(etaSeconds % 60);
         etaString = `${mins}m ${secs}s`;
       }
-
-      console.log(
+      const progressMessage =
         `📊 Progress: ${percentage}% | Processed: ${processedFormatted}/${totalFormatted}` +
-          ` | Elements: ${this.totalItemsProcessed}` +
-          ` | Speed: ${this.formatBytesPerSecond(this.currentSpeedMBps * 1024 * 1024)}` +
-          ` | ETA: ~${etaString}`
-      );
+        ` | Elements: ${this.totalItemsProcessed}` +
+        ` | Speed: ${this.formatBytesPerSecond(this.currentSpeedMBps * 1024 * 1024)}` +
+        ` | ETA: ~${etaString}`;
+
+      if (this.sessionId && this.sendProgress) {
+        console.log('Sending progress to session:', this.sessionId);
+        this.sendProgress(this.sessionId, {
+          sessionId: this.sessionId,
+          percentage: parseFloat(percentage),
+          processedBytes: this.bytesProcessed,
+          totalBytes: this.totalBytes,
+          elementsProcessed: this.totalItemsProcessed,
+          speedMBps: Number(this.formatBytesPerSecond(this.currentSpeedMBps * 1024 * 1024)),
+          eta: etaString,
+          stage: 'parsing',
+          message: progressMessage,
+        });
+      }
 
       this.lastProgressTime = now;
     }
@@ -300,23 +342,35 @@ export class RSSXMLService {
     return result;
   }
 
-  // Rest of your existing methods remain the same...
-  async parseXMLAndExtractData(xmlUrl: string): Promise<any> {
-    console.log('🚀 Starting XML parsing...');
+  async parseXMLAndExtractData(data: IParseXMLAndExtractData) {
+    console.log('🚀 Starting XML parsing...', data);
 
-    const parser = new RSSXMLService(xmlUrl);
+    this.xmlUrl = data.xmlUrl;
+    this.sessionId = data.sessionId;
+    this.sendProgress = data.sendProgress;
+    this.sendError = data.sendError;
+    this.sendCompletion = data.sendCompletion;
+    this.abortSignal = data.abortSignal;
 
     try {
       // Parse the XML
-      const xmlData = await parser.parseXML();
+      const xmlData = await this.parseXML();
       // Extract keys
-      const keys = await parser.printKeys(xmlData);
+      const keys = await this.printKeys(xmlData);
+
+      if (keys.length > 0 && xmlData) {
+        this.sendCompletion?.(data.sessionId, {
+          keys,
+          xmlData,
+        });
+      }
 
       return {
         keys,
         xmlData,
       };
     } catch (error) {
+      this.sendError?.(data.sessionId, error);
       console.error('💥 Error:', error);
 
       return null;

@@ -53,6 +53,7 @@ export interface IUploadValues extends IFormvalues {
 }
 
 export interface IAutoImportValues {
+  webSocketSessionId: string;
   url: string;
   templateId: string;
   authHeaderValue?: string;

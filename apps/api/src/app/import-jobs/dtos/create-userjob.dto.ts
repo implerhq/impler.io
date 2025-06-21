@@ -3,6 +3,10 @@ import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 export class CreateUserJobDto {
   @IsString()
   @IsNotEmpty()
+  webSocketSessionId: string;
+
+  @IsString()
+  @IsNotEmpty()
   url: string;
 
   @IsString()

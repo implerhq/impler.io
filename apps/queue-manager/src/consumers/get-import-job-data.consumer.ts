@@ -1,6 +1,6 @@
-/* eslint-disable multiline-comment-style */
 import { PassThrough } from 'stream';
-import { FileNameService, RSSXMLService } from '@impler/services';
+import { FileNameService } from '@impler/services';
+import { RSSXMLService } from '@impler/services';
 import {
   FileMimeTypesEnum,
   ImportJobHistoryStatusEnum /*, QueuesEnum*/,
@@ -61,7 +61,9 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
       console.log(mappings);
 
       // Parse XML once
-      const parsedXMLData = await this.rssXmlService.parseXMLAndExtractData(userJob.url);
+      const parsedXMLData = await this.rssXmlService.parseXMLAndExtractData({
+        xmlUrl: userJob.url,
+      });
       if (!parsedXMLData) {
         throw new Error('Failed to parse XML data');
       }

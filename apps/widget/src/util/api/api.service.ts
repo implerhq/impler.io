@@ -201,6 +201,7 @@ export class ApiService {
   }
 
   async getRssXmlMappingHeading(data: {
+    webSocketSessionId: string;
     templateId: string;
     url: string;
     authHeaderValue?: string;
@@ -209,6 +210,7 @@ export class ApiService {
     output?: string;
   }) {
     return this.httpClient.post(`/import-jobs/${data.templateId}`, {
+      webSocketSessionId: data.webSocketSessionId,
       url: data.url,
       authHeaderValue: data.authHeaderValue,
       extra: data.extra,
