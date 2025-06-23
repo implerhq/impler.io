@@ -24,18 +24,10 @@ export function AutoImportPhase1({
   onRssParsingEnd,
   onRegisterAbortFunction,
 }: IAutoImportPhase1Props) {
-  const {
-    isGetRssXmlHeadingsLoading,
-    progressPercentage,
-    register,
-    errors,
-    onSubmit,
-    isAborted,
-    abortOperation,
-    canAbort,
-  } = useAutoImportPhase1({
-    goNext: onNextClick,
-  });
+  const { isGetRssXmlHeadingsLoading, progressPercentage, register, errors, onSubmit, abortOperation, canAbort } =
+    useAutoImportPhase1({
+      goNext: onNextClick,
+    });
 
   // Register the abort function with the parent component
   useEffect(() => {

@@ -1,22 +1,15 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-unused-vars */
 import { useMutation } from '@tanstack/react-query';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { generateSessionId, notifier } from '@util';
-import { IAutoImportValues } from '@types';
+import { IAutoImportValues, IErrorData } from '@types';
 import { useAppState } from '@store/app.context';
 import { useAPIState } from '@store/api.context';
 import { useJobsInfo } from '@store/jobinfo.context';
 import { useImplerState } from '@store/impler.context';
 import { IUserJob, IErrorObject } from '@impler/shared';
-import {
-  useWebSocketProgress,
-  IProgressData,
-  ICompletionData,
-  IErrorData,
-} from '@hooks/AutoImportPhase1/useWebSocketProgress';
+import { useWebSocketProgress } from '@hooks/AutoImportPhase1/useWebSocketProgress';
 
 interface IUseAutoImportPhase1Props {
   goNext: () => void;
@@ -41,15 +34,7 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
     formState: { errors },
   } = useForm<FormValues>();
 
-  // WebSocket progress handlers
-  const handleProgress = useCallback((data: IProgressData) => {
-    console.log('📊 RSS XML Progress:', data);
-    // You can add additional progress handling here if needed
-  }, []);
-
-  const handleCompletion = useCallback((data: ICompletionData) => {
-    console.log('✅ RSS XML Processing completed:', data);
-
+  const handleCompletion = useCallback(() => {
     if (webSocketSessionIdRef.current) {
       leaveSession(webSocketSessionIdRef.current);
       webSocketSessionIdRef.current = null;
@@ -58,8 +43,6 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
   }, []);
 
   const handleError = useCallback((data: IErrorData) => {
-    console.error('❌ RSS XML Processing error:', data);
-
     // Don't show error if operation was aborted by user
     if (!isAbortedRef.current) {
       notifier.showError({
@@ -70,7 +53,6 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
   }, []);
 
   const handleConnectionChange = useCallback((connected: boolean) => {
-    console.log('🔌 WebSocket connection status:', connected);
     if (!connected && !isAbortedRef.current) {
       notifier.showError({
         message: 'Connection lost. Please try again.',
@@ -82,7 +64,6 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
   // Initialize WebSocket connection
   const { isConnected, progressData, completionData, errorData, joinSession, leaveSession, socket, clearProgress } =
     useWebSocketProgress({
-      onProgress: handleProgress,
       onCompletion: handleCompletion,
       onError: handleError,
       onConnectionChange: handleConnectionChange,
@@ -97,8 +78,6 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
     [string]
   >(['getRssXmlHeading'], (importData) => api.getRssXmlMappingHeading(importData) as Promise<IUserJob>, {
     onSuccess(data) {
-      console.log('✅ API Success:', data);
-
       // Only proceed if not aborted
       if (!isAbortedRef.current) {
         setJobsInfo(data);
@@ -114,8 +93,6 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
       isAbortedRef.current = false;
     },
     onError(error) {
-      console.error('❌ API Error:', error);
-
       // Only show error if not aborted by user
       if (!isAbortedRef.current) {
         notifier.showError({ message: error.message, title: error.error });
@@ -133,8 +110,6 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
 
   // Abort current operation
   const abortOperation = useCallback(() => {
-    console.log('🚫 Aborting RSS XML processing...');
-
     if (webSocketSessionIdRef.current && socket?.connected) {
       isAbortedRef.current = true;
 
@@ -177,7 +152,6 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
       // Join WebSocket session
       joinSession(webSocketSessionId);
 
-      console.log('🚀 Started RSS XML processing with session:', webSocketSessionId);
       // Clear any previous progress data
       clearProgress();
 
@@ -214,48 +188,6 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
 
     return 0;
   }, [progressData?.percentage]);
-
-  // Format progress message for display
-  const progressMessage = useMemo(() => {
-    if (isAbortedRef.current) {
-      return 'Cancelling operation...';
-    }
-
-    if (progressData?.message) {
-      return progressData.message;
-    }
-    if (progressData?.stage) {
-      const stageMessages = {
-        fetching: 'Fetching RSS feed...',
-        parsing: 'Parsing XML data...',
-        extracting: 'Extracting information...',
-        mapping: 'Processing mappings...',
-        completed: 'Processing completed!',
-        error: 'An error occurred',
-      };
-
-      return stageMessages[progressData.stage] || 'Processing...';
-    }
-    if (isGetRssXmlHeadingsLoading) {
-      return 'Starting RSS XML processing...';
-    }
-
-    return '';
-  }, [progressData, isGetRssXmlHeadingsLoading, isAbortedRef.current]);
-
-  // Format additional progress details
-  const progressDetails = useMemo(() => {
-    if (!progressData) return null;
-
-    return {
-      processedBytes: progressData.processedBytes,
-      totalBytes: progressData.totalBytes,
-      elementsProcessed: progressData.elementsProcessed,
-      speedMBps: progressData.speedMBps,
-      eta: progressData.eta,
-      stage: progressData.stage,
-    };
-  }, [progressData]);
 
   const handleCleanup = useCallback(() => {
     // First abort the session if it's running
@@ -300,8 +232,6 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
     // Progress data
     progressData,
     progressPercentage,
-    progressMessage,
-    progressDetails,
 
     // Error and completion states
     errorData,

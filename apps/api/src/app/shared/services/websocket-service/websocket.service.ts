@@ -9,19 +9,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Injectable, Logger } from '@nestjs/common';
-
-export interface IProgressData {
-  sessionId: string;
-  percentage: number;
-  processedBytes: number;
-  totalBytes: number;
-  elementsProcessed: number;
-  speedMBps: number;
-  eta: string;
-  stage: 'fetching' | 'parsing' | 'extracting' | 'mapping' | 'completed' | 'error';
-  message?: string;
-  error?: string;
-}
+import { IProgressData } from '@impler/services';
 
 @Injectable()
 @WebSocketGateway(3002, { cors: true })
@@ -74,7 +62,6 @@ export class WebSocketService implements OnGatewayConnection, OnGatewayDisconnec
 
   @SubscribeMessage('abort-session')
   handleAbortSession(@MessageBody() data: { sessionId: string }, @ConnectedSocket() client: Socket) {
-    console.log('Abort Session called');
     const { sessionId } = data;
     this.logger.log(`Abort requested for session ${sessionId} by client ${client.id}`);
 
@@ -84,7 +71,7 @@ export class WebSocketService implements OnGatewayConnection, OnGatewayDisconnec
     // Notify all clients in the session
     this.server.to(sessionId).emit('session-aborted', {
       sessionId,
-      message: 'Operation cancelled by user HA HA HA ',
+      message: 'Operation cancelled by user.',
       timestamp: new Date().toISOString(),
     });
   }
@@ -130,37 +117,25 @@ export class WebSocketService implements OnGatewayConnection, OnGatewayDisconnec
 
   // Use arrow functions to automatically bind 'this'
   sendProgress = (sessionId: string, progressData: IProgressData) => {
-    console.log('📤 Sending progress to session:', sessionId, progressData);
-
     if (!this.server) {
-      console.error('❌ WebSocket server not initialized');
-
       return;
     }
 
     // Check if session is aborted before sending progress
     const abortController = this.sessionAbortControllers.get(sessionId);
     if (abortController?.signal.aborted) {
-      console.log('⚠️ Session aborted, skipping progress update');
-
       return;
     }
 
     try {
       this.server.to(sessionId).emit('rssxml-progress', progressData);
-      this.logger.debug(`✅ Progress sent to session ${sessionId}: ${progressData.percentage}%`);
     } catch (err) {
-      console.error('❌ Error sending progress:', err);
       this.logger.error(`Failed to send progress to session ${sessionId}:`, err);
     }
   };
 
   sendError = (sessionId: string, error: string) => {
-    console.log('📤 Sending error to session:', sessionId, error);
-
     if (!this.server) {
-      console.error('❌ WebSocket server not initialized');
-
       return;
     }
 
@@ -172,7 +147,6 @@ export class WebSocketService implements OnGatewayConnection, OnGatewayDisconnec
       });
       this.logger.error(`✅ Error sent to session ${sessionId}: ${error}`);
     } catch (err) {
-      console.error('❌ Error sending error message:', err);
       this.logger.error(`Failed to send error to session ${sessionId}:`, err);
     } finally {
       // Clean up abort controller on error
@@ -181,11 +155,7 @@ export class WebSocketService implements OnGatewayConnection, OnGatewayDisconnec
   };
 
   sendCompletion = (sessionId: string, result: any) => {
-    console.log('📤 Sending completion to session:', sessionId, result);
-
     if (!this.server) {
-      console.error('❌ WebSocket server not initialized');
-
       return;
     }
 
@@ -197,10 +167,8 @@ export class WebSocketService implements OnGatewayConnection, OnGatewayDisconnec
       });
       this.logger.log(`✅ Completion sent to session ${sessionId}`);
     } catch (err) {
-      console.error('❌ Error sending completion:', err);
       this.logger.error(`Failed to send completion to session ${sessionId}:`, err);
     } finally {
-      // Clean up abort controller on completion
       this.sessionAbortControllers.delete(sessionId);
     }
   };

@@ -60,7 +60,6 @@ export function Widget() {
   const onPromptConfirm = () => {
     // If we're closing during RSS parsing, abort the RSS operation first
     if (promptContinueAction === PromptModalTypesEnum.CLOSE && isRssParsing && abortRssOperationRef.current) {
-      console.log('Aborting RSS operation before closing...');
       abortRssOperationRef.current();
     }
 
@@ -75,7 +74,6 @@ export function Widget() {
   };
 
   const onClose = () => {
-    console.log('onClose AutoImport');
     let isImportNotOnProgress = false;
 
     if (flow === FlowsEnum.AUTO_IMPORT && phase === PhasesEnum.CONFIGURE && isRssParsing) {

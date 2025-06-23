@@ -23,7 +23,6 @@ export class CreateUserJob {
     authHeaderValue,
   }: CreateUserJobCommand): Promise<UserJobEntity> {
     const rssService = new RSSXMLService(url);
-    console.log('🚀 Starting job with session ID:', webSocketSessionId);
 
     const mimeType = await rssService.getMimeType(url);
 
@@ -45,9 +44,7 @@ export class CreateUserJob {
         let formattedExtra = extra || '{}';
         try {
           formattedExtra = JSON.parse(extra);
-        } catch (_) {
-          console.warn('⚠️ Failed to parse extra data, using original', _);
-        }
+        } catch (_) {}
 
         return await this.userJobRepository.create({
           url,
@@ -57,14 +54,7 @@ export class CreateUserJob {
           _templateId: _templateId,
           externalUserId: externalUserId || (formattedExtra as unknown as Record<string, any>)?.externalUserId,
         });
-      } catch (error) {
-        if (error.message === 'Request aborted') {
-          // have enum const
-          console.log('Job cancelled by user');
-          throw error;
-        }
-        throw error;
-      }
+      } catch (error) {}
     } else {
       throw new BadRequestException(APIMessages.INVALID_RSS_URL);
     }

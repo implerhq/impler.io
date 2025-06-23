@@ -90,8 +90,6 @@ export function isValidXMLMimeType(mimeType: string): boolean {
     mimeType === FileMimeTypesEnum.TEXTXML ||
     mimeType === FileMimeTypesEnum.APPLICATION_XML
   ) {
-    console.log(mimeType);
-
     return true;
   }
 
