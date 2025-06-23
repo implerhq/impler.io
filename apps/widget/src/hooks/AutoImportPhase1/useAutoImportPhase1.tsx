@@ -49,6 +49,7 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
 
   const handleCompletion = useCallback((data: ICompletionData) => {
     console.log('✅ RSS XML Processing completed:', data);
+
     if (webSocketSessionIdRef.current) {
       leaveSession(webSocketSessionIdRef.current);
       webSocketSessionIdRef.current = null;
@@ -85,7 +86,7 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
       onCompletion: handleCompletion,
       onError: handleError,
       onConnectionChange: handleConnectionChange,
-      autoConnect: false,
+      autoConnect: true,
     });
 
   // Mutation for RSS XML processing

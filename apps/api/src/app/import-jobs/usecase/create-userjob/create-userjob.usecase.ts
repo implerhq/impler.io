@@ -46,7 +46,7 @@ export class CreateUserJob {
         try {
           formattedExtra = JSON.parse(extra);
         } catch (_) {
-          console.warn('⚠️ Failed to parse extra data, using original');
+          console.warn('⚠️ Failed to parse extra data, using original', _);
         }
 
         return await this.userJobRepository.create({

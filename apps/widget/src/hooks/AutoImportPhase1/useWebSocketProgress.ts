@@ -67,7 +67,6 @@ export const useWebSocketProgress = ({
   onConnectionChange,
   onSessionAborted,
 }: UseWebSocketProgressOptions = {}): UseWebSocketProgressReturn => {
-  console.log('WEBSOCKET_SERVER_URL', process.env.WEBSOCKET_SERVER_URL);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [progressData, setProgressData] = useState<IProgressData | null>(null);
@@ -202,6 +201,7 @@ export const useWebSocketProgress = ({
 
   const leaveSession = useCallback(
     (sessionId: string) => {
+      console.log('🚪 Leaving session:', sessionId);
       if (!socket?.connected) {
         console.warn('⚠️ Socket not connected, cannot leave session');
 
