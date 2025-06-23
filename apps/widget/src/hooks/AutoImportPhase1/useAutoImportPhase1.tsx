@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
 import { useMutation } from '@tanstack/react-query';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { generateSessionId, notifier } from '@util';
 import { IAutoImportValues } from '@types';
@@ -30,7 +32,8 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
   const { output, schema } = useAppState();
   const { templateId, extra, authHeaderValue } = useImplerState();
 
-  const sessionIdRef = useRef<string | null>(null);
+  const webSocketSessionIdRef = useRef<string | null>(null);
+  const isAbortedRef = useRef<boolean>(false);
 
   const {
     register,
@@ -46,21 +49,28 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
 
   const handleCompletion = useCallback((data: ICompletionData) => {
     console.log('✅ RSS XML Processing completed:', data);
-    leaveSession(data.sessionId);
+    if (webSocketSessionIdRef.current) {
+      leaveSession(webSocketSessionIdRef.current);
+      webSocketSessionIdRef.current = null;
+    }
     // The mutation's onSuccess will handle navigation
   }, []);
 
   const handleError = useCallback((data: IErrorData) => {
     console.error('❌ RSS XML Processing error:', data);
-    notifier.showError({
-      message: data.error || 'Processing failed',
-      title: 'RSS XML Error',
-    });
+
+    // Don't show error if operation was aborted by user
+    if (!isAbortedRef.current) {
+      notifier.showError({
+        message: data.error || 'Processing failed',
+        title: 'RSS XML Error',
+      });
+    }
   }, []);
 
   const handleConnectionChange = useCallback((connected: boolean) => {
     console.log('🔌 WebSocket connection status:', connected);
-    if (!connected) {
+    if (!connected && !isAbortedRef.current) {
       notifier.showError({
         message: 'Connection lost. Please try again.',
         title: 'Connection Error',
@@ -69,13 +79,13 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
   }, []);
 
   // Initialize WebSocket connection
-  const { isConnected, progressData, completionData, errorData, joinSession, socket, leaveSession, clearProgress } =
+  const { isConnected, progressData, completionData, errorData, joinSession, leaveSession, socket, clearProgress } =
     useWebSocketProgress({
       onProgress: handleProgress,
       onCompletion: handleCompletion,
       onError: handleError,
       onConnectionChange: handleConnectionChange,
-      autoConnect: true,
+      autoConnect: false,
     });
 
   // Mutation for RSS XML processing
@@ -87,34 +97,63 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
   >(['getRssXmlHeading'], (importData) => api.getRssXmlMappingHeading(importData) as Promise<IUserJob>, {
     onSuccess(data) {
       console.log('✅ API Success:', data);
-      setJobsInfo(data);
 
-      // Leave the session when done
-      if (sessionIdRef.current) {
-        leaveSession(sessionIdRef.current);
-        sessionIdRef.current = null;
+      // Only proceed if not aborted
+      if (!isAbortedRef.current) {
+        setJobsInfo(data);
+        goNext();
       }
 
-      // Clear progress data
+      // Clean up session
+      if (webSocketSessionIdRef.current) {
+        leaveSession(webSocketSessionIdRef.current);
+        webSocketSessionIdRef.current = null;
+      }
       clearProgress();
-
-      // Navigate to next step
-      goNext();
+      isAbortedRef.current = false;
     },
     onError(error) {
       console.error('❌ API Error:', error);
-      notifier.showError({ message: error.message, title: error.error });
 
-      // Leave the session on error
-      if (sessionIdRef.current) {
-        leaveSession(sessionIdRef.current);
-        sessionIdRef.current = null;
+      // Only show error if not aborted by user
+      if (!isAbortedRef.current) {
+        notifier.showError({ message: error.message, title: error.error });
       }
+
+      // Clean up session
+      if (webSocketSessionIdRef.current) {
+        leaveSession(webSocketSessionIdRef.current);
+        webSocketSessionIdRef.current = null;
+      }
+      clearProgress();
+      isAbortedRef.current = false;
+    },
+  });
+
+  // Abort current operation
+  const abortOperation = useCallback(() => {
+    console.log('🚫 Aborting RSS XML processing...');
+
+    if (webSocketSessionIdRef.current && socket?.connected) {
+      isAbortedRef.current = true;
+
+      // Send abort signal to backend
+      socket.emit('abort-session', { sessionId: webSocketSessionIdRef.current });
+
+      // Leave the session
+      leaveSession(webSocketSessionIdRef.current);
+      webSocketSessionIdRef.current = null;
 
       // Clear progress data
       clearProgress();
-    },
-  });
+
+      // Show cancellation message
+      notifier.showError({
+        message: 'RSS XML processing has been cancelled.',
+        title: 'Operation Cancelled',
+      });
+    }
+  }, [socket, leaveSession, clearProgress]);
 
   const onSubmit: SubmitHandler<FormValues> = useCallback(
     (data) => {
@@ -127,16 +166,17 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
         return;
       }
 
+      // Reset abort flag
+      isAbortedRef.current = false;
+
       // Generate unique session ID
       const webSocketSessionId = generateSessionId();
-      console.log(webSocketSessionId);
-      sessionIdRef.current = webSocketSessionId;
-
-      console.log('🚀 Starting RSS XML processing with session:', webSocketSessionId);
+      webSocketSessionIdRef.current = webSocketSessionId;
 
       // Join WebSocket session
       joinSession(webSocketSessionId);
 
+      console.log('🚀 Started RSS XML processing with session:', webSocketSessionId);
       // Clear any previous progress data
       clearProgress();
 
@@ -160,6 +200,11 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
     return isGetRssXmlHeadingsLoading || (progressData !== null && progressData.stage !== 'completed');
   }, [isGetRssXmlHeadingsLoading, progressData]);
 
+  // Check if operation can be aborted
+  const canAbort = useMemo(() => {
+    return isLoading && webSocketSessionIdRef.current !== null && !isAbortedRef.current;
+  }, [isLoading]);
+
   // Format progress percentage for display
   const progressPercentage = useMemo(() => {
     if (progressData?.percentage !== undefined) {
@@ -171,6 +216,10 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
 
   // Format progress message for display
   const progressMessage = useMemo(() => {
+    if (isAbortedRef.current) {
+      return 'Cancelling operation...';
+    }
+
     if (progressData?.message) {
       return progressData.message;
     }
@@ -191,7 +240,7 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
     }
 
     return '';
-  }, [progressData, isGetRssXmlHeadingsLoading]);
+  }, [progressData, isGetRssXmlHeadingsLoading, isAbortedRef.current]);
 
   // Format additional progress details
   const progressDetails = useMemo(() => {
@@ -207,6 +256,31 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
     };
   }, [progressData]);
 
+  const handleCleanup = useCallback(() => {
+    // First abort the session if it's running
+    if (canAbort && webSocketSessionIdRef.current) {
+      abortOperation();
+    }
+
+    // Then do additional cleanup
+    if (socket && socket.connected) {
+      socket.disconnect();
+    }
+    if (webSocketSessionIdRef.current) {
+      leaveSession(webSocketSessionIdRef.current);
+      webSocketSessionIdRef.current = null;
+    }
+  }, [socket, webSocketSessionIdRef, leaveSession, abortOperation, canAbort]);
+
+  useEffect(() => {
+    return () => {
+      // Cleanup on unmount
+      if (canAbort && webSocketSessionIdRef.current) {
+        abortOperation();
+      }
+    };
+  }, []);
+
   return {
     errors,
     register,
@@ -220,7 +294,7 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
     isConnected,
     socket,
     leaveSession,
-    sessionIdRef,
+    webSocketSessionIdRef,
 
     // Progress data
     progressData,
@@ -231,5 +305,11 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
     // Error and completion states
     errorData,
     completionData,
+
+    // Abort functionality
+    abortOperation,
+    canAbort,
+    handleCleanup,
+    isAborted: isAbortedRef.current,
   };
 }

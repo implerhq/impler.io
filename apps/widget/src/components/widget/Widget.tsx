@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 
 import { Modal } from '@ui/Modal';
 import { variables } from '@config';
@@ -32,6 +32,12 @@ export function Widget() {
   const { terminateUpload, phase, setPhase } = useWidget();
   const [dataCount, setDataCount] = useState<number>(defaultDataCount);
   const [promptContinueAction, setPromptContinueAction] = useState<PromptModalTypesEnum>();
+  // Add state to track RSS parsing status
+  const [isRssParsing, setIsRssParsing] = useState<boolean>(false);
+
+  // Add ref to store abort function from AutoImportPhase1
+  const abortRssOperationRef = useRef<(() => void) | null>(null);
+
   const {
     flow,
     title,
@@ -50,17 +56,34 @@ export function Widget() {
     logAmplitudeEvent('RESET');
     setPromptContinueAction(PromptModalTypesEnum.UPLOAD_AGAIN);
   };
+
   const onPromptConfirm = () => {
+    // If we're closing during RSS parsing, abort the RSS operation first
+    if (promptContinueAction === PromptModalTypesEnum.CLOSE && isRssParsing && abortRssOperationRef.current) {
+      console.log('Aborting RSS operation before closing...');
+      abortRssOperationRef.current();
+    }
+
     terminateUpload();
     setPromptContinueAction(undefined);
     if (uploadInfo._id) ParentWindow.UploadTerminated({ uploadId: uploadInfo._id });
     if (promptContinueAction === PromptModalTypesEnum.CLOSE) closeWidget();
   };
+
   const onPromptCancel = () => {
     setPromptContinueAction(undefined);
   };
+
   const onClose = () => {
+    console.log('onClose AutoImport');
     let isImportNotOnProgress = false;
+
+    if (flow === FlowsEnum.AUTO_IMPORT && phase === PhasesEnum.CONFIGURE && isRssParsing) {
+      setPromptContinueAction(PromptModalTypesEnum.CLOSE);
+
+      return;
+    }
+
     if (flow === FlowsEnum.AUTO_IMPORT)
       isImportNotOnProgress = [PhasesEnum.CONFIGURE, PhasesEnum.CONFIRM].includes(phase);
     else if (flow == FlowsEnum.MANUAL_ENTRY)
@@ -79,22 +102,32 @@ export function Widget() {
       closeWidget();
     } else setPromptContinueAction(PromptModalTypesEnum.CLOSE);
   };
+
   const closeWidget = () => {
     setShowWidget(false);
     resetAmplitude();
+    // Reset RSS parsing state when closing
+    setIsRssParsing(false);
+    // Clear the abort function reference
+    abortRssOperationRef.current = null;
     setTimeout(() => {
       ParentWindow.Close();
     }, variables.closeDelayInMS);
   };
+
   const resetProgress = () => {
     resetAppState();
     resetAmplitude();
     setPhase(PhasesEnum.VALIDATE);
+    setIsRssParsing(false); // Reset RSS parsing state
+    abortRssOperationRef.current = null; // Clear abort function reference
   };
+
   const onImportJobCreated = (jobInfo: IUserJob) => {
     ParentWindow.ImportJobCreated(jobInfo);
     setPhase(PhasesEnum.CONFIRM);
   };
+
   const onComplete = (uploadData: IUpload, importedData?: Record<string, any>[], doClose = false) => {
     setDataCount(uploadData.totalRecords);
     setPhase(PhasesEnum.COMPLETE);
@@ -102,6 +135,7 @@ export function Widget() {
     if (importedData) ParentWindow.DataImported(importedData);
     if (doClose) closeWidget();
   };
+
   const onSuccess = useCallback(() => {
     setImportConfig((configData: IImportConfig) => {
       setPhase(
@@ -116,11 +150,24 @@ export function Widget() {
     });
   }, [importConfig, hasImageUpload]);
 
+  // Callback to register abort function from AutoImportPhase1
+  const handleRegisterAbortFunction = useCallback((abortFn: () => void) => {
+    abortRssOperationRef.current = abortFn;
+  }, []);
+
   const PhaseView = {
     [PhasesEnum.VALIDATE]: <Phase0 onValidationSuccess={onSuccess} />,
     ...(flow === FlowsEnum.AUTO_IMPORT
       ? {
-          [PhasesEnum.CONFIGURE]: <AutoImportPhase1 onNextClick={() => setPhase(PhasesEnum.MAPCOLUMNS)} />,
+          [PhasesEnum.CONFIGURE]: (
+            <AutoImportPhase1
+              onNextClick={() => setPhase(PhasesEnum.MAPCOLUMNS)}
+              onCloseClick={onClose}
+              onRssParsingStart={() => setIsRssParsing(true)}
+              onRssParsingEnd={() => setIsRssParsing(false)}
+              onRegisterAbortFunction={handleRegisterAbortFunction}
+            />
+          ),
           [PhasesEnum.MAPCOLUMNS]: <AutoImportPhase2 texts={texts} onNextClick={() => setPhase(PhasesEnum.SCHEDULE)} />,
           [PhasesEnum.SCHEDULE]: <AutoImportPhase3 onNextClick={onImportJobCreated} texts={texts} />,
           [PhasesEnum.CONFIRM]: <AutoImportPhase4 onCloseClick={onClose} />,
@@ -163,6 +210,8 @@ export function Widget() {
   useEffect(() => {
     if (!showWidget) {
       setPhase(PhasesEnum.VALIDATE);
+      setIsRssParsing(false); // Reset RSS parsing state when widget is hidden
+      abortRssOperationRef.current = null; // Clear abort function reference
     }
   }, [showWidget]);
 

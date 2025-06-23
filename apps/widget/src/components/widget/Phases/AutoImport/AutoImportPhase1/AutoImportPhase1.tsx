@@ -1,4 +1,6 @@
-import { Stack, TextInput } from '@mantine/core';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
+import { Stack, TextInput, Text } from '@mantine/core';
 import { PhasesEnum } from '@types';
 import { validateRssUrl } from '@util';
 import { Footer } from 'components/Common/Footer';
@@ -6,55 +8,50 @@ import { useAutoImportPhase1 } from '@hooks/AutoImportPhase1/useAutoImportPhase1
 import { ProgressRing } from './ProgressRing';
 import { ConfirmModal } from 'components/widget/modals/ConfirmModal';
 import { WIDGET_TEXTS } from '@impler/client';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 interface IAutoImportPhase1Props {
   onNextClick: () => void;
+  onCloseClick: () => void;
+  onRssParsingStart?: () => void;
+  onRssParsingEnd?: () => void;
+  onRegisterAbortFunction?: (abortFn: () => void) => void;
 }
 
-export function AutoImportPhase1({ onNextClick }: IAutoImportPhase1Props) {
-  const [showCloseConfirm, setShowCloseConfirm] = useState(false);
+export function AutoImportPhase1({
+  onNextClick,
+  onRssParsingStart,
+  onRssParsingEnd,
+  onRegisterAbortFunction,
+}: IAutoImportPhase1Props) {
   const {
     isGetRssXmlHeadingsLoading,
     progressPercentage,
     register,
     errors,
     onSubmit,
-    socket,
-    leaveSession,
-    sessionIdRef,
+    isAborted,
+    abortOperation,
+    canAbort,
   } = useAutoImportPhase1({
     goNext: onNextClick,
   });
 
-  const handleCleanup = useCallback(() => {
-    if (socket && socket.connected) {
-      socket.disconnect();
+  // Register the abort function with the parent component
+  useEffect(() => {
+    if (canAbort && abortOperation && onRegisterAbortFunction) {
+      onRegisterAbortFunction(abortOperation);
     }
-    if (sessionIdRef.current) {
-      leaveSession(sessionIdRef.current);
-      sessionIdRef.current = null;
-    }
-  }, [socket, sessionIdRef, leaveSession]);
+  }, [canAbort, abortOperation, onRegisterAbortFunction]);
 
-  const handleClose = (confirm: boolean) => {
-    if (confirm) {
-      // Reset form and close
-      setShowCloseConfirm(false);
-      handleCleanup();
-      // Add any additional cleanup here if needed
+  // Notify parent component about RSS parsing status
+  useEffect(() => {
+    if (isGetRssXmlHeadingsLoading) {
+      onRssParsingStart?.();
     } else {
-      setShowCloseConfirm(false);
+      onRssParsingEnd?.();
     }
-  };
-
-  /*
-   * const handleFormClose = () => {
-   *   if (isGetRssXmlHeadingsLoading) {
-   *     setShowCloseConfirm(true);
-   *   }
-   * };
-   */
+  }, [isGetRssXmlHeadingsLoading, onRssParsingStart, onRssParsingEnd]);
 
   // Show form view when not processing
   return (
@@ -77,6 +74,7 @@ export function AutoImportPhase1({ onNextClick }: IAutoImportPhase1Props) {
           }}
         />
       </form>
+
       {isGetRssXmlHeadingsLoading && (
         <Stack align="center" justify="center" spacing="xl">
           <ProgressRing percentage={progressPercentage} />
@@ -84,16 +82,6 @@ export function AutoImportPhase1({ onNextClick }: IAutoImportPhase1Props) {
       )}
 
       <Footer onNextClick={onSubmit} active={PhasesEnum.CONFIGURE} primaryButtonLoading={isGetRssXmlHeadingsLoading} />
-
-      <ConfirmModal
-        opened={showCloseConfirm}
-        onCancel={() => handleClose(false)}
-        onConfirm={() => handleClose(true)}
-        title={WIDGET_TEXTS.CLOSE_CONFIRMATION.TITLE}
-        subTitle={WIDGET_TEXTS.CLOSE_CONFIRMATION.TITLE}
-        confirmLabel={WIDGET_TEXTS.CLOSE_CONFIRMATION.CONFIRM_CLOSE}
-        cancelLabel={WIDGET_TEXTS.CLOSE_CONFIRMATION.CANCEL_CLOSE}
-      />
     </Stack>
   );
 }

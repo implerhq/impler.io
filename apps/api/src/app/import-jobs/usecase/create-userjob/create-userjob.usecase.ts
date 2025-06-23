@@ -28,16 +28,11 @@ export class CreateUserJob {
     const mimeType = await rssService.getMimeType(url);
 
     if (isValidXMLMimeType(mimeType)) {
-      console.log('📡 WebSocket service methods available:', {
-        sendProgress: typeof this.webSocketService.sendProgress,
-        sendError: typeof this.webSocketService.sendError,
-        sendCompletion: typeof this.webSocketService.sendCompletion,
-      });
-
-      // Join the session
-
       try {
         const abortController = new AbortController();
+
+        this.webSocketService.registerSessionAbort(webSocketSessionId, abortController);
+
         const rssXmlParsedDataKeys = await rssService.parseXMLAndExtractData({
           xmlUrl: url,
           sessionId: webSocketSessionId,
@@ -64,11 +59,11 @@ export class CreateUserJob {
         });
       } catch (error) {
         if (error.message === 'Request aborted') {
+          // have enum const
           console.log('Job cancelled by user');
           throw error;
         }
         throw error;
-      } finally {
       }
     } else {
       throw new BadRequestException(APIMessages.INVALID_RSS_URL);

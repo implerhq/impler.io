@@ -27,6 +27,12 @@ export interface IErrorData {
   timestamp: string;
 }
 
+export interface ISessionAbortedData {
+  sessionId: string;
+  message: string;
+  timestamp: string;
+}
+
 interface UseWebSocketProgressOptions {
   serverUrl?: string;
   autoConnect?: boolean;
@@ -34,6 +40,7 @@ interface UseWebSocketProgressOptions {
   onCompletion?: (data: ICompletionData) => void;
   onError?: (data: IErrorData) => void;
   onConnectionChange?: (connected: boolean) => void;
+  onSessionAborted?: (data: ISessionAbortedData) => void;
 }
 
 interface UseWebSocketProgressReturn {
@@ -42,28 +49,33 @@ interface UseWebSocketProgressReturn {
   progressData: IProgressData | null;
   completionData: ICompletionData | null;
   errorData: IErrorData | null;
+  abortedData: ISessionAbortedData | null;
   joinSession: (sessionId: string) => void;
   leaveSession: (sessionId: string) => void;
+  abortSession: (sessionId: string) => void;
   clearProgress: () => void;
   connect: () => void;
   disconnect: () => void;
 }
 
 export const useWebSocketProgress = ({
-  serverUrl = 'http://localhost:3000/rssxml-progress', //ToDo use constant .env
-  autoConnect = false, //true,
+  serverUrl = process.env.WEBSOCKET_SERVER_URL ?? 'localhost:3002', //ToDo use constant .env
+  autoConnect = true,
   onProgress,
   onCompletion,
   onError,
   onConnectionChange,
+  onSessionAborted,
 }: UseWebSocketProgressOptions = {}): UseWebSocketProgressReturn => {
+  console.log('WEBSOCKET_SERVER_URL', process.env.WEBSOCKET_SERVER_URL);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [progressData, setProgressData] = useState<IProgressData | null>(null);
   const [completionData, setCompletionData] = useState<ICompletionData | null>(null);
   const [errorData, setErrorData] = useState<IErrorData | null>(null);
+  const [abortedData, setAbortedData] = useState<ISessionAbortedData | null>(null);
 
-  const currentSessionId = useRef<string | null>(null);
+  const webSocketSessionIdRef = useRef<string | null>(null);
   const reconnectAttempts = useRef(0);
   const maxReconnectAttempts = 5;
 
@@ -92,9 +104,9 @@ export const useWebSocketProgress = ({
       onConnectionChange?.(true);
 
       // Rejoin session if we had one
-      if (currentSessionId.current) {
-        console.log('🔄 Rejoining session:', currentSessionId.current);
-        newSocket.emit('join-session', { sessionId: currentSessionId.current });
+      if (webSocketSessionIdRef.current) {
+        console.log('🔄 Rejoining session:', webSocketSessionIdRef.current);
+        newSocket.emit('join-session', { sessionId: webSocketSessionIdRef.current });
       }
     });
 
@@ -147,8 +159,21 @@ export const useWebSocketProgress = ({
       console.log('🎯 Session joined successfully:', data.sessionId);
     });
 
+    // NEW: Handle session aborted event
+    newSocket.on('session-aborted', (data: ISessionAbortedData) => {
+      console.log('🚫 Session aborted:', data);
+      setAbortedData(data);
+      abortSession(data.sessionId);
+      onSessionAborted?.(data);
+
+      // Clear progress data when session is aborted
+      setProgressData(null);
+      setCompletionData(null);
+      setErrorData(null);
+    });
+
     setSocket(newSocket);
-  }, [serverUrl, onProgress, onCompletion, onError, onConnectionChange]);
+  }, [serverUrl, onProgress, onCompletion, onError, onConnectionChange, onSessionAborted]);
 
   const disconnect = useCallback(() => {
     if (socket) {
@@ -156,7 +181,7 @@ export const useWebSocketProgress = ({
       socket.disconnect();
       setSocket(null);
       setIsConnected(false);
-      currentSessionId.current = null;
+      webSocketSessionIdRef.current = null;
     }
   }, [socket]);
 
@@ -169,7 +194,7 @@ export const useWebSocketProgress = ({
       }
 
       console.log('🎯 Joining session:', sessionId);
-      currentSessionId.current = sessionId;
+      webSocketSessionIdRef.current = sessionId;
       socket.emit('join-session', { sessionId });
     },
     [socket]
@@ -185,7 +210,21 @@ export const useWebSocketProgress = ({
 
       console.log('🚪 Leaving session:', sessionId);
       socket.emit('leave-session', { sessionId });
-      currentSessionId.current = null;
+      webSocketSessionIdRef.current = null;
+    },
+    [socket]
+  );
+
+  const abortSession = useCallback(
+    (sessionId: string) => {
+      if (!socket?.connected) {
+        console.warn('⚠️ Socket not connected, cannot abort session');
+
+        return;
+      }
+
+      console.log('🚫 Aborting session:', sessionId);
+      socket.emit('abort-session', { sessionId });
     },
     [socket]
   );
@@ -194,6 +233,7 @@ export const useWebSocketProgress = ({
     setProgressData(null);
     setCompletionData(null);
     setErrorData(null);
+    setAbortedData(null);
   }, []);
 
   // Auto-connect on mount
@@ -230,8 +270,10 @@ export const useWebSocketProgress = ({
     progressData,
     completionData,
     errorData,
+    abortedData,
     joinSession,
     leaveSession,
+    abortSession,
     clearProgress,
     connect,
     disconnect,

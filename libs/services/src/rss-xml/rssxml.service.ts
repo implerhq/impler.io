@@ -1,6 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import axios from 'axios';
 import * as sax from 'sax';
 
@@ -25,6 +22,7 @@ export interface IParseXMLAndExtractData {
   sendCompletion?: (sessionId: string, result: any) => void;
   abortSignal?: AbortSignal;
 }
+
 interface IParsedElement {
   [key: string]: any;
 }
@@ -53,12 +51,48 @@ export class RSSXMLService {
   private sendError?: (sessionId: string, error: string) => void;
   private sendCompletion?: (sessionId: string, result: any) => void;
   private abortSignal?: AbortSignal;
+  private parser?: sax.SAXStream;
+  private responseStream?: any;
+  private isAborted = false;
 
   constructor(xmlUrl?: string) {
     this.xmlUrl = xmlUrl;
   }
 
+  // Enhanced abort signal checking with proper error handling
+  private checkAbortSignal(): void {
+    if (this.abortSignal?.aborted || this.isAborted) {
+      this.isAborted = true;
+      // Clean up resources before throwing
+      this.cleanup();
+
+      const error = new Error('Request aborted');
+      error.name = 'AbortError';
+      throw error;
+    }
+  }
+
+  // Cleanup method to properly dispose of resources
+  private cleanup(): void {
+    try {
+      // Destroy parser if it exists
+      if (this.parser && !this.parser.destroyed) {
+        this.parser.destroy();
+      }
+
+      // Destroy response stream if it exists
+      if (this.responseStream && typeof this.responseStream.destroy === 'function') {
+        this.responseStream.destroy();
+      }
+    } catch (error) {
+      console.error('Error during cleanup:', error);
+    }
+  }
+
   private showProgress(): void {
+    // Check abort signal frequently during processing
+    this.checkAbortSignal();
+
     const now = Date.now();
 
     // Only update every 1 second
@@ -86,6 +120,7 @@ export class RSSXMLService {
         const secs = Math.floor(etaSeconds % 60);
         etaString = `${mins}m ${secs}s`;
       }
+
       const progressMessage =
         `📊 Progress: ${percentage}% | Processed: ${processedFormatted}/${totalFormatted}` +
         ` | Elements: ${this.totalItemsProcessed}` +
@@ -184,6 +219,9 @@ export class RSSXMLService {
     result: IBatchExtractionResult,
     currentPath: string[]
   ): void {
+    // Check abort signal during recursive operations
+    this.checkAbortSignal();
+
     // Check if current path matches any of our target paths
     pathMappings.forEach((mapping) => {
       if (this.isPathMatches(currentPath, mapping.pathArray)) {
@@ -329,6 +367,9 @@ export class RSSXMLService {
     }
 
     for (let i = 0; i < maxLength; i++) {
+      // Check abort signal during mapping
+      this.checkAbortSignal();
+
       const item: any = {};
       keys.forEach((key) => {
         const values = batchResult[key];
@@ -351,12 +392,29 @@ export class RSSXMLService {
     this.sendError = data.sendError;
     this.sendCompletion = data.sendCompletion;
     this.abortSignal = data.abortSignal;
+    this.isAborted = false;
 
     try {
+      // Set up abort signal listener for immediate cleanup
+      if (this.abortSignal) {
+        this.abortSignal.addEventListener('abort', () => {
+          console.log('🚫 Abort signal received, cleaning up...');
+          this.isAborted = true;
+          this.cleanup();
+        });
+      }
+
       // Parse the XML
       const xmlData = await this.parseXML();
+
+      // Check if aborted after parsing
+      this.checkAbortSignal();
+
       // Extract keys
       const keys = await this.printKeys(xmlData);
+
+      // Check if aborted after key extraction
+      this.checkAbortSignal();
 
       if (keys.length > 0 && xmlData) {
         this.sendCompletion?.(data.sessionId, {
@@ -370,8 +428,15 @@ export class RSSXMLService {
         xmlData,
       };
     } catch (error) {
-      this.sendError?.(data.sessionId, error);
       console.error('💥 Error:', error);
+
+      // Don't send error if it was aborted by user
+      if (!this.isAborted && error.name !== 'AbortError') {
+        this.sendError?.(data.sessionId, error.message || 'Unknown error occurred');
+      }
+
+      // Clean up resources
+      this.cleanup();
 
       return null;
     }
@@ -396,6 +461,8 @@ export class RSSXMLService {
   }
 
   async printKeys(obj: Record<string, any>, prefix = '', result: Set<string> = new Set()): Promise<string[]> {
+    this.checkAbortSignal(); // Check abort signal during key extraction
+
     if (Array.isArray(obj)) {
       obj.forEach((item) => {
         const newPrefix = `${prefix}[]`;
@@ -414,10 +481,17 @@ export class RSSXMLService {
 
   async parseXML(): Promise<IParsedElement | null> {
     console.log('Getting url as ->', this.xmlUrl);
+
     try {
       this.startTime = Date.now();
       this.lastSpeedCheckTime = this.startTime;
+
+      // Check abort signal before starting
+      this.checkAbortSignal();
+
       const response = await this.fetchStream(this.xmlUrl);
+      this.responseStream = response;
+
       console.log(`📥 Starting XML parsing...`);
 
       const parser = sax.createStream(true, {
@@ -425,6 +499,8 @@ export class RSSXMLService {
         trim: true,
         normalize: true,
       });
+
+      this.parser = parser;
 
       const xmlStructure: IParsedElement = {};
       const elementStack: Array<{
@@ -436,12 +512,58 @@ export class RSSXMLService {
       let currentText = '';
       let currentAttributes: any = null;
 
+      // Set up abort signal listener on the response stream
+      if (this.abortSignal) {
+        this.abortSignal.addEventListener('abort', () => {
+          console.log('🚫 Aborting response stream...');
+          this.isAborted = true;
+          if (response && typeof response.destroy === 'function') {
+            response.destroy();
+          }
+          if (parser && !parser.destroyed) {
+            parser.destroy();
+          }
+        });
+      }
+
       response.on('data', (chunk: Buffer) => {
+        // Check abort signal on each data chunk
+        if (this.isAborted || this.abortSignal?.aborted) {
+          response.destroy();
+          parser.destroy();
+
+          return;
+        }
+
         this.bytesProcessed += chunk.length;
-        this.showProgress();
+
+        try {
+          this.showProgress();
+        } catch (error) {
+          if (error.name === 'AbortError') {
+            response.destroy();
+            parser.destroy();
+
+            return;
+          }
+          throw error;
+        }
+      });
+
+      response.on('error', (err: any) => {
+        console.error('🔴 Response error:', err);
+        if (!this.isAborted) {
+          parser.destroy();
+        }
       });
 
       parser.on('opentag', (node) => {
+        if (this.isAborted || this.abortSignal?.aborted) {
+          parser.destroy();
+
+          return;
+        }
+
         this.totalItemsProcessed++;
 
         elementStack.push({
@@ -456,18 +578,36 @@ export class RSSXMLService {
       });
 
       parser.on('text', (text: string) => {
+        if (this.isAborted || this.abortSignal?.aborted) {
+          parser.destroy();
+
+          return;
+        }
+
         if (text.trim()) {
           currentText += text.trim();
         }
       });
 
       parser.on('cdata', (cdata: string) => {
+        if (this.isAborted || this.abortSignal?.aborted) {
+          parser.destroy();
+
+          return;
+        }
+
         if (cdata.trim()) {
           currentText += cdata.trim();
         }
       });
 
       parser.on('closetag', () => {
+        if (this.isAborted || this.abortSignal?.aborted) {
+          parser.destroy();
+
+          return;
+        }
+
         const stackItem = elementStack.pop();
         if (!stackItem) return;
 
@@ -482,6 +622,12 @@ export class RSSXMLService {
 
       return new Promise((resolve, reject) => {
         parser.on('end', async () => {
+          if (this.isAborted) {
+            reject(new Error('Request aborted'));
+
+            return;
+          }
+
           const endTime = Date.now();
           const duration = ((endTime - this.startTime) / 1000).toFixed(2);
 
@@ -491,32 +637,60 @@ export class RSSXMLService {
           console.log(`⏱️  Processing time: ${duration}s`);
           console.log(`🚀 Average speed: ${this.formatBytesPerSecond(this.bytesProcessed / (duration as any))}`);
 
-          const keys = await this.printKeys(xmlStructure);
-          console.log('XML DATA KEYS ->', keys);
-
-          resolve(xmlStructure);
+          try {
+            const keys = await this.printKeys(xmlStructure);
+            console.log('XML DATA KEYS ->', keys);
+            resolve(xmlStructure);
+          } catch (error) {
+            if (error.name === 'AbortError') {
+              reject(error);
+            } else {
+              throw error;
+            }
+          }
         });
 
         parser.on('error', (err) => {
           console.error('❌ Parser error:', err);
-          reject(err);
+          if (!this.isAborted) {
+            reject(err);
+          }
         });
 
         response.on('error', (err: any) => {
           console.error('🔴 Response error:', err);
-          parser.destroy();
-          reject(err);
+          if (!this.isAborted) {
+            reject(err);
+          }
         });
 
         response.on('end', () => {
           console.log('📡 Response stream ended');
         });
 
+        // Handle stream abort
+        response.on('aborted', () => {
+          console.log('📡 Response stream aborted');
+          reject(new Error('Request aborted'));
+        });
+
         console.log(`🔄 Piping response to parser...`);
-        response.pipe(parser);
+
+        try {
+          response.pipe(parser);
+        } catch (error) {
+          if (!this.isAborted) {
+            reject(error);
+          }
+        }
       });
     } catch (err) {
       console.error('🚫 Failed to parse XML:', err);
+      this.cleanup();
+
+      if (err.name === 'AbortError' || this.isAborted) {
+        throw err;
+      }
 
       return null;
     }
@@ -568,13 +742,28 @@ export class RSSXMLService {
     }
   }
 
+  // Enhanced fetchStream method with proper abort handling
   async fetchStream(url: string): Promise<any> {
     console.log(`🌐 Fetching XML from: ${url}`);
 
+    // Check if already aborted before starting
+    this.checkAbortSignal();
+
     try {
+      // Create a new AbortController for the axios request if we don't have one
+      const controller = new AbortController();
+
+      // If we have an existing abort signal, listen to it
+      if (this.abortSignal) {
+        this.abortSignal.addEventListener('abort', () => {
+          controller.abort();
+        });
+      }
+
       const response = await axios.get(url, {
         responseType: 'stream',
         timeout: 30000,
+        signal: controller.signal, // Use the controller's signal
         headers: {
           'User-Agent': 'Mozilla/5.0 (Node.js XML Parser)',
           Accept: 'application/rss+xml, application/xml, text/xml, */*',
@@ -591,6 +780,12 @@ export class RSSXMLService {
 
       return response.data;
     } catch (error) {
+      if (error.name === 'AbortError' || error.code === 'ABORT_ERR' || error.message?.includes('aborted')) {
+        console.log('🚫 Request aborted');
+        const abortError = new Error('Request aborted');
+        abortError.name = 'AbortError';
+        throw abortError;
+      }
       console.error('🔴 Request error:', error);
       throw error;
     }
