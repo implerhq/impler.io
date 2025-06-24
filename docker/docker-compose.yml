@@ -164,6 +164,7 @@ services:
 
 volumes:
   mongodb: ~
+  minio_data: ~
 
 networks:
   impler:
