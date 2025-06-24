@@ -22,6 +22,7 @@ import {
   FailedWebhookRetryRequestsRepository,
   WebhookLogRepository,
 } from '@impler/dal';
+import { StorageTypeEnum } from '@impler/shared';
 import { CSVFileService2, ExcelFileService } from './services/file/file.service';
 import {
   S3StorageService,
@@ -30,6 +31,7 @@ import {
   SESEmailService,
   FileNameService,
   NameService,
+  AzureStorageService,
 } from '@impler/services';
 import { WebSocketService } from './services';
 
@@ -60,7 +62,7 @@ const UTILITY_SERVICES = [CSVFileService2, FileNameService, NameService, ExcelFi
 const dalService = new DalService();
 
 function getStorageServiceClass() {
-  return S3StorageService;
+  return process.env.STORAGE_TYPE === StorageTypeEnum.AZURE ? AzureStorageService : S3StorageService;
 }
 
 function getEmailServiceClass() {
