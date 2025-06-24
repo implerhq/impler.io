@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
 import * as Sentry from '@sentry/react';
 import axios from 'axios';
 import tippy from 'tippy.js';
@@ -360,3 +362,7 @@ export const generateCronExpression = (data: RecurrenceFormData): string => {
       return `${minutes} ${hours} * * *`;
   }
 };
+
+export function generateSessionId() {
+  return Date.now().toString(36) + Math.random().toString(36).substring(2);
+}

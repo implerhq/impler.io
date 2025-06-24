@@ -225,6 +225,9 @@ importers:
       rimraf:
         specifier: ^3.0.2
         version: 3.0.2
+      sax:
+        specifier: ^1.4.1
+        version: 1.4.1
       socket.io:
         specifier: ^4.7.2
         version: 4.7.5
@@ -295,6 +298,9 @@ importers:
       '@types/passport-oauth2':
         specifier: ^1.4.11
         version: 1.4.17
+      '@types/sax':
+        specifier: ^1.2.7
+        version: 1.2.7
       '@types/uuid':
         specifier: ^9.0.2
         version: 9.0.8
@@ -609,6 +615,12 @@ importers:
       rimraf:
         specifier: ^3.0.2
         version: 3.0.2
+      socket.io:
+        specifier: ^4.7.2
+        version: 4.7.5
+      socket.io-client:
+        specifier: ^4.8.1
+        version: 4.8.1
       tippy.js:
         specifier: ^6.3.7
         version: 6.3.7
@@ -767,6 +779,9 @@ importers:
       nodemailer:
         specifier: ^6.9.14
         version: 6.9.14
+      sax:
+        specifier: ^1.4.1
+        version: 1.4.1
       uuid:
         specifier: ^9.0.0
         version: 9.0.1
@@ -774,6 +789,9 @@ importers:
       '@types/node':
         specifier: ^18.7.18
         version: 18.19.39
+      '@types/sax':
+        specifier: ^1.2.7
+        version: 1.2.7
       '@types/uuid':
         specifier: ^9.0.2
         version: 9.0.8
@@ -789,6 +807,9 @@ importers:
       '@impler/client':
         specifier: workspace:^
         version: link:../../packages/client
+      sax:
+        specifier: ^1.4.1
+        version: 1.4.1
       uuid:
         specifier: ^9.0.0
         version: 9.0.1
@@ -9551,6 +9572,12 @@ packages:
   /@types/retry@0.12.0:
     resolution: {integrity: sha512-wWKOClTTiizcZhXnPY4wikVAwmdYHp8q6DmC+EJUzAMsycb7HB32Kh9RN4+0gExjmPmZSAQjgURXIGATPegAvA==}
 
+  /@types/sax@1.2.7:
+    resolution: {integrity: sha512-rO73L89PJxeYM3s3pPPjiPgVVcymqU490g0YO5n5By0k2Erzj6tay/4lr1CHAAU4JyOWd1rpQ8bCf6cZfHU96A==}
+    dependencies:
+      '@types/node': 18.19.39
+    dev: true
+
   /@types/semver@7.5.8:
     resolution: {integrity: sha512-I8EUhyrgfLrcTkzV3TSsGyl1tSuPrEDzr0yd5m90UgNxQkyDXULk3b6MlQqTCpZpNtWe1K0hzclnZkTcLBe2UQ==}
 
@@ -13551,6 +13578,20 @@ packages:
       dedent: 0.7.0
       fast-json-parse: 1.0.3
       objectorarray: 1.0.5
+
+  /engine.io-client@6.6.3:
+    resolution: {integrity: sha512-T0iLjnyNWahNyv/lcjS2y4oE358tVS/SYQNxYXGAJ9/GLgH4VCvOQ/mhTjqU88mLZCQgiG8RIegFHYCdVC+j5w==}
+    dependencies:
+      '@socket.io/component-emitter': 3.1.2
+      debug: 4.3.5(supports-color@8.1.1)
+      engine.io-parser: 5.2.2
+      ws: 8.17.1
+      xmlhttprequest-ssl: 2.1.2
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+    dev: false
 
   /engine.io-parser@5.2.2:
     resolution: {integrity: sha512-RcyUFKA93/CXH20l4SoVvzZfrSDMOTUS3bWVpTt2FuFP+XYrL8i8oonHP7WInRyVHXh0n/ORtoeiE1os+8qkSw==}
@@ -23034,6 +23075,20 @@ packages:
       - utf-8-validate
     dev: false
 
+  /socket.io-client@4.8.1:
+    resolution: {integrity: sha512-hJVXfu3E28NmzGk8o1sHhN3om52tRvwYeidbj7xKy2eIIse5IoKX3USlS6Tqt3BHAtflLIkCQBkzVrEEfWUyYQ==}
+    engines: {node: '>=10.0.0'}
+    dependencies:
+      '@socket.io/component-emitter': 3.1.2
+      debug: 4.3.5(supports-color@8.1.1)
+      engine.io-client: 6.6.3
+      socket.io-parser: 4.2.4
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+    dev: false
+
   /socket.io-parser@4.2.4:
     resolution: {integrity: sha512-/GbIKmo8ioc+NIWIhwdecY0ge+qVBSMdgxGygevmdHj24bsfgtCmcUUcQ5ZzcylGFHsN3k4HB4Cgkl96KVnuew==}
     engines: {node: '>=10.0.0'}
@@ -25892,6 +25947,11 @@ packages:
 
   /xmlchars@2.2.0:
     resolution: {integrity: sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==}
+    dev: false
+
+  /xmlhttprequest-ssl@2.1.2:
+    resolution: {integrity: sha512-TEU+nJVUUnA4CYJFLvK5X9AOeH4KvDvhIfm0vV1GaQRtchnG0hgK5p8hw/xjv8cunWYCsiPCSDzObPyhEwq3KQ==}
+    engines: {node: '>=0.4.0'}
     dev: false
 
   /xtend@2.1.2:

@@ -22,6 +22,7 @@ import {
   FailedWebhookRetryRequestsRepository,
   WebhookLogRepository,
 } from '@impler/dal';
+import { StorageTypeEnum } from '@impler/shared';
 import { CSVFileService2, ExcelFileService } from './services/file/file.service';
 import {
   S3StorageService,
@@ -32,7 +33,7 @@ import {
   NameService,
   AzureStorageService,
 } from '@impler/services';
-import { StorageTypeEnum } from '@impler/shared';
+import { WebSocketService } from './services';
 
 const DAL_MODELS = [
   ProjectRepository,
@@ -56,7 +57,7 @@ const DAL_MODELS = [
   FailedWebhookRetryRequestsRepository,
   WebhookLogRepository,
 ];
-const UTILITY_SERVICES = [CSVFileService2, FileNameService, NameService, ExcelFileService];
+const UTILITY_SERVICES = [CSVFileService2, FileNameService, NameService, ExcelFileService, WebSocketService];
 
 const dalService = new DalService();
 

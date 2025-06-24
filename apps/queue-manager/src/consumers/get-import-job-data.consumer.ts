@@ -1,118 +1,35 @@
-import axios from 'axios';
-import { parseStringPromise } from 'xml2js';
+import { RSSXMLService } from '@impler/services';
+import { ImportJobHistoryStatusEnum, SendImportJobCachedData } from '@impler/shared';
+import { JobMappingRepository, CommonRepository } from '@impler/dal';
+import { SendImportJobDataConsumer } from './send-import-job-data.consumer';
 
-import { StorageService, FileNameService } from '@impler/services';
-import { FileMimeTypesEnum, ImportJobHistoryStatusEnum, QueuesEnum } from '@impler/shared';
-import {
-  UserJobRepository,
-  JobMappingRepository,
-  ImportJobHistoryRepository,
-  CommonRepository,
-  WebhookDestinationRepository,
-} from '@impler/dal';
-import { BaseConsumer } from './base.consumer';
-import { publishToQueue } from '../bootstrap';
-import { getStorageServiceClass } from '../helpers/services.helper';
-
-export class GetImportJobDataConsumer extends BaseConsumer {
+export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
   private commonRepository: CommonRepository = new CommonRepository();
-  private userJobRepository: UserJobRepository = new UserJobRepository();
-  private importJobHistoryRepository: ImportJobHistoryRepository = new ImportJobHistoryRepository();
   private jobMappingRepository: JobMappingRepository = new JobMappingRepository();
-  private webhookDestinationRepository: WebhookDestinationRepository = new WebhookDestinationRepository();
-
-  private storageService: StorageService = getStorageServiceClass();
-  private fileNameService: FileNameService = new FileNameService();
+  private rssXmlService: RSSXMLService = new RSSXMLService();
 
   async message(message: { content: string }) {
     const data = JSON.parse(message.content) as { _jobId: string };
     const importJobHistoryId = this.commonRepository.generateMongoId().toString();
     const importedData = await this.getJobImportedData(data._jobId);
-    const allDataFilePath = this.fileNameService.getAllJsonDataFilePath(importJobHistoryId);
-    await this.convertRecordsToJsonFile(importJobHistoryId, importedData);
+
+    // Create history entry
     await this.importJobHistoryRepository.create({
       _id: importJobHistoryId,
       _jobId: data._jobId,
-      allDataFilePath,
       status: ImportJobHistoryStatusEnum.PROCESSING,
     });
-    const userJobInfo = await this.userJobRepository.getUserJobWithTemplate(data._jobId);
 
+    const userJobInfo = await this.userJobRepository.getUserJobWithTemplate(data._jobId);
     const webhookDestination = await this.webhookDestinationRepository.findOne({
       _templateId: userJobInfo._templateId,
     });
 
     if (webhookDestination?.callbackUrl) {
-      publishToQueue(QueuesEnum.SEND_IMPORT_JOB_DATA, { _jobId: data._jobId, allDataFilePath });
+      await this.sendDataImportData(data._jobId, importedData);
     }
 
     return;
-  }
-
-  getXMLJsonValueByPath(obj: Record<string, any>, path: string | undefined): string | number | undefined | any {
-    if (!path) {
-      return undefined;
-    }
-
-    const keys = path.split('>').map((key) => key.trim());
-    let current: any = obj;
-
-    for (const key of keys) {
-      if (current === undefined) return undefined;
-
-      const isArray = key.endsWith('[]');
-      const actualKey = isArray ? key.slice(0, -2) : key;
-
-      if (Array.isArray(current)) {
-        current = current.flatMap((item) => (item ? item[actualKey] : undefined)).filter(Boolean);
-      } else {
-        current = current ? current[actualKey] : undefined;
-      }
-
-      if (isArray && !Array.isArray(current)) {
-        current = current ? [current] : [];
-      }
-    }
-
-    if (Array.isArray(current)) {
-      return current.filter(
-        (item) =>
-          typeof item === 'string' ||
-          typeof item === 'number' ||
-          (Array.isArray(item) && (typeof item[0] === 'string' || typeof item[0] === 'number'))
-      );
-    } else if (typeof current === 'string' || typeof current === 'number') {
-      return current;
-    }
-
-    return undefined;
-  }
-
-  async parseXmlFromUrl(url: string): Promise<Record<string, any>> {
-    try {
-      const response = await axios.get(url);
-      const xmlData = response.data;
-
-      return await parseStringPromise(xmlData);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  mappingFunction(mappingsData: any, values: any[]): any[] {
-    const result = [];
-    const maxLength = Math.max(...values.map((value) => (Array.isArray(value) ? value.length : 1)));
-
-    for (let i = 0; i < maxLength; i++) {
-      const item: any = {};
-      mappingsData.forEach((mapping, index) => {
-        const value = values[index];
-        item[mapping.key] = Array.isArray(value) ? value[i] : value;
-      });
-      result.push(item);
-    }
-
-    return result;
   }
 
   async getJobImportedData(_jobId: string) {
@@ -123,15 +40,20 @@ export class GetImportJobDataConsumer extends BaseConsumer {
       }
 
       const jobMappings = await this.jobMappingRepository.find({ _jobId });
-      const mappings: { key: string; mapping: string }[] = jobMappings.map((jobMapping) => ({
+      const mappings: { key: string; path: string }[] = jobMappings.map((jobMapping) => ({
         key: jobMapping.key,
-        mapping: jobMapping.path,
+        path: jobMapping.path,
       }));
 
-      const xmlJsonData = await this.parseXmlFromUrl(userJob.url);
+      const parsedXMLData = await this.rssXmlService.parseXMLAndExtractData({
+        xmlUrl: userJob.url,
+      });
+      if (!parsedXMLData) {
+        throw new Error('Failed to parse XML data');
+      }
 
-      const returnedValues = mappings.map(({ mapping }) => this.getXMLJsonValueByPath(xmlJsonData, mapping));
-      const mappedData = this.mappingFunction(mappings, returnedValues);
+      const batchResult = await this.rssXmlService.getBatchXMLKeyValuesByPaths(parsedXMLData.xmlData, mappings);
+      const mappedData = await this.rssXmlService.mappingFunction(mappings, batchResult);
 
       return mappedData;
     } catch (error) {
@@ -139,8 +61,63 @@ export class GetImportJobDataConsumer extends BaseConsumer {
     }
   }
 
-  private async convertRecordsToJsonFile(importJobId: string, importRecords: Record<string, any>[]) {
-    const allJsonDataFilePath = this.fileNameService.getAllJsonDataFilePath(importJobId);
-    await this.storageService.uploadFile(allJsonDataFilePath, JSON.stringify(importRecords), FileMimeTypesEnum.JSON);
+  private async sendDataImportData(
+    _jobId: string,
+    allDataJson: any[],
+    page = 1,
+    initialCachedData?: SendImportJobCachedData
+  ) {
+    try {
+      let cachedData = null;
+      if (!initialCachedData) {
+        cachedData = await this.getInitialCachedData(_jobId, null);
+      } else {
+        cachedData = initialCachedData;
+      }
+
+      if (cachedData && cachedData.callbackUrl) {
+        const { sendData } = this.buildSendData({
+          data: allDataJson,
+          uploadId: _jobId,
+          page,
+          chunkSize: cachedData.chunkSize,
+          recordFormat: cachedData.recordFormat,
+          chunkFormat: cachedData.chunkFormat,
+          ...cachedData,
+        });
+
+        const headers =
+          cachedData.authHeaderName && cachedData.authHeaderValue
+            ? { [cachedData.authHeaderName]: cachedData.authHeaderValue }
+            : null;
+
+        const response = await this.makeApiCall({
+          data: sendData,
+          uploadId: _jobId,
+          page,
+          method: 'POST',
+          url: cachedData.callbackUrl,
+          headers,
+        });
+
+        await this.makeResponseEntry(response);
+
+        const nextPageNumber = this.getNextPageNumber({
+          totalRecords: allDataJson.length,
+          currentPage: page,
+          chunkSize: cachedData.chunkSize,
+        });
+
+        if (nextPageNumber) {
+          // Recursively call for next page with updated page number
+          await this.sendDataImportData(_jobId, allDataJson, nextPageNumber, { ...cachedData, page: nextPageNumber });
+        } else {
+          // Processing is done
+          await this.finalizeUpload(_jobId);
+        }
+      }
+    } catch (error) {
+      throw error;
+    }
   }
 }
