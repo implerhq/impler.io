@@ -11,7 +11,7 @@ import {
 } from '@types';
 
 export const useWebSocketProgress = ({
-  serverUrl = process.env.WEBSOCKET_SERVER_URL ?? 'localhost:3002', //ToDo use constant .env
+  serverUrl = WEBSOCKET_SERVER_URL,
   autoConnect = true,
   onCompletion,
   onError,
@@ -24,8 +24,6 @@ export const useWebSocketProgress = ({
   const [completionData, setCompletionData] = useState<ICompletionData | null>(null);
   const [errorData, setErrorData] = useState<IErrorData | null>(null);
   const [abortedData, setAbortedData] = useState<ISessionAbortedData | null>(null);
-
-  console.log('WEBSOCKET_SERVER_URL>>>', WEBSOCKET_SERVER_URL ?? process.env.WEBSOCKET_SERVER_URL);
 
   const webSocketSessionIdRef = useRef<string | null>(null);
   const reconnectAttempts = useRef(0);
