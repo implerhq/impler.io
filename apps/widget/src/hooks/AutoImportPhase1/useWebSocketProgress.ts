@@ -11,7 +11,7 @@ import {
 } from '@types';
 
 export const useWebSocketProgress = ({
-  serverUrl = WEBSOCKET_SERVER_URL,
+  serverUrl,
   autoConnect = true,
   onCompletion,
   onError,
@@ -34,7 +34,7 @@ export const useWebSocketProgress = ({
       return;
     }
 
-    const newSocket = io(serverUrl, {
+    const newSocket = io(WEBSOCKET_SERVER_URL, {
       transports: ['websocket', 'polling'],
       upgrade: true,
       rememberUpgrade: true,
@@ -76,7 +76,6 @@ export const useWebSocketProgress = ({
 
     // Progress data handlers
     newSocket.on('rssxml-progress', (data: IProgressData) => {
-      console.log(data);
       setProgressData(data);
     });
 

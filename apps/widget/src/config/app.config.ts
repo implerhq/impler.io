@@ -12,7 +12,7 @@ export const AMPLITUDE_ID = window._env_?.REACT_APP_AMPLITUDE_ID || process.env.
 export const ENV = window._env_?.REACT_APP_ENVIRONMENT || process.env.REACT_APP_ENVIRONMENT || 'local';
 
 export const WEBSOCKET_SERVER_URL =
-  window._env_?.REACT_APP_WEBSOCKET_SERVER_URL || process.env.REACT_APP_WEBSOCKET_SERVER_URL || 'localhost:3002';
+  window._env_?.REACT_APP_WEBSOCKET_SERVER_URL || process.env.REACT_APP_WEBSOCKET_SERVER_URL || 'localhost:3000';
 
 export const HANDSONTABLE_LICENSE_KEY =
   window._env_?.REACT_APP_HANDSONTABLE_LICENSE_KEY ||
