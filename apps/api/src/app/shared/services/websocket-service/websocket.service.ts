@@ -12,7 +12,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { IProgressData } from '@impler/services';
 
 @Injectable()
-@WebSocketGateway(3002, { cors: true })
+@WebSocketGateway()
 export class WebSocketService implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   private server: Server;
