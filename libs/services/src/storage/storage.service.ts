@@ -1,9 +1,7 @@
-import { PassThrough, Readable } from 'stream';
-import { Upload } from '@aws-sdk/lib-storage';
+import { Readable } from 'stream';
 import {
   S3Client,
   PutObjectCommand,
-  PutObjectCommandOutput,
   GetObjectCommand,
   DeleteObjectCommand,
   ListBucketsCommand,
@@ -11,20 +9,29 @@ import {
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { FileNotExistError, Defaults } from '@impler/shared';
 
+// Azure Storage imports
+import {
+  BlobSASPermissions,
+  BlobServiceClient,
+  BlockBlobUploadResponse,
+  ContainerSASPermissions,
+} from '@azure/storage-blob';
+
 export interface IFilePath {
   path: string;
   name: string;
 }
 
+export interface StorageResponse {
+  success: boolean;
+  metadata?: any;
+}
+
 export abstract class StorageService {
-  abstract uploadFile(
-    key: string,
-    file: Buffer | string | PassThrough,
-    contentType: string
-  ): Promise<PutObjectCommandOutput>;
+  abstract uploadFile(key: string, file: Buffer | string | Readable, contentType: string): Promise<StorageResponse>;
   abstract getFileContent(key: string, encoding?: BufferEncoding): Promise<string>;
   abstract getFileStream(key: string): Promise<Readable>;
-  abstract writeStream(key: string, stream: Readable, contentType: string): Upload;
+  abstract writeStream(key: string, stream: Readable, contentType: string): Promise<void>;
   abstract deleteFile(key: string): Promise<void>;
   abstract isConnected(): boolean;
   abstract getSignedUrl(key: string): Promise<string>;
@@ -63,7 +70,7 @@ export class S3StorageService implements StorageService {
       });
   }
 
-  async uploadFile(key: string, file: Buffer, contentType: string): Promise<PutObjectCommandOutput> {
+  async uploadFile(key: string, file: Buffer | string | Readable, contentType: string): Promise<StorageResponse> {
     const command = new PutObjectCommand({
       Bucket: process.env.S3_BUCKET_NAME,
       Key: key,
@@ -71,7 +78,14 @@ export class S3StorageService implements StorageService {
       ContentType: contentType,
     });
 
-    return await this.s3.send(command);
+    const result = await this.s3.send(command);
+    return {
+      success: true,
+      metadata: {
+        eTag: result.ETag,
+        versionId: result.VersionId,
+      },
+    };
   }
 
   async getFileContent(key: string, encoding = 'utf8' as BufferEncoding): Promise<string> {
@@ -81,7 +95,6 @@ export class S3StorageService implements StorageService {
         Key: key,
       });
       const data = await this.s3.send(command);
-
       return await streamToString(data.Body as Readable, encoding);
     } catch (error) {
       if (error.code === Defaults.NOT_FOUND_STATUS_CODE || error.message === 'The specified key does not exist.') {
@@ -98,7 +111,6 @@ export class S3StorageService implements StorageService {
         Key: key,
       });
       const data = await this.s3.send(command);
-
       return data.Body as Readable;
     } catch (error) {
       if (error.code === Defaults.NOT_FOUND_STATUS_CODE || error.message === 'The specified key does not exist.') {
@@ -108,17 +120,14 @@ export class S3StorageService implements StorageService {
     }
   }
 
-  writeStream(key: string, stream: Readable | PassThrough, contentType: string): Upload {
-    return new Upload({
-      client: this.s3,
-      queueSize: 4,
-      params: {
-        Bucket: process.env.S3_BUCKET_NAME,
-        Key: key,
-        Body: stream,
-        ContentType: contentType,
-      },
+  async writeStream(key: string, stream: Readable, contentType: string): Promise<void> {
+    const command = new PutObjectCommand({
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: key,
+      Body: stream,
+      ContentType: contentType,
     });
+    await this.s3.send(command);
   }
 
   async deleteFile(key: string): Promise<void> {
@@ -134,16 +143,126 @@ export class S3StorageService implements StorageService {
   }
 
   async getSignedUrl(key: string): Promise<string> {
-    return await getSignedUrl(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      this.s3,
-      new GetObjectCommand({
-        Bucket: process.env.S3_BUCKET_NAME,
-        Key: key,
-      }),
-      // eslint-disable-next-line no-magic-numbers
-      { expiresIn: 15 * 60 } // 15 minutes
+    const command = new GetObjectCommand({
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: key,
+    });
+    return getSignedUrl(this.s3, command, { expiresIn: 3600 });
+  }
+}
+
+export class AzureStorageService implements StorageService {
+  private isAzureConnected = false;
+  private blobServiceClient: BlobServiceClient;
+  private containerClient: any;
+
+  constructor() {
+    if (!process.env.AZURE_STORAGE_CONNECTION_STRING) {
+      throw new Error('AZURE_STORAGE_CONNECTION_STRING is not configured');
+    }
+
+    this.blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_CONNECTION_STRING);
+    this.containerClient = this.blobServiceClient.getContainerClient(
+      process.env.AZURE_STORAGE_CONTAINER || 'default-container'
     );
+
+    // Verify connection
+    this.blobServiceClient
+      .listContainers()
+      .next()
+      .then(() => {
+        this.isAzureConnected = true;
+      })
+      .catch(() => {
+        this.isAzureConnected = false;
+      });
+  }
+
+  async uploadFile(key: string, file: Buffer | string | Readable, contentType: string): Promise<StorageResponse> {
+    const blockBlobClient = this.containerClient.getBlockBlobClient(key);
+    let uploadResponse: BlockBlobUploadResponse;
+
+    if (typeof file === 'string') {
+      const buffer = Buffer.from(file);
+      uploadResponse = await blockBlobClient.upload(buffer, buffer.length);
+    } else if (file instanceof Buffer) {
+      uploadResponse = await blockBlobClient.upload(file, file.length);
+    } else {
+      // For Readable streams
+      const chunks: Buffer[] = [];
+      for await (const chunk of file) {
+        chunks.push(chunk);
+      }
+      const buffer = Buffer.concat(chunks);
+      uploadResponse = await blockBlobClient.upload(buffer, buffer.length);
+    }
+
+    await blockBlobClient.setHTTPHeaders({ blobContentType: contentType });
+    return {
+      success: true,
+      metadata: {
+        eTag: uploadResponse.etag,
+      },
+    };
+  }
+
+  async getFileContent(key: string, encoding = 'utf8' as BufferEncoding): Promise<string> {
+    try {
+      const blockBlobClient = this.containerClient.getBlockBlobClient(key);
+      const downloadResponse = await blockBlobClient.download();
+      const content = await downloadResponse.blobBody?.toString(encoding);
+      if (!content) {
+        throw new Error('Failed to download file content');
+      }
+      return content;
+    } catch (error) {
+      if (error.name === 'RestError' && error.statusCode === 404) {
+        throw new FileNotExistError(key);
+      }
+      throw error;
+    }
+  }
+
+  async getFileStream(key: string): Promise<Readable> {
+    try {
+      const blockBlobClient = this.containerClient.getBlockBlobClient(key);
+      const downloadResponse = await blockBlobClient.download();
+      return Readable.from(downloadResponse.blobBody as any);
+    } catch (error) {
+      if (error.name === 'RestError' && error.statusCode === 404) {
+        throw new FileNotExistError(key);
+      }
+      throw error;
+    }
+  }
+
+  async writeStream(key: string, stream: Readable, contentType: string): Promise<void> {
+    const blockBlobClient = this.containerClient.getBlockBlobClient(key);
+    const chunks: Buffer[] = [];
+    for await (const chunk of stream) {
+      chunks.push(chunk);
+    }
+    const buffer = Buffer.concat(chunks);
+    await blockBlobClient.upload(buffer, buffer.length);
+    await blockBlobClient.setHTTPHeaders({ blobContentType: contentType });
+  }
+
+  async deleteFile(key: string): Promise<void> {
+    const blockBlobClient = this.containerClient.getBlockBlobClient(key);
+    await blockBlobClient.delete();
+  }
+
+  isConnected(): boolean {
+    return this.isAzureConnected;
+  }
+
+  async getSignedUrl(key: string): Promise<string> {
+    const blockBlobClient = this.containerClient.getBlockBlobClient(key);
+    const permissions = BlobSASPermissions.parse('r');
+
+    return blockBlobClient.generateSasUrl({
+      permissions,
+      expiresOn: new Date(Date.now() + 3600 * 1000), // 1 hour expiry
+    });
   }
 }

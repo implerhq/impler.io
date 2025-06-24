@@ -7,7 +7,7 @@ export abstract class BaseConsumer {
   protected DEFAULT_PAGE = 1;
   abstract message(data: any): void;
 
-  protected getNextPageNumber({
+  getNextPageNumber({
     currentPage,
     chunkSize,
     totalRecords,
@@ -23,15 +23,15 @@ export abstract class BaseConsumer {
     return null;
   }
 
-  protected getTotalPages(totalRecords: number, pageSize: number): number {
+  getTotalPages(totalRecords: number, pageSize: number): number {
     return Math.ceil(totalRecords / pageSize);
   }
 
-  protected getNextTime(delayInMinutes: number) {
+  getNextTime(delayInMinutes: number) {
     return dayjs().add(delayInMinutes, 'minutes');
   }
 
-  protected async makeApiCall({
+  async makeApiCall({
     data,
     uploadId,
     page,

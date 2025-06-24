@@ -1,6 +1,6 @@
 {
   "name": "impler.io",
-  "version": "0.30.1",
+  "version": "1.0.0",
   "description": "Open source infrastructure to import data easily",
   "packageManager": "pnpm@8.9.0",
   "private": true,
@@ -39,6 +39,7 @@
     "start:docker:embed": "cross-env npx nx start:docker @impler/embed",
     "test": "npx nx run-many --target=test --all",
     "test:api": "pnpm run --filter @impler/api test",
+    "release:major": "lerna version major --no-push",
     "release:patch": "lerna version patch --no-push",
     "release:minor": "lerna version minor --no-push",
     "release:preminor": "lerna version preminor --no-push",

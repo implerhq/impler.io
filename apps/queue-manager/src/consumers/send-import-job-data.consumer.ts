@@ -27,11 +27,11 @@ const DEFAULT_PAGE = 1;
 
 export class SendImportJobDataConsumer extends BaseConsumer {
   private columnRepository: ColumnRepository = new ColumnRepository();
-  private userJobRepository: UserJobRepository = new UserJobRepository();
+  public userJobRepository: UserJobRepository = new UserJobRepository();
   private templateRepository: TemplateRepository = new TemplateRepository();
-  private importJobHistoryRepository: ImportJobHistoryRepository = new ImportJobHistoryRepository();
-  private webhookDestinationRepository: WebhookDestinationRepository = new WebhookDestinationRepository();
-  private storageService: StorageService = getStorageServiceClass();
+  public importJobHistoryRepository: ImportJobHistoryRepository = new ImportJobHistoryRepository();
+  public webhookDestinationRepository: WebhookDestinationRepository = new WebhookDestinationRepository();
+  public storageService: StorageService = getStorageServiceClass();
 
   async message(message: { content: string }) {
     const data = JSON.parse(message.content) as SendImportJobData;
@@ -94,7 +94,7 @@ export class SendImportJobDataConsumer extends BaseConsumer {
     }
   }
 
-  private buildSendData({
+  public buildSendData({
     data,
     defaultValues,
     page = DEFAULT_PAGE,
@@ -140,7 +140,7 @@ export class SendImportJobDataConsumer extends BaseConsumer {
     };
   }
 
-  private async getInitialCachedData(_jobId: string, allDataFilePath: string): Promise<SendImportJobCachedData> {
+  async getInitialCachedData(_jobId: string, allDataFilePath: string): Promise<SendImportJobCachedData> {
     const userJob = await this.userJobRepository.findById(_jobId);
     const userJobEmail = await this.userJobRepository.getUserEmailFromJobId(_jobId);
 
@@ -185,11 +185,11 @@ export class SendImportJobDataConsumer extends BaseConsumer {
     };
   }
 
-  private async makeResponseEntry(data: Partial<WebhookLogEntity>) {
+  public async makeResponseEntry(data: Partial<WebhookLogEntity>) {
     return this.importJobHistoryRepository.create(data);
   }
 
-  private async finalizeUpload(_jobId: string) {
+  public async finalizeUpload(_jobId: string) {
     return await this.userJobRepository.update({ _id: _jobId }, { status: UploadStatusEnum.COMPLETED });
   }
 }

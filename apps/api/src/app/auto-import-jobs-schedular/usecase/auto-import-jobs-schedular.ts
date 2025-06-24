@@ -6,6 +6,7 @@ import { Cron } from '@nestjs/schedule';
 import { ScheduleUserJob, UpdateUserJob } from 'app/import-jobs/usecase';
 import { UserJobImportStatusEnum } from '@impler/shared';
 import { CRON_SCHEDULE } from '@shared/constants';
+// import { CRON_SCHEDULE } from '@shared/constants';
 const parseCronExpression = require('@impler/shared/src/utils/cronstrue');
 
 @Injectable()

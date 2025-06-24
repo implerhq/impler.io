@@ -1,6 +1,6 @@
 {
   "name": "@impler/services",
-  "version": "0.30.1",
+  "version": "1.0.0",
   "description": "Reusable services to shared between backend api and queue-manager",
   "license": "MIT",
   "author": "implerhq",
@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@types/node": "^18.7.18",
+    "@types/sax": "^1.2.7",
     "@types/uuid": "^9.0.2",
     "rimraf": "^3.0.2",
     "typescript": "^4.8.3"
@@ -30,9 +31,11 @@
     "@aws-sdk/client-ses": "^3.616.0",
     "@aws-sdk/lib-storage": "^3.360.0",
     "@aws-sdk/s3-request-presigner": "^3.276.0",
+    "@azure/storage-blob": "^12.27.0",
     "@impler/shared": "workspace:^",
     "axios": "1.6.2",
     "nodemailer": "^6.9.14",
+    "sax": "^1.4.1",
     "uuid": "^9.0.0"
   },
   "lint-staged": {

@@ -362,6 +362,13 @@ export function Container({ children }: PropsWithChildren<{}>) {
                 },
               },
             },
+            ProgressRing: {
+              styles: {
+                root: {
+                  '--rp-section-color': 'var(--mantine-color-primary-filled)',
+                },
+              },
+            },
           },
           colors: {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment

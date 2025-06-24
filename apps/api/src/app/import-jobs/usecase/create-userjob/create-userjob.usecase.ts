@@ -1,40 +1,60 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { isValidXMLMimeType } from '@shared/helpers/common.helper';
-import { APIMessages } from '@shared/constants';
+import { Injectable } from '@nestjs/common';
 import { UserJobEntity, UserJobRepository } from '@impler/dal';
-import { RSSService } from '@shared/services';
 import { CreateUserJobCommand } from './create-userjob.command';
+import { APIMessages } from '@shared/constants';
+import { BadRequestException } from '@nestjs/common';
+import { RSSXMLService } from '@impler/services';
+import { isValidXMLMimeType } from '@shared/helpers/common.helper';
+import { WebSocketService } from '@shared/services';
 
 @Injectable()
 export class CreateUserJob {
   constructor(
-    private readonly rssService: RSSService,
+    private readonly webSocketService: WebSocketService,
     private readonly userJobRepository: UserJobRepository
   ) {}
 
   async execute({
+    webSocketSessionId,
     url,
     extra,
     _templateId,
     externalUserId,
     authHeaderValue,
   }: CreateUserJobCommand): Promise<UserJobEntity> {
-    const mimeType = await this.rssService.getMimeType(url);
-    if (isValidXMLMimeType(mimeType)) {
-      const { rssKeyHeading } = await this.rssService.parseRssFeed(url);
-      let formattedExtra = extra || '{}';
-      try {
-        formattedExtra = JSON.parse(extra);
-      } catch (_) {}
+    const rssService = new RSSXMLService(url);
 
-      return await this.userJobRepository.create({
-        url,
-        extra,
-        authHeaderValue,
-        headings: rssKeyHeading,
-        _templateId: _templateId,
-        externalUserId: externalUserId || (formattedExtra as unknown as Record<string, any>)?.externalUserId,
-      });
+    const mimeType = await rssService.getMimeType(url);
+
+    if (isValidXMLMimeType(mimeType)) {
+      try {
+        const abortController = new AbortController();
+
+        this.webSocketService.registerSessionAbort(webSocketSessionId, abortController);
+
+        const rssXmlParsedDataKeys = await rssService.parseXMLAndExtractData({
+          xmlUrl: url,
+          sessionId: webSocketSessionId,
+          sendProgress: this.webSocketService.sendProgress,
+          sendError: this.webSocketService.sendError,
+          sendCompletion: this.webSocketService.sendCompletion,
+          abortSignal: abortController.signal,
+        });
+
+        let formattedExtra = extra || '{}';
+        try {
+          formattedExtra = JSON.parse(extra);
+        } catch (_) {}
+
+        return await this.userJobRepository.create({
+          url,
+          extra,
+          authHeaderValue,
+          headings: rssXmlParsedDataKeys?.keys || [],
+          _templateId: _templateId,
+          externalUserId: externalUserId || (formattedExtra as unknown as Record<string, any>)?.externalUserId,
+        });
+      } catch (error) {}
     } else {
       throw new BadRequestException(APIMessages.INVALID_RSS_URL);
     }

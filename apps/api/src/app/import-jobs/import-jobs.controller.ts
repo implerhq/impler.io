@@ -37,6 +37,7 @@ export class ImportJobsController {
   @ApiSecurity(ACCESS_KEY_NAME)
   async createUserJobRoute(@Param('templateId') templateId: string, @Body() jobData: CreateUserJobDto) {
     return this.createUserJob.execute({
+      webSocketSessionId: jobData.webSocketSessionId,
       _templateId: templateId,
       url: jobData.url,
       extra: jobData.extra,

@@ -3,7 +3,7 @@ import { GetColumnSchemaMapping } from './get-columnschema-mapping/get-columnsch
 import { CreateJobMapping } from './create-jobmapping/create-jobmapping.usecase';
 import { UpdateUserJob } from './update-userjob/update-userjob.usecase';
 import { GetUserJob } from './get-userjob/get-userjob.usecase';
-import { RSSService } from '@shared/services';
+import { RSSXMLService } from '@impler/services';
 import { QueueService } from '@shared/services/queue.service';
 import { UserJobPause } from './userjob-usecase/userjob-pause.usecase';
 import { UserJobDelete } from './userjob-usecase/userjob-delete.usecase';
@@ -18,7 +18,7 @@ export const USECASES = [
   CreateJobMapping,
   UpdateUserJob,
   GetUserJob,
-  RSSService,
+  RSSXMLService,
   QueueService,
   UserJobResume,
   UserJobPause,
