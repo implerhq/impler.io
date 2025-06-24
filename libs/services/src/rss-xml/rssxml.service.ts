@@ -285,10 +285,7 @@ export class RSSXMLService {
       this.checkAbortSignal();
 
       if (keys.length > 0 && xmlData) {
-        this.sendCompletion?.(data.sessionId, {
-          keys,
-          xmlData,
-        });
+        this.sendCompletion?.(data.sessionId, { keys });
       }
 
       return {
