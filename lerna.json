@@ -2,10 +2,6 @@
   "$schema": "node_modules/lerna/schemas/lerna-schema.json",
   "npmClient": "pnpm",
   "useNx": true,
-  "packages": [
-    "apps/*",
-    "libs/*",
-    "packages/*"
-  ],
-  "version": "0.29.0"
+  "packages": ["apps/*", "libs/*", "packages/*"],
+  "version": "1.0.0"
 }
