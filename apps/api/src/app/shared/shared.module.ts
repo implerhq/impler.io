@@ -31,6 +31,7 @@ import {
   FileNameService,
   NameService,
 } from '@impler/services';
+import { WebSocketService } from './services';
 
 const DAL_MODELS = [
   ProjectRepository,
@@ -54,7 +55,7 @@ const DAL_MODELS = [
   FailedWebhookRetryRequestsRepository,
   WebhookLogRepository,
 ];
-const UTILITY_SERVICES = [CSVFileService2, FileNameService, NameService, ExcelFileService];
+const UTILITY_SERVICES = [CSVFileService2, FileNameService, NameService, ExcelFileService, WebSocketService];
 
 const dalService = new DalService();
 

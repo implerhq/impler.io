@@ -1,5 +1,6 @@
 import { IUserShowPayload } from '@impler/shared';
 import { EventTypesEnum, WidgetEventTypesEnum } from '@impler/shared';
+import { Socket } from 'socket.io-client';
 
 export type MessageHandlerDataType =
   | {
@@ -53,6 +54,7 @@ export interface IUploadValues extends IFormvalues {
 }
 
 export interface IAutoImportValues {
+  webSocketSessionId: string;
   url: string;
   templateId: string;
   authHeaderValue?: string;
@@ -81,3 +83,61 @@ export type RecurrenceFormData = {
   yearlyDayPosition?: string;
   yearlyDayOfWeek?: string;
 };
+
+export enum StageEnum {
+  FETCHING = 'fetching',
+  PARSING = 'parsing',
+  EXTRACTING = 'extracting',
+  MAPPING = 'mapping',
+  COMPLETED = 'completed',
+  ERROR = 'error',
+}
+
+export interface IProgressData {
+  sessionId: string;
+  percentage: number;
+  stage: StageEnum;
+}
+
+export interface ICompletionData {
+  sessionId: string;
+  result: any;
+  timestamp: string;
+}
+
+export interface IErrorData {
+  sessionId: string;
+  error: string;
+  timestamp: string;
+}
+
+export interface ISessionAbortedData {
+  sessionId: string;
+  message: string;
+  timestamp: string;
+}
+
+export interface UseWebSocketProgressOptions {
+  serverUrl?: string;
+  autoConnect?: boolean;
+  onProgress?: (data: IProgressData) => void;
+  onCompletion?: (data: ICompletionData) => void;
+  onError?: (data: IErrorData) => void;
+  onConnectionChange?: (connected: boolean) => void;
+  onSessionAborted?: (data: ISessionAbortedData) => void;
+}
+
+export interface UseWebSocketProgressReturn {
+  socket: Socket | null;
+  isConnected: boolean;
+  progressData: IProgressData | null;
+  completionData: ICompletionData | null;
+  errorData: IErrorData | null;
+  abortedData: ISessionAbortedData | null;
+  joinSession: (sessionId: string) => void;
+  leaveSession: (sessionId: string) => void;
+  abortSession: (sessionId: string) => void;
+  clearProgress: () => void;
+  connect: () => void;
+  disconnect: () => void;
+}
