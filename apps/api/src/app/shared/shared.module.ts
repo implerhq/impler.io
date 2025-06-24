@@ -30,7 +30,9 @@ import {
   SESEmailService,
   FileNameService,
   NameService,
+  AzureStorageService,
 } from '@impler/services';
+import { StorageTypeEnum } from '@impler/shared';
 
 const DAL_MODELS = [
   ProjectRepository,
@@ -59,7 +61,7 @@ const UTILITY_SERVICES = [CSVFileService2, FileNameService, NameService, ExcelFi
 const dalService = new DalService();
 
 function getStorageServiceClass() {
-  return S3StorageService;
+  return process.env.STORAGE_TYPE === StorageTypeEnum.AZURE ? AzureStorageService : S3StorageService;
 }
 
 function getEmailServiceClass() {
