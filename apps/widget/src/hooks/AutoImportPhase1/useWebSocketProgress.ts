@@ -25,42 +25,51 @@ export const useWebSocketProgress = ({
   const [errorData, setErrorData] = useState<IErrorData | null>(null);
   const [abortedData, setAbortedData] = useState<ISessionAbortedData | null>(null);
 
-  const webSocketSessionIdRef = useRef<string | null>(null);
+  // const webSocketSessionIdRef = useRef<string | null>(null);
   const reconnectAttempts = useRef(0);
+  const isIntentionalDisconnectRef = useRef(false);
+
   const maxReconnectAttempts = 5;
+  const isConnectingRef = useRef(false); // Prevent multiple connection attempts
 
   const connect = useCallback(() => {
-    if (socket?.connected) {
+    // Prevent multiple simultaneous connection attempts
+    if (socket?.connected || isConnectingRef.current) {
       return;
     }
 
-    const newSocket = io(WEBSOCKET_SERVER_URL, {
+    isConnectingRef.current = true;
+
+    const newSocket = io(serverUrl || WEBSOCKET_SERVER_URL, {
       transports: ['websocket', 'polling'],
       upgrade: true,
       rememberUpgrade: true,
       timeout: 20000,
-      forceNew: false,
+      forceNew: true, // Force new connection to avoid reusing old ones
     });
 
     // Connection event handlers
     newSocket.on('connect', () => {
       setIsConnected(true);
       reconnectAttempts.current = 0;
+      isConnectingRef.current = false;
       onConnectionChange?.(true);
-
-      // Rejoin session if we had one
-      if (webSocketSessionIdRef.current) {
-        newSocket.emit('join-session', { sessionId: webSocketSessionIdRef.current });
-      }
     });
 
     newSocket.on('disconnect', () => {
       setIsConnected(false);
-      onConnectionChange?.(false);
-    });
+      isConnectingRef.current = false;
+      // Only call onConnectionChange if it's not an intentional disconnect
+      if (!isIntentionalDisconnectRef.current) {
+        onConnectionChange?.(false);
+      }
 
+      // Reset the flag after handling
+      isIntentionalDisconnectRef.current = false;
+    });
     newSocket.on('connect_error', () => {
       setIsConnected(false);
+      isConnectingRef.current = false;
       onConnectionChange?.(false);
 
       // Implement exponential backoff for reconnection
@@ -71,6 +80,7 @@ export const useWebSocketProgress = ({
           reconnectAttempts.current++;
           connect();
         }, delay);
+      } else {
       }
     });
 
@@ -101,14 +111,15 @@ export const useWebSocketProgress = ({
     });
 
     setSocket(newSocket);
-  }, [serverUrl, onCompletion, onError, onConnectionChange, onSessionAborted]);
+  }, [serverUrl, onCompletion, onError, onConnectionChange, onSessionAborted]); // Removed socket from deps
 
   const disconnect = useCallback(() => {
     if (socket) {
+      isIntentionalDisconnectRef.current = true; // Set flag before disconnecting
       socket.disconnect();
       setSocket(null);
       setIsConnected(false);
-      webSocketSessionIdRef.current = null;
+      isConnectingRef.current = false;
     }
   }, [socket]);
 
@@ -117,7 +128,7 @@ export const useWebSocketProgress = ({
       if (!socket?.connected) {
         return;
       }
-      webSocketSessionIdRef.current = sessionId;
+
       socket.emit('join-session', { sessionId });
     },
     [socket]
@@ -130,7 +141,7 @@ export const useWebSocketProgress = ({
       }
 
       socket.emit('leave-session', { sessionId });
-      webSocketSessionIdRef.current = null;
+      // webSocketSessionIdRef.current = null;
     },
     [socket]
   );
@@ -155,22 +166,30 @@ export const useWebSocketProgress = ({
 
   // Auto-connect on mount
   useEffect(() => {
-    if (autoConnect) {
+    let mounted = true;
+
+    if (autoConnect && mounted) {
       connect();
     }
 
     // Cleanup on unmount
     return () => {
+      mounted = false;
       if (socket) {
+        isIntentionalDisconnectRef.current = true;
+        socket.removeAllListeners();
         socket.disconnect();
+        setSocket(null);
+        setIsConnected(false);
+        isConnectingRef.current = false;
       }
     };
-  }, [autoConnect, connect]);
+  }, [autoConnect]);
 
   // Handle page visibility changes (reconnect when page becomes visible)
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible' && !socket?.connected) {
+      if (document.visibilityState === 'visible' && !socket?.connected && !isConnectingRef.current) {
         connect();
       }
     };
@@ -178,7 +197,7 @@ export const useWebSocketProgress = ({
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [connect, socket]);
+  }, [socket?.connected]); // Only depend on connection status
 
   return {
     socket,
