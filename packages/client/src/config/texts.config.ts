@@ -118,7 +118,7 @@ export const WIDGET_TEXTS = {
   },
   AUTOIMPORT_PHASE1: {
     CLOSE_CONFIRMATION: {
-      TITLE: 'Parsing is in progress... Please do not close the Widget!',
+      TITLE: 'Parsing is in progress... Please do not close the Widget !',
     },
     MAPCOLUMN: 'Map Column',
   },
