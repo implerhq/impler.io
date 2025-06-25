@@ -1,6 +1,6 @@
-import { useMutation } from '@tanstack/react-query';
-import { useForm, SubmitHandler } from 'react-hook-form';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { useMutation } from '@tanstack/react-query';
 
 import { generateSessionId, notifier } from '@util';
 import { IAutoImportValues, IErrorData } from '@types';
@@ -13,16 +13,26 @@ import { useWebSocketProgress } from '@hooks/AutoImportPhase1/useWebSocketProgre
 
 interface IUseAutoImportPhase1Props {
   goNext: () => void;
+  onRegisterAbortFunction?: (abortFn: () => void) => void;
+  onRegisterDisconnectFunction?: (disconnectFn: () => void) => void;
+  onRssParsingStart?: () => void;
+  onRssParsingEnd?: () => void;
 }
 
 interface FormValues {
   rssUrl: string;
 }
 
-export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
+export function useAutoImportPhase1({
+  goNext,
+  onRegisterAbortFunction,
+  onRegisterDisconnectFunction,
+  onRssParsingStart,
+  onRssParsingEnd,
+}: IUseAutoImportPhase1Props) {
   const { api } = useAPIState();
   const { setJobsInfo } = useJobsInfo();
-  const { output, schema } = useAppState();
+  const { output, schema, texts } = useAppState();
   const { templateId, extra, authHeaderValue } = useImplerState();
 
   const webSocketSessionIdRef = useRef<string | null>(null);
@@ -62,13 +72,22 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
   }, []);
 
   // Initialize WebSocket connection
-  const { isConnected, progressData, completionData, errorData, joinSession, leaveSession, socket, clearProgress } =
-    useWebSocketProgress({
-      onCompletion: handleCompletion,
-      onError: handleError,
-      onConnectionChange: handleConnectionChange,
-      autoConnect: true,
-    });
+  const {
+    isConnected,
+    progressData,
+    completionData,
+    errorData,
+    joinSession,
+    leaveSession,
+    socket,
+    disconnect,
+    clearProgress,
+  } = useWebSocketProgress({
+    onCompletion: handleCompletion,
+    onError: handleError,
+    onConnectionChange: handleConnectionChange,
+    autoConnect: true,
+  });
 
   // Mutation for RSS XML processing
   const { isLoading: isGetRssXmlHeadingsLoading, mutate: getRssXmlHeading } = useMutation<
@@ -189,21 +208,24 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
     return 0;
   }, [progressData?.percentage]);
 
-  const handleCleanup = useCallback(() => {
-    // First abort the session if it's running
-    if (canAbort && webSocketSessionIdRef.current) {
-      abortOperation();
+  useEffect(() => {
+    if (canAbort && abortOperation && onRegisterAbortFunction) {
+      onRegisterAbortFunction(abortOperation);
+    }
+  }, [canAbort, abortOperation, onRegisterAbortFunction]);
+
+  // Register the disconnect function with the parent component
+  useEffect(() => {
+    if (isGetRssXmlHeadingsLoading) {
+      onRssParsingStart?.();
+    } else {
+      onRssParsingEnd?.();
     }
 
-    // Then do additional cleanup
-    if (socket && socket.connected) {
-      socket.disconnect();
+    if (disconnect && onRegisterDisconnectFunction) {
+      onRegisterDisconnectFunction(disconnect);
     }
-    if (webSocketSessionIdRef.current) {
-      leaveSession(webSocketSessionIdRef.current);
-      webSocketSessionIdRef.current = null;
-    }
-  }, [socket, webSocketSessionIdRef, leaveSession, abortOperation, canAbort]);
+  }, [isGetRssXmlHeadingsLoading, onRssParsingStart, onRssParsingEnd, disconnect, onRegisterDisconnectFunction]);
 
   useEffect(() => {
     return () => {
@@ -225,6 +247,7 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
 
     // WebSocket connection state
     isConnected,
+    disconnect,
     socket,
     leaveSession,
     webSocketSessionIdRef,
@@ -240,7 +263,8 @@ export function useAutoImportPhase1({ goNext }: IUseAutoImportPhase1Props) {
     // Abort functionality
     abortOperation,
     canAbort,
-    handleCleanup,
     isAborted: isAbortedRef.current,
+
+    texts,
   };
 }

@@ -174,7 +174,7 @@ export class WebSocketService implements OnGatewayConnection, OnGatewayDisconnec
   };
 
   // Helper method to check if a session has connected clients
-  hasClientsInSession = (sessionId: string): boolean => {
+  hasClientsInSession = async (sessionId: string): Promise<boolean> => {
     const room = this.server.sockets.adapter.rooms.get(sessionId);
 
     return room && room.size > 0;

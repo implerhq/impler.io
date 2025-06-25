@@ -37,6 +37,7 @@ export function Widget() {
 
   // Add ref to store abort function from AutoImportPhase1
   const abortRssOperationRef = useRef<(() => void) | null>(null);
+  const disconnectSocketRef = useRef<(() => void) | null>(null);
 
   const {
     flow,
@@ -63,11 +64,24 @@ export function Widget() {
       abortRssOperationRef.current();
     }
 
+    if (promptContinueAction === PromptModalTypesEnum.CLOSE && disconnectSocketRef.current) {
+      disconnectSocketRef.current();
+    }
+
     terminateUpload();
+
     setPromptContinueAction(undefined);
     if (uploadInfo._id) ParentWindow.UploadTerminated({ uploadId: uploadInfo._id });
     if (promptContinueAction === PromptModalTypesEnum.CLOSE) closeWidget();
   };
+
+  // Add callback to register disconnect function from AutoImportPhase1
+  const handleRegisterDisconnectFunction = useCallback((disconnectFn: () => void) => {
+    if (promptContinueAction === PromptModalTypesEnum.CLOSE) {
+      console.log('disconnectFn');
+    }
+    disconnectSocketRef.current = disconnectFn;
+  }, []);
 
   const onPromptCancel = () => {
     setPromptContinueAction(undefined);
@@ -76,12 +90,14 @@ export function Widget() {
   const onClose = () => {
     let isImportNotOnProgress = false;
 
+    // If RSS is actively parsing, show confirmation dialog but DON'T disconnect socket yet
     if (flow === FlowsEnum.AUTO_IMPORT && phase === PhasesEnum.CONFIGURE && isRssParsing) {
       setPromptContinueAction(PromptModalTypesEnum.CLOSE);
 
       return;
     }
 
+    // For other AUTO_IMPORT phases
     if (flow === FlowsEnum.AUTO_IMPORT)
       isImportNotOnProgress = [PhasesEnum.CONFIGURE, PhasesEnum.CONFIRM].includes(phase);
     else if (flow == FlowsEnum.MANUAL_ENTRY)
@@ -95,10 +111,13 @@ export function Widget() {
       ].includes(phase);
 
     if (isImportNotOnProgress) {
+      if (disconnectSocketRef.current) disconnectSocketRef.current();
       setPhase(PhasesEnum.VALIDATE);
       resetAppState();
       closeWidget();
-    } else setPromptContinueAction(PromptModalTypesEnum.CLOSE);
+    } else {
+      setPromptContinueAction(PromptModalTypesEnum.CLOSE);
+    }
   };
 
   const closeWidget = () => {
@@ -108,6 +127,8 @@ export function Widget() {
     setIsRssParsing(false);
     // Clear the abort function reference
     abortRssOperationRef.current = null;
+    // Clear the disconnect function reference
+    disconnectSocketRef.current = null;
     setTimeout(() => {
       ParentWindow.Close();
     }, variables.closeDelayInMS);
@@ -119,6 +140,7 @@ export function Widget() {
     setPhase(PhasesEnum.VALIDATE);
     setIsRssParsing(false); // Reset RSS parsing state
     abortRssOperationRef.current = null; // Clear abort function reference
+    disconnectSocketRef.current = null; // Clear disconnect function reference
   };
 
   const onImportJobCreated = (jobInfo: IUserJob) => {
@@ -164,6 +186,7 @@ export function Widget() {
               onRssParsingStart={() => setIsRssParsing(true)}
               onRssParsingEnd={() => setIsRssParsing(false)}
               onRegisterAbortFunction={handleRegisterAbortFunction}
+              onRegisterDisconnectFunction={handleRegisterDisconnectFunction}
             />
           ),
           [PhasesEnum.MAPCOLUMNS]: <AutoImportPhase2 texts={texts} onNextClick={() => setPhase(PhasesEnum.SCHEDULE)} />,
@@ -210,6 +233,7 @@ export function Widget() {
       setPhase(PhasesEnum.VALIDATE);
       setIsRssParsing(false); // Reset RSS parsing state when widget is hidden
       abortRssOperationRef.current = null; // Clear abort function reference
+      disconnectSocketRef.current = null; // Clear disconnect function reference
     }
   }, [showWidget]);
 
