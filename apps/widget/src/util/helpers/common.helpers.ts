@@ -51,8 +51,9 @@ function fetchFile(urlToFetch: string, name: string) {
 export function buildFullFileUrl(signedUrl: string, queryVariables: string[], baseIndex: number) {
   const filePath = queryVariables[baseIndex];
   const url = new URL(signedUrl);
+  const fileUrl = `${url.origin}${url.pathname}${filePath}${url.search}`;
 
-  return `${url.origin}${url.pathname}${filePath}${url.search}`;
+  return fileUrl;
 }
 
 export function downloadFileFromURL(url: string, name: string) {
