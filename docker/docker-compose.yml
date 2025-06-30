@@ -19,7 +19,7 @@ services:
 
   api:
     privileged: true
-    image: "ghcr.io/implerhq/impler/api:1.0.0"
+    image: "ghcr.io/implerhq/impler/api:1.1.0"
     depends_on:
       - mongodb
       - rabbitmq
@@ -30,10 +30,10 @@ services:
       WIDGET_BASE_URL: ${WIDGET_BASE_URL}
       WEB_BASE_URL: ${WEB_BASE_URL}
       MONGO_URL: ${MONGO_URL}
+      #S3_REGION: ${S3_REGION}
+      #S3_LOCAL_STACK: ${S3_LOCAL_STACK}
+      #S3_BUCKET_NAME: ${S3_BUCKET_NAME}
       STORAGE_TYPE: ${STORAGE_TYPE}
-      S3_REGION: ${S3_REGION}
-      S3_LOCAL_STACK: ${S3_LOCAL_STACK}
-      S3_BUCKET_NAME: ${S3_BUCKET_NAME}
       AZURE_STORAGE_CONNECTION_STRING: ${AZURE_STORAGE_CONNECTION_STRING}
       AZURE_STORAGE_CONTAINER: ${AZURE_STORAGE_CONTAINER}
       JWT_SECRET: ${JWT_SECRET}
@@ -56,7 +56,7 @@ services:
       - impler
 
   queue-manager:
-    image: "ghcr.io/implerhq/impler/queue-manager:1.0.0"
+    image: "ghcr.io/implerhq/impler/queue-manager:1.1.0"
     depends_on:
       - api
       - rabbitmq
@@ -66,10 +66,10 @@ services:
       MONGO_URL: ${MONGO_URL}
       RABBITMQ_CONN_URL: ${RABBITMQ_CONN_URL}
       API_ROOT_URL: ${API_ROOT_URL}
+      #S3_REGION: ${S3_REGION}
+      #S3_LOCAL_STACK: ${S3_LOCAL_STACK}
+      #S3_BUCKET_NAME: ${S3_BUCKET_NAME}
       STORAGE_TYPE: ${STORAGE_TYPE}
-      S3_REGION: ${S3_REGION}
-      S3_LOCAL_STACK: ${S3_LOCAL_STACK}
-      S3_BUCKET_NAME: ${S3_BUCKET_NAME}
       AZURE_STORAGE_CONNECTION_STRING: ${AZURE_STORAGE_CONNECTION_STRING}
       AZURE_STORAGE_CONTAINER: ${AZURE_STORAGE_CONTAINER}
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
@@ -84,7 +84,7 @@ services:
       - impler
 
   widget:
-    image: "ghcr.io/implerhq/impler/widget:1.0.0"
+    image: "ghcr.io/implerhq/impler/widget:1.1.0"
     depends_on:
       - api
     container_name: widget
@@ -102,7 +102,7 @@ services:
   embed:
     depends_on:
       - widget
-    image: "ghcr.io/implerhq/impler/embed:1.0.0"
+    image: "ghcr.io/implerhq/impler/embed:1.1.0"
     container_name: embed
     environment:
       WIDGET_URL: ${WIDGET_BASE_URL}
@@ -114,7 +114,7 @@ services:
   web:
     depends_on:
       - api
-    image: "ghcr.io/implerhq/impler/web:1.0.0"
+    image: "ghcr.io/implerhq/impler/web:1.1.0"
     container_name: web
     environment:
       NEXT_PUBLIC_API_BASE_URL: ${API_ROOT_URL}
