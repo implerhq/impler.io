@@ -6,9 +6,6 @@ let emailService: EmailService;
 
 // Implementing singleton pattern for storage service
 export function getStorageServiceClass() {
-  console.log('storageService >>', storageService);
-  console.log('storageType >>', process.env.STORAGE_TYPE);
-  console.log('process.env.STORAGE_TYPE === StorageTypeEnum.AZURE', process.env.STORAGE_TYPE === StorageTypeEnum.AZURE);
   if (storageService) return storageService;
   storageService =
     process.env.STORAGE_TYPE === StorageTypeEnum.AZURE ? new AzureStorageService() : new S3StorageService();
