@@ -9,15 +9,19 @@ const validators: { [K in keyof any]: ValidatorSpec<any[K]> } = {
     choices: [ENVTypesEnum.LOCAL, ENVTypesEnum.TEST, ENVTypesEnum.PROD, ENVTypesEnum.CI, ENVTypesEnum.LOCAL],
     default: ENVTypesEnum.LOCAL,
   }),
-  S3_LOCAL_STACK: str(),
-  S3_BUCKET_NAME: str(),
-  S3_REGION: str(),
+  /*
+   * S3_LOCAL_STACK: str(),
+   * S3_BUCKET_NAME: str(),
+   * S3_REGION: str(),
+   */
   PORT: port(),
   MONGO_URL: str(),
   RABBITMQ_CONN_URL: str(),
-  AWS_ACCESS_KEY_ID: str({ default: '' }),
-  AWS_SECRET_ACCESS_KEY: str({ default: '' }),
-  // urls
+  /*
+   * AWS_ACCESS_KEY_ID: str({ default: '' }),
+   * AWS_SECRET_ACCESS_KEY: str({ default: '' }),
+   */
+  //urls: str(),
   WIDGET_BASE_URL: url(),
   WEB_BASE_URL: url(),
   // auth
