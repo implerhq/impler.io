@@ -1,17 +1,14 @@
 export class FileNameService {
   getURLOrigin(): string {
-    const url = new URL(process.env.S3_LOCAL_STACK);
-
-    return url.origin;
+    return '';
   }
   getSampleFileName(templateId: string, hasMultiSelect: boolean): string {
     return `${templateId}/sample.${hasMultiSelect ? 'xlsm' : 'xlsx'}`;
   }
   getSampleFileUrl(templateId: string, hasMultiSelect: boolean): string {
     const fileName = this.getSampleFileName(templateId, hasMultiSelect);
-    const origin = this.getURLOrigin();
 
-    return [origin, process.env.S3_BUCKET_NAME, fileName].join('/');
+    return fileName;
   }
   getFileExtension(fileName: string): string {
     return fileName.split('.').pop();
@@ -63,9 +60,8 @@ export class FileNameService {
   }
   getInvalidExcelDataFileUrl(uploadId: string): string {
     const path = this.getInvalidExcelDataFilePath(uploadId);
-    const origin = this.getURLOrigin();
 
-    return [origin, process.env.S3_BUCKET_NAME, path].join('/');
+    return path;
   }
   getValidDataFileName(): string {
     return `valid-data.json`;

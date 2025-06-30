@@ -10,15 +10,17 @@ const validators: { [K in keyof any]: ValidatorSpec<any[K]> } = {
   }),
   STORAGE_TYPE: str({
     choices: [StorageTypeEnum.S3, StorageTypeEnum.AZURE],
-    default: StorageTypeEnum.S3,
+    default: StorageTypeEnum.AZURE,
   }),
   MONGO_URL: str(),
   RABBITMQ_CONN_URL: str(),
-  S3_LOCAL_STACK: str({
-    default: '',
-  }),
-  S3_BUCKET_NAME: str(),
-  S3_REGION: str(),
+  /*
+   * S3_LOCAL_STACK: str({
+   *   default: '',
+   * }),
+   * S3_BUCKET_NAME: str(),
+   * S3_REGION: str(),
+   */
 };
 
 export function validateEnv() {
