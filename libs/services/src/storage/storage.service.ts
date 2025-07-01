@@ -10,25 +10,20 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { FileNotExistError, Defaults } from '@impler/shared';
 
 // Azure Storage imports
-import {
-  BlobSASPermissions,
-  BlobServiceClient,
-  BlockBlobUploadResponse,
-  ContainerSASPermissions,
-} from '@azure/storage-blob';
+import { BlobSASPermissions, BlobServiceClient, BlockBlobUploadResponse } from '@azure/storage-blob';
 
 export interface IFilePath {
   path: string;
   name: string;
 }
 
-export interface StorageResponse {
+export interface IStorageResponse {
   success: boolean;
   metadata?: any;
 }
 
 export abstract class StorageService {
-  abstract uploadFile(key: string, file: Buffer | string | Readable, contentType: string): Promise<StorageResponse>;
+  abstract uploadFile(key: string, file: Buffer | string | Readable, contentType: string): Promise<IStorageResponse>;
   abstract getFileContent(key: string, encoding?: BufferEncoding): Promise<string>;
   abstract getFileStream(key: string): Promise<Readable>;
   abstract writeStream(key: string, stream: Readable, contentType: string): Promise<void>;
@@ -70,7 +65,7 @@ export class S3StorageService implements StorageService {
       });
   }
 
-  async uploadFile(key: string, file: Buffer | string | Readable, contentType: string): Promise<StorageResponse> {
+  async uploadFile(key: string, file: Buffer | string | Readable, contentType: string): Promise<IStorageResponse> {
     const command = new PutObjectCommand({
       Bucket: process.env.S3_BUCKET_NAME,
       Key: key,
@@ -79,6 +74,7 @@ export class S3StorageService implements StorageService {
     });
 
     const result = await this.s3.send(command);
+
     return {
       success: true,
       metadata: {
@@ -95,6 +91,7 @@ export class S3StorageService implements StorageService {
         Key: key,
       });
       const data = await this.s3.send(command);
+
       return await streamToString(data.Body as Readable, encoding);
     } catch (error) {
       if (error.code === Defaults.NOT_FOUND_STATUS_CODE || error.message === 'The specified key does not exist.') {
@@ -111,6 +108,7 @@ export class S3StorageService implements StorageService {
         Key: key,
       });
       const data = await this.s3.send(command);
+
       return data.Body as Readable;
     } catch (error) {
       if (error.code === Defaults.NOT_FOUND_STATUS_CODE || error.message === 'The specified key does not exist.') {
@@ -147,6 +145,7 @@ export class S3StorageService implements StorageService {
       Bucket: process.env.S3_BUCKET_NAME,
       Key: key,
     });
+
     return getSignedUrl(this.s3, command, { expiresIn: 3600 });
   }
 }
@@ -172,13 +171,15 @@ export class AzureStorageService implements StorageService {
       .next()
       .then(() => {
         this.isAzureConnected = true;
+
+        return;
       })
       .catch(() => {
         this.isAzureConnected = false;
       });
   }
 
-  async uploadFile(key: string, file: Buffer | string | Readable, contentType: string): Promise<StorageResponse> {
+  async uploadFile(key: string, file: Buffer | string | Readable, contentType: string): Promise<IStorageResponse> {
     const blockBlobClient = this.containerClient.getBlockBlobClient(key);
     let uploadResponse: BlockBlobUploadResponse;
 
@@ -198,6 +199,7 @@ export class AzureStorageService implements StorageService {
     }
 
     await blockBlobClient.setHTTPHeaders({ blobContentType: contentType });
+
     return {
       success: true,
       metadata: {
@@ -210,12 +212,28 @@ export class AzureStorageService implements StorageService {
     try {
       const blockBlobClient = this.containerClient.getBlockBlobClient(key);
       const downloadResponse = await blockBlobClient.download();
-      const content = await downloadResponse.blobBody?.toString(encoding);
-      if (!content) {
-        throw new Error('Failed to download file content');
+
+      if (!downloadResponse.readableStreamBody) {
+        throw new Error('Failed to download file content - no readable stream');
       }
+
+      // Convert the readable stream to string
+      const chunks: Buffer[] = [];
+      const stream = downloadResponse.readableStreamBody as Readable;
+
+      for await (const chunk of stream) {
+        chunks.push(chunk instanceof Buffer ? chunk : Buffer.from(chunk));
+      }
+
+      const buffer = Buffer.concat(chunks);
+      const content = buffer.toString(encoding);
+
+      if (!content) {
+        throw new Error('Failed to download file content - empty content');
+      }
+
       return content;
-    } catch (error) {
+    } catch (error: any) {
       if (error.name === 'RestError' && error.statusCode === 404) {
         throw new FileNotExistError(key);
       }
@@ -227,8 +245,13 @@ export class AzureStorageService implements StorageService {
     try {
       const blockBlobClient = this.containerClient.getBlockBlobClient(key);
       const downloadResponse = await blockBlobClient.download();
-      return Readable.from(downloadResponse.blobBody as any);
-    } catch (error) {
+
+      if (!downloadResponse.readableStreamBody) {
+        throw new Error('Failed to get file stream - no readable stream');
+      }
+
+      return downloadResponse.readableStreamBody as Readable;
+    } catch (error: any) {
       if (error.name === 'RestError' && error.statusCode === 404) {
         throw new FileNotExistError(key);
       }

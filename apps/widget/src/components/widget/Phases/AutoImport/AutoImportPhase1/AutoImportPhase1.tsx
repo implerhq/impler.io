@@ -1,14 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-unused-vars */
 import { Stack, TextInput, Text } from '@mantine/core';
-import { PhasesEnum } from '@types';
 import { validateRssUrl } from '@util';
+import { PhasesEnum } from '@types';
 import { Footer } from 'components/Common/Footer';
 import { useAutoImportPhase1 } from '@hooks/AutoImportPhase1/useAutoImportPhase1';
 import { ProgressRing } from './ProgressRing';
-import { ConfirmModal } from 'components/widget/modals/ConfirmModal';
-import { WIDGET_TEXTS } from '@impler/client';
-import { useState, useCallback, useEffect } from 'react';
+import { colors } from '@config';
 
 interface IAutoImportPhase1Props {
   onNextClick: () => void;
@@ -16,6 +12,7 @@ interface IAutoImportPhase1Props {
   onRssParsingStart?: () => void;
   onRssParsingEnd?: () => void;
   onRegisterAbortFunction?: (abortFn: () => void) => void;
+  onRegisterDisconnectFunction?: (disconnectFn: () => void) => void;
 }
 
 export function AutoImportPhase1({
@@ -23,29 +20,16 @@ export function AutoImportPhase1({
   onRssParsingStart,
   onRssParsingEnd,
   onRegisterAbortFunction,
+  onRegisterDisconnectFunction,
 }: IAutoImportPhase1Props) {
-  const { isGetRssXmlHeadingsLoading, progressPercentage, register, errors, onSubmit, abortOperation, canAbort } =
-    useAutoImportPhase1({
-      goNext: onNextClick,
-    });
+  const { isGetRssXmlHeadingsLoading, progressPercentage, register, errors, onSubmit, texts } = useAutoImportPhase1({
+    goNext: onNextClick,
+    onRegisterAbortFunction,
+    onRegisterDisconnectFunction,
+    onRssParsingStart,
+    onRssParsingEnd,
+  });
 
-  // Register the abort function with the parent component
-  useEffect(() => {
-    if (canAbort && abortOperation && onRegisterAbortFunction) {
-      onRegisterAbortFunction(abortOperation);
-    }
-  }, [canAbort, abortOperation, onRegisterAbortFunction]);
-
-  // Notify parent component about RSS parsing status
-  useEffect(() => {
-    if (isGetRssXmlHeadingsLoading) {
-      onRssParsingStart?.();
-    } else {
-      onRssParsingEnd?.();
-    }
-  }, [isGetRssXmlHeadingsLoading, onRssParsingStart, onRssParsingEnd]);
-
-  // Show form view when not processing
   return (
     <Stack spacing="xs" style={{ height: '100%', justifyContent: 'space-between' }}>
       <form onSubmit={onSubmit}>
@@ -70,6 +54,9 @@ export function AutoImportPhase1({
       {isGetRssXmlHeadingsLoading && (
         <Stack align="center" justify="center" spacing="xl">
           <ProgressRing percentage={progressPercentage} />
+          <Text fw="bolder" color={colors.StrokeLight}>
+            {texts.AUTOIMPORT_PHASE1.CLOSE_CONFIRMATION.TITLE}
+          </Text>
         </Stack>
       )}
 

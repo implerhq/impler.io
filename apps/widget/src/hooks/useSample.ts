@@ -4,7 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { variables } from '@config';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
-import { downloadFileFromURL, getFileNameFromUrl, notifier } from '@util';
+import { buildFullFileUrl, downloadFileFromURL, getFileNameFromUrl, notifier } from '@util';
 import { ColumnTypesEnum, FileMimeTypesEnum, IErrorObject, ISchemaItem, ITemplate, downloadFile } from '@impler/shared';
 
 interface UseSampleProps {
@@ -20,7 +20,9 @@ export function useSample({ onDownloadComplete }: UseSampleProps) {
     [string, string]
   >(['getSignedUrl'], ([fileUrl]) => api.getSignedUrl(getFileNameFromUrl(fileUrl)), {
     onSuccess(signedUrl, queryVariables) {
-      downloadFileFromURL(signedUrl, queryVariables[variables.firstIndex]);
+      const fullFileUrl = buildFullFileUrl(signedUrl, queryVariables, variables.baseIndex);
+
+      downloadFileFromURL(fullFileUrl, queryVariables[variables.firstIndex]);
     },
     onError(error: IErrorObject) {
       notifier.showError({ title: error.error, message: error.message });

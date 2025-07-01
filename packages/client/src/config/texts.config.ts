@@ -117,6 +117,9 @@ export const WIDGET_TEXTS = {
     UPLOAD_AGAIN: 'Upload New File',
   },
   AUTOIMPORT_PHASE1: {
+    CLOSE_CONFIRMATION: {
+      TITLE: 'Parsing is in progress... Please do not close the Widget !',
+    },
     MAPCOLUMN: 'Map Column',
   },
   AUTOIMPORT_PHASE2: {

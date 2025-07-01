@@ -110,11 +110,6 @@ export class WebSocketService implements OnGatewayConnection, OnGatewayDisconnec
     });
   }
 
-  // Get abort signal for a session
-  getSessionAbortSignal(sessionId: string): AbortSignal | undefined {
-    return this.sessionAbortControllers.get(sessionId)?.signal;
-  }
-
   // Use arrow functions to automatically bind 'this'
   sendProgress = (sessionId: string, progressData: IProgressData) => {
     if (!this.server) {
@@ -145,7 +140,7 @@ export class WebSocketService implements OnGatewayConnection, OnGatewayDisconnec
         error,
         timestamp: new Date().toISOString(),
       });
-      this.logger.error(`✅ Error sent to session ${sessionId}: ${error}`);
+      this.logger.error(`❌ Error sent to session ${sessionId}: ${error}`);
     } catch (err) {
       this.logger.error(`Failed to send error to session ${sessionId}:`, err);
     } finally {
@@ -172,38 +167,4 @@ export class WebSocketService implements OnGatewayConnection, OnGatewayDisconnec
       this.sessionAbortControllers.delete(sessionId);
     }
   };
-
-  // Helper method to check if a session has connected clients
-  hasClientsInSession = (sessionId: string): boolean => {
-    const room = this.server.sockets.adapter.rooms.get(sessionId);
-
-    return room && room.size > 0;
-  };
-
-  // Method to get session info for debugging
-  getSessionInfo = (sessionId: string) => {
-    const room = this.server.sockets.adapter.rooms.get(sessionId);
-    const hasAbortController = this.sessionAbortControllers.has(sessionId);
-    const isAborted = this.sessionAbortControllers.get(sessionId)?.signal.aborted;
-
-    return {
-      sessionId,
-      clientCount: room ? room.size : 0,
-      hasClients: room && room.size > 0,
-      hasAbortController,
-      isAborted,
-    };
-  };
-
-  // Method to manually abort all sessions (useful for cleanup)
-  abortAllSessions() {
-    this.logger.log('Aborting all active sessions');
-    this.sessionAbortControllers.forEach((controller, sessionId) => {
-      if (!controller.signal.aborted) {
-        controller.abort();
-        this.logger.log(`Aborted session ${sessionId}`);
-      }
-    });
-    this.sessionAbortControllers.clear();
-  }
 }

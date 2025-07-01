@@ -1,0 +1,447 @@
+0 silly argv {
+0 silly argv   _: [ 'version' ],
+0 silly argv   push: false,
+0 silly argv   lernaVersion: '8.1.6',
+0 silly argv   '$0': 'node_modules/lerna/dist/cli.js',
+0 silly argv   bump: 'minor'
+0 silly argv }
+1 notice cli v8.1.6
+2 verbose packageConfigs Explicit "packages" configuration found in lerna.json. Resolving packages using the configured glob(s): ["apps/*","libs/*","packages/*"]
+3 verbose rootPath /home/administration/Desktop/impler.io
+4 info current version 1.0.0
+5 silly isAnythingCommitted
+6 verbose isAnythingCommitted 1
+7 silly getCurrentBranch
+8 verbose currentBranch release/1.1.0
+9 silly hasTags
+10 verbose hasTags true
+11 silly git-describe.sync "v0.27.5-65-gd254d127" => {"lastTagName":"v0.27.5","lastVersion":"v0.27.5","refCount":"65","sha":"d254d127","isDirty":false}
+12 info Looking for changed packages since v0.27.5
+13 silly checking diff apps/api
+14 silly found diff in apps/api/package.json
+14 silly found diff in apps/api/src/.env.development
+14 silly found diff in apps/api/src/.env.production
+14 silly found diff in apps/api/src/.env.test
+14 silly found diff in apps/api/src/.example.env
+14 silly found diff in apps/api/src/app.module.ts
+14 silly found diff in apps/api/src/app/auth/auth.controller.ts
+14 silly found diff in apps/api/src/app/auth/usecases/index.ts
+14 silly found diff in apps/api/src/app/auth/usecases/onboard-user/onboard-user.usecase.ts
+14 silly found diff in apps/api/src/app/auto-import-jobs-schedular/usecase/auto-import-jobs-schedular.ts
+14 silly found diff in apps/api/src/app/column/dtos/column-request.dto.ts
+14 silly found diff in apps/api/src/app/failed-webhook-request-retry/failed-webhook-retry.module.ts
+14 silly found diff in apps/api/src/app/failed-webhook-request-retry/usecase/failed-webhook-request-retry.usecase.ts
+14 silly found diff in apps/api/src/app/failed-webhook-request-retry/usecase/index.ts
+14 silly found diff in apps/api/src/app/import-jobs/dtos/create-userjob.dto.ts
+14 silly found diff in apps/api/src/app/import-jobs/import-jobs.controller.ts
+14 silly found diff in apps/api/src/app/import-jobs/usecase/create-userjob/create-userjob.command.ts
+14 silly found diff in apps/api/src/app/import-jobs/usecase/create-userjob/create-userjob.usecase.ts
+14 silly found diff in apps/api/src/app/import-jobs/usecase/index.ts
+14 silly found diff in apps/api/src/app/project/project.controller.ts
+14 silly found diff in apps/api/src/app/project/usecases/create-project/create-project.command.ts
+14 silly found diff in apps/api/src/app/project/usecases/create-project/create-project.usecase.ts
+14 silly found diff in apps/api/src/app/project/usecases/index.ts
+14 silly found diff in apps/api/src/app/review/usecases/do-review/base-review.usecase.ts
+14 silly found diff in apps/api/src/app/review/usecases/do-review/do-review.usecase.ts
+14 silly found diff in apps/api/src/app/review/usecases/do-review/re-review-data.usecase.ts
+14 silly found diff in apps/api/src/app/review/usecases/start-process/start-process.usecase.ts
+14 silly found diff in apps/api/src/app/shared/constants.ts
+14 silly found diff in apps/api/src/app/shared/services/file/file.service.ts
+14 silly found diff in apps/api/src/app/shared/services/index.ts
+14 silly found diff in apps/api/src/app/shared/services/queue.service.ts
+14 silly found diff in apps/api/src/app/shared/services/rss.service.ts
+14 silly found diff in apps/api/src/app/shared/services/sandbox/Sandbox.ts
+14 silly found diff in apps/api/src/app/shared/services/sandbox/contents.ts
+14 silly found diff in apps/api/src/app/shared/services/websocket-service/index.ts
+14 silly found diff in apps/api/src/app/shared/services/websocket-service/websocket.service.ts
+14 silly found diff in apps/api/src/app/shared/shared.module.ts
+14 silly found diff in apps/api/src/app/shared/types/websockets.types.ts
+14 silly found diff in apps/api/src/app/template/commands/update-destination.command.ts
+14 silly found diff in apps/api/src/app/template/dtos/create-template-request.dto.ts
+14 silly found diff in apps/api/src/app/template/dtos/destination-response.dto.ts
+14 silly found diff in apps/api/src/app/template/dtos/update-destination-request.dto.ts
+14 silly found diff in apps/api/src/app/template/template.controller.ts
+14 silly found diff in apps/api/src/app/template/usecases/create-template/create-template.command.ts
+14 silly found diff in apps/api/src/app/template/usecases/get-column-types/get-import-file-schema.usecase.ts
+14 silly found diff in apps/api/src/app/template/usecases/index.ts
+14 silly found diff in apps/api/src/app/upload/usecases/get-preview-rows/get-preview-rows.usecase.ts
+14 silly found diff in apps/api/src/config/env-validator.ts
+14 silly found diff in apps/api/src/migrations/resend-webhook-data/resend-webhook-data.migration.ts
+15 verbose filtered diff [
+15 verbose filtered diff   'apps/api/package.json',
+15 verbose filtered diff   'apps/api/src/.env.development',
+15 verbose filtered diff   'apps/api/src/.env.production',
+15 verbose filtered diff   'apps/api/src/.env.test',
+15 verbose filtered diff   'apps/api/src/.example.env',
+15 verbose filtered diff   'apps/api/src/app.module.ts',
+15 verbose filtered diff   'apps/api/src/app/auth/auth.controller.ts',
+15 verbose filtered diff   'apps/api/src/app/auth/usecases/index.ts',
+15 verbose filtered diff   'apps/api/src/app/auth/usecases/onboard-user/onboard-user.usecase.ts',
+15 verbose filtered diff   'apps/api/src/app/auto-import-jobs-schedular/usecase/auto-import-jobs-schedular.ts',
+15 verbose filtered diff   'apps/api/src/app/column/dtos/column-request.dto.ts',
+15 verbose filtered diff   'apps/api/src/app/failed-webhook-request-retry/failed-webhook-retry.module.ts',
+15 verbose filtered diff   'apps/api/src/app/failed-webhook-request-retry/usecase/failed-webhook-request-retry.usecase.ts',
+15 verbose filtered diff   'apps/api/src/app/failed-webhook-request-retry/usecase/index.ts',
+15 verbose filtered diff   'apps/api/src/app/import-jobs/dtos/create-userjob.dto.ts',
+15 verbose filtered diff   'apps/api/src/app/import-jobs/import-jobs.controller.ts',
+15 verbose filtered diff   'apps/api/src/app/import-jobs/usecase/create-userjob/create-userjob.command.ts',
+15 verbose filtered diff   'apps/api/src/app/import-jobs/usecase/create-userjob/create-userjob.usecase.ts',
+15 verbose filtered diff   'apps/api/src/app/import-jobs/usecase/index.ts',
+15 verbose filtered diff   'apps/api/src/app/project/project.controller.ts',
+15 verbose filtered diff   'apps/api/src/app/project/usecases/create-project/create-project.command.ts',
+15 verbose filtered diff   'apps/api/src/app/project/usecases/create-project/create-project.usecase.ts',
+15 verbose filtered diff   'apps/api/src/app/project/usecases/index.ts',
+15 verbose filtered diff   'apps/api/src/app/review/usecases/do-review/base-review.usecase.ts',
+15 verbose filtered diff   'apps/api/src/app/review/usecases/do-review/do-review.usecase.ts',
+15 verbose filtered diff   'apps/api/src/app/review/usecases/do-review/re-review-data.usecase.ts',
+15 verbose filtered diff   'apps/api/src/app/review/usecases/start-process/start-process.usecase.ts',
+15 verbose filtered diff   'apps/api/src/app/shared/constants.ts',
+15 verbose filtered diff   'apps/api/src/app/shared/services/file/file.service.ts',
+15 verbose filtered diff   'apps/api/src/app/shared/services/index.ts',
+15 verbose filtered diff   'apps/api/src/app/shared/services/queue.service.ts',
+15 verbose filtered diff   'apps/api/src/app/shared/services/rss.service.ts',
+15 verbose filtered diff   'apps/api/src/app/shared/services/sandbox/Sandbox.ts',
+15 verbose filtered diff   'apps/api/src/app/shared/services/sandbox/contents.ts',
+15 verbose filtered diff   'apps/api/src/app/shared/services/websocket-service/index.ts',
+15 verbose filtered diff   'apps/api/src/app/shared/services/websocket-service/websocket.service.ts',
+15 verbose filtered diff   'apps/api/src/app/shared/shared.module.ts',
+15 verbose filtered diff   'apps/api/src/app/shared/types/websockets.types.ts',
+15 verbose filtered diff   'apps/api/src/app/template/commands/update-destination.command.ts',
+15 verbose filtered diff   'apps/api/src/app/template/dtos/create-template-request.dto.ts',
+15 verbose filtered diff   'apps/api/src/app/template/dtos/destination-response.dto.ts',
+15 verbose filtered diff   'apps/api/src/app/template/dtos/update-destination-request.dto.ts',
+15 verbose filtered diff   'apps/api/src/app/template/template.controller.ts',
+15 verbose filtered diff   'apps/api/src/app/template/usecases/create-template/create-template.command.ts',
+15 verbose filtered diff   'apps/api/src/app/template/usecases/get-column-types/get-import-file-schema.usecase.ts',
+15 verbose filtered diff   'apps/api/src/app/template/usecases/index.ts',
+15 verbose filtered diff   'apps/api/src/app/upload/usecases/get-preview-rows/get-preview-rows.usecase.ts',
+15 verbose filtered diff   'apps/api/src/config/env-validator.ts',
+15 verbose filtered diff   'apps/api/src/migrations/resend-webhook-data/resend-webhook-data.migration.ts'
+15 verbose filtered diff ]
+16 silly checking diff apps/queue-manager
+17 silly found diff in apps/queue-manager/package.json
+17 silly found diff in apps/queue-manager/src/.env.development
+17 silly found diff in apps/queue-manager/src/.env.production
+17 silly found diff in apps/queue-manager/src/.env.test
+17 silly found diff in apps/queue-manager/src/.example.env
+17 silly found diff in apps/queue-manager/src/bootstrap.ts
+17 silly found diff in apps/queue-manager/src/config/env-validator.ts
+17 silly found diff in apps/queue-manager/src/consumers/base.consumer.ts
+17 silly found diff in apps/queue-manager/src/consumers/end-import.consumer.ts
+17 silly found diff in apps/queue-manager/src/consumers/get-import-job-data.consumer.ts
+17 silly found diff in apps/queue-manager/src/consumers/index.ts
+17 silly found diff in apps/queue-manager/src/consumers/send-bubble-data.consumer.ts
+17 silly found diff in apps/queue-manager/src/consumers/send-failed-webhook-data.consumer.ts
+17 silly found diff in apps/queue-manager/src/consumers/send-import-job-data.consumer.ts
+17 silly found diff in apps/queue-manager/src/consumers/send-webhook-data.consumer.ts
+17 silly found diff in apps/queue-manager/src/helpers/services.helper.ts
+17 silly found diff in apps/queue-manager/src/types/file-processing.types.ts
+18 verbose filtered diff [
+18 verbose filtered diff   'apps/queue-manager/package.json',
+18 verbose filtered diff   'apps/queue-manager/src/.env.development',
+18 verbose filtered diff   'apps/queue-manager/src/.env.production',
+18 verbose filtered diff   'apps/queue-manager/src/.env.test',
+18 verbose filtered diff   'apps/queue-manager/src/.example.env',
+18 verbose filtered diff   'apps/queue-manager/src/bootstrap.ts',
+18 verbose filtered diff   'apps/queue-manager/src/config/env-validator.ts',
+18 verbose filtered diff   'apps/queue-manager/src/consumers/base.consumer.ts',
+18 verbose filtered diff   'apps/queue-manager/src/consumers/end-import.consumer.ts',
+18 verbose filtered diff   'apps/queue-manager/src/consumers/get-import-job-data.consumer.ts',
+18 verbose filtered diff   'apps/queue-manager/src/consumers/index.ts',
+18 verbose filtered diff   'apps/queue-manager/src/consumers/send-bubble-data.consumer.ts',
+18 verbose filtered diff   'apps/queue-manager/src/consumers/send-failed-webhook-data.consumer.ts',
+18 verbose filtered diff   'apps/queue-manager/src/consumers/send-import-job-data.consumer.ts',
+18 verbose filtered diff   'apps/queue-manager/src/consumers/send-webhook-data.consumer.ts',
+18 verbose filtered diff   'apps/queue-manager/src/helpers/services.helper.ts',
+18 verbose filtered diff   'apps/queue-manager/src/types/file-processing.types.ts'
+18 verbose filtered diff ]
+19 silly checking diff apps/web
+20 silly found diff in apps/web/assets/images/full-logo-dark.png
+20 silly found diff in apps/web/assets/images/full-logo-light.png
+20 silly found diff in apps/web/assets/images/logo-dark.png
+20 silly found diff in apps/web/components/ConfirmationModal/ConfirmationModal.tsx
+20 silly found diff in apps/web/components/imports/destination/Destination.tsx
+20 silly found diff in apps/web/components/signin/index.tsx
+20 silly found diff in apps/web/config/constants.config.ts
+20 silly found diff in apps/web/config/theme.config.ts
+20 silly found diff in apps/web/design-system/UploadDropzone/UploadDropzone.stories.tsx
+20 silly found diff in apps/web/design-system/UploadDropzone/UploadDropzone.styles.ts
+20 silly found diff in apps/web/design-system/UploadDropzone/UploadDropzone.tsx
+20 silly found diff in apps/web/design-system/UploadDropzone/index.ts
+20 silly found diff in apps/web/hooks/useOnboardUserProjectForm.tsx
+20 silly found diff in apps/web/hooks/useTemplateSchema.tsx
+20 silly found diff in apps/web/libs/api.ts
+20 silly found diff in apps/web/package.json
+20 silly found diff in apps/web/pages/auth/onboard.tsx
+20 silly found diff in apps/web/pages/auth/onboarding/CreateImportForm.tsx
+20 silly found diff in apps/web/pages/auth/onboarding/ImportColumnsSection.tsx
+20 silly found diff in apps/web/pages/auth/onboarding/OnboardImportForm.tsx
+20 silly found diff in apps/web/pages/auth/onboarding/OnboardProjectForm.tsx
+20 silly found diff in apps/web/pages/auth/onboarding/OnboardTemplateSchemaTable.tsx
+20 silly found diff in apps/web/pages/auth/onboarding/ProjectOnboardForm.tsx
+20 silly found diff in apps/web/pages/auth/onboarding/SampleColumnsTable.tsx
+20 silly found diff in apps/web/pages/auth/reset/[token].tsx
+20 silly found diff in apps/web/pages/auth/reset/request.tsx
+20 silly found diff in apps/web/pages/auth/signup.tsx
+20 silly found diff in apps/web/pages/auth/template.tsx
+20 silly found diff in apps/web/pages/imports/[id].tsx
+20 silly found diff in apps/web/types/global.d.ts
+21 verbose filtered diff [
+21 verbose filtered diff   'apps/web/assets/images/full-logo-dark.png',
+21 verbose filtered diff   'apps/web/assets/images/full-logo-light.png',
+21 verbose filtered diff   'apps/web/assets/images/logo-dark.png',
+21 verbose filtered diff   'apps/web/components/ConfirmationModal/ConfirmationModal.tsx',
+21 verbose filtered diff   'apps/web/components/imports/destination/Destination.tsx',
+21 verbose filtered diff   'apps/web/components/signin/index.tsx',
+21 verbose filtered diff   'apps/web/config/constants.config.ts',
+21 verbose filtered diff   'apps/web/config/theme.config.ts',
+21 verbose filtered diff   'apps/web/design-system/UploadDropzone/UploadDropzone.stories.tsx',
+21 verbose filtered diff   'apps/web/design-system/UploadDropzone/UploadDropzone.styles.ts',
+21 verbose filtered diff   'apps/web/design-system/UploadDropzone/UploadDropzone.tsx',
+21 verbose filtered diff   'apps/web/design-system/UploadDropzone/index.ts',
+21 verbose filtered diff   'apps/web/hooks/useOnboardUserProjectForm.tsx',
+21 verbose filtered diff   'apps/web/hooks/useTemplateSchema.tsx',
+21 verbose filtered diff   'apps/web/libs/api.ts',
+21 verbose filtered diff   'apps/web/package.json',
+21 verbose filtered diff   'apps/web/pages/auth/onboard.tsx',
+21 verbose filtered diff   'apps/web/pages/auth/onboarding/CreateImportForm.tsx',
+21 verbose filtered diff   'apps/web/pages/auth/onboarding/ImportColumnsSection.tsx',
+21 verbose filtered diff   'apps/web/pages/auth/onboarding/OnboardImportForm.tsx',
+21 verbose filtered diff   'apps/web/pages/auth/onboarding/OnboardProjectForm.tsx',
+21 verbose filtered diff   'apps/web/pages/auth/onboarding/OnboardTemplateSchemaTable.tsx',
+21 verbose filtered diff   'apps/web/pages/auth/onboarding/ProjectOnboardForm.tsx',
+21 verbose filtered diff   'apps/web/pages/auth/onboarding/SampleColumnsTable.tsx',
+21 verbose filtered diff   'apps/web/pages/auth/reset/[token].tsx',
+21 verbose filtered diff   'apps/web/pages/auth/reset/request.tsx',
+21 verbose filtered diff   'apps/web/pages/auth/signup.tsx',
+21 verbose filtered diff   'apps/web/pages/auth/template.tsx',
+21 verbose filtered diff   'apps/web/pages/imports/[id].tsx',
+21 verbose filtered diff   'apps/web/types/global.d.ts'
+21 verbose filtered diff ]
+22 silly checking diff apps/widget
+23 silly found diff in apps/widget/.example.env
+23 silly found diff in apps/widget/package.json
+23 silly found diff in apps/widget/src/components/Common/Container/Container.tsx
+23 silly found diff in apps/widget/src/components/Common/Provider/Provider.tsx
+23 silly found diff in apps/widget/src/components/Common/Table/Table.tsx
+23 silly found diff in apps/widget/src/components/widget/Phases/AutoImport/AutoImportPhase1/AutoImportPhase1.tsx
+23 silly found diff in apps/widget/src/components/widget/Phases/AutoImport/AutoImportPhase1/ProgressRing.tsx
+23 silly found diff in apps/widget/src/components/widget/Phases/AutoImport/AutoImportPhase3/AutoImportPhase3.tsx
+23 silly found diff in apps/widget/src/components/widget/Phases/AutoImport/AutoImportPhase3/SchedularFrequency.tsx
+23 silly found diff in apps/widget/src/components/widget/Phases/ImageImport/ImageUpload.Styles.tsx
+23 silly found diff in apps/widget/src/components/widget/Phases/ImageImport/ImageUpload.tsx
+23 silly found diff in apps/widget/src/components/widget/Phases/Phase1/DirectEntryView/DirectEntryView.tsx
+23 silly found diff in apps/widget/src/components/widget/Phases/Phase1/Phase1.tsx
+23 silly found diff in apps/widget/src/components/widget/Widget.tsx
+23 silly found diff in apps/widget/src/config/app.config.ts
+23 silly found diff in apps/widget/src/config/colors.config.ts
+23 silly found diff in apps/widget/src/hooks/AutoImportPhase1/useAutoImportPhase1.tsx
+23 silly found diff in apps/widget/src/hooks/AutoImportPhase1/useWebSocketProgress.ts
+23 silly found diff in apps/widget/src/hooks/Phase1/usePhase1.ts
+23 silly found diff in apps/widget/src/store/app.context.tsx
+23 silly found diff in apps/widget/src/types/component.types.ts
+23 silly found diff in apps/widget/src/types/store.types.ts
+23 silly found diff in apps/widget/src/util/api/api.service.ts
+23 silly found diff in apps/widget/src/util/helpers/common.helpers.ts
+24 verbose filtered diff [
+24 verbose filtered diff   'apps/widget/.example.env',
+24 verbose filtered diff   'apps/widget/package.json',
+24 verbose filtered diff   'apps/widget/src/components/Common/Container/Container.tsx',
+24 verbose filtered diff   'apps/widget/src/components/Common/Provider/Provider.tsx',
+24 verbose filtered diff   'apps/widget/src/components/Common/Table/Table.tsx',
+24 verbose filtered diff   'apps/widget/src/components/widget/Phases/AutoImport/AutoImportPhase1/AutoImportPhase1.tsx',
+24 verbose filtered diff   'apps/widget/src/components/widget/Phases/AutoImport/AutoImportPhase1/ProgressRing.tsx',
+24 verbose filtered diff   'apps/widget/src/components/widget/Phases/AutoImport/AutoImportPhase3/AutoImportPhase3.tsx',
+24 verbose filtered diff   'apps/widget/src/components/widget/Phases/AutoImport/AutoImportPhase3/SchedularFrequency.tsx',
+24 verbose filtered diff   'apps/widget/src/components/widget/Phases/ImageImport/ImageUpload.Styles.tsx',
+24 verbose filtered diff   'apps/widget/src/components/widget/Phases/ImageImport/ImageUpload.tsx',
+24 verbose filtered diff   'apps/widget/src/components/widget/Phases/Phase1/DirectEntryView/DirectEntryView.tsx',
+24 verbose filtered diff   'apps/widget/src/components/widget/Phases/Phase1/Phase1.tsx',
+24 verbose filtered diff   'apps/widget/src/components/widget/Widget.tsx',
+24 verbose filtered diff   'apps/widget/src/config/app.config.ts',
+24 verbose filtered diff   'apps/widget/src/config/colors.config.ts',
+24 verbose filtered diff   'apps/widget/src/hooks/AutoImportPhase1/useAutoImportPhase1.tsx',
+24 verbose filtered diff   'apps/widget/src/hooks/AutoImportPhase1/useWebSocketProgress.ts',
+24 verbose filtered diff   'apps/widget/src/hooks/Phase1/usePhase1.ts',
+24 verbose filtered diff   'apps/widget/src/store/app.context.tsx',
+24 verbose filtered diff   'apps/widget/src/types/component.types.ts',
+24 verbose filtered diff   'apps/widget/src/types/store.types.ts',
+24 verbose filtered diff   'apps/widget/src/util/api/api.service.ts',
+24 verbose filtered diff   'apps/widget/src/util/helpers/common.helpers.ts'
+24 verbose filtered diff ]
+25 silly checking diff libs/dal
+26 silly found diff in libs/dal/package.json
+26 silly found diff in libs/dal/src/dal.service.ts
+26 silly found diff in libs/dal/src/index.ts
+26 silly found diff in libs/dal/src/repositories/failed-webhook-retry-requests/failed-webhook-retry-requests.entity.ts
+26 silly found diff in libs/dal/src/repositories/failed-webhook-retry-requests/failed-webhook-retry-requests.repository.ts
+26 silly found diff in libs/dal/src/repositories/failed-webhook-retry-requests/failed-webhook-retry-requests.schema.ts
+26 silly found diff in libs/dal/src/repositories/failed-webhook-retry-requests/index.ts
+26 silly found diff in libs/dal/src/repositories/record/record.entity.ts
+26 silly found diff in libs/dal/src/repositories/record/record.schema.ts
+26 silly found diff in libs/dal/src/repositories/webhook-destination/webhook-destination.entity.ts
+26 silly found diff in libs/dal/src/repositories/webhook-destination/webhook-destination.schema.ts
+27 verbose filtered diff [
+27 verbose filtered diff   'libs/dal/package.json',
+27 verbose filtered diff   'libs/dal/src/dal.service.ts',
+27 verbose filtered diff   'libs/dal/src/index.ts',
+27 verbose filtered diff   'libs/dal/src/repositories/failed-webhook-retry-requests/failed-webhook-retry-requests.entity.ts',
+27 verbose filtered diff   'libs/dal/src/repositories/failed-webhook-retry-requests/failed-webhook-retry-requests.repository.ts',
+27 verbose filtered diff   'libs/dal/src/repositories/failed-webhook-retry-requests/failed-webhook-retry-requests.schema.ts',
+27 verbose filtered diff   'libs/dal/src/repositories/failed-webhook-retry-requests/index.ts',
+27 verbose filtered diff   'libs/dal/src/repositories/record/record.entity.ts',
+27 verbose filtered diff   'libs/dal/src/repositories/record/record.schema.ts',
+27 verbose filtered diff   'libs/dal/src/repositories/webhook-destination/webhook-destination.entity.ts',
+27 verbose filtered diff   'libs/dal/src/repositories/webhook-destination/webhook-destination.schema.ts'
+27 verbose filtered diff ]
+28 silly checking diff libs/embed
+29 silly found diff in libs/embed/package.json
+30 verbose filtered diff [ 'libs/embed/package.json' ]
+31 silly checking diff libs/services
+32 silly found diff in libs/services/package.json
+32 silly found diff in libs/services/src/index.ts
+32 silly found diff in libs/services/src/name/file-name.service.ts
+32 silly found diff in libs/services/src/rss-xml/index.ts
+32 silly found diff in libs/services/src/rss-xml/rssxml.service.ts
+32 silly found diff in libs/services/src/storage/storage.service.ts
+33 verbose filtered diff [
+33 verbose filtered diff   'libs/services/package.json',
+33 verbose filtered diff   'libs/services/src/index.ts',
+33 verbose filtered diff   'libs/services/src/name/file-name.service.ts',
+33 verbose filtered diff   'libs/services/src/rss-xml/index.ts',
+33 verbose filtered diff   'libs/services/src/rss-xml/rssxml.service.ts',
+33 verbose filtered diff   'libs/services/src/storage/storage.service.ts'
+33 verbose filtered diff ]
+34 silly checking diff libs/shared
+35 silly found diff in libs/shared/package.json
+35 silly found diff in libs/shared/src/config/api.config.ts
+35 silly found diff in libs/shared/src/entities/Record/Record.interface.ts
+35 silly found diff in libs/shared/src/entities/Template/Template.interface.ts
+35 silly found diff in libs/shared/src/types/destination/destination.types.ts
+35 silly found diff in libs/shared/src/types/project/project.types.ts
+35 silly found diff in libs/shared/src/types/template/template.types.ts
+35 silly found diff in libs/shared/src/types/upload/upload.types.ts
+35 silly found diff in libs/shared/src/types/widget/widget.types.ts
+36 verbose filtered diff [
+36 verbose filtered diff   'libs/shared/package.json',
+36 verbose filtered diff   'libs/shared/src/config/api.config.ts',
+36 verbose filtered diff   'libs/shared/src/entities/Record/Record.interface.ts',
+36 verbose filtered diff   'libs/shared/src/entities/Template/Template.interface.ts',
+36 verbose filtered diff   'libs/shared/src/types/destination/destination.types.ts',
+36 verbose filtered diff   'libs/shared/src/types/project/project.types.ts',
+36 verbose filtered diff   'libs/shared/src/types/template/template.types.ts',
+36 verbose filtered diff   'libs/shared/src/types/upload/upload.types.ts',
+36 verbose filtered diff   'libs/shared/src/types/widget/widget.types.ts'
+36 verbose filtered diff ]
+37 silly checking diff packages/angular
+38 silly found diff in packages/angular/package.json
+39 verbose filtered diff [ 'packages/angular/package.json' ]
+40 silly checking diff packages/client
+41 silly found diff in packages/client/package.json
+41 silly found diff in packages/client/src/config/appearance.config.ts
+41 silly found diff in packages/client/src/config/index.ts
+41 silly found diff in packages/client/src/config/texts.config.ts
+41 silly found diff in packages/client/src/types.ts
+42 verbose filtered diff [
+42 verbose filtered diff   'packages/client/package.json',
+42 verbose filtered diff   'packages/client/src/config/appearance.config.ts',
+42 verbose filtered diff   'packages/client/src/config/index.ts',
+42 verbose filtered diff   'packages/client/src/config/texts.config.ts',
+42 verbose filtered diff   'packages/client/src/types.ts'
+42 verbose filtered diff ]
+43 silly checking diff packages/react
+44 silly found diff in packages/react/package.json
+44 silly found diff in packages/react/src/hooks/useImpler.ts
+45 verbose filtered diff [
+45 verbose filtered diff   'packages/react/package.json',
+45 verbose filtered diff   'packages/react/src/hooks/useImpler.ts'
+45 verbose filtered diff ]
+46 verbose updated @impler/api
+47 verbose updated @impler/queue-manager
+48 verbose updated @impler/web
+49 verbose updated @impler/widget
+50 verbose updated @impler/dal
+51 verbose updated @impler/embed
+52 verbose updated @impler/services
+53 verbose updated @impler/shared
+54 verbose updated @impler/angular
+55 verbose updated @impler/client
+56 verbose updated @impler/react
+57 verbose git-describe undefined => "v0.27.5-65-gd254d127"
+58 silly git-describe parsed => {"lastTagName":"v0.27.5","lastVersion":"v0.27.5","refCount":"65","sha":"d254d127","isDirty":false}
+59 info execute Skipping git push
+60 info execute Skipping releases
+61 silly lifecycle No script for "preversion" in "impler.io", continuing
+62 silly lifecycle No script for "preversion" in "@impler/embed", continuing
+63 silly lifecycle No script for "preversion" in "@impler/angular", continuing
+64 silly lifecycle No script for "preversion" in "@impler/client", continuing
+65 silly lifecycle No script for "preversion" in "@impler/react", continuing
+66 verbose version @impler/embed has no lockfile. Skipping lockfile update.
+67 verbose version @impler/angular has no lockfile. Skipping lockfile update.
+68 verbose version @impler/client has no lockfile. Skipping lockfile update.
+69 verbose version @impler/react has no lockfile. Skipping lockfile update.
+70 silly lifecycle No script for "version" in "@impler/client", continuing
+71 silly lifecycle No script for "preversion" in "@impler/shared", continuing
+72 silly lifecycle No script for "version" in "@impler/react", continuing
+73 silly lifecycle No script for "version" in "@impler/embed", continuing
+74 silly lifecycle No script for "version" in "@impler/angular", continuing
+75 verbose version @impler/shared has no lockfile. Skipping lockfile update.
+76 silly lifecycle No script for "version" in "@impler/shared", continuing
+77 silly lifecycle No script for "preversion" in "@impler/web", continuing
+78 silly lifecycle No script for "preversion" in "@impler/widget", continuing
+79 silly lifecycle No script for "preversion" in "@impler/dal", continuing
+80 silly lifecycle No script for "preversion" in "@impler/services", continuing
+81 verbose version @impler/web has no lockfile. Skipping lockfile update.
+82 verbose version @impler/widget has no lockfile. Skipping lockfile update.
+83 verbose version @impler/dal has no lockfile. Skipping lockfile update.
+84 verbose version @impler/services has no lockfile. Skipping lockfile update.
+85 silly lifecycle No script for "version" in "@impler/widget", continuing
+86 silly lifecycle No script for "version" in "@impler/dal", continuing
+87 silly lifecycle No script for "version" in "@impler/web", continuing
+88 silly lifecycle No script for "version" in "@impler/services", continuing
+89 silly lifecycle No script for "preversion" in "@impler/api", continuing
+90 silly lifecycle No script for "preversion" in "@impler/queue-manager", continuing
+91 verbose version @impler/api has no lockfile. Skipping lockfile update.
+92 verbose version @impler/queue-manager has no lockfile. Skipping lockfile update.
+93 silly lifecycle No script for "version" in "@impler/api", continuing
+94 silly lifecycle No script for "version" in "@impler/queue-manager", continuing
+95 silly lifecycle No script for "version" in "impler.io", continuing
+96 verbose version Updating root pnpm-lock.yaml
+97 silly version Skipped applying prettier to ignored file: packages/client/package.json
+98 silly version Skipped applying prettier to ignored file: packages/react/package.json
+99 silly version Skipped applying prettier to ignored file: libs/embed/package.json
+100 silly version Skipped applying prettier to ignored file: packages/angular/package.json
+101 silly version Skipped applying prettier to ignored file: libs/shared/package.json
+102 silly version Skipped applying prettier to ignored file: apps/widget/package.json
+103 silly version Skipped applying prettier to ignored file: libs/dal/package.json
+104 silly version Skipped applying prettier to ignored file: apps/web/package.json
+105 silly version Skipped applying prettier to ignored file: libs/services/package.json
+106 silly version Skipped applying prettier to ignored file: apps/api/package.json
+107 silly version Skipped applying prettier to ignored file: apps/queue-manager/package.json
+108 silly version Successfully applied prettier to updated file: lerna.json
+109 silly version Successfully applied prettier to updated file: pnpm-lock.yaml
+110 silly gitAdd [
+110 silly gitAdd   'packages/client/package.json',
+110 silly gitAdd   'packages/react/package.json',
+110 silly gitAdd   'libs/embed/package.json',
+110 silly gitAdd   'packages/angular/package.json',
+110 silly gitAdd   'libs/shared/package.json',
+110 silly gitAdd   'apps/widget/package.json',
+110 silly gitAdd   'libs/dal/package.json',
+110 silly gitAdd   'apps/web/package.json',
+110 silly gitAdd   'libs/services/package.json',
+110 silly gitAdd   'apps/api/package.json',
+110 silly gitAdd   'apps/queue-manager/package.json',
+110 silly gitAdd   'lerna.json',
+110 silly gitAdd   'pnpm-lock.yaml'
+110 silly gitAdd ]
+111 silly gitCommit v1.1.0
+112 verbose git [ 'commit', '-m', 'v1.1.0' ]
+113 silly gitTag v1.1.0 git tag %s -m %s
+114 verbose git [ 'tag', 'v1.1.0', '-m', 'v1.1.0' ]
+115 error Error: Command failed with exit code 128: git tag v1.1.0 -m v1.1.0
+115 error fatal: tag 'v1.1.0' already exists
+115 error     at makeError (/home/administration/Desktop/impler.io/node_modules/.pnpm/execa@5.0.0/node_modules/execa/lib/error.js:59:11)
+115 error     at handlePromise (/home/administration/Desktop/impler.io/node_modules/.pnpm/execa@5.0.0/node_modules/execa/index.js:114:26)
+115 error     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+115 error     at async VersionCommand.gitCommitAndTagVersion (/home/administration/Desktop/impler.io/node_modules/.pnpm/lerna@8.1.6/node_modules/lerna/dist/index.js:9940:9)
