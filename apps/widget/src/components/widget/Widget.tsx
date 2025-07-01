@@ -78,7 +78,6 @@ export function Widget() {
   // Add callback to register disconnect function from AutoImportPhase1
   const handleRegisterDisconnectFunction = useCallback((disconnectFn: () => void) => {
     if (promptContinueAction === PromptModalTypesEnum.CLOSE) {
-      console.log('disconnectFn');
     }
     disconnectSocketRef.current = disconnectFn;
   }, []);
