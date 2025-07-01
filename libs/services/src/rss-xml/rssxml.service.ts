@@ -498,6 +498,12 @@ export class RSSXMLService {
   }
 
   async setValue(obj: Record<string, any>, path: string[], value: any, attributes?: any): Promise<void> {
+    // Validate path to prevent prototype pollution
+    const forbiddenKeys = ['__proto__', 'constructor', 'prototype'];
+    if (path.some(key => forbiddenKeys.includes(key))) {
+      throw new Error('Invalid path: contains forbidden keys');
+    }
+
     let current = obj;
 
     // Navigate to parent
