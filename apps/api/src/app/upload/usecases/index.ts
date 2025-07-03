@@ -8,6 +8,7 @@ import { MakeUploadEntry } from './make-upload-entry/make-upload-entry.usecase';
 import { PaginateFileContent } from './paginate-file-content/paginate-file-content.usecase';
 import { GetOriginalFileContent } from './get-original-file-content/get-original-file-content.usecase';
 import { GetUploadProcessInformation } from './get-upload-process-info/get-upload-process-info.usecase';
+import { UploadCleanupSchedulerService } from './uploadcleanup-scheduler/uploadcleanup-scheduler.service';
 
 export const USE_CASES = [
   GetPreviewRows,
@@ -20,6 +21,7 @@ export const USE_CASES = [
   PaginateFileContent,
   GetOriginalFileContent,
   GetUploadProcessInformation,
+  UploadCleanupSchedulerService,
   //
 ];
 
@@ -34,4 +36,5 @@ export {
   GetOriginalFileContent,
   GetUploadProcessInformation,
   PaginateFileContent,
+  UploadCleanupSchedulerService,
 };

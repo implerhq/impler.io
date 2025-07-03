@@ -95,7 +95,7 @@ export function History() {
               key: 'download',
               width: 100,
               Cell(item) {
-                return item.originalFileName ? (
+                return item.originalFileName && item._uploadedFileId ? (
                   <Tooltip label="Download original file" withArrow>
                     <ActionIcon
                       radius={0}

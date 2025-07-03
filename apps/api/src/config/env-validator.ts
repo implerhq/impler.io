@@ -9,6 +9,7 @@ const validators: { [K in keyof any]: ValidatorSpec<any[K]> } = {
     choices: [ENVTypesEnum.LOCAL, ENVTypesEnum.TEST, ENVTypesEnum.PROD, ENVTypesEnum.CI, ENVTypesEnum.LOCAL],
     default: ENVTypesEnum.LOCAL,
   }),
+
   /*
    * S3_LOCAL_STACK: str(),
    * S3_BUCKET_NAME: str(),
