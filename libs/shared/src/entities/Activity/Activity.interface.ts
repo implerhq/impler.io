@@ -1,5 +1,6 @@
 export interface IHistoryRecord {
   _id: string;
+  _uploadedFileId: string;
   totalRecords: number;
   status: string;
   uploadedDate: string;
