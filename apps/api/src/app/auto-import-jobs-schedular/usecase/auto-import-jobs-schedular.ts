@@ -18,7 +18,7 @@ export class AutoImportJobsSchedular {
     private readonly scheduleUserJob: ScheduleUserJob
   ) {}
 
-  @Cron(CRON_SCHEDULE.DEFAULT_CRON_TIME)
+  @Cron(CRON_SCHEDULE.AUTO_IMPORT_DEFAULT_CRON_TIME)
   async handleCronSchedular() {
     await this.fetchAndExecuteScheduledJobs();
   }

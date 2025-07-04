@@ -96,9 +96,11 @@ export enum LEAD_SIGNUP_USING {
 }
 
 export const CRON_SCHEDULE = {
-  DEFAULT_CRON_TIME: '45 23 * * *',
+  AUTO_IMPORT_DEFAULT_CRON_TIME: '45 23 * * *',
+  UPLOAD_CLEANUP_DEFAULT_CRON_TIME: '30 22 * * *', //Cron - Every Night at 10:30 PM
   TEST_CRON_TIME: '* * * * *',
   CRON_TIME: '45 23 * * *',
+  UPLOAD_CLEANUP_DAYS: 30,
 };
 
 export const TYPE_CHECK_SAMPLE = 10;

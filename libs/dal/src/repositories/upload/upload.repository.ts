@@ -209,6 +209,7 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
             {
               $project: {
                 _id: 1,
+                _uploadedFileId: 1,
                 name: 1,
                 uploadedDate: 1,
                 totalRecords: 1,

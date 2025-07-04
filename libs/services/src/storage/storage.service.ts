@@ -5,6 +5,8 @@ import {
   GetObjectCommand,
   DeleteObjectCommand,
   ListBucketsCommand,
+  ListObjectsV2Command,
+  DeleteObjectsCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { FileNotExistError, Defaults } from '@impler/shared';
@@ -28,6 +30,7 @@ export abstract class StorageService {
   abstract getFileStream(key: string): Promise<Readable>;
   abstract writeStream(key: string, stream: Readable, contentType: string): Promise<void>;
   abstract deleteFile(key: string): Promise<void>;
+  abstract deleteFolder(key: string): Promise<void>;
   abstract isConnected(): boolean;
   abstract getSignedUrl(key: string): Promise<string>;
 }
@@ -63,6 +66,46 @@ export class S3StorageService implements StorageService {
       .catch(() => {
         this.isS3Connected = false;
       });
+  }
+  async deleteFolder(prefix: string): Promise<void> {
+    try {
+      // Ensure prefix ends with '/' if it's not empty
+      const folderPrefix = prefix && !prefix.endsWith('/') ? `${prefix}/` : prefix;
+
+      let continuationToken: string | undefined;
+
+      do {
+        // List objects with the given prefix
+        const listCommand = new ListObjectsV2Command({
+          Bucket: process.env.S3_BUCKET_NAME,
+          Prefix: folderPrefix,
+          ContinuationToken: continuationToken,
+        });
+
+        const listResponse = await this.s3.send(listCommand);
+
+        if (listResponse.Contents && listResponse.Contents.length > 0) {
+          // Prepare objects for deletion (max 1000 objects per delete request)
+          const objectsToDelete = listResponse.Contents.map((obj) => ({
+            Key: obj.Key,
+          }));
+
+          // Delete the objects
+          const deleteCommand = new DeleteObjectsCommand({
+            Bucket: process.env.S3_BUCKET_NAME,
+            Delete: {
+              Objects: objectsToDelete,
+              Quiet: true, // Don't return details about deleted objects
+            },
+          });
+
+          await this.s3.send(deleteCommand);
+        }
+
+        // Check if there are more objects to delete
+        continuationToken = listResponse.NextContinuationToken;
+      } while (continuationToken);
+    } catch (error) {}
   }
 
   async uploadFile(key: string, file: Buffer | string | Readable, contentType: string): Promise<IStorageResponse> {
@@ -273,6 +316,13 @@ export class AzureStorageService implements StorageService {
   async deleteFile(key: string): Promise<void> {
     const blockBlobClient = this.containerClient.getBlockBlobClient(key);
     await blockBlobClient.delete();
+  }
+
+  async deleteFolder(prefix: string): Promise<void> {
+    for await (const blob of this.containerClient.listBlobsFlat({ prefix })) {
+      const blockBlobClient = this.containerClient.getBlockBlobClient(blob.name);
+      await blockBlobClient.deleteIfExists();
+    }
   }
 
   isConnected(): boolean {

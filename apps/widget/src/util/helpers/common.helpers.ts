@@ -371,6 +371,32 @@ export const generateCronExpression = (data: RecurrenceFormData): string => {
   }
 };
 
-export function generateSessionId() {
-  return Date.now().toString(36) + Math.random().toString(36).substring(2);
+export function generateSessionId(length = 16, type: 'numbers' | 'alphanumeric' | 'hex' = 'alphanumeric'): string {
+  if (!window.crypto || !window.crypto.getRandomValues) {
+    throw new Error('Crypto API not available. Use HTTPS or modern browser.');
+  }
+
+  const array = new Uint8Array(length);
+  window.crypto.getRandomValues(array);
+
+  let charset: string;
+  switch (type) {
+    case 'numbers':
+      charset = '0123456789';
+      break;
+    case 'hex':
+      charset = '0123456789abcdef';
+      break;
+    case 'alphanumeric':
+    default:
+      charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      break;
+  }
+
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += charset[array[i] % charset.length];
+  }
+
+  return result;
 }
