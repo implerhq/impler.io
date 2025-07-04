@@ -31,14 +31,14 @@ export class UploadCleanupSchedulerService {
       try {
         const files = await this.fileRepository.find({ _id: upload._uploadedFileId });
 
-        await Promise.all(
+        await Promise.allSettled(
           files.map(async (file) => {
             try {
               await Upload.updateOne({ _uploadedFileId: file._id }, { $set: { _uploadedFileId: '' } });
 
               // Delete file from storage and db
               try {
-                await this.storageService.deleteFile(file.path);
+                await this.storageService.deleteFolder(file.path);
                 await this.fileRepository.delete({ _id: file._id });
               } catch (error) {}
 
