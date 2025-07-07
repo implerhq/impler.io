@@ -584,15 +584,4 @@ export class RSSXMLService {
       throw error;
     }
   }
-
-  async getMimeType(url: string): Promise<string | null> {
-    try {
-      const response = await axios.head(url);
-      const mimeType = response.headers['content-type'] || null;
-
-      return mimeType?.split(';')[0] || null;
-    } catch (error) {
-      return null;
-    }
-  }
 }

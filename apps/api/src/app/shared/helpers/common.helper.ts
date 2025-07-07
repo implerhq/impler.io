@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/node';
+import axios from 'axios';
 import { BadRequestException } from '@nestjs/common';
 import { APIMessages } from '../constants';
 import { PaginationResult, Defaults, FileMimeTypesEnum } from '@impler/shared';
@@ -95,3 +96,56 @@ export function isValidXMLMimeType(mimeType: string): boolean {
 
   return false;
 }
+
+export const getMimeType = async (url: string): Promise<string | null> => {
+  try {
+    if (!isUrlSafe(url)) {
+      throw new BadRequestException('Invalid URL');
+    }
+
+    const response = await axios.head(url, {
+      timeout: 10000,
+      maxRedirects: 3,
+    });
+
+    const mimeType = response.headers['content-type'] || null;
+
+    return mimeType?.split(';')[0] || null;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export function isUrlSafe(url: string): boolean {
+  try {
+    const parsedUrl = new URL(url);
+
+    // Only allow HTTP and HTTPS
+    if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+      return false;
+    }
+
+    // Block localhost and private IPs (except in development)
+    const hostname = parsedUrl.hostname.toLowerCase();
+    const isDevelopment = process.env.NODE_ENV === 'dev';
+
+    if (!isDevelopment && ['localhost', '127.0.0.1', '::1'].includes(hostname)) {
+      return false;
+    }
+
+    if (
+      hostname.startsWith('10.') ||
+      hostname.startsWith('192.168.') ||
+      hostname.startsWith('169.254.') ||
+      /^172\.(1[6-9]|2[0-9]|3[01])\./.test(hostname)
+    ) {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+export default { getMimeType };
