@@ -1,10 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserJobEntity, UserJobRepository } from '@impler/dal';
 import { CreateUserJobCommand } from './create-userjob.command';
 import { APIMessages } from '@shared/constants';
-import { BadRequestException } from '@nestjs/common';
 import { RSSXMLService } from '@impler/services';
-import { isValidXMLMimeType } from '@shared/helpers/common.helper';
+import { getMimeType, isValidXMLMimeType } from '@shared/helpers/common.helper';
 import { WebSocketService } from '@shared/services';
 
 @Injectable()
@@ -24,10 +23,11 @@ export class CreateUserJob {
   }: CreateUserJobCommand): Promise<UserJobEntity> {
     const rssService = new RSSXMLService(url);
 
-    const mimeType = await rssService.getMimeType(url);
+    try {
+      const mimeType = await getMimeType(url);
+      console.log('mime type is >>', mimeType);
 
-    if (isValidXMLMimeType(mimeType)) {
-      try {
+      if (isValidXMLMimeType(mimeType)) {
         const abortController = new AbortController();
 
         this.webSocketService.registerSessionAbort(webSocketSessionId, abortController);
@@ -54,9 +54,11 @@ export class CreateUserJob {
           _templateId: _templateId,
           externalUserId: externalUserId || (formattedExtra as unknown as Record<string, any>)?.externalUserId,
         });
-      } catch (error) {}
-    } else {
-      throw new BadRequestException(APIMessages.INVALID_RSS_URL);
+      } else {
+        throw new BadRequestException(APIMessages.INVALID_RSS_URL);
+      }
+    } catch (error) {
+      throw new BadRequestException(error);
     }
   }
 }
