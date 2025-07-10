@@ -49,6 +49,9 @@ export function OutputEditor({ templateId, switchToDestination }: OutputEditorPr
     isSyncCustomizationLoading,
     isCustomizationLoading,
     isDestinationLoading,
+    allVariables,
+    formatVariableDisplay,
+    isSystemVariable,
   } = useEditor({
     templateId,
   });
@@ -98,7 +101,7 @@ export function OutputEditor({ templateId, switchToDestination }: OutputEditorPr
                     id="format"
                     value={field.value}
                     onChange={field.onChange}
-                    variables={[...(customization?.recordVariables || []), ...(customization?.chunkVariables || [])]}
+                    variables={allVariables}
                   />
                 )}
               />
@@ -107,14 +110,16 @@ export function OutputEditor({ templateId, switchToDestination }: OutputEditorPr
             </div>
             <div style={{ width: '20%', display: 'flex', flexDirection: 'column', gap: '5' }}>
               <VarLabel label="System Variables">
-                {customization?.chunkVariables.map((variable) => (
-                  <VarItemWrapper key={variable} name={variable} copyText={'"' + variable + '"'} />
+                {allVariables.filter(isSystemVariable).map((variable) => (
+                  <VarItemWrapper key={variable} name={variable} copyText={formatVariableDisplay(variable)} />
                 ))}
               </VarLabel>
               <VarLabel label="Schema Variables">
-                {customization?.recordVariables.map((variable) => (
-                  <VarItemWrapper key={variable} name={variable} copyText={'"' + variable + '"'} />
-                ))}
+                {allVariables
+                  .filter((variable) => !isSystemVariable(variable))
+                  .map((variable) => (
+                    <VarItemWrapper key={variable} name={variable} copyText={formatVariableDisplay(variable)} />
+                  ))}
               </VarLabel>
             </div>
           </Flex>
