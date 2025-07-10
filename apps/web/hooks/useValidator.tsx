@@ -7,7 +7,7 @@ import { notify } from '@libs/notify';
 import { commonApi } from '@libs/api';
 import { track } from '@libs/amplitude';
 import { API_KEYS, MODAL_KEYS, MODAL_TITLES } from '@config';
-import { ICustomization, IErrorObject, IValidator } from '@impler/shared';
+import { ICustomization, IErrorObject, IValidator, DestinationsEnum } from '@impler/shared';
 import { CodeOutput } from '@components/imports/validator/CodeOutput';
 
 interface UseSchemaProps {
@@ -43,9 +43,14 @@ export function useValidator({ templateId }: UseSchemaProps) {
     () => commonApi<ICustomization>(API_KEYS.TEMPLATE_CUSTOMIZATION_GET as any, { parameters: [templateId] }),
     {
       onSuccess(data) {
-        setEditorVariables([
-          ...(data.recordVariables.map((variable) => variable.substring(2, variable.length - 2)) || []),
-        ]);
+        // Get base variables from customization
+        const baseVariables = data.recordVariables?.map((variable) => variable.substring(2, variable.length - 2)) || [];
+
+        // Add static Bubble.io variables if destination is Bubble.io
+        const bubbleIoVariables =
+          data.destination === DestinationsEnum.BUBBLEIO ? ['extra.uploadId', 'extra.userId'] : [];
+
+        setEditorVariables([...baseVariables, ...bubbleIoVariables]);
       },
     }
   );

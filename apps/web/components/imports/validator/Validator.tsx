@@ -20,13 +20,19 @@ import { useValidator } from '@hooks/useValidator';
 import { VarItemWrapper } from '../editor/VarItemWrapper';
 import { InformationIcon } from '@assets/icons/Information.icon';
 import { TooltipLink } from '@components/guide-point';
+import { useMemo } from 'react';
+import { useEditor } from '@hooks/useEditor';
+import { DestinationsEnum } from '@impler/shared';
 
 interface ValidatorProps {
   templateId: string;
 }
 
 export function Validator({ templateId }: ValidatorProps) {
-  const systemVariables = [
+  const { destination } = useEditor({ templateId });
+
+  // Existing system variables
+  const baseSystemVariables = [
     'params.uploadId',
     'params.fileName',
     'params.data',
@@ -34,11 +40,25 @@ export function Validator({ templateId }: ValidatorProps) {
     'params.totalRecords',
     'params.chunkSize',
   ];
+
+  // Bubble.io specific system variables
+  const bubbleIoSystemVariables = ['extra.uploadId', 'extra.userId'];
+
   const { colorScheme } = useMantineColorScheme();
   const { control, editorVariables, onSave, isUpdateValidationsLoading, isValidationsLoading, testCodeResult } =
     useValidator({
       templateId,
     });
+
+  // Combine all variables: base system variables + editor variables + Bubble.io variables (if applicable)
+  const allVariables = useMemo(() => {
+    const variables = [...baseSystemVariables, ...editorVariables];
+    if (destination?.destination === DestinationsEnum.BUBBLEIO) {
+      variables.push(...bubbleIoSystemVariables);
+    }
+
+    return variables;
+  }, [destination?.destination, editorVariables]);
 
   return (
     <div style={{ position: 'relative' }}>
@@ -124,7 +144,7 @@ export function Validator({ templateId }: ValidatorProps) {
                   mode="javascript"
                   value={field.value}
                   onChange={field.onChange}
-                  variables={[...systemVariables]}
+                  variables={allVariables}
                 />
               )}
             />
@@ -134,13 +154,8 @@ export function Validator({ templateId }: ValidatorProps) {
           </div>
           <div style={{ width: '20%', display: 'flex', flexDirection: 'column', gap: '5' }}>
             <VarLabel label="System Variables">
-              {systemVariables.map((variable) => (
+              {allVariables.map((variable) => (
                 <VarItemWrapper key={variable} name={variable} copyText={variable} />
-              ))}
-            </VarLabel>
-            <VarLabel label="Schema Variables">
-              {editorVariables.map((variable) => (
-                <VarItemWrapper key={variable} name={variable} copyText={'"' + variable + '"'} />
               ))}
             </VarLabel>
           </div>
