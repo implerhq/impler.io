@@ -1,11 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  DestinationsEnum,
-  createRecordFormat,
-  extractExtraSystemVariables,
-  getRecordFormat,
-  updateCombinedFormat,
-} from '@impler/shared';
+import { DestinationsEnum, createRecordFormat, getRecordFormat, updateCombinedFormat } from '@impler/shared';
 import { ColumnRepository, CustomizationEntity, CustomizationRepository, TemplateRepository } from '@impler/dal';
 
 import { CONSTANTS } from '@shared/constants';
@@ -22,12 +16,6 @@ export class UpdateCustomization {
   async execute(_templateId: string, data: UpdateCustomizationCommand) {
     const customization = await this.customizationRepository.findOne({ _templateId });
     const template = await this.templateRepository.findById(_templateId, 'destination');
-
-    // Extract system variables for BubbleIO
-    if (template.destination === DestinationsEnum.BUBBLEIO && customization?.recordFormat) {
-      const extractedChunkSystemVariables = extractExtraSystemVariables(customization.recordFormat);
-      await this.customizationRepository.update({ _templateId }, { chunkVariables: extractedChunkSystemVariables });
-    }
 
     const customizationUpdateData: Partial<CustomizationEntity> = {
       _templateId,
