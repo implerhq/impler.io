@@ -148,17 +148,3 @@ export function getRecordFormat(chunkFormat: string) {
     chunkFormat: JSON.stringify(format),
   };
 }
-
-export function extractExtraSystemVariables(format: string): string[] {
-  const variablePattern = /\{\{([^}]+)\}\}/g;
-  const variables: string[] = [];
-  let match;
-
-  while ((match = variablePattern.exec(format)) !== null) {
-    variables.push(match[1]);
-  }
-
-  const systemVariables = variables.filter((variable) => variable.startsWith('extra.'));
-
-  return systemVariables;
-}
