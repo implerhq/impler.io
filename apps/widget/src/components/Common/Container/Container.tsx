@@ -8,7 +8,7 @@ import { useEffect, useState, PropsWithChildren, useMemo } from 'react';
 import { ApiService } from '@api';
 import { Provider } from '../Provider';
 import { MessageHandlerDataType } from '@types';
-import { ParentWindow, deepMerge } from '@util';
+import { ParentWindow, deepMerge, getContrastingTextColor, getSecondaryTextColor, isColorDark } from '@util';
 import { WIDGET_TEXTS, isObject } from '@impler/client';
 import { API_URL, colors, mantineConfig, variables } from '@config';
 import { IWidgetShowPayload, WidgetEventTypesEnum } from '@impler/shared';
@@ -89,6 +89,11 @@ export function Container({ children }: PropsWithChildren<{}>) {
   }
 
   const primaryColor = secondaryPayload.appearance?.primaryColor ?? secondaryPayload.primaryColor ?? colors.primary;
+  const backgroundColor = secondaryPayload.appearance?.widget?.backgroundColor ?? colors.white;
+
+  // Dynamic text colors based on background
+  const textColor = getContrastingTextColor(backgroundColor);
+  const secondaryTextColor = getSecondaryTextColor(backgroundColor);
 
   const primaryButtonConfig = secondaryPayload.appearance?.primaryButtonConfig;
   const secondaryButtonConfig = secondaryPayload.appearance?.secondaryButtonConfig;
@@ -139,10 +144,15 @@ export function Container({ children }: PropsWithChildren<{}>) {
 
             //common
             '--border-radius': secondaryPayload.appearance?.borderRadius || '0.25rem',
-            '--label-color': '#868e96',
+            '--label-color': secondaryTextColor,
             '--error-color': '#f03e3e',
-            '--border-color': colors.lightDeem,
-            '--background-color': secondaryPayload.appearance?.widget?.backgroundColor ?? colors.white,
+            '--border-color': isColorDark(backgroundColor) ? '#444' : colors.lightDeem,
+            '--background-color': backgroundColor,
+            '--text-color': textColor,
+            '--secondary-text-color': secondaryTextColor,
+
+            // Table-specific hover colors (much more subtle)
+            '--table-hover-background': primaryColorShades[2],
 
             // stepper
             '--stepper-background': '#f1f3f5',
@@ -156,7 +166,6 @@ export function Container({ children }: PropsWithChildren<{}>) {
             '--stepper-progress-border-color': primaryColor,
             '--stepper-border-radius': '0px',
             '--stepper-color': '#666',
-
             // button
 
             //Primary Button Variables
@@ -169,16 +178,19 @@ export function Container({ children }: PropsWithChildren<{}>) {
 
             // Secondary Button Variables
             '--button-secondary-color': secondaryButtonConfig?.textColor ?? primaryColor,
-            '--button-secondary-background': secondaryButtonConfig?.backgroundColor ?? colors.white,
-            '--button-secondary-background-hover': secondaryButtonConfig?.hoverBackground ?? primaryColorShades?.[0],
+            '--button-secondary-background':
+              secondaryButtonConfig?.backgroundColor ?? (isColorDark(backgroundColor) ? '#4a4a4a' : colors.white),
+            '--button-secondary-background-hover':
+              secondaryButtonConfig?.hoverBackground ??
+              (isColorDark(backgroundColor) ? '#5a5a5a' : primaryColorShades?.[0]),
             '--button-secondary-border-color': secondaryButtonConfig?.borderColor ?? primaryColor,
             '--button-secondary-border-hover': secondaryButtonConfig?.hoverBorderColor ?? primaryColor,
             '--button-secondary-shadow': secondaryButtonConfig?.buttonShadow ?? 'none',
 
             // counts
-            '--counts-background': '#f1f3f5',
+            '--counts-background': isColorDark(backgroundColor) ? '#3a3a3a' : '#f1f3f5',
             '--counts-border-radius': '2rem',
-            '--counts-active-background': '#ffffff',
+            '--counts-active-background': backgroundColor,
           },
           '.tippy-box[data-theme~="custom"]': {
             color: 'black',
@@ -209,7 +221,21 @@ export function Container({ children }: PropsWithChildren<{}>) {
           fontFamily: `${secondaryPayload.appearance?.fontFamily || 'Poppins'}, sans-serif`,
           globalStyles: () => ({
             '*': {
-              color: secondaryPayload.colorScheme, // textColor
+              color: textColor, // Use the calculated text color
+            },
+            body: {
+              backgroundColor: backgroundColor,
+              color: textColor,
+            },
+            // Additional global styles for better text contrast
+            'h1, h2, h3, h4, h5, h6': {
+              color: textColor,
+            },
+            'p, span, div': {
+              color: textColor,
+            },
+            label: {
+              color: secondaryTextColor,
             },
           }),
           components: {
@@ -241,13 +267,6 @@ export function Container({ children }: PropsWithChildren<{}>) {
               },
             },
 
-            Modal: {
-              styles: {
-                content: {
-                  backgroundColor: 'var(--background-color)',
-                },
-              },
-            },
             Button: {
               styles: {
                 root: {
@@ -335,30 +354,225 @@ export function Container({ children }: PropsWithChildren<{}>) {
               },
             },
 
-            Dropzone: {
-              styles: {
+            DirectEntryView: {
+              styles: () => ({
                 root: {
-                  '&[data-has-error]': {
-                    borderColor: 'var(--error-color)',
-                    color: 'var(--error-color)',
-                    text: {
-                      color: 'var(--error-color)',
-                    },
-                  },
+                  backgroundColor: isColorDark(backgroundColor) ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
+                  border: `2px dashed ${isColorDark(backgroundColor) ? '#555' : '#d1d5db'}`,
+                  borderRadius: '8px',
+                  padding: '24px',
+                  transition: 'all 0.2s ease',
+                  color: isColorDark(backgroundColor) ? '#a0a0a0' : '#6b7280',
+                  minHeight: '200px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+
                   '&:hover': {
-                    backgroundColor: 'lightgrey',
+                    backgroundColor: isColorDark(backgroundColor) ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
+                    borderColor: primaryColor,
+                    transform: 'translateY(-1px)',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                   },
-                  button: {
+
+                  // Style any text elements inside
+                  '& .mantine-Text-root': {
+                    color: 'inherit',
+                  },
+
+                  // Style icons if present
+                  '& svg': {
+                    color: 'inherit',
+                    opacity: 0.7,
+                  },
+
+                  // Style any buttons inside the DirectEntryView
+                  '& button': {
                     '&[data-variant=filled]': {
                       backgroundColor: 'var(--button-primary-background)',
-                      '.mantine-Button-label': {
-                        color: 'var(--button-primary-color)',
+                      color: 'var(--button-primary-color)',
+                      border: 'none',
+
+                      '&:hover': {
+                        backgroundColor: 'var(--button-primary-background-hover)',
                       },
+                    },
+                    '&[data-variant=outline]': {
+                      backgroundColor: 'var(--button-secondary-background)',
+                      borderColor: 'var(--button-secondary-border-color)',
+                      color: 'var(--button-secondary-color)',
+
+                      '&:hover': {
+                        backgroundColor: 'var(--button-secondary-background-hover)',
+                      },
+                    },
+                  },
+                },
+              }),
+            },
+            // Replace your existing Dropzone styles with this:
+            Dropzone: {
+              styles: () => ({
+                root: {
+                  // Use a more visible background with better contrast
+                  backgroundColor: isColorDark(backgroundColor)
+                    ? 'rgba(255, 255, 255, 0.05)' // Very light white overlay for dark themes
+                    : 'rgba(0, 0, 0, 0.02)', // Very light dark overlay for light themes
+
+                  border: `2px dashed ${isColorDark(backgroundColor) ? '#555' : '#d1d5db'}`,
+                  borderRadius: '8px',
+                  padding: '24px',
+                  transition: 'all 0.2s ease',
+
+                  // Text color with better contrast
+                  color: isColorDark(backgroundColor) ? '#a0a0a0' : '#6b7280',
+
+                  // Ensure minimum contrast
+                  minHeight: '200px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+
+                  '&[data-has-error]': {
+                    borderColor: 'var(--error-color)',
+                    backgroundColor: isColorDark(backgroundColor)
+                      ? 'rgba(240, 62, 62, 0.1)'
+                      : 'rgba(240, 62, 62, 0.05)',
+                    color: 'var(--error-color)',
+                  },
+
+                  '&:hover': {
+                    backgroundColor: isColorDark(backgroundColor)
+                      ? 'rgba(255, 255, 255, 0.08)' // Slightly more visible on hover
+                      : 'rgba(0, 0, 0, 0.04)',
+                    borderColor: primaryColor,
+                    transform: 'translateY(-1px)',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                  },
+
+                  // Style the button inside dropzone
+                  '& button': {
+                    '&[data-variant=filled]': {
+                      backgroundColor: 'var(--button-primary-background)',
+                      color: 'var(--button-primary-color)',
+                      border: 'none',
+
                       '&:hover': {
                         backgroundColor: 'var(--button-primary-background-hover)',
                       },
                     },
                   },
+
+                  // Style text elements inside dropzone
+                  '& .mantine-Text-root': {
+                    color: 'inherit',
+                  },
+
+                  // Style icon if present
+                  '& svg': {
+                    color: 'inherit',
+                    opacity: 0.7,
+                  },
+                },
+              }),
+            },
+
+            // Add these new component styles for the manual entry section:
+            Card: {
+              styles: {
+                root: {
+                  backgroundColor: 'var(--background-color)',
+                  borderColor: 'var(--border-color)',
+                  color: 'var(--text-color)',
+                },
+              },
+            },
+            Table: {
+              styles: (theme) => ({
+                root: {
+                  borderRadius: theme.radius.md,
+                  overflow: 'hidden',
+                  fontSize: theme.fontSizes.sm,
+                  backgroundColor: 'transparent',
+                  color: 'var(--text-color)',
+                },
+
+                thead: {
+                  backgroundColor: 'var(--stepper-background)',
+                },
+
+                'thead th': {
+                  backgroundColor: 'var(--stepper-background)',
+                  color: 'var(--text-color)',
+                  fontWeight: 600,
+                  borderBottom: `1px solid var(--border-color)`,
+                  padding: '12px',
+                  textAlign: 'left',
+                },
+
+                'tbody td': {
+                  color: 'var(--text-color)',
+                  padding: '12px',
+                  borderBottom: `1px solid var(--border-color)`,
+                  backgroundColor: 'var(--background-color)',
+                },
+
+                'tbody tr': {
+                  transition: 'background-color 0.2s ease',
+
+                  '&:nth-of-type(even)': {
+                    backgroundColor: 'var(--stepper-background)',
+                  },
+
+                  // Updated hover with much more subtle color
+                  '&:hover': {
+                    backgroundColor: 'var(--table-hover-background)',
+                    // Ensure text remains visible
+                    color: 'var(--text-color)',
+
+                    // Make sure all child elements maintain proper text color
+                    '& td': {
+                      color: 'var(--text-color)',
+                    },
+                  },
+                },
+
+                /*
+                 * Optional: selected row style
+                 * 'tbody tr[data-selected="true"]': {
+                 *   backgroundColor: 'var(--button-primary-background)',
+                 *   color: 'var(--button-primary-color)',
+                 *   '&:hover': {
+                 *     backgroundColor: 'var(--button-primary-background-hover)',
+                 *   },
+                 * },
+                 */
+              }),
+            },
+            Input: {
+              styles: {
+                input: {
+                  borderColor: 'var(--border-color)',
+                  backgroundColor: 'var(--background-color)',
+                  color: 'var(--text-color)',
+                  '&:focus': {
+                    borderColor: 'var(--button-primary-background)',
+                  },
+                  '&::placeholder': {
+                    color: 'var(--secondary-text-color)',
+                  },
+                },
+              },
+            },
+
+            Alert: {
+              styles: {
+                root: {
+                  backgroundColor: primaryColorShades[0],
+                  borderColor: primaryColorShades[2],
+                  color: primaryColorShades[7],
                 },
               },
             },
@@ -368,6 +582,234 @@ export function Container({ children }: PropsWithChildren<{}>) {
                   '--rp-section-color': 'var(--mantine-color-primary-filled)',
                 },
               },
+            },
+            SegmentedControl: {
+              styles: (theme) => ({
+                root: {
+                  backgroundColor: theme.fn.rgba(theme.colors[theme.primaryColor][5], 0.06),
+                  borderRadius: 'var(--border-radius)',
+                  padding: '4px',
+                  border: `1px solid var(--border-color)`,
+                },
+
+                control: {
+                  borderRadius: 'calc(var(--border-radius) - 2px)',
+                  border: 'none !important',
+                  transition: 'all 0.2s ease',
+                  color: 'var(--text-color) !important',
+
+                  '&:not([data-active])': {
+                    backgroundColor: 'transparent',
+                    color: 'var(--text-color) !important',
+
+                    '&:hover': {
+                      backgroundColor: isColorDark(backgroundColor)
+                        ? 'rgba(255, 255, 255, 0.05)'
+                        : 'rgba(0, 0, 0, 0.03)',
+                    },
+                  },
+
+                  '&[data-active]': {
+                    backgroundColor: 'var(--button-primary-background) !important',
+                    color: 'var(--button-primary-color) !important',
+                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+
+                    '&:hover': {
+                      backgroundColor: 'var(--button-primary-background-hover) !important',
+                    },
+                  },
+                },
+
+                controlActive: {
+                  backgroundColor: 'var(--button-primary-background) !important',
+                  color: 'var(--button-primary-color) !important',
+                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                },
+
+                label: {
+                  fontWeight: 500,
+                  fontSize: theme.fontSizes.sm,
+                  padding: '8px 16px',
+                  transition: 'color 0.2s ease',
+                  color: 'var(--text-color) !important',
+                },
+
+                labelActive: {
+                  color: 'var(--button-primary-color) !important',
+                  fontWeight: 600,
+                },
+              }),
+            },
+
+            FindReplaceModal: {
+              styles: (theme) => ({
+                root: {
+                  borderRadius: theme.radius.md,
+                  overflow: 'hidden',
+                  fontSize: theme.fontSizes.sm,
+                  backgroundColor: 'var(--background-color)',
+                  color: 'var(--text-color)',
+                },
+                header: {
+                  backgroundColor: 'var(--background-color)',
+                  color: 'var(--text-color)',
+                  borderBottom: `1px solid var(--border-color)`,
+                },
+                title: {
+                  color: 'var(--text-color)',
+                  fontWeight: 600,
+                },
+                body: {
+                  backgroundColor: 'var(--background-color)',
+                  color: 'var(--text-color)',
+                },
+                close: {
+                  color: 'var(--text-color)',
+                  '&:hover': {
+                    backgroundColor: 'var(--stepper-background)',
+                  },
+                },
+              }),
+            },
+
+            // Also update your Modal component styles to ensure proper theming:
+            Modal: {
+              styles: {
+                content: {
+                  backgroundColor: 'var(--background-color)',
+                  color: 'var(--text-color)',
+                },
+                header: {
+                  backgroundColor: 'var(--background-color)',
+                  color: 'var(--text-color)',
+                  borderBottom: `1px solid var(--border-color)`,
+                },
+                title: {
+                  color: 'var(--text-color)',
+                  fontWeight: 600,
+                },
+                body: {
+                  backgroundColor: 'var(--background-color)',
+                  color: 'var(--text-color)',
+                },
+                close: {
+                  color: 'var(--text-color)',
+                  '&:hover': {
+                    backgroundColor: 'var(--stepper-background)',
+                  },
+                },
+              },
+            },
+
+            // Add/update TextInput and Select components to use your CSS variables:
+            TextInput: {
+              styles: {
+                input: {
+                  borderColor: 'var(--border-color)',
+                  backgroundColor: 'var(--background-color)',
+                  color: 'var(--text-color)',
+                  '&:focus': {
+                    borderColor: 'var(--button-primary-background)',
+                  },
+                  '&::placeholder': {
+                    color: 'var(--secondary-text-color)',
+                  },
+                },
+                label: {
+                  color: 'var(--label-color)',
+                  fontWeight: 500,
+                },
+              },
+            },
+
+            Select: {
+              styles: {
+                input: {
+                  borderColor: 'var(--border-color)',
+                  backgroundColor: 'var(--background-color)',
+                  color: 'var(--text-color)',
+                  '&:focus': {
+                    borderColor: 'var(--button-primary-background)',
+                  },
+                },
+                label: {
+                  color: 'var(--label-color)',
+                  fontWeight: 500,
+                },
+                item: {
+                  backgroundColor: 'var(--background-color)',
+                  color: 'var(--text-color)',
+                  '&:hover': {
+                    backgroundColor: 'var(--stepper-background)',
+                  },
+                  '&[data-selected]': {
+                    backgroundColor: 'var(--button-primary-background)',
+                    color: 'var(--button-primary-color)',
+                  },
+                },
+                dropdown: {
+                  backgroundColor: 'var(--background-color)',
+                  borderColor: 'var(--border-color)',
+                },
+              },
+            },
+
+            // Add Checkbox component styling:
+            Checkbox: {
+              styles: {
+                input: {
+                  borderColor: 'var(--border-color)',
+                  backgroundColor: 'var(--background-color)',
+                  '&:checked': {
+                    backgroundColor: 'var(--button-primary-background)',
+                    borderColor: 'var(--button-primary-background)',
+                  },
+                },
+                label: {
+                  color: 'var(--text-color)',
+                  fontWeight: 500,
+                },
+              },
+            },
+
+            // Just add this to your Container.tsx components section
+            Pagination: {
+              styles: () => ({
+                item: {
+                  backgroundColor: 'var(--background-color)',
+                  color: 'var(--text-color)',
+                  border: '1px solid var(--border-color)',
+
+                  '&[data-active="true"]': {
+                    backgroundColor: 'var(--button-primary-background)',
+                    color: 'var(--button-primary-color)',
+                    border: '1px solid var(--button-primary-background)',
+                  },
+
+                  '&:hover:not([data-active="true"])': {
+                    backgroundColor: 'var(--stepper-background)',
+                  },
+                },
+
+                control: {
+                  backgroundColor: 'var(--background-color)',
+                  color: 'var(--text-color)',
+                  border: '1px solid var(--border-color)',
+
+                  '&:hover:not(:disabled)': {
+                    backgroundColor: 'var(--button-primary-background)',
+                    color: 'var(--button-primary-color)',
+                    border: '1px solid var(--button-primary-background)',
+                  },
+
+                  '&:disabled': {
+                    backgroundColor: 'var(--stepper-background)',
+                    color: 'var(--secondary-text-color)',
+                    opacity: 0.5,
+                    cursor: 'not-allowed',
+                  },
+                },
+              }),
             },
           },
           colors: {
