@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -83,6 +83,38 @@ export function useEditor({ templateId }: UseEditorProps) {
     }
   );
 
+  // Combine all variables: record variables + chunk variables + system variables
+  const allVariables = useMemo(() => {
+    const variables = [];
+
+    // Add schema variables (from record format)
+    if (customization?.recordVariables) {
+      variables.push(...customization.recordVariables.map((variable) => variable.substring(2, variable.length - 2)));
+    }
+
+    // Add system variables (from chunk format)
+    if (customization?.chunkVariables) {
+      variables.push(...customization.chunkVariables);
+    }
+
+    // Add Bubble.io specific system variables
+    if (destination?.destination === DestinationsEnum.BUBBLEIO) {
+      variables.push('extra.uploadId', 'extra.userId');
+    }
+
+    return variables;
+  }, [customization?.recordVariables, customization?.chunkVariables, destination?.destination]);
+
+  // Helper function to format variable display
+  const formatVariableDisplay = (variable: string) => {
+    return `"${variable}"`;
+  };
+
+  // Helper function to categorize variables
+  const isSystemVariable = (variable: string) => {
+    return variable.startsWith('extra.') || variable.startsWith('params.');
+  };
+
   const validateFormat = (data: string): boolean => {
     try {
       JSON.parse(data);
@@ -137,10 +169,13 @@ export function useEditor({ templateId }: UseEditorProps) {
     onSaveClick,
     destination,
     handleSubmit,
+    allVariables,
     customization,
+    isSystemVariable,
     syncCustomization,
     updateCustomization,
     isDestinationLoading,
+    formatVariableDisplay,
     isCustomizationLoading,
     isSyncCustomizationLoading,
     isUpdateCustomizationLoading,

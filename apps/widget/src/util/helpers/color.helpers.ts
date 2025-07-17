@@ -56,3 +56,29 @@ export function generateShades(color: string, shadesCount = variables.defaultSha
     return shades.reverse();
   }
 }
+
+// Helper function to determine if a color is dark
+export function isColorDark(color: string): boolean {
+  // Remove # if present
+  const hex = color.replace('#', '');
+
+  // Convert to RGB
+  const red = parseInt(hex.substr(0, 2), 16);
+  const green = parseInt(hex.substr(2, 2), 16);
+  const blue = parseInt(hex.substr(4, 2), 16);
+
+  // Calculate luminance using the relative luminance formula
+  const luminance = (0.299 * red + 0.587 * green + 0.114 * blue) / 255;
+
+  return luminance < 0.5;
+}
+
+// Helper function to get contrasting text color
+export function getContrastingTextColor(backgroundColor: string): string {
+  return isColorDark(backgroundColor) ? '#ffffff' : '#000000';
+}
+
+// Helper function to get a lighter version of the text color for secondary text
+export function getSecondaryTextColor(backgroundColor: string): string {
+  return isColorDark(backgroundColor) ? '#e0e0e0' : '#666666';
+}

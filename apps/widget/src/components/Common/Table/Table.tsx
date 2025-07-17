@@ -49,7 +49,7 @@ const createErrorSvg = memoize(() => {
   errorSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
   errorSvg.setAttribute('viewBox', '-2 -2 24 24');
   errorSvg.setAttribute('width', '20');
-  errorSvg.setAttribute('fill', 'currentColor');
+  errorSvg.setAttribute('fill', 'var(--error-color)');
   const errorSvgPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   errorSvgPath.setAttribute(
     'd',
@@ -76,8 +76,12 @@ Handsontable.renderers.registerRenderer(
     const hasWarnings = sourceData.warnings?.[name];
     const isUpdated = sourceData.updated?.[name];
 
+    // Reset classes first
     TD.className = 'custom-cell';
     TD.ariaLabel = '';
+
+    // Remove any inline background styles
+    TD.style.backgroundColor = '';
 
     let fieldValue = sourceData.record?.[name] ?? null;
 
@@ -101,29 +105,30 @@ Handsontable.renderers.registerRenderer(
     if (fieldValue !== null) valueSpan.textContent = fieldValue;
     TD.appendChild(valueSpan);
 
+    // Apply CSS classes instead of inline styles
     if (isUpdated) {
+      TD.classList.add('updated-cell');
       errorSvg.setAttribute('style', memoizedStyles.errorUpdated);
       if (hasError) {
+        TD.classList.add('error-cell');
         TD.appendChild(errorSvg);
       }
-      TD.style.backgroundColor = '#ffda5b';
     } else if (hasError) {
+      TD.classList.add('error-cell');
       errorSvg.setAttribute('style', memoizedStyles.errorOnly);
       TD.appendChild(errorSvg);
-      TD.style.backgroundColor = '#fdebeb';
     } else if (hasWarnings) {
+      TD.classList.add('warning-cell');
       TD.ariaLabel = hasWarnings;
       TD.dataset.cooltipzDir = row < 5 ? 'bottom' : 'top';
       TD.dataset.cooltipzSize = 'fit';
       errorSvg.setAttribute('style', hasWarnings ? memoizedStyles.warningOnly : memoizedStyles.errorUpdated);
       TD.appendChild(errorSvg);
-      TD.style.backgroundColor = '#ffda5b';
     }
 
     return TD;
   }
 );
-
 Handsontable.renderers.registerRenderer(
   'check',
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars

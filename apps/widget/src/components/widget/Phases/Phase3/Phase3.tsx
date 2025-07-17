@@ -128,7 +128,7 @@ export function Phase3(props: IPhase3Props) {
                 onClick={() => setShowDeleteConfirmModal(true)}
               >
                 {texts.COMMON.DELETE}
-                <Badge variant="light" ml="xs" color="red">
+                <Badge variant="gradient" ml="xs" color="red">
                   {numberFormatter(selectedRowsRef.current.size)}
                 </Badge>
               </Button>
