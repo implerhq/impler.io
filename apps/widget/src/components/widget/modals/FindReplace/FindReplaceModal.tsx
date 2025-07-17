@@ -10,6 +10,7 @@ import { Button } from '@ui/Button';
 import { Select } from '@ui/Select';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
+import { useStyles } from './FindReplaceModal.styles';
 
 interface IFindReplaceModalProps {
   opened: boolean;
@@ -22,6 +23,7 @@ interface IFindReplaceModalProps {
 }
 
 export function FindReplaceModal(props: IFindReplaceModalProps) {
+  const { classes } = useStyles();
   const { api } = useAPIState();
   const { uploadInfo } = useAppState();
   const [modifiedCount, setModifiedCount] = useState<number | undefined>();
@@ -60,11 +62,11 @@ export function FindReplaceModal(props: IFindReplaceModalProps) {
     <MantineModal
       centered
       size="lg"
-      padding="xl"
       opened={opened}
       keepMounted={false}
       onClose={onCloseModal}
       title={texts.PHASE3.FIND_REPLACE}
+      classNames={classes}
     >
       <FocusTrap active>
         <form onSubmit={handleSubmit((data) => replaceData(data))}>
