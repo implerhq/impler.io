@@ -532,7 +532,6 @@ export function Container({ children }: PropsWithChildren<{}>) {
                     // Ensure text remains visible
                     color: 'var(--text-color)',
 
-                    // Make sure all child elements maintain proper text color
                     '& td': {
                       color: 'var(--text-color)',
                     },

@@ -6,6 +6,7 @@ const getContentWrapperStyles = (theme: MantineTheme): CSSProperties => ({
   [`@media (min-width: ${theme.breakpoints.sm}px)`]: {
     width: '48%',
   },
+  backgroundColor: 'var(--primary-background)',
 });
 
 export const getTemplateContainerStyles = (): CSSProperties => ({

@@ -23,7 +23,7 @@ export function DirectEntryView({
 }: DirectEntryViewProps) {
   return (
     <Box
-      bg="var(--stepper-background)"
+      bg="var(--primary-background)"
       style={{ borderRadius: 'var(--border-radius)' }}
       pt="sm"
       pl="sm"
