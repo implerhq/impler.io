@@ -12,6 +12,7 @@ import { PaymentAPIService } from '@impler/services';
 import { QueueService } from '@shared/services/queue.service';
 import { AmplitudeService } from '@shared/services/amplitude.service';
 import { DalService, TemplateEntity, TemplateRepository, UploadEntity, UploadRepository } from '@impler/dal';
+import { MaxRecordsExceededException } from '@shared/exceptions/max-records.exception';
 
 @Injectable()
 export class StartProcess {
@@ -24,7 +25,7 @@ export class StartProcess {
     private templateRepository: TemplateRepository
   ) {}
 
-  async execute(_uploadId: string) {
+  async execute(_uploadId: string, maxRecords?: number) {
     let uploadInfo = await this.uploadRepository.getUploadWithTemplate(_uploadId, ['destination']);
     let importedData;
     const destination = (uploadInfo._templateId as unknown as TemplateEntity)?.destination;
@@ -44,7 +45,7 @@ export class StartProcess {
       });
     }
 
-    await this.updateTemplateStatistics({ uploadInfo, userEmail });
+    await this.updateTemplateStatistics({ uploadInfo, userEmail, maxRecords });
 
     // if destination is frontend or not defined then complete the upload process
     if (
@@ -117,7 +118,15 @@ export class StartProcess {
     return importedData;
   }
 
-  private async updateTemplateStatistics({ uploadInfo, userEmail }: { uploadInfo: UploadEntity; userEmail: string }) {
+  private async updateTemplateStatistics({
+    uploadInfo,
+    userEmail,
+    maxRecords,
+  }: {
+    uploadInfo: UploadEntity;
+    userEmail: string;
+    maxRecords?: number;
+  }) {
     //if its a file based import do-review will handle the further process
     if (uploadInfo._uploadedFileId || uploadInfo.originalFileName) {
       return;
@@ -134,7 +143,12 @@ export class StartProcess {
         },
       }
     );
-
+    if (maxRecords && uploadInfo.totalRecords > maxRecords) {
+      throw new MaxRecordsExceededException({
+        actualRecords: uploadInfo.totalRecords,
+        maxAllowed: maxRecords,
+      });
+    }
     await this.paymentAPIService.createEvent(
       {
         uploadId: uploadInfo._id,

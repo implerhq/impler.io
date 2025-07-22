@@ -51,6 +51,7 @@ export interface IUploadValues extends IFormvalues {
   output?: string;
   importId?: string;
   imageSchema?: string;
+  maxRecords?: number;
 }
 
 export interface IAutoImportValues {

@@ -25,7 +25,6 @@ export class CreateUserJob {
 
     try {
       const mimeType = await getMimeType(url);
-      console.log('mime type is >>', mimeType);
 
       if (isValidXMLMimeType(mimeType)) {
         const abortController = new AbortController();

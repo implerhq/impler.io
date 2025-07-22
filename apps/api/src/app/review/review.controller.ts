@@ -123,7 +123,7 @@ export class ReviewController {
   @ApiOperation({
     summary: 'Confirm review data for uploaded file',
   })
-  async doConfirmReview(@Param('uploadId', ValidateMongoId) _uploadId: string) {
+  async doConfirmReview(@Param('uploadId', ValidateMongoId) _uploadId: string, @Body() body: { maxRecords?: number }) {
     const uploadInformation = await this.getUpload.execute({
       uploadId: _uploadId,
       select: 'status _validDataFileId _invalidDataFileId totalRecords invalidRecords _templateId',
@@ -135,7 +135,7 @@ export class ReviewController {
     // upload files with status reviewing can only be confirmed
     validateUploadStatus(uploadInformation.status as UploadStatusEnum, [UploadStatusEnum.REVIEWING]);
 
-    return this.startProcess.execute(_uploadId);
+    return this.startProcess.execute(_uploadId, body.maxRecords);
   }
 
   @Put(':uploadId/record')
