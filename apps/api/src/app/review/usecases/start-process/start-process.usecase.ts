@@ -127,36 +127,51 @@ export class StartProcess {
     userEmail: string;
     maxRecords?: number;
   }) {
-    //if its a file based import do-review will handle the further process
+    // If it's a file based import do-review will handle the further process
     if (uploadInfo._uploadedFileId || uploadInfo.originalFileName) {
       return;
     }
-    await this.templateRepository.findOneAndUpdate(
-      {
-        _id: uploadInfo._templateId,
-      },
-      {
-        $inc: {
-          totalUploads: uploadInfo.totalRecords,
-          totalRecords: uploadInfo.totalRecords,
-          totalInvalidRecords: uploadInfo.invalidRecords,
-        },
-      }
-    );
-    if (maxRecords && uploadInfo.totalRecords > maxRecords) {
+
+    // Check max records limit BEFORE updating statistics
+    if (maxRecords && uploadInfo.validRecords > maxRecords) {
       throw new MaxRecordsExceededException({
         actualRecords: uploadInfo.totalRecords,
         maxAllowed: maxRecords,
       });
     }
-    await this.paymentAPIService.createEvent(
-      {
-        uploadId: uploadInfo._id,
-        totalRecords: uploadInfo.totalRecords,
-        validRecords: uploadInfo.validRecords,
-        invalidRecords: uploadInfo.invalidRecords,
-      },
-      userEmail
-    );
+
+    // Validate that we're not updating with negative values
+    const recordsToAdd = Math.max(0, uploadInfo.totalRecords || 0);
+    const invalidRecordsToAdd = Math.max(0, uploadInfo.invalidRecords || 0);
+    const validRecordsToAdd = Math.max(0, uploadInfo.validRecords || 0);
+
+    // Only update if we have positive values to add
+    if (validRecordsToAdd > 0) {
+      await this.templateRepository.findOneAndUpdate(
+        {
+          _id: uploadInfo._templateId,
+        },
+        {
+          $inc: {
+            totalUploads: uploadInfo.totalRecords,
+            totalRecords: uploadInfo.totalRecords,
+            totalInvalidRecords: uploadInfo.invalidRecords,
+          },
+        }
+      );
+    }
+
+    // Only create payment event if we have valid records
+    if (validRecordsToAdd > 0 || recordsToAdd > 0) {
+      await this.paymentAPIService.createEvent(
+        {
+          uploadId: uploadInfo._id,
+          totalRecords: recordsToAdd,
+          validRecords: validRecordsToAdd,
+          invalidRecords: invalidRecordsToAdd,
+        },
+        userEmail
+      );
+    }
   }
 }
