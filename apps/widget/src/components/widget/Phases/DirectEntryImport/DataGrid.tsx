@@ -207,6 +207,15 @@ export function DataGrid({ onNextClick, onPrevClick, texts }: IPhase12Props) {
           // Add row selection handlers from Phase3
           onRowCheck={(rowIndex, recordIndex, checked) => {
             const currentData = [...reviewData];
+
+            const isEmptyRow = Object.values(currentData[rowIndex].record || {}).every((value) => {
+              return value === '' || value === null || value === undefined;
+            });
+
+            if (isEmptyRow && checked) {
+              return;
+            }
+
             currentData[rowIndex].checked = checked;
             const newSelectedRowsCountRef = { ...selectedRowsCountRef.current };
 
@@ -222,27 +231,39 @@ export function DataGrid({ onNextClick, onPrevClick, texts }: IPhase12Props) {
 
             setReviewData(currentData);
             selectedRowsCountRef.current = newSelectedRowsCountRef;
-            setAllChecked(selectedRowsRef.current.size === currentData.length);
+            setAllChecked(
+              selectedRowsRef.current.size ===
+                currentData.filter(
+                  (row) =>
+                    !Object.values(row.record || {}).every(
+                      (value) => value === '' || value === null || value === undefined
+                    )
+                ).length
+            );
           }}
           onCheckAll={(checked) => {
             setAllChecked(checked);
             const currentData = [...reviewData];
-            currentData.forEach((record) => {
-              record.checked = checked;
-            });
+            const newSelectedRows = new Set<number>();
+            const newSelectedRowsCountRef = { valid: new Set<number>(), invalid: new Set<number>() };
 
-            const newSelectedRows = selectedRowsRef.current;
-            const newSelectedRowsCountRef = { ...selectedRowsCountRef.current };
+            currentData.forEach((record, index) => {
+              // Fixed: Added return statement for empty row detection
+              const isEmptyRow = Object.values(record.record || {}).every((value) => {
+                return value === '' || value === null || value === undefined;
+              });
 
-            currentData.forEach((record) => {
+              if (isEmptyRow) {
+                currentData[index].checked = false;
+
+                return; // Skip empty rows
+              }
+
+              currentData[index].checked = checked;
               if (checked) {
                 newSelectedRows.add(record.index);
                 if (record.isValid) newSelectedRowsCountRef.valid.add(record.index);
                 else newSelectedRowsCountRef.invalid.add(record.index);
-              } else {
-                newSelectedRows.delete(record.index);
-                if (record.isValid) newSelectedRowsCountRef.valid.delete(record.index);
-                else newSelectedRowsCountRef.invalid.delete(record.index);
               }
             });
 
@@ -282,11 +303,29 @@ export function DataGrid({ onNextClick, onPrevClick, texts }: IPhase12Props) {
         })}
         onConfirm={() => {
           setShowDeleteConfirmModal(false);
-          deleteRecords([
-            Array.from(selectedRowsRef.current),
-            selectedRowsCountRef.current.valid.size,
-            selectedRowsCountRef.current.invalid.size,
-          ]);
+
+          // Filter out empty rows before deletion
+          const nonEmptySelectedRows = Array.from(selectedRowsRef.current).filter((index) => {
+            const record = reviewData.find((reviewDatas) => reviewDatas.index === index);
+
+            return (
+              record &&
+              !Object.values(record.record || {}).every(
+                (value) => value === '' || value === null || value === undefined
+              )
+            );
+          });
+
+          // Update the selected rows ref to only include non-empty rows
+          selectedRowsRef.current = new Set(nonEmptySelectedRows);
+
+          // Recalculate valid/invalid counts for non-empty rows only
+          const validCount = nonEmptySelectedRows.filter(
+            (index) => reviewData.find((reviewDataa) => reviewDataa.index === index)?.isValid
+          ).length;
+          const invalidCount = nonEmptySelectedRows.length - validCount;
+
+          deleteRecords([nonEmptySelectedRows, validCount, invalidCount]);
         }}
         cancelLabel={texts.DELETE_RECORDS_CONFIRMATION.CANCEL_DELETE}
         confirmLabel={texts.DELETE_RECORDS_CONFIRMATION.CONFIRM_DELETE}

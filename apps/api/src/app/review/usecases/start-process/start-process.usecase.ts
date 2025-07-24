@@ -135,7 +135,6 @@ export class StartProcess {
     // Check max records limit BEFORE updating statistics
     if (maxRecords && uploadInfo.validRecords > maxRecords) {
       throw new MaxRecordsExceededException({
-        actualRecords: uploadInfo.totalRecords,
         maxAllowed: maxRecords,
       });
     }
@@ -155,7 +154,7 @@ export class StartProcess {
           $inc: {
             totalUploads: uploadInfo.totalRecords,
             totalRecords: uploadInfo.totalRecords,
-            totalInvalidRecords: uploadInfo.invalidRecords,
+            totalInvalidRecords: Math.max(0, uploadInfo.invalidRecords),
           },
         }
       );

@@ -86,6 +86,7 @@ export class ReviewController {
     const uploadData = await this.getUpload.execute({
       uploadId: _uploadId,
     });
+
     if (!uploadData) throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
 
     return await this.getFileInvalidData.execute(
@@ -168,7 +169,7 @@ export class ReviewController {
     @Body() { indexes, valid, invalid }: DeleteRecordsDto,
     @Param('uploadId', ValidateMongoId) _uploadId: string
   ) {
-    await this.deleteRecord.execute(_uploadId, indexes, valid, invalid);
+    return await this.deleteRecord.execute(_uploadId, indexes, valid, invalid);
   }
 
   @Put(':uploadId/replace')

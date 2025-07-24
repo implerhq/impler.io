@@ -76,7 +76,12 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
       },
       onError(error: IErrorObject) {
         resetField('file');
-        setError('file', { type: 'file', message: texts.PHASE3.MAX_RECORD_LIMIT_ERROR ?? error.message });
+        setError('file', {
+          type: 'file',
+          message: maxRecords
+            ? `${texts.PHASE3.MAX_RECORD_LIMIT_ERROR} ${maxRecords}`
+            : texts.PHASE3.MAX_RECORD_LIMIT_ERROR ?? error.message,
+        });
       },
     }
   );

@@ -72,7 +72,6 @@ export class MakeUploadEntry {
           // Check maxRecords restriction for Excel files
           if (maxRecords !== undefined && maxRecords !== null && opts.rows > maxRecords) {
             throw new MaxRecordsExceededException({
-              actualRecords: opts.rows,
               maxAllowed: maxRecords,
             });
           }
@@ -91,7 +90,6 @@ export class MakeUploadEntry {
         // Check maxRecords restriction for CSV files
         if (maxRecords !== undefined && maxRecords !== null && opts.rows > maxRecords) {
           throw new MaxRecordsExceededException({
-            actualRecords: opts.rows,
             maxAllowed: maxRecords,
           });
         }
@@ -228,7 +226,6 @@ export class MakeUploadEntry {
     if (maxRecords !== undefined && maxRecords !== null) {
       if (rows > maxRecords) {
         throw new MaxRecordsExceededException({
-          actualRecords: rows,
           maxAllowed: maxRecords,
         });
       }
