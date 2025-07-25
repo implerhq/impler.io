@@ -12,7 +12,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { BaseCommand } from '@shared/commands/base.command';
-import { BubbleDestinationEnvironmentEnum, DestinationsEnum } from '@impler/shared';
+import { DestinationsEnum } from '@impler/shared';
 
 export class WebhookDestinationObject {
   @IsUrl()
@@ -42,7 +42,7 @@ export class BubbleIoDestinationObject {
   @IsString()
   @IsDefined()
   @ValidateIf((obj) => obj.destination === DestinationsEnum.BUBBLEIO)
-  appName: string;
+  bubbleAppUrl: string;
 
   @IsString()
   @IsDefined()
@@ -54,15 +54,19 @@ export class BubbleIoDestinationObject {
   @ValidateIf((obj) => obj.destination === DestinationsEnum.BUBBLEIO)
   datatype: string;
 
-  @IsEnum(BubbleDestinationEnvironmentEnum)
-  @IsDefined()
-  @ValidateIf((obj) => obj.destination === DestinationsEnum.BUBBLEIO)
-  environment: BubbleDestinationEnvironmentEnum;
+  /*
+   * @IsEnum(BubbleDestinationEnvironmentEnum)
+   * @IsDefined()
+   * @ValidateIf((obj) => obj.destination === DestinationsEnum.BUBBLEIO)
+   * environment: BubbleDestinationEnvironmentEnum;
+   */
 
-  @IsString()
-  @IsOptional()
-  @ValidateIf((obj) => obj.destination === DestinationsEnum.BUBBLEIO)
-  customDomainName?: string;
+  /*
+   * @IsString()
+   * @IsOptional()
+   * @ValidateIf((obj) => obj.destination === DestinationsEnum.BUBBLEIO)
+   * customDomainName?: string;
+   */
 }
 
 export class UpdateDestinationCommand extends BaseCommand {

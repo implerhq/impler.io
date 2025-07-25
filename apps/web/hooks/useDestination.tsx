@@ -30,9 +30,6 @@ export function useDestination({ template }: UseDestinationProps) {
       webhook: {
         chunkSize: 100,
       },
-      bubbleIo: {
-        environment: 'development',
-      },
     },
   });
   useQuery<unknown, IErrorObject, IDestinationData, [string, string | undefined]>(
@@ -123,20 +120,25 @@ export function useDestination({ template }: UseDestinationProps) {
     });
   };
   const onSubmit = (data: IDestinationData) => {
-    if (data.destination === DestinationsEnum.BUBBLEIO && !data.bubbleIo?.appName && !data.bubbleIo?.customDomainName) {
+    console.log(data);
+    if (
+      data.destination === DestinationsEnum.BUBBLEIO &&
+      !data.bubbleIo?.bubbleAppUrl &&
+      !data.bubbleIo?.apiPrivateKey
+    ) {
       setError(
-        'bubbleIo.appName',
+        'bubbleIo.bubbleAppUrl',
         {
           type: 'manual',
-          message: 'Either App Name or Custom Domain Name is required',
+          message: 'Bubble App URL is required',
         },
         {
           shouldFocus: true,
         }
       );
-      setError('bubbleIo.customDomainName', {
+      setError('bubbleIo.apiPrivateKey', {
         type: 'manual',
-        message: 'Either App Name or Custom Domain Name is required',
+        message: 'API Private Key is required',
       });
 
       return;

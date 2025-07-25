@@ -17,8 +17,7 @@ interface IThingsResponse {
 export class BubbleIoService extends BubbleBaseService {
   async getDatatypeData(data: Omit<BubbleDestinationEntity, '_id' | '_templateId'>) {
     try {
-      const url = this.createBubbleIoUrl(data);
-      const response = await axios.get<IThingsResponse>(url, {
+      const response = await axios.get<IThingsResponse>(data.bubbleAppUrl, {
         headers: {
           Authorization: `Bearer ${data.apiPrivateKey}`,
         },
