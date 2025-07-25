@@ -31,6 +31,7 @@ export interface IAppStore {
   texts: typeof WIDGET_TEXTS;
   config?: WidgetConfig;
   appearance?: AppearanceConfig;
+  maxRecords?: number;
   importId?: string;
   imageSchema?: string;
   data?: string;

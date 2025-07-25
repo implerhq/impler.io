@@ -27,6 +27,7 @@ import { MakeUploadEntryCommand } from './make-upload-entry.command';
 import { FileParseException } from '@shared/exceptions/file-parse-issue.exception';
 import { CSVFileService2, ExcelFileService } from '@shared/services/file';
 import { FileSizeException } from '@shared/exceptions/file-size-limit.exception';
+import { MaxRecordsExceededException } from '@shared/exceptions/max-records.exception';
 
 @Injectable()
 export class MakeUploadEntry {
@@ -52,6 +53,7 @@ export class MakeUploadEntry {
     importId,
     imageSchema,
     selectedSheetName,
+    maxRecords,
   }: MakeUploadEntryCommand) {
     const csvFileService = new CSVFileService2();
     let fileOriginalName: string | undefined, csvFile: string | Express.Multer.File | undefined;
@@ -66,17 +68,33 @@ export class MakeUploadEntry {
         try {
           const fileService = new ExcelFileService();
           const opts = await fileService.getExcelRowsColumnsCount(file, selectedSheetName);
-          this.analyzeLargeFile(opts, true);
+
+          // Check maxRecords restriction for Excel files
+          if (maxRecords !== undefined && maxRecords !== null && opts.rows > maxRecords) {
+            throw new MaxRecordsExceededException({
+              maxAllowed: maxRecords,
+            });
+          }
+
+          this.analyzeLargeFile(opts, true, maxRecords);
           csvFile = await fileService.convertToCsv(file, selectedSheetName);
         } catch (error) {
-          if (error instanceof FileSizeException) {
+          if (error instanceof FileSizeException || error instanceof MaxRecordsExceededException) {
             throw error;
           }
           throw new FileParseException();
         }
       } else if (file.mimetype === FileMimeTypesEnum.CSV) {
         const opts = await csvFileService.getCSVMetaInfo(file);
-        this.analyzeLargeFile(opts, false);
+
+        // Check maxRecords restriction for CSV files
+        if (maxRecords !== undefined && maxRecords !== null && opts.rows > maxRecords) {
+          throw new MaxRecordsExceededException({
+            maxAllowed: maxRecords,
+          });
+        }
+
+        this.analyzeLargeFile(opts, false, maxRecords);
         csvFile = file;
       } else {
         throw new Error('Invalid file type');
@@ -188,14 +206,33 @@ export class MakeUploadEntry {
       originalFileType: file?.mimetype,
     });
   }
+
   roundToNiceNumber(num: number) {
     const niceNumbers = [500, 1000, 5000, 10000, 50000, 100000, 500000, 1000000];
 
     return niceNumbers.reduce((prev, curr) => (Math.abs(curr - num) < Math.abs(prev - num) ? curr : prev));
   }
-  analyzeLargeFile(fileInfo: { rows: number; columns: number }, isExcel?: boolean, maxDataPoints = 5000000) {
+
+  analyzeLargeFile(
+    fileInfo: { rows: number; columns: number },
+    isExcel?: boolean,
+    maxRecords?: number,
+    maxDataPoints = 5000000
+  ) {
     const { columns, rows } = fileInfo;
     const dataPoints = columns * rows;
+
+    // If maxRecords is specified, use it as the limit instead of maxDataPoints calculation
+    if (maxRecords !== undefined && maxRecords !== null) {
+      if (rows > maxRecords) {
+        throw new MaxRecordsExceededException({
+          maxAllowed: maxRecords,
+        });
+      }
+
+      // If maxRecords is specified and file is within limit, skip the dataPoints check
+      return;
+    }
 
     if (dataPoints > maxDataPoints) {
       let suggestedChunkSize = Math.floor(maxDataPoints / columns);

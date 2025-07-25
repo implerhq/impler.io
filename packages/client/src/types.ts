@@ -168,6 +168,7 @@ export interface IShowWidgetProps {
   texts?: CustomTexts;
   config?: WidgetConfig;
   appearance?: AppearanceConfig;
+  maxRecords?: number;
   title?: string;
   primaryColor?: string;
   extra?: string | Record<string, any>;
@@ -217,6 +218,7 @@ export interface IUseImplerProps {
   extra?: string | Record<string, any>;
   config?: WidgetConfig;
   appearance?: AppearanceConfig;
+  maxRecords?: number;
   authHeaderValue?: string | (() => string) | (() => Promise<string>);
   onUploadStart?: (value: UploadTemplateData) => void;
   onUploadTerminate?: (value: UploadData) => void;

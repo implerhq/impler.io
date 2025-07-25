@@ -86,6 +86,7 @@ export class ReviewController {
     const uploadData = await this.getUpload.execute({
       uploadId: _uploadId,
     });
+
     if (!uploadData) throw new BadRequestException(APIMessages.UPLOAD_NOT_FOUND);
 
     return await this.getFileInvalidData.execute(
@@ -123,7 +124,7 @@ export class ReviewController {
   @ApiOperation({
     summary: 'Confirm review data for uploaded file',
   })
-  async doConfirmReview(@Param('uploadId', ValidateMongoId) _uploadId: string) {
+  async doConfirmReview(@Param('uploadId', ValidateMongoId) _uploadId: string, @Body() body: { maxRecords?: number }) {
     const uploadInformation = await this.getUpload.execute({
       uploadId: _uploadId,
       select: 'status _validDataFileId _invalidDataFileId totalRecords invalidRecords _templateId',
@@ -135,7 +136,7 @@ export class ReviewController {
     // upload files with status reviewing can only be confirmed
     validateUploadStatus(uploadInformation.status as UploadStatusEnum, [UploadStatusEnum.REVIEWING]);
 
-    return this.startProcess.execute(_uploadId);
+    return this.startProcess.execute(_uploadId, body.maxRecords);
   }
 
   @Put(':uploadId/record')
@@ -168,7 +169,7 @@ export class ReviewController {
     @Body() { indexes, valid, invalid }: DeleteRecordsDto,
     @Param('uploadId', ValidateMongoId) _uploadId: string
   ) {
-    await this.deleteRecord.execute(_uploadId, indexes, valid, invalid);
+    return await this.deleteRecord.execute(_uploadId, indexes, valid, invalid);
   }
 
   @Put(':uploadId/replace')

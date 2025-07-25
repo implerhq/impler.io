@@ -44,7 +44,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     valid: new Set(),
     invalid: new Set(),
   });
-  const { uploadInfo, setUploadInfo, config } = useAppState();
+  const { uploadInfo, setUploadInfo, config, maxRecords } = useAppState();
   const [allChecked, setAllChecked] = useState<boolean>(false);
   const [reviewData, setReviewData] = useState<IRecordExtended[]>([]);
   const [columnDefs, setColumnDefs] = useState<HotItemSchema[]>([]);
@@ -196,7 +196,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
         setTotalPages(reviewDataResponse.totalPages);
       },
       onError(error: IErrorObject) {
-        notifier.showError({ message: error.message, title: error.error });
+        notifier.showError({ message: 'Hellow World', title: error.error });
       },
     }
   );
@@ -277,6 +277,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     columns,
     headings,
     totalPages,
+    maxRecords,
     columnDefs,
     allChecked,
     reReviewData,

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsJSON, IsMongoId, IsOptional, IsString } from 'class-validator';
+import { IsJSON, IsMongoId, IsNumberString, IsOptional, IsString } from 'class-validator';
 
 export class UploadRequestDto {
   @ApiProperty({
@@ -61,4 +61,12 @@ export class UploadRequestDto {
   @IsOptional()
   @IsJSON()
   imageSchema?: string;
+
+  @ApiProperty({
+    description: 'Max Number of records to import',
+    required: false,
+  })
+  @IsOptional()
+  @IsNumberString()
+  maxRecords?: string;
 }

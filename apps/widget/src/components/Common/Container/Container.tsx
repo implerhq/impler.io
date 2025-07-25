@@ -64,6 +64,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
         texts: deepMerge(WIDGET_TEXTS, data.value.texts),
         config: data.value.config,
         appearance: data.value.appearance,
+        maxRecords: data.value.maxRecords,
         schema:
           typeof data.value.schema === 'string'
             ? data.value.schema
@@ -842,6 +843,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
           templateId={secondaryPayload.templateId}
           authHeaderValue={secondaryPayload?.authHeaderValue}
           sampleFile={secondaryPayload?.sampleFile}
+          maxRecords={secondaryPayload.maxRecords}
           primaryColor={secondaryPayload.primaryColor ?? secondaryPayload.appearance?.primaryColor ?? primaryColor}
         >
           {children}
