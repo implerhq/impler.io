@@ -19,6 +19,7 @@ interface IProviderProps {
   data?: string;
   host: string;
   showWidget: boolean;
+  maxRecords?: number;
   setShowWidget: (status: boolean) => void;
   // api-context
   api: ApiService;
@@ -42,6 +43,7 @@ export function Provider(props: PropsWithChildren<IProviderProps>) {
     projectId,
     templateId,
     extra,
+    maxRecords,
     showWidget,
     setShowWidget,
     authHeaderValue,
@@ -69,6 +71,7 @@ export function Provider(props: PropsWithChildren<IProviderProps>) {
             appearance={appearance}
             texts={texts}
             output={output}
+            maxRecords={maxRecords}
             schema={schema}
             showWidget={showWidget}
             primaryColor={primaryColor}

@@ -411,3 +411,16 @@ background-color: '#f1f3f5';
     background-color: var(--button-secondary-background-hover) !important;
     color: var(--text-color) !important;
 }
+/* Tooltip box */
+.tippy-box[data-theme~="custom"] {
+    background-color: var(--text-color) !important;
+    border: 1px solid #000000 !important;
+    border-radius: var(--border-radius) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Tooltip content */
+.tippy-content {
+    padding: 8px 12px !important;
+    color: var(--background-color) !important;
+}

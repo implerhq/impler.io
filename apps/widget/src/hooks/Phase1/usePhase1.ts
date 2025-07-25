@@ -40,8 +40,19 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
   const { templateId, authHeaderValue, extra } = useImplerState();
   const [excelSheetNames, setExcelSheetNames] = useState<string[]>([]);
   const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
-  const { setUploadInfo, setTemplateInfo, output, schema, data, importId, imageSchema, sampleFile, config } =
-    useAppState();
+
+  const {
+    setUploadInfo,
+    setTemplateInfo,
+    output,
+    schema,
+    data,
+    importId,
+    imageSchema,
+    sampleFile,
+    config,
+    maxRecords,
+  } = useAppState();
 
   const selectedTemplateId = watch('templateId');
 
@@ -65,7 +76,12 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
       },
       onError(error: IErrorObject) {
         resetField('file');
-        setError('file', { type: 'file', message: error.message });
+        setError('file', {
+          type: 'file',
+          message: maxRecords
+            ? `${texts.PHASE3.MAX_RECORD_LIMIT_ERROR} ${maxRecords}`
+            : texts.PHASE3.MAX_RECORD_LIMIT_ERROR ?? error.message,
+        });
       },
     }
   );
@@ -153,6 +169,7 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
         output,
         importId,
         imageSchema,
+        maxRecords,
       });
     }
   };

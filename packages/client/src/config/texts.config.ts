@@ -109,6 +109,7 @@ export const WIDGET_TEXTS = {
     IN_COLUMN_LABEL: 'In Column',
     CASE_SENSITIVE_LABEL: 'Case Sensitive',
     MATCH_ENTIRE_LABEL: 'Match Entire Cell',
+    MAX_RECORD_LIMIT_ERROR: 'You can not import records more than',
   },
   PHASE4: {
     TITLE: 'Bravo! {count} rows have been uploaded',

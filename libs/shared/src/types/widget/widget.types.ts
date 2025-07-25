@@ -7,6 +7,7 @@ export interface ICommonShowPayload {
   templateId?: string;
   authHeaderValue?: string;
   primaryColor?: string;
+  maxRecords?: number;
   appearance?: AppearanceConfig;
   colorScheme?: string;
   title?: string;

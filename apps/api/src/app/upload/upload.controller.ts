@@ -78,14 +78,14 @@ export class UploadController {
     @UploadedFile('file', ValidImportFile) file: Express.Multer.File
   ) {
     return this.makeUploadEntry.execute({
-      file: file,
+      file,
       templateId,
       extra: body.extra,
       schema: body.schema,
       output: body.output,
       importId: body.importId,
       imageSchema: body.imageSchema,
-
+      maxRecords: parseInt(body.maxRecords),
       authHeaderValue: body.authHeaderValue,
       selectedSheetName: body.selectedSheetName,
     });

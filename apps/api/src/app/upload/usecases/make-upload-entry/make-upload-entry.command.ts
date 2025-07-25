@@ -8,4 +8,5 @@ export class MakeUploadEntryCommand {
   imageSchema?: string;
   authHeaderValue?: string;
   selectedSheetName?: string;
+  maxRecords?: number;
 }

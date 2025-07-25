@@ -12,6 +12,7 @@ import { PaymentAPIService } from '@impler/services';
 import { QueueService } from '@shared/services/queue.service';
 import { AmplitudeService } from '@shared/services/amplitude.service';
 import { DalService, TemplateEntity, TemplateRepository, UploadEntity, UploadRepository } from '@impler/dal';
+import { MaxRecordsExceededException } from '@shared/exceptions/max-records.exception';
 
 @Injectable()
 export class StartProcess {
@@ -24,7 +25,7 @@ export class StartProcess {
     private templateRepository: TemplateRepository
   ) {}
 
-  async execute(_uploadId: string) {
+  async execute(_uploadId: string, maxRecords?: number) {
     let uploadInfo = await this.uploadRepository.getUploadWithTemplate(_uploadId, ['destination']);
     let importedData;
     const destination = (uploadInfo._templateId as unknown as TemplateEntity)?.destination;
@@ -44,7 +45,7 @@ export class StartProcess {
       });
     }
 
-    await this.updateTemplateStatistics({ uploadInfo, userEmail });
+    await this.updateTemplateStatistics({ uploadInfo, userEmail, maxRecords });
 
     // if destination is frontend or not defined then complete the upload process
     if (
@@ -117,32 +118,59 @@ export class StartProcess {
     return importedData;
   }
 
-  private async updateTemplateStatistics({ uploadInfo, userEmail }: { uploadInfo: UploadEntity; userEmail: string }) {
-    //if its a file based import do-review will handle the further process
+  private async updateTemplateStatistics({
+    uploadInfo,
+    userEmail,
+    maxRecords,
+  }: {
+    uploadInfo: UploadEntity;
+    userEmail: string;
+    maxRecords?: number;
+  }) {
+    // If it's a file based import do-review will handle the further process
     if (uploadInfo._uploadedFileId || uploadInfo.originalFileName) {
       return;
     }
-    await this.templateRepository.findOneAndUpdate(
-      {
-        _id: uploadInfo._templateId,
-      },
-      {
-        $inc: {
-          totalUploads: uploadInfo.totalRecords,
-          totalRecords: uploadInfo.totalRecords,
-          totalInvalidRecords: uploadInfo.invalidRecords,
-        },
-      }
-    );
 
-    await this.paymentAPIService.createEvent(
-      {
-        uploadId: uploadInfo._id,
-        totalRecords: uploadInfo.totalRecords,
-        validRecords: uploadInfo.validRecords,
-        invalidRecords: uploadInfo.invalidRecords,
-      },
-      userEmail
-    );
+    // Check max records limit BEFORE updating statistics
+    if (maxRecords && uploadInfo.validRecords > maxRecords) {
+      throw new MaxRecordsExceededException({
+        maxAllowed: maxRecords,
+      });
+    }
+
+    // Validate that we're not updating with negative values
+    const recordsToAdd = Math.max(0, uploadInfo.totalRecords || 0);
+    const invalidRecordsToAdd = Math.max(0, uploadInfo.invalidRecords || 0);
+    const validRecordsToAdd = Math.max(0, uploadInfo.validRecords || 0);
+
+    // Only update if we have positive values to add
+    if (validRecordsToAdd > 0) {
+      await this.templateRepository.findOneAndUpdate(
+        {
+          _id: uploadInfo._templateId,
+        },
+        {
+          $inc: {
+            totalUploads: uploadInfo.totalRecords,
+            totalRecords: uploadInfo.totalRecords,
+            totalInvalidRecords: Math.max(0, uploadInfo.invalidRecords),
+          },
+        }
+      );
+    }
+
+    // Only create payment event if we have valid records
+    if (validRecordsToAdd > 0 || recordsToAdd > 0) {
+      await this.paymentAPIService.createEvent(
+        {
+          uploadId: uploadInfo._id,
+          totalRecords: recordsToAdd,
+          validRecords: validRecordsToAdd,
+          invalidRecords: invalidRecordsToAdd,
+        },
+        userEmail
+      );
+    }
   }
 }

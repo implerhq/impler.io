@@ -11,6 +11,7 @@ export function useImpler({
   texts,
   extra,
   config,
+  maxRecords,
   appearance,
   onUploadComplete,
   onWidgetClose,
@@ -100,6 +101,7 @@ export function useImpler({
         extra,
         config,
         appearance,
+        maxRecords,
         colorScheme,
         primaryColor,
       };

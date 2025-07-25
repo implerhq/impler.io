@@ -72,6 +72,7 @@ export class ApiService {
     importId?: string;
     imageSchema?: string;
     selectedSheetName?: string;
+    maxRecords?: number;
   }) {
     const formData = new FormData();
     if (data.file) formData.append('file', data.file);
@@ -82,6 +83,7 @@ export class ApiService {
     if (data.selectedSheetName) formData.append('selectedSheetName', data.selectedSheetName);
     if (data.importId) formData.append('importId', data.importId);
     if (data.imageSchema) formData.append('imageSchema', data.imageSchema);
+    if (data.maxRecords) formData.append('maxRecords', data.maxRecords.toString());
 
     return this.httpClient.post(
       `/upload/${data.templateId}`,
@@ -126,8 +128,8 @@ export class ApiService {
     return this.httpClient.get(`/review/${uploadId}${queryString}`) as Promise<IReviewData>;
   }
 
-  async confirmReview(uploadId: string) {
-    return this.httpClient.post(`/review/${uploadId}/confirm`) as Promise<{
+  async confirmReview(uploadId: string, maxRecords?: number) {
+    return this.httpClient.post(`/review/${uploadId}/confirm`, { maxRecords }) as Promise<{
       email: string;
       uploadInfo: IUpload;
       importedData: Record<string, any>[];

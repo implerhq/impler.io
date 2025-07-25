@@ -16,7 +16,7 @@ export class GetUploadData {
     const data = await this.dalService.getRecords(_uploadId, page, limit, type);
 
     return {
-      data,
+      data: data.sort((a, b) => a.index - b.index),
       limit,
       page,
       totalRecords,
