@@ -120,7 +120,6 @@ export function useDestination({ template }: UseDestinationProps) {
     });
   };
   const onSubmit = (data: IDestinationData) => {
-    console.log(data);
     if (
       data.destination === DestinationsEnum.BUBBLEIO &&
       !data.bubbleIo?.bubbleAppUrl &&
