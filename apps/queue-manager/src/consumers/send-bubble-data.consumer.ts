@@ -76,7 +76,7 @@ export class SendBubbleDataConsumer extends BaseConsumer {
 
       await this.makeResponseEntry(
         response,
-        { datatype: cachedData.datatype, environment: cachedData.environment, url: cachedData.bubbleUrl },
+        { bubbleAppUrl: cachedData.bubbleUrl, datatype: cachedData.datatype },
         cachedData.name,
         cachedData.email
       );
@@ -142,7 +142,7 @@ export class SendBubbleDataConsumer extends BaseConsumer {
     const templateData = await this.templateRepository.findById(uploadata._templateId, 'name');
 
     const bubbleDestination = await this.bubbleDestinationRepository.findOne({ _templateId: uploadata._templateId });
-    const bubbleUrl = this.bubbleBaseService.createBubbleIoUrl(bubbleDestination, 'bulk');
+    const bubbleUrl = bubbleDestination.bubbleAppUrl;
 
     const defaultValueObj = {};
     const customSchema = JSON.parse(uploadata.customSchema) as ITemplateSchemaItem;
@@ -168,7 +168,6 @@ export class SendBubbleDataConsumer extends BaseConsumer {
       email: userEmail,
       datatype: bubbleDestination.datatype,
       name: templateData.name,
-      environment: bubbleDestination.environment,
       _templateId: uploadata._templateId,
       recordFormat: uploadata.customRecordFormat,
       defaultValues: JSON.stringify(defaultValueObj),
@@ -179,7 +178,7 @@ export class SendBubbleDataConsumer extends BaseConsumer {
 
   private async makeResponseEntry(
     data: Partial<WebhookLogEntity>,
-    bubbleData: { datatype: string; environment: string; url: string },
+    bubbleData: { datatype: string; bubbleAppUrl: string },
     importName: string,
     userEmail: string
   ) {
@@ -191,8 +190,7 @@ export class SendBubbleDataConsumer extends BaseConsumer {
           importName,
           time: data.callDate.toString(),
           datatype: bubbleData.datatype,
-          environment: bubbleData.environment,
-          url: bubbleData.url,
+          bubbleAppUrl: bubbleData.bubbleAppUrl,
           importId: data._uploadId,
         },
       });
