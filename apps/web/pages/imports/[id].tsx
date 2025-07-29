@@ -48,11 +48,37 @@ function ImportDetails() {
     templateId: router.query.id as string,
   });
   const { showWidget, isImplerInitiated } = useImpler({
-    primaryColor: colors.blue,
+    // primaryColor: colors.blue,
     templateId: templateData?._id,
     projectId: templateData?._projectId,
     accessToken: profileInfo?.accessToken,
     onUploadComplete: onSpreadsheetImported,
+    appearance: {
+      widget: {
+        backgroundColor: '#2e2e2e', // soft graphite
+      },
+      primaryColor: '#9fb2a3', // soft sage-gray as accent
+      fontFamily: '"Inter", "Segoe UI", sans-serif',
+      borderRadius: '6px',
+      primaryButtonConfig: {
+        backgroundColor: '#4c5c51',
+        textColor: '#ffffff',
+        hoverBackground: '#5c6d61',
+        hoverTextColor: '#ffffff',
+        borderColor: '#6f8575',
+        hoverBorderColor: '#9fb2a3',
+        buttonShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+      },
+      secondaryButtonConfig: {
+        backgroundColor: '#3a3a3a',
+        textColor: '#aaaaaa',
+        hoverBackground: '#444444',
+        hoverTextColor: '#ffffff',
+        borderColor: '#5a5a5a',
+        hoverBorderColor: '#777777',
+        buttonShadow: '0 1px 4px rgba(0, 0, 0, 0.2)',
+      },
+    },
   });
   const onImportClick = () => {
     track({
