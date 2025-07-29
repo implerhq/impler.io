@@ -50,6 +50,7 @@ services:
       EMAIL_FROM: ${EMAIL_FROM}
       EMAIL_FROM_NAME: ${EMAIL_FROM_NAME}
       ALERT_EMAIL_FROM: ${ALERT_EMAIL_FROM}
+      LEAD_MAKE_WEBHOOK_URL: ${LEAD_MAKE_WEBHOOK_URL}
     ports:
       - "3000:3000"
     networks:
