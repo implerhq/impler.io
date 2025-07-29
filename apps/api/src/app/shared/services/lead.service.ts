@@ -18,20 +18,23 @@ export class LeadService {
   private log = process.env.NODE_ENV === 'local';
 
   public async createLead(data: ILeadInformation): Promise<void> {
-    try {
-      await axios.post(process.env.LEAD_MAKE_WEBHOOK_URL, {
-        firstName: data['First Name'],
-        lastName: data['Last Name'],
-        email: data['Lead Email'],
-        signupMethod: data['Signup Method'],
-        mentionedRole: data['Mentioned Role'],
-        leadSource: data['Lead Source'],
-        companySize: data['Company Size'],
-      });
-      if (this.log) console.log('Lead data sent to Make.com webhook');
-    } catch (error) {
-      captureException(error);
-      console.error('Error sending data to Make.com webhook:', error);
+    if (process.env.LEAD_MAKE_WEBHOOK_URL) {
+      try {
+        await axios.post(process.env.LEAD_MAKE_WEBHOOK_URL, {
+          firstName: data['First Name'],
+          lastName: data['Last Name'],
+          email: data['Lead Email'],
+          signupMethod: data['Signup Method'],
+          mentionedRole: data['Mentioned Role'],
+          leadSource: data['Lead Source'],
+          companySize: data['Company Size'],
+          createdAt: new Date(),
+        });
+        if (this.log) console.log('Lead data sent to Make.com webhook');
+      } catch (error) {
+        captureException(error);
+        console.error('Error sending data to Make.com webhook:', error);
+      }
     }
   }
 }
