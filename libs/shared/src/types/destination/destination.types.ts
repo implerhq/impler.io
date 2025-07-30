@@ -18,9 +18,7 @@ export interface IWebhookData {
 }
 
 export interface IBubbleData {
-  appName: string;
-  customDomainName?: string;
-  environment: string;
+  bubbleAppUrl: string;
   apiPrivateKey: string;
   datatype: string;
 }

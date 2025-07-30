@@ -436,6 +436,7 @@ export const HOW_HEARD_ABOUT_US = [
   { value: 'Colleague', label: 'Colleague' },
   { value: 'Linkdin', label: 'Linkdin' },
   { value: 'Invitation', label: 'Invitation' },
+  { value: 'AI (ChatGPT, Perplexity, Claude ...)', label: 'AI (ChatGPT, Perplexity, Claude ...)' },
 ];
 
 export const PLACEHOLDERS = {
@@ -445,7 +446,7 @@ export const PLACEHOLDERS = {
   fullName: 'John Doe',
   companySize: 'Only me',
   role: 'Engineer, Manager, Founder...',
-  source: 'Google Search, Recommendation...',
+  source: 'Google Search, AI (ChatGPT, Perplexity, Claude ...), Recommendation...',
   about: 'Google Search',
   importName: 'Products, Employees, Assets...',
 };

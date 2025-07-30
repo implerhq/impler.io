@@ -586,7 +586,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
             SegmentedControl: {
               styles: (theme) => ({
                 root: {
-                  backgroundColor: theme.fn.rgba(theme.colors[theme.primaryColor][5], 0.06),
+                  backgroundColor: 'var(--stepper-background)',
                   borderRadius: 'var(--border-radius)',
                   padding: '4px',
                   border: `1px solid var(--border-color)`,
@@ -596,11 +596,10 @@ export function Container({ children }: PropsWithChildren<{}>) {
                   borderRadius: 'calc(var(--border-radius) - 2px)',
                   border: 'none !important',
                   transition: 'all 0.2s ease',
-                  color: 'var(--text-color) !important',
+                  backgroundColor: 'transparent',
 
                   '&:not([data-active])': {
                     backgroundColor: 'transparent',
-                    color: 'var(--text-color) !important',
 
                     '&:hover': {
                       backgroundColor: isColorDark(backgroundColor)
@@ -611,7 +610,6 @@ export function Container({ children }: PropsWithChildren<{}>) {
 
                   '&[data-active]': {
                     backgroundColor: 'var(--button-primary-background) !important',
-                    color: 'var(--button-primary-color) !important',
                     boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
 
                     '&:hover': {
@@ -622,7 +620,6 @@ export function Container({ children }: PropsWithChildren<{}>) {
 
                 controlActive: {
                   backgroundColor: 'var(--button-primary-background) !important',
-                  color: 'var(--button-primary-color) !important',
                   boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
                 },
 
@@ -631,16 +628,36 @@ export function Container({ children }: PropsWithChildren<{}>) {
                   fontSize: theme.fontSizes.sm,
                   padding: '8px 16px',
                   transition: 'color 0.2s ease',
-                  color: 'var(--text-color) !important',
+                  // Use secondary text color for inactive labels (more subdued but still visible)
+                  color: 'var(--secondary-text-color) !important',
+
+                  // Ensure inactive state uses secondary text color
+                  '[data-active="false"] &': {
+                    color: 'var(--secondary-text-color) !important',
+                  },
+
+                  // Ensure active state uses primary button text color
+                  '[data-active="true"] &': {
+                    color: 'var(--button-primary-color) !important',
+                  },
                 },
 
                 labelActive: {
                   color: 'var(--button-primary-color) !important',
                   fontWeight: 600,
                 },
+
+                // Additional selector to ensure proper color inheritance
+                input: {
+                  '&:not(:checked) + label': {
+                    color: 'var(--secondary-text-color) !important',
+                  },
+                  '&:checked + label': {
+                    color: 'var(--button-primary-color) !important',
+                  },
+                },
               }),
             },
-
             FindReplaceModal: {
               styles: (theme) => ({
                 root: {

@@ -10,8 +10,7 @@ interface IWebhookAlertEmailOptions {
 }
 interface IBubbleAlertEmailOptions {
   datatype: string;
-  environment: string;
-  url: string;
+  bubbleAppUrl: string;
   error: string;
   importName: string;
   time: string;
@@ -241,11 +240,10 @@ const EMAIL_CONTENTS = {
   `,
   ERROR_SENDING_BUBBLE_DATA: ({
     datatype,
-    environment,
+    bubbleAppUrl,
     error,
     importName,
     time,
-    url,
     importId,
   }: IBubbleAlertEmailOptions) => `
 <!DOCTYPE html>
@@ -316,9 +314,8 @@ const EMAIL_CONTENTS = {
 
       <ul>
         <li><strong>Import Name:</strong> ${importName}</li>
-        <li><strong>URL:</strong> ${url}</li>
+        <li><strong>URL:</strong> ${bubbleAppUrl}</li>
         <li><strong>Data Type:</strong> ${datatype}</li>
-        <li><strong>Environment:</strong> ${environment}</li>
         <li><strong>Import Id:</strong> ${importId}</li>
         <li><strong>Time of Error:</strong> ${time}</li>
       </ul>

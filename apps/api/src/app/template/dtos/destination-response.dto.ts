@@ -10,10 +10,8 @@ export class DestinationResponseDto {
     retryCount?: number;
   };
   bubbleio?: {
-    appName: string;
+    bubbleAppUrl: string;
     apiPrivateKey: string;
     datatype: string;
-    environment: string;
-    customDomainName?: string;
   };
 }

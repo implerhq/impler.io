@@ -4,13 +4,7 @@ import { BubbleDestinationEntity } from './bubble-destination.entity';
 
 const bubbleDestinationSchema = new Schema(
   {
-    appName: {
-      type: Schema.Types.String,
-    },
-    customDomainName: {
-      type: Schema.Types.String,
-    },
-    environment: {
+    bubbleAppUrl: {
       type: Schema.Types.String,
     },
     _templateId: {

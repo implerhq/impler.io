@@ -4,9 +4,7 @@ import { Stack, TextInput as Input, Group, Select } from '@mantine/core';
 
 import { Button } from '@ui/button';
 import { NumberInput } from '@ui/number-input';
-import { DoaminInput } from '@ui/domain-input';
 import { DOCUMENTATION_REFERENCE_LINKS, REGULAR_EXPRESSIONS } from '@config';
-import { NativeSelect } from '@ui/native-select';
 import { useDestination } from '@hooks/useDestination';
 import { DestinationItem } from './DestinationItem';
 
@@ -16,7 +14,6 @@ interface DestinationProps {
 
 export function Destination({ template }: DestinationProps) {
   const {
-    watch,
     errors,
     control,
     onSubmit,
@@ -45,7 +42,6 @@ export function Destination({ template }: DestinationProps) {
       }
     }
   };
-  const bubbleDestinationEnvironment = watch('bubbleIo.environment');
 
   return (
     <Stack>
@@ -148,48 +144,13 @@ export function Destination({ template }: DestinationProps) {
       >
         <form onSubmit={onSubmit}>
           <Stack spacing="xs">
-            <Controller
-              name="bubbleIo.appName"
-              control={control}
-              render={({ field }) => (
-                <DoaminInput
-                  value={field.value}
-                  label="Bubble App Name"
-                  onChange={field.onChange}
-                  rightSection=".bubbleapps.io"
-                  placeholder="Bubble Application Name"
-                  error={errors.bubbleIo?.appName?.message}
-                />
-              )}
+            <Input
+              required
+              label="Bubble App URL"
+              placeholder="Bubble App URL"
+              {...register('bubbleIo.bubbleAppUrl')}
+              error={errors?.bubbleIo?.bubbleAppUrl?.message}
             />
-
-            <Controller
-              control={control}
-              name="bubbleIo.environment"
-              render={({ field }) => (
-                <NativeSelect
-                  register={{
-                    value: field.value,
-                    onChange: field.onChange,
-                  }}
-                  required
-                  label="Environment"
-                  data={['development', 'production']}
-                  error={errors.bubbleIo?.environment?.message}
-                />
-              )}
-            />
-            {bubbleDestinationEnvironment === 'production' && (
-              <Input
-                label="Custom Domain Name"
-                placeholder="Custom Domain Name"
-                {...register('bubbleIo.customDomainName', {
-                  pattern: /^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+[a-zA-Z]{2,63}$/,
-                })}
-                description="Required, if application is hosted on custom domain. Ex. myapp.io"
-                error={errors?.bubbleIo?.customDomainName ? 'Please enter valid domain name' : undefined}
-              />
-            )}
             <Input
               required
               label="API Private Key"
