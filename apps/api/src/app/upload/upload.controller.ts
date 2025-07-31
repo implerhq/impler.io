@@ -6,6 +6,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ACCESS_KEY_NAME, Defaults, UploadStatusEnum } from '@impler/shared';
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -46,6 +47,7 @@ import {
 @Controller('/upload')
 @ApiSecurity(ACCESS_KEY_NAME)
 @UseGuards(JwtAuthGuard)
+@UseInterceptors(ClassSerializerInterceptor)
 export class UploadController {
   constructor(
     private getAsset: GetAsset,
