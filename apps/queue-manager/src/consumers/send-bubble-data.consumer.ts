@@ -142,7 +142,23 @@ export class SendBubbleDataConsumer extends BaseConsumer {
     const templateData = await this.templateRepository.findById(uploadata._templateId, 'name');
 
     const bubbleDestination = await this.bubbleDestinationRepository.findOne({ _templateId: uploadata._templateId });
-    const bubbleUrl = bubbleDestination.bubbleAppUrl;
+    let bubbleUrl = bubbleDestination?.bubbleAppUrl;
+
+    if (
+      !bubbleUrl &&
+      'baseUrl' in bubbleDestination &&
+      'datatype' in bubbleDestination &&
+      bubbleDestination.baseUrl &&
+      bubbleDestination.datatype
+    ) {
+      const baseUrl = bubbleDestination.baseUrl as string;
+      bubbleUrl = `${baseUrl}/api/1.1/obj/${bubbleDestination.datatype}`;
+    }
+
+    // If still no URL, return null as we can't proceed without a valid URL
+    if (!bubbleUrl) {
+      return null;
+    }
 
     const defaultValueObj = {};
     const customSchema = JSON.parse(uploadata.customSchema) as ITemplateSchemaItem;

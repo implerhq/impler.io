@@ -42,6 +42,9 @@ export const APIMessages = {
   ONBOARD_TEMPLATE_SHEET_NOT_FOUND: 'No sheets found in the workbook',
   ONBOARD_TEMPLATE_FILE_EMPTY: 'File is empty or invalid',
   ONBOARD_TEMPLATE_FILE_EMPTY_RECORDS: 'The file contains empty records',
+
+  INVALID_API_RESPONSE_STRUCTURE: `Invalid API response structure. Please recheck the URL and ensure the API is correctly configured to return data.`,
+  DATATYPE_EMPTY: `The datatype appears to be empty. Please add at least one entry and verify the URL points to the correct data source.`,
 };
 
 export const CONSTANTS = {
