@@ -164,13 +164,6 @@ export function Destination({ template }: DestinationProps) {
               {...register('bubbleIo.apiPrivateKey')}
               error={errors?.bubbleIo?.apiPrivateKey?.message}
             />
-            <Input
-              required
-              label="Datatype Name"
-              placeholder="Datatype"
-              {...register('bubbleIo.datatype')}
-              error={errors?.bubbleIo?.datatype?.message}
-            />
             <Group>
               <Button loading={isUpdateImportLoading} type="submit">
                 Test and Save
