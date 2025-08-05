@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, ParseArrayPipe, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  Param,
+  ParseArrayPipe,
+  Post,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ApiTags, ApiSecurity, ApiOperation, ApiBody } from '@nestjs/swagger';
 import { ACCESS_KEY_NAME, Defaults, ITemplateSchemaItem, UploadStatusEnum } from '@impler/shared';
 
@@ -22,6 +32,7 @@ import {
 @ApiTags('Mappings')
 @ApiSecurity(ACCESS_KEY_NAME)
 @UseGuards(JwtAuthGuard)
+@UseInterceptors(ClassSerializerInterceptor)
 export class MappingController {
   constructor(
     private getUpload: GetUpload,
