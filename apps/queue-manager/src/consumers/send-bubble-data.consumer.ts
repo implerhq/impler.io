@@ -42,7 +42,7 @@ export class SendBubbleDataConsumer extends BaseConsumer {
     const uploadId = data.uploadId;
     const cachedData = data.cache || (await this.getInitialCachedData(uploadId));
 
-    if (cachedData && cachedData.bubbleUrl) {
+    if (cachedData && cachedData.bubbleAppUrl) {
       // Get valid data information
       let allDataJson: null | any[] = null;
       if (cachedData.allDataFilePath) {
@@ -67,7 +67,7 @@ export class SendBubbleDataConsumer extends BaseConsumer {
         uploadId,
         page,
         method: 'POST',
-        url: cachedData.bubbleUrl,
+        url: cachedData.bubbleAppUrl,
         headers: {
           Authorization: `Bearer ${cachedData.apiPrivateKey}`,
           'Content-Type': 'text/plain',
@@ -76,7 +76,7 @@ export class SendBubbleDataConsumer extends BaseConsumer {
 
       await this.makeResponseEntry(
         response,
-        { bubbleAppUrl: cachedData.bubbleUrl, datatype: cachedData.datatype },
+        { bubbleAppUrl: cachedData.bubbleAppUrl, datatype: cachedData.datatype },
         cachedData.name,
         cachedData.email
       );
@@ -142,21 +142,12 @@ export class SendBubbleDataConsumer extends BaseConsumer {
     const templateData = await this.templateRepository.findById(uploadata._templateId, 'name');
 
     const bubbleDestination = await this.bubbleDestinationRepository.findOne({ _templateId: uploadata._templateId });
-    let bubbleUrl = bubbleDestination?.bubbleAppUrl;
+    if (!bubbleDestination) return null;
 
-    if (
-      !bubbleUrl &&
-      'baseUrl' in bubbleDestination &&
-      'datatype' in bubbleDestination &&
-      bubbleDestination.baseUrl &&
-      bubbleDestination.datatype
-    ) {
-      const baseUrl = bubbleDestination.baseUrl as string;
-      bubbleUrl = `${baseUrl}/api/1.1/obj/${bubbleDestination.datatype}`;
-    }
+    const bubbleAppUrl = bubbleDestination.bubbleAppUrl;
 
     // If still no URL, return null as we can't proceed without a valid URL
-    if (!bubbleUrl) {
+    if (!bubbleAppUrl) {
       return null;
     }
 
@@ -179,7 +170,7 @@ export class SendBubbleDataConsumer extends BaseConsumer {
 
     return {
       page: 1,
-      bubbleUrl,
+      bubbleAppUrl,
       chunkSize: 500,
       email: userEmail,
       datatype: bubbleDestination.datatype,
