@@ -196,7 +196,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
         setTotalPages(reviewDataResponse.totalPages);
       },
       onError(error: IErrorObject) {
-        notifier.showError({ message: 'Hellow World', title: error.error });
+        notifier.showError({ message: error.message, title: error.error });
       },
     }
   );
