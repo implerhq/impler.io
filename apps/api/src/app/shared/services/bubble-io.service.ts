@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { BubbleBaseService } from '@impler/services';
 import { BubbleDestinationEntity } from '@impler/dal';
 import { ColumnTypesEnum, DEFAULT_KEYS_OBJ, IColumn } from '@impler/shared';
+import { APIMessages } from '@shared/constants';
 
 interface IThingsResponse {
   response: {
@@ -17,13 +18,19 @@ interface IThingsResponse {
 export class BubbleIoService extends BubbleBaseService {
   async getDatatypeData(data: Omit<BubbleDestinationEntity, '_id' | '_templateId'>) {
     try {
-      const response = await axios.get<IThingsResponse>(data.bubbleAppUrl, {
+      const response = await axios.get<IThingsResponse>(this.createBubbleIoUrl(data.bubbleAppUrl), {
         headers: {
           Authorization: `Bearer ${data.apiPrivateKey}`,
         },
       });
-      if (!response.data.response.results.length)
-        throw new Error('Datatype is empty. Please add at least one entry to the datatype');
+
+      if (!Array.isArray(response.data.response.results)) {
+        throw new Error(APIMessages.INVALID_API_RESPONSE_STRUCTURE);
+      }
+
+      if (response.data.response.results.length === 0) {
+        throw new Error(APIMessages.DATATYPE_EMPTY);
+      }
 
       return response.data.response.results;
     } catch (error: unknown) {

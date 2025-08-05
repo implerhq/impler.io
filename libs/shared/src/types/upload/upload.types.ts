@@ -84,7 +84,7 @@ export type SendBubbleCachedData = {
   email: string;
   datatype: string;
   chunkSize: number;
-  bubbleUrl: string;
+  bubbleAppUrl: string;
   apiPrivateKey: string;
   _templateId: string;
   recordFormat: string;

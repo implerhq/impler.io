@@ -147,7 +147,13 @@ export function Destination({ template }: DestinationProps) {
             <Input
               required
               label="Bubble App URL"
-              placeholder="Bubble App URL"
+              placeholder="https://acme.in/api/1.1/obj/customers"
+              description={
+                <>
+                  <div>Example with default domain: https://your-app.bubbleapps.io/api/1.1/obj/your-datatype</div>
+                  <div>Example with custom domain: https://yourapp.com/api/1.1/obj/your-datatype</div>
+                </>
+              }
               {...register('bubbleIo.bubbleAppUrl')}
               error={errors?.bubbleIo?.bubbleAppUrl?.message}
             />
