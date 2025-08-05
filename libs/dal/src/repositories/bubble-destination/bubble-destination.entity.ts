@@ -5,7 +5,5 @@ export class BubbleDestinationEntity {
 
   apiPrivateKey: string;
 
-  datatype: string;
-
   _templateId: string;
 }

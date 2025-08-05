@@ -76,7 +76,7 @@ export class SendBubbleDataConsumer extends BaseConsumer {
 
       await this.makeResponseEntry(
         response,
-        { bubbleAppUrl: cachedData.bubbleAppUrl, datatype: cachedData.datatype },
+        { bubbleAppUrl: cachedData.bubbleAppUrl },
         cachedData.name,
         cachedData.email
       );
@@ -173,7 +173,6 @@ export class SendBubbleDataConsumer extends BaseConsumer {
       bubbleAppUrl,
       chunkSize: 500,
       email: userEmail,
-      datatype: bubbleDestination.datatype,
       name: templateData.name,
       _templateId: uploadata._templateId,
       recordFormat: uploadata.customRecordFormat,
@@ -185,7 +184,7 @@ export class SendBubbleDataConsumer extends BaseConsumer {
 
   private async makeResponseEntry(
     data: Partial<WebhookLogEntity>,
-    bubbleData: { datatype: string; bubbleAppUrl: string },
+    bubbleData: { bubbleAppUrl: string },
     importName: string,
     userEmail: string
   ) {
@@ -196,7 +195,6 @@ export class SendBubbleDataConsumer extends BaseConsumer {
           error: JSON.stringify(data.error, null, 2).replace(/\\+"/g, '"'),
           importName,
           time: data.callDate.toString(),
-          datatype: bubbleData.datatype,
           bubbleAppUrl: bubbleData.bubbleAppUrl,
           importId: data._uploadId,
         },

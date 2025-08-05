@@ -15,9 +15,6 @@ const bubbleDestinationSchema = new Schema(
     apiPrivateKey: {
       type: Schema.Types.String,
     },
-    datatype: {
-      type: Schema.Types.String,
-    },
   },
   { ...schemaOptions }
 );

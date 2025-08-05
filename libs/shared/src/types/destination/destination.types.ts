@@ -20,7 +20,6 @@ export interface IWebhookData {
 export interface IBubbleData {
   bubbleAppUrl: string;
   apiPrivateKey: string;
-  datatype: string;
 }
 
 export interface IDestinationData {
