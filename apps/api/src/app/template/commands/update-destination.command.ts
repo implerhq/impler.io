@@ -49,12 +49,13 @@ export class BubbleIoDestinationObject {
   @ValidateIf((obj) => obj.destination === DestinationsEnum.BUBBLEIO)
   apiPrivateKey: string;
 
-  @IsString()
-  @IsDefined()
-  @ValidateIf((obj) => obj.destination === DestinationsEnum.BUBBLEIO)
-  datatype: string;
-
   /*
+   *@IsString()
+   *@IsDefined()
+   *@ValidateIf((obj) => obj.destination === DestinationsEnum.BUBBLEIO)
+   *datatype: string;
+   *
+   * /*
    * @IsEnum(BubbleDestinationEnvironmentEnum)
    * @IsDefined()
    * @ValidateIf((obj) => obj.destination === DestinationsEnum.BUBBLEIO)

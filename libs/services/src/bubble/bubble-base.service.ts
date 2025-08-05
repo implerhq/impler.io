@@ -6,6 +6,7 @@ export class BubbleBaseService {
     return bubbleAppUrl;
   }
   throwRequestError(errorWithType: AxiosError) {
+    console.log(errorWithType);
     if ((errorWithType as AxiosError).response) {
       // Request made and server responded
       const response = errorWithType.response.data as Record<string, any>;

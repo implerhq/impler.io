@@ -12,6 +12,5 @@ export class DestinationResponseDto {
   bubbleio?: {
     bubbleAppUrl: string;
     apiPrivateKey: string;
-    datatype: string;
   };
 }
