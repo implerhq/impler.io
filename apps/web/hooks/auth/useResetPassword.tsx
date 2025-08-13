@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 
-import { API_KEYS, ROUTES } from '@config';
+import { API_KEYS, CONSTANTS, ROUTES } from '@config';
 import { commonApi } from '@libs/api';
 import { IErrorObject, ILoginResponse, SCREENS } from '@impler/shared';
 import { track } from '@libs/amplitude';
@@ -19,7 +19,11 @@ interface IResetPasswordData extends IResetPasswordFormData {
 
 export function useResetPassword() {
   const { push, query } = useRouter();
-  const { register, handleSubmit } = useForm<IResetPasswordFormData>();
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors }, } = useForm<IResetPasswordFormData>();
   const {
     mutate: resetPassword,
     isLoading: isResetPasswordLoading,
@@ -49,6 +53,12 @@ export function useResetPassword() {
   };
 
   const onResetPassword = (data: IResetPasswordFormData) => {
+    if (data.password && data.password.length > CONSTANTS.MAX_PASSWORD_LENGTH) {
+      setError("password", {
+        type: "manual",
+        message: `Password length must be less than ${CONSTANTS.MAX_PASSWORD_LENGTH}!`
+      });
+    }
     resetPassword({
       ...data,
       token: query.token as string,
@@ -57,6 +67,7 @@ export function useResetPassword() {
 
   return {
     error,
+    errors,
     isError,
     register,
     goToLogin,
