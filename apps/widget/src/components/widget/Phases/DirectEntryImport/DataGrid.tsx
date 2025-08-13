@@ -197,7 +197,7 @@ export function DataGrid({ onNextClick, onPrevClick, texts }: IPhase12Props) {
           minSpareRows={1}
           data={reviewData}
           headings={headings}
-          selectEnabled={true}
+          selectEnabled={hideCheckBox ? false : true}
           columnDefs={columnDefs}
           allChecked={allChecked}
           hideCheckBox={hideCheckBox}
