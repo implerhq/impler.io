@@ -1,6 +1,19 @@
 import { Response } from 'express';
 import { ApiOperation, ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  Res,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 
 import { ACCESS_KEY_NAME, Defaults, IJwtPayload, PaginationResult, UserRolesEnum } from '@impler/shared';
 import { UserSession } from '@shared/framework/user.decorator';
@@ -32,6 +45,7 @@ import { EnvironmentResponseDto } from 'app/environment/dtos/environment-respons
 @ApiTags('Project')
 @ApiSecurity(ACCESS_KEY_NAME)
 @UseGuards(JwtAuthGuard)
+@UseInterceptors(ClassSerializerInterceptor)
 export class ProjectController {
   constructor(
     private getImports: GetImports,
