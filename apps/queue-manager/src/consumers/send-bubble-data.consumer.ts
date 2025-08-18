@@ -67,7 +67,7 @@ export class SendBubbleDataConsumer extends BaseConsumer {
         uploadId,
         page,
         method: 'POST',
-        url: cachedData.bubbleAppUrl,
+        url: cachedData.bubbleAppUrl + '/bulk',
         headers: {
           Authorization: `Bearer ${cachedData.apiPrivateKey}`,
           'Content-Type': 'text/plain',
