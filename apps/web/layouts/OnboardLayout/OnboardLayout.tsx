@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic';
 import { useQuery } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
-import { API_KEYS, CONSTANTS, TEXTS } from '@config';
+import { API_KEYS, colors, CONSTANTS, TEXTS } from '@config';
 import { IErrorObject } from '@impler/shared';
 import DarkLogo from '@assets/images/logo-dark.png';
 
@@ -53,12 +53,18 @@ export function OnboardLayout({ children }: OnboardLayoutProps) {
 
             <Flex gap="xs" align="center">
               <Link href={CONSTANTS.IMPLER_DOCUMENTATION} passHref legacyBehavior>
-                <Anchor component="a" fw={600} c="white" fz="sm">
+                <Anchor underline={false} component="a" fw={600} c="white" fz="sm">
                   Need Help ?
                 </Anchor>
               </Link>
 
-              <Anchor href={CONSTANTS.IMPLER_CAL_QUICK_MEETING} fw={600} c="white" fz="sm">
+              <Anchor
+                underline={false}
+                href={CONSTANTS.IMPLER_CAL_QUICK_MEETING}
+                fw={600}
+                c={colors.goldenYellow}
+                fz="sm"
+              >
                 Get in Touch
               </Anchor>
             </Flex>
