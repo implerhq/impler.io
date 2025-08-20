@@ -1,5 +1,5 @@
 import { useOnboardUserProjectForm } from '@hooks/useOnboardUserProjectForm';
-import { ProjectOnboardForm } from './ProjectOnboardForm';
+import ProjectOnboardForm from './ProjectOnboardForm';
 
 interface ProjectOnboardFormData {
   projectName: string;
@@ -8,7 +8,7 @@ interface ProjectOnboardFormData {
   source: string;
 }
 
-export function OnboardProjectForm() {
+export default function OnboardProjectForm() {
   const { onboardUser, isUserOnboardLoading } = useOnboardUserProjectForm({});
 
   const handleProjectOnboardFormSubmit = async (data: ProjectOnboardFormData) => {

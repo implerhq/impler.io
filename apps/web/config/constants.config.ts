@@ -7,6 +7,8 @@ import { UserRolesEnum, IntegrationEnum, ColumnTypesEnum } from '@impler/shared'
 import { Plan } from '@components/UpgradePlan/Plans';
 
 export const CONSTANTS = {
+  IMPLER_DOCUMENTATION: 'https://docs.impler.io',
+  IMPLER_CAL_QUICK_MEETING: 'https://cal.com/impler/quick-chat',
   EXPLORE_PLANS_QUERY_LEY: 'explore_plans',
   PLAN_CODE_QUERY_KEY: 'plan_code',
   GITHUB_LOGIN_URL: '/v1/auth/github',

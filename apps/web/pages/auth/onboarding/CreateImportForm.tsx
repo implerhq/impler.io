@@ -1,4 +1,3 @@
-// Quick fix: Reduce padding in CreateImportForm
 import { Controller, useForm, Control, UseFormSetError, FieldErrors, UseFormResetField } from 'react-hook-form';
 import { Title, Stack, TextInput, Radio, Flex, Box, FocusTrap } from '@mantine/core';
 import { Button } from '@ui/button';
@@ -17,7 +16,7 @@ interface CreateImportFormProps {
   handleSubmit: ReturnType<typeof useForm<CreateOnboardImportFormData>>['handleSubmit'];
 }
 
-export function CreateImportForm({
+export default function CreateImportForm({
   onSubmit,
   isLoading,
   control,
@@ -27,8 +26,8 @@ export function CreateImportForm({
 }: CreateImportFormProps) {
   return (
     <>
-      <Stepper currentStep={3} totalSteps={3} />
       <Title mb="md">Get Your First Import</Title>
+      <Stepper currentStep={3} totalSteps={3} />
       <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
         <FocusTrap active>
           <Stack spacing="xs" align="left">

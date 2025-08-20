@@ -18,7 +18,7 @@ interface ProjectOnboardFormProps {
   isLoading?: boolean;
 }
 
-export function ProjectOnboardForm({ onSubmit, isLoading }: ProjectOnboardFormProps) {
+export default function ProjectOnboardForm({ onSubmit, isLoading }: ProjectOnboardFormProps) {
   const { profileInfo } = useAppState();
   const [role] = useState(ROLES);
   const [about, setAbout] = useState(HOW_HEARD_ABOUT_US);
@@ -31,19 +31,19 @@ export function ProjectOnboardForm({ onSubmit, isLoading }: ProjectOnboardFormPr
 
   return (
     <>
-      <Stepper currentStep={2} totalSteps={3} />
       <Title order={2} mb="md">
         <Group position="left" spacing="xs">
           <span style={{ fontSize: '30px' }}>👋</span>
           <span>Welcome {profileInfo?.firstName}</span>
         </Group>
       </Title>
+      <Stepper currentStep={2} totalSteps={3} />
       <Text size="md" color="dimmed" align="left" mb="lg">
         Let&apos;s customize your experience. Your answers will decrease the time to get started.
       </Text>
-      <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <FocusTrap active>
-          <Stack spacing="md" align="stretch">
+          <Stack spacing="md">
             <Controller
               name="projectName"
               control={control}

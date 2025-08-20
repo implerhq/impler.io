@@ -15,10 +15,10 @@ export default function SignupPage() {
   return (
     <OnboardLayout>
       <Container size="xs">
-        <Stepper currentStep={1} totalSteps={3} />
         <Title order={1} color="white" mb="md">
           Get Started
         </Title>
+        <Stepper currentStep={1} totalSteps={3} />
         <FocusTrap>
           <form onSubmit={signup} style={{ width: '100%' }}>
             <Stack>

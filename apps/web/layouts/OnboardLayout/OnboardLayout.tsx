@@ -1,4 +1,4 @@
-import { Flex, Paper, Container, Anchor } from '@mantine/core';
+import { Flex, Paper, Anchor } from '@mantine/core';
 import { PropsWithChildren } from 'react';
 import Link from 'next/link';
 import Head from 'next/head';
@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic';
 import { useQuery } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';
-import { API_KEYS, colors, TEXTS } from '@config';
+import { API_KEYS, CONSTANTS, TEXTS } from '@config';
 import { IErrorObject } from '@impler/shared';
 import DarkLogo from '@assets/images/logo-dark.png';
 
@@ -48,27 +48,25 @@ export function OnboardLayout({ children }: OnboardLayoutProps) {
       <main>
         <Flex direction="column" mih="100vh">
           {/* Header with logo and help links */}
-          <Flex p="md" align="center" justify="space-between">
+          <Flex p="xs" align="center" justify="space-between">
             <Image src={DarkLogo} width={30} height={35} alt="Impler Logo" />
 
             <Flex gap="xs" align="center">
-              <Link href="/help" passHref legacyBehavior>
+              <Link href={CONSTANTS.IMPLER_DOCUMENTATION} passHref legacyBehavior>
                 <Anchor component="a" fw={600} c="white" fz="sm">
                   Need Help ?
                 </Anchor>
               </Link>
 
-              <Link href="/contact" passHref legacyBehavior>
-                <Anchor component="a" fw={600} c="white" fz="sm">
-                  Get in Touch
-                </Anchor>
-              </Link>
+              <Anchor href={CONSTANTS.IMPLER_CAL_QUICK_MEETING} fw={600} c="white" fz="sm">
+                Get in Touch
+              </Anchor>
             </Flex>
           </Flex>
 
           <Flex style={{ flexGrow: 1 }} align="center" justify="center">
-            <Paper withBorder radius="md" p="sm" bg={colors.darkGray}>
-              <Container>{children}</Container>
+            <Paper withBorder radius="md" p="lg" w={600} maw="90%">
+              {children}
             </Paper>
           </Flex>
         </Flex>

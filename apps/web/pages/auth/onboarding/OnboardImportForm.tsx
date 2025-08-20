@@ -1,5 +1,5 @@
 import { IColumn, IntegrationEnum, OnboardCreateTemplateModeEnum } from '@impler/shared';
-import { CreateImportForm } from './CreateImportForm';
+import CreateImportForm from './CreateImportForm';
 import { useForm } from 'react-hook-form';
 import { useTemplateSchema } from '@hooks/useTemplateSchema';
 import { useAppState } from 'store/app.context';
