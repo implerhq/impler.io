@@ -33,7 +33,9 @@ export default function SigninPage() {
     }
   }, [query, push]);
 
-  return <Signin API_URL={publicRuntimeConfig.NEXT_PUBLIC_API_BASE_URL} error={query?.error as string} />;
+  return (
+    <OnboardLayout>
+      <Signin API_URL={publicRuntimeConfig.NEXT_PUBLIC_API_BASE_URL} error={query?.error as string} />
+    </OnboardLayout>
+  );
 }
-
-SigninPage.Layout = OnboardLayout;

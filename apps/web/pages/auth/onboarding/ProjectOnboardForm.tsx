@@ -4,6 +4,7 @@ import { Title, Text, Stack, TextInput, Select, Radio, Group, Flex, Box, FocusTr
 import { Button } from '@ui/button';
 import { useAppState } from 'store/app.context';
 import { colors, COMPANY_SIZES, HOW_HEARD_ABOUT_US, PLACEHOLDERS, ROLES } from '@config';
+import { Stepper } from '@components/Stepper/Stepper';
 
 interface ProjectOnboardFormData {
   projectName: string;
@@ -30,8 +31,9 @@ export function ProjectOnboardForm({ onSubmit, isLoading }: ProjectOnboardFormPr
 
   return (
     <>
-      <Title mb="md">
-        <Group position="left">
+      <Stepper currentStep={2} totalSteps={3} />
+      <Title order={2} mb="md">
+        <Group position="left" spacing="xs">
           <span style={{ fontSize: '30px' }}>👋</span>
           <span>Welcome {profileInfo?.firstName}</span>
         </Group>
@@ -39,9 +41,9 @@ export function ProjectOnboardForm({ onSubmit, isLoading }: ProjectOnboardFormPr
       <Text size="md" color="dimmed" align="left" mb="lg">
         Let&apos;s customize your experience. Your answers will decrease the time to get started.
       </Text>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
         <FocusTrap active>
-          <Stack spacing="md" align="left">
+          <Stack spacing="md" align="stretch">
             <Controller
               name="projectName"
               control={control}
@@ -75,7 +77,7 @@ export function ProjectOnboardForm({ onSubmit, isLoading }: ProjectOnboardFormPr
                   value={field.value}
                   onBlur={field.onBlur}
                   error={errors.companySize?.message}
-                  onChange={(value) => field.onChange(value)}
+                  onChange={field.onChange}
                 >
                   <Flex gap="sm" wrap="wrap">
                     {COMPANY_SIZES.map((companySize) => (
@@ -84,6 +86,7 @@ export function ProjectOnboardForm({ onSubmit, isLoading }: ProjectOnboardFormPr
                         p="xs"
                         sx={() => ({
                           border: `1px solid ${colors.darkGrey}`,
+                          borderRadius: '4px',
                         })}
                       >
                         <Radio name="companySize" size="xs" value={companySize.value} label={companySize.label} />
@@ -139,7 +142,7 @@ export function ProjectOnboardForm({ onSubmit, isLoading }: ProjectOnboardFormPr
             />
 
             <Button type="submit" fullWidth loading={isLoading}>
-              Continue
+              Prepare your Import
             </Button>
           </Stack>
         </FocusTrap>
@@ -147,5 +150,3 @@ export function ProjectOnboardForm({ onSubmit, isLoading }: ProjectOnboardFormPr
     </>
   );
 }
-
-export default ProjectOnboardForm;

@@ -45,7 +45,7 @@ export default function OtpVerifyPage() {
   };
 
   return (
-    <>
+    <OnboardLayout>
       <LoadingOverlay visible={!profileInfo} />
       <Container size="md" p="md">
         <Title align="left" order={1} weight="bolder">
@@ -119,8 +119,6 @@ export default function OtpVerifyPage() {
           )}
         </Stack>
       </Container>
-    </>
+    </OnboardLayout>
   );
 }
-
-OtpVerifyPage.Layout = OnboardLayout;
