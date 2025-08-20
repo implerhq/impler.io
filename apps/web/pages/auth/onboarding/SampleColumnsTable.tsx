@@ -6,7 +6,7 @@ import { IColumn } from '@impler/shared';
 
 export default function SampleColumnsTable() {
   return (
-    <Stack spacing="sm">
+    <Stack spacing="xs">
       <DraggableTable<IColumn>
         emptyDataText="No columns configured"
         headings={[

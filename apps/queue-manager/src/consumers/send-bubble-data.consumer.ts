@@ -73,7 +73,6 @@ export class SendBubbleDataConsumer extends BaseConsumer {
           'Content-Type': 'text/plain',
         },
       });
-
       await this.makeResponseEntry(
         response,
         { bubbleAppUrl: cachedData.bubbleAppUrl },

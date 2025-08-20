@@ -1,8 +1,14 @@
-import { Container } from '@mantine/core';
 import { useOnboardUserProjectForm } from '@hooks/useOnboardUserProjectForm';
-import { ProjectOnboardForm } from './ProjectOnboardForm';
+import ProjectOnboardForm from './ProjectOnboardForm';
 
-export function OnboardProjectForm() {
+interface ProjectOnboardFormData {
+  projectName: string;
+  companySize: string;
+  role: string;
+  source: string;
+}
+
+export default function OnboardProjectForm() {
   const { onboardUser, isUserOnboardLoading } = useOnboardUserProjectForm({});
 
   const handleProjectOnboardFormSubmit = async (data: ProjectOnboardFormData) => {
@@ -11,11 +17,5 @@ export function OnboardProjectForm() {
     } catch (error) {}
   };
 
-  return (
-    <Container size="md" p="md">
-      <ProjectOnboardForm isLoading={isUserOnboardLoading} onSubmit={handleProjectOnboardFormSubmit} />
-    </Container>
-  );
+  return <ProjectOnboardForm isLoading={isUserOnboardLoading} onSubmit={handleProjectOnboardFormSubmit} />;
 }
-
-export default OnboardProjectForm;

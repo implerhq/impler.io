@@ -4,6 +4,7 @@ import { Button } from '@ui/button';
 import { colors, PLACEHOLDERS } from '@config';
 import { IntegrationEnum } from '@impler/shared';
 import ImportColumnsSection from './ImportColumnsSection';
+import { Stepper } from '@components/Stepper/Stepper';
 
 interface CreateImportFormProps {
   onSubmit: (data: CreateOnboardImportFormData) => void;
@@ -15,7 +16,7 @@ interface CreateImportFormProps {
   handleSubmit: ReturnType<typeof useForm<CreateOnboardImportFormData>>['handleSubmit'];
 }
 
-export function CreateImportForm({
+export default function CreateImportForm({
   onSubmit,
   isLoading,
   control,
@@ -25,10 +26,11 @@ export function CreateImportForm({
 }: CreateImportFormProps) {
   return (
     <>
-      <Title mb="md">Get Your First Import </Title>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <Title mb="md">Get Your First Import</Title>
+      <Stepper currentStep={3} totalSteps={3} />
+      <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
         <FocusTrap active>
-          <Stack spacing="xl" align="left">
+          <Stack spacing="xs" align="left">
             <Controller
               name="importName"
               control={control}
@@ -93,5 +95,3 @@ export function CreateImportForm({
     </>
   );
 }
-
-export default CreateImportForm;

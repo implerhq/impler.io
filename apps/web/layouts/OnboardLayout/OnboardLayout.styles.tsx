@@ -30,21 +30,11 @@ const getContentContainerStyles = (theme: MantineTheme): Record<string, any> => 
     width: '65%',
   },
 });
+
 const getSlideImageStyles = (): CSSObject => ({
   width: '100%',
   height: '100%',
   objectFit: 'contain',
-});
-
-const getCarouselColStyles = (theme: MantineTheme): Record<string, any> => ({
-  backgroundImage: `url(/images/auth-bg.png)`,
-  backgroundPosition: 'center',
-  backgroundSize: 'cover',
-  padding: '40px',
-  display: 'none',
-  [`@media (min-width: ${theme.breakpoints.md}px)`]: {
-    display: 'block',
-  },
 });
 
 const getGridStyles = (): Record<string, any> => ({
@@ -59,6 +49,32 @@ const getViewportStyles = (): CSSObject => ({
   alignItems: 'center',
 });
 
+const getLogoWrapperStyles = (theme: MantineTheme): CSSObject => ({
+  position: 'absolute',
+  top: theme.spacing.md,
+  left: theme.spacing.md,
+  zIndex: 10,
+});
+
+const getFormWrapperStyles = (): CSSObject => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  minHeight: '100vh',
+  width: '100%',
+  margin: '0 auto', // keeps center alignment
+});
+
+const getFormBoxStyles = (theme: MantineTheme): CSSObject => ({
+  backgroundColor: theme.colors.dark[6],
+  border: `1px solid ${theme.colors.gray[8]}`,
+  borderRadius: theme.radius.sm,
+  padding: theme.spacing.xl,
+  boxShadow: theme.shadows.sm, // lighter shadow
+  width: '100%',
+  maxWidth: 400,
+});
+
 export default createStyles((theme): Record<string, any> => {
   return {
     root: getRootStyles(),
@@ -66,7 +82,9 @@ export default createStyles((theme): Record<string, any> => {
     image: getSlideImageStyles(),
     viewport: getViewportStyles(),
     contentCol: getContentColStyles(),
-    carouselCol: getCarouselColStyles(theme),
     contentContainer: getContentContainerStyles(theme),
+    logoWrapper: getLogoWrapperStyles(theme),
+    formWrapper: getFormWrapperStyles(),
+    formBox: getFormBoxStyles(theme),
   };
 });
