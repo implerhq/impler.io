@@ -16,6 +16,7 @@ export const colors = {
   darkGrey: '#454545',
   stoneGrey: '#25262b',
   blackGrey: '#333333',
+  darkGray: '#1A1B1E',
   darkBlue: '#5263FA',
   lightGrey: '#333333',
   faintGrey: '#1c1d21',

@@ -1,13 +1,10 @@
 import Link from 'next/link';
-import Image from 'next/image';
-import { Title, Text, Stack, Divider, Flex, Box, Alert, TextInput as Input } from '@mantine/core';
+import { Title, Text, Stack, Divider, Box, Alert, TextInput as Input, Container } from '@mantine/core';
 
 import { Button } from '@ui/button';
 import { useSignin } from '@hooks/auth/useSignin';
 import { PasswordInput } from '@ui/password-input';
 import { CONSTANTS, PLACEHOLDERS, ROUTES, colors } from '@config';
-
-import DarkLogo from '@assets/images/logo-dark.png';
 import { GithubIcon } from '@assets/icons/Github.icon';
 
 interface SigninProps {
@@ -19,21 +16,11 @@ export const Signin = ({ API_URL, error }: SigninProps) => {
   const { register, isLoginLoading, login, errorMessage } = useSignin();
 
   return (
-    <>
-      <Flex
-        gap="sm"
-        direction="column"
-        mb="md"
-        align={{
-          base: 'center',
-          md: 'flex-start',
-        }}
-      >
-        <Image src={DarkLogo} width={60} height={70} alt="Impler Logo" />
-        <Title order={1} color="white">
-          Sign In to your account
-        </Title>
-      </Flex>
+    <Container size="xs">
+      <Title order={1} color="white" mb="md">
+        Let&apos;s Continue
+      </Title>
+
       <Box w="100%">
         <Button fullWidth component="a" size="md" href={API_URL + CONSTANTS.GITHUB_LOGIN_URL} leftIcon={<GithubIcon />}>
           Continue with Github
@@ -87,6 +74,6 @@ export const Signin = ({ API_URL, error }: SigninProps) => {
           </Text>
         </Stack>
       </form>
-    </>
+    </Container>
   );
 };

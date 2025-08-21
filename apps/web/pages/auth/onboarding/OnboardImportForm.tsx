@@ -1,6 +1,5 @@
-import { Container } from '@mantine/core';
 import { IColumn, IntegrationEnum, OnboardCreateTemplateModeEnum } from '@impler/shared';
-import { CreateImportForm } from './CreateImportForm';
+import CreateImportForm from './CreateImportForm';
 import { useForm } from 'react-hook-form';
 import { useTemplateSchema } from '@hooks/useTemplateSchema';
 import { useAppState } from 'store/app.context';
@@ -38,26 +37,20 @@ export default function OnboardImportForm() {
       createOnboardTemplateSample({
         name: createImportFormData.importName,
         _projectId: profileInfo!._projectId,
-        columns: templateSchemaColumns?.length
-          ? templateSchemaColumns.map((item) => ({
-              ...item,
-            }))
-          : [],
+        columns: templateSchemaColumns?.length ? templateSchemaColumns.map((item) => ({ ...item })) : [],
       });
     }
   };
 
   return (
-    <Container size="md" p="md">
-      <CreateImportForm
-        onSubmit={handleCreateImportFormSubmit}
-        isLoading={isCreateOnboardTemplateSampleLoading}
-        control={control}
-        errors={errors}
-        setError={setError}
-        resetField={resetField}
-        handleSubmit={handleSubmit}
-      />
-    </Container>
+    <CreateImportForm
+      onSubmit={handleCreateImportFormSubmit}
+      isLoading={isCreateOnboardTemplateSampleLoading}
+      control={control}
+      errors={errors}
+      setError={setError}
+      resetField={resetField}
+      handleSubmit={handleSubmit}
+    />
   );
 }

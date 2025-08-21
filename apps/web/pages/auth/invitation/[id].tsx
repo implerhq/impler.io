@@ -26,26 +26,28 @@ export default function InvitationPage() {
   };
 
   return !isLoggedInUser ? (
-    <Container size="md" p="md">
-      <Stack spacing="md" align="left">
-        <Title>
-          <Group position="left">Sign Up or Sign In</Group>
-        </Title>
-        <Text size="md" color="dimmed" align="left">
-          You have to signin or create new account to take action on the invitation you&apos;ve received.
-        </Text>
-        <Link href={formatUrl(ROUTES.SIGNUP, [], { invitationId })}>
-          <Button fullWidth size="md">
-            Sign Up
-          </Button>
-        </Link>
-        <Text size="md" align="center">
-          Already have an account? <Link href={formatUrl(ROUTES.SIGNIN, [], { invitationId })}>Sign In</Link>
-        </Text>
-      </Stack>
-    </Container>
+    <OnboardLayout>
+      <Container size="md" p="md">
+        <Stack spacing="md" align="left">
+          <Title>
+            <Group position="left">Sign Up or Sign In</Group>
+          </Title>
+          <Text size="md" color="dimmed" align="left">
+            You have to signin or create new account to take action on the invitation you&apos;ve received.
+          </Text>
+          <Link href={formatUrl(ROUTES.SIGNUP, [], { invitationId })}>
+            <Button fullWidth size="md">
+              Sign Up
+            </Button>
+          </Link>
+          <Text size="md" align="center">
+            Already have an account? <Link href={formatUrl(ROUTES.SIGNIN, [], { invitationId })}>Sign In</Link>
+          </Text>
+        </Stack>
+      </Container>
+    </OnboardLayout>
   ) : (
-    <>
+    <OnboardLayout>
       <Container size="md" p="md">
         <Stack spacing="md" align="left">
           <Title>
@@ -82,8 +84,6 @@ export default function InvitationPage() {
           </Text>
         </Stack>
       </Container>
-    </>
+    </OnboardLayout>
   );
 }
-
-InvitationPage.Layout = OnboardLayout;

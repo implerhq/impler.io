@@ -25,10 +25,19 @@ export default function ImportColumnsSection({ control, setError, errors }: Impo
           name="file"
           control={control}
           render={({ field, fieldState }) => (
-            <Stack spacing="md">
+            <Stack spacing="xl">
               {templateSchema && templateSchema.length > 0 ? (
                 <Stack spacing="md">
-                  <OnboardTemplateSchemaTable data={templateSchema} />
+                  <Box
+                    style={{
+                      maxHeight: '250px',
+                      overflowY: 'auto',
+                      border: '1px solid #373A40',
+                      borderRadius: '4px',
+                    }}
+                  >
+                    <OnboardTemplateSchemaTable data={templateSchema} />
+                  </Box>
                   <Flex gap="xs">
                     <InformationIcon size="md" color={colors.yellow} />
                     <Text color="dimmed">You will be able to Edit and delete Columns in Next Step</Text>
@@ -59,12 +68,21 @@ export default function ImportColumnsSection({ control, setError, errors }: Impo
         />
       );
     } else {
-      return <SampleColumnsTable />;
+      return (
+        <Box
+          style={{
+            overflowY: 'auto',
+            height: '200px',
+          }}
+        >
+          <SampleColumnsTable />
+        </Box>
+      );
     }
   };
 
   return (
-    <Stack spacing={1}>
+    <Stack spacing="sm">
       <Controller
         name="onboardCreateTemplateMode"
         control={control}
@@ -80,7 +98,7 @@ export default function ImportColumnsSection({ control, setError, errors }: Impo
               fullWidth
             />
 
-            <Box mt="md">{renderContent(field.value as OnboardCreateTemplateModeEnum)}</Box>
+            <Box>{renderContent(field.value as OnboardCreateTemplateModeEnum)}</Box>
           </>
         )}
       />

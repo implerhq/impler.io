@@ -1,6 +1,6 @@
 {
   "name": "@impler/client",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "API client to be used in end user environments",
   "license": "MIT",
   "author": "implerhq",
