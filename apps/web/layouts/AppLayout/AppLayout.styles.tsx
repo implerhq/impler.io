@@ -10,16 +10,20 @@ export const useStyles = createStyles((theme, { collapsed }: { collapsed: boolea
   root: {
     display: 'flex',
     height: '100vh',
+    overflow: 'hidden',
   },
 
   aside: {
     width: collapsed ? 60 : 210,
-    transition: 'width 0.3s ease',
+    transition: 'width 0.1s ease',
     backgroundColor: theme.colors.dark[7],
     display: 'flex',
     flexDirection: 'column',
-    overflow: 'hidden',
-    alignItems: collapsed ? 'center' : 'stretch',
+    overflow: 'visible',
+    alignItems: 'stretch',
+    position: 'relative',
+    zIndex: 1,
+    flexShrink: 0,
   },
 
   asideHeader: {
@@ -51,10 +55,13 @@ export const useStyles = createStyles((theme, { collapsed }: { collapsed: boolea
 
   contentBox: {
     backgroundColor: theme.colors.dark[6],
+    minHeight: '100%', // ensures it fills the parent
+    height: 'auto', // allows growth with content
     borderRadius: theme.radius.md,
     padding: theme.spacing.md,
     boxShadow: theme.shadows.sm,
-    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
   },
 
   navSection: {

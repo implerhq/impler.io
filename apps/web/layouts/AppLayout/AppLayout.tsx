@@ -85,9 +85,9 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
         <aside className={classes.aside}>
           <div className={classes.logoContainer}>
             {collapsed ? (
-              <Image src={DarkLogo} alt="Impler Logo" width={25} height={30} />
+              <Image onClick={() => replace('/')} src={DarkLogo} alt="Impler Logo" width={25} height={30} />
             ) : (
-              <Image src={LogoWhite} alt="Impler Logo" width={120} height={30} />
+              <Image onClick={() => replace('/')} src={LogoWhite} alt="Impler Logo" width={120} height={30} />
             )}
           </div>
 
@@ -119,31 +119,31 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
                 <NavItem
                   active={pathname === '/'}
                   href="/"
-                  icon={<HomeIcon size="md" />}
+                  icon={<HomeIcon size="sm" />}
                   title={!collapsed ? 'Home' : ''}
                 />
                 <NavItem
                   active={pathname.includes('/imports')}
                   href="/imports"
-                  icon={<ImportIcon size="md" />}
+                  icon={<ImportIcon size="sm" />}
                   title={!collapsed ? 'Imports' : ''}
                 />
                 <NavItem
                   active={pathname.includes('/activities')}
                   href="/activities"
-                  icon={<ActivitiesIcon size="md" />}
+                  icon={<ActivitiesIcon size="sm" />}
                   title={!collapsed ? 'Activities' : ''}
                 />
                 <NavItem
                   active={pathname.includes('/settings')}
                   href="/settings"
-                  icon={<SettingsIcon size="md" />}
+                  icon={<SettingsIcon size="sm" />}
                   title={!collapsed ? 'Settings' : ''}
                 />
                 <NavItem
                   active={pathname.includes('/team-members')}
                   href="/team-members"
-                  icon={<PeopleIcon size="md" />}
+                  icon={<PeopleIcon size="sm" />}
                   title={!collapsed ? 'Team Members' : ''}
                 />
                 <Can I={ActionsEnum.READ} a={SubjectsEnum.DOCUMENTATION}>
@@ -151,7 +151,7 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
                     target="_blank"
                     title={!collapsed ? 'Documentation' : ''}
                     href="https://docs.impler.io"
-                    icon={<OutLinkIcon size="md" />}
+                    icon={<OutLinkIcon size="sm" />}
                   />
                 </Can>
               </Stack>

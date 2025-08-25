@@ -19,9 +19,9 @@ export function Activities() {
       <Title order={3}>Imports</Title>
       <div style={{ position: 'relative' }}>
         <LoadingOverlay visible={isSummaryLoading} />
-        <Grid mb="sm">
+        <Grid mb="md">
           <Grid.Col span={4}>
-            <Card title="This Week" subtitle={summaryData?.weekly || VARIABLES.ZERO} />
+            <Card title="This Week" subtitle={summaryData?.weekly || VARIABLES.ZERO} color="primary" />
           </Grid.Col>
           <Grid.Col span={4}>
             <Card title="This Month" subtitle={summaryData?.monthly || VARIABLES.ZERO} />

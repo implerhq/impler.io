@@ -10,34 +10,48 @@ const getRootFilledStyles = (theme: MantineTheme, isActive?: boolean): CSSObject
   color: isActive ? theme.white : colors.TXTGray,
   paddingLeft: theme.spacing.sm,
   flexWrap: 'nowrap',
-  transition: 'all 0.2s ease',
+  transition: 'background-color 0.2s ease, color 0.2s ease',
   cursor: 'pointer',
   paddingBlock: theme.spacing.xs,
   position: 'relative',
   borderRadius: theme.radius.xs,
   backgroundColor: isActive ? colors.blue : 'transparent',
   paddingRight: theme.spacing.xs,
-  label: {
+  width: '100%',
+  overflow: 'hidden',
+  minHeight: '40px', // Fixed height to prevent layout shift
+
+  '& > svg': {
+    flexShrink: 0,
+    width: '24px', // Fixed width for icons
+    height: '24px',
+    color: isActive ? theme.white : colors.TXTGray,
+    transition: 'color 0.2s ease',
+  },
+
+  '& > span': {
     whiteSpace: 'nowrap',
     overflow: 'hidden',
-    transition: 'opacity 0.2s ease, width 0.3s ease',
+    textOverflow: 'ellipsis',
+    transition: 'opacity 0.2s ease',
     opacity: 1,
-    width: 'auto',
+    width: '100%',
+    textAlign: 'left',
 
     '&[data-collapsed="true"]': {
       opacity: 0,
       width: 0,
+      padding: 0,
     },
   },
 
   '&:hover': {
     backgroundColor: isActive ? colors.blue : theme.colors.dark[5],
     color: theme.white,
-  },
 
-  '& svg': {
-    color: isActive ? theme.white : colors.TXTGray,
-    transition: 'color 0.2s ease',
+    '& > svg': {
+      color: theme.white,
+    },
   },
 });
 
