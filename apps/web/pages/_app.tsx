@@ -138,20 +138,20 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                 modalProps={{
                   styles: {
                     title: {
-                      color: colorScheme === 'dark' ? colors.white : colors.black,
+                      color: colors.white,
                     },
                     content: {
-                      backgroundColor: colorScheme === 'dark' ? colors.black : colors.white,
+                      backgroundColor: colors.black,
                       borderRadius: 0,
                       boxShadow: 'none',
                       // flex: `0 0 40rem !important`,
                     },
                     header: {
-                      backgroundColor: colorScheme === 'dark' ? colors.black : colors.white,
+                      backgroundColor: colors.black,
                     },
                     overlay: {
                       // eslint-disable-next-line no-magic-numbers
-                      backgroundColor: addOpacityToHex(colorScheme === 'dark' ? colors.white : colors.black, 0.2),
+                      backgroundColor: addOpacityToHex(colors.white, 0.2),
                       backdropFilter: 'blur(5px)',
                     },
                   },

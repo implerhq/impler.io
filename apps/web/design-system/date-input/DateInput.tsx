@@ -1,4 +1,3 @@
-import { useMantineColorScheme } from '@mantine/core';
 import { DateInput as MantineDateInput } from '@mantine/dates';
 
 import { colors } from '@config';
@@ -15,13 +14,12 @@ interface IDateInputProps {
 }
 
 export function DateInput({ onChange, value, placeholder, maw, valueFormat, allowDeselect }: IDateInputProps) {
-  const { colorScheme } = useMantineColorScheme();
   const { classes } = useStyles();
 
   return (
     <MantineDateInput
       clearable
-      rightSection={<CalendarIcon color={colorScheme === 'dark' ? colors.white : colors.black} />}
+      rightSection={<CalendarIcon color={colors.black} />}
       classNames={classes}
       onChange={onChange}
       value={value}

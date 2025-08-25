@@ -27,22 +27,10 @@ const useStyles = createStyles((theme, { disabled, radius, readOnly }: DefaultLa
   defaultValue: {
     display: 'flex',
     alignItems: 'center',
-    backgroundColor: disabled
-      ? theme.colorScheme === 'dark'
-        ? theme.colors.dark[5]
-        : theme.colors.gray[3]
-      : theme.colorScheme === 'dark'
-      ? theme.colors.dark[7]
-      : variant === 'filled'
-      ? theme.white
-      : theme.colors.gray[1],
-    color: disabled
-      ? theme.colorScheme === 'dark'
-        ? theme.colors.dark[1]
-        : theme.colors.gray[7]
-      : theme.colorScheme === 'dark'
-      ? theme.colors.dark[0]
-      : theme.colors.gray[7],
+    backgroundColor: disabled ? theme.colors.gray[3] : variant === 'filled' ? theme.white : theme.colors.gray[1],
+
+    color: disabled ? theme.colors.gray[7] : theme.colors.gray[7],
+
     height: getSize({ size, sizes }),
     margin: `calc(${getSize({ size, sizes: theme.spacing })} / 2.5) 0`,
     paddingLeft: `calc(${getSize({ size, sizes: theme.spacing })} / 1.5)`,
@@ -56,7 +44,7 @@ const useStyles = createStyles((theme, { disabled, radius, readOnly }: DefaultLa
   },
 
   defaultValueRemove: {
-    color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.colors.gray[7],
+    color: theme.colors.gray[9], // use a static color
     marginLeft: `calc(${getSize({ size, sizes: theme.spacing })} / 6)`,
   },
 

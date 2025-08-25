@@ -1,6 +1,6 @@
 import { PropsWithChildren, useState } from 'react';
 import { colors } from '@config';
-import { Collapse, UnstyledButton, useMantineTheme } from '@mantine/core';
+import { Collapse, UnstyledButton } from '@mantine/core';
 import { ChevronDownIcon } from '@assets/icons/ChevronDown.icon';
 import { ChevronUpIcon } from '@assets/icons/ChevronUp.icon';
 
@@ -10,7 +10,6 @@ interface VarLabelProps {
 
 export const VarLabel = ({ label, children }: PropsWithChildren<VarLabelProps>) => {
   const [open, setOpen] = useState(false);
-  const theme = useMantineTheme();
 
   return (
     <>
@@ -24,7 +23,7 @@ export const VarLabel = ({ label, children }: PropsWithChildren<VarLabelProps>) 
           padding: 10,
           borderRadius: 7,
           marginBottom: 10,
-          backgroundColor: theme.colorScheme === 'dark' ? colors.BGPrimaryDark : colors.BGPrimaryLight,
+          backgroundColor: colors.BGPrimaryDark,
         }}
       >
         <div
@@ -46,7 +45,7 @@ export const VarLabel = ({ label, children }: PropsWithChildren<VarLabelProps>) 
       <Collapse
         in={open}
         style={{
-          borderBottom: `1px solid ${theme.colorScheme === 'dark' ? colors.StrokeDark : colors.StrokeLight}`,
+          borderBottom: `1px solid ${colors.StrokeDark}`,
           marginBottom: 10,
           paddingLeft: 12,
         }}

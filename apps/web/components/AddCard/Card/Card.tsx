@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import { Card as MantineCard, Group, Stack, Text, useMantineColorScheme } from '@mantine/core';
+import { Card as MantineCard, Group, Stack, Text } from '@mantine/core';
 
 import { colors } from '@config';
 import { Button } from '@ui/button';
@@ -15,7 +15,6 @@ interface CardProps {
 
 export const Card = ({ data, onRemoveCardClick }: CardProps) => {
   const { classes } = useStyles();
-  const { colorScheme } = useMantineColorScheme();
   const src = data.brand.toLowerCase()?.replaceAll(' ', '_') || 'default';
 
   return (
@@ -27,7 +26,7 @@ export const Card = ({ data, onRemoveCardClick }: CardProps) => {
           <Text size="xs" fw="lighter" color={colors.grey}>
             Card Number
           </Text>
-          <Text size="xl" fw="bolder" color={colorScheme === 'dark' ? colors.TXTDark : colors.TXTLight}>
+          <Text size="xl" fw="bolder" color={colors.TXTDark}>
             **** **** **** {data.last4Digits}
           </Text>
         </Stack>
@@ -37,7 +36,7 @@ export const Card = ({ data, onRemoveCardClick }: CardProps) => {
             <Text size="xs" fw="lighter" color={colors.grey}>
               Expiry Date
             </Text>
-            <Text size="xl" fw="bolder" color={colorScheme === 'dark' ? colors.TXTDark : colors.TXTLight}>
+            <Text size="xl" fw="bolder" color={colors.TXTDark}>
               {`${data?.expMonth}/${data?.expYear}`}
             </Text>
           </Stack>

@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Bar } from 'react-chartjs-2';
-import { Flex, Title, Grid, Stack, useMantineColorScheme, LoadingOverlay } from '@mantine/core';
+import { Flex, Title, Grid, Stack, LoadingOverlay } from '@mantine/core';
 import { BarElement, CategoryScale, Chart as ChartJS, LinearScale, Tooltip } from 'chart.js';
 
 import { Card } from '@ui/Card';
@@ -12,7 +12,6 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
 
 export function Activities() {
   const { summaryData, isSummaryLoading } = useSummary();
-  const theme = useMantineColorScheme();
   const chartRef = useRef();
 
   return (
@@ -22,7 +21,7 @@ export function Activities() {
         <LoadingOverlay visible={isSummaryLoading} />
         <Grid mb="sm">
           <Grid.Col span={4}>
-            <Card title="This Week" subtitle={summaryData?.weekly || VARIABLES.ZERO} color="primary" />
+            <Card title="This Week" subtitle={summaryData?.weekly || VARIABLES.ZERO} />
           </Grid.Col>
           <Grid.Col span={4}>
             <Card title="This Month" subtitle={summaryData?.monthly || VARIABLES.ZERO} />
@@ -32,7 +31,7 @@ export function Activities() {
           </Grid.Col>
         </Grid>
         <Flex align="center" direction="column">
-          <ActivityGraphGlobalStyles isDark={theme.colorScheme === 'dark'} isTriggerSent={true} />
+          <ActivityGraphGlobalStyles isTriggerSent={true} />
           <Bar
             ref={chartRef}
             id="chart-bar-styles"

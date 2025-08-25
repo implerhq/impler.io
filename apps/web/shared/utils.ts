@@ -16,6 +16,10 @@ export function capitalizeFirstLetter(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+export function capitalizeFirstLetterOfName(str: string) {
+  return str.split(' ')[0].charAt(0).toUpperCase() + str.split(' ')[0].slice(1);
+}
+
 export const getColorForText = (text: string) => {
   const colors = MANTINE_COLORS;
 

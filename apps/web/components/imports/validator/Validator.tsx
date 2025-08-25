@@ -1,17 +1,6 @@
 import { colors, DOCUMENTATION_REFERENCE_LINKS } from '@config';
 import { Controller } from 'react-hook-form';
-import {
-  Group,
-  Stack,
-  useMantineColorScheme,
-  Title,
-  Text,
-  Flex,
-  Accordion,
-  List,
-  Code,
-  LoadingOverlay,
-} from '@mantine/core';
+import { Group, Stack, Title, Text, Flex, Accordion, List, Code, LoadingOverlay } from '@mantine/core';
 
 import { Button } from '@ui/button';
 import { Editor } from '@ui/editor/Editor';
@@ -44,7 +33,6 @@ export function Validator({ templateId }: ValidatorProps) {
   // Bubble.io specific system variables
   const bubbleIoSystemVariables = ['extra.uploadId', 'extra.userId'];
 
-  const { colorScheme } = useMantineColorScheme();
   const { control, editorVariables, onSave, isUpdateValidationsLoading, isValidationsLoading, testCodeResult } =
     useValidator({
       templateId,
@@ -67,7 +55,7 @@ export function Validator({ templateId }: ValidatorProps) {
         <Group position="apart">
           <div>
             <Flex gap="sm" align="center">
-              <Title color={colorScheme === 'dark' ? colors.white : colors.black} order={4}>
+              <Title color={colors.white} order={4}>
                 Validate data in batch
               </Title>
               <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.customValidation} />
