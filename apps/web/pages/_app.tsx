@@ -1,15 +1,14 @@
 import React from 'react';
+import { ColorSchemeProvider, MantineProvider } from '@mantine/core';
 import { Global } from '@emotion/react';
 import Head from 'next/head';
 import getConfig from 'next/config';
 import { Poppins } from 'next/font/google';
 import App, { AppProps } from 'next/app';
 import { ModalsProvider } from '@mantine/modals';
-import { useLocalStorage } from '@mantine/hooks';
 import { init } from '@amplitude/analytics-browser';
 import { Notifications } from '@mantine/notifications';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { ColorSchemeProvider, MantineProvider, ColorScheme } from '@mantine/core';
 
 import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
@@ -71,14 +70,6 @@ const poppinsFont = Poppins({
 });
 
 export default function MyApp({ Component, pageProps }: AppProps) {
-  const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
-    key: 'color-scheme',
-    defaultValue: 'dark',
-    getInitialValueInEffect: true,
-  });
-  const toggleColorScheme = (value?: ColorScheme) =>
-    setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
-
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const Layout = Component.Layout ? Component.Layout : React.Fragment;
@@ -101,7 +92,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         />
       </Head>
       <QueryClientProvider client={client}>
-        <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
+        <ColorSchemeProvider colorScheme={'dark'} toggleColorScheme={() => {}}>
           <StoreWrapper>
             <Global
               styles={{
@@ -127,7 +118,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             <MantineProvider
               theme={{
                 ...mantineConfig,
-                colorScheme,
+                colorScheme: 'dark',
                 fontFamily: poppinsFont.style.fontFamily,
               }}
               withGlobalStyles
@@ -138,20 +129,20 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                 modalProps={{
                   styles: {
                     title: {
-                      color: colorScheme === 'dark' ? colors.white : colors.black,
+                      color: colors.white,
                     },
                     content: {
-                      backgroundColor: colorScheme === 'dark' ? colors.black : colors.white,
+                      backgroundColor: colors.black,
                       borderRadius: 0,
                       boxShadow: 'none',
                       // flex: `0 0 40rem !important`,
                     },
                     header: {
-                      backgroundColor: colorScheme === 'dark' ? colors.black : colors.white,
+                      backgroundColor: colors.black,
                     },
                     overlay: {
                       // eslint-disable-next-line no-magic-numbers
-                      backgroundColor: addOpacityToHex(colorScheme === 'dark' ? colors.white : colors.black, 0.2),
+                      backgroundColor: addOpacityToHex(colors.white, 0.2),
                       backdropFilter: 'blur(5px)',
                     },
                   },

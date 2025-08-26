@@ -1,18 +1,7 @@
 import { useEffect } from 'react';
 import { modals } from '@mantine/modals';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
-import {
-  Stack,
-  Text,
-  Title,
-  Group,
-  Select,
-  Divider,
-  SimpleGrid,
-  CloseButton,
-  TextInput as Input,
-  useMantineColorScheme,
-} from '@mantine/core';
+import { Stack, Text, Title, Group, Select, Divider, SimpleGrid, CloseButton, TextInput as Input } from '@mantine/core';
 
 import { ValidationTypesEnum } from '@impler/client';
 import { ColumnTypesEnum, DEFAULT_VALUES, IColumn } from '@impler/shared';
@@ -35,7 +24,6 @@ interface ColumnFormProps {
 }
 
 export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
-  const { colorScheme } = useMantineColorScheme();
   const { columnTypes, advancedValidationsUnavailable } = useSubscriptionInfo();
   const {
     watch,
@@ -254,7 +242,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 )}
               />
             </Stack>
-            <Stack spacing="sm" p="xs" bg={colorScheme === 'dark' ? colors.BGSecondaryDark : colors.BGSecondaryLight}>
+            <Stack spacing="sm" p="xs" bg={colors.BGSecondaryDark}>
               <Title order={5}>Column Validations</Title>
               <Checkbox
                 label={<TooltipLabel label="Required Values" />}

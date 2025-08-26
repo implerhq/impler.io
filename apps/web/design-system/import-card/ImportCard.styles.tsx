@@ -10,7 +10,7 @@ const getRootStyles = (theme: MantineTheme) => ({
   cursor: 'pointer',
   transition: 'all 0.2s ease-in-out',
   border: `1px solid ${colors.StrokeSecondaryDark}`,
-  backgroundColor: theme.colorScheme === 'dark' ? colors.BGSecondaryDark : colors.BGSecondaryLight,
+  backgroundColor: colors.BGSecondaryDark,
   '&:hover': {
     border: `1px solid ${colors.blueDark}`,
     boxShadow: theme.shadows.md,
@@ -22,7 +22,7 @@ const getRootStyles = (theme: MantineTheme) => ({
 });
 
 const getNameStyles = (theme: MantineTheme): CSSObject => ({
-  color: theme.colorScheme === 'dark' ? colors.white : colors.black,
+  color: colors.white,
   fontWeight: 600,
   fontSize: theme.fontSizes.xl,
   textAlign: 'center',
@@ -34,16 +34,16 @@ const getKeyStyles = (theme: MantineTheme): CSSObject => ({
   textAlign: 'center',
 });
 
-const getDuplicateButtonStyles = (theme: MantineTheme): CSSObject => ({
+const getDuplicateButtonStyles = (): CSSObject => ({
   transition: 'color 0.2s ease-in-out',
-  color: theme.colorScheme === 'dark' ? colors.white : colors.black,
+  color: colors.white,
   '&:hover': {
     color: colors.blueDark,
   },
 });
 
 const getValueStyles = (theme: MantineTheme): CSSObject => ({
-  color: theme.colorScheme === 'dark' ? colors.white : colors.black,
+  color: colors.white,
   fontWeight: 600,
   fontSize: theme.fontSizes.sm,
 });
@@ -54,6 +54,6 @@ export default createStyles((theme: MantineTheme): Record<string, any> => {
     root: getRootStyles(theme),
     name: getNameStyles(theme),
     value: getValueStyles(theme),
-    duplicate: getDuplicateButtonStyles(theme),
+    duplicate: getDuplicateButtonStyles(),
   };
 });

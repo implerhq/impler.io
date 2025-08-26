@@ -18,7 +18,7 @@ export function NavItem({ target, icon, title, active, href }: NavItemProps) {
     <Link href={href} target={target} className={classes.link}>
       <Flex className={classes.root}>
         {icon}
-        <Text size="lg">{title}</Text>
+        <Text size="sm">{title}</Text>
       </Flex>
     </Link>
   );

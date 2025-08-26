@@ -24,7 +24,7 @@ export function ImportsList() {
   } = useImports();
 
   return (
-    <Flex gap="sm" direction="column" h="100%" style={{ position: 'relative' }}>
+    <Flex gap="sm" direction="column" h="100%" style={{ position: 'relative', flexGrow: 1 }}>
       <LoadingOverlay visible={isCreateImportLoading || isImportsLoading} />
       <Flex justify="space-between" align="center">
         <Title order={2}>Imports</Title>

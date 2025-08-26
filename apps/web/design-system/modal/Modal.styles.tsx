@@ -1,17 +1,17 @@
 import { colors } from '@config';
-import { createStyles, MantineTheme } from '@mantine/core';
+import { createStyles } from '@mantine/core';
 
-const getModalStyles = (theme: MantineTheme): React.CSSProperties => ({
-  backgroundColor: theme.colorScheme === 'dark' ? colors.BGPrimaryDark : colors.BGPrimaryLight,
+const getModalStyles = (): React.CSSProperties => ({
+  backgroundColor: colors.BGPrimaryDark,
 });
 
-const getTitleStyles = (theme: MantineTheme): React.CSSProperties => ({
-  color: theme.colorScheme === 'dark' ? colors.white : colors.black,
+const getTitleStyles = (): React.CSSProperties => ({
+  color: colors.white,
 });
 
-export default createStyles((theme: MantineTheme): Record<string, any> => {
+export default createStyles((): Record<string, any> => {
   return {
-    modal: getModalStyles(theme),
-    title: getTitleStyles(theme),
+    modal: getModalStyles(),
+    title: getTitleStyles(),
   };
 });

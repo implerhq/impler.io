@@ -4,7 +4,7 @@ import { APIMessages } from '@shared/constants';
 import { PaymentAPIService } from '@impler/services';
 import { UpdateImageColumns, SaveSampleFile } from '@shared/usecases';
 import { AVAILABLE_BILLABLEMETRIC_CODE_ENUM, ColumnTypesEnum } from '@impler/shared';
-import { ColumnRepository, CustomizationRepository, TemplateRepository } from '@impler/dal';
+import { ColumnEntity, ColumnRepository, CustomizationRepository, TemplateRepository } from '@impler/dal';
 import { AddColumnCommand } from 'app/column/commands/add-column.command';
 import { UniqueColumnException } from '@shared/exceptions/unique-column.exception';
 import { UpdateCustomization } from '../update-customization/update-customization.usecase';
@@ -25,10 +25,19 @@ export class UpdateTemplateColumns {
   async execute(userColumns: AddColumnCommand[], _templateId: string, email: string) {
     await this.checkSchema(userColumns, email);
 
+    // eslint-disable-next-line prefer-const
+    let userInitialColumns: ColumnEntity[] = await this.columnRepository.find({ _templateId });
     await this.columnRepository.deleteMany({ _templateId });
     userColumns.forEach((column, index) => {
+      const existingUserColumns = userInitialColumns.find((col: ColumnEntity) => col.key === column.key);
+
       column.sequence = index;
       column.dateFormats = column.dateFormats?.map((format) => format.toUpperCase()) || [];
+      column.isRequired = existingUserColumns?.isRequired || false;
+      column.isUnique = existingUserColumns?.isUnique || false;
+      column.selectValues = existingUserColumns?.selectValues || [];
+      column.dateFormats = existingUserColumns?.dateFormats || [];
+      column.validations = existingUserColumns?.validations || [];
     });
     const columns = await this.columnRepository.createMany(userColumns);
     await this.saveSampleFile.execute(columns, _templateId);
