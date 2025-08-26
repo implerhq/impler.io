@@ -16,14 +16,12 @@ import { ActivitiesIcon } from '@assets/icons/Activities.icon';
 import { EditProjectIcon } from '@assets/icons/EditImport.icon';
 
 import { NavItem } from '@ui/nav-item';
-import { track } from '@libs/amplitude';
 import { UserMenu } from '@ui/user-menu';
 import { Can } from 'store/ability.context';
 import { useProject } from '@hooks/useProject';
 import { useAppState } from 'store/app.context';
 import { useLogout } from '@hooks/auth/useLogout';
 import { notify } from '@libs/notify';
-import { ColorSchemeToggle } from '@ui/toggle-color-scheme';
 import { usePlanDetails } from '@hooks/usePlanDetails';
 import dynamic from 'next/dynamic';
 import { useStyles } from './AppLayout.styles';
@@ -192,10 +190,6 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
                   <Title order={2}>
                     Welcome, {profileInfo.firstName} {profileInfo.lastName}
                   </Title>
-                </Group>
-
-                <Group>
-                  <ColorSchemeToggle onChange={(theme) => track({ name: 'TOGGLE THEME', properties: { theme } })} />
                 </Group>
               </Flex>
             )}
