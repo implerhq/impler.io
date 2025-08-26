@@ -71,6 +71,11 @@ export const useStyles = createStyles((theme, { collapsed }: { collapsed: boolea
     flexDirection: 'column',
     alignItems: collapsed ? 'center' : 'stretch',
     padding: collapsed ? '0' : '0 8px',
+
+    '& svg': {
+      width: theme.spacing.md,
+      height: theme.spacing.md,
+    },
   },
 
   userMenuContainer: {

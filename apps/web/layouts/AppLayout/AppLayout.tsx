@@ -116,34 +116,29 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
           <Flex direction="column" justify="space-between" h="100%">
             <div className={classes.navSection}>
               <Stack spacing="lg" py="xs" align={collapsed ? 'center' : 'stretch'}>
-                <NavItem
-                  active={pathname === '/'}
-                  href="/"
-                  icon={<HomeIcon size="sm" />}
-                  title={!collapsed ? 'Home' : ''}
-                />
+                <NavItem active={pathname === '/'} href="/" icon={<HomeIcon />} title={!collapsed ? 'Home' : ''} />
                 <NavItem
                   active={pathname.includes('/imports')}
                   href="/imports"
-                  icon={<ImportIcon size="sm" />}
+                  icon={<ImportIcon />}
                   title={!collapsed ? 'Imports' : ''}
                 />
                 <NavItem
                   active={pathname.includes('/activities')}
                   href="/activities"
-                  icon={<ActivitiesIcon size="sm" />}
+                  icon={<ActivitiesIcon />}
                   title={!collapsed ? 'Activities' : ''}
                 />
                 <NavItem
                   active={pathname.includes('/settings')}
                   href="/settings"
-                  icon={<SettingsIcon size="sm" />}
+                  icon={<SettingsIcon />}
                   title={!collapsed ? 'Settings' : ''}
                 />
                 <NavItem
                   active={pathname.includes('/team-members')}
                   href="/team-members"
-                  icon={<PeopleIcon size="sm" />}
+                  icon={<PeopleIcon />}
                   title={!collapsed ? 'Team Members' : ''}
                 />
                 <Can I={ActionsEnum.READ} a={SubjectsEnum.DOCUMENTATION}>
@@ -151,7 +146,7 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
                     target="_blank"
                     title={!collapsed ? 'Documentation' : ''}
                     href="https://docs.impler.io"
-                    icon={<OutLinkIcon size="sm" />}
+                    icon={<OutLinkIcon />}
                   />
                 </Can>
               </Stack>
