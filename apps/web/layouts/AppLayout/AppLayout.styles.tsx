@@ -1,3 +1,4 @@
+import { colors } from '@config';
 import { createStyles } from '@mantine/core';
 
 export const useStyles = createStyles((theme, { collapsed }: { collapsed: boolean }) => ({
@@ -54,9 +55,9 @@ export const useStyles = createStyles((theme, { collapsed }: { collapsed: boolea
   },
 
   contentBox: {
-    backgroundColor: theme.colors.dark[6],
-    minHeight: '100%', // ensures it fills the parent
-    height: 'auto', // allows growth with content
+    backgroundColor: colors.BGSecondaryDark,
+    minHeight: '100%',
+    height: 'auto',
     borderRadius: theme.radius.md,
     padding: theme.spacing.md,
     boxShadow: theme.shadows.sm,
