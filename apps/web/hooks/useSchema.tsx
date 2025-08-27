@@ -90,7 +90,8 @@ export function useSchema({ templateId }: UseSchemaProps) {
     [API_KEYS.COLUMN_UPDATE],
     ({ id, data }) => commonApi(API_KEYS.COLUMN_UPDATE as any, { parameters: [id], body: data }),
     {
-      onSuccess: () => {
+      onSuccess: (data: any) => {
+        console.log('API onSuccess DATA IS >>', data);
         queryClient.invalidateQueries([API_KEYS.TEMPLATE_COLUMNS_LIST, templateId]);
         modals.close(MODAL_KEYS.COLUMN_UPDATE);
       },
@@ -120,7 +121,15 @@ export function useSchema({ templateId }: UseSchemaProps) {
         trapFocus: true,
         withCloseButton: false,
         modalId: MODAL_KEYS.COLUMN_UPDATE,
-        children: <ColumnForm data={columnData} onSubmit={(data) => updateColumn({ id: columnId, data })} />,
+        children: (
+          <ColumnForm
+            data={columnData}
+            onSubmit={(data) => {
+              console.log('DATA Submitted in form is IS >>', data);
+              updateColumn({ id: columnId, data });
+            }}
+          />
+        ),
       });
     }
   }
@@ -140,6 +149,7 @@ export function useSchema({ templateId }: UseSchemaProps) {
           <ColumnForm
             data={columnData}
             onSubmit={(data) => {
+              console.log('DATA IS >>', data);
               reset(data);
               onAddColumnSubmit();
               modals.close(MODAL_KEYS.COLUMN_UPDATE);

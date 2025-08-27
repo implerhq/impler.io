@@ -38,7 +38,34 @@ function MinMaxValidationBadge({ max, min }: IMinMaxValidationBadgeProps) {
   return null;
 }
 
+function DigitsValidationBadge({ min, max }: IMinMaxValidationBadgeProps) {
+  if (typeof min === 'number' && typeof max === 'number')
+    return (
+      <Badge key={ValidationTypesEnum.DIGITS} color="pink" variant="filled">
+        Digits: {min}-{max}
+      </Badge>
+    );
+
+  if (typeof min === 'number')
+    return (
+      <Badge key={ValidationTypesEnum.DIGITS} color="pink" variant="filled">
+        Min digits: {min}
+      </Badge>
+    );
+
+  if (typeof max === 'number')
+    return (
+      <Badge key={ValidationTypesEnum.DIGITS} color="pink" variant="filled">
+        Max digits: {max}
+      </Badge>
+    );
+
+  return null;
+}
+
 export function ValidationsGroup({ item }: IValidationsGroupProps) {
+  console.log('item is >>', item);
+
   return (
     <Group spacing={5}>
       {item.isRequired && <Badge variant="outline">Required</Badge>}
@@ -63,6 +90,8 @@ export function ValidationsGroup({ item }: IValidationsGroupProps) {
           return <MinMaxValidationBadge min={validation.min} max={validation.max} key={ValidationTypesEnum.RANGE} />;
         } else if (validation.validate === ValidationTypesEnum.LENGTH) {
           return <MinMaxValidationBadge min={validation.min} max={validation.max} key={ValidationTypesEnum.LENGTH} />;
+        } else if (validation.validate === ValidationTypesEnum.DIGITS) {
+          return <DigitsValidationBadge min={validation.min} max={validation.max} key={ValidationTypesEnum.DIGITS} />;
         }
       }) || []}
     </Group>

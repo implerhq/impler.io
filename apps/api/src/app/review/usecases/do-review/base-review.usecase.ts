@@ -1,3 +1,4 @@
+/* eslint-disable multiline-comment-style */
 import * as fs from 'fs';
 import * as dayjs from 'dayjs';
 import * as Papa from 'papaparse';
@@ -10,7 +11,7 @@ import Ajv, { AnySchemaObject, ErrorObject, ValidateFunction } from 'ajv';
 import { ValidationErrorMessages } from '@shared/types/review.types';
 import { ColumnTypesEnum, Defaults, ITemplateSchemaItem } from '@impler/shared';
 import { SManager, BATCH_LIMIT, MAIN_CODE, ExecuteIsolateResult } from '@shared/services/sandbox';
-import { ValidationTypesEnum, LengthValidationType, RangeValidationType } from '@impler/client';
+import { ValidationTypesEnum, LengthValidationType, RangeValidationType, DigitsValidationType } from '@impler/client';
 
 dayjs.extend(customParseFormat);
 
@@ -112,6 +113,9 @@ export class BaseReview {
     const lengthValidation = column.validations?.find(
       (validation) => validation.validate === ValidationTypesEnum.LENGTH
     ) as LengthValidationType;
+    const digitsValidation = column.validations?.find(
+      (validation) => validation.validate === ValidationTypesEnum.DIGITS
+    ) as DigitsValidationType;
 
     switch (column.type) {
       case ColumnTypesEnum.STRING:
@@ -122,15 +126,31 @@ export class BaseReview {
         };
         break;
       case ColumnTypesEnum.NUMBER:
-      case ColumnTypesEnum.DOUBLE:
+      case ColumnTypesEnum.DOUBLE: {
+        const isInteger = column.type === ColumnTypesEnum.NUMBER;
+
         property = {
-          ...(column.type === ColumnTypesEnum.NUMBER && { multipleOf: 1 }),
           type: ['number', 'null'],
           ...(!column.isRequired && { default: null }),
+
+          // only enforce integer for NUMBER
+          //...(isInteger && { multipleOf: 1 }),
+
+          // normal range validation (applies to both)
           ...(typeof rangeValidation?.min === 'number' && { minimum: rangeValidation?.min }),
           ...(typeof rangeValidation?.max === 'number' && { maximum: rangeValidation?.max }),
+
+          // digit validation (only for NUMBER)
+          ...(isInteger &&
+            digitsValidation && {
+              digitCount: {
+                ...(typeof digitsValidation.min === 'number' && { min: digitsValidation.min }),
+                ...(typeof digitsValidation.max === 'number' && { max: digitsValidation.max }),
+              },
+            }),
         };
         break;
+      }
       case ColumnTypesEnum.SELECT:
       case ColumnTypesEnum.IMAGE:
         const selectValues =
@@ -250,6 +270,7 @@ export class BaseReview {
         message =
           validationErrorMessages?.[field]?.[ValidationTypesEnum.LENGTH] ||
           `Length must be greater than or equal to ${error.params.limit}`;
+        console.log('error is ->', error);
         break;
       // maximum number case
       case error.keyword === 'maximum':
@@ -263,6 +284,32 @@ export class BaseReview {
           validationErrorMessages?.[field]?.[ValidationTypesEnum.RANGE] ||
           `${String(data)} must be greater than or equal to ${error.params.limit}`;
         break;
+      case error.keyword === 'digitCount': {
+        const customMessage = validationErrorMessages?.[field]?.[ValidationTypesEnum.DIGITS];
+        console.log('customMessage is ->', error);
+
+        if (customMessage) {
+          message = customMessage;
+        } else {
+          const minDigits = error.parentSchema.digitCount.min;
+          const maxDigits = error.parentSchema.digitCount.max;
+
+          if (minDigits !== undefined && maxDigits !== undefined) {
+            if (minDigits === maxDigits) {
+              message = `Must have exactly ${minDigits} digits`;
+            } else {
+              message = `Must have between ${minDigits} and ${maxDigits} digits`;
+            }
+          } else if (minDigits !== undefined) {
+            message = `Must have at least ${minDigits} digits`;
+          } else if (maxDigits !== undefined) {
+            message = `Must have at most ${maxDigits} digits`;
+          } else {
+            message = 'Invalid number of digits';
+          }
+        }
+        break;
+      }
       // empty string case
       case error.keyword === 'emptyCheck':
       case error.keyword === 'required':
@@ -313,6 +360,7 @@ export class BaseReview {
           `Value should be unique for combination of ${uniqueCombinations[error.keyword].toString()}`;
         break;
       default:
+        console.log(error);
         message = ` contains invalid data`;
         break;
     }
@@ -546,6 +594,25 @@ export class BaseReview {
 
         return true;
       },
+    });
+
+    ajv.addKeyword({
+      keyword: 'digitCount',
+      type: 'number',
+      schemaType: 'object',
+      // schema = { min: number, max: number }
+      validate: (schema: { min?: number; max?: number }, data: number) => {
+        if (data === null || data === undefined) return true;
+
+        // Count digits (ignore sign and decimal part)
+        const digits = Math.floor(Math.log10(Math.abs(data))) + 1;
+
+        if (schema.min !== undefined && digits < schema.min) return false;
+        if (schema.max !== undefined && digits > schema.max) return false;
+
+        return true;
+      },
+      errors: true,
     });
 
     const valuesMap = new Map();
