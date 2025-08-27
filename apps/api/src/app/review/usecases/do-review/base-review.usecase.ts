@@ -270,7 +270,6 @@ export class BaseReview {
         message =
           validationErrorMessages?.[field]?.[ValidationTypesEnum.LENGTH] ||
           `Length must be greater than or equal to ${error.params.limit}`;
-        console.log('error is ->', error);
         break;
       // maximum number case
       case error.keyword === 'maximum':
@@ -286,8 +285,6 @@ export class BaseReview {
         break;
       case error.keyword === 'digitCount': {
         const customMessage = validationErrorMessages?.[field]?.[ValidationTypesEnum.DIGITS];
-        console.log('customMessage is ->', error);
-
         if (customMessage) {
           message = customMessage;
         } else {
@@ -360,7 +357,6 @@ export class BaseReview {
           `Value should be unique for combination of ${uniqueCombinations[error.keyword].toString()}`;
         break;
       default:
-        console.log(error);
         message = ` contains invalid data`;
         break;
     }
