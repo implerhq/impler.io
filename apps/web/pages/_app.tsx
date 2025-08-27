@@ -1,10 +1,11 @@
+// import  from 'subos-frontend/style.css';
 import React from 'react';
 import { ColorSchemeProvider, MantineProvider } from '@mantine/core';
 import { Global } from '@emotion/react';
 import Head from 'next/head';
 import getConfig from 'next/config';
 import { Poppins } from 'next/font/google';
-import App, { AppProps } from 'next/app';
+import App, { AppContext, AppProps } from 'next/app';
 import { ModalsProvider } from '@mantine/modals';
 import { init } from '@amplitude/analytics-browser';
 import { Notifications } from '@mantine/notifications';
@@ -31,12 +32,17 @@ if (typeof window !== 'undefined' && publicRuntimeConfig.NEXT_PUBLIC_AMPLITUDE_I
   });
 }
 
+interface CustomError extends Error {
+  statusCode?: number;
+}
+
 const client = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
       retry: false,
-      onError: async (err: any) => {
+      onError: async (error: unknown) => {
+        const err = error as CustomError;
         const path = window.location.pathname;
         const isApplicationPath =
           ![ROUTES.SIGNIN, ROUTES.SIGNUP, ROUTES.REQUEST_FORGOT_PASSWORD].includes(path) &&
@@ -52,7 +58,7 @@ const client = new QueryClient({
           notify(NOTIFICATION_KEYS.ERROR_OCCURED);
           if (isApplicationPath) window.location.href = ROUTES.SIGNIN;
         } else if (err && err.statusCode === 401) {
-          await commonApi(API_KEYS.LOGOUT as any, {});
+          await commonApi(API_KEYS.LOGOUT, {});
           track({
             name: 'LOGOUT',
             properties: {},
@@ -162,7 +168,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   );
 }
 
-MyApp.getInitialProps = async (appContext: any) => {
+MyApp.getInitialProps = async (appContext: AppContext) => {
   // calls page's `getInitialProps` and fills `appProps.pageProps`
   const appProps = await App.getInitialProps(appContext);
 

@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import getConfig from 'next/config';
 import { Stack, Title } from '@mantine/core';
-
+// import { CheckIcon } from 'subos-frontend';
 import { TEXTS } from '@config';
 import { AppLayout } from '@layouts/AppLayout';
 import { PlanDetails } from '@components/home/PlanDetails';
