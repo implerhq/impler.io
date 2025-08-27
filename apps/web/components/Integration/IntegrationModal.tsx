@@ -1,6 +1,6 @@
 import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
-import { Flex, NativeSelect, Title, useMantineColorScheme } from '@mantine/core';
+import { Flex, NativeSelect, Title } from '@mantine/core';
 
 import { colors } from '@config';
 import { track } from '@libs/amplitude';
@@ -18,7 +18,6 @@ interface IIntegrationModalProps {
 const { publicRuntimeConfig } = getConfig();
 
 export function IntegrationModal({ accessToken, projectId, templateId, integrations }: IIntegrationModalProps) {
-  const { colorScheme } = useMantineColorScheme();
   const [selectedTab, setSelectedTab] = useState<string>('Add Script');
   const [integration, setIntegration] = useState<IntegrationEnum>(
     (integrations as IntegrationEnum) || IntegrationEnum.JAVASCRIPT
@@ -54,7 +53,7 @@ export function IntegrationModal({ accessToken, projectId, templateId, integrati
   return (
     <>
       <Flex justify="space-between" mb="sm">
-        <Title order={3} color={colorScheme === 'dark' ? colors.StrokeLight : colors.StrokeDark}>
+        <Title order={3} color={colors.StrokeDark}>
           Integrate
         </Title>
         <NativeSelect

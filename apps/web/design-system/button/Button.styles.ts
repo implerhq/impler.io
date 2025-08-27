@@ -18,8 +18,8 @@ const getRootFilledStyles = (theme: MantineTheme, color: ButtonColors = 'blue', 
     color: colors.white,
   }),
   ...(color === 'invariant' && {
-    backgroundColor: theme.colorScheme === 'dark' ? colors.white : colors.black,
-    color: theme.colorScheme === 'dark' ? colors.black : colors.white,
+    backgroundColor: colors.white,
+    color: colors.black,
   }),
   ...(color === 'red' && {
     backgroundColor: colors.danger,
@@ -36,8 +36,8 @@ const getRootFilledStyles = (theme: MantineTheme, color: ButtonColors = 'blue', 
       backgroundColor: colors.blueDark,
     }),
     ...(color === 'invariant' && {
-      backgroundColor: theme.colorScheme === 'dark' ? colors.white : colors.black,
-      color: theme.colorScheme === 'dark' ? colors.black : colors.white,
+      backgroundColor: colors.white,
+      color: colors.black,
     }),
     ...(color === 'red' && {
       backgroundColor: colors.dangerDark,
@@ -62,16 +62,10 @@ const getRootOutlineStyles = (
   transition: 'color 0.2s, background-color 0.2s, border-color ease-in-out',
   border: borderLess
     ? `1px solid transparent`
-    : `1px solid ${
-        color === 'invariant'
-          ? theme.colorScheme === 'dark'
-            ? colors.StrokeDark
-            : colors.StrokeLight
-          : colorsCodes[color]
-      }`,
-  color: color === 'invariant' ? (theme.colorScheme === 'dark' ? colors.white : colors.black) : colorsCodes[color],
+    : `1px solid ${color === 'invariant' ? colors.StrokeDark : colorsCodes[color]}`,
+  color: color === 'invariant' ? colors.white : colorsCodes[color],
   '> svg': {
-    color: color === 'invariant' ? (theme.colorScheme === 'dark' ? colors.white : colors.black) : colorsCodes[color],
+    color: color === 'invariant' ? colors.white : colorsCodes[color],
   },
   ['&:hover']: {
     ...(color === 'blue' && {
@@ -80,11 +74,11 @@ const getRootOutlineStyles = (
       border: `1px solid ${colors.blue}`,
     }),
     ...(color === 'invariant' && {
-      backgroundColor: theme.colorScheme === 'dark' ? colors.white : colors.black,
-      color: theme.colorScheme === 'dark' ? colors.black : colors.white,
+      backgroundColor: colors.white,
+      color: colors.black,
       border: `1px solid ${colors.black}`,
       '> svg': {
-        color: theme.colorScheme === 'dark' ? colors.black : colors.white,
+        color: colors.black,
       },
     }),
     ...(color === 'red' && {
@@ -107,10 +101,10 @@ const getRootOutlineStyles = (
       color: colors.white,
       border: `1px solid ${colors.lightGrey}`,
       '> svg': {
-        color: theme.colorScheme === 'dark' ? colors.black : colors.white,
+        color: colors.black,
       },
     }),
-    color: theme.colorScheme === 'dark' && color === 'invariant' ? colors.black : colors.white,
+    color: color === 'invariant' ? colors.black : colors.white,
   },
 });
 

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import { ActionIcon, Flex, Group, LoadingOverlay, Title, useMantineTheme, Select } from '@mantine/core';
+import { ActionIcon, Flex, Group, LoadingOverlay, Title, Select } from '@mantine/core';
 
 import { track } from '@libs/amplitude';
 import { useImpler } from '@impler/react';
@@ -32,7 +32,6 @@ const Validator = dynamic(() => import('@components/imports/validator').then((mo
 function ImportDetails() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'schema' | 'destination' | 'snippet' | 'validator' | 'output'>();
-  const { colorScheme } = useMantineTheme();
   const {
     meta,
     columns,
@@ -85,7 +84,7 @@ function ImportDetails() {
       properties: {},
     });
     showWidget({
-      colorScheme,
+      // colorScheme,
     });
   };
 

@@ -6,7 +6,7 @@ interface ParamProps {
 }
 
 export default createStyles((theme: MantineTheme, params: ParamProps): Record<string, any> => {
-  let borderColor = theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[4];
+  let borderColor = theme.colors.dark[4];
   if (params.hasError) borderColor = theme.colors.red[8];
 
   return {
@@ -17,15 +17,15 @@ export default createStyles((theme: MantineTheme, params: ParamProps): Record<st
       '&:focus-within': {
         borderColor,
       },
-      backgroundColor: theme.colorScheme === 'dark' ? colors.BGPrimaryDark : colors.BGPrimaryLight,
+      backgroundColor: colors.BGPrimaryDark,
     },
     rightSection: {
       padding: '0 10px',
       width: 'unset',
       position: 'unset',
       textWrap: 'nowrap',
-      backgroundColor: theme.colorScheme === 'dark' ? colors.BGSecondaryDark : colors.BGSecondaryLight,
-      borderLeft: `0.0625rem solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[4]}`,
+      backgroundColor: colors.BGSecondaryDark,
+      borderLeft: `0.0625rem solid ${theme.colors.dark[4]}`,
     },
     input: {
       padding: '10px 0px 10px 15px',

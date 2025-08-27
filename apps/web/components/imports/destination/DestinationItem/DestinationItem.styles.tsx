@@ -1,15 +1,11 @@
 import { colors } from '@config';
-import { CSSObject, ColorScheme, createStyles } from '@mantine/core';
+import { CSSObject, createStyles } from '@mantine/core';
 
-interface DestinationItemStylesProps {
-  colorScheme: ColorScheme;
-}
-
-export default createStyles((_, props: DestinationItemStylesProps): Record<string, CSSObject> => {
+export default createStyles((): Record<string, CSSObject> => {
   return {
     container: {
-      backgroundColor: props.colorScheme === 'dark' ? colors.BGSecondaryDark : colors.BGSecondaryLight,
-      border: `1px solid ${props.colorScheme === 'dark' ? colors.StrokeDark : colors.StrokeSecondaryLight}`,
+      backgroundColor: colors.BGSecondaryDark,
+      border: `1px solid ${colors.StrokeDark}`,
     },
   };
 });

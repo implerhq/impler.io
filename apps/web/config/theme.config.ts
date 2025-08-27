@@ -1,4 +1,4 @@
-import { MantineTheme, MantineThemeOverride } from '@mantine/core';
+import { MantineThemeOverride } from '@mantine/core';
 
 export const colors = {
   primary: '#24A0ED',
@@ -98,10 +98,10 @@ export const mantineConfig: MantineThemeOverride = {
   },
   components: {
     Input: {
-      styles: (theme: MantineTheme) => ({
+      styles: () => ({
         input: {
           borderRadius: 0,
-          backgroundColor: theme.colorScheme === 'dark' ? colors.BGPrimaryDark : colors.BGPrimaryLight,
+          backgroundColor: colors.BGPrimaryDark,
         },
       }),
     },
@@ -113,10 +113,10 @@ export const mantineConfig: MantineThemeOverride = {
       }),
     },
     Checkbox: {
-      styles: (theme: MantineTheme) => ({
+      styles: () => ({
         input: {
           borderRadius: 0,
-          backgroundColor: theme.colorScheme === 'dark' ? colors.BGPrimaryDark : colors.BGPrimaryLight,
+          backgroundColor: colors.BGPrimaryDark,
         },
       }),
     },
@@ -137,12 +137,12 @@ export const mantineConfig: MantineThemeOverride = {
       lineHeight: theme.lineHeight,
     },
     body: {
-      backgroundColor: theme.colorScheme === 'dark' ? colors.BGPrimaryDark : colors.BGPrimaryLight,
-      color: theme.colorScheme === 'dark' ? colors.TXTDark : colors.TXTLight,
+      backgroundColor: colors.BGPrimaryDark,
+      color: colors.TXTDark,
       fontSize: '16px',
     },
     a: {
-      color: theme.colorScheme === 'dark' ? colors.blueDark : colors.blue,
+      color: colors.blueDark,
       textDecoration: 'none',
       '&:hover': {
         textDecoration: 'underline',

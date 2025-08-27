@@ -1,20 +1,12 @@
-import { forwardRef } from 'react';
 import useStyles from './UserMenu.styles';
-import { ChevronDownIcon } from '@assets/icons';
 import { Avatar, Group, UnstyledButton, Text, Menu } from '@mantine/core';
-
-interface UserButtonProps extends React.ComponentPropsWithoutRef<'button'> {
-  image: string;
-  name: string;
-  email: string;
-  icon?: React.ReactNode;
-  classNames?: Record<string, string>;
-}
+import { capitalizeFirstLetterOfName } from '@shared/utils';
 
 type MenuItemType = {
   title: string;
   icon?: React.ReactNode;
   onClick?: () => void;
+  disabled?: boolean;
 };
 
 interface UserMenuProps {
@@ -25,40 +17,34 @@ interface UserMenuProps {
   };
   menus?: MenuItemType[];
   width?: number;
+  collapsed?: boolean;
 }
 
-const UserButton = forwardRef<HTMLButtonElement, UserButtonProps>(
-  ({ image, name, email, icon, classNames, ...others }: UserButtonProps, ref: any) => (
-    <UnstyledButton ref={ref} {...others}>
-      <Group spacing="xs">
-        <Avatar src={image} className={classNames?.avatar} />
-        <div style={{ flex: 1 }}>
-          <Text size="sm" className={classNames?.name}>
-            {name}
-          </Text>
-          <Text color="dimmed" size="xs">
-            {email}
-          </Text>
-        </div>
-        {icon || <ChevronDownIcon />}
-      </Group>
-    </UnstyledButton>
-  )
-);
-
-UserButton.displayName = 'UserButton';
-
-export function UserMenu({ menus, width, user }: UserMenuProps) {
-  const { classes } = useStyles();
+export function UserMenu({ menus, width, user, collapsed }: UserMenuProps) {
+  const { classes } = useStyles({ collapsed });
 
   return (
     <Menu closeOnEscape position="bottom-end" classNames={{ item: classes.dropdown }} width={width} offset={10}>
       <Menu.Target>
-        <UserButton image={user.image} name={user.name} email={user.email} classNames={classes} />
+        <UnstyledButton className={classes.button}>
+          <Group spacing="sm">
+            <Avatar src={user.image} className={classes.avatar} />
+            {collapsed ? null : (
+              <div style={{ flex: 1 }}>
+                <Text size="sm" className={classes.name}>
+                  {capitalizeFirstLetterOfName(user.name)}
+                </Text>
+                <Text color="dimmed" size="xs">
+                  {/* {user.email} */}
+                </Text>
+              </div>
+            )}
+          </Group>
+        </UnstyledButton>
       </Menu.Target>
       <Menu.Dropdown>
         {menus?.map((menuItem, index) => (
-          <Menu.Item onClick={menuItem.onClick} icon={menuItem.icon} key={index}>
+          <Menu.Item disabled={menuItem.disabled} onClick={menuItem.onClick} icon={menuItem.icon} key={index}>
             {menuItem.title}
           </Menu.Item>
         ))}

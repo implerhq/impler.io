@@ -3,14 +3,11 @@ import { themes } from '@storybook/theming';
 import { MantineProvider, ColorSchemeProvider } from '@mantine/core';
 // @ts-ignore
 import { mantineConfig } from '@config';
-import { useDarkMode } from 'storybook-dark-mode';
 
 function ThemeWrapper(props: { children: React.ReactNode }) {
-  const colorScheme = useDarkMode() ? 'dark' : 'light';
-
   return (
-    <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={() => {}}>
-      <MantineProvider theme={{ ...mantineConfig, colorScheme }} withGlobalStyles withNormalizeCSS>
+    <ColorSchemeProvider colorScheme={'dark'} toggleColorScheme={() => {}}>
+      <MantineProvider theme={{ ...mantineConfig, colorScheme: 'dark' }} withGlobalStyles withNormalizeCSS>
         {props.children}
       </MantineProvider>
     </ColorSchemeProvider>

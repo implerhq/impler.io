@@ -1,5 +1,5 @@
 import { Controller } from 'react-hook-form';
-import { Group, Title, Text, useMantineColorScheme, Flex, Code, Stack, LoadingOverlay } from '@mantine/core';
+import { Group, Title, Text, Flex, Code, Stack, LoadingOverlay } from '@mantine/core';
 
 import { colors, DOCUMENTATION_REFERENCE_LINKS } from '@config';
 import { Button } from '@ui/button';
@@ -38,7 +38,6 @@ const titles = {
 };
 
 export function OutputEditor({ templateId, switchToDestination }: OutputEditorProps) {
-  const { colorScheme } = useMantineColorScheme();
   const {
     customization,
     control,
@@ -64,7 +63,7 @@ export function OutputEditor({ templateId, switchToDestination }: OutputEditorPr
           <Group position="apart">
             <div>
               <Flex gap="sm" align="center">
-                <Title color={colorScheme === 'dark' ? colors.white : colors.black} order={4}>
+                <Title color={colors.white} order={4}>
                   {titles[destination.destination].title}
                 </Title>
                 <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.customValidation} />
