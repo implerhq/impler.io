@@ -1,7 +1,6 @@
 FROM node:20.13.1-slim
 
 WORKDIR /usr/src/app
-RUN corepack enable && corepack prepare pnpm@8.9.0 --activate
 
 RUN npm install -g pnpm@8.9.0 --loglevel notice
 RUN npm i pm2 -g
