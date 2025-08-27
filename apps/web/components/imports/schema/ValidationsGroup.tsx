@@ -64,8 +64,6 @@ function DigitsValidationBadge({ min, max }: IMinMaxValidationBadgeProps) {
 }
 
 export function ValidationsGroup({ item }: IValidationsGroupProps) {
-  console.log('item is >>', item);
-
   return (
     <Group spacing={5}>
       {item.isRequired && <Badge variant="outline">Required</Badge>}
