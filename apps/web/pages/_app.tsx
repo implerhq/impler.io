@@ -1,4 +1,4 @@
-// import  from 'subos-frontend/style.css';
+import 'subos-frontend/apps/frontend';
 import React from 'react';
 import { ColorSchemeProvider, MantineProvider } from '@mantine/core';
 import { Global } from '@emotion/react';
@@ -10,7 +10,7 @@ import { ModalsProvider } from '@mantine/modals';
 import { init } from '@amplitude/analytics-browser';
 import { Notifications } from '@mantine/notifications';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-
+import 'subos-frontend/style.css';
 import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
 import { track } from '@libs/amplitude';

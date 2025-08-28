@@ -52,7 +52,7 @@
     "react-dom": "18.2.0",
     "react-hook-form": "^7.39.1",
     "sharp": "^0.32.6",
-    "subos-frontend": "git+ssh://git@git.knovator.in:sunilbhadu/subos-frontend.git",
+    "subos-frontend": "git+ssh://git@git.knovator.in:sunilbhadu/subos-frontend.git/apps/frontend",
     "typescript": "4.9.5"
   },
   "devDependencies": {
