@@ -120,7 +120,14 @@ export function useSchema({ templateId }: UseSchemaProps) {
         trapFocus: true,
         withCloseButton: false,
         modalId: MODAL_KEYS.COLUMN_UPDATE,
-        children: <ColumnForm data={columnData} onSubmit={(data) => updateColumn({ id: columnId, data })} />,
+        children: (
+          <ColumnForm
+            data={columnData}
+            onSubmit={(data) => {
+              updateColumn({ id: columnId, data });
+            }}
+          />
+        ),
       });
     }
   }

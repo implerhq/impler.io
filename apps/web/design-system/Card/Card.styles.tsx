@@ -3,20 +3,21 @@ import { createStyles, MantineTheme } from '@mantine/core';
 import { Colors } from './Card';
 
 const getRootStyles = (theme: MantineTheme, color: Colors): React.CSSProperties => ({
-  border: `1px solid ${theme.colorScheme === 'dark' ? colors.BGSecondaryDark : colors.BGSecondaryLight}`,
+  border: `1px solid ${colors.BGSecondaryDark}`,
   ...(color === 'primary' && {
-    backgroundColor: theme.colorScheme === 'dark' ? colors.blue : colors.blue,
+    backgroundColor: colors.blue,
     color: colors.white,
   }),
   ...(color === 'default' && {
-    backgroundColor: theme.colorScheme === 'dark' ? colors.BGPrimaryDark : colors.BGPrimaryLight,
-    color: theme.colorScheme === 'dark' ? colors.TXTDark : colors.TXTLight,
+    backgroundColor: colors.BGPrimaryDark,
+    color: colors.TXTDark,
   }),
   boxShadow: theme.shadows.sm,
   padding: theme.spacing.md,
   display: 'flex',
   flexDirection: 'column',
   gap: theme.spacing.xs,
+  borderRadius: theme.radius.sm,
 });
 
 const getSubtitleStyles = (theme: MantineTheme): React.CSSProperties => ({

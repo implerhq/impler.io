@@ -15,7 +15,7 @@ export const useStyles = createStyles((theme) => ({
   },
   tab: {
     backgroundColor: 'transparent',
-    color: theme.colorScheme === 'dark' ? colors.StrokeLight : colors.StrokeDark,
+    color: colors.StrokeDark,
     fontWeight: 400,
     fontSize: theme.fontSizes.sm,
     padding: 8,

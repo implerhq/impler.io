@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, UnstyledButton, useMantineTheme } from '@mantine/core';
+import { Menu, UnstyledButton } from '@mantine/core';
 import { MenuIcon } from '@assets/icons/Menu.icon';
 import { colors } from '@config';
 import { CancelIcon } from '@assets/icons/Cancel.icon';
@@ -12,13 +12,12 @@ interface IInvitation {
 
 export function SentInvitationActions(invitation: IInvitation) {
   const { handleCopyInvitationLink, handleCancelInvitation } = useSentProjectInvitations();
-  const theme = useMantineTheme();
 
   return (
     <Menu width="sm" position="right" withArrow>
       <Menu.Target>
         <UnstyledButton>
-          <MenuIcon size="lg" color={theme.colorScheme === 'dark' ? colors.BGPrimaryLight : colors.BGPrimaryDark} />
+          <MenuIcon size="lg" color={colors.BGPrimaryLight} />
         </UnstyledButton>
       </Menu.Target>
       <Menu.Dropdown>

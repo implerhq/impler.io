@@ -7,15 +7,15 @@ interface ImportActionsProps {
   slug: string;
 }
 
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles({
   link: {
-    color: theme.colorScheme === 'dark' ? colors.white : colors.black,
+    color: colors.white,
     transition: 'color 150ms ease',
     ':hover': {
       color: colors.blue,
     },
   },
-}));
+});
 
 export function ImportActions({ slug }: ImportActionsProps) {
   const { classes } = useStyles();

@@ -1,5 +1,5 @@
 import { PropsWithChildren } from 'react';
-import { Title, useMantineColorScheme, Flex, Stack, Switch, Collapse, Group } from '@mantine/core';
+import { Title, Flex, Stack, Switch, Collapse, Group } from '@mantine/core';
 
 import useStyles from './DestinationItem.styles';
 import { colors } from '@config';
@@ -14,15 +14,14 @@ interface DestinationItemProps extends PropsWithChildren {
 }
 
 export const DestinationItem = ({ title, subtitle, onClick, children, active, tooltipLink }: DestinationItemProps) => {
-  const { colorScheme } = useMantineColorScheme();
-  const { classes } = useStyles({ colorScheme });
+  const { classes } = useStyles();
 
   return (
     <Stack className={classes.container} p="lg" spacing={children ? 'sm' : 0}>
       <Flex justify="space-between" align="center">
         <Stack spacing={2}>
           <Group spacing="xs" align="center" noWrap>
-            <Title color={colorScheme === 'dark' ? colors.white : colors.black} order={4}>
+            <Title color={colors.white} order={4}>
               {title}
             </Title>
             {tooltipLink && <TooltipLink link={tooltipLink} iconSize="md" />}
