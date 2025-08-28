@@ -1,9 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDefined, IsString, IsUUID } from 'class-validator';
+import { IsDefined, IsString, IsUUID, MaxLength } from 'class-validator';
 
 export class ResetPasswordDto {
   @IsString()
   @IsDefined()
+  @MaxLength(24)
   @ApiProperty({
     description: 'New password of the user',
   })
