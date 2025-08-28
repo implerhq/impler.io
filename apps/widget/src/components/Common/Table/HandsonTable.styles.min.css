@@ -16,7 +16,6 @@
         border-color: var(--border-color) !important;
         background-color: #ffcccc;
         
-            /*Here Add*/
 }
 
 .htCore thead tr th {
@@ -268,6 +267,7 @@ background-color: '#f1f3f5';
 }
 /* Additional Handsontable specific overrides */
 .handsontable .htCore {
+    border-bottom: 1px solid var(--border-color) !important;
     background-color: var(--background-color) !important;
 }
 
@@ -342,13 +342,12 @@ background-color: '#f1f3f5';
 
 
 @media (prefers-color-scheme: dark) {
-
     .handsontable .htCore .htInvalid,
     .handsontable .htCore .error-cell,
     .handsontable td.htInvalid,
     .handsontable td.error-cell,
     .handsontable td.custom-cell.error-cell {
-        background-color: #ffebeb !important;
+        background-color: #4c2020 !important;
         color: var(--text-color) !important;
     }
 
@@ -389,8 +388,6 @@ background-color: '#f1f3f5';
     color: var(--text-color) !important;
     border-color: var(--border-color) !important;
 
-
-    /*Here add*/
 }
 
 
