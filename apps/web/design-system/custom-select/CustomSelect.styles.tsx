@@ -6,12 +6,12 @@ const getInputWrapperStyles = (theme: MantineTheme): CSSObject => ({
   display: 'flex',
   borderRadius: 0,
   paddingLeft: 'calc(2.25rem / 3)',
-  border: `0.0625rem solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[4]}`,
+  border: `0.0625rem solid ${theme.colors.dark[4]}`,
 
   ':focus-within': {
-    borderColor: theme.colorScheme === 'dark' ? theme.colors.blue[8] : theme.colors.blue[6],
+    borderColor: theme.colors.blue[8],
   },
-  backgroundColor: theme.colorScheme === 'dark' ? colors.BGPrimaryDark : colors.BGPrimaryLight,
+  backgroundColor: colors.BGPrimaryDark,
   '&[data-haslabel="true"]': {
     marginTop: 5,
   },
@@ -35,14 +35,14 @@ const getInputStyles = (theme: MantineTheme, size: MantineSize): CSSObject => ({
   borderRadius: '0.25rem',
   transition: 'border-color 100ms ease',
   lineHeight: 'calc(2.25rem - 0.125rem)',
-  color: theme.colorScheme === 'dark' ? theme.colors.white : theme.colors.black,
+  color: theme.colors.white,
   fontSize: getSize({ size, sizes: theme.fontSizes }),
 
   ':empty:before': {
     content: 'attr(data-placeholder)',
     pointerEvents: 'none',
     display: 'block',
-    color: theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[5],
+    color: theme.colors.dark[3],
   },
 });
 const getSelectItemStyles = (theme: MantineTheme, size: MantineSize): CSSObject => ({
@@ -57,25 +57,25 @@ const getSelectItemStyles = (theme: MantineTheme, size: MantineSize): CSSObject 
   })}`,
   cursor: 'pointer',
   fontSize: getSize({ size, sizes: theme.fontSizes }),
-  color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
+  color: theme.colors.dark[0],
   transition: 'background-color 0.3s ease-in-out',
 
   ':hover': {
-    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[1],
+    backgroundColor: theme.colors.dark[4],
   },
 });
 const getLabelStyles = (theme: MantineTheme): CSSObject => ({
   ...theme.fn.fontStyles(),
   fontWeight: 500,
   fontSize: getSize({ size: 'sm', sizes: theme.fontSizes }),
-  color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.colors.gray[9],
+  color: theme.colors.dark[0],
 });
-const getSelectItemsWrapper = (theme: MantineTheme): CSSObject => ({
+const getSelectItemsWrapper = (): CSSObject => ({
   padding: 0,
   display: 'flex',
   overflow: 'auto',
   flexDirection: 'column',
-  backgroundColor: theme.colorScheme === 'dark' ? colors.BGSecondaryDark : colors.BGPrimaryLight,
+  backgroundColor: colors.BGSecondaryDark,
 });
 const getChevronButtonStyles = (): CSSObject => ({
   display: 'flex',
@@ -98,7 +98,7 @@ export default createStyles(
     inputWrapper: getInputWrapperStyles(theme),
     chevronButton: getChevronButtonStyles(),
     input: getInputStyles(theme, params.size),
-    itemsWrapper: getSelectItemsWrapper(theme),
+    itemsWrapper: getSelectItemsWrapper(),
     item: getSelectItemStyles(theme, params.size),
   })
 );

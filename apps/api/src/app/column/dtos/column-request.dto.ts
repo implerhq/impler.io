@@ -15,6 +15,7 @@ import { Type } from 'class-transformer';
 
 import { ValidationTypesEnum } from '@impler/client';
 import { IsValidRegex } from '@shared/framework/is-valid-regex.validator';
+import { IsValidDigitsConstraint } from '@shared/framework/is-valid-digits.validator';
 import { IsNumberOrString } from '@shared/framework/number-or-string.validator';
 import { ColumnDelimiterEnum, ColumnTypesEnum, Defaults } from '@impler/shared';
 
@@ -36,17 +37,25 @@ export class ValidationDto {
   errorMessage?: string;
 
   @ApiPropertyOptional({
-    description: 'Minimum value',
+    description: 'Minimum value for digit validation',
   })
   @IsNumber()
   @IsOptional()
+  @ValidateIf((object) => object.validate === ValidationTypesEnum.DIGITS)
+  @Validate(IsValidDigitsConstraint, {
+    message: 'Invalid number of digits',
+  })
   min?: number;
 
   @ApiPropertyOptional({
-    description: 'Maximum value',
+    description: 'Maximum value for digit validation',
   })
   @IsNumber()
   @IsOptional()
+  @ValidateIf((object) => object.validate === ValidationTypesEnum.DIGITS)
+  @Validate(IsValidDigitsConstraint, {
+    message: 'Invalid number of digits',
+  })
   max?: number;
 
   @ApiPropertyOptional({

@@ -1,21 +1,21 @@
 import { colors } from '@config';
-import { createStyles, MantineTheme } from '@mantine/core';
+import { createStyles } from '@mantine/core';
 
-const getRootStyles = (theme: MantineTheme): React.CSSProperties => ({
+const getRootStyles = (): React.CSSProperties => ({
   padding: 10,
   width: '100%',
   borderRadius: 7,
   marginBottom: 10,
   color: colors.TXTSecondaryDark,
-  backgroundColor: theme.colorScheme === 'dark' ? colors.BGPrimaryDark : colors.BGPrimaryLight,
+  backgroundColor: colors.BGPrimaryDark,
 
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
 });
 
-export default createStyles((theme: MantineTheme): Record<string, any> => {
+export default createStyles((): Record<string, any> => {
   return {
-    root: getRootStyles(theme),
+    root: getRootStyles(),
   };
 });

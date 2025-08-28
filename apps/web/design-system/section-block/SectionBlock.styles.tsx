@@ -2,7 +2,7 @@ import { colors } from '@config';
 import { createStyles, MantineTheme } from '@mantine/core';
 
 const getRootStyles = (theme: MantineTheme): React.CSSProperties => ({
-  backgroundColor: theme.colorScheme === 'dark' ? colors.BGPrimaryDark : colors.BGPrimaryLight,
+  backgroundColor: colors.BGPrimaryDark,
   padding: theme.spacing.sm,
 });
 

@@ -1,53 +1,87 @@
 import { colors } from '@config';
-import { createStyles, MantineTheme } from '@mantine/core';
+import { createStyles } from '@mantine/core';
 
-const getRootStyles = (): React.CSSProperties => ({
-  height: '100vh',
-  display: 'flex',
-  position: 'relative',
-});
+export const useStyles = createStyles((theme, { collapsed }: { collapsed: boolean }) => ({
+  scrollAreaContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+  },
 
-const getAsideStyles = (): React.CSSProperties => ({
-  width: 'calc(100vw - 85%)',
-  minWidth: '150px',
-});
+  root: {
+    display: 'flex',
+    height: '100vh',
+    overflow: 'hidden',
+  },
 
-const getLogoContainerStyles = (theme: MantineTheme): React.CSSProperties => ({
-  display: 'flex',
-  alignItems: 'center',
-  paddingBlock: theme.spacing.lg,
-  paddingLeft: theme.spacing.md,
-  justifyContent: 'center',
-});
+  aside: {
+    width: collapsed ? 60 : 210,
+    transition: 'width 0.1s ease',
+    backgroundColor: theme.colors.dark[7],
+    display: 'flex',
+    flexDirection: 'column',
+    overflow: 'visible',
+    alignItems: 'stretch',
+    position: 'relative',
+    zIndex: 1,
+    flexShrink: 0,
+  },
 
-const getMainStyles = (theme: MantineTheme): React.CSSProperties => ({
-  width: '100%',
-  padding: theme.spacing.lg,
-  display: 'flex',
-  flexDirection: 'column',
-  overflow: 'auto',
-});
+  asideHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: theme.spacing.md,
+  },
 
-const getContentStyles = (theme: MantineTheme): React.CSSProperties => ({
-  paddingTop: theme.spacing.md,
-  flexGrow: 1,
-});
+  main: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+  },
 
-const getContentBoxStyles = (theme: MantineTheme): React.CSSProperties => ({
-  backgroundColor: theme.colorScheme === 'dark' ? colors.BGSecondaryDark : colors.BGSecondaryLight,
-  width: '100%',
-  height: '100%',
-  borderRadius: theme.radius.lg,
-  padding: theme.spacing.lg,
-});
+  logoContainer: {
+    padding: theme.spacing.md,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: 62,
+  },
 
-export default createStyles((theme): Record<string, any> => {
-  return {
-    root: getRootStyles(),
-    aside: getAsideStyles(),
-    main: getMainStyles(theme),
-    content: getContentStyles(theme),
-    contentBox: getContentBoxStyles(theme),
-    logoContainer: getLogoContainerStyles(theme),
-  };
-});
+  content: {
+    flex: 1,
+    padding: theme.spacing.md,
+    overflow: 'auto',
+  },
+
+  contentBox: {
+    backgroundColor: colors.BGSecondaryDark,
+    minHeight: '100%',
+    height: 'auto',
+    borderRadius: theme.radius.md,
+    padding: theme.spacing.md,
+    boxShadow: theme.shadows.sm,
+    display: 'flex',
+    flexDirection: 'column',
+  },
+
+  navSection: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: collapsed ? 'center' : 'stretch',
+    padding: collapsed ? '0' : '0 8px',
+
+    '& svg': {
+      width: theme.spacing.md,
+      height: theme.spacing.md,
+    },
+  },
+
+  userMenuContainer: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: collapsed ? 'center' : 'stretch',
+    padding: collapsed ? '0' : '0 8px',
+  },
+}));

@@ -1,11 +1,11 @@
 import { colors } from '@config';
 import { css, Global } from '@emotion/react';
 
-export function ActivityGraphGlobalStyles({ isTriggerSent, isDark }: { isTriggerSent: boolean; isDark: boolean }) {
-  return <Global styles={chartStyles(isTriggerSent, isDark)} />;
+export function ActivityGraphGlobalStyles({ isTriggerSent }: { isTriggerSent: boolean }) {
+  return <Global styles={chartStyles(isTriggerSent)} />;
 }
 
-function chartStyles(isTriggerSent: boolean, isDark: boolean) {
+function chartStyles(isTriggerSent: boolean) {
   return css`
     #chart-bar-styles {
       height: 175px;
@@ -17,7 +17,7 @@ function chartStyles(isTriggerSent: boolean, isDark: boolean) {
       display: flex;
       justify-content: center;
       box-shadow: 0 5px 15px rgba(38, 68, 128, 0.05);
-      background: ${isDark ? colors.BGSecondaryDark : colors.BGSecondaryLight};
+      background: ${colors.BGSecondaryDark};
       border-radius: 7px;
       padding: 12px 15px 14px 15px;
       pointer-events: none;
@@ -30,7 +30,7 @@ function chartStyles(isTriggerSent: boolean, isDark: boolean) {
         content: '';
         position: absolute;
         left: calc(50% - 5px);
-        border-top: 10px solid ${isDark ? colors.BGSecondaryDark : colors.BGSecondaryLight};
+        border-top: 10px solid ${colors.BGSecondaryDark};
         border-left: 10px solid transparent;
         border-right: 10px solid transparent;
       }

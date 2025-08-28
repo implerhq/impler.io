@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
-import { createStyles, MantineTheme } from '@mantine/core';
+import { createStyles } from '@mantine/core';
 import { colors, strokes } from '@config';
 
-const getRootStyles = (theme: MantineTheme) => ({
+const getRootStyles = () => ({
   borderRadius: 0,
   borderWidth: strokes.sm,
   borderStyle: 'solid',
-  borderColor: theme.colorScheme === 'dark' ? colors.white : colors.black,
+  borderColor: colors.white,
   padding: 0,
   height: '100%',
   '.mantine-SegmentedControl-indicator': {
@@ -23,27 +22,27 @@ const getRootStyles = (theme: MantineTheme) => ({
   },
 });
 
-const getActiveStyles = (theme: MantineTheme): React.CSSProperties => ({
+const getActiveStyles = () => ({
   backgroundColor: colors.blue,
 });
 
-const getActiveLabelStyles = (theme: MantineTheme) => ({
+const getActiveLabelStyles = () => ({
   borderRadius: '0px',
   color: colors.white + ' !important',
   backgroundColor: colors.blue,
 });
-const getLabelStyles = (theme: MantineTheme) => ({
-  color: theme.colorScheme === 'dark' ? colors.white : colors.black,
+const getLabelStyles = () => ({
+  color: colors.white,
   '&:hover': {
-    color: theme.colorScheme === 'dark' ? colors.white : colors.black,
+    color: colors.white,
   },
 });
 
-export default createStyles((theme: MantineTheme): Record<string, any> => {
+export default createStyles((): Record<string, any> => {
   return {
-    root: getRootStyles(theme),
-    active: getActiveStyles(theme),
-    label: getLabelStyles(theme),
-    controlActive: getActiveLabelStyles(theme),
+    root: getRootStyles(),
+    active: getActiveStyles(),
+    label: getLabelStyles(),
+    controlActive: getActiveLabelStyles(),
   };
 });

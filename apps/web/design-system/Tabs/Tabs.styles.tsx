@@ -1,17 +1,17 @@
 import { colors } from '@config';
 import { createStyles, MantineTheme } from '@mantine/core';
 
-const getTabListStyles = (theme: MantineTheme): React.CSSProperties => ({
+const getTabListStyles = (): React.CSSProperties => ({
   padding: 5,
-  backgroundColor: theme.colorScheme === 'dark' ? colors.BGPrimaryDark : colors.BGPrimaryLight,
+  backgroundColor: colors.BGPrimaryDark,
 });
 
-const getTabStyles = (theme: MantineTheme) => ({
+const getTabStyles = () => ({
   flexGrow: 1,
-  color: theme.colorScheme === 'dark' ? colors.white : colors.black,
+  color: colors.white,
   borderRadius: 0,
   '&:hover': {
-    backgroundColor: theme.colorScheme === 'dark' ? colors.BGSecondaryDark : colors.BGSecondaryLight,
+    backgroundColor: colors.BGSecondaryDark,
   },
   '&[aria-selected="true"]': {
     backgroundColor: `${colors.blue} !important`,
@@ -27,10 +27,10 @@ const getTabIconStyles = (theme: MantineTheme) => ({
   width: 20,
   height: 20,
   marginRight: theme.spacing.xs,
-  backgroundColor: theme.colorScheme === 'dark' ? colors.BGSecondaryDark : colors.BGSecondaryLight,
+  backgroundColor: colors.BGSecondaryDark,
   borderRadius: 20,
   '& path': {
-    fill: theme.colorScheme === 'dark' ? colors.white : colors.black,
+    fill: colors.white,
   },
 });
 const getTabLabelStyles = (theme: MantineTheme) => ({
@@ -39,8 +39,8 @@ const getTabLabelStyles = (theme: MantineTheme) => ({
 
 export default createStyles((theme: MantineTheme): Record<string, any> => {
   return {
-    tabsList: getTabListStyles(theme),
-    tab: getTabStyles(theme),
+    tabsList: getTabListStyles(),
+    tab: getTabStyles(),
     tabLabel: getTabLabelStyles(theme),
     panel: getPanelStyles(theme),
     tabIcon: getTabIconStyles(theme),

@@ -71,6 +71,7 @@ export enum ValidationTypesEnum {
   RANGE = 'range',
   LENGTH = 'length',
   UNIQUE_WITH = 'unique_with',
+  DIGITS = 'digits',
 }
 
 export type RangeValidationType = {
@@ -80,6 +81,12 @@ export type RangeValidationType = {
   errorMessage?: string;
 };
 
+export type DigitsValidationType = {
+  validate: 'digits' | ValidationTypesEnum.DIGITS;
+  min: number;
+  max: number;
+  errorMessage?: string;
+};
 export type LengthValidationType = {
   validate: 'length' | ValidationTypesEnum.LENGTH;
   min?: number;
@@ -96,7 +103,8 @@ export type UniqueWithValidationType = {
 export type ValidationType =
   | RangeValidationType
   | LengthValidationType
-  | UniqueWithValidationType;
+  | UniqueWithValidationType
+  | DigitsValidationType;
 
 export interface ISchemaItem {
   key: string;

@@ -27,6 +27,7 @@ export const CONSTANTS = {
   SUBSCRIPTION_ACTIVATED_TITLE: 'Subscription activated',
   SUBSCRIPTION_FAILED_TITLE: 'Payment failed',
   SAMPLE_IMPORT_NAME: 'Product Data Import',
+  SIDEBAR_COLLAPSED_KEY: 'SIDE_BAR_COLLAPSED',
 };
 
 export const VARIABLES = {

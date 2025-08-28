@@ -1,18 +1,7 @@
 import { useEffect } from 'react';
 import { modals } from '@mantine/modals';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
-import {
-  Stack,
-  Text,
-  Title,
-  Group,
-  Select,
-  Divider,
-  SimpleGrid,
-  CloseButton,
-  TextInput as Input,
-  useMantineColorScheme,
-} from '@mantine/core';
+import { Stack, Text, Title, Group, Select, Divider, SimpleGrid, CloseButton, TextInput as Input } from '@mantine/core';
 
 import { ValidationTypesEnum } from '@impler/client';
 import { ColumnTypesEnum, DEFAULT_VALUES, IColumn } from '@impler/shared';
@@ -35,7 +24,6 @@ interface ColumnFormProps {
 }
 
 export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
-  const { colorScheme } = useMantineColorScheme();
   const { columnTypes, advancedValidationsUnavailable } = useSubscriptionInfo();
   const {
     watch,
@@ -60,10 +48,15 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
   useEffect(() => {
     const rangeValidationIndex = fields.findIndex((field) => field.validate === ValidationTypesEnum.RANGE);
     const lengthValidationIndex = fields.findIndex((field) => field.validate === ValidationTypesEnum.LENGTH);
+    const digitsValidationIndex = fields.findIndex((field) => field.validate === ValidationTypesEnum.DIGITS);
+
     switch (typeValue) {
       case ColumnTypesEnum.STRING:
         if (rangeValidationIndex > -1) {
           remove(rangeValidationIndex);
+        }
+        if (digitsValidationIndex > -1) {
+          remove(digitsValidationIndex);
         }
         break;
       case ColumnTypesEnum.DOUBLE:
@@ -72,12 +65,23 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
           remove(lengthValidationIndex);
         }
         break;
+      case ColumnTypesEnum.DOUBLE:
+        if (lengthValidationIndex > -1) {
+          remove(lengthValidationIndex);
+        }
+        if (digitsValidationIndex > -1) {
+          remove(digitsValidationIndex);
+        }
+        break;
       default:
         if (rangeValidationIndex > -1) {
           remove(rangeValidationIndex);
         }
         if (lengthValidationIndex > -1) {
           remove(lengthValidationIndex);
+        }
+        if (digitsValidationIndex > -1) {
+          remove(digitsValidationIndex);
         }
         break;
     }
@@ -254,7 +258,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 )}
               />
             </Stack>
-            <Stack spacing="sm" p="xs" bg={colorScheme === 'dark' ? colors.BGSecondaryDark : colors.BGSecondaryLight}>
+            <Stack spacing="sm" p="xs" bg={colors.BGSecondaryDark}>
               <Title order={5}>Column Validations</Title>
               <Checkbox
                 label={<TooltipLabel label="Required Values" />}
@@ -325,6 +329,43 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                       append({ validate: ValidationTypesEnum.RANGE });
                     } else {
                       remove(index);
+                    }
+                  }}
+                />
+              </AutoHeightComponent>
+              <AutoHeightComponent isVisible={typeValue === ColumnTypesEnum.NUMBER}>
+                <Validation
+                  errors={errors}
+                  control={control}
+                  min={1}
+                  max={10}
+                  minPlaceholder="Min digits (e.g. 1)"
+                  maxPlaceholder="Max digits (e.g. 10)"
+                  label="Number of Digits Validation"
+                  type={ValidationTypesEnum.DIGITS}
+                  unavailable={advancedValidationsUnavailable}
+                  link={DOCUMENTATION_REFERENCE_LINKS.lengthValidator}
+                  description="Set min/max digit count for valid numbers"
+                  errorMessagePlaceholder='Number must have between "Min" and "Max" digits'
+                  index={fields.findIndex((field) => field.validate === ValidationTypesEnum.DIGITS)}
+                  onCheckToggle={(status) => {
+                    if (status) {
+                      // Only add DIGITS validation if it doesn't already exist
+                      const exists = fields.some((field) => field.validate === ValidationTypesEnum.DIGITS);
+                      if (!exists) {
+                        append({
+                          validate: ValidationTypesEnum.DIGITS,
+                          min: 1,
+                          max: 10,
+                          errorMessage: 'Number must have between 1 and 10 digits',
+                        });
+                      }
+                    } else {
+                      // Remove the DIGITS validation using the correct index
+                      const digitsIndex = fields.findIndex((field) => field.validate === ValidationTypesEnum.DIGITS);
+                      if (digitsIndex > -1) {
+                        remove(digitsIndex);
+                      }
                     }
                   }}
                 />

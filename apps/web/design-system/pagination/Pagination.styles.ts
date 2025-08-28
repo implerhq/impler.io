@@ -3,7 +3,7 @@ import { createStyles } from '@mantine/core';
 
 export default createStyles((theme) => ({
   root: {
-    color: theme.colorScheme === 'dark' ? colors.TXTDark : colors.TXTLight,
+    color: colors.TXTDark,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -12,8 +12,8 @@ export default createStyles((theme) => ({
     },
   },
   selectInput: {
-    backgroundColor: theme.colorScheme === 'dark' ? colors.BGSecondaryDark : colors.BGSecondaryLight,
-    color: theme.colorScheme === 'dark' ? colors.TXTDark : colors.TXTLight,
+    backgroundColor: colors.BGSecondaryDark,
+    color: colors.TXTDark,
     borderColor: colors.DisabledDark,
     '&:focus-within': {
       borderColor: colors.DisabledDark,
@@ -32,6 +32,6 @@ export default createStyles((theme) => ({
     },
     '&[disabled]': { backgroundColor: 'transparent' },
     '&[data-active]': { backgroundColor: colors.blue },
-    '&[data-dots]': { color: theme.colorScheme === 'dark' ? colors.white : colors.black },
+    '&[data-dots]': { color: colors.white },
   },
 }));

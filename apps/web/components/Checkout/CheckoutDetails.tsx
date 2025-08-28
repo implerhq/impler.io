@@ -10,10 +10,7 @@ export function CheckoutDetails({ checkoutData, isCheckoutDataLoading }: Checkou
 
   if (isCheckoutDataLoading)
     return (
-      <Box
-        p="xs"
-        style={{ border: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[4]}` }}
-      >
+      <Box p="xs" style={{ border: `1px solid ${theme.colors.dark[4]}` }}>
         <Stack spacing="xs">
           <Skeleton height={20} radius={0} />
           <Skeleton height={20} radius={0} />
