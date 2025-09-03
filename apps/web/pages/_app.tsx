@@ -8,6 +8,7 @@ import App, { AppProps } from 'next/app';
 import { ModalsProvider } from '@mantine/modals';
 import { init } from '@amplitude/analytics-browser';
 import { Notifications } from '@mantine/notifications';
+import 'subos-frontend/style.css';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 import { commonApi } from '@libs/api';

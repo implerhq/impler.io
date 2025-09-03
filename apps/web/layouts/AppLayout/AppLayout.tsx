@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { PropsWithChildren, useRef } from 'react';
+import { PropsWithChildren, useEffect, useRef } from 'react';
 import { Divider, Flex, Group, LoadingOverlay, Stack, Text, Title, Tooltip, UnstyledButton } from '@mantine/core';
 import DarkLogo from '@assets/images/logo-dark.png';
 import { ActionsEnum, colors, CONSTANTS, ROUTES, SubjectsEnum, TEXTS } from '@config';
@@ -25,12 +25,14 @@ import { notify } from '@libs/notify';
 import { usePlanDetails } from '@hooks/usePlanDetails';
 import dynamic from 'next/dynamic';
 import { useStyles } from './AppLayout.styles';
+import getConfig from 'next/config';
 import { DrawerRightOpenIcon } from '@assets/icons/DrawerRightOpen.icon';
 import { DrawerLeftCloseIcon } from '@assets/icons/DrawerLeftClose.icon';
 
 import { useClipboard, useLocalStorage } from '@mantine/hooks';
 import { EmailIcon } from '@assets/icons/Email.icon';
 
+import { configureSubOS } from 'subos-frontend';
 const Support = dynamic(() => import('components/common/Support').then((mod) => mod.Support), {
   ssr: false,
 });
@@ -57,6 +59,43 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
 
   usePlanDetails({ projectId: profileInfo?._projectId });
   const { projects, onEditImportClick, isProjectsLoading, isProfileLoading } = useProject();
+
+  const { publicRuntimeConfig } = getConfig();
+
+  useEffect(() => {
+    const run = async () => {
+      const apiEndpoint = publicRuntimeConfig?.NEXT_PUBLIC_SUBOS_API_ENDPOINT || publicRuntimeConfig?.NEXT_PUBLIC_API_BASE_URL;
+      const projectId = profileInfo?._projectId || publicRuntimeConfig?.NEXT_PUBLIC_SUBOS_PROJECT_ID || '';
+      const stripeKey = publicRuntimeConfig?.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '';
+
+      if (apiEndpoint) {
+        try {
+          const url = new URL(apiEndpoint);
+        } catch (error) {
+          console.log('❌ Invalid API endpoint URL:', apiEndpoint);
+        }
+      }
+
+      try {
+        const response = await configureSubOS({
+          apiEndpoint,
+          projectId,
+          stripePublishableKey: stripeKey,
+        });
+        
+        const { getApiBaseUrl, getProjectId } = await import('subos-frontend');
+      } catch (error) {
+        console.error('❌ SubOS Configuration Error:', error);
+      }
+    };
+    run();
+  }, [
+    publicRuntimeConfig?.NEXT_PUBLIC_SUBOS_API_ENDPOINT,
+    publicRuntimeConfig?.NEXT_PUBLIC_API_BASE_URL,
+    publicRuntimeConfig?.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+    publicRuntimeConfig?.NEXT_PUBLIC_SUBOS_PROJECT_ID,
+    profileInfo?._projectId,
+  ]);
 
   const handleCopyEmail = () => {
     copy(profileInfo?.email || '');
@@ -120,6 +159,12 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
                   href="/imports"
                   icon={<ImportIcon />}
                   title={!collapsed ? 'Imports' : ''}
+                />
+                <NavItem
+                  active={pathname.includes('/subscription')}
+                  href="/subscription"
+                  icon={<SettingsIcon />}  // or any icon you prefer
+                  title={!collapsed ? 'Subscription' : ''}
                 />
                 <NavItem
                   active={pathname.includes('/activities')}
