@@ -1,25 +1,24 @@
-import { ChangeEvent } from 'react';
-import { ActionIcon, Group, LoadingOverlay, Stack, Title, Tooltip, TextInput as Input } from '@mantine/core';
+import { Stack, Group, Button, Badge } from '@mantine/core';
+import React, { ChangeEvent } from 'react';
+import { LoadingOverlay, TextInput as Input, Title } from '@mantine/core';
 
-import { Badge } from '@ui/badge';
 import { Table } from '@ui/table';
-import { VARIABLES, colors } from '@config';
+import { VARIABLES } from '@config';
 import { Pagination } from '@ui/pagination';
 import { DateInput } from '@ui/date-input';
 import { useHistory } from '@hooks/useHistory';
 import { IHistoryRecord } from '@impler/shared';
 import { SearchIcon } from '@assets/icons/Search.icon';
-import { DownloadIcon } from '@assets/icons/Download.icon';
 
 export function History() {
   const {
     historyData,
-    downloadOriginalFile,
     isHistoryDataLoading,
     onLimitChange,
     onPageChange,
     onNameChange,
     onDateChange,
+    openViewImportHistoryModal,
     name,
     date,
   } = useHistory();
@@ -48,10 +47,6 @@ export function History() {
         <LoadingOverlay visible={isHistoryDataLoading} />
         <Table<IHistoryRecord>
           headings={[
-            {
-              title: 'Import Id',
-              key: '_id',
-            },
             {
               title: 'Name',
               key: 'name',
@@ -91,21 +86,21 @@ export function History() {
               key: 'totalRecords',
             },
             {
-              title: 'Download Original File',
-              key: 'download',
+              title: 'View Details',
+              key: 'details',
               width: 100,
-              Cell(item) {
-                return item.originalFileName && item._uploadedFileId ? (
-                  <Tooltip label="Download original file" withArrow>
-                    <ActionIcon
-                      radius={0}
-                      variant="transparent"
-                      onClick={() => downloadOriginalFile([item._id, item.originalFileName])}
-                    >
-                      <DownloadIcon color={colors.yellow} />
-                    </ActionIcon>
-                  </Tooltip>
-                ) : null;
+              Cell(item: IHistoryRecord) {
+                return (
+                  <Button
+                    size="xs"
+                    variant="subtle"
+                    onClick={() => {
+                      openViewImportHistoryModal(item);
+                    }}
+                  >
+                    View
+                  </Button>
+                );
               },
             },
           ]}

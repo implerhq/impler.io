@@ -5,6 +5,7 @@ export interface IHistoryRecord {
   status: string;
   uploadedDate: string;
   validRecords: number;
+  webhookLogs: Record<string, any>[];
   originalFileName: string;
   name: string;
 }
