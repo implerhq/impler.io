@@ -124,3 +124,51 @@ export function getPlanType(CODE?: string): string | undefined {
       return undefined;
   }
 }
+
+export const getStatusColor = (status: string) => {
+  switch (status?.toLowerCase()) {
+    case 'success':
+    case 'completed':
+    case 'done':
+      return 'green';
+    case 'failed':
+    case 'error':
+      return 'red';
+    case 'pending':
+    case 'processing':
+      return 'yellow';
+    default:
+      return 'blue';
+  }
+};
+
+export const getStatusSymbol = (status: string): React.ReactNode | string => {
+  switch (status?.toLowerCase()) {
+    case 'success':
+    case 'completed':
+      return '✓';
+    case 'failed':
+    case 'error':
+      return '✗';
+    case 'pending':
+    case 'processing':
+      return '⏳';
+    default:
+      return '•';
+  }
+};
+
+export const formatDate = (date: string) => {
+  return new Date(date).toLocaleString();
+};
+
+export const renderJSONContent = (content: unknown) => {
+  try {
+    const jsonString =
+      typeof content === 'string' ? JSON.stringify(JSON.parse(content), null, 2) : JSON.stringify(content, null, 2);
+
+    return jsonString;
+  } catch (error) {
+    return typeof content === 'string' ? content : JSON.stringify(content);
+  }
+};
