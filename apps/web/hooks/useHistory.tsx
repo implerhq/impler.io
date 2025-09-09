@@ -4,9 +4,12 @@ import { useDebouncedState } from '@mantine/hooks';
 
 import { commonApi } from '@libs/api';
 import { track } from '@libs/amplitude';
-import { API_KEYS, VARIABLES } from '@config';
+import { API_KEYS, MODAL_KEYS, VARIABLES } from '@config';
 import { useAppState } from 'store/app.context';
 import { IErrorObject, IPaginationData, IHistoryRecord, downloadFile } from '@impler/shared';
+import { modals } from '@mantine/modals';
+import { ImportHistoryModal } from '@components/import-feed/ImportHistoryModal/ImportHistoryModal';
+import { Title } from '@mantine/core';
 
 export function useHistory() {
   const { profileInfo } = useAppState();
@@ -82,6 +85,17 @@ export function useHistory() {
     }
   }
 
+  function openViewImportHistoryModal(record: IHistoryRecord) {
+    modals.open({
+      modalId: MODAL_KEYS.VIEW_IMPORT_HISTORY,
+      centered: true,
+      size: 'calc(40vw - 3rem)',
+      children: <ImportHistoryModal record={record} onDownloadFile={downloadOriginalFile} />,
+      withCloseButton: true,
+      title: <Title order={3}>Import Details</Title>,
+    });
+  }
+
   return {
     onDateChange,
     onNameChange,
@@ -91,6 +105,7 @@ export function useHistory() {
     isHistoryDataLoading,
     isDownloadOriginalFileLoading,
     historyData,
+    openViewImportHistoryModal,
     name,
     date,
   };

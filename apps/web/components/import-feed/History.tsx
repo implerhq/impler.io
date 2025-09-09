@@ -3,24 +3,22 @@ import React, { ChangeEvent } from 'react';
 import { LoadingOverlay, TextInput as Input, Title } from '@mantine/core';
 
 import { Table } from '@ui/table';
-import { MODAL_KEYS, VARIABLES } from '@config';
+import { VARIABLES } from '@config';
 import { Pagination } from '@ui/pagination';
 import { DateInput } from '@ui/date-input';
 import { useHistory } from '@hooks/useHistory';
 import { IHistoryRecord } from '@impler/shared';
 import { SearchIcon } from '@assets/icons/Search.icon';
-import { ImportHistoryModal } from './ImportHistoryModal/ImportHistoryModal';
-import { modals } from '@mantine/modals';
 
 export function History() {
   const {
     historyData,
-    downloadOriginalFile,
     isHistoryDataLoading,
     onLimitChange,
     onPageChange,
     onNameChange,
     onDateChange,
+    openViewImportHistoryModal,
     name,
     date,
   } = useHistory();
@@ -97,14 +95,7 @@ export function History() {
                     size="xs"
                     variant="subtle"
                     onClick={() => {
-                      modals.open({
-                        modalId: MODAL_KEYS.VIEW_IMPORT_HISTORY,
-                        centered: true,
-                        size: 'calc(40vw - 3rem)',
-                        children: <ImportHistoryModal record={item} onDownloadFile={downloadOriginalFile} />,
-                        withCloseButton: true,
-                        title: <Title order={3}>Import Details</Title>,
-                      });
+                      openViewImportHistoryModal(item);
                     }}
                   >
                     View
