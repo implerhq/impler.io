@@ -26,4 +26,6 @@ export class UserJobEntity {
   customChunkFormat: string;
 
   customSchema: string;
+
+  isInvalidRecords?: boolean;
 }

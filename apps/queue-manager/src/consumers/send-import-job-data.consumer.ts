@@ -104,7 +104,15 @@ export class SendImportJobDataConsumer extends BaseConsumer {
     recordFormat,
     extra = '',
     multiSelectHeadings,
-  }: SendImportJobCachedData & { data: any[]; uploadId: string }): { sendData: Record<string, unknown>; page: number } {
+    isInvalidRecords,
+  }: SendImportJobCachedData & {
+    data: any[];
+    uploadId: string;
+    isInvalidRecords?: boolean;
+  }): {
+    sendData: Record<string, unknown>;
+    page: number;
+  } {
     const defaultValuesObj = JSON.parse(defaultValues);
     let slicedData = data.slice(
       Math.max((page - DEFAULT_PAGE) * chunkSize, MIN_LIMIT),
@@ -132,6 +140,7 @@ export class SendImportJobDataConsumer extends BaseConsumer {
       chunkSize: slicedData.length,
       extra: extra ? JSON.parse(extra) : '',
       totalPages: this.getTotalPages(data.length, chunkSize),
+      ...(isInvalidRecords !== undefined && { isInvalidRecords }),
     };
 
     return {
@@ -182,6 +191,7 @@ export class SendImportJobDataConsumer extends BaseConsumer {
       defaultValues: JSON.stringify(defaultValueObj),
       recordFormat: userJob.customRecordFormat,
       chunkFormat: userJob.customChunkFormat,
+      isInvalidRecords: userJob.isInvalidRecords,
     };
   }
 
