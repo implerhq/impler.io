@@ -1,11 +1,12 @@
 import { RSSXMLService } from '@impler/services';
-import { ImportJobHistoryStatusEnum, SendImportJobCachedData } from '@impler/shared';
-import { JobMappingRepository, CommonRepository } from '@impler/dal';
+import { ImportJobHistoryStatusEnum, SendImportJobCachedData, ColumnTypesEnum } from '@impler/shared';
+import { JobMappingRepository, CommonRepository, ColumnRepository } from '@impler/dal';
 import { SendImportJobDataConsumer } from './send-import-job-data.consumer';
 
 export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
   private commonRepository: CommonRepository = new CommonRepository();
   private jobMappingRepository: JobMappingRepository = new JobMappingRepository();
+  private columnRepo: ColumnRepository = new ColumnRepository();
   private rssXmlService: RSSXMLService = new RSSXMLService();
 
   async message(message: { content: string }) {
@@ -32,7 +33,7 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
     return;
   }
 
-  async getJobImportedData(_jobId: string) {
+  async getJobImportedData(_jobId: string): Promise<Record<string, any>[]> {
     try {
       const userJob = await this.userJobRepository.findOne({ _id: _jobId });
       if (!userJob) {
@@ -55,15 +56,138 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
       const batchResult = await this.rssXmlService.getBatchXMLKeyValuesByPaths(parsedXMLData.xmlData, mappings);
       const mappedData = await this.rssXmlService.mappingFunction(mappings, batchResult);
 
-      return mappedData;
+      const hasInvalidRecords = await this.validateWithTemplateColumns(_jobId, mappedData);
+
+      if (hasInvalidRecords) {
+        await this.userJobRepository.update({ _id: _jobId }, { $set: { isInvalidRecords: true } });
+      }
+
+      return mappedData as Record<string, any>[];
     } catch (error) {
       throw error;
     }
   }
 
+  private async validateWithTemplateColumns(_jobId: string, mappedData: Record<string, any>[]): Promise<boolean> {
+    enum ValidationTypesEnum {
+      RANGE = 'range',
+      LENGTH = 'length',
+      UNIQUE_WITH = 'unique_with',
+      DIGITS = 'digits',
+    }
+
+    try {
+      const userJob = await this.userJobRepository.findOne({ _id: _jobId });
+      const columns = await this.columnRepo.find({ _templateId: userJob._templateId });
+
+      if (!columns || columns.length === 0) {
+        return false;
+      }
+
+      let invalidRecordCount = 0;
+      const totalRecords = mappedData.length;
+
+      for (const record of mappedData) {
+        let recordHasErrors = false;
+
+        for (const column of columns) {
+          const value = record[column.key];
+
+          if (column.isRequired && (!value || value === '' || value === null)) {
+            recordHasErrors = true;
+            break;
+          }
+
+          if (value && value !== '') {
+            switch (column.type) {
+              case ColumnTypesEnum.NUMBER:
+                if (isNaN(Number(value))) recordHasErrors = true;
+                break;
+              case ColumnTypesEnum.DOUBLE:
+                if (isNaN(Number(value)) || !Number.isFinite(Number(value))) recordHasErrors = true;
+                break;
+              case ColumnTypesEnum.EMAIL:
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(value)) recordHasErrors = true;
+                break;
+              case ColumnTypesEnum.DATE:
+                if (isNaN(Date.parse(value))) recordHasErrors = true;
+                break;
+              case ColumnTypesEnum.REGEX:
+                if (column.regex && !new RegExp(column.regex).test(value)) {
+                  recordHasErrors = true;
+                }
+                break;
+              case ColumnTypesEnum.SELECT:
+                if (column.selectValues && !column.selectValues.includes(value)) {
+                  recordHasErrors = true;
+                }
+                break;
+              case ColumnTypesEnum.IMAGE:
+                // Basic URL validation for images
+                const imageUrlRegex = /^https?:\/\/.+\.(jpg|jpeg|png|gif|bmp|webp|svg)$/i;
+                if (!imageUrlRegex.test(value)) recordHasErrors = true;
+                break;
+            }
+          }
+
+          if (!recordHasErrors && column.validations && column.validations.length > 0) {
+            for (const validation of column.validations) {
+              switch (validation.validate) {
+                case ValidationTypesEnum.RANGE:
+                  const numValue = Number(value);
+                  if (!isNaN(numValue)) {
+                    if (validation.min !== undefined && numValue < validation.min) {
+                      recordHasErrors = true;
+                    }
+                    if (validation.max !== undefined && numValue > validation.max) {
+                      recordHasErrors = true;
+                    }
+                  }
+                  break;
+                case ValidationTypesEnum.LENGTH:
+                  const strValue = String(value);
+                  if (validation.min !== undefined && strValue.length < validation.min) {
+                    recordHasErrors = true;
+                  }
+                  if (validation.max !== undefined && strValue.length > validation.max) {
+                    recordHasErrors = true;
+                  }
+                  break;
+                case ValidationTypesEnum.DIGITS:
+                  const digitStr = String(value).replace(/[^0-9]/g, '');
+                  if (validation.min !== undefined && digitStr.length < validation.min) {
+                    recordHasErrors = true;
+                  }
+                  if (validation.max !== undefined && digitStr.length > validation.max) {
+                    recordHasErrors = true;
+                  }
+                  break;
+                case ValidationTypesEnum.UNIQUE_WITH:
+                  break;
+              }
+              if (recordHasErrors) break;
+            }
+          }
+
+          if (recordHasErrors) break;
+        }
+
+        if (recordHasErrors) {
+          invalidRecordCount++;
+        }
+      }
+
+      // Consider batch invalid if >30% of records have validation errors
+      return totalRecords > 0 && invalidRecordCount / totalRecords > 0.3;
+    } catch (error) {
+      return false;
+    }
+  }
+
   private async sendDataImportData(
     _jobId: string,
-    allDataJson: any[],
+    allDataJson: Record<string, any>[],
     page = 1,
     initialCachedData?: SendImportJobCachedData
   ) {

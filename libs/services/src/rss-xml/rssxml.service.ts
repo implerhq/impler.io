@@ -115,7 +115,7 @@ export class RSSXMLService {
     // Parse paths and prepare for extraction
     const parsedPaths = pathMappings.map((mapping) => ({
       key: mapping.key,
-      pathArray: mapping.path.split('>').map((key) => key.trim()),
+      pathArray: mapping.path?.split('>').map((key) => key.trim()) || [],
       originalPath: mapping.path,
     }));
 
@@ -500,7 +500,7 @@ export class RSSXMLService {
   async setValue(obj: Record<string, any>, path: string[], value: any, attributes?: any): Promise<void> {
     // Validate path to prevent prototype pollution
     const forbiddenKeys = ['__proto__', 'constructor', 'prototype'];
-    if (path.some(key => forbiddenKeys.includes(key))) {
+    if (path.some((key) => forbiddenKeys.includes(key))) {
       throw new Error('Invalid path: contains forbidden keys');
     }
 
