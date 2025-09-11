@@ -94,9 +94,7 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
         validData: validationResult.validData,
         invalidData: validationResult.invalidData,
       };
-    } catch (error) {
-      throw error;
-    }
+    } catch (error) {}
   }
 
   private async validateData(
@@ -161,7 +159,6 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
           validData.push(recordData);
         } else {
           invalidRecords++;
-          // Include validation errors with the invalid record
           invalidData.push(recordData);
         }
       }
@@ -188,7 +185,6 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
     }
   }
 
-  // Format record method from ReReviewData
   private formatRecord({
     record,
     multiSelectColumnHeadings,
@@ -271,27 +267,24 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
   private validateRecordUsingColumnSchema(
     record: Record<string, unknown>,
     columns: ITemplateSchemaItem[]
-  ): { isValid: boolean; errors: Record<string, string> } {
+  ): { isValid: boolean } {
     enum ValidationTypesEnum {
       RANGE = 'range',
       LENGTH = 'length',
       UNIQUE_WITH = 'unique_with',
       DIGITS = 'digits',
     }
-    const errors: Record<string, string> = {};
     let isValid = true;
 
     for (const column of columns) {
       const value = record[column.key];
 
       if (value === undefined) {
-        errors[column.key] = `${column.key} has undefined value`;
         isValid = false;
         continue;
       }
 
       if (column.isRequired && (value === null || value === '' || !value)) {
-        errors[column.key] = `${column.key} is required`;
         isValid = false;
         continue;
       }
@@ -300,45 +293,38 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
         switch (column.type) {
           case ColumnTypesEnum.NUMBER:
             if (isNaN(Number(value))) {
-              errors[column.key] = `${column.key} must be a valid number`;
               isValid = false;
             }
             break;
           case ColumnTypesEnum.DOUBLE:
             if (isNaN(Number(value)) || !Number.isFinite(Number(value))) {
-              errors[column.key] = `${column.key} must be a valid decimal number`;
               isValid = false;
             }
             break;
           case ColumnTypesEnum.EMAIL:
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(String(value))) {
-              errors[column.key] = `${column.key} must be a valid email address`;
               isValid = false;
             }
             break;
           case ColumnTypesEnum.DATE:
             if (isNaN(Date.parse(String(value)))) {
-              errors[column.key] = `${column.key} must be a valid date`;
               isValid = false;
             }
             break;
           case ColumnTypesEnum.REGEX:
             if (column.regex && !new RegExp(column.regex).test(String(value))) {
-              errors[column.key] = `${column.key} does not match required format`;
               isValid = false;
             }
             break;
           case ColumnTypesEnum.SELECT:
             if (column.selectValues && !column.selectValues.includes(String(value))) {
-              errors[column.key] = `${column.key} must be one of: ${column.selectValues.join(', ')}`;
               isValid = false;
             }
             break;
           case ColumnTypesEnum.IMAGE:
             const imageUrlRegex = /^https?:\/\/.+\.(jpg|jpeg|png|gif|bmp|webp|svg)$/i;
             if (!imageUrlRegex.test(String(value))) {
-              errors[column.key] = `${column.key} must be a valid image URL`;
               isValid = false;
             }
             break;
@@ -358,11 +344,9 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
               const numValue = Number(value);
               if (!isNaN(numValue)) {
                 if (validation.min !== undefined && numValue < validation.min) {
-                  errors[column.key] = `${column.key} must be at least ${validation.min}`;
                   isValid = false;
                 }
                 if (validation.max !== undefined && numValue > validation.max) {
-                  errors[column.key] = `${column.key} must be at most ${validation.max}`;
                   isValid = false;
                 }
               }
@@ -370,22 +354,18 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
             case ValidationTypesEnum.LENGTH:
               const strValue = String(value);
               if (validation.min !== undefined && strValue.length < validation.min) {
-                errors[column.key] = `${column.key} must be at least ${validation.min} characters long`;
                 isValid = false;
               }
               if (validation.max !== undefined && strValue.length > validation.max) {
-                errors[column.key] = `${column.key} must be at most ${validation.max} characters long`;
                 isValid = false;
               }
               break;
             case ValidationTypesEnum.DIGITS:
               const digitStr = String(value).replace(/[^0-9]/g, '');
               if (validation.min !== undefined && digitStr.length < validation.min) {
-                errors[column.key] = `${column.key} must have at least ${validation.min} digits`;
                 isValid = false;
               }
               if (validation.max !== undefined && digitStr.length > validation.max) {
-                errors[column.key] = `${column.key} must have at most ${validation.max} digits`;
                 isValid = false;
               }
               break;
@@ -397,6 +377,6 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
       }
     }
 
-    return { isValid, errors };
+    return { isValid };
   }
 }
