@@ -46,6 +46,10 @@ const userJobSchema = new Schema(
     customSchema: {
       type: Schema.Types.String,
     },
+    isInvalidRecords: {
+      type: Schema.Types.Boolean,
+      default: false,
+    },
   },
   { ...schemaOptions }
 );
