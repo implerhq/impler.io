@@ -88,7 +88,7 @@ export function AutoImportPhase3({ onNextClick }: IAutoImportPhase3Props) {
 
   const handleNextClick = () => {
     updateUserJob({
-      cron: '* * * * *', // cronExpression,
+      cron: cronExpression,
       endsOn: formValues.endsNever ? undefined : formValues.endsOn,
     });
   };
