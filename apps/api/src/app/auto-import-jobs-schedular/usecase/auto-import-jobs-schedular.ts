@@ -22,7 +22,7 @@ export class AutoImportJobsSchedular {
     console.log('Crone Running');
     await this.fetchAndExecuteScheduledJobs();
   }
-
+  
   private async fetchAndExecuteScheduledJobs() {
     const now = dayjs();
     const userJobs = await this.userJobRepository.find({});

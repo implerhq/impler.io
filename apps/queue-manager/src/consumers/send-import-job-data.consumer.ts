@@ -13,9 +13,9 @@ import {
   replaceVariablesInObject,
   QueuesEnum,
   ColumnTypesEnum,
-  UploadStatusEnum,
   FileEncodingsEnum,
   ColumnDelimiterEnum,
+  UserJobImportStatusEnum,
 } from '@impler/shared';
 
 import { publishToQueue } from '../bootstrap';
@@ -34,6 +34,7 @@ export class SendImportJobDataConsumer extends BaseConsumer {
   public storageService: StorageService = getStorageServiceClass();
 
   async message(message: { content: string }) {
+    console.log('Auto importing......');
     const data = JSON.parse(message.content) as SendImportJobData;
     const cachedData = data.cache || (await this.getInitialCachedData(data._jobId, data.allDataFilePath));
     let allDataJson: null | any[] = null;
@@ -200,6 +201,6 @@ export class SendImportJobDataConsumer extends BaseConsumer {
   }
 
   public async finalizeUpload(_jobId: string) {
-    return await this.userJobRepository.update({ _id: _jobId }, { status: UploadStatusEnum.COMPLETED });
+    return await this.userJobRepository.update({ _id: _jobId }, { status: UserJobImportStatusEnum.COMPLETED });
   }
 }

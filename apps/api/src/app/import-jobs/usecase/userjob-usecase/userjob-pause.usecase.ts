@@ -1,32 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { SchedulerRegistry } from '@nestjs/schedule';
-import { NameService } from '@impler/services';
+import { Injectable } from '@nestjs/common';
 import { UserJobImportStatusEnum } from '@impler/shared';
 import { UserJobEntity, UserJobRepository } from '@impler/dal';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
 
 @Injectable()
 export class UserJobPause {
-  constructor(
-    private readonly nameService: NameService,
-    private readonly schedulerRegistry: SchedulerRegistry,
-    private readonly userJobRepository: UserJobRepository
-  ) {}
+  constructor(private readonly userJobRepository: UserJobRepository) {}
 
   async execute(_jobId: string): Promise<UserJobEntity> {
     const userJob = await this.userJobRepository.findById(_jobId);
     if (!userJob) {
       throw new DocumentNotFoundException('Userjob', _jobId);
     }
-
-    const cronName = this.nameService.getCronName(_jobId);
-
-    const userCronJob = this.schedulerRegistry.getCronJob(cronName);
-    if (!userCronJob) {
-      throw new NotFoundException(`Cron job with name ${cronName} not found.`);
-    }
-
-    userCronJob.stop();
 
     const updatedUserJob = await this.userJobRepository.findOneAndUpdate(
       { _id: _jobId },
