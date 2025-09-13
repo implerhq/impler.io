@@ -92,7 +92,9 @@ export class AutoImportJobsSchedular {
     if (
       (userJob.cron && userJob.status === UserJobImportStatusEnum.SCHEDULING) ||
       userJob.status === UserJobImportStatusEnum.RUNNING ||
-      (userJob.status === 'Completed' && (await this.fetchDestination(userJob._templateId)) && !userJob.endsOn) ||
+      (userJob.status === UserJobImportStatusEnum.COMPLETED &&
+        (await this.fetchDestination(userJob._templateId)) &&
+        !userJob.endsOn) ||
       !dayjs(userJob.endsOn).isSame(now, 'd')
     ) {
       return true;
