@@ -9,6 +9,7 @@ import {
 
 import { SendImportJobDataConsumer } from './send-import-job-data.consumer';
 import { CommonRepository, JobMappingRepository, ColumnRepository } from '@impler/dal';
+import dayjs from 'dayjs';
 
 export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
   private commonRepository: CommonRepository = new CommonRepository();
@@ -35,10 +36,17 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
 
     if (webhookDestination?.callbackUrl) {
       if (validationResult.validRecords > 0) {
-        await this.sendDataImportData(data._jobId, validationResult.validData, 1, undefined, false);
+        await this.sendDataImportData(data._jobId, validationResult.validData, 1, undefined, false, userJobInfo.endsOn);
       }
       if (validationResult.invalidRecords > 0) {
-        await this.sendDataImportData(data._jobId, validationResult.invalidData, 1, undefined, true);
+        await this.sendDataImportData(
+          data._jobId,
+          validationResult.invalidData,
+          1,
+          undefined,
+          true,
+          userJobInfo.endsOn
+        );
       }
     }
 
@@ -209,7 +217,8 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
     allDataJson: Record<string, any>[],
     page = 1,
     initialCachedData?: SendImportJobCachedData,
-    areInvalidRecords?: boolean
+    areInvalidRecords?: boolean,
+    endsOn?: Date | undefined
   ) {
     try {
       let cachedData = null;
@@ -256,7 +265,9 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
         if (nextPageNumber) {
           await this.sendDataImportData(_jobId, allDataJson, nextPageNumber, { ...cachedData, page: nextPageNumber });
         } else {
-          await this.finalizeUpload(_jobId);
+          if (endsOn && dayjs(endsOn).isSame(dayjs(), 'day')) {
+            await this.finalizeUpload(_jobId);
+          }
         }
       }
     } catch (error) {

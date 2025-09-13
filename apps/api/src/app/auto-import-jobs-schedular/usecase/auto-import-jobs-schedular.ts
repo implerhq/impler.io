@@ -22,12 +22,13 @@ export class AutoImportJobsSchedular {
     console.log('Crone Run of', CronExpression.EVERY_5_MINUTES);
     await this.fetchAndExecuteScheduledJobs();
   }
-
+  
   private async fetchAndExecuteScheduledJobs() {
     const now = dayjs();
     const userJobs = await this.userJobRepository.find({});
 
     for (const userJob of userJobs) {
+      console.log('should run the crne job ?', await this.shouldCroneRun({ userJob }), userJob._id);
       if (await this.shouldCroneRun({ userJob })) {
         try {
           const interval = parser.parseExpression(userJob.cron);
@@ -39,7 +40,8 @@ export class AutoImportJobsSchedular {
 
             await this.updateUserJob.execute(userJob._id, userJob);
 
-            await this.scheduleUserJob.execute(userJob._id, userJob.cron);
+            // await this.scheduleUserJob.execute(userJob._id, userJob.cron);
+            await this.userJobTriggerService.execute(userJob._id);
           }
         } catch (error) {}
       }
@@ -89,10 +91,16 @@ export class AutoImportJobsSchedular {
   async shouldCroneRun({ userJob }: { userJob: UserJobEntity }): Promise<boolean> {
     const now = dayjs();
 
+    if (userJob.status === UserJobImportStatusEnum.PAUSED) {
+      return false;
+    }
+
     if (
       (userJob.cron && userJob.status === UserJobImportStatusEnum.SCHEDULING) ||
       userJob.status === UserJobImportStatusEnum.RUNNING ||
-      (userJob.status === 'Completed' && (await this.fetchDestination(userJob._templateId)) && !userJob.endsOn) ||
+      (userJob.status === UserJobImportStatusEnum.COMPLETED &&
+        (await this.fetchDestination(userJob._templateId)) &&
+        !userJob.endsOn) ||
       !dayjs(userJob.endsOn).isSame(now, 'd')
     ) {
       return true;
