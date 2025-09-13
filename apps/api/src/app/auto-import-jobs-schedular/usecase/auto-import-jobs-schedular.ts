@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import * as dayjs from 'dayjs';
 import * as parser from 'cron-parser';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { ScheduleUserJob, UpdateUserJob } from 'app/import-jobs/usecase';
+import { UpdateUserJob, UserJobTriggerService } from 'app/import-jobs/usecase';
 import { UserJobImportStatusEnum } from '@impler/shared';
 // import { CRON_SCHEDULE } from '@shared/constants';
 const parseCronExpression = require('@impler/shared/src/utils/cronstrue');
@@ -14,12 +14,12 @@ export class AutoImportJobsSchedular {
     private readonly userJobRepository: UserJobRepository,
     private readonly webhookDestinationRepository: WebhookDestinationRepository,
     private readonly updateUserJob: UpdateUserJob,
-    private readonly scheduleUserJob: ScheduleUserJob
+    private readonly userJobTriggerService: UserJobTriggerService
   ) {}
 
   @Cron(CronExpression.EVERY_5_MINUTES)
   async handleCronSchedular() {
-    console.log('Crone Run of', CronExpression.EVERY_5_MINUTES);
+    console.log('Crone Running');
     await this.fetchAndExecuteScheduledJobs();
   }
 
@@ -28,6 +28,7 @@ export class AutoImportJobsSchedular {
     const userJobs = await this.userJobRepository.find({});
 
     for (const userJob of userJobs) {
+      console.log('should run the crne job ?', await this.shouldCroneRun({ userJob }), userJob._id);
       if (await this.shouldCroneRun({ userJob })) {
         try {
           const interval = parser.parseExpression(userJob.cron);
@@ -39,7 +40,8 @@ export class AutoImportJobsSchedular {
 
             await this.updateUserJob.execute(userJob._id, userJob);
 
-            await this.scheduleUserJob.execute(userJob._id, userJob.cron);
+            // await this.scheduleUserJob.execute(userJob._id, userJob.cron);
+            await this.userJobTriggerService.execute(userJob._id);
           }
         } catch (error) {}
       }
@@ -88,6 +90,10 @@ export class AutoImportJobsSchedular {
 
   async shouldCroneRun({ userJob }: { userJob: UserJobEntity }): Promise<boolean> {
     const now = dayjs();
+
+    if (userJob.status === UserJobImportStatusEnum.PAUSED) {
+      return false;
+    }
 
     if (
       (userJob.cron && userJob.status === UserJobImportStatusEnum.SCHEDULING) ||
