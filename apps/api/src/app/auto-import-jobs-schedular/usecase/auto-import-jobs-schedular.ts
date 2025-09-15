@@ -3,8 +3,9 @@ import { Injectable } from '@nestjs/common';
 import * as dayjs from 'dayjs';
 import * as parser from 'cron-parser';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { UpdateUserJob, UserJobTriggerService } from 'app/import-jobs/usecase';
+import { UpdateUserJob } from 'app/import-jobs/usecase';
 import { UserJobImportStatusEnum } from '@impler/shared';
+import { UserJobTriggerService } from 'app/import-jobs/usecase';
 // import { CRON_SCHEDULE } from '@shared/constants';
 const parseCronExpression = require('@impler/shared/src/utils/cronstrue');
 
@@ -22,14 +23,13 @@ export class AutoImportJobsSchedular {
     console.log('Crone Running');
     await this.fetchAndExecuteScheduledJobs();
   }
-  
+
   private async fetchAndExecuteScheduledJobs() {
     const now = dayjs();
     const userJobs = await this.userJobRepository.find({});
 
     for (const userJob of userJobs) {
-      console.log('Should run the Cron job Run ?', await this.shouldCroneRun({ userJob }), userJob._id);
-
+      console.log('Should run the Cron Job ?', await this.shouldCroneRun({ userJob }), userJob._id);
       if (await this.shouldCroneRun({ userJob })) {
         try {
           const interval = parser.parseExpression(userJob.cron);

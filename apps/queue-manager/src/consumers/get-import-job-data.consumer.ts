@@ -7,9 +7,9 @@ import {
   ColumnDelimiterEnum,
 } from '@impler/shared';
 
+import dayjs from 'dayjs';
 import { SendImportJobDataConsumer } from './send-import-job-data.consumer';
 import { CommonRepository, JobMappingRepository, ColumnRepository } from '@impler/dal';
-import dayjs from 'dayjs';
 
 export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
   private commonRepository: CommonRepository = new CommonRepository();
@@ -36,6 +36,7 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
 
     if (webhookDestination?.callbackUrl) {
       if (validationResult.validRecords > 0) {
+        await this.sendDataImportData(data._jobId, validationResult.validData, 1, undefined, false, userJobInfo.endsOn);
         await this.sendDataImportData(data._jobId, validationResult.validData, 1, undefined, false, userJobInfo.endsOn);
       }
       if (validationResult.invalidRecords > 0) {
@@ -149,7 +150,6 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
       const invalidData: Record<string, unknown>[] = [];
 
       for (const recordData of mappedData) {
-        // Format record for multi-select handling
         const checkRecord: Record<string, unknown> = this.formatRecord({
           record: { record: recordData },
           multiSelectColumnHeadings,
@@ -218,7 +218,7 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
     page = 1,
     initialCachedData?: SendImportJobCachedData,
     areInvalidRecords?: boolean,
-    endsOn?: Date | undefined
+    endsOn?: Date
   ) {
     try {
       let cachedData = null;
@@ -268,7 +268,8 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
             allDataJson,
             nextPageNumber,
             { ...cachedData, page: nextPageNumber },
-            areInvalidRecords
+            areInvalidRecords,
+            endsOn
           );
         } else {
           if (endsOn && dayjs(endsOn).isSame(dayjs(), 'day')) {
@@ -412,8 +413,8 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
           if (!isValid) break;
         }
       }
-    }
 
-    return { isValid, errors };
+      return { isValid, errors };
+    }
   }
 }

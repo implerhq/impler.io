@@ -6,6 +6,7 @@ export const USE_CASES = [
   AutoImportJobsSchedular,
   UpdateUserJob,
   UserJobTriggerService,
+  UserJobTriggerService,
   QueueService,
   //
 ];
