@@ -263,7 +263,13 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
         });
 
         if (nextPageNumber) {
-          await this.sendDataImportData(_jobId, allDataJson, nextPageNumber, { ...cachedData, page: nextPageNumber });
+          await this.sendDataImportData(
+            _jobId,
+            allDataJson,
+            nextPageNumber,
+            { ...cachedData, page: nextPageNumber },
+            areInvalidRecords
+          );
         } else {
           if (endsOn && dayjs(endsOn).isSame(dayjs(), 'day')) {
             await this.finalizeUpload(_jobId);

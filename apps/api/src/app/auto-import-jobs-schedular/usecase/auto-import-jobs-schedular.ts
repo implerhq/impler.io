@@ -28,7 +28,8 @@ export class AutoImportJobsSchedular {
     const userJobs = await this.userJobRepository.find({});
 
     for (const userJob of userJobs) {
-      console.log('should run the crne job ?', await this.shouldCroneRun({ userJob }), userJob._id);
+      console.log('Should run the Cron job Run ?', await this.shouldCroneRun({ userJob }), userJob._id);
+
       if (await this.shouldCroneRun({ userJob })) {
         try {
           const interval = parser.parseExpression(userJob.cron);
