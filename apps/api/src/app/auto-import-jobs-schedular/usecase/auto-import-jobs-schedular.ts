@@ -2,10 +2,10 @@ import { UserJobEntity, UserJobRepository, WebhookDestinationRepository } from '
 import { Injectable } from '@nestjs/common';
 import * as dayjs from 'dayjs';
 import * as parser from 'cron-parser';
-import { Cron } from '@nestjs/schedule';
-import { ScheduleUserJob, UpdateUserJob } from 'app/import-jobs/usecase';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { UpdateUserJob } from 'app/import-jobs/usecase';
 import { UserJobImportStatusEnum } from '@impler/shared';
-import { CRON_SCHEDULE } from '@shared/constants';
+import { UserJobTriggerService } from 'app/import-jobs/usecase/userjob-usecase/userjob-trigger.usecase';
 // import { CRON_SCHEDULE } from '@shared/constants';
 const parseCronExpression = require('@impler/shared/src/utils/cronstrue');
 
@@ -15,10 +15,10 @@ export class AutoImportJobsSchedular {
     private readonly userJobRepository: UserJobRepository,
     private readonly webhookDestinationRepository: WebhookDestinationRepository,
     private readonly updateUserJob: UpdateUserJob,
-    private readonly scheduleUserJob: ScheduleUserJob
+    private readonly userJobTriggerService: UserJobTriggerService
   ) {}
 
-  @Cron(CRON_SCHEDULE.AUTO_IMPORT_DEFAULT_CRON_TIME)
+  @Cron(CronExpression.EVERY_5_MINUTES)
   async handleCronSchedular() {
     await this.fetchAndExecuteScheduledJobs();
   }
@@ -28,7 +28,7 @@ export class AutoImportJobsSchedular {
     const userJobs = await this.userJobRepository.find({});
 
     for (const userJob of userJobs) {
-      console.log('Should run the Cron job Run ?', await this.shouldCroneRun({ userJob }), userJob._id);
+      console.log('Should run the Cron Job ?', await this.shouldCroneRun({ userJob }), userJob._id);
       if (await this.shouldCroneRun({ userJob })) {
         try {
           const interval = parser.parseExpression(userJob.cron);
@@ -40,7 +40,8 @@ export class AutoImportJobsSchedular {
 
             await this.updateUserJob.execute(userJob._id, userJob);
 
-            await this.scheduleUserJob.execute(userJob._id, userJob.cron);
+            // await this.scheduleUserJob.execute(userJob._id, userJob.cron);
+            await this.userJobTriggerService.execute(userJob._id);
           }
         } catch (error) {}
       }

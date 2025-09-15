@@ -10,7 +10,6 @@ import { UserJobDelete } from './userjob-usecase/userjob-delete.usecase';
 import { UserJobTerminate } from './userjob-usecase/userjob-terminate.usecase';
 import { UserJobTriggerService } from './userjob-usecase/userjob-trigger.usecase';
 import { UserJobResume } from './userjob-usecase/userjob.resume.usecsae';
-import { ScheduleUserJob } from './schedule-user-job/schedule-user-job';
 
 export const USECASES = [
   CreateUserJob,
@@ -25,7 +24,6 @@ export const USECASES = [
   UserJobDelete,
   UserJobTerminate,
   UserJobTriggerService,
-  ScheduleUserJob,
   //
 ];
 
@@ -40,5 +38,4 @@ export {
   UserJobDelete,
   UserJobTerminate,
   UserJobTriggerService,
-  ScheduleUserJob,
 };
