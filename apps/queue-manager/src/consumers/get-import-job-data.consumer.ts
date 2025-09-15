@@ -254,7 +254,13 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
         });
 
         if (nextPageNumber) {
-          await this.sendDataImportData(_jobId, allDataJson, nextPageNumber, { ...cachedData, page: nextPageNumber });
+          await this.sendDataImportData(
+            _jobId,
+            allDataJson,
+            nextPageNumber,
+            { ...cachedData, page: nextPageNumber },
+            areInvalidRecords
+          );
         } else {
           await this.finalizeUpload(_jobId);
         }
