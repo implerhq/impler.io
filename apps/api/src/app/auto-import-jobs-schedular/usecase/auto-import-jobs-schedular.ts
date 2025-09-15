@@ -5,7 +5,7 @@ import * as parser from 'cron-parser';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { UpdateUserJob } from 'app/import-jobs/usecase';
 import { UserJobImportStatusEnum } from '@impler/shared';
-import { UserJobTriggerService } from 'app/import-jobs/usecase/userjob-usecase/userjob-trigger.usecase';
+import { UserJobTriggerService } from 'app/import-jobs/usecase';
 // import { CRON_SCHEDULE } from '@shared/constants';
 const parseCronExpression = require('@impler/shared/src/utils/cronstrue');
 
@@ -20,6 +20,7 @@ export class AutoImportJobsSchedular {
 
   @Cron(CronExpression.EVERY_5_MINUTES)
   async handleCronSchedular() {
+    console.log('Crone Running');
     await this.fetchAndExecuteScheduledJobs();
   }
 
@@ -91,10 +92,16 @@ export class AutoImportJobsSchedular {
   async shouldCroneRun({ userJob }: { userJob: UserJobEntity }): Promise<boolean> {
     const now = dayjs();
 
+    if (userJob.status === UserJobImportStatusEnum.PAUSED) {
+      return false;
+    }
+
     if (
       (userJob.cron && userJob.status === UserJobImportStatusEnum.SCHEDULING) ||
       userJob.status === UserJobImportStatusEnum.RUNNING ||
-      (userJob.status === 'Completed' && (await this.fetchDestination(userJob._templateId)) && !userJob.endsOn) ||
+      (userJob.status === UserJobImportStatusEnum.COMPLETED &&
+        (await this.fetchDestination(userJob._templateId)) &&
+        !userJob.endsOn) ||
       !dayjs(userJob.endsOn).isSame(now, 'd')
     ) {
       return true;
