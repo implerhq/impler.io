@@ -37,7 +37,6 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
     if (webhookDestination?.callbackUrl) {
       if (validationResult.validRecords > 0) {
         await this.sendDataImportData(data._jobId, validationResult.validData, 1, undefined, false, userJobInfo.endsOn);
-        await this.sendDataImportData(data._jobId, validationResult.validData, 1, undefined, false, userJobInfo.endsOn);
       }
       if (validationResult.invalidRecords > 0) {
         await this.sendDataImportData(
