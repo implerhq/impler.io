@@ -222,6 +222,12 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
                       status: 1,
                       error: 1,
                       failedReason: 1,
+                      isRetry: 1,
+                    },
+                  },
+                  {
+                    $sort: {
+                      createdAt: -1,
                     },
                   },
                 ],

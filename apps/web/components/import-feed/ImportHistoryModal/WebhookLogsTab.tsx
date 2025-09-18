@@ -1,47 +1,54 @@
+/* eslint-disable multiline-comment-style */
 import React from 'react';
 import {
   Stack,
   Group,
   Text,
-  Timeline,
-  Paper,
-  Box,
+  Accordion,
+  ActionIcon,
   Badge,
-  ScrollArea,
+  Box,
   Code,
   CopyButton,
-  Tooltip,
-  ActionIcon,
   Flex,
-  Accordion,
+  Paper,
+  ScrollArea,
+  Timeline,
+  Tooltip,
 } from '@mantine/core';
 import { Alert } from '@ui/Alert';
-import { IHistoryRecord } from '@impler/shared';
-import { formatDate, getStatusColor, getStatusSymbol, renderJSONContent } from '@shared/utils';
 import { InformationIcon } from '@assets/icons/Information.icon';
-
-interface WebhookLog {
-  status: string;
-  callDate?: string;
-  failedReason?: string;
-  error?: string | object;
-  dataContent?: string | object;
-}
+import { getStatusSymbol, getStatusColor, formatDate, renderJSONContent } from '@shared/utils';
+import { IHistoryRecord } from '@impler/shared';
 
 export function WebhookLogsTab({ record }: { record: IHistoryRecord }) {
-  const webhookLogs = (record as any).webhookLogs || [];
+  // if (loading) {
+  //   return (
+  //     <Center style={{ height: 200 }}>
+  //       <Loader size="md" />
+  //     </Center>
+  //   );
+  // }
+
+  // if (error) {
+  //   return (
+  //     <Alert color="red" variant="light">
+  //       <Text size="sm">Error loading webhook logs: {error}</Text>
+  //     </Alert>
+  //   );
+  // }
 
   return (
-    <Stack>
+    <Stack style={{ height: '100%' }}>
       <Group>
         <Text size="lg" fw={600}>
           Webhook Response Logs
         </Text>
       </Group>
 
-      {webhookLogs.length > 0 ? (
-        <Timeline active={webhookLogs.length} bulletSize={24} lineWidth={2}>
-          {webhookLogs.map((log: WebhookLog, index: number) => (
+      {record.webhookLogs?.length > 0 ? (
+        <Timeline active={record.webhookLogs?.length || 0} bulletSize={24} lineWidth={2}>
+          {record.webhookLogs?.map((log, index: number) => (
             <Timeline.Item
               key={index}
               bullet={<Text size="sm">{getStatusSymbol(log.status)}</Text>}
@@ -108,7 +115,7 @@ export function WebhookLogsTab({ record }: { record: IHistoryRecord }) {
           ))}
         </Timeline>
       ) : (
-        <Alert variant="light" color="blue">
+        <Alert variant="light" color="yellow">
           <Group spacing="xs">
             <InformationIcon size="sm" />
             <Text size="xs">No webhook logs available for this import.</Text>

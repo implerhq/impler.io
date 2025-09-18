@@ -44,8 +44,13 @@ export class SendWebhookDataConsumer extends BaseConsumer {
   private environmentRepository: EnvironmentRepository = new EnvironmentRepository();
 
   async message(message: { content: string }) {
-    const data = JSON.parse(message.content) as SendWebhookData;
+    const data = JSON.parse(message.content) as SendWebhookData & { isRetry?: boolean };
     const uploadId = data.uploadId;
+    const isRetry = data.isRetry || false;
+    console.log('data is', isRetry);
+
+    // Mark webhook logs as retry only if this is actually a retry request
+
     const cachedData = data.cache || (await this.getInitialCachedData(uploadId));
 
     if (cachedData && cachedData.callbackUrl) {
@@ -87,7 +92,10 @@ export class SendWebhookDataConsumer extends BaseConsumer {
         method: 'POST',
         url: cachedData.callbackUrl,
         headers,
+        isRetry,
       };
+
+      console.log('All Data is', allData);
 
       const response = await this.makeApiCall(allData);
 
@@ -248,6 +256,8 @@ export class SendWebhookDataConsumer extends BaseConsumer {
     allData: Record<string, any>;
   }) {
     const webhookLog = await this.webhookLogRepository.create(data);
+    console.log('data', data.isRetry);
+    console.log('webhooklogis', webhookLog.isRetry);
     if (data.status === StatusEnum.FAILED) {
       const environment = await this.environmentRepository.getProjectTeamMembers(projectId);
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

@@ -38,6 +38,7 @@ export abstract class BaseConsumer {
     method,
     url,
     headers,
+    isRetry,
   }: ISendDataParameters): Promise<Partial<WebhookLogEntity>> {
     const baseResponse: Partial<WebhookLogEntity> = {
       _uploadId: uploadId,
@@ -45,6 +46,7 @@ export abstract class BaseConsumer {
       pageNumber: page,
       dataContent: data as any,
       headersContent: headers,
+      isRetry: isRetry || false,
     };
     try {
       const response = await axios({

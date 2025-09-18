@@ -44,6 +44,7 @@ export function ActivePlanDetails({
   const { onOpenPaymentModal } = usePlanDetails({
     projectId: projectId!,
   });
+  console.log('ACTIVE PLAN DETAILS', activePlanDetails);
 
   return (
     <Stack>

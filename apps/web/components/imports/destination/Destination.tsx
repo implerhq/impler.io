@@ -71,6 +71,13 @@ export function Destination({ template }: DestinationProps) {
                 pattern: REGULAR_EXPRESSIONS.URL,
               })}
             />
+            <Button
+              size="xs"
+              variant="outline"
+              // style={{ alignSelf: 'flex-start', marginTop: '-8px', marginBottom: '8px' }}
+            >
+              Send Test Webhook
+            </Button>
             <Input label="Auth Header Name" placeholder="Auth Header Name" {...register('webhook.authHeaderName')} />
             <Controller
               control={control}

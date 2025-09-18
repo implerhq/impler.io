@@ -11,6 +11,7 @@ export enum UploadStatusEnum {
   'PROCESSING' = 'Processing',
   'COMPLETED' = 'Completed',
   'TERMINATED' = 'Terminated',
+  'RETRIED' = 'Retried',
 }
 
 export const SupportedFileMimeTypes = [
@@ -104,11 +105,13 @@ export interface ISendDataParameters {
   method?: 'POST' | string;
   uploadId: string;
   headers?: Record<string, string>;
+  isRetry?: boolean;
 }
 
 export type SendWebhookData = {
   uploadId: string;
   cache?: SendWebhookCachedData;
+  isRetry?: boolean;
 };
 
 export type SendFailedWebhookData = {

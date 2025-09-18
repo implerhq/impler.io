@@ -276,6 +276,10 @@ const routes: Record<string, Route> = {
     url: (projectId) => `/v1/activity/${projectId}/summary`,
     method: 'GET',
   },
+  [API_KEYS.ACTIVITY_RETRY]: {
+    url: (uploadId) => `/v1/activity/${uploadId}/retry`,
+    method: 'POST',
+  },
 
   // Security
   [API_KEYS.REGENERATE]: {
