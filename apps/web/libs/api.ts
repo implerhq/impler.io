@@ -239,6 +239,11 @@ const routes: Record<string, Route> = {
     method: 'POST',
   },
 
+  [API_KEYS.TEMPLATE_SAMPLE_GET]: {
+    url: (templateId: string) => `/v1/template/${templateId}/send-sample`,
+    method: 'POST',
+  },
+
   // Destination
   [API_KEYS.DESTINATION_FETCH]: {
     url: (templateId) => `/v1/template/${templateId}/destination`,

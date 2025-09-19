@@ -1,3 +1,4 @@
+/* eslint-disable multiline-comment-style */
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -70,6 +71,7 @@ export function useDestination({ template }: UseDestinationProps) {
       },
     }
   );
+
   const { mutate: mapBubbleIoColumns, isLoading: isMapBubbleIoColumnsLoading } = useMutation<
     IDestinationData,
     IErrorObject,
@@ -95,6 +97,43 @@ export function useDestination({ template }: UseDestinationProps) {
       },
     }
   );
+  // const { data: templateColumns } = useQuery<unknown, IErrorObject, ISchemaItem[], [string, string]>(
+  //   [API_KEYS.TEMPLATE_COLUMNS_LIST, template._id],
+  //   () => commonApi<ISchemaItem[]>(API_KEYS.TEMPLATE_COLUMNS_LIST as any, { parameters: [template._id] }),
+  //   {
+  //     onSuccess(data) {
+  //       console.log(data.map((item) => item.key));
+  //     },
+  //     enabled: !!template._id,
+  //   }
+  // );
+
+  const { mutate: sendSampleRequest, isLoading: isSendSampleRequestLoading } = useMutation<unknown, IErrorObject, void>(
+    () =>
+      commonApi<unknown>(API_KEYS.TEMPLATE_SAMPLE_GET as any, {
+        parameters: [template._id],
+        // body: sampleColumns,
+      }),
+    {
+      onSuccess: () => {
+        notify(NOTIFICATION_KEYS.DESTINATION_UPDATED, {
+          title: 'Sample request sent successfully',
+          message: 'Your sample data has been processed',
+          color: 'green',
+        });
+      },
+      onError(error) {
+        console.log('❌ Sample request failed:', error);
+
+        notify(NOTIFICATION_KEYS.ERROR_OCCURED, {
+          title: 'Failed to send sample request',
+          message: error?.message,
+          color: 'red',
+        });
+      },
+    }
+  );
+
   const mapBubbleIoColumnsClick = () => {
     modals.openConfirmModal({
       centered: true,
@@ -163,6 +202,8 @@ export function useDestination({ template }: UseDestinationProps) {
     setDestination,
     resetDestination,
     updateDestination,
+    sendSampleRequest,
+    isSendSampleRequestLoading,
     mapBubbleIoColumns,
     mapBubbleIoColumnsClick,
     isMapBubbleIoColumnsLoading,

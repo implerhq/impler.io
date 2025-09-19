@@ -213,7 +213,14 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
                 pipeline: [
                   {
                     $match: {
-                      $expr: { $eq: ['$_uploadId', '$$uploadId'] },
+                      $expr: {
+                        $and: [
+                          { $eq: ['$_uploadId', '$$uploadId'] },
+                          {
+                            $gte: ['$callDate', { $dateSubtract: { startDate: new Date(), unit: 'day', amount: 30 } }],
+                          },
+                        ],
+                      },
                     },
                   },
                   {
@@ -223,11 +230,13 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
                       error: 1,
                       failedReason: 1,
                       isRetry: 1,
+                      callDate: 1,
+                      createdAt: 1,
                     },
                   },
                   {
                     $sort: {
-                      createdAt: -1,
+                      callDate: -1,
                     },
                   },
                 ],

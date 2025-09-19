@@ -95,8 +95,6 @@ export class SendWebhookDataConsumer extends BaseConsumer {
         isRetry,
       };
 
-      console.log('All Data is', allData);
-
       const response = await this.makeApiCall(allData);
 
       await this.makeResponseEntry({

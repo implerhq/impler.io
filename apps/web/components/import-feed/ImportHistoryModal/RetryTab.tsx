@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Stack,
   Group,
@@ -21,6 +21,7 @@ import { Alert } from '@ui/Alert';
 import { IHistoryRecord } from '@impler/shared';
 import { formatDate, getStatusColor, getStatusSymbol, renderJSONContent } from '@shared/utils';
 import { InformationIcon } from '@assets/icons/Information.icon';
+import { Pagination } from '@ui/pagination';
 // import { RedoIcon } from '@assets/icons/Redo.icon';
 
 interface WebhookLog {
@@ -37,9 +38,17 @@ interface RetryTabProps {
 }
 
 export function RetryTab({ record }: RetryTabProps) {
-  console.log('RECORD', record);
-  const webhookLogs = (record as any).webhookLogs || [];
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(5);
+
+  const webhookLogs = (record as IHistoryRecord & { webhookLogs?: WebhookLog[] }).webhookLogs || [];
   const retryLogs = webhookLogs.filter((log: WebhookLog) => log.isRetry === true);
+
+  // Pagination logic
+  const totalRetries = retryLogs.length;
+  const totalPages = Math.ceil(totalRetries / limit);
+  const startIndex = (page - 1) * limit;
+  const paginatedRetryLogs = retryLogs.slice(startIndex, startIndex + limit);
   const hasRetryLogs = retryLogs.length > 0;
 
   return (
@@ -98,11 +107,11 @@ export function RetryTab({ record }: RetryTabProps) {
           {/* Retry Timeline */}
           <ScrollArea style={{ flex: 1, maxHeight: '100%' }} scrollbarSize={6}>
             <Timeline active={retryLogs.length} bulletSize={24} lineWidth={2}>
-              {retryLogs.map((log: WebhookLog, index: number) => (
+              {paginatedRetryLogs.map((log: WebhookLog, index: number) => (
                 <Timeline.Item
                   key={index}
                   bullet={<Text size="sm">{getStatusSymbol(log.status)}</Text>}
-                  title={`Retry Attempt #${index + 1}`}
+                  title={`Retry Attempt #${retryLogs.length - (startIndex + index)}`}
                   color={getStatusColor(log.status)}
                 >
                   <Paper withBorder p="md" mt="xs" radius="sm">
@@ -171,6 +180,20 @@ export function RetryTab({ record }: RetryTabProps) {
               ))}
             </Timeline>
           </ScrollArea>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <Pagination
+              limit={limit}
+              onLimitChange={setLimit}
+              dataLength={retryLogs.length}
+              page={page}
+              setPage={setPage}
+              totalPages={totalPages}
+              totalRecords={retryLogs.length}
+              size="sm"
+            />
+          )}
         </>
       ) : (
         <Alert variant="light" color="blue">

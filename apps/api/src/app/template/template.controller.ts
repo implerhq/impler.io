@@ -47,6 +47,7 @@ import {
   DuplicateTemplateCommand,
   UpdateValidationsCommand,
   GetImportFileSchema,
+  SendSampleRequest,
 } from './usecases';
 
 import { TemplateResponseDto } from './dtos/template-response.dto';
@@ -89,7 +90,8 @@ export class TemplateController {
     private mapBubbleIoColumns: MapBubbleIoColumns,
     private updateCustomization: UpdateCustomization,
     private updateTemplateColumns: UpdateTemplateColumns,
-    private getImportFileSchema: GetImportFileSchema
+    private getImportFileSchema: GetImportFileSchema,
+    private sendSampleRequest: SendSampleRequest
   ) {}
 
   @Get(':templateId')
@@ -379,5 +381,15 @@ export class TemplateController {
     @Body() body: UpdateValidationsRequestDto
   ): Promise<UpdateValidationResponseDto> {
     return this.updateValidations.execute(templateId, UpdateValidationsCommand.create(body));
+  }
+
+  @Post(':templateId/send-sample')
+  @ApiOperation({
+    summary: 'Send sample request for template processing',
+  })
+  async sendSampleRequestRoute(@Param('templateId', ValidateMongoId) templateId: string) {
+    return await this.sendSampleRequest.execute({
+      templateId,
+    });
   }
 }
