@@ -47,7 +47,7 @@ export class SendSampleRequest implements OnModuleInit {
         sampleData,
         webhookDestination,
         chunkSize,
-        extra,
+        extra: extra as string,
         page: 1,
         authHeaderValue,
       });
@@ -268,7 +268,7 @@ export class SendSampleRequest implements OnModuleInit {
       data: sampleData,
       totalRecords: sampleData.length,
       chunkSize: sampleData.length,
-      extra: extra ? JSON.parse(extra as string) : '',
+      extra: extra ? this.parseExtraData(extra as string) : '',
       totalPages,
     };
 
@@ -287,6 +287,7 @@ export class SendSampleRequest implements OnModuleInit {
       data: sendData,
       uploadId: sendData.uploadId,
       page,
+      extra,
       method: 'POST',
       url: webhookUrl,
       headers,
@@ -296,10 +297,30 @@ export class SendSampleRequest implements OnModuleInit {
     return await this.makeApiCall(allData);
   }
 
+  private parseExtraData(extra: string): any {
+    if (!extra) return '';
+
+    const trimmed = extra.trim();
+
+    // If it looks like JSON (starts with { or [), try to parse it
+    if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+      try {
+        return JSON.parse(extra);
+      } catch {
+        // If JSON parsing fails, return as plain string
+        return extra;
+      }
+    }
+
+    // Return plain string as-is
+    return extra;
+  }
+
   private async makeApiCall(allData: {
     data: any;
     uploadId: string;
     page: number;
+    extra: JSON | string;
     method: string;
     url: string;
     headers: any;
