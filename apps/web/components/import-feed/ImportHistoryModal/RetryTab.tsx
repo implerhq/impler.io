@@ -17,8 +17,7 @@ import {
   Card,
 } from '@mantine/core';
 import { Alert } from '@ui/Alert';
-import { IHistoryRecord } from '@impler/shared';
-import { getStatusColor, getStatusSymbol, renderJSONContent } from '@shared/utils';
+import { getStatusColor, getStatusSymbol } from '@shared/utils';
 import { InformationIcon } from '@assets/icons/Information.icon';
 import dayjs from 'dayjs';
 import { DATE_FORMATS } from '@config';
@@ -45,18 +44,13 @@ interface UseWebhookLogsReturn {
 }
 
 interface RetryTabProps {
-  record: IHistoryRecord;
   webhookLogsData?: UseWebhookLogsReturn;
 }
 
-export function RetryTab({ record, webhookLogsData }: RetryTabProps) {
-  const allWebhookLogs =
-    webhookLogsData!.webhookLogs!.length > 0
-      ? webhookLogsData!.webhookLogs!
-      : (record as IHistoryRecord & { webhookLogs?: WebhookLog[] }).webhookLogs || [];
+export function RetryTab({ webhookLogsData }: RetryTabProps) {
+  const retryLogs = webhookLogsData?.webhookLogs || [];
 
-  const retryLogs = allWebhookLogs?.filter((log: WebhookLog) => log.isRetry === true);
-  const hasRetryLogs = retryLogs!.length > 0;
+  const hasRetryLogs = retryLogs.length > 0;
 
   return (
     <Stack>
@@ -142,7 +136,31 @@ export function RetryTab({ record, webhookLogsData }: RetryTabProps) {
                       <Box mb="sm">
                         <Accordion variant="contained">
                           <Accordion.Item value={`errorDetails-${index}`}>
-                            <Accordion.Control>Error Details</Accordion.Control>
+                            <Accordion.Control>
+                              <Flex justify="space-between" align="center">
+                                <Text>Error Details</Text>
+                                <CopyButton
+                                  value={
+                                    typeof log.error === 'object' ? JSON.stringify(log.error, null, 2) : log.error || ''
+                                  }
+                                >
+                                  {({ copied, copy }) => (
+                                    <Tooltip label={copied ? 'Copied' : 'Copy error details'}>
+                                      <ActionIcon
+                                        variant="subtle"
+                                        size="sm"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          copy();
+                                        }}
+                                      >
+                                        <CopyIcon size="xs" />
+                                      </ActionIcon>
+                                    </Tooltip>
+                                  )}
+                                </CopyButton>
+                              </Flex>
+                            </Accordion.Control>
                             <Accordion.Panel>
                               <Code block c="white" p="xs">
                                 {typeof log.error === 'object' ? JSON.stringify(log.error, null, 2) : log.error}
@@ -150,32 +168,6 @@ export function RetryTab({ record, webhookLogsData }: RetryTabProps) {
                             </Accordion.Panel>
                           </Accordion.Item>
                         </Accordion>
-                      </Box>
-                    )}
-
-                    {log.dataContent && (
-                      <Box>
-                        <Flex justify="space-between" align="center" mb={4}>
-                          <Text size="xs" c="dimmed">
-                            Retry Data Content
-                          </Text>
-                          <CopyButton
-                            value={typeof log.error === 'object' ? JSON.stringify(log.error, null, 2) : log.error || ''}
-                          >
-                            {({ copied, copy }) => (
-                              <Tooltip label={copied ? 'Copied' : 'Copy error details'}>
-                                <ActionIcon variant="subtle" size="sm" onClick={copy}>
-                                  <CopyIcon size="xs" />
-                                </ActionIcon>
-                              </Tooltip>
-                            )}
-                          </CopyButton>
-                        </Flex>
-                        <ScrollArea style={{ maxHeight: 200 }}>
-                          <Code block p="sm">
-                            {renderJSONContent(log.dataContent)}
-                          </Code>
-                        </ScrollArea>
                       </Box>
                     )}
                   </Paper>

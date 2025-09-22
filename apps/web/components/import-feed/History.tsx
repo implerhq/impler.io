@@ -86,7 +86,7 @@ export function History() {
               key: 'totalRecords',
             },
             {
-              title: 'View Details',
+              title: 'View History',
               key: 'details',
               width: 100,
               Cell(item: IHistoryRecord) {

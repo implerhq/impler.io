@@ -60,7 +60,7 @@ export type CommonCachedData = {
   name: string; // template name
   extra?: string;
   authHeaderName: string;
-  authHeaderValue: string;
+  authHeaderValue?: string;
   retryInterval?: number;
   retryCount?: number;
   projectId: string;

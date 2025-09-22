@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import {
   Stack,
   Group,
@@ -20,11 +20,11 @@ import {
 } from '@mantine/core';
 import { Alert } from '@ui/Alert';
 import { IHistoryRecord } from '@impler/shared';
-import { getStatusColor, getStatusSymbol, renderJSONContent } from '@shared/utils';
+import { getStatusColor, getStatusSymbol } from '@shared/utils';
 import { InformationIcon } from '@assets/icons/Information.icon';
 import { useWebhookLogs } from '@hooks/useWebhookLogs';
 import dayjs from 'dayjs';
-import { DATE_FORMATS } from '@config';
+import { DATE_FORMATS, VARIABLES } from '@config';
 import { CopyIcon } from '@assets/icons/Copy.icon';
 
 interface WebhookLog {
@@ -55,7 +55,7 @@ interface WebhookLogsTabProps {
 export function WebhookLogsTab({ record, webhookLogsData }: WebhookLogsTabProps) {
   const internalWebhookLogsData = useWebhookLogs({
     uploadId: record._id,
-    limit: 10,
+    limit: VARIABLES.TEN,
     enabled: !webhookLogsData && !!record._id,
   });
 
@@ -64,26 +64,6 @@ export function WebhookLogsTab({ record, webhookLogsData }: WebhookLogsTabProps)
     webhookLogsData || internalWebhookLogsData;
 
   const isUsingApiData = webhookLogs.length > 0;
-
-  const handleScroll = useCallback(
-    (position: { x: number; y: number }) => {
-      if (!isUsingApiData || !hasNextPage || isFetchingNextPage) return;
-
-      // Check if we're near the bottom using the position from onScrollPositionChange
-      const scrollElement = document.querySelector('[data-radix-scroll-area-viewport]');
-      if (scrollElement) {
-        const { scrollHeight, clientHeight } = scrollElement;
-        const isNearBottom = position.y + clientHeight >= scrollHeight - 100;
-
-        if (isNearBottom) {
-          fetchNextPage();
-        }
-      }
-    },
-    [isUsingApiData, hasNextPage, isFetchingNextPage, fetchNextPage]
-  );
-
-  console.log(webhookLogs);
 
   return (
     <Stack>
@@ -94,7 +74,7 @@ export function WebhookLogsTab({ record, webhookLogsData }: WebhookLogsTabProps)
       </Group>
 
       {webhookLogs.length > 0 ? (
-        <ScrollArea onScrollPositionChange={handleScroll}>
+        <ScrollArea>
           <Timeline active={webhookLogs.length} bulletSize={24} lineWidth={2}>
             {webhookLogs.map((log: WebhookLog, index: number) => (
               <Timeline.Item
@@ -124,28 +104,25 @@ export function WebhookLogsTab({ record, webhookLogsData }: WebhookLogsTabProps)
                   {log.error && (
                     <Box mb="sm">
                       <Accordion variant="contained">
-                        <Accordion.Item value="errorDetails">
-                          <Accordion.Control>Error Details</Accordion.Control>
-                          <Accordion.Panel>
-                            <Code block c="white" p="xs">
-                              {typeof log.error === 'object' ? JSON.stringify(log.error, null, 2) : log.error}
-                            </Code>
-                          </Accordion.Panel>
-                        </Accordion.Item>
-                      </Accordion>
-                    </Box>
-                  )}
-                  {log.dataContent && (
-                    <Box>
-                      <Accordion variant="contained">
-                        <Accordion.Item value="dataContent">
+                        <Accordion.Item value={`errorDetails-${index}`}>
                           <Accordion.Control>
                             <Flex justify="space-between" align="center">
-                              <Text>Data Content</Text>
-                              <CopyButton value={renderJSONContent(log.status)}>
+                              <Text>Error Details</Text>
+                              <CopyButton
+                                value={
+                                  typeof log.error === 'object' ? JSON.stringify(log.error, null, 2) : log.error || ''
+                                }
+                              >
                                 {({ copied, copy }) => (
-                                  <Tooltip label={copied ? 'Copied' : 'Copy data content'}>
-                                    <ActionIcon variant="subtle" size="sm" onClick={copy}>
+                                  <Tooltip label={copied ? 'Copied' : 'Copy error details'}>
+                                    <ActionIcon
+                                      variant="subtle"
+                                      size="sm"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        copy();
+                                      }}
+                                    >
                                       <CopyIcon size="xs" />
                                     </ActionIcon>
                                   </Tooltip>
@@ -154,13 +131,9 @@ export function WebhookLogsTab({ record, webhookLogsData }: WebhookLogsTabProps)
                             </Flex>
                           </Accordion.Control>
                           <Accordion.Panel>
-                            <ScrollArea style={{ maxHeight: 200 }}>
-                              <Code block p="sm">
-                                <Text size="sm" mb="xs" fw={500}>
-                                  Status: {renderJSONContent(log.status)}
-                                </Text>
-                              </Code>
-                            </ScrollArea>
+                            <Code block c="white" p="xs">
+                              {typeof log.error === 'object' ? JSON.stringify(log.error, null, 2) : log.error}
+                            </Code>
                           </Accordion.Panel>
                         </Accordion.Item>
                       </Accordion>

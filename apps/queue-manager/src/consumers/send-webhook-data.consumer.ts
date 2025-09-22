@@ -51,7 +51,6 @@ export class SendWebhookDataConsumer extends BaseConsumer {
     const cachedData = data.cache || (await this.getInitialCachedData(uploadId));
 
     if (cachedData && cachedData.callbackUrl) {
-      console.log(cachedData);
       // Get valid data information
       let allDataJson: null | any[] = null;
       if (cachedData.allDataFilePath) {
@@ -219,7 +218,6 @@ export class SendWebhookDataConsumer extends BaseConsumer {
       name: templateData.name,
       page: 1,
       authHeaderName: webhookDestination?.authHeaderName,
-      authHeaderValue: webhookDestination?.authHeaderValue,
       retryInterval: webhookDestination.retryInterval,
       retryCount: webhookDestination.retryCount,
       allDataFilePath: this.fileNameService.getAllJsonDataFilePath(_uploadId),

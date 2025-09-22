@@ -62,7 +62,6 @@ export abstract class BaseConsumer {
       return baseResponse;
     } catch (error) {
       baseResponse.status = StatusEnum.FAILED;
-      console.log(error);
       if (axios.isAxiosError(error)) {
         if (error.response) {
           const formattedError = error.toJSON() as any;

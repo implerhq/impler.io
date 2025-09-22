@@ -413,6 +413,7 @@ export const DOCUMENTATION_REFERENCE_LINKS = {
   lengthValidator: 'https://docs.impler.io/validations/advanced#length',
   outputCustomization: 'https://docs.impler.io/features/output-customization',
   uniqueWithValidator: 'https://docs.impler.io/validations/advanced#unique-across-multiple-fields',
+  webhookAuthentication: 'https://docs.impler.io/data-retrieval/using-webhook#authentication',
 };
 
 export const COMPANY_SIZES = [

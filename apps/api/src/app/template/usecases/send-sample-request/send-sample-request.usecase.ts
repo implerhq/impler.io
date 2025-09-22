@@ -19,13 +19,18 @@ export class SendSampleRequest implements OnModuleInit {
     this.faker = (await import('@faker-js/faker')).faker;
   }
 
-  async execute({ templateId, extra }: { templateId: string; extra?: JSON | string }) {
+  async execute({
+    templateId,
+    extra,
+    authHeaderValue,
+  }: {
+    templateId: string;
+    extra?: JSON | string;
+    authHeaderValue?: string;
+  }) {
     const webhookDestination = await this.webookDataRepository.findOne({
       _templateId: templateId,
     });
-
-    console.log('authHeaderValue', webhookDestination.authHeaderValue);
-    console.log('authHeaderName', webhookDestination.authHeaderName);
 
     if (!webhookDestination?.callbackUrl) {
       throw new HttpException('Webhook URL not configured', HttpStatus.NOT_FOUND);
@@ -35,7 +40,6 @@ export class SendSampleRequest implements OnModuleInit {
     const chunkSize = webhookDestination.chunkSize || 5;
     const sampleRecordCount = 15; // Generate more records to test chunking
     const sampleData = this.generateSampleData(columns as IColumn[], sampleRecordCount);
-    const authHeaderValue = webhookDestination.authHeaderValue;
 
     try {
       const results = await this.sendChunkedData({

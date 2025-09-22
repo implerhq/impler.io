@@ -1,13 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsJSON, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class SendSampleRequestDto {
+  @ApiProperty({
+    description: 'Auth header value',
+    example: 'auth-header-value',
+  })
+  @IsString()
+  @IsOptional()
+  authHeaderValue?: string;
+
   @ApiProperty({
     description: 'Extra data',
     example: 'extra-data',
   })
-  @IsJSON()
   @IsString()
   @IsOptional()
-  extra?: JSON | string;
+  extra?: string;
 }

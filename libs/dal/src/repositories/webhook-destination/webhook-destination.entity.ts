@@ -5,8 +5,6 @@ export class WebhookDestinationEntity {
 
   authHeaderName: string;
 
-  authHeaderValue: string;
-
   chunkSize: number;
 
   _templateId: string;

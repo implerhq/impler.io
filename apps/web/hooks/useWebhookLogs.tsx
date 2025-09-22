@@ -65,16 +65,14 @@ export function useWebhookLogs({
         return currentPage < totalPages ? currentPage + 1 : undefined;
       },
       refetchOnWindowFocus: false,
-      staleTime: 30000, // 30 seconds
+      staleTime: 30000,
     }
   );
 
-  // Flatten all pages into a single array of webhook logs
   const webhookLogs = useMemo(() => {
     return data?.pages.flatMap((page) => page.data || []) || [];
   }, [data]);
 
-  // Get total records from the first page
   const totalRecords = useMemo(() => {
     return data?.pages[0]?.totalRecords || 0;
   }, [data]);

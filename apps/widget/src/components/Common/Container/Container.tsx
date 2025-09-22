@@ -49,7 +49,6 @@ export function Container({ children }: PropsWithChildren<{}>) {
         api.setAuthorizationToken(data.value.accessToken);
       }
 
-      console.log(data.value);
       setShowWidget(true);
       setSecondaryPayload({
         accessToken: data.value.accessToken,

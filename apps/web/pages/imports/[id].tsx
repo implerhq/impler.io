@@ -33,7 +33,7 @@ const Validator = dynamic(() => import('@components/imports/validator').then((mo
 function ImportDetails() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'schema' | 'destination' | 'snippet' | 'validator' | 'output'>();
-  const [webhookConfig, setWebhookConfig] = useState<{ extra?: string }>({});
+  const [webhookConfig, setWebhookConfig] = useState<{ authHeaderValue?: string; extra?: string }>({});
   const {
     meta,
     columns,
@@ -55,6 +55,7 @@ function ImportDetails() {
     projectId: templateData?._projectId,
     accessToken: profileInfo?.accessToken,
     onUploadComplete: onSpreadsheetImported,
+    authHeaderValue: webhookConfig.authHeaderValue || '',
     extra: webhookConfig.extra || '',
     appearance: {
       widget: {
@@ -93,7 +94,7 @@ function ImportDetails() {
       children: (
         <WidgetConfigurationModal
           template={templateData as ITemplate}
-          onConfigSubmit={(config: { extra?: string }) => {
+          onConfigSubmit={(config: { authHeaderValue?: string; extra?: string }) => {
             setWebhookConfig(config);
             modals.closeAll();
             showWidget();
