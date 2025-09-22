@@ -207,43 +207,6 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
               },
             },
             {
-              $lookup: {
-                from: 'webhooklogs',
-                let: { uploadId: { $toString: '$_id' } },
-                pipeline: [
-                  {
-                    $match: {
-                      $expr: {
-                        $and: [
-                          { $eq: ['$_uploadId', '$$uploadId'] },
-                          {
-                            $gte: ['$callDate', { $dateSubtract: { startDate: new Date(), unit: 'day', amount: 30 } }],
-                          },
-                        ],
-                      },
-                    },
-                  },
-                  {
-                    $project: {
-                      _id: 0,
-                      status: 1,
-                      error: 1,
-                      failedReason: 1,
-                      isRetry: 1,
-                      callDate: 1,
-                      createdAt: 1,
-                    },
-                  },
-                  {
-                    $sort: {
-                      callDate: -1,
-                    },
-                  },
-                ],
-                as: 'webhookLogs',
-              },
-            },
-            {
               $project: {
                 _id: 1,
                 _uploadedFileId: 1,

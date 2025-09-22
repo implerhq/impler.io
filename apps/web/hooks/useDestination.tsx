@@ -22,9 +22,6 @@ interface SendSampleRequestParams {
 }
 
 interface SampleWebhookFormData {
-  callbackUrl: string;
-  authHeaderName?: string;
-  authHeaderValue?: string;
   extraData?: string;
 }
 
@@ -34,7 +31,6 @@ export function useDestination({ template }: UseDestinationProps) {
 
   const sampleWebhookForm = useForm<SampleWebhookFormData>({
     defaultValues: {
-      authHeaderValue: undefined,
       extraData: undefined,
     },
   });
@@ -123,11 +119,10 @@ export function useDestination({ template }: UseDestinationProps) {
     isLoading: isSendSampleRequestLoading,
     isPending: isSendSampleRequestPending,
   } = useMutation<unknown, IErrorObject, SendSampleRequestParams>(
-    ({ templateId, authHeaderValue, extra }: SendSampleRequestParams) =>
+    ({ templateId, extra }: SendSampleRequestParams) =>
       commonApi<unknown>(API_KEYS.TEMPLATE_SAMPLE_GET as any, {
         parameters: [templateId || template._id],
         body: {
-          authHeaderValue: authHeaderValue || undefined,
           extra: extra || undefined,
         },
       }),
@@ -152,7 +147,6 @@ export function useDestination({ template }: UseDestinationProps) {
   const onSampleWebhookSubmit = (data: SampleWebhookFormData) => {
     const params: SendSampleRequestParams = {
       templateId: template._id,
-      authHeaderValue: data.authHeaderValue || undefined,
       extra: data.extraData || undefined,
     };
     sendSampleRequestApi(params);

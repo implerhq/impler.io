@@ -1,10 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
+
+import { commonApi } from '@libs/api';
+import { API_KEYS } from '@config';
+import { IErrorObject, IPaginationData } from '@impler/shared';
 
 interface UseWebhookLogsParams {
   uploadId: string;
-  page?: number;
   limit?: number;
   isRetry?: boolean;
+  enabled?: boolean;
 }
 
 interface WebhookLog {
@@ -18,80 +23,70 @@ interface WebhookLog {
   isRetry?: boolean;
 }
 
+type WebhookLogsResponse = IPaginationData<WebhookLog>;
+
 interface UseWebhookLogsReturn {
   webhookLogs: WebhookLog[];
   loading: boolean;
-  error: string | null;
-  totalPages: number;
+  error: IErrorObject | null;
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
+  fetchNextPage: () => void;
   totalRecords: number;
+  refetch: () => void;
 }
 
 export function useWebhookLogs({
   uploadId,
-  page = 1,
   limit = 10,
   isRetry = false,
+  enabled = true,
 }: UseWebhookLogsParams): UseWebhookLogsReturn {
-  const [webhookLogs, setWebhookLogs] = useState<WebhookLog[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalRecords, setTotalRecords] = useState(0);
+  const { data, error, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage, refetch } = useInfiniteQuery<
+    WebhookLogsResponse,
+    IErrorObject
+  >(
+    [API_KEYS.ACTIVITY_WEBHOOK_LOGS, uploadId, limit, isRetry],
+    ({ pageParam = 1 }) =>
+      commonApi<WebhookLogsResponse>(API_KEYS.ACTIVITY_WEBHOOK_LOGS as any, {
+        parameters: [uploadId],
+        query: {
+          page: pageParam,
+          limit,
+          ...(isRetry && { isRetry: 'true' }),
+        },
+      }),
+    {
+      enabled: enabled && !!uploadId,
+      getNextPageParam: (lastPage, allPages) => {
+        const currentPage = allPages.length;
+        const totalPages = Math.ceil((lastPage.totalRecords || 0) / limit);
 
-  useEffect(() => {
-    const fetchWebhookLogs = async () => {
-      if (!uploadId) return;
+        return currentPage < totalPages ? currentPage + 1 : undefined;
+      },
+      refetchOnWindowFocus: false,
+      staleTime: 30000, // 30 seconds
+    }
+  );
 
-      setLoading(true);
-      setError(null);
+  // Flatten all pages into a single array of webhook logs
+  const webhookLogs = useMemo(() => {
+    return data?.pages.flatMap((page) => page.data || []) || [];
+  }, [data]);
 
-      try {
-        const params = new URLSearchParams({
-          page: page.toString(),
-          limit: limit.toString(),
-        });
-
-        if (isRetry) {
-          params.append('isRetry', 'true');
-        }
-
-        const response = await fetch(`/api/v1/activity/upload/${uploadId}/webhook-logs?${params}`, {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        if (data) {
-          setWebhookLogs(data.data || []);
-          setTotalPages(data.totalPages || 0);
-          setTotalRecords(data.totalRecords || 0);
-        }
-      } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch webhook logs');
-        setWebhookLogs([]);
-        setTotalPages(0);
-        setTotalRecords(0);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchWebhookLogs();
-  }, [uploadId, page, limit, isRetry]);
+  // Get total records from the first page
+  const totalRecords = useMemo(() => {
+    return data?.pages[0]?.totalRecords || 0;
+  }, [data]);
 
   return {
     webhookLogs,
-    loading,
+    loading: isLoading,
     error,
-    totalPages,
+    hasNextPage: !!hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
     totalRecords,
+    refetch,
   };
 }

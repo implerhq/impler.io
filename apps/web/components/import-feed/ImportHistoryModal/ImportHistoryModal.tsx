@@ -7,6 +7,8 @@ import { WebhookLogsTab } from './WebhookLogsTab';
 import { RetryTab } from './RetryTab';
 import { Button } from '@ui/button';
 import { useHistory } from '@hooks/useHistory';
+import { useWebhookLogs } from '@hooks/useWebhookLogs';
+import { VARIABLES } from '@config';
 
 interface ImportHistoryModalProps {
   record: IHistoryRecord;
@@ -22,7 +24,11 @@ export function ImportHistoryModal({ record, onDownloadFile, isRetryLoading }: I
 
   const displayRecord = currentRecord || record;
 
-  const hasWebhookLogs = displayRecord.webhookLogs?.length > 0 || false;
+  const webhookLogsData = useWebhookLogs({
+    uploadId: record._id,
+    limit: VARIABLES.TEN,
+    enabled: !!record._id,
+  });
 
   const handleDownloadFile = () => {
     onDownloadFile([record._id, record.originalFileName]);
@@ -40,7 +46,7 @@ export function ImportHistoryModal({ record, onDownloadFile, isRetryLoading }: I
   };
 
   const canRetry =
-    displayRecord.webhookLogs?.length > 0 &&
+    webhookLogsData.webhookLogs.length > 0 &&
     (displayRecord.status === ImportJobHistoryStatusEnum.PROCESSING ||
       displayRecord.status === ImportJobHistoryStatusEnum.COMPLETED);
 
@@ -50,23 +56,21 @@ export function ImportHistoryModal({ record, onDownloadFile, isRetryLoading }: I
         <Tabs.List grow>
           <Tabs.Tab value="overview">Overview</Tabs.Tab>
           <Tabs.Tab value="logs">Webhook Logs</Tabs.Tab>
-          {hasWebhookLogs && <Tabs.Tab value="retry">Retry History</Tabs.Tab>}
+          <Tabs.Tab value="retry">Retry History</Tabs.Tab>
         </Tabs.List>
 
         <Box h="60vh" style={{ overflowY: 'auto' }} py="md">
-          <Tabs.Panel value="overview">
+          <Tabs.Panel value="overview" px="md">
             <OverviewTab record={displayRecord} />
           </Tabs.Panel>
 
-          <Tabs.Panel value="logs">
-            <WebhookLogsTab record={displayRecord} />
+          <Tabs.Panel value="logs" px="md">
+            <WebhookLogsTab record={displayRecord} webhookLogsData={webhookLogsData} />
           </Tabs.Panel>
 
-          {hasWebhookLogs && (
-            <Tabs.Panel value="retry">
-              <RetryTab record={displayRecord} />
-            </Tabs.Panel>
-          )}
+          <Tabs.Panel value="retry" px="md">
+            <RetryTab record={displayRecord} webhookLogsData={webhookLogsData} />
+          </Tabs.Panel>
         </Box>
       </Tabs>
 

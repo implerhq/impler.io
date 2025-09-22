@@ -19,18 +19,13 @@ export class SendSampleRequest implements OnModuleInit {
     this.faker = (await import('@faker-js/faker')).faker;
   }
 
-  async execute({
-    templateId,
-    authHeaderValue,
-    extra,
-  }: {
-    templateId: string;
-    authHeaderValue?: string;
-    extra?: string;
-  }) {
+  async execute({ templateId, extra }: { templateId: string; extra?: JSON | string }) {
     const webhookDestination = await this.webookDataRepository.findOne({
       _templateId: templateId,
     });
+
+    console.log('authHeaderValue', webhookDestination.authHeaderValue);
+    console.log('authHeaderName', webhookDestination.authHeaderName);
 
     if (!webhookDestination?.callbackUrl) {
       throw new HttpException('Webhook URL not configured', HttpStatus.NOT_FOUND);
@@ -40,6 +35,7 @@ export class SendSampleRequest implements OnModuleInit {
     const chunkSize = webhookDestination.chunkSize || 5;
     const sampleRecordCount = 15; // Generate more records to test chunking
     const sampleData = this.generateSampleData(columns as IColumn[], sampleRecordCount);
+    const authHeaderValue = webhookDestination.authHeaderValue;
 
     try {
       const results = await this.sendChunkedData({
@@ -206,7 +202,7 @@ export class SendSampleRequest implements OnModuleInit {
     sampleData: Record<string, any>[];
     webhookDestination: any;
     chunkSize: number;
-    extra?: string;
+    extra?: JSON | string;
     authHeaderValue?: string;
     page?: number;
   }): Promise<any[]> {
@@ -256,7 +252,7 @@ export class SendSampleRequest implements OnModuleInit {
     template: any,
     page = 1,
     totalPages = 1,
-    extra?: string,
+    extra?: JSON | string,
     authHeaderValue?: string
   ) {
     const uploadId = `sample-${template._id}-${Date.now()}-page-${page}`;
@@ -268,7 +264,7 @@ export class SendSampleRequest implements OnModuleInit {
       data: sampleData,
       totalRecords: sampleData.length,
       chunkSize: sampleData.length,
-      extra: extra ? JSON.parse(extra) : '',
+      extra: extra ? JSON.parse(extra as string) : '',
       totalPages,
     };
 

@@ -394,8 +394,7 @@ export class TemplateController {
   ) {
     return await this.sendSampleRequest.execute({
       templateId,
-      authHeaderValue: body.authHeaderValue,
-      extra: JSON.stringify(body.extra),
+      extra: body.extra,
     });
   }
 }

@@ -12,6 +12,7 @@ export enum BubbleDestinationEnvironmentEnum {
 export interface IWebhookData {
   callbackUrl: string;
   authHeaderName: string;
+  authHeaderValue?: string;
   chunkSize: number;
   retryInterval?: number;
   retryCount?: number;

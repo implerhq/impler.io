@@ -33,14 +33,30 @@ interface WebhookLog {
   isRetry?: boolean;
 }
 
-interface RetryTabProps {
-  record: IHistoryRecord;
+interface UseWebhookLogsReturn {
+  webhookLogs: WebhookLog[];
+  loading: boolean;
+  error: any;
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
+  fetchNextPage: () => void;
+  totalRecords: number;
+  refetch: () => void;
 }
 
-export function RetryTab({ record }: RetryTabProps) {
-  const webhookLogs = (record as IHistoryRecord & { webhookLogs?: WebhookLog[] }).webhookLogs || [];
-  const retryLogs = webhookLogs.filter((log: WebhookLog) => log.isRetry === true);
-  const hasRetryLogs = retryLogs.length > 0;
+interface RetryTabProps {
+  record: IHistoryRecord;
+  webhookLogsData?: UseWebhookLogsReturn;
+}
+
+export function RetryTab({ record, webhookLogsData }: RetryTabProps) {
+  const allWebhookLogs =
+    webhookLogsData!.webhookLogs!.length > 0
+      ? webhookLogsData!.webhookLogs!
+      : (record as IHistoryRecord & { webhookLogs?: WebhookLog[] }).webhookLogs || [];
+
+  const retryLogs = allWebhookLogs?.filter((log: WebhookLog) => log.isRetry === true);
+  const hasRetryLogs = retryLogs!.length > 0;
 
   return (
     <Stack>
@@ -49,7 +65,7 @@ export function RetryTab({ record }: RetryTabProps) {
           Retry History
         </Text>
         <Badge variant="light" color={hasRetryLogs ? 'blue' : 'gray'} size="sm">
-          {retryLogs.length} Retry{retryLogs.length !== 1 ? 'ies' : ''}
+          {retryLogs?.length} Retry{retryLogs?.length !== 1 ? 'ies' : ''}
         </Badge>
       </Group>
 
@@ -66,7 +82,7 @@ export function RetryTab({ record }: RetryTabProps) {
                   Total Retries
                 </Text>
                 <Text size="lg" fw={700} c="blue">
-                  {retryLogs.length}
+                  {retryLogs?.length}
                 </Text>
               </Box>
 
@@ -75,7 +91,7 @@ export function RetryTab({ record }: RetryTabProps) {
                   Successful Retries
                 </Text>
                 <Text size="lg" fw={700} c="green">
-                  {retryLogs.filter((log: WebhookLog) => log.status === 'Success').length}
+                  {retryLogs?.filter((log: WebhookLog) => log.status === 'Success').length}
                 </Text>
               </Box>
 
@@ -84,19 +100,19 @@ export function RetryTab({ record }: RetryTabProps) {
                   Failed Retries
                 </Text>
                 <Text size="lg" fw={700} c="red">
-                  {retryLogs.filter((log: WebhookLog) => log.status === 'Failed').length}
+                  {retryLogs?.filter((log: WebhookLog) => log.status === 'Failed').length}
                 </Text>
               </Box>
             </Group>
           </Card>
 
           <ScrollArea style={{ flex: 1, maxHeight: '100%' }} scrollbarSize={6}>
-            <Timeline active={retryLogs.length} bulletSize={24} lineWidth={2}>
-              {retryLogs.map((log: WebhookLog, index: number) => (
+            <Timeline active={retryLogs?.length} bulletSize={24} lineWidth={2}>
+              {retryLogs?.map((log: WebhookLog, index: number) => (
                 <Timeline.Item
                   key={index}
                   bullet={<Text size="sm">{getStatusSymbol(log.status)}</Text>}
-                  title={`Retry Attempt #${retryLogs.length - index}`}
+                  title={`Retry Attempt #${retryLogs?.length - index}`}
                   color={getStatusColor(log.status)}
                 >
                   <Paper withBorder p="md" mt="xs" radius="sm">

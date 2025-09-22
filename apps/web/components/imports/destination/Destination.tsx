@@ -88,6 +88,19 @@ export function Destination({ template }: DestinationProps) {
             />
 
             <Input label="Auth Header Name" placeholder="Auth Header Name" {...register('webhook.authHeaderName')} />
+
+            <Input
+              label="Auth Header Value"
+              placeholder="e.g., Bearer token123, your-api-key"
+              description={
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span>You can also configure the Extra Data from the frontend SDK</span>
+                </div>
+              }
+              error={errors.webhook?.authHeaderValue?.message}
+              {...register('webhook.authHeaderValue')}
+            />
+
             <Controller
               control={control}
               name="webhook.chunkSize"

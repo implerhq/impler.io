@@ -10,6 +10,9 @@ const webhookDestinationSchema = new Schema(
     authHeaderName: {
       type: Schema.Types.String,
     },
+    authHeaderValue: {
+      type: Schema.Types.String,
+    },
     chunkSize: {
       type: Schema.Types.Number,
     },

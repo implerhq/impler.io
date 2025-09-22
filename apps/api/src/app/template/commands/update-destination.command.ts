@@ -23,6 +23,10 @@ export class WebhookDestinationObject {
   @IsOptional()
   authHeaderName?: string;
 
+  @IsString()
+  @IsOptional()
+  authHeaderValue?: string;
+
   @IsNumber({
     allowNaN: false,
   })

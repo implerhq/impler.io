@@ -33,7 +33,7 @@ const Validator = dynamic(() => import('@components/imports/validator').then((mo
 function ImportDetails() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'schema' | 'destination' | 'snippet' | 'validator' | 'output'>();
-  const [webhookConfig, setWebhookConfig] = useState<{ authHeaderValue?: string; extra?: string }>({});
+  const [webhookConfig, setWebhookConfig] = useState<{ extra?: string }>({});
   const {
     meta,
     columns,
@@ -49,14 +49,12 @@ function ImportDetails() {
     templateId: router.query.id as string,
   });
 
-  console.log(webhookConfig);
   const { showWidget, isImplerInitiated } = useImpler({
     primaryColor: colors.faintYellow,
     templateId: templateData?._id,
     projectId: templateData?._projectId,
     accessToken: profileInfo?.accessToken,
     onUploadComplete: onSpreadsheetImported,
-    authHeaderValue: webhookConfig.authHeaderValue || '',
     extra: webhookConfig.extra || '',
     appearance: {
       widget: {
@@ -95,7 +93,7 @@ function ImportDetails() {
       children: (
         <WidgetConfigurationModal
           template={templateData as ITemplate}
-          onConfigSubmit={(config: { authHeaderValue?: string; extra?: string }) => {
+          onConfigSubmit={(config: { extra?: string }) => {
             setWebhookConfig(config);
             modals.closeAll();
             showWidget();

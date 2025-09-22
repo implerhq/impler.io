@@ -286,6 +286,11 @@ const routes: Record<string, Route> = {
     method: 'POST',
   },
 
+  [API_KEYS.ACTIVITY_WEBHOOK_LOGS]: {
+    url: (uploadId) => `/v1/activity/upload/${uploadId}/webhook-logs`,
+    method: 'GET',
+  },
+
   // Security
   [API_KEYS.REGENERATE]: {
     url: () => `/v1/environment/api-keys/regenerate`,

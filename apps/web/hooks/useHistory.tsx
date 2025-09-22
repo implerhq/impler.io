@@ -87,8 +87,7 @@ export function useHistory(recordId?: string) {
     ['retryImport'],
     (uploadId) => commonApi(API_KEYS.ACTIVITY_RETRY as any, { parameters: [uploadId] }),
     {
-      onSuccess(data: any) {
-        console.log('data is ', data);
+      onSuccess() {
         queryClient.invalidateQueries([API_KEYS.ACTIVITY_HISTORY, profileInfo?._projectId]);
         // Also refresh live data if we have a recordId
         if (recordId) {

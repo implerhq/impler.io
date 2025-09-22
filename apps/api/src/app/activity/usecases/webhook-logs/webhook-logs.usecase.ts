@@ -15,6 +15,11 @@ export class WebhookLogs {
       matchQuery.isRetry = isRetry;
     }
 
+    // ✅ Only include records newer than 30 days
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    matchQuery.callDate = { $gte: thirtyDaysAgo };
+
     const [logs, totalCount] = await Promise.all([
       this.webhookLogRepository.find(matchQuery, '', {
         sort: { callDate: -1 },

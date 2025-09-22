@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stack, Group, Text, TextInput as Input } from '@mantine/core';
+import { Stack, Group, Text } from '@mantine/core';
 import { Button } from '@ui/button';
 import { Controller } from 'react-hook-form';
 import { useDestination } from '../../../../hooks/useDestination';
@@ -13,26 +13,19 @@ interface SampleWebhookDataConfigurationProps {
 
 export function SampleWebhookDataConfiguration({ template }: SampleWebhookDataConfigurationProps) {
   const { sampleWebhookForm, isSendSampleRequestLoading } = useDestination({ template });
-  const { register, errors, control } = sampleWebhookForm;
+  const { errors, control } = sampleWebhookForm;
 
   return (
     <Stack spacing="lg" style={{ minWidth: 400 }}>
-      <Text size="sm" color="dimmed">
-        Add optional authentication headers and extra data for your webhook test
-      </Text>
-
       <form onSubmit={sampleWebhookForm.handleSubmit}>
         <Stack spacing="sm">
-          <Input
-            label="Auth Header Value"
-            placeholder="e.g., Bearer token123, your-api-key"
-            error={errors.authHeaderValue?.message}
-            {...register('authHeaderValue')}
-          />
-
           <div>
             <Text size="sm" weight={500} mb="xs">
               Extra Data
+            </Text>
+            <Text size="xs" c="dimmed" mb="sm">
+              Optional JSON data to include in your webhook test payload. This will be merged with the sample import
+              data.
             </Text>
             <Controller
               name="extraData"
