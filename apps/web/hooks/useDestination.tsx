@@ -9,14 +9,35 @@ import { track } from '@libs/amplitude';
 import { modals } from '@mantine/modals';
 import { API_KEYS, NOTIFICATION_KEYS } from '@config';
 import { DestinationsEnum, IErrorObject, IDestinationData, ITemplate } from '@impler/shared';
+import { SampleWebhookDataConfiguration } from '../components/imports/destination/SampleWebhookDataConfiguration';
 
 interface UseDestinationProps {
   template: ITemplate;
 }
 
+interface SendSampleRequestParams {
+  templateId?: string;
+  authHeaderValue?: string;
+  extra?: string;
+}
+
+interface SampleWebhookFormData {
+  callbackUrl: string;
+  authHeaderName?: string;
+  authHeaderValue?: string;
+  extraData?: string;
+}
+
 export function useDestination({ template }: UseDestinationProps) {
   const queryClient = useQueryClient();
   const [destination, setDestination] = useState<DestinationsEnum | undefined>();
+
+  const sampleWebhookForm = useForm<SampleWebhookFormData>({
+    defaultValues: {
+      authHeaderValue: undefined,
+      extraData: undefined,
+    },
+  });
   const {
     watch,
     reset,
@@ -97,42 +118,56 @@ export function useDestination({ template }: UseDestinationProps) {
       },
     }
   );
-  // const { data: templateColumns } = useQuery<unknown, IErrorObject, ISchemaItem[], [string, string]>(
-  //   [API_KEYS.TEMPLATE_COLUMNS_LIST, template._id],
-  //   () => commonApi<ISchemaItem[]>(API_KEYS.TEMPLATE_COLUMNS_LIST as any, { parameters: [template._id] }),
-  //   {
-  //     onSuccess(data) {
-  //       console.log(data.map((item) => item.key));
-  //     },
-  //     enabled: !!template._id,
-  //   }
-  // );
-
-  const { mutate: sendSampleRequest, isLoading: isSendSampleRequestLoading } = useMutation<unknown, IErrorObject, void>(
-    () =>
+  const {
+    mutate: sendSampleRequestApi,
+    isLoading: isSendSampleRequestLoading,
+    isPending: isSendSampleRequestPending,
+  } = useMutation<unknown, IErrorObject, SendSampleRequestParams>(
+    ({ templateId, authHeaderValue, extra }: SendSampleRequestParams) =>
       commonApi<unknown>(API_KEYS.TEMPLATE_SAMPLE_GET as any, {
-        parameters: [template._id],
-        // body: sampleColumns,
+        parameters: [templateId || template._id],
+        body: {
+          authHeaderValue: authHeaderValue || undefined,
+          extra: extra || undefined,
+        },
       }),
     {
       onSuccess: () => {
         notify(NOTIFICATION_KEYS.DESTINATION_UPDATED, {
-          title: 'Sample request sent successfully',
-          message: 'Your sample data has been processed',
+          title: 'Test webhook sent successfully',
+          message: 'Sample data delivered to your endpoint',
           color: 'green',
         });
       },
-      onError(error) {
-        console.log('❌ Sample request failed:', error);
-
+      onError(error: IErrorObject) {
         notify(NOTIFICATION_KEYS.ERROR_OCCURED, {
-          title: 'Failed to send sample request',
-          message: error?.message,
+          title: 'Failed to send test webhook',
+          message: error.message || 'Unable to reach webhook endpoint',
           color: 'red',
         });
       },
     }
   );
+
+  const onSampleWebhookSubmit = (data: SampleWebhookFormData) => {
+    const params: SendSampleRequestParams = {
+      templateId: template._id,
+      authHeaderValue: data.authHeaderValue || undefined,
+      extra: data.extraData || undefined,
+    };
+    sendSampleRequestApi(params);
+    modals.closeAll();
+  };
+
+  const openSampleRequestModal = () => {
+    modals.open({
+      title: 'Configure Test Webhook',
+      children: <SampleWebhookDataConfiguration templateId={template._id} template={template} />,
+      withCloseButton: true,
+      centered: true,
+      size: 'xl',
+    });
+  };
 
   const mapBubbleIoColumnsClick = () => {
     modals.openConfirmModal({
@@ -202,12 +237,20 @@ export function useDestination({ template }: UseDestinationProps) {
     setDestination,
     resetDestination,
     updateDestination,
-    sendSampleRequest,
+    sendSampleRequestApi,
+    openSampleRequestModal,
     isSendSampleRequestLoading,
+    isSendSampleRequestPending,
     mapBubbleIoColumns,
     mapBubbleIoColumnsClick,
     isMapBubbleIoColumnsLoading,
     onSubmit: handleSubmit(onSubmit),
     isUpdateImportLoading: isUpdateDestinationLoading,
+    sampleWebhookForm: {
+      register: sampleWebhookForm.register,
+      errors: sampleWebhookForm.formState.errors,
+      control: sampleWebhookForm.control,
+      handleSubmit: sampleWebhookForm.handleSubmit(onSampleWebhookSubmit),
+    },
   };
 }

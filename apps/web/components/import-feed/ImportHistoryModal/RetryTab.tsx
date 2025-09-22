@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Stack,
   Group,
@@ -15,14 +15,14 @@ import {
   Flex,
   Accordion,
   Card,
-  ThemeIcon,
 } from '@mantine/core';
 import { Alert } from '@ui/Alert';
 import { IHistoryRecord } from '@impler/shared';
-import { formatDate, getStatusColor, getStatusSymbol, renderJSONContent } from '@shared/utils';
+import { getStatusColor, getStatusSymbol, renderJSONContent } from '@shared/utils';
 import { InformationIcon } from '@assets/icons/Information.icon';
-import { Pagination } from '@ui/pagination';
-// import { RedoIcon } from '@assets/icons/Redo.icon';
+import dayjs from 'dayjs';
+import { DATE_FORMATS } from '@config';
+import { CopyIcon } from '@assets/icons/Copy.icon';
 
 interface WebhookLog {
   status: string;
@@ -38,21 +38,12 @@ interface RetryTabProps {
 }
 
 export function RetryTab({ record }: RetryTabProps) {
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(5);
-
   const webhookLogs = (record as IHistoryRecord & { webhookLogs?: WebhookLog[] }).webhookLogs || [];
   const retryLogs = webhookLogs.filter((log: WebhookLog) => log.isRetry === true);
-
-  // Pagination logic
-  const totalRetries = retryLogs.length;
-  const totalPages = Math.ceil(totalRetries / limit);
-  const startIndex = (page - 1) * limit;
-  const paginatedRetryLogs = retryLogs.slice(startIndex, startIndex + limit);
   const hasRetryLogs = retryLogs.length > 0;
 
   return (
-    <Stack style={{ height: '100%' }}>
+    <Stack>
       <Group>
         <Text size="lg" fw={600}>
           Retry History
@@ -64,14 +55,9 @@ export function RetryTab({ record }: RetryTabProps) {
 
       {hasRetryLogs ? (
         <>
-          {/* Retry Summary Card */}
           <Card withBorder radius="md" p="lg">
             <Group position="apart" mb="md">
               <Text size="sm">Retry Summary</Text>
-              <ThemeIcon variant="light" size="lg" color="blue">
-                {/* <RefreshIcon /> */}
-                <Text size="xs">hELLO</Text>
-              </ThemeIcon>
             </Group>
 
             <Group spacing="xl">
@@ -104,14 +90,13 @@ export function RetryTab({ record }: RetryTabProps) {
             </Group>
           </Card>
 
-          {/* Retry Timeline */}
           <ScrollArea style={{ flex: 1, maxHeight: '100%' }} scrollbarSize={6}>
             <Timeline active={retryLogs.length} bulletSize={24} lineWidth={2}>
-              {paginatedRetryLogs.map((log: WebhookLog, index: number) => (
+              {retryLogs.map((log: WebhookLog, index: number) => (
                 <Timeline.Item
                   key={index}
                   bullet={<Text size="sm">{getStatusSymbol(log.status)}</Text>}
-                  title={`Retry Attempt #${retryLogs.length - (startIndex + index)}`}
+                  title={`Retry Attempt #${retryLogs.length - index}`}
                   color={getStatusColor(log.status)}
                 >
                   <Paper withBorder p="md" mt="xs" radius="sm">
@@ -126,7 +111,7 @@ export function RetryTab({ record }: RetryTabProps) {
                       </Group>
                       {log.callDate && (
                         <Text size="xs" c="dimmed">
-                          {formatDate(log.callDate)}
+                          {dayjs(log.callDate).format(DATE_FORMATS.LONG)}
                         </Text>
                       )}
                     </Group>
@@ -158,11 +143,13 @@ export function RetryTab({ record }: RetryTabProps) {
                           <Text size="xs" c="dimmed">
                             Retry Data Content
                           </Text>
-                          <CopyButton value={renderJSONContent(log.dataContent)}>
+                          <CopyButton
+                            value={typeof log.error === 'object' ? JSON.stringify(log.error, null, 2) : log.error || ''}
+                          >
                             {({ copied, copy }) => (
-                              <Tooltip label={copied ? 'Copied' : 'Copy retry data'}>
+                              <Tooltip label={copied ? 'Copied' : 'Copy error details'}>
                                 <ActionIcon variant="subtle" size="sm" onClick={copy}>
-                                  <Text size="xs">{copied ? '✓' : '📋'}</Text>
+                                  <CopyIcon size="xs" />
                                 </ActionIcon>
                               </Tooltip>
                             )}
@@ -180,20 +167,6 @@ export function RetryTab({ record }: RetryTabProps) {
               ))}
             </Timeline>
           </ScrollArea>
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <Pagination
-              limit={limit}
-              onLimitChange={setLimit}
-              dataLength={retryLogs.length}
-              page={page}
-              setPage={setPage}
-              totalPages={totalPages}
-              totalRecords={retryLogs.length}
-              size="sm"
-            />
-          )}
         </>
       ) : (
         <Alert variant="light" color="blue">

@@ -34,7 +34,6 @@ export class SendImportJobDataConsumer extends BaseConsumer {
   public storageService: StorageService = getStorageServiceClass();
 
   async message(message: { content: string }) {
-    console.log('Auto importing......');
     const data = JSON.parse(message.content) as SendImportJobData;
     const cachedData = data.cache || (await this.getInitialCachedData(data._jobId, data.allDataFilePath));
     let allDataJson: null | any[] = null;

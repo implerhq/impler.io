@@ -35,7 +35,6 @@ export class RetryUpload {
       throw new BadRequestException('Webhook destination not found for template');
     }
 
-    console.log('uploadidis', upload._id);
     this.queueService.publishToQueue(QueuesEnum.SEND_WEBHOOK_DATA, {
       uploadId: upload._id,
       isRetry: true,

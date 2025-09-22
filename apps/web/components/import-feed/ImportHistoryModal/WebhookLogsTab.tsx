@@ -18,26 +18,13 @@ import {
 } from '@mantine/core';
 import { Alert } from '@ui/Alert';
 import { InformationIcon } from '@assets/icons/Information.icon';
-import { getStatusSymbol, getStatusColor, formatDate, renderJSONContent } from '@shared/utils';
+import { CopyIcon } from '@assets/icons/Copy.icon';
+import { getStatusSymbol, getStatusColor, renderJSONContent } from '@shared/utils';
 import { IHistoryRecord } from '@impler/shared';
+import { DATE_FORMATS } from '@config';
+import dayjs from 'dayjs';
 
 export function WebhookLogsTab({ record }: { record: IHistoryRecord }) {
-  // if (loading) {
-  //   return (
-  //     <Center style={{ height: 200 }}>
-  //       <Loader size="md" />
-  //     </Center>
-  //   );
-  // }
-
-  // if (error) {
-  //   return (
-  //     <Alert color="red" variant="light">
-  //       <Text size="sm">Error loading webhook logs: {error}</Text>
-  //     </Alert>
-  //   );
-  // }
-
   return (
     <Stack style={{ height: '100%' }}>
       <Group>
@@ -62,7 +49,7 @@ export function WebhookLogsTab({ record }: { record: IHistoryRecord }) {
                   </Badge>
                   {log.callDate && (
                     <Text size="xs" c="dimmed">
-                      {formatDate(log.callDate)}
+                      {dayjs(log.callDate).format(DATE_FORMATS.LONG)}
                     </Text>
                   )}
                 </Group>
@@ -77,7 +64,22 @@ export function WebhookLogsTab({ record }: { record: IHistoryRecord }) {
                   <Box mb="sm">
                     <Accordion variant="contained">
                       <Accordion.Item value="errorDetails">
-                        <Accordion.Control>Error Details</Accordion.Control>
+                        <Accordion.Control>
+                          <Flex justify="space-between" align="center">
+                            <Text>Error Details</Text>
+                            <CopyButton
+                              value={typeof log.error === 'object' ? JSON.stringify(log.error, null, 2) : log.error}
+                            >
+                              {({ copied, copy }) => (
+                                <Tooltip label={copied ? 'Copied' : 'Copy error details'}>
+                                  <ActionIcon variant="subtle" size="sm" onClick={copy}>
+                                    <CopyIcon size="xs" />
+                                  </ActionIcon>
+                                </Tooltip>
+                              )}
+                            </CopyButton>
+                          </Flex>
+                        </Accordion.Control>
                         <Accordion.Panel>
                           <Code block c="white" p="xs">
                             {typeof log.error === 'object' ? JSON.stringify(log.error, null, 2) : log.error}

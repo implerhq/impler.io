@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import { Tabs, Group, Box } from '@mantine/core';
+import { Tabs, Box, Flex, Stack } from '@mantine/core';
 
 import { IHistoryRecord, ImportJobHistoryStatusEnum } from '@impler/shared';
 import { OverviewTab } from './OverviewTab';
 import { WebhookLogsTab } from './WebhookLogsTab';
 import { RetryTab } from './RetryTab';
-import { modals } from '@mantine/modals';
-import { MODAL_KEYS } from '@config';
 import { Button } from '@ui/button';
 import { useHistory } from '@hooks/useHistory';
 
@@ -24,7 +22,6 @@ export function ImportHistoryModal({ record, onDownloadFile, isRetryLoading }: I
 
   const displayRecord = currentRecord || record;
 
-  // Check if there are webhook logs available
   const hasWebhookLogs = displayRecord.webhookLogs?.length > 0 || false;
 
   const handleDownloadFile = () => {
@@ -48,21 +45,15 @@ export function ImportHistoryModal({ record, onDownloadFile, isRetryLoading }: I
       displayRecord.status === ImportJobHistoryStatusEnum.COMPLETED);
 
   return (
-    <Box style={{ height: '70vh', display: 'flex', flexDirection: 'column' }}>
-      <Tabs
-        value={activeTab}
-        onTabChange={handleTabChange}
-        style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
-      >
-        <Box style={{ position: 'sticky', top: 0, zIndex: 10, backgroundColor: 'var(--mantine-color-body)' }}>
-          <Tabs.List grow mb="md">
-            <Tabs.Tab value="overview">Overview</Tabs.Tab>
-            <Tabs.Tab value="logs">Webhook Logs</Tabs.Tab>
-            {hasWebhookLogs && <Tabs.Tab value="retry">Retry History</Tabs.Tab>}
-          </Tabs.List>
-        </Box>
+    <Stack>
+      <Tabs value={activeTab} onTabChange={handleTabChange}>
+        <Tabs.List grow>
+          <Tabs.Tab value="overview">Overview</Tabs.Tab>
+          <Tabs.Tab value="logs">Webhook Logs</Tabs.Tab>
+          {hasWebhookLogs && <Tabs.Tab value="retry">Retry History</Tabs.Tab>}
+        </Tabs.List>
 
-        <Box style={{ flex: 1, overflow: 'auto', paddingBottom: '1rem' }}>
+        <Box h="60vh" style={{ overflowY: 'auto' }} py="md">
           <Tabs.Panel value="overview">
             <OverviewTab record={displayRecord} />
           </Tabs.Panel>
@@ -79,17 +70,18 @@ export function ImportHistoryModal({ record, onDownloadFile, isRetryLoading }: I
         </Box>
       </Tabs>
 
-      <Group position="center">
-        <Button variant="outline" onClick={() => modals.close(MODAL_KEYS.VIEW_IMPORT_HISTORY)}>
-          Close
-        </Button>
-        <Button onClick={handleDownloadFile}>Download Original File</Button>
-        {canRetry && record.originalFileName && record._uploadedFileId ? (
-          <Button onClick={handleRetryClick} loading={isRetryLoading}>
-            Retry Import
+      <Box mt="auto" pt="md">
+        <Flex gap="lg" justify="center">
+          <Button variant="outline" fullWidth onClick={handleDownloadFile}>
+            Download Original File
           </Button>
-        ) : null}
-      </Group>
-    </Box>
+          {canRetry && record.originalFileName && record._uploadedFileId ? (
+            <Button fullWidth onClick={handleRetryClick} loading={isRetryLoading}>
+              Retry Import
+            </Button>
+          ) : null}
+        </Flex>
+      </Box>
+    </Stack>
   );
 }

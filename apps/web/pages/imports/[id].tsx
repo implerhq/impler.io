@@ -6,7 +6,7 @@ import { ActionIcon, Flex, Group, LoadingOverlay, Title, Select } from '@mantine
 
 import { track } from '@libs/amplitude';
 import { useImpler } from '@impler/react';
-import { TemplateModeEnum } from '@impler/shared';
+import { ITemplate, TemplateModeEnum } from '@impler/shared';
 import { IMPORT_MODES, ROUTES, SubjectsEnum, colors } from '@config';
 import { useImportDetails } from '@hooks/useImportDetails';
 
@@ -15,12 +15,13 @@ import { Button } from '@ui/button';
 import { Schema } from '@components/imports/schema';
 import { withProtectedResource } from '@components/hoc';
 import { Destination } from '@components/imports/destination';
-
 import { AppLayout } from '@layouts/AppLayout';
 import { EditIcon } from '@assets/icons/Edit.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
 import { LeftArrowIcon } from '@assets/icons/LeftArrow.icon';
 import { IntegrationIcon } from '@assets/icons/Integration.icon';
+import { modals } from '@mantine/modals';
+import { WidgetConfigurationModal } from '@components/imports/destination/WidgetConfigurationModal/WidgetConfigurationModal';
 
 const Editor = dynamic(() => import('@components/imports/editor').then((mod) => mod.OutputEditor), {
   ssr: false,
@@ -32,6 +33,7 @@ const Validator = dynamic(() => import('@components/imports/validator').then((mo
 function ImportDetails() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'schema' | 'destination' | 'snippet' | 'validator' | 'output'>();
+  const [webhookConfig, setWebhookConfig] = useState<{ authHeaderValue?: string; extra?: string }>({});
   const {
     meta,
     columns,
@@ -46,12 +48,16 @@ function ImportDetails() {
   } = useImportDetails({
     templateId: router.query.id as string,
   });
+
+  console.log(webhookConfig);
   const { showWidget, isImplerInitiated } = useImpler({
     primaryColor: colors.faintYellow,
     templateId: templateData?._id,
     projectId: templateData?._projectId,
     accessToken: profileInfo?.accessToken,
     onUploadComplete: onSpreadsheetImported,
+    authHeaderValue: webhookConfig.authHeaderValue || '',
+    extra: webhookConfig.extra || '',
     appearance: {
       widget: {
         backgroundColor: '#1c1917',
@@ -83,8 +89,23 @@ function ImportDetails() {
       name: 'IMPORT CLICK',
       properties: {},
     });
-    showWidget({
-      // colorScheme,
+
+    modals.open({
+      title: 'Configure Import Webhook',
+      children: (
+        <WidgetConfigurationModal
+          template={templateData as ITemplate}
+          onConfigSubmit={(config: { authHeaderValue?: string; extra?: string }) => {
+            setWebhookConfig(config);
+            modals.closeAll();
+            showWidget();
+            setTimeout(() => {}, 100);
+          }}
+        />
+      ),
+      withCloseButton: true,
+      centered: true,
+      size: 'xl',
     });
   };
 

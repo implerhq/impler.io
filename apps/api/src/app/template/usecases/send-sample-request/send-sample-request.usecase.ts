@@ -1,5 +1,5 @@
 /* eslint-disable multiline-comment-style */
-import { Injectable, HttpException, HttpStatus, OnModuleInit } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, OnModuleInit, BadRequestException } from '@nestjs/common';
 import { WebhookDestinationRepository, ColumnRepository } from '@impler/dal';
 import axios from 'axios';
 import { ColumnTypesEnum, IColumn } from '@impler/shared';
@@ -16,11 +16,18 @@ export class SendSampleRequest implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    // Dynamically import faker to handle ES module compatibility
     this.faker = (await import('@faker-js/faker')).faker;
   }
 
-  async execute({ templateId }: { templateId: string }) {
+  async execute({
+    templateId,
+    authHeaderValue,
+    extra,
+  }: {
+    templateId: string;
+    authHeaderValue?: string;
+    extra?: string;
+  }) {
     const webhookDestination = await this.webookDataRepository.findOne({
       _templateId: templateId,
     });
@@ -30,14 +37,31 @@ export class SendSampleRequest implements OnModuleInit {
     }
 
     const columns = await this.columnRepository.find({ _templateId: templateId });
-    const sampleData = this.generateSampleData(columns as IColumn[], 5);
+    const chunkSize = webhookDestination.chunkSize || 5;
+    const sampleRecordCount = 15; // Generate more records to test chunking
+    const sampleData = this.generateSampleData(columns as IColumn[], sampleRecordCount);
 
     try {
-      await this.sendSampleToWebhook(webhookDestination.callbackUrl, sampleData, webhookDestination);
+      const results = await this.sendChunkedData({
+        webhookUrl: webhookDestination.callbackUrl,
+        sampleData,
+        webhookDestination,
+        chunkSize,
+        extra,
+        page: 1,
+        authHeaderValue,
+      });
 
-      return { success: true, sampleData, webhookResponse: { sent: true } };
+      return {
+        success: true,
+        sampleData,
+        totalRecords: sampleData.length,
+        chunkSize,
+        totalPages: this.getTotalPages(sampleData.length, chunkSize),
+        results,
+      };
     } catch (error: any) {
-      return { success: false, sampleData, webhookResponse: { error: error.message, sent: false } };
+      throw new BadRequestException(error);
     }
   }
 
@@ -149,26 +173,123 @@ export class SendSampleRequest implements OnModuleInit {
     return this.faker.helpers.fromRegExp(column.regex);
   }
 
-  private async sendSampleToWebhook(webhookUrl: string, sampleData: Record<string, any>[], template: any) {
+  private getTotalPages(totalRecords: number, pageSize: number): number {
+    return Math.ceil(totalRecords / pageSize);
+  }
+
+  private getNextPageNumber({
+    currentPage,
+    chunkSize,
+    totalRecords,
+  }: {
+    currentPage: number;
+    totalRecords: number;
+    chunkSize: number;
+  }): number | null {
+    if (totalRecords > currentPage * chunkSize) {
+      return currentPage + 1;
+    }
+
+    return null;
+  }
+
+  private async sendChunkedData({
+    webhookUrl,
+    sampleData,
+    webhookDestination,
+    chunkSize,
+    extra,
+    authHeaderValue,
+    page = 1,
+  }: {
+    webhookUrl: string;
+    sampleData: Record<string, any>[];
+    webhookDestination: any;
+    chunkSize: number;
+    extra?: string;
+    authHeaderValue?: string;
+    page?: number;
+  }): Promise<any[]> {
+    const startIndex = (page - 1) * chunkSize;
+    const endIndex = Math.min(startIndex + chunkSize, sampleData.length);
+    const chunk = sampleData.slice(startIndex, endIndex);
+
+    if (chunk.length === 0) {
+      return [];
+    }
+
+    const totalPages = this.getTotalPages(sampleData.length, chunkSize);
+    const result = await this.sendSampleToWebhook(
+      webhookUrl,
+      chunk,
+      webhookDestination,
+      page,
+      totalPages,
+      extra,
+      authHeaderValue
+    );
+
+    const nextPageNumber = this.getNextPageNumber({
+      currentPage: page,
+      chunkSize,
+      totalRecords: sampleData.length,
+    });
+
+    if (nextPageNumber) {
+      return await this.sendChunkedData({
+        webhookUrl,
+        sampleData,
+        webhookDestination,
+        chunkSize,
+        extra,
+        authHeaderValue,
+        page: nextPageNumber,
+      });
+    }
+
+    return [result];
+  }
+
+  private async sendSampleToWebhook(
+    webhookUrl: string,
+    sampleData: Record<string, any>[],
+    template: any,
+    page = 1,
+    totalPages = 1,
+    extra?: string,
+    authHeaderValue?: string
+  ) {
+    const uploadId = `sample-${template._id}-${Date.now()}-page-${page}`;
     const sendData = {
-      page: 1,
+      page,
       fileName: 'sample-data.json',
-      template: template.name,
-      uploadId: `sample-${template._id}-${Date.now()}`,
+      template: template.name || 'Sample Template',
+      uploadId,
       data: sampleData,
       totalRecords: sampleData.length,
       chunkSize: sampleData.length,
-      extra: '',
-      totalPages: 1,
+      extra: extra ? JSON.parse(extra) : '',
+      totalPages,
     };
+
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'User-Agent': 'Impler-Sample-Request/1.0',
+    };
+
+    if (authHeaderValue && template.authHeaderName) {
+      headers[template.authHeaderName] = authHeaderValue;
+    } else if (template.authHeaderName && template.authHeaderValue) {
+      headers[template.authHeaderName] = template.authHeaderValue;
+    }
 
     const allData = {
       data: sendData,
       uploadId: sendData.uploadId,
-      page: 1,
+      page,
       method: 'POST',
       url: webhookUrl,
-      headers: null,
+      headers,
       isRetry: false,
     };
 
@@ -189,11 +310,7 @@ export class SendSampleRequest implements OnModuleInit {
         method: allData.method as 'POST',
         url: allData.url,
         data: allData.data,
-        headers: {
-          'Content-Type': 'application/json',
-          'User-Agent': 'Impler-Sample-Request/1.0',
-          ...allData.headers,
-        },
+        headers: allData.headers,
         timeout: 30000,
       });
 
@@ -205,13 +322,7 @@ export class SendSampleRequest implements OnModuleInit {
         _uploadId: allData.uploadId,
       };
     } catch (error: any) {
-      return {
-        status: 'FAILED',
-        statusCode: error.response?.status || 500,
-        error: error.response?.data || error.message,
-        callDate: new Date(),
-        _uploadId: allData.uploadId,
-      };
+      throw new BadRequestException(error);
     }
   }
 }

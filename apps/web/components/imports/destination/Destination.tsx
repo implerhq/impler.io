@@ -24,8 +24,9 @@ export function Destination({ template }: DestinationProps) {
     resetDestination,
     updateDestination,
     mapBubbleIoColumnsClick,
-    sendSampleRequest,
+    openSampleRequestModal,
     isUpdateImportLoading,
+    isSendSampleRequestPending,
     isMapBubbleIoColumnsLoading,
     isSendSampleRequestLoading,
   } = useDestination({
@@ -73,8 +74,8 @@ export function Destination({ template }: DestinationProps) {
                   <Button
                     size="xs"
                     variant="outline"
-                    onClick={() => sendSampleRequest()}
-                    loading={isSendSampleRequestLoading}
+                    onClick={() => openSampleRequestModal()}
+                    loading={isSendSampleRequestLoading || isSendSampleRequestPending}
                   >
                     Send Test Webhook
                   </Button>
