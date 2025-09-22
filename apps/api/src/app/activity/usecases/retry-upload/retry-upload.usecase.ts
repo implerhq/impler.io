@@ -1,6 +1,5 @@
-/* eslint-disable multiline-comment-style */
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { UploadRepository, TemplateRepository, WebhookDestinationRepository, WebhookLogRepository } from '@impler/dal';
+import { UploadRepository, TemplateRepository, WebhookDestinationRepository } from '@impler/dal';
 import { QueueService } from '@shared/services/queue.service';
 import { QueuesEnum, DestinationsEnum } from '@impler/shared';
 
@@ -10,14 +9,11 @@ export class RetryUpload {
     private uploadRepository: UploadRepository,
     private templateRepository: TemplateRepository,
     private webhookDestinationRepository: WebhookDestinationRepository,
-    private webhookLogRepository: WebhookLogRepository,
     private queueService: QueueService
   ) {}
 
   async execute(uploadId: string) {
-    // Get the upload record to verify it exists and has webhook destination
     const upload = await this.uploadRepository.findById(uploadId);
-    // const userEmail = await this.uploadRepository.getUserEmailFromUploadId(uploadId);
 
     if (!upload) {
       throw new Error('Upload not found');

@@ -11,14 +11,13 @@ import { modals } from '@mantine/modals';
 import { ImportHistoryModal } from '@components/import-feed/ImportHistoryModal/ImportHistoryModal';
 import { Title } from '@mantine/core';
 
-export function useHistory(recordId?: string) {
+export function useHistory() {
   const { profileInfo } = useAppState();
   const queryClient = useQueryClient();
   const [date, setDate] = useState<Date>();
   const [page, setPage] = useState<number>();
   const [limit, setLimit] = useState<number>(VARIABLES.TEN);
   const [name, setName] = useDebouncedState('', VARIABLES.TWO_HUNDREDS);
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   // Main history data query
   const { isFetching: isHistoryDataLoading, data: historyData } = useQuery<
@@ -44,25 +43,6 @@ export function useHistory(recordId?: string) {
     }
   );
 
-  // Live data query for real-time updates (from useRetryLogs)
-  const { data: liveData, refetch: refetchLiveData } = useQuery<
-    unknown,
-    IErrorObject,
-    IPaginationData<IHistoryRecord>,
-    (string | number | undefined)[]
-  >(
-    [API_KEYS.ACTIVITY_HISTORY, 'live', profileInfo?._projectId, recordId, refreshTrigger],
-    () =>
-      commonApi<IPaginationData<IHistoryRecord>>(API_KEYS.ACTIVITY_HISTORY as any, {
-        parameters: [profileInfo!._projectId],
-        query: { limit: 100, page: 1 },
-      }),
-    {
-      enabled: !!profileInfo && !!recordId,
-      refetchInterval: 3000,
-    }
-  );
-
   // Download original file mutation
   const { isLoading: isDownloadOriginalFileLoading, mutate: downloadOriginalFile } = useMutation<
     ArrayBuffer,
@@ -78,7 +58,7 @@ export function useHistory(recordId?: string) {
     }
   );
 
-  // Retry import mutation (enhanced from both hooks)
+  // Retry import mutation
   const {
     isLoading: isRetryLoading,
     mutate: retryImport,
@@ -89,32 +69,10 @@ export function useHistory(recordId?: string) {
     {
       onSuccess() {
         queryClient.invalidateQueries([API_KEYS.ACTIVITY_HISTORY, profileInfo?._projectId]);
-        // Also refresh live data if we have a recordId
-        if (recordId) {
-          refreshLogs();
-        }
       },
       onError() {},
     }
   );
-
-  // Helper functions from useRetryLogs
-  const getCurrentRecord = (): IHistoryRecord | undefined => {
-    if (!recordId || !liveData?.data) return undefined;
-
-    return liveData.data.find((record) => record._id === recordId);
-  };
-
-  const refreshLogs = () => {
-    setRefreshTrigger((prev) => prev + 1);
-    queryClient.invalidateQueries([API_KEYS.ACTIVITY_HISTORY, profileInfo?._projectId]);
-    refetchLiveData();
-  };
-
-  // Enhanced handleRetry that works with both mutation patterns
-  const handleRetry = (uploadId: string) => {
-    retryImport(uploadId);
-  };
 
   // Filter and state management functions
   function onDateChange(newDate?: Date) {
@@ -170,7 +128,6 @@ export function useHistory(recordId?: string) {
   }
 
   return {
-    // Original useHistory returns
     onDateChange,
     onNameChange,
     onPageChange: setPage,
@@ -185,11 +142,5 @@ export function useHistory(recordId?: string) {
     openViewImportHistoryModal,
     name,
     date,
-
-    // New returns from useRetryLogs
-    currentRecord: getCurrentRecord(),
-    refreshLogs,
-    handleRetry,
-    liveData,
   };
 }

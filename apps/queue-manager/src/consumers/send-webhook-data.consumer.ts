@@ -219,7 +219,7 @@ export class SendWebhookDataConsumer extends BaseConsumer {
       name: templateData.name,
       page: 1,
       authHeaderName: webhookDestination?.authHeaderName,
-      authHeaderValue: uploadata.authHeaderValue,
+      authHeaderValue: webhookDestination?.authHeaderValue,
       retryInterval: webhookDestination.retryInterval,
       retryCount: webhookDestination.retryCount,
       allDataFilePath: this.fileNameService.getAllJsonDataFilePath(_uploadId),
