@@ -166,7 +166,6 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
                       icon: <EmailIcon />,
                       onClick: () => {
                         handleCopyEmail();
-                        console.log('Email clicked');
                       },
                     },
                     { title: 'Logout', icon: <LogoutIcon />, onClick: logout },

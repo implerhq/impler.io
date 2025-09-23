@@ -1,3 +1,4 @@
+/* eslint-disable multiline-comment-style */
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -8,14 +9,33 @@ import { track } from '@libs/amplitude';
 import { modals } from '@mantine/modals';
 import { API_KEYS, NOTIFICATION_KEYS } from '@config';
 import { DestinationsEnum, IErrorObject, IDestinationData, ITemplate } from '@impler/shared';
+import { SampleWebhookDataConfiguration } from '../components/imports/destination/SampleWebhookDataConfiguration';
 
 interface UseDestinationProps {
   template: ITemplate;
 }
 
+interface SendSampleRequestParams {
+  templateId?: string;
+  authHeaderValue?: string;
+  extra?: string;
+}
+
+interface SampleWebhookFormData {
+  authHeaderValue?: string;
+  extraData?: string;
+}
+
 export function useDestination({ template }: UseDestinationProps) {
   const queryClient = useQueryClient();
   const [destination, setDestination] = useState<DestinationsEnum | undefined>();
+
+  const sampleWebhookForm = useForm<SampleWebhookFormData>({
+    defaultValues: {
+      authHeaderValue: undefined,
+      extraData: '{"key": "value"}',
+    },
+  });
   const {
     watch,
     reset,
@@ -70,6 +90,7 @@ export function useDestination({ template }: UseDestinationProps) {
       },
     }
   );
+
   const { mutate: mapBubbleIoColumns, isLoading: isMapBubbleIoColumnsLoading } = useMutation<
     IDestinationData,
     IErrorObject,
@@ -95,6 +116,56 @@ export function useDestination({ template }: UseDestinationProps) {
       },
     }
   );
+  const {
+    mutate: sendSampleRequestApi,
+    isLoading: isSendSampleRequestLoading,
+    isPending: isSendSampleRequestPending,
+  } = useMutation<unknown, IErrorObject, SendSampleRequestParams>(
+    (apiConfig: SendSampleRequestParams) =>
+      commonApi<unknown>(API_KEYS.TEMPLATE_SAMPLE_GET as any, {
+        parameters: [apiConfig.templateId || template._id],
+        body: {
+          authHeaderValue: apiConfig.authHeaderValue || undefined,
+          extra: apiConfig.extra || undefined,
+        },
+      }),
+    {
+      onSuccess: () => {
+        notify(NOTIFICATION_KEYS.DESTINATION_UPDATED, {
+          title: 'Test webhook sent successfully',
+          message: 'Sample data delivered to your endpoint',
+          color: 'green',
+        });
+      },
+      onError(error: IErrorObject) {
+        notify(NOTIFICATION_KEYS.ERROR_OCCURED, {
+          title: 'Failed to send test webhook',
+          message: error.message || 'Unable to reach webhook endpoint',
+          color: 'red',
+        });
+      },
+    }
+  );
+
+  const onSampleWebhookSubmit = (data: SampleWebhookFormData) => {
+    const params: SendSampleRequestParams = {
+      templateId: template._id,
+      extra: data.extraData || undefined,
+    };
+    sendSampleRequestApi(params);
+    modals.closeAll();
+  };
+
+  const openSampleRequestModal = () => {
+    modals.open({
+      title: 'Configure Test Webhook',
+      children: <SampleWebhookDataConfiguration templateId={template._id} template={template} />,
+      withCloseButton: true,
+      centered: true,
+      size: 'xl',
+    });
+  };
+
   const mapBubbleIoColumnsClick = () => {
     modals.openConfirmModal({
       centered: true,
@@ -163,10 +234,20 @@ export function useDestination({ template }: UseDestinationProps) {
     setDestination,
     resetDestination,
     updateDestination,
+    sendSampleRequestApi,
+    openSampleRequestModal,
+    isSendSampleRequestLoading,
+    isSendSampleRequestPending,
     mapBubbleIoColumns,
     mapBubbleIoColumnsClick,
     isMapBubbleIoColumnsLoading,
     onSubmit: handleSubmit(onSubmit),
     isUpdateImportLoading: isUpdateDestinationLoading,
+    sampleWebhookForm: {
+      register: sampleWebhookForm.register,
+      errors: sampleWebhookForm.formState.errors,
+      control: sampleWebhookForm.control,
+      handleSubmit: sampleWebhookForm.handleSubmit(onSampleWebhookSubmit),
+    },
   };
 }

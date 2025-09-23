@@ -17,7 +17,7 @@ export function ChevronDown(props: IIcon) {
         transform="translate(14.707 0.287) rotate(90)"
         fill="#999"
         stroke="#999"
-        // stroke-width="0.5"
+        // strokeWidth="0.5"
       />
     </svg>
   );

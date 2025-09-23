@@ -25,6 +25,7 @@ import { DuplicateTemplateCommand } from './duplicate-template/duplicate-templat
 import { UpdateValidationsCommand } from './update-validations/update-validations.command';
 import { UpdateCustomizationCommand } from './update-customization/update-customization.command';
 import { GetImportFileSchema } from './get-column-types/get-import-file-schema.usecase';
+import { SendSampleRequest, SendSampleRequestCommand } from './send-sample-request';
 import { AddColumn } from 'app/column/usecases';
 
 export const USE_CASES = [
@@ -48,6 +49,7 @@ export const USE_CASES = [
   MapBubbleIoColumns,
   UpdateImageColumns,
   GetImportFileSchema,
+  SendSampleRequest,
   AddColumn,
   //
 ];
@@ -71,6 +73,7 @@ export {
   UpdateDestination,
   MapBubbleIoColumns,
   GetImportFileSchema,
+  SendSampleRequest,
   AddColumn,
 };
 export {
@@ -81,4 +84,5 @@ export {
   UpdateDestinationCommand,
   DuplicateTemplateCommand,
   UpdateCustomizationCommand,
+  SendSampleRequestCommand,
 };

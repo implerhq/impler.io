@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDebouncedState } from '@mantine/hooks';
 
 import { commonApi } from '@libs/api';
@@ -13,23 +13,13 @@ import { Title } from '@mantine/core';
 
 export function useHistory() {
   const { profileInfo } = useAppState();
+  const queryClient = useQueryClient();
   const [date, setDate] = useState<Date>();
   const [page, setPage] = useState<number>();
   const [limit, setLimit] = useState<number>(VARIABLES.TEN);
   const [name, setName] = useDebouncedState('', VARIABLES.TWO_HUNDREDS);
-  const { isLoading: isDownloadOriginalFileLoading, mutate: downloadOriginalFile } = useMutation<
-    ArrayBuffer,
-    IErrorObject,
-    [string, string]
-  >(
-    ['downloadOriginal'],
-    ([uploadId]) => commonApi(API_KEYS.DONWLOAD_ORIGINAL_FILE as any, { parameters: [uploadId] }),
-    {
-      onSuccess(excelFileData, variables) {
-        downloadFile(new Blob([excelFileData]), variables[1]);
-      },
-    }
-  );
+
+  // Main history data query
   const { isFetching: isHistoryDataLoading, data: historyData } = useQuery<
     unknown,
     IErrorObject,
@@ -53,6 +43,38 @@ export function useHistory() {
     }
   );
 
+  // Download original file mutation
+  const { isLoading: isDownloadOriginalFileLoading, mutate: downloadOriginalFile } = useMutation<
+    ArrayBuffer,
+    IErrorObject,
+    [string, string]
+  >(
+    ['downloadOriginal'],
+    ([uploadId]) => commonApi(API_KEYS.DONWLOAD_ORIGINAL_FILE as any, { parameters: [uploadId] }),
+    {
+      onSuccess(excelFileData, variables) {
+        downloadFile(new Blob([excelFileData]), variables[1]);
+      },
+    }
+  );
+
+  // Retry import mutation
+  const {
+    isLoading: isRetryLoading,
+    mutate: retryImport,
+    data: retryImportData,
+  } = useMutation<void, IErrorObject, string>(
+    ['retryImport'],
+    (uploadId) => commonApi(API_KEYS.ACTIVITY_RETRY as any, { parameters: [uploadId] }),
+    {
+      onSuccess() {
+        queryClient.invalidateQueries([API_KEYS.ACTIVITY_HISTORY, profileInfo?._projectId]);
+      },
+      onError() {},
+    }
+  );
+
+  // Filter and state management functions
   function onDateChange(newDate?: Date) {
     setDate(newDate);
     if (newDate) {
@@ -64,6 +86,7 @@ export function useHistory() {
       });
     }
   }
+
   function onLimitChange(newLimit: number) {
     setLimit(newLimit);
     track({
@@ -73,6 +96,7 @@ export function useHistory() {
       },
     });
   }
+
   function onNameChange(newName: string) {
     setName(newName);
     if (newName) {
@@ -90,7 +114,15 @@ export function useHistory() {
       modalId: MODAL_KEYS.VIEW_IMPORT_HISTORY,
       centered: true,
       size: 'calc(40vw - 3rem)',
-      children: <ImportHistoryModal record={record} onDownloadFile={downloadOriginalFile} />,
+
+      children: (
+        <ImportHistoryModal
+          record={record}
+          onDownloadFile={downloadOriginalFile}
+          onRetry={retryImport}
+          isRetryLoading={isRetryLoading}
+        />
+      ),
       withCloseButton: true,
       title: <Title order={3}>Import Details</Title>,
     });
@@ -102,9 +134,12 @@ export function useHistory() {
     onPageChange: setPage,
     onLimitChange,
     downloadOriginalFile,
+    retryImport,
     isHistoryDataLoading,
     isDownloadOriginalFileLoading,
+    isRetryLoading,
     historyData,
+    retryImportData,
     openViewImportHistoryModal,
     name,
     date,

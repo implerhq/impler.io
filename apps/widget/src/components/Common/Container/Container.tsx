@@ -48,6 +48,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
       if (data.value.accessToken) {
         api.setAuthorizationToken(data.value.accessToken);
       }
+
       setShowWidget(true);
       setSecondaryPayload({
         accessToken: data.value.accessToken,

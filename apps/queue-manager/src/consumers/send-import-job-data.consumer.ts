@@ -13,9 +13,9 @@ import {
   replaceVariablesInObject,
   QueuesEnum,
   ColumnTypesEnum,
-  UploadStatusEnum,
   FileEncodingsEnum,
   ColumnDelimiterEnum,
+  UserJobImportStatusEnum,
 } from '@impler/shared';
 
 import { publishToQueue } from '../bootstrap';
@@ -200,6 +200,6 @@ export class SendImportJobDataConsumer extends BaseConsumer {
   }
 
   public async finalizeUpload(_jobId: string) {
-    return await this.userJobRepository.update({ _id: _jobId }, { status: UploadStatusEnum.COMPLETED });
+    return await this.userJobRepository.update({ _id: _jobId }, { status: UserJobImportStatusEnum.COMPLETED });
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@impler/api",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "author": "implerhq",
   "license": "MIT",
   "private": true,
@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@amplitude/analytics-node": "^1.3.6",
+    "@faker-js/faker": "^8.4.1",
     "@impler/client": "workspace:^",
     "@impler/dal": "workspace:^",
     "@impler/services": "workspace:^",

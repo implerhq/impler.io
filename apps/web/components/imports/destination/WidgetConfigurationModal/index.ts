@@ -1,0 +1,1 @@
+export { WidgetConfigurationModal } from './WidgetConfigurationModal';

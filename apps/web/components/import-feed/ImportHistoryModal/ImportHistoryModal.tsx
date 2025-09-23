@@ -1,56 +1,94 @@
 import React, { useState } from 'react';
-import { Tabs, Group, Box } from '@mantine/core';
-import { IHistoryRecord } from '@impler/shared';
+import { Tabs, Box, Flex, Stack } from '@mantine/core';
+
+import { IHistoryRecord, ImportJobHistoryStatusEnum } from '@impler/shared';
 import { OverviewTab } from './OverviewTab';
 import { WebhookLogsTab } from './WebhookLogsTab';
+import { RetryTab } from './RetryTab';
 import { Button } from '@ui/button';
+import { useWebhookLogs } from '@hooks/useWebhookLogs';
+import { VARIABLES } from '@config';
 
 interface ImportHistoryModalProps {
-  onClose?: () => void;
   record: IHistoryRecord;
   onDownloadFile: (data: [string, string]) => void;
+  onRetry: (uploadId: string) => void;
+  isRetryLoading: boolean;
 }
 
-export function ImportHistoryModal({ onClose, record, onDownloadFile }: ImportHistoryModalProps) {
+export function ImportHistoryModal({ record, onDownloadFile, onRetry, isRetryLoading }: ImportHistoryModalProps) {
   const [activeTab, setActiveTab] = useState<string>('overview');
 
+  const webhookLogsData = useWebhookLogs({
+    uploadId: record._id,
+    limit: VARIABLES.TEN,
+    enabled: !!record._id,
+  });
+
+  const retryLogsData = useWebhookLogs({
+    uploadId: record._id,
+    limit: 100,
+    isRetry: true,
+    enabled: !!record._id,
+  });
+
   const handleDownloadFile = () => {
-    if (record.originalFileName && record._uploadedFileId) {
-      onDownloadFile([record._id, record.originalFileName]);
-    }
+    onDownloadFile([record._id, record.originalFileName]);
   };
 
+  const handleTabChange = (value: string | null) => {
+    setActiveTab(value || 'overview');
+  };
+
+  const handleRetryClick = () => {
+    onRetry(record._id);
+
+    setTimeout(() => {
+      webhookLogsData.refetch();
+      retryLogsData.refetch();
+    }, 2000);
+  };
+
+  const canRetry =
+    webhookLogsData.webhookLogs.length > 0 &&
+    (record.status === ImportJobHistoryStatusEnum.PROCESSING || record.status === ImportJobHistoryStatusEnum.COMPLETED);
+
   return (
-    <Box style={{ height: '70vh', display: 'flex', flexDirection: 'column' }}>
-      <Tabs
-        value={activeTab}
-        onTabChange={(value) => setActiveTab(value || 'overview')}
-        style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
-      >
-        <Tabs.List grow mb="md">
+    <Stack>
+      <Tabs value={activeTab} onTabChange={handleTabChange}>
+        <Tabs.List grow>
           <Tabs.Tab value="overview">Overview</Tabs.Tab>
           <Tabs.Tab value="logs">Webhook Logs</Tabs.Tab>
+          <Tabs.Tab value="retry">Retry History</Tabs.Tab>
         </Tabs.List>
 
-        <Box style={{ flexGrow: 1, overflow: 'auto', marginBottom: 'auto' }}>
-          <Tabs.Panel value="overview">
+        <Box h="60vh" style={{ overflowY: 'auto', scrollbarWidth: 'none' }} py="md">
+          <Tabs.Panel value="overview" px="md">
             <OverviewTab record={record} />
           </Tabs.Panel>
 
-          <Tabs.Panel value="logs">
-            <WebhookLogsTab record={record as IHistoryRecord} />
+          <Tabs.Panel value="logs" px="md">
+            <WebhookLogsTab record={record} webhookLogsData={webhookLogsData} />
+          </Tabs.Panel>
+
+          <Tabs.Panel value="retry" px="md">
+            <RetryTab webhookLogsData={retryLogsData} />
           </Tabs.Panel>
         </Box>
       </Tabs>
 
-      <Group position="center" pt="md">
-        <Button variant="outline" onClick={onClose}>
-          Close
-        </Button>
-        {record.originalFileName && record._uploadedFileId && (
-          <Button onClick={handleDownloadFile}>Download Original File</Button>
-        )}
-      </Group>
-    </Box>
+      <Box>
+        <Flex gap="lg" justify="center">
+          <Button variant="outline" fullWidth onClick={handleDownloadFile}>
+            Download Original File
+          </Button>
+          {canRetry && record.originalFileName && record._uploadedFileId ? (
+            <Button fullWidth onClick={handleRetryClick} loading={isRetryLoading}>
+              Retry Import
+            </Button>
+          ) : null}
+        </Flex>
+      </Box>
+    </Stack>
   );
 }

@@ -40,6 +40,10 @@ const webhookSchema = new Schema(
         return JSON.stringify(data);
       },
     },
+    isRetry: {
+      type: Schema.Types.Boolean,
+      default: false,
+    },
   },
   { ...schemaOptions }
 );
