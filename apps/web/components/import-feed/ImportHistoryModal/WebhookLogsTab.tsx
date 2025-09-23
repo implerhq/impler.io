@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import {
   Stack,
   Group,
@@ -14,7 +14,6 @@ import {
   ActionIcon,
   Flex,
   Accordion,
-  Button,
   Loader,
   Center,
 } from '@mantine/core';
@@ -59,11 +58,55 @@ export function WebhookLogsTab({ record, webhookLogsData }: WebhookLogsTabProps)
     enabled: !webhookLogsData && !!record._id,
   });
 
-  // Use provided data or internal data
   const { webhookLogs, hasNextPage, isFetchingNextPage, fetchNextPage, loading } =
     webhookLogsData || internalWebhookLogsData;
 
   const isUsingApiData = webhookLogs.length > 0;
+
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const loadingTriggerRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  const handleIntersection = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      const [entry] = entries;
+      if (entry.isIntersecting && hasNextPage && !isFetchingNextPage && !loading && isUsingApiData) {
+        fetchNextPage();
+      }
+    },
+    [hasNextPage, isFetchingNextPage, loading, fetchNextPage, isUsingApiData]
+  );
+
+  useEffect(() => {
+    const triggerElement = loadingTriggerRef.current;
+
+    if (!triggerElement) return;
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+
+    observerRef.current = new IntersectionObserver(handleIntersection, {
+      root: scrollAreaRef.current,
+      rootMargin: '100px 0px',
+      threshold: 0.1,
+    });
+
+    observerRef.current.observe(triggerElement);
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [handleIntersection, webhookLogs.length]);
+
+  useEffect(() => {
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, []);
 
   return (
     <Stack>
@@ -74,7 +117,7 @@ export function WebhookLogsTab({ record, webhookLogsData }: WebhookLogsTabProps)
       </Group>
 
       {webhookLogs.length > 0 ? (
-        <ScrollArea>
+        <ScrollArea ref={scrollAreaRef} style={{ height: '600px' }}>
           <Timeline active={webhookLogs.length} bulletSize={24} lineWidth={2}>
             {webhookLogs.map((log: WebhookLog, index: number) => (
               <Timeline.Item
@@ -144,17 +187,29 @@ export function WebhookLogsTab({ record, webhookLogsData }: WebhookLogsTabProps)
             ))}
           </Timeline>
 
-          {/* Show load more button only when using API data */}
-          {isUsingApiData && hasNextPage && (
-            <Center mt="md">
-              {isFetchingNextPage || loading ? (
-                <Loader size="sm" />
-              ) : (
-                <Button variant="subtle" onClick={() => fetchNextPage()}>
-                  Load More Logs
-                </Button>
+          {isUsingApiData && (
+            <div>
+              <div ref={loadingTriggerRef} style={{ height: '1px', width: '100%' }} />
+
+              {isFetchingNextPage && (
+                <Center py="md">
+                  <Group spacing="xs">
+                    <Loader size="sm" />
+                    <Text size="sm" c="dimmed">
+                      Loading more logs...
+                    </Text>
+                  </Group>
+                </Center>
               )}
-            </Center>
+
+              {!hasNextPage && webhookLogs.length > 0 && (
+                <Center py="md">
+                  <Text size="sm" c="dimmed">
+                    No more logs to load
+                  </Text>
+                </Center>
+              )}
+            </div>
           )}
         </ScrollArea>
       ) : (
