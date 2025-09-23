@@ -25,11 +25,10 @@ export function ImportHistoryModal({ record, onDownloadFile, onRetry, isRetryLoa
     enabled: !!record._id,
   });
 
-  // Separate hook for retry logs with higher limit and isRetry flag
   const retryLogsData = useWebhookLogs({
     uploadId: record._id,
-    limit: 100, // Higher limit for retry logs
-    isRetry: true, // Only fetch retry logs
+    limit: 100,
+    isRetry: true,
     enabled: !!record._id,
   });
 
@@ -44,11 +43,10 @@ export function ImportHistoryModal({ record, onDownloadFile, onRetry, isRetryLoa
   const handleRetryClick = () => {
     onRetry(record._id);
 
-    // Refresh both webhook logs and retry logs after retry
     setTimeout(() => {
       webhookLogsData.refetch();
       retryLogsData.refetch();
-    }, 2000); // Wait 2 seconds for the retry to be processed
+    }, 2000);
   };
 
   const canRetry =
@@ -64,7 +62,7 @@ export function ImportHistoryModal({ record, onDownloadFile, onRetry, isRetryLoa
           <Tabs.Tab value="retry">Retry History</Tabs.Tab>
         </Tabs.List>
 
-        <Box h="60vh" style={{ overflowY: 'hidden' }} py="md">
+        <Box h="60vh" style={{ overflowY: 'auto', scrollbarWidth: 'none' }} py="md">
           <Tabs.Panel value="overview" px="md">
             <OverviewTab record={record} />
           </Tabs.Panel>
