@@ -18,4 +18,6 @@ export class WebhookLogEntity {
   dataContent?: Record<string, unknown>;
 
   headersContent?: Record<string, unknown>;
+
+  isRetry?: boolean;
 }

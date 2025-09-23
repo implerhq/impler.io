@@ -162,6 +162,7 @@ export const API_KEYS = {
   TEMPLATE_CUSTOMIZATION_SYNC: 'CUSTOMIZATION_SYNC',
   TEMPLATE_SCHEMA_GET: 'TEMPLATE_SCHEMA_GET',
   TEMPLATE_SAMPLE_CREATE: 'TEMPLATE_SAMPLE_CREATE',
+  TEMPLATE_SAMPLE_GET: 'TEMPLATE_SAMPLE_GET',
 
   COLUMN_CREATE: 'COLUMN_CREATE',
   COLUMN_UPDATE: 'COLUMN_UPDATE',
@@ -176,6 +177,8 @@ export const API_KEYS = {
 
   ACTIVITY_HISTORY: 'ACTIVITY_HISTORY',
   ACTIVITY_SUMMARY: 'ACTIVITY_SUMMARY',
+  ACTIVITY_RETRY: 'ACTIVITY_RETRY',
+  ACTIVITY_WEBHOOK_LOGS: 'ACTIVITY_WEBHOOK_LOGS',
 
   ME: 'ME',
   UPDATE_ME_INFO: 'UPDATE_ME_INFO',
@@ -410,6 +413,7 @@ export const DOCUMENTATION_REFERENCE_LINKS = {
   lengthValidator: 'https://docs.impler.io/validations/advanced#length',
   outputCustomization: 'https://docs.impler.io/features/output-customization',
   uniqueWithValidator: 'https://docs.impler.io/validations/advanced#unique-across-multiple-fields',
+  webhookAuthentication: 'https://docs.impler.io/data-retrieval/using-webhook#authentication',
 };
 
 export const COMPANY_SIZES = [

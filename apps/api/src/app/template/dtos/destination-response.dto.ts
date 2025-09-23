@@ -5,6 +5,7 @@ export class DestinationResponseDto {
   webhook?: {
     callbackUrl?: string;
     authHeaderName?: string;
+    authHeaderValue?: string;
     chunkSize?: number;
     retryInterval?: number;
     retryCount?: number;

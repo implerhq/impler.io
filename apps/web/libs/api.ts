@@ -239,6 +239,11 @@ const routes: Record<string, Route> = {
     method: 'POST',
   },
 
+  [API_KEYS.TEMPLATE_SAMPLE_GET]: {
+    url: (templateId: string) => `/v1/template/${templateId}/send-sample`,
+    method: 'POST',
+  },
+
   // Destination
   [API_KEYS.DESTINATION_FETCH]: {
     url: (templateId) => `/v1/template/${templateId}/destination`,
@@ -274,6 +279,15 @@ const routes: Record<string, Route> = {
   },
   [API_KEYS.ACTIVITY_SUMMARY]: {
     url: (projectId) => `/v1/activity/${projectId}/summary`,
+    method: 'GET',
+  },
+  [API_KEYS.ACTIVITY_RETRY]: {
+    url: (uploadId) => `/v1/activity/${uploadId}/retry`,
+    method: 'POST',
+  },
+
+  [API_KEYS.ACTIVITY_WEBHOOK_LOGS]: {
+    url: (uploadId) => `/v1/activity/upload/${uploadId}/webhook-logs`,
     method: 'GET',
   },
 

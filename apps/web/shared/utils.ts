@@ -158,10 +158,6 @@ export const getStatusSymbol = (status: string): React.ReactNode | string => {
   }
 };
 
-export const formatDate = (date: string) => {
-  return new Date(date).toLocaleString();
-};
-
 export const renderJSONContent = (content: unknown) => {
   try {
     const jsonString =

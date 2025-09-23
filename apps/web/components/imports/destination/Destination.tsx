@@ -24,8 +24,11 @@ export function Destination({ template }: DestinationProps) {
     resetDestination,
     updateDestination,
     mapBubbleIoColumnsClick,
+    openSampleRequestModal,
     isUpdateImportLoading,
+    isSendSampleRequestPending,
     isMapBubbleIoColumnsLoading,
+    isSendSampleRequestLoading,
   } = useDestination({
     template,
   });
@@ -65,13 +68,27 @@ export function Destination({ template }: DestinationProps) {
               required
               label="Callback URL"
               placeholder="Callback URL"
-              description="REST endpoint where data will be sent. Ex. https://acme.inc/api/data"
+              description={
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span>REST endpoint where data will be sent. Ex. https://acme.inc/api/data</span>
+                  <Button
+                    size="xs"
+                    variant="outline"
+                    onClick={() => openSampleRequestModal()}
+                    loading={isSendSampleRequestLoading || isSendSampleRequestPending}
+                  >
+                    Send Test Webhook
+                  </Button>
+                </div>
+              }
               error={errors.webhook?.callbackUrl ? 'Please enter valid URL' : undefined}
               {...register('webhook.callbackUrl', {
                 pattern: REGULAR_EXPRESSIONS.URL,
               })}
             />
+
             <Input label="Auth Header Name" placeholder="Auth Header Name" {...register('webhook.authHeaderName')} />
+
             <Controller
               control={control}
               name="webhook.chunkSize"
