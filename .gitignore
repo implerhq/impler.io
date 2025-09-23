@@ -1,9 +1,6 @@
 node_modules
 dist
 build
-
+.vscode/
 .env
 .nx
-
-# VSCode settings
-.vscode/
