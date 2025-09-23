@@ -114,6 +114,7 @@ export function useHistory() {
       modalId: MODAL_KEYS.VIEW_IMPORT_HISTORY,
       centered: true,
       size: 'calc(40vw - 3rem)',
+
       children: (
         <ImportHistoryModal
           record={record}

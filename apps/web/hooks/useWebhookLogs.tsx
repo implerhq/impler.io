@@ -10,6 +10,8 @@ interface UseWebhookLogsParams {
   limit?: number;
   isRetry?: boolean;
   enabled?: boolean;
+  // Add debug delay parameter
+  debugDelay?: number;
 }
 
 interface WebhookLog {
@@ -36,26 +38,36 @@ interface UseWebhookLogsReturn {
   refetch: () => void;
 }
 
+// Helper function to add artificial delay
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export function useWebhookLogs({
   uploadId,
   limit = 10,
   isRetry = false,
   enabled = true,
+  debugDelay = 6000,
 }: UseWebhookLogsParams): UseWebhookLogsReturn {
   const { data, error, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage, refetch } = useInfiniteQuery<
     WebhookLogsResponse,
     IErrorObject
   >(
-    [API_KEYS.ACTIVITY_WEBHOOK_LOGS, uploadId, limit, isRetry],
-    ({ pageParam = 1 }) =>
-      commonApi<WebhookLogsResponse>(API_KEYS.ACTIVITY_WEBHOOK_LOGS as any, {
+    [API_KEYS.ACTIVITY_WEBHOOK_LOGS, uploadId, limit, isRetry, debugDelay],
+    async ({ pageParam = 1 }) => {
+      // Add artificial delay for debugging if specified
+      if (debugDelay > 0) {
+        await delay(debugDelay);
+      }
+
+      return commonApi<WebhookLogsResponse>(API_KEYS.ACTIVITY_WEBHOOK_LOGS as any, {
         parameters: [uploadId],
         query: {
           page: pageParam,
           limit,
           ...(isRetry && { isRetry: 'true' }),
         },
-      }),
+      });
+    },
     {
       enabled: enabled && !!uploadId,
       getNextPageParam: (lastPage, allPages) => {

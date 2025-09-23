@@ -40,10 +40,7 @@ export function WidgetConfigurationModal({ onConfigSubmit, isLoading }: WidgetCo
 
   return (
     <Stack spacing="lg" style={{ minWidth: 400 }}>
-      <Text size="sm" color="dimmed">
-        Add optional authentication headers and extra data for your webhook test{' '}
-        <TooltipLink label="Extra Data" link={DOCUMENTATION_REFERENCE_LINKS.webhookAuthentication} />
-      </Text>
+      <Text color="dimmed">Add optional authentication headers and extra data for your webhook test</Text>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing="sm">
@@ -51,6 +48,12 @@ export function WidgetConfigurationModal({ onConfigSubmit, isLoading }: WidgetCo
             placeholder="e.g., Bearer token123, your-api-key"
             error={errors.authHeaderValue?.message}
             label="Auth Header Value"
+            description={
+              <div style={{ marginTop: '4px' }}>
+                The frontend SDK also lets you configure the Auth header and extra parameters.
+                <TooltipLink label="Learn more" link={DOCUMENTATION_REFERENCE_LINKS.webhookAuthentication} />
+              </div>
+            }
             {...register('authHeaderValue')}
           />
 
@@ -80,7 +83,7 @@ export function WidgetConfigurationModal({ onConfigSubmit, isLoading }: WidgetCo
                   }
                 }
 
-                return true; // Accept any other string
+                return true;
               },
             }}
             render={({ field }) => (

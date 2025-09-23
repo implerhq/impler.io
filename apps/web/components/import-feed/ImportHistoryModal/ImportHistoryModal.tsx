@@ -64,7 +64,7 @@ export function ImportHistoryModal({ record, onDownloadFile, onRetry, isRetryLoa
           <Tabs.Tab value="retry">Retry History</Tabs.Tab>
         </Tabs.List>
 
-        <Box h="60vh" style={{ overflowY: 'auto' }} py="md">
+        <Box h="60vh" style={{ overflowY: 'hidden' }} py="md">
           <Tabs.Panel value="overview" px="md">
             <OverviewTab record={record} />
           </Tabs.Panel>
@@ -74,12 +74,12 @@ export function ImportHistoryModal({ record, onDownloadFile, onRetry, isRetryLoa
           </Tabs.Panel>
 
           <Tabs.Panel value="retry" px="md">
-            <RetryTab record={record} webhookLogsData={retryLogsData} />
+            <RetryTab webhookLogsData={retryLogsData} />
           </Tabs.Panel>
         </Box>
       </Tabs>
 
-      <Box mt="auto" pt="md">
+      <Box>
         <Flex gap="lg" justify="center">
           <Button variant="outline" fullWidth onClick={handleDownloadFile}>
             Download Original File

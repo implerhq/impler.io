@@ -117,7 +117,7 @@ export function WebhookLogsTab({ record, webhookLogsData }: WebhookLogsTabProps)
       </Group>
 
       {webhookLogs.length > 0 ? (
-        <ScrollArea ref={scrollAreaRef} style={{ height: '600px' }}>
+        <ScrollArea ref={scrollAreaRef} style={{ height: '600px' }} scrollbarSize={5}>
           <Timeline active={webhookLogs.length} bulletSize={24} lineWidth={2}>
             {webhookLogs.map((log: WebhookLog, index: number) => (
               <Timeline.Item
