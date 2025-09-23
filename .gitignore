@@ -4,3 +4,6 @@ build
 
 .env
 .nx
+
+# VSCode settings
+.vscode/
