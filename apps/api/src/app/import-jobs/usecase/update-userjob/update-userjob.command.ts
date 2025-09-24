@@ -10,4 +10,6 @@ export class UpdateUserJobCommand {
   headings: string[];
 
   status: string;
+
+  nextRun?: Date;
 }
