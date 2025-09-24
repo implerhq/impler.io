@@ -1,4 +1,4 @@
-import { UpdateUserJob, UserJobTriggerService } from 'app/import-jobs/usecase';
+import { CreateUserJob, UpdateUserJob, UserJobTriggerService } from 'app/import-jobs/usecase';
 import { AutoImportJobsSchedular } from './auto-import-jobs-schedular';
 import { QueueService } from '@shared/services/queue.service';
 
@@ -8,6 +8,7 @@ export const USE_CASES = [
   UserJobTriggerService,
   UserJobTriggerService,
   QueueService,
+  CreateUserJob,
   //
 ];
-export { AutoImportJobsSchedular, UpdateUserJob, UserJobTriggerService, QueueService };
+export { AutoImportJobsSchedular, UpdateUserJob, UserJobTriggerService, QueueService, CreateUserJob };

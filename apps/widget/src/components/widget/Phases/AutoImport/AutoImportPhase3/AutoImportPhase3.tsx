@@ -12,7 +12,7 @@ import { autoImportSchedulerFrequency, AUTOIMPORTSCHEDULERFREQUENCY, colors } fr
 import { SchedulerFrequency } from './SchedularFrequency';
 import useStyles from './AutoImportPhase3.Styles';
 
-import { generateCronExpression } from 'util/helpers/common.helpers';
+import { generateCronExpression, getFormattedFirstRunTime } from 'util/helpers/common.helpers';
 
 interface IAutoImportPhase3Props {
   onNextClick: (importJob: IUserJob) => void;
@@ -87,8 +87,9 @@ export function AutoImportPhase3({ onNextClick }: IAutoImportPhase3Props) {
   }, [formValues]);
 
   const handleNextClick = () => {
+    const currentCronExpression = generateCronExpression(formValues);
     updateUserJob({
-      cron: cronExpression,
+      cron: currentCronExpression || cronExpression,
       endsOn: formValues.endsNever ? undefined : formValues.endsOn,
     });
   };
@@ -173,9 +174,14 @@ export function AutoImportPhase3({ onNextClick }: IAutoImportPhase3Props) {
 
               <Stack spacing="xl">
                 {cronExpression && (
-                  <Text fw="bolder" color={colors.StrokeLight}>
-                    Current Schedule: {parseCronExpression.toString(cronExpression)}
-                  </Text>
+                  <Stack spacing="xs">
+                    <Text fw="bolder" color={colors.StrokeLight}>
+                      First import will run: {getFormattedFirstRunTime()}
+                    </Text>
+                    <Text fw="normal" color={colors.StrokeLight} size="sm">
+                      Then repeats: {parseCronExpression.toString(cronExpression)}
+                    </Text>
+                  </Stack>
                 )}
               </Stack>
             </Stack>
