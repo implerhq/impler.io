@@ -307,4 +307,21 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
 
     return (environment[0].apiKeys[0]._userId as unknown as UserEntity).email;
   }
+
+  async getUserIdFromUploadId(uploadId: string): Promise<string> {
+    const uploadInfoWithTemplate = await Upload.findById(uploadId).populate([
+      {
+        path: '_templateId',
+      },
+    ]);
+    const environment = await Environment.find({
+      _projectId: (uploadInfoWithTemplate._templateId as unknown as TemplateEntity)._projectId,
+    }).populate([
+      {
+        path: 'apiKeys._userId',
+      },
+    ]);
+
+    return (environment[0].apiKeys[0]._userId as unknown as UserEntity)._id;
+  }
 }
