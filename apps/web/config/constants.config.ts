@@ -26,6 +26,7 @@ export const CONSTANTS = {
     'An error occurred with the payment. No amount has been deducted. Please try again later or contact the support team.',
   SUBSCRIPTION_ACTIVATED_TITLE: 'Subscription activated',
   SUBSCRIPTION_FAILED_TITLE: 'Payment failed',
+  MAX_PASSWORD_LENGTH: 24,
   SAMPLE_IMPORT_NAME: 'Product Data Import',
   SIDEBAR_COLLAPSED_KEY: 'SIDE_BAR_COLLAPSED',
 };
@@ -478,7 +479,7 @@ export enum PLANCODEENUM {
   GROWTH_YEARLY = 'GROWTH-YEARLY',
   STARTER = 'STARTER',
 }
-export const plans: { monthly: Plan[]; yearly: Plan[] } = {
+export const plans: { monthly: Plan[]; yearly: Plan[]; } = {
   monthly: [
     {
       name: 'Starter (Default)',
