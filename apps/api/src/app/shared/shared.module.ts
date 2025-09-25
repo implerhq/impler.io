@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { SchedulerRegistry } from '@nestjs/schedule';
 import {
   ColumnRepository,
   CommonRepository,
@@ -49,11 +48,9 @@ const DAL_MODELS = [
   ValidatorRepository,
   WebhookDestinationRepository,
   BubbleDestinationRepository,
+  UserJobRepository,
   JobMappingRepository,
-  UserJobRepository,
-  SchedulerRegistry,
   ProjectInvitationRepository,
-  UserJobRepository,
   FailedWebhookRetryRequestsRepository,
   WebhookLogRepository,
 ];

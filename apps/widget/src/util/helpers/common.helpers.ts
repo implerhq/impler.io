@@ -10,6 +10,23 @@ import { WIDGET_TEXTS, isObject } from '@impler/client';
 import { convertStringToJson, downloadFile, FileMimeTypesEnum } from '@impler/shared';
 import { RecurrenceFormData } from 'types/component.types';
 
+export const getFirstRunTime = (): Date => {
+  const now = new Date();
+
+  return new Date(now.getTime() + 5 * 60 * 1000); // 5 minutes from now
+};
+
+export const getFormattedFirstRunTime = (): string => {
+  return getFirstRunTime().toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  });
+};
+
 // eslint-disable-next-line no-magic-numbers
 export function formatBytes(bytes, decimals = 2) {
   if (!+bytes) return '0 Bytes';
@@ -205,8 +222,9 @@ const calculateMonthlyPattern = (frequency: number, consecutiveMonths = 1, input
 };
 
 export const generateCronExpression = (data: RecurrenceFormData): string => {
-  const minutes = 45;
-  const hours = 23;
+  const firstRunTime = getFirstRunTime();
+  const minutes = firstRunTime.getMinutes();
+  const hours = firstRunTime.getHours();
 
   const getMonthlyWeekDayIndex = (dayName?: string): number => {
     if (!dayName) return 0;
@@ -281,7 +299,9 @@ export const generateCronExpression = (data: RecurrenceFormData): string => {
         return `${minutes} ${hours} */${data.dailyFrequency} * *`;
       }
 
-      return `${minutes} ${hours} * * *`;
+      const cronExpression = `${minutes} ${hours} * * *`;
+
+      return cronExpression;
     }
     case AUTOIMPORTSCHEDULERFREQUENCY.WEEKLY: {
       const selectedDayIndexes = (data.selectedDays || [])
