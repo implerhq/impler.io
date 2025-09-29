@@ -9,15 +9,15 @@ export class UploadHistory {
 
   async execute({ _projectId, date, limit, name, page }: UploadHistoryCommand): Promise<PaginationResult> {
     const uploadResult = await this.uploadRepository.getList(_projectId, name, date, page, limit);
-    uploadResult.uploads = uploadResult.uploads.map((upload) => {
-      upload.name = upload._template.name;
-      delete upload._template;
 
-      return upload;
-    });
+    const transformedRecords = uploadResult.uploads.map((record) => ({
+      ...record,
+      name: record._template?.name,
+      _template: undefined,
+    }));
 
     return {
-      data: uploadResult.uploads,
+      data: transformedRecords,
       limit,
       page,
       totalPages: Math.ceil(uploadResult.totalRecords / limit),
