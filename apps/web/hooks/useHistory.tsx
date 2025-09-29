@@ -124,7 +124,7 @@ export function useHistory() {
         />
       ),
       withCloseButton: true,
-      title: <Title order={3}>Import Details</Title>,
+      title: <Title order={3}>{record.name} - Import Details</Title>,
     });
   }
 

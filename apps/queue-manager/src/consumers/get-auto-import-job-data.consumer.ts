@@ -1,33 +1,34 @@
-import { RSSXMLService } from '@impler/services';
+import { PaymentAPIService, RSSXMLService } from '@impler/services';
 import {
-  ImportJobHistoryStatusEnum,
   SendImportJobCachedData,
   ColumnTypesEnum,
   ITemplateSchemaItem,
   ColumnDelimiterEnum,
+  UserJobImportStatusEnum,
 } from '@impler/shared';
 
-import dayjs from 'dayjs';
 import { SendImportJobDataConsumer } from './send-import-job-data.consumer';
-import { CommonRepository, JobMappingRepository, ColumnRepository } from '@impler/dal';
+import { JobMappingRepository, ColumnRepository, UploadRepository, UserJobEntity } from '@impler/dal';
 
-export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
-  private commonRepository: CommonRepository = new CommonRepository();
+interface IValidationResult {
+  hasInvalidRecords: boolean;
+  totalRecords: number;
+  validRecords: number;
+  invalidRecords: number;
+  validData: Record<string, unknown>[];
+  invalidData: Record<string, unknown>[];
+}
+
+export class SendAutoImportJobDataConsumer extends SendImportJobDataConsumer {
   private jobMappingRepository: JobMappingRepository = new JobMappingRepository();
   private columnRepo: ColumnRepository = new ColumnRepository();
   private rssXmlService: RSSXMLService = new RSSXMLService();
+  private paymentAPIService: PaymentAPIService = new PaymentAPIService();
+  private uploadRepository: UploadRepository = new UploadRepository();
 
   async message(message: { content: string }) {
     const data = JSON.parse(message.content) as { _jobId: string };
-    const importJobHistoryId = this.commonRepository.generateMongoId().toString();
     const validationResult = await this.getJobImportedData(data._jobId);
-
-    // Create history entry
-    await this.importJobHistoryRepository.create({
-      _id: importJobHistoryId,
-      _jobId: data._jobId,
-      status: ImportJobHistoryStatusEnum.PROCESSING,
-    });
 
     const userJobInfo = await this.userJobRepository.getUserJobWithTemplate(data._jobId);
     const webhookDestination = await this.webhookDestinationRepository.findOne({
@@ -36,8 +37,17 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
 
     if (webhookDestination?.callbackUrl) {
       if (validationResult.validRecords > 0) {
-        await this.sendDataImportData(data._jobId, validationResult.validData, 1, undefined, false, userJobInfo.endsOn);
+        await this.sendDataImportData(
+          data._jobId,
+          validationResult.validData,
+          1,
+          undefined,
+          false,
+          userJobInfo.endsOn,
+          validationResult
+        );
       }
+
       if (validationResult.invalidRecords > 0) {
         await this.sendDataImportData(
           data._jobId,
@@ -45,7 +55,8 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
           1,
           undefined,
           true,
-          userJobInfo.endsOn
+          userJobInfo.endsOn,
+          validationResult
         );
       }
     }
@@ -53,15 +64,7 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
     return;
   }
 
-  async getJobImportedData(_jobId: string): Promise<{
-    importedData: Record<string, unknown>[];
-    hasInvalidRecords: boolean;
-    totalRecords: number;
-    validRecords: number;
-    invalidRecords: number;
-    validData: Record<string, unknown>[];
-    invalidData: Record<string, unknown>[];
-  }> {
+  async getJobImportedData(_jobId: string): Promise<IValidationResult & { importedData: Record<string, unknown>[] }> {
     try {
       const userJob = await this.userJobRepository.findOne({ _id: _jobId });
       if (!userJob) {
@@ -217,7 +220,8 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
     page = 1,
     initialCachedData?: SendImportJobCachedData,
     areInvalidRecords?: boolean,
-    endsOn?: Date
+    endsOn?: Date,
+    validationResult?: IValidationResult
   ) {
     try {
       let cachedData = null;
@@ -268,17 +272,62 @@ export class GetImportJobDataConsumer extends SendImportJobDataConsumer {
             nextPageNumber,
             { ...cachedData, page: nextPageNumber },
             areInvalidRecords,
-            endsOn
+            endsOn,
+            validationResult
           );
         } else {
-          if (endsOn && dayjs(endsOn).isSame(dayjs(), 'day')) {
-            await this.finalizeUpload(_jobId);
+          if (validationResult) {
+            // Get userJobInfo for finalization
+            const userJobInfo = await this.userJobRepository.getUserJobWithTemplate(_jobId);
+            await this.finalizeAutoImportJob(_jobId, validationResult, userJobInfo);
           }
         }
       }
     } catch (error) {
       throw error;
     }
+  }
+
+  private async finalizeAutoImportJob(
+    _jobId: string,
+    validationResult: IValidationResult,
+    userJobInfo: UserJobEntity
+  ): Promise<void> {
+    try {
+      await this.templateRepository.update(
+        { _id: userJobInfo._templateId },
+        {
+          $set: {
+            isInvalidRecords: validationResult.hasInvalidRecords,
+            invalidRecords: validationResult.invalidRecords,
+            validRecords: validationResult.validRecords,
+            totalRecords: validationResult.totalRecords,
+          },
+        }
+      );
+
+      await this.paymentAPIService.createEvent(
+        {
+          uploadId: _jobId,
+          totalRecords: validationResult.totalRecords,
+          validRecords: validationResult.validRecords,
+          invalidRecords: validationResult.invalidRecords,
+        },
+        userJobInfo.externalUserId
+      );
+
+      await this.userJobRepository.update(
+        { _id: _jobId },
+        {
+          $set: {
+            status: UserJobImportStatusEnum.RUNNING, //UserJobImportStatusEnum.COMPLETED,
+            totalRecords: validationResult.totalRecords,
+            validRecords: validationResult.validRecords,
+            invalidRecords: validationResult.invalidRecords,
+          },
+        }
+      );
+    } catch (error) {}
   }
 
   private validateRecordUsingColumnSchema(
