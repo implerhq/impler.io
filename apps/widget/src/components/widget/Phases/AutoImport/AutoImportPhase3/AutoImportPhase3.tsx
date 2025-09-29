@@ -21,10 +21,14 @@ interface IAutoImportPhase3Props {
 }
 
 const getDefaultValuesForFrequency = (frequency: AUTOIMPORTSCHEDULERFREQUENCY): Partial<RecurrenceFormData> => {
+  const now = new Date();
+  const defaultTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
   const baseDefaults = {
     recurrenceType: frequency,
     endsNever: true,
     endsOn: undefined,
+    time: defaultTime,
   };
 
   switch (frequency) {
@@ -208,7 +212,7 @@ export function AutoImportPhase3({ onNextClick }: IAutoImportPhase3Props) {
                 {cronExpression && (
                   <Stack spacing="xs">
                     <Text fw="bolder" color={colors.StrokeLight}>
-                      First import will run: {getFormattedFirstRunTime()}
+                      First import will run: {getFormattedFirstRunTime(formValues)}
                     </Text>
                     <Text fw="normal" color={colors.StrokeLight} size="sm">
                       Then repeats: {parseCronExpression.toString(cronExpression)}
