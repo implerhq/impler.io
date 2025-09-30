@@ -73,17 +73,19 @@ export class CreateUserJob {
         return dayjs().add(5, 'minutes').toDate();
       }
 
-      const now = dayjs();
-      const fiveMinutesFromNow = now.add(5, 'minutes');
-
-      const interval = parser.parseExpression(cronExpression.trim());
+      const interval = parser.parseExpression(cronExpression.trim(), {
+        tz: 'Asia/Kolkata',
+      });
       const nextCronTime = dayjs(interval.next().toDate());
+      const now = dayjs();
 
-      if (nextCronTime.isAfter(fiveMinutesFromNow)) {
-        return fiveMinutesFromNow.toDate();
-      } else {
-        return nextCronTime.toDate();
+      if (nextCronTime.isBefore(now.add(1, 'minute'))) {
+        const nextOccurrence = dayjs(interval.next().toDate());
+
+        return nextOccurrence.toDate();
       }
+
+      return nextCronTime.toDate();
     } catch (error) {
       return dayjs().add(5, 'minutes').toDate();
     }

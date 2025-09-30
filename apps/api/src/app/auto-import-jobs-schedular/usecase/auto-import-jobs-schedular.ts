@@ -48,6 +48,7 @@ export class AutoImportJobsSchedular {
 
       const interval = parser.parseExpression(cronExpression.trim(), {
         currentDate: currentNextRun,
+        tz: 'Asia/Kolkata',
       });
 
       const nextRun = interval.next().toDate();

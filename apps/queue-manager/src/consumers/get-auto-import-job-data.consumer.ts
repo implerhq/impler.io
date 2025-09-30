@@ -8,7 +8,7 @@ import {
 } from '@impler/shared';
 
 import { SendImportJobDataConsumer } from './send-import-job-data.consumer';
-import { JobMappingRepository, ColumnRepository, UploadRepository, UserJobEntity } from '@impler/dal';
+import { JobMappingRepository, ColumnRepository, UserJobEntity } from '@impler/dal';
 
 interface IValidationResult {
   hasInvalidRecords: boolean;
@@ -24,7 +24,6 @@ export class SendAutoImportJobDataConsumer extends SendImportJobDataConsumer {
   private columnRepo: ColumnRepository = new ColumnRepository();
   private rssXmlService: RSSXMLService = new RSSXMLService();
   private paymentAPIService: PaymentAPIService = new PaymentAPIService();
-  private uploadRepository: UploadRepository = new UploadRepository();
 
   async message(message: { content: string }) {
     const data = JSON.parse(message.content) as { _jobId: string };
