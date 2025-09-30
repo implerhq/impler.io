@@ -1,6 +1,6 @@
 {
   "name": "@impler/react",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "React library to show CSV Excel Importer in react applications",
   "license": "MIT",
   "author": "implerhq",
