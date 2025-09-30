@@ -50,6 +50,18 @@ const userJobSchema = new Schema(
       type: Schema.Types.Boolean,
       default: false,
     },
+    totalRecords: {
+      type: Schema.Types.Number,
+      default: 0,
+    },
+    validRecords: {
+      type: Schema.Types.Number,
+      default: 0,
+    },
+    invalidRecords: {
+      type: Schema.Types.Number,
+      default: 0,
+    },
   },
   { ...schemaOptions }
 );

@@ -1,6 +1,5 @@
 version: "3"
 services:
-
   mongodb:
     image: mongo
     container_name: mongodb
@@ -19,7 +18,7 @@ services:
 
   api:
     privileged: true
-    image: "ghcr.io/implerhq/impler/api:1.8.0"
+    image: "ghcr.io/implerhq/impler/api:1.8.1"
     depends_on:
       - mongodb
       - rabbitmq
@@ -57,7 +56,7 @@ services:
       - impler
 
   queue-manager:
-    image: "ghcr.io/implerhq/impler/queue-manager:1.8.0"
+    image: "ghcr.io/implerhq/impler/queue-manager:1.8.1"
     depends_on:
       - api
       - rabbitmq
@@ -85,7 +84,7 @@ services:
       - impler
 
   widget:
-    image: "ghcr.io/implerhq/impler/widget:1.8.0"
+    image: "ghcr.io/implerhq/impler/widget:1.8.1"
     depends_on:
       - api
     container_name: widget
@@ -103,7 +102,7 @@ services:
   embed:
     depends_on:
       - widget
-    image: "ghcr.io/implerhq/impler/embed:1.8.0"
+    image: "ghcr.io/implerhq/impler/embed:1.8.1"
     container_name: embed
     environment:
       WIDGET_URL: ${WIDGET_BASE_URL}
@@ -115,7 +114,7 @@ services:
   web:
     depends_on:
       - api
-    image: "ghcr.io/implerhq/impler/web:1.8.0"
+    image: "ghcr.io/implerhq/impler/web:1.8.1"
     container_name: web
     environment:
       NEXT_PUBLIC_API_BASE_URL: ${API_ROOT_URL}
@@ -127,15 +126,15 @@ services:
       - 4200:4200
     networks:
       - impler
-  
+
   rabbitmq:
     image: rabbitmq:3-alpine
-    container_name: 'rabbitmq'
+    container_name: "rabbitmq"
     restart: always
     ports:
       - 5672:5672
     healthcheck:
-      test: [ "CMD", "nc", "-z", "localhost", "5672" ]
+      test: ["CMD", "nc", "-z", "localhost", "5672"]
       interval: 5s
       timeout: 15s
       retries: 1

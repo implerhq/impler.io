@@ -9,6 +9,8 @@ export interface IHistoryRecord {
   hasWebhookLogs?: boolean;
   originalFileName: string;
   name: string;
+  type: string;
+  destination: string;
 }
 
 export interface IPaginationData<T = any> {

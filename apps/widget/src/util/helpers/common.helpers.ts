@@ -16,8 +16,25 @@ export const getFirstRunTime = (): Date => {
   return new Date(now.getTime() + 5 * 60 * 1000); // 5 minutes from now
 };
 
-export const getFormattedFirstRunTime = (): string => {
-  return getFirstRunTime().toLocaleString('en-US', {
+export const getFormattedFirstRunTime = (formData?: RecurrenceFormData): string => {
+  let firstRunTime: Date;
+
+  if (formData?.time) {
+    const [hours, minutes] = formData.time.split(':').map(Number);
+    const now = new Date();
+    firstRunTime = new Date();
+    firstRunTime.setHours(hours, minutes, 0, 0);
+
+    // If the time has already passed today, schedule for tomorrow
+    if (firstRunTime <= now) {
+      firstRunTime.setDate(firstRunTime.getDate() + 1);
+    }
+  } else {
+    // Fallback to 5 minutes from now
+    firstRunTime = getFirstRunTime();
+  }
+
+  return firstRunTime.toLocaleString('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -222,9 +239,19 @@ const calculateMonthlyPattern = (frequency: number, consecutiveMonths = 1, input
 };
 
 export const generateCronExpression = (data: RecurrenceFormData): string => {
-  const firstRunTime = getFirstRunTime();
-  const minutes = firstRunTime.getMinutes();
-  const hours = firstRunTime.getHours();
+  let minutes = 0;
+  let hours = 0;
+
+  if (data.time) {
+    const [timeHours, timeMinutes] = data.time.split(':').map(Number);
+    hours = timeHours;
+    minutes = timeMinutes;
+  } else {
+    // Fallback to current time + 5 minutes if no time specified
+    const firstRunTime = getFirstRunTime();
+    minutes = firstRunTime.getMinutes();
+    hours = firstRunTime.getHours();
+  }
 
   const getMonthlyWeekDayIndex = (dayName?: string): number => {
     if (!dayName) return 0;

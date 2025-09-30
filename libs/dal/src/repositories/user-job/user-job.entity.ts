@@ -28,4 +28,10 @@ export class UserJobEntity {
   customSchema: string;
 
   isInvalidRecords?: boolean;
+
+  totalRecords?: number;
+
+  validRecords?: number;
+
+  invalidRecords?: number;
 }
