@@ -83,7 +83,7 @@ export function OverviewTab({ record }: OverviewTabProps) {
 
           <Grid.Col span={6}>
             <Group spacing="xs" mb="xs">
-              <DestinationIcon />
+              <DestinationIcon size="sm" />
               <Text size="sm">Destination</Text>
             </Group>
             <Text size="md" fw={600}>
