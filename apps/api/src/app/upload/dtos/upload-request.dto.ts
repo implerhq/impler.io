@@ -37,7 +37,7 @@ export class UploadRequestDto {
     required: false,
   })
   @IsOptional()
-  @IsJSON()
+  @IsString()
   extra?: string;
 
   @ApiProperty({

@@ -34,7 +34,7 @@ export function WidgetConfigurationModal({ onConfigSubmit, isLoading }: WidgetCo
   const onSubmit = (data: WidgetConfigFormData) => {
     onConfigSubmit({
       authHeaderValue: data.authHeaderValue,
-      extra: data.extraData,
+      extra: JSON.parse(data.extraData || '{}'),
     });
   };
 
