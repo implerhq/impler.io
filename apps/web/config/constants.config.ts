@@ -443,7 +443,7 @@ export const HOW_HEARD_ABOUT_US = [
   { value: 'Google Search', label: 'Google Search' },
   { value: 'Bubble.io', label: 'Bubble.io' },
   { value: 'Colleague', label: 'Colleague' },
-  { value: 'Linkdin', label: 'Linkdin' },
+  { value: 'Linkedin', label: 'Linkedin' },
   { value: 'Invitation', label: 'Invitation' },
   { value: 'AI (ChatGPT, Perplexity, Claude ...)', label: 'AI (ChatGPT, Perplexity, Claude ...)' },
 ];

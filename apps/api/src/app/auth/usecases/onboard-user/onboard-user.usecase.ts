@@ -43,14 +43,15 @@ export class OnboardUser {
           externalId: updatedUser.email,
         };
         await this.paymentAPIService.createUser(userData);
+        console.log('User created in payment API', userData);
         await this.leadService.createLead({
           'First Name': updatedUser.firstName,
           'Last Name': updatedUser.lastName,
           'Lead Email': updatedUser.email,
-          'Lead Source': updatedUser.source,
-          'Mentioned Role': updatedUser.role,
+          'CRM Source': updatedUser.source,
+          Role: updatedUser.role,
           'Signup Method': updatedUser.signupMethod as LEAD_SIGNUP_USING,
-          'Company Size': updatedUser.companySize,
+          'Est. Employees': updatedUser.companySize,
         });
       } catch (error) {
         captureException(error);

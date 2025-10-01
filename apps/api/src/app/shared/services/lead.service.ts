@@ -8,9 +8,9 @@ interface ILeadInformation {
   'Last Name': string;
   'Lead Email': string;
   'Signup Method': LEAD_SIGNUP_USING;
-  'Mentioned Role': string;
-  'Lead Source': string;
-  'Company Size': string;
+  Role: string;
+  'CRM Source': string;
+  'Est. Employees': string;
 }
 
 @Injectable()
@@ -53,6 +53,9 @@ export class LeadService {
         'First Name': data['First Name'],
         'Last Name': data['Last Name'],
         'Lead Email': data['Lead Email'],
+        Role: data.Role,
+        'Est. Employees': data['Est. Employees'],
+        'CRM Source': data['CRM Source'],
       });
       // Add Lead to marketing automation
       // eslint-disable-next-line max-len
@@ -81,9 +84,9 @@ export class LeadService {
           lastName: data['Last Name'],
           email: data['Lead Email'],
           signupMethod: data['Signup Method'],
-          mentionedRole: data['Mentioned Role'],
-          leadSource: data['Lead Source'],
-          companySize: data['Company Size'],
+          mentionedRole: data.Role,
+          leadSource: data['CRM Source'],
+          companySize: data['Est. Employees'],
           createdAt: new Date(),
         });
         if (this.log) console.log('Lead data sent to Make.com webhook');
