@@ -43,7 +43,6 @@ export class OnboardUser {
           externalId: updatedUser.email,
         };
         await this.paymentAPIService.createUser(userData);
-        console.log('User created in payment API', userData);
         await this.leadService.createLead({
           'First Name': updatedUser.firstName,
           'Last Name': updatedUser.lastName,
