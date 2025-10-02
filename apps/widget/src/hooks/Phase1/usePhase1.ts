@@ -78,9 +78,7 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
         resetField('file');
         setError('file', {
           type: 'file',
-          message: maxRecords
-            ? `${texts.PHASE3.MAX_RECORD_LIMIT_ERROR} ${maxRecords}`
-            : texts.PHASE3.MAX_RECORD_LIMIT_ERROR ?? error.message,
+          message: error.message,
         });
       },
     }
@@ -91,7 +89,7 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
     IErrorObject,
     { file: File }
     // eslint-disable-next-line prettier/prettier
-    >(['getExcelSheetNames'], (excelSheetFile) => api.getExcelSheetNames(excelSheetFile), {
+  >(['getExcelSheetNames'], (excelSheetFile) => api.getExcelSheetNames(excelSheetFile), {
     onSuccess(sheetNames) {
       if (sheetNames.length <= 1) {
         setValue('selectedSheetName', sheetNames[0]);
