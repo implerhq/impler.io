@@ -108,10 +108,10 @@ export class AcceptInvitation {
         'First Name': user.firstName,
         'Last Name': user.lastName,
         'Lead Email': user.email,
-        'Lead Source': 'Invitation',
-        'Mentioned Role': user.role,
+        'CRM Source': 'Invitation',
+        Role: user.role,
         'Signup Method': LEAD_SIGNUP_USING.EMAIL,
-        'Company Size': user.companySize,
+        'Est. Employees': user.companySize,
       });
     } catch (error) {
       captureException(error);
