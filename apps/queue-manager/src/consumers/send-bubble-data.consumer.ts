@@ -164,13 +164,17 @@ export class SendBubbleDataConsumer extends BaseConsumer {
         Object.keys(extra).forEach((extraObjKey) => {
           defaultValueObj[`extra.${extraObjKey}`] = extra[extraObjKey];
         });
-        if (uploadata.customRecordFormat && uploadata.customRecordFormat.includes('{{extra.uploadId}}')) {
-          defaultValueObj['extra.uploadId'] = _uploadId;
-        }
+        /*
+         * if (uploadata.customRecordFormat && uploadata.customRecordFormat.includes('{{extra.uploadId}}')) {
+         *   defaultValueObj['extra.uploadId'] = _uploadId;
+         * }
+         */
 
-        if (uploadata.customRecordFormat && uploadata.customRecordFormat.includes('{{extra.userId}}')) {
-          defaultValueObj['extra.userId'] = await this.uploadRepository.getUserIdFromUploadId(_uploadId);
-        }
+        /*
+         * if (uploadata.customRecordFormat && uploadata.customRecordFormat.includes('{{extra.userId}}')) {
+         *   defaultValueObj['extra.userId'] = await this.uploadRepository.getUserIdFromUploadId(_uploadId);
+         * }
+         */
       } catch (error) {}
     }
 
