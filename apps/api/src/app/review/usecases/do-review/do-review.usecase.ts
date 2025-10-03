@@ -1,3 +1,4 @@
+/* eslint-disable multiline-comment-style */
 import { Model } from 'mongoose';
 import { Writable } from 'stream';
 import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
@@ -16,7 +17,9 @@ import {
   DalService,
   TemplateEntity,
   TemplateRepository,
+  EnvironmentRepository,
 } from '@impler/dal';
+import { UsageLimitExceededException } from '@shared/exceptions/import-limit-exceeded.exception';
 
 interface ISaveResults {
   uploadId: string;
@@ -32,6 +35,7 @@ export class DoReview extends BaseReview {
 
   constructor(
     private templateRepository: TemplateRepository,
+    private environmentRepository: EnvironmentRepository,
     private storageService: StorageService,
     private uploadRepository: UploadRepository,
     private validatorRepository: ValidatorRepository,
@@ -44,6 +48,7 @@ export class DoReview extends BaseReview {
   }
 
   async execute(_uploadId: string) {
+    console.log('Called The Do Review.execute');
     this._modal = this.dalService.getRecordCollection(_uploadId);
     const userEmail = await this.uploadRepository.getUserEmailFromUploadId(_uploadId);
 
@@ -205,7 +210,28 @@ export class DoReview extends BaseReview {
       throw new InternalServerErrorException(APIMessages.ERROR_DURING_VALIDATION);
     }
 
-    await this.saveResults(response);
+    try {
+      await this.saveResults(response);
+    } catch (error) {
+      const emailContents = this.emailService.getEmailContent({
+        type: 'IMPORT_LIMIT_EXCEEDED_EMAIL',
+        data: {
+          limitType: 'Import Rows',
+          currentUsage: 'All available units including grace percentage',
+          planName: 'Current Plan',
+          upgradeUrl: `${process.env.WEB_BASE_URL}/pricing`,
+        },
+      });
+      await this.emailService.sendEmail({
+        from: process.env.EMAIL_FROM,
+        html: emailContents,
+        subject: 'Usage limit exceeded',
+        to: userEmail,
+        senderName: process.env.EMAIL_FROM_NAME,
+      });
+
+      throw new UsageLimitExceededException(error.message);
+    }
 
     return response;
   }
@@ -235,32 +261,65 @@ export class DoReview extends BaseReview {
   }
 
   private async saveResults({ uploadId, totalRecords, validRecords, invalidRecords, _templateId }: ISaveResults) {
-    await this.uploadRepository.update(
-      { _id: uploadId },
-      {
-        status: UploadStatusEnum.REVIEWING,
-        totalRecords,
-        validRecords,
-        invalidRecords,
-      }
-    );
-    await this.templateRepository.findOneAndUpdate(
-      {
-        _id: _templateId,
-      },
-      {
-        $inc: {
-          totalUploads: 1,
-          totalRecords: totalRecords,
-          totalInvalidRecords: invalidRecords,
-        },
-      }
-    );
     const userExternalIdOrEmail = await this.uploadRepository.getUserEmailFromUploadId(uploadId);
 
-    await this.paymentAPIService.createEvent(
-      { uploadId, totalRecords, validRecords, invalidRecords },
-      userExternalIdOrEmail
-    );
+    try {
+      // First, try to create the payment event
+      await this.paymentAPIService.createEvent(
+        { uploadId, totalRecords, validRecords, invalidRecords },
+        userExternalIdOrEmail
+      );
+
+      // Only update database if payment event creation succeeds
+      await this.uploadRepository.update(
+        { _id: uploadId },
+        {
+          status: UploadStatusEnum.REVIEWING,
+          totalRecords,
+          validRecords,
+          invalidRecords,
+        }
+      );
+
+      await this.templateRepository.findOneAndUpdate(
+        {
+          _id: _templateId,
+        },
+        {
+          $inc: {
+            totalUploads: 1,
+            totalRecords: totalRecords,
+            totalInvalidRecords: invalidRecords,
+          },
+        }
+      );
+    } catch (error) {
+      const template = await this.templateRepository.findById(_templateId);
+      const environment = await this.environmentRepository.getProjectTeamMembers(template._projectId);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const teamMemberEmails = environment.map((teamMember) => teamMember._userId.email);
+      console.log(teamMemberEmails);
+
+      const emailContents = this.emailService.getEmailContent({
+        type: 'IMPORT_LIMIT_EXCEEDED_EMAIL',
+        data: {
+          limitType: 'Import Rows',
+          currentUsage: 'All available units including grace percentage',
+          planName: 'Current Plan',
+          upgradeUrl: `${process.env.WEB_BASE_URL}/pricing`,
+        },
+      });
+
+      teamMemberEmails.forEach(async (email) => {
+        await this.emailService.sendEmail({
+          to: email,
+          subject: EMAIL_SUBJECT.IMPORT_LIMIT_EXCEEDED,
+          html: emailContents,
+          from: process.env.ALERT_EMAIL_FROM,
+          senderName: process.env.EMAIL_FROM_NAME,
+        });
+      });
+    }
   }
 }

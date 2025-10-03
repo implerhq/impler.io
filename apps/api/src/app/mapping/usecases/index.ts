@@ -8,6 +8,7 @@ import { ReanameFileHeadings } from './rename-file-headings/rename-file-headings
 
 import { DoMappingCommand } from './do-mapping/do-mapping.command';
 import { ValidateMappingCommand } from './validate-mapping/validate-mapping.command';
+import { PaymentAPIService } from '@impler/services';
 
 export const USE_CASES = [
   DoMapping,
@@ -17,9 +18,19 @@ export const USE_CASES = [
   ValidateMapping,
   ReanameFileHeadings,
   GetUpload,
+  PaymentAPIService,
   //
 ];
 
-export { DoMapping, ValidateMapping, GetMappings, UpdateMappings, FinalizeUpload, ReanameFileHeadings, GetUpload };
+export {
+  DoMapping,
+  ValidateMapping,
+  GetMappings,
+  UpdateMappings,
+  FinalizeUpload,
+  ReanameFileHeadings,
+  GetUpload,
+  PaymentAPIService,
+};
 
 export { DoMappingCommand, ValidateMappingCommand };

@@ -4,13 +4,14 @@ import { API_KEYS, MODAL_KEYS } from '@config';
 import { IErrorObject, ISubscriptionData } from '@impler/shared';
 import { usePlanMetaData } from 'store/planmeta.store.context';
 import { useCallback } from 'react';
-import { PlansModal } from '@components/UpgradePlan/PlansModal';
 import { useAppState } from 'store/app.context';
 import { modals } from '@mantine/modals';
 import { track } from '@libs/amplitude';
 import { PaymentModal } from '@components/AddCard/PaymentModal';
-import { Center } from '@mantine/core';
 import { IPlanMeta } from '@types';
+import React from 'react';
+import { useSubOSIntegration } from './useSubOSIntegration';
+import { PlansGrid } from 'subos-frontend';
 
 interface UsePlanDetailProps {
   projectId?: string;
@@ -18,6 +19,8 @@ interface UsePlanDetailProps {
 }
 
 export function usePlanDetails({ projectId }: UsePlanDetailProps) {
+  const subOSIntegration = useSubOSIntegration();
+  console.log('subscription >', subOSIntegration.subscription);
   const { profileInfo } = useAppState();
   const { meta, setPlanMeta } = usePlanMetaData();
   const {
@@ -48,20 +51,21 @@ export function usePlanDetails({ projectId }: UsePlanDetailProps) {
       id: MODAL_KEYS.PAYMENT_PLANS,
       modalId: MODAL_KEYS.PAYMENT_PLANS,
       children: (
-        <Center>
-          <PlansModal
-            userProfile={profileInfo!}
-            activePlanCode={activePlanDetails?.plan?.code}
-            canceledOn={activePlanDetails?.plan.canceledOn}
-            expiryDate={activePlanDetails?.expiryDate}
-          />
-        </Center>
+        <PlansGrid
+          plans={subOSIntegration.plans}
+          selectedPlan={null}
+          billingCycle="monthly"
+          loading={false}
+          error={null}
+          onPlanSelect={subOSIntegration.selectPlan}
+          activePlanCode="current-plan-code"
+        />
       ),
       centered: true,
-      size: 'calc(60vw - 3rem)',
+      size: 'calc(50vw - 3rem)',
       withCloseButton: false,
     });
-  }, [activePlanDetails, profileInfo]);
+  }, [activePlanDetails, profileInfo, subOSIntegration.plans, subOSIntegration.selectPlan]);
 
   const onOpenPaymentModal = ({ code, modalId }: { code: string; modalId: string }) => {
     modals.closeAll();
@@ -87,10 +91,20 @@ export function usePlanDetails({ projectId }: UsePlanDetailProps) {
 
   return {
     meta,
-    activePlanDetails,
+    activePlanDetails: subOSIntegration.subscription,
     isActivePlanLoading,
     showPlans,
     onOpenPaymentModal,
     refetchActivePlanDetails,
+    // SubOS integration data and methods
+    subOSPlans: subOSIntegration.plans,
+    subOSLoading: subOSIntegration.loading,
+    subOSError: subOSIntegration.error,
+    subOSIsConfigured: subOSIntegration.isConfigured,
+    subOSBillingCycle: subOSIntegration.billingCycle,
+    subOSSelectedPlan: subOSIntegration.selectedPlan,
+    subOSChangeBillingCycle: subOSIntegration.changeBillingCycle,
+    subOSSelectPlan: subOSIntegration.selectPlan,
+    subOSFetchPlans: subOSIntegration.fetchPlans,
   };
 }

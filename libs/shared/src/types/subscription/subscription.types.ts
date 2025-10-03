@@ -18,6 +18,7 @@ export interface ISubscriptionData {
   isActive: boolean;
   usage: {
     IMPORTED_ROWS: number;
+    ROWS: number;
   };
   expiryDate: string;
   meta: {
@@ -32,6 +33,7 @@ export interface ISubscriptionData {
     ADVANCED_VALIDATORS: boolean;
     TEAM_MEMBERS: number;
     IMAGE_IMPORT: boolean;
+    ROWS: number;
   };
   customer?: {
     paymentMethodCurrency?: string;

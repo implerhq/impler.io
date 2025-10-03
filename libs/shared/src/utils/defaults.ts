@@ -88,4 +88,5 @@ export enum EMAIL_SUBJECT {
   PROJECT_INVITATION = 'You Have Invited to',
   INVITATION_ACCEPTED = 'Invitation Accepted Successfully',
   INVITATION_DECLINED = 'Has Declined the Invitation',
+  IMPORT_LIMIT_EXCEEDED = 'Import Limit Exceeded',
 }

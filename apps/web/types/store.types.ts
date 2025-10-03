@@ -15,6 +15,7 @@ export interface IPlanMeta {
   AUTOMATIC_IMPORTS: boolean;
   ADVANCED_VALIDATORS: boolean;
   TEAM_MEMBERS: number;
+  ROWS: number;
 }
 
 export interface IPlanMetaContext {

@@ -1,5 +1,10 @@
 import axios from 'axios';
-import { ISubscriptionData, AVAILABLE_BILLABLEMETRIC_CODE_ENUM, constructQueryString } from '@impler/shared';
+import {
+  ISubscriptionData,
+  AVAILABLE_BILLABLEMETRIC_CODE_ENUM,
+  constructQueryString,
+  handleApiError,
+} from '@impler/shared';
 
 interface ICheckData {
   uploadId: string;
@@ -45,7 +50,7 @@ export class PaymentAPIService {
 
     const createEventAPIBody = {
       customerId: userExternalIdOrEmail,
-      billableMetricCode: AVAILABLE_BILLABLEMETRIC_CODE_ENUM.IMPORTED_ROWS,
+      billableMetricCode: AVAILABLE_BILLABLEMETRIC_CODE_ENUM.ROWS,
       timestamp: new Date(),
       metadata: {
         units: resultData.totalRecords,
@@ -53,16 +58,28 @@ export class PaymentAPIService {
     };
 
     const url = `${this.PAYMENT_API_BASE_URL}/api/v1/events`;
-    await axios.post(url, createEventAPIBody, {
-      headers: {
-        [this.AUTH_KEY]: this.AUTH_VALUE,
-      },
-    });
+    try {
+      const response = await axios.post(url, createEventAPIBody, {
+        headers: {
+          [this.AUTH_KEY]: this.AUTH_VALUE,
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      const errorMessage = handleApiError({
+        axiosInstance: axios,
+        error,
+        context: 'createEvent',
+        shouldLog: true,
+      });
+      throw new Error(errorMessage);
+    }
   }
 
   async checkEvent({
     email,
-    billableMetricCode = AVAILABLE_BILLABLEMETRIC_CODE_ENUM.IMPORTED_ROWS,
+    billableMetricCode = AVAILABLE_BILLABLEMETRIC_CODE_ENUM.ROWS,
   }: ICheckEvent): Promise<boolean> {
     if (!this.PAYMENT_API_BASE_URL) return true;
 
@@ -147,19 +164,13 @@ export class PaymentAPIService {
 
       return response.data;
     } catch (error) {
-      const isAxios = axios.isAxiosError(error);
-      const errorDetails = isAxios
-        ? {
-            message: error.message,
-            response: error.response?.data,
-            status: error.response?.status,
-            headers: error.response?.headers,
-          }
-        : { message: error.message, stack: error.stack };
-
-      console.error('Error details:', errorDetails);
-
-      throw error;
+      const errorMessage = handleApiError({
+        axiosInstance: axios,
+        error,
+        context: 'subscribe',
+        shouldLog: true,
+      });
+      throw new Error(errorMessage);
     }
   }
 

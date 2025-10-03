@@ -7,11 +7,19 @@ import {
   replaceVariablesInObject,
   DestinationsEnum,
   ColumnDelimiterEnum,
+  EMAIL_SUBJECT,
 } from '@impler/shared';
-import { PaymentAPIService } from '@impler/services';
+import { PaymentAPIService, EmailService } from '@impler/services';
 import { QueueService } from '@shared/services/queue.service';
 import { AmplitudeService } from '@shared/services/amplitude.service';
-import { DalService, TemplateEntity, TemplateRepository, UploadEntity, UploadRepository } from '@impler/dal';
+import {
+  DalService,
+  TemplateEntity,
+  TemplateRepository,
+  UploadEntity,
+  UploadRepository,
+  EnvironmentRepository,
+} from '@impler/dal';
 import { MaxRecordsExceededException } from '@shared/exceptions/max-records.exception';
 
 @Injectable()
@@ -22,7 +30,9 @@ export class StartProcess {
     private uploadRepository: UploadRepository,
     private amplitudeService: AmplitudeService,
     private paymentAPIService: PaymentAPIService,
-    private templateRepository: TemplateRepository
+    private templateRepository: TemplateRepository,
+    private environmentRepository: EnvironmentRepository,
+    private emailService: EmailService
   ) {}
 
   async execute(_uploadId: string, maxRecords?: number) {
@@ -33,6 +43,7 @@ export class StartProcess {
     const dataProcessingAllowed = await this.paymentAPIService.checkEvent({
       email: userEmail,
     });
+    console.log('true or false', dataProcessingAllowed);
 
     if (
       dataProcessingAllowed &&
@@ -48,6 +59,11 @@ export class StartProcess {
     await this.updateTemplateStatistics({ uploadInfo, userEmail, maxRecords });
 
     // if destination is frontend or not defined then complete the upload process
+    console.log('No destination or destination is frontend', !destination);
+    console.log(
+      'Destination is frontend',
+      (uploadInfo._templateId as unknown as TemplateEntity).destination === DestinationsEnum.FRONTEND
+    );
     if (
       !destination ||
       (uploadInfo._templateId as unknown as TemplateEntity).destination === DestinationsEnum.FRONTEND
@@ -134,6 +150,7 @@ export class StartProcess {
 
     // Check max records limit BEFORE updating statistics
     if (maxRecords && uploadInfo.validRecords > maxRecords) {
+      console.log('Caused an Exception');
       throw new MaxRecordsExceededException({
         maxAllowed: maxRecords,
       });
@@ -143,6 +160,9 @@ export class StartProcess {
     const recordsToAdd = Math.max(0, uploadInfo.totalRecords || 0);
     const invalidRecordsToAdd = Math.max(0, uploadInfo.invalidRecords || 0);
     const validRecordsToAdd = Math.max(0, uploadInfo.validRecords || 0);
+    console.log('Records to add', recordsToAdd);
+    console.log('Invalid records to add', invalidRecordsToAdd);
+    console.log('Valid records to add', validRecordsToAdd);
 
     // Only update if we have positive values to add
     if (validRecordsToAdd > 0) {
@@ -160,17 +180,47 @@ export class StartProcess {
       );
     }
 
-    // Only create payment event if we have valid records
     if (validRecordsToAdd > 0 || recordsToAdd > 0) {
-      await this.paymentAPIService.createEvent(
-        {
-          uploadId: uploadInfo._id,
-          totalRecords: recordsToAdd,
-          validRecords: validRecordsToAdd,
-          invalidRecords: invalidRecordsToAdd,
-        },
-        userEmail
-      );
+      console.log('Creating payment event');
+      try {
+        await this.paymentAPIService.createEvent(
+          {
+            uploadId: uploadInfo._id,
+            totalRecords: recordsToAdd,
+            validRecords: validRecordsToAdd,
+            invalidRecords: invalidRecordsToAdd,
+          },
+          userEmail
+        );
+      } catch (error) {
+        const template = await this.templateRepository.findById(uploadInfo._templateId);
+        const projectId = template._projectId;
+        const environment = await this.environmentRepository.getProjectTeamMembers(projectId);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const teamMemberEmails = environment.map((teamMember) => teamMember._userId.email);
+        console.log(teamMemberEmails);
+
+        const emailContents = this.emailService.getEmailContent({
+          type: 'IMPORT_LIMIT_EXCEEDED_EMAIL',
+          data: {
+            limitType: 'Import Rows',
+            currentUsage: 'All available units including grace percentage',
+            planName: 'Current Plan',
+            upgradeUrl: `${process.env.WEB_BASE_URL}/pricing`,
+          },
+        });
+
+        teamMemberEmails.forEach(async (email) => {
+          await this.emailService.sendEmail({
+            to: email,
+            subject: EMAIL_SUBJECT.IMPORT_LIMIT_EXCEEDED,
+            html: emailContents,
+            from: process.env.ALERT_EMAIL_FROM,
+            senderName: process.env.EMAIL_FROM_NAME,
+          });
+        });
+      }
     }
   }
 }

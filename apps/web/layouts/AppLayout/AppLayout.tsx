@@ -30,6 +30,7 @@ import { DrawerLeftCloseIcon } from '@assets/icons/DrawerLeftClose.icon';
 
 import { useClipboard, useLocalStorage } from '@mantine/hooks';
 import { EmailIcon } from '@assets/icons/Email.icon';
+import 'subos-frontend/style.css';
 
 const Support = dynamic(() => import('components/common/Support').then((mod) => mod.Support), {
   ssr: false,

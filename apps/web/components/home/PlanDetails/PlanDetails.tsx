@@ -1,3 +1,4 @@
+/* eslint-disable multiline-comment-style */
 import { Alert, Skeleton, Stack, Text, useMantineTheme } from '@mantine/core';
 
 import { colors } from '@config';
@@ -24,24 +25,17 @@ export function PlanDetails() {
     return <Skeleton width="100%" height="200" />;
   }
 
-  let numberOfRecords;
-  if (
-    Array.isArray(activePlanDetails?.meta.IMPORTED_ROWS) &&
-    (activePlanDetails?.meta.IMPORTED_ROWS as unknown as ChargeItem[]).length > 0
-  ) {
-    numberOfRecords = (activePlanDetails?.meta.IMPORTED_ROWS[0] as unknown as ChargeItem).last_unit;
-  } else {
-    numberOfRecords = 0;
-  }
+  let numberOfAllocatedRowsInCurrentPlan = 0;
+  let isOverLimit = false;
 
-  let isLessThanZero;
-  let showWarning;
   if (activePlanDetails) {
-    isLessThanZero =
-      typeof activePlanDetails?.meta.IMPORTED_ROWS === 'number' && activePlanDetails?.meta.IMPORTED_ROWS < 0;
+    // isLessThanZero =
+    //   typeof activePlanDetails?.meta.IMPORTED_ROWS === 'number' && activePlanDetails?.meta.IMPORTED_ROWS < 0;
 
-    const isOverLimit = activePlanDetails?.usage.IMPORTED_ROWS > numberOfRecords;
-    showWarning = isLessThanZero || isOverLimit;
+    numberOfAllocatedRowsInCurrentPlan = activePlanDetails.meta.ROWS;
+    isOverLimit = activePlanDetails.usage.ROWS >= numberOfAllocatedRowsInCurrentPlan;
+
+    console.log('USAGE?', activePlanDetails.usage.ROWS);
   }
 
   return (
@@ -74,9 +68,9 @@ export function PlanDetails() {
         {activePlanDetails ? (
           <ActivePlanDetails
             activePlanDetails={activePlanDetails}
-            numberOfRecords={numberOfRecords}
+            numberOfAllocatedRowsInCurrentPlan={numberOfAllocatedRowsInCurrentPlan}
             showPlans={showPlans}
-            showWarning={showWarning}
+            showWarning={isOverLimit}
             projectId={profileInfo?._projectId}
             projectName={profileInfo?.projectName}
           />

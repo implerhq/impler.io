@@ -71,6 +71,7 @@ export class MakeUploadEntry {
 
           // Check maxRecords restriction for Excel files
           if (maxRecords !== undefined && maxRecords !== null && opts.rows > maxRecords) {
+            console.log('Caused an Exception, ', 74);
             throw new MaxRecordsExceededException({
               maxAllowed: maxRecords,
             });
@@ -79,6 +80,7 @@ export class MakeUploadEntry {
           this.analyzeLargeFile(opts, true, maxRecords);
           csvFile = await fileService.convertToCsv(file, selectedSheetName);
         } catch (error) {
+          console.log('Caused an Exception, ', 79);
           if (error instanceof FileSizeException || error instanceof MaxRecordsExceededException) {
             throw error;
           }
@@ -89,6 +91,7 @@ export class MakeUploadEntry {
 
         // Check maxRecords restriction for CSV files
         if (maxRecords !== undefined && maxRecords !== null && opts.rows > maxRecords) {
+          console.log('Caused an Exception, ', 84);
           throw new MaxRecordsExceededException({
             maxAllowed: maxRecords,
           });
@@ -225,6 +228,7 @@ export class MakeUploadEntry {
     // If maxRecords is specified, use it as the limit instead of maxDataPoints calculation
     if (maxRecords !== undefined && maxRecords !== null) {
       if (rows > maxRecords) {
+        console.log('Caused an Exception, ', 231);
         throw new MaxRecordsExceededException({
           maxAllowed: maxRecords,
         });

@@ -24,7 +24,7 @@ import { Can } from 'store/ability.context';
 
 interface ActivePlanDetailsProps {
   activePlanDetails: ISubscriptionData;
-  numberOfRecords: number;
+  numberOfAllocatedRowsInCurrentPlan: number;
   showWarning?: boolean;
   email?: string;
   projectId?: string;
@@ -34,7 +34,7 @@ interface ActivePlanDetailsProps {
 
 export function ActivePlanDetails({
   activePlanDetails,
-  numberOfRecords,
+  numberOfAllocatedRowsInCurrentPlan,
   showWarning,
   showPlans,
   projectId,
@@ -77,7 +77,9 @@ export function ActivePlanDetails({
         <Group grow align="flex-start">
           <PlanDetailCard
             title="Records Imported"
-            value={`${numberFormatter(activePlanDetails.usage.IMPORTED_ROWS)}/${numberFormatter(numberOfRecords)}`}
+            value={`${numberFormatter(activePlanDetails.usage.ROWS)}/${numberFormatter(
+              numberOfAllocatedRowsInCurrentPlan
+            )}`}
             isWarning={showWarning}
           />
           <PlanDetailCard title="Active Plan" value={activePlanDetails.plan.name} />
