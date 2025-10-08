@@ -1,6 +1,7 @@
 import { model, models, Schema, Model } from 'mongoose';
 import { schemaOptions } from '../schema-default.options';
 import { UserJobEntity } from './user-job.entity';
+import { FilterOperationEnum } from '@impler/shared';
 
 const userJobSchema = new Schema(
   {
@@ -61,6 +62,19 @@ const userJobSchema = new Schema(
     invalidRecords: {
       type: Schema.Types.Number,
       default: 0,
+    },
+    filters: {
+      type: [
+        {
+          field: { type: Schema.Types.String },
+          operation: {
+            type: Schema.Types.String,
+            enum: Object.values(FilterOperationEnum),
+          },
+          value: { type: Schema.Types.String },
+        },
+      ],
+      default: [],
     },
   },
   { ...schemaOptions }

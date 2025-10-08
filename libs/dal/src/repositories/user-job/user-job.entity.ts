@@ -1,3 +1,5 @@
+import { IFilter } from '@impler/shared';
+
 export class UserJobEntity {
   _id?: string;
 
@@ -34,4 +36,6 @@ export class UserJobEntity {
   validRecords?: number;
 
   invalidRecords?: number;
+
+  filters?: IFilter[];
 }

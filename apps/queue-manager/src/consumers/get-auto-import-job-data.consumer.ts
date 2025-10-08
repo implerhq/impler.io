@@ -5,6 +5,8 @@ import {
   ITemplateSchemaItem,
   ColumnDelimiterEnum,
   UserJobImportStatusEnum,
+  IFilter,
+  FilterOperationEnum,
 } from '@impler/shared';
 
 import { SendImportJobDataConsumer } from './send-import-job-data.consumer';
@@ -88,8 +90,15 @@ export class SendAutoImportJobDataConsumer extends SendImportJobDataConsumer {
 
       const validationResult = await this.validateData(_jobId, mappedData);
 
-      // Send data to webhook with validation status
-      this.sendDataImportData(_jobId, mappedData, 1, undefined, validationResult.hasInvalidRecords);
+      if (validationResult.filteredData.length > 0) {
+        this.sendDataImportData(
+          _jobId,
+          validationResult.filteredData,
+          1,
+          undefined,
+          validationResult.hasInvalidRecords
+        );
+      }
 
       if (validationResult.hasInvalidRecords) {
         await this.userJobRepository.update({ _id: _jobId }, { $set: { isInvalidRecords: true } });
@@ -117,6 +126,7 @@ export class SendAutoImportJobDataConsumer extends SendImportJobDataConsumer {
     invalidRecords: number;
     validData: Record<string, unknown>[];
     invalidData: Record<string, unknown>[];
+    filteredData: Record<string, unknown>[];
   }> {
     try {
       const userJob = await this.userJobRepository.findOne({ _id: _jobId });
@@ -134,6 +144,7 @@ export class SendAutoImportJobDataConsumer extends SendImportJobDataConsumer {
           invalidRecords: 0,
           validData: [],
           invalidData: [],
+          filteredData: [],
         };
       }
 
@@ -150,7 +161,19 @@ export class SendAutoImportJobDataConsumer extends SendImportJobDataConsumer {
       const validData: Record<string, unknown>[] = [];
       const invalidData: Record<string, unknown>[] = [];
 
+      const filters = userJob.filters || [];
+
+      const filteredData: Record<string, unknown>[] = [];
+
       for (const recordData of mappedData) {
+        const passesFilters = await this.applyDynamicFilters(recordData, filters);
+
+        if (passesFilters) {
+          filteredData.push(recordData);
+        }
+      }
+
+      for (const recordData of filteredData) {
         const checkRecord: Record<string, unknown> = this.formatRecord({
           record: { record: recordData },
           multiSelectColumnHeadings,
@@ -181,6 +204,7 @@ export class SendAutoImportJobDataConsumer extends SendImportJobDataConsumer {
         invalidRecords,
         validData,
         invalidData,
+        filteredData,
       };
     } catch (error) {
       return {
@@ -190,6 +214,7 @@ export class SendAutoImportJobDataConsumer extends SendImportJobDataConsumer {
         invalidRecords: 0,
         validData: [],
         invalidData: [],
+        filteredData: [],
       };
     }
   }
@@ -284,6 +309,68 @@ export class SendAutoImportJobDataConsumer extends SendImportJobDataConsumer {
       }
     } catch (error) {
       throw error;
+    }
+  }
+
+  private async applyDynamicFilters(record: Record<string, unknown>, filters: IFilter[]): Promise<boolean> {
+    try {
+      if (!filters || filters.length === 0) {
+        return true;
+      }
+
+      for (const filter of filters) {
+        const fieldValue = record[filter.field];
+
+        if (fieldValue === undefined || fieldValue === null) {
+          return false;
+        }
+
+        const stringValue = String(fieldValue);
+        const filterValue = String(filter.value);
+
+        const operationType = filter.operation;
+
+        let operationPassed = false;
+
+        switch (operationType) {
+          case FilterOperationEnum.CONTAINS:
+            operationPassed = stringValue.includes(filterValue);
+            break;
+
+          case FilterOperationEnum.EQUALS:
+            operationPassed = stringValue === filterValue;
+            break;
+
+          case FilterOperationEnum.STARTSWITH:
+            operationPassed = stringValue.startsWith(filterValue);
+            break;
+
+          case FilterOperationEnum.ENDSWITH:
+            operationPassed = stringValue.endsWith(filterValue);
+            break;
+
+          case FilterOperationEnum.MATCHES:
+            try {
+              const regex = new RegExp(filter.value, 'i');
+              operationPassed = regex.test(stringValue);
+            } catch (regexError) {
+              operationPassed = false;
+            }
+            break;
+
+          default:
+            operationPassed = false;
+            break;
+        }
+
+        if (!operationPassed) {
+          return false;
+        }
+      }
+
+      return true;
+    } catch (error) {
+      return true;
     }
   }
 
