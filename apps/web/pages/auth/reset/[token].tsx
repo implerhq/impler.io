@@ -9,8 +9,8 @@ import { OnboardLayout } from '@layouts/OnboardLayout';
 import { useResetPassword } from '@hooks/auth/useResetPassword';
 import { PLACEHOLDERS, ROUTES, colors } from '@config';
 
-export default function ResetPasswordPage({}) {
-  const { register, resetPassword, error, isError } = useResetPassword();
+export default function ResetPasswordPage({ }) {
+  const { register, resetPassword, error, isError, errors } = useResetPassword();
 
   return (
     <>
@@ -44,9 +44,9 @@ export default function ResetPasswordPage({}) {
             Back to <Link href={ROUTES.SIGNIN}>Signin</Link>
           </Text>
         </Stack>
-        {isError && (
+        {isError || errors.password.message && (
           <Text mt={20} size="md" align="center" color={colors.danger}>
-            {error?.message}
+            {error?.message || errors.password.message}
           </Text>
         )}
       </form>
