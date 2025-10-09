@@ -51,6 +51,7 @@ export function Phase1({
     onSelectSheetModalReset,
     isExcelSheetNamesLoading,
     hideDownloadSampleButton,
+    isManualDataEntryAvailable,
   } = usePhase1({
     goNext,
     texts,
@@ -126,6 +127,7 @@ export function Phase1({
           <Divider orientation={isBiggerThanSm ? 'vertical' : 'horizontal'} label="OR" />
 
           <DirectEntryView
+            isManualDataEntryAvailable={isManualDataEntryAvailable}
             texts={texts}
             columns={columns}
             limit={MANUAL_ENTRY_LIMIT}

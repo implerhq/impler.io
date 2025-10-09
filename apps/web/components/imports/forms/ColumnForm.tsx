@@ -1,21 +1,35 @@
 import { useEffect } from 'react';
 import { modals } from '@mantine/modals';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
-import { Stack, Text, Title, Group, Select, Divider, SimpleGrid, CloseButton, TextInput as Input } from '@mantine/core';
+import {
+  Stack,
+  Text,
+  Title,
+  Group,
+  Select,
+  Divider,
+  SimpleGrid,
+  CloseButton,
+  TextInput as Input,
+  Flex,
+} from '@mantine/core';
 
 import { ValidationTypesEnum } from '@impler/client';
 import { ColumnTypesEnum, DEFAULT_VALUES, IColumn } from '@impler/shared';
-import { colors, DELIMITERS, MODAL_KEYS, MODAL_TITLES, DOCUMENTATION_REFERENCE_LINKS } from '@config';
+import { colors, DELIMITERS, MODAL_KEYS, MODAL_TITLES, DOCUMENTATION_REFERENCE_LINKS, ROUTES } from '@config';
 
 import { Button } from '@ui/button';
 import { Textarea } from '@ui/textarea';
 import { Checkbox } from '@ui/checkbox';
 import { Validation } from '@ui/validation';
+import { LockIcon } from '@assets/icons/Lock.icon';
 import { MultiSelect } from '@ui/multi-select';
 import { CustomSelect } from '@ui/custom-select';
 import { TooltipLabel } from '@components/guide-point';
 import { AutoHeightComponent } from '@ui/auto-height-component';
 import { useSubscriptionInfo } from '@hooks/useSubscriptionInfo';
+import Link from 'next/link';
+import { Badge } from '@ui/badge';
 
 interface ColumnFormProps {
   isLoading?: boolean;
@@ -24,7 +38,7 @@ interface ColumnFormProps {
 }
 
 export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
-  const { columnTypes, advancedValidationsUnavailable } = useSubscriptionInfo();
+  const { columnTypes, advancedValidationsUnavailable, freezeColumnsUnavailable } = useSubscriptionInfo();
   const {
     watch,
     control,
@@ -304,11 +318,34 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 />
               </AutoHeightComponent>
 
-              <Checkbox
-                label={<TooltipLabel label="Freeze Column" link={DOCUMENTATION_REFERENCE_LINKS.freezeColumns} />}
-                register={register('isFrozen')}
-                description="Pin column to left side in sample file and review views"
-              />
+              <Flex
+                direction="row"
+                gap="sm"
+                align="center"
+                style={{
+                  padding: freezeColumnsUnavailable ? '8px' : '0',
+                  backgroundColor: freezeColumnsUnavailable ? colors.BGPrimaryDark : 'transparent',
+                }}
+              >
+                {freezeColumnsUnavailable ? <LockIcon size="xl" /> : <Checkbox register={register('isFrozen')} />}
+
+                <Stack spacing={5} w="100%" align="flex-start">
+                  {freezeColumnsUnavailable ? <Badge color="orange">Feature unavailable on current plan</Badge> : null}
+                  <div>
+                    <TooltipLabel label="Freeze Column" link={DOCUMENTATION_REFERENCE_LINKS.freezeColumns} />
+                    <p style={{ fontSize: '0.75rem', color: '#868e96', margin: 0 }}>
+                      Pin column to left side in sample file and review views
+                    </p>
+                  </div>
+                </Stack>
+
+                {freezeColumnsUnavailable ? (
+                  <Button component={Link} size="xs" href={ROUTES.EXPLORE_PLANS} onClick={modals.closeAll}>
+                    Explore Options
+                  </Button>
+                ) : null}
+              </Flex>
+
               <AutoHeightComponent
                 isVisible={typeValue === ColumnTypesEnum.DOUBLE || typeValue === ColumnTypesEnum.NUMBER}
               >

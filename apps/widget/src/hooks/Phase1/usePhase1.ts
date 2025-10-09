@@ -52,6 +52,7 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
     sampleFile,
     config,
     maxRecords,
+    importConfig,
   } = useAppState();
 
   const selectedTemplateId = watch('templateId');
@@ -192,8 +193,8 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
   }, [templateId]);
 
   return {
-    control,
     errors,
+    control,
     columns,
     setError,
     register,
@@ -209,6 +210,7 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
     isExcelSheetNamesLoading,
     showSelectTemplate: !templateId,
     onSelectExcelSheet: handleSubmit(uploadFile),
+    isManualDataEntryAvailable: importConfig.MANUAL_ENTRY,
     hideDownloadSampleButton: config?.hideDownloadSampleButton,
   };
 }

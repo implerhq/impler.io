@@ -14,11 +14,23 @@ export class GetImportConfig {
 
   async execute(projectId: string, templateId?: string): Promise<IImportConfig> {
     const userEmail = await this.userRepository.findUserEmailFromProjectId(projectId);
+    const isFeatureAvailableMap = new Map<string, boolean>();
 
-    const removeBrandingAvailable = await this.paymentAPIService.checkEvent({
-      email: userEmail,
-      billableMetricCode: AVAILABLE_BILLABLEMETRIC_CODE_ENUM.REMOVE_BRANDING,
+    Object.values(AVAILABLE_BILLABLEMETRIC_CODE_ENUM).forEach((code) => {
+      isFeatureAvailableMap.set(code, false);
     });
+
+    try {
+      for (const billableMetricCode of Object.keys(AVAILABLE_BILLABLEMETRIC_CODE_ENUM)) {
+        try {
+          const isAvailable = await this.paymentAPIService.checkEvent({
+            email: userEmail,
+            billableMetricCode: AVAILABLE_BILLABLEMETRIC_CODE_ENUM[billableMetricCode],
+          });
+          isFeatureAvailableMap.set(billableMetricCode, isAvailable);
+        } catch (error) {}
+      }
+    } catch (error) {}
 
     let template: TemplateEntity;
     if (templateId) {
@@ -32,6 +44,11 @@ export class GetImportConfig {
       }
     }
 
-    return { showBranding: !removeBrandingAvailable, mode: template?.mode, title: template?.name };
+    return {
+      ...Object.fromEntries(isFeatureAvailableMap),
+      showBranding: !isFeatureAvailableMap.get(AVAILABLE_BILLABLEMETRIC_CODE_ENUM.REMOVE_BRANDING),
+      mode: template?.mode,
+      title: template?.name,
+    };
   }
 }

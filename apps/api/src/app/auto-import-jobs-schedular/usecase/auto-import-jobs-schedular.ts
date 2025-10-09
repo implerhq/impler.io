@@ -15,7 +15,7 @@ export class AutoImportJobsSchedular {
     private readonly userJobTriggerService: UserJobTriggerService
   ) {}
 
-  @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_8_HOURS)
   async handleCronSchedular() {
     console.log('Cron Running');
     await this.fetchAndExecuteScheduledJobs();

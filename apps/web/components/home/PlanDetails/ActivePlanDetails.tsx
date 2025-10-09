@@ -86,7 +86,7 @@ export function ActivePlanDetails({
           {Number(activePlanDetails.plan.charge) > 0 && (
             <PlanDetailCard title="Outstanding Amount" value={`$${activePlanDetails.plan.charge}`} />
           )}
-          <PlanDetailCard title="Expiry Date" value={activePlanDetails.expiryDate} />
+          <PlanDetailCard title="Expiry Date" value={dayjs(activePlanDetails.expiryDate).format(DATE_FORMATS.LONG)} />
         </Group>
 
         <Divider />

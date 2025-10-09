@@ -26,6 +26,7 @@ export function useSubscriptionInfo() {
 
   return {
     columnTypes,
-    advancedValidationsUnavailable: false, //!meta?.ADVANCED_VALIDATORS,
+    advancedValidationsUnavailable: !meta?.ADVANCED_VALIDATORS,
+    freezeColumnsUnavailable: !meta?.FREEZE_COLUMNS,
   };
 }

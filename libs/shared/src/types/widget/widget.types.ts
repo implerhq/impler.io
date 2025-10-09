@@ -1,6 +1,26 @@
 import { AppearanceConfig, WIDGET_TEXTS, WidgetConfig } from '@impler/client';
 import { ISchemaItem } from '../column';
 
+export interface IImportConfig {
+  showBranding: boolean;
+  mode: string;
+  title: string;
+  IMAGE_IMPORT?: boolean;
+  IMPORTED_ROWS?: Array<{
+    flat_fee: number;
+    per_unit: number;
+    last_unit: number | string;
+    first_unit: number;
+  }>;
+  REMOVE_BRANDING?: boolean;
+  AUTOMATIC_IMPORTS?: boolean;
+  ADVANCED_VALIDATORS?: boolean;
+  FREEZE_COLUMNS?: boolean;
+  TEAM_MEMBERS?: number;
+  ROWS?: number;
+  MANUAL_ENTRY?: boolean;
+}
+
 export interface ICommonShowPayload {
   host: string;
   extra?: string | any;

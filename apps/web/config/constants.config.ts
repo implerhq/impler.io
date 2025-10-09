@@ -26,9 +26,16 @@ export const CONSTANTS = {
     'An error occurred with the payment. No amount has been deducted. Please try again later or contact the support team.',
   SUBSCRIPTION_ACTIVATED_TITLE: 'Subscription activated',
   SUBSCRIPTION_FAILED_TITLE: 'Payment failed',
+  SUBSCRIPTION_CANCELLED_MESSAGE: (expiryDate: string): string =>
+    `Your subscription is cancelled. Your current subscription will continue till ${expiryDate}. You won't be charged again.`,
   SAMPLE_IMPORT_NAME: 'Product Data Import',
   SIDEBAR_COLLAPSED_KEY: 'SIDE_BAR_COLLAPSED',
 };
+
+export enum CancellationModeEnum {
+  END_OF_PERIOD = 'endOfPeriod',
+  IMMEDIATE = 'immediate',
+}
 
 export const VARIABLES = {
   DEFAULT_ICON_SIZE: 24,

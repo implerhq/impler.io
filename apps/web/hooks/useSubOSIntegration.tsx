@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { configureSubOS, Plan } from 'subos-frontend';
 import { useAppState } from 'store/app.context';
+import { CancellationModeEnum } from '@config';
 
 export const useSubOSIntegration = () => {
   const { profileInfo } = useAppState();
@@ -147,27 +148,56 @@ export const useSubOSIntegration = () => {
     },
     [subOSApis, subOSUtils, isConfigured, billingCycle]
   );
+
   // Fetch subscription using SubOS API
-  const fetchSubscription = useCallback(async () => {
-    if (!subOSApis?.subscriptionApi || !isConfigured) {
-      console.log('SubOS APIs or configuration not initialized');
+  const fetchSubscription = useCallback(
+    async (retryCount = 0): Promise<any> => {
+      if (!subOSApis?.subscriptionApi || !isConfigured) {
+        // eslint-disable-next-line no-console
+        console.log('SubOS APIs or configuration not initialized');
 
-      return;
-    }
+        return null;
+      }
 
-    try {
-      const subscriptionData = await subOSApis.subscriptionApi.getActiveSubscription(profileInfo?.email);
-      console.log('subscriptionData', profileInfo?.email);
-      setSubscription(subscriptionData.data);
+      if (!profileInfo?.email) {
+        // eslint-disable-next-line no-console
+        console.log('Profile email not available for subscription fetch');
 
-      return subscriptionData;
-    } catch (err) {
-      console.error('Error fetching subscription:', err);
-      setError(err instanceof Error ? err.message : String(err));
+        return null;
+      }
 
-      return null;
-    }
-  }, [subOSApis, isConfigured]);
+      try {
+        const subscriptionData = await subOSApis.subscriptionApi.getActiveSubscription(profileInfo.email);
+
+        console.log(subscriptionData);
+        // eslint-disable-next-line no-console
+        console.log('Successfully fetched subscription data for:', profileInfo.email);
+
+        // Only update state if we got valid data
+        if (subscriptionData?.data) {
+          setSubscription(subscriptionData.data);
+        }
+
+        return subscriptionData;
+      } catch (err) {
+        console.error('Error fetching subscription:', err);
+
+        // Retry logic for network errors
+        if (retryCount < 2 && err instanceof Error && err.message.includes('network')) {
+          // eslint-disable-next-line no-console
+          console.log(`Retrying subscription fetch (attempt ${retryCount + 1})`);
+          await new Promise((resolve) => setTimeout(resolve, 1000 * (retryCount + 1)));
+
+          return fetchSubscription(retryCount + 1);
+        }
+
+        setError(err instanceof Error ? err.message : String(err));
+
+        return null;
+      }
+    },
+    [subOSApis, isConfigured, profileInfo?.email]
+  );
 
   // Fetch transactions using SubOS API
   const fetchTransactions = useCallback(
@@ -175,8 +205,8 @@ export const useSubOSIntegration = () => {
       if (!subOSApis?.transactionApi || !isConfigured) return;
 
       try {
-        const transactionData = await subOSApis.transactionApi.getTransactions({ page, limit });
-        setTransactions(transactionData.transactions || transactionData);
+        const transactionData = await subOSApis.transactionApi.getTransactions(profileInfo?.email, { page, limit });
+        setTransactions(transactionData.data);
 
         return transactionData;
       } catch (err) {
@@ -186,33 +216,59 @@ export const useSubOSIntegration = () => {
         return [];
       }
     },
-    [subOSApis, isConfigured]
+    [subOSApis, isConfigured, profileInfo?.email]
+  );
+
+  // Fetch single transaction by ID using SubOS API
+  const fetchTransaction = useCallback(
+    async (transactionId: string) => {
+      if (!subOSApis?.transactionApi || !isConfigured || !profileInfo?.email) return null;
+
+      try {
+        // Try to use getTransaction method if available
+        if (subOSApis.transactionApi.getTransaction) {
+          const transactionData = await subOSApis.transactionApi.getTransaction(transactionId, profileInfo.email);
+
+          return transactionData;
+        }
+
+        // Fallback: fetch all transactions and find the specific one
+        const allTransactions = await subOSApis.transactionApi.getTransactions(profileInfo.email, {
+          page: 1,
+          limit: 100,
+        });
+        const transaction = allTransactions?.data?.find(
+          (t: { _id: string; id: string }) => t._id === transactionId || t.id === transactionId
+        );
+
+        return transaction ? { data: transaction } : null;
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('Error fetching transaction:', err);
+        setError(err instanceof Error ? err.message : String(err));
+
+        return null;
+      }
+    },
+    [subOSApis, isConfigured, profileInfo?.email]
   );
 
   // Handle plan selection and checkout
   const selectPlan = useCallback(
     async (plan: Plan) => {
       if (!subOSApis?.checkoutApi || !isConfigured) {
-        console.log('SubOS APIs or configuration not initialized asdsadasdasdasd');
-
         return;
-      } else {
-        console.log('SubOS APIs or configuration initialized', plan);
       }
 
       try {
         setSelectedPlan(plan);
-        console.log('asdjasgdjasgdjasd', profileInfo);
 
         // Create checkout session using SubOS
         const response = await subOSApis.plansApi.createPaymentSession(plan.code, {
           billingCycle,
-          returnUrl: `${window.location.origin}/subscription/success`,
-          cancelUrl: `${window.location.origin}/subscription/cancel`,
+          returnUrl: `${window.location.origin}/subscription_success`,
           customerEmail: profileInfo?.email,
         });
-
-        console.log('response', JSON.stringify(response));
 
         const checkoutUrl = response?.data?.checkoutUrl || response?.data?.url;
 
@@ -228,26 +284,37 @@ export const useSubOSIntegration = () => {
         return null;
       }
     },
-    [subOSApis, isConfigured, billingCycle]
+    [subOSApis, isConfigured, billingCycle, profileInfo?.email]
   );
 
   // Handle subscription cancellation
-  const cancelSubscription = useCallback(async () => {
-    if (!subOSApis?.subscriptionApi || !isConfigured) return;
+  const cancelSubscription = useCallback(
+    // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+    async ({ reasons }: { reasons: string[] }) => {
+      if (!subOSApis?.subscriptionApi || !isConfigured) {
+        throw new Error('SubOS API not initialized or configured');
+      }
 
-    try {
-      const result = await subOSApis.subscriptionApi.cancelSubscription();
-      // Refresh subscription data
-      await fetchSubscription();
+      if (!profileInfo?.email) {
+        throw new Error('User email not available');
+      }
 
-      return result;
-    } catch (err) {
-      console.error('Error cancelling subscription:', err);
-      setError(err instanceof Error ? err.message : String(err));
+      try {
+        const response = await subOSApis.subscriptionApi.cancelSubscription(profileInfo.email, {
+          cancellationMode: CancellationModeEnum.END_OF_PERIOD,
+        });
+        console.log('Subscription cancelled successfully', response);
 
-      return null;
-    }
-  }, [subOSApis, isConfigured, fetchSubscription]);
+        return response.data;
+      } catch (err) {
+        console.error('Error cancelling subscription:', err);
+        setError(err instanceof Error ? err.message : String(err));
+
+        throw err;
+      }
+    },
+    [subOSApis, isConfigured, fetchSubscription, profileInfo?.email]
+  );
 
   // Handle billing cycle change
   const changeBillingCycle = useCallback(
@@ -310,6 +377,7 @@ export const useSubOSIntegration = () => {
     fetchPlans,
     fetchSubscription,
     fetchTransactions,
+    fetchTransaction,
     selectPlan,
     cancelSubscription,
     changeBillingCycle,

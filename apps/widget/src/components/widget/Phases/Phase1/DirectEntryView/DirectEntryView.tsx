@@ -10,6 +10,7 @@ interface DirectEntryViewProps {
   columns?: IColumn[];
   isLoading?: boolean;
   texts: typeof WIDGET_TEXTS;
+  isManualDataEntryAvailable?: boolean;
   onManuallyEnterData?: () => void;
 }
 
@@ -20,7 +21,12 @@ export function DirectEntryView({
   isLoading,
   className,
   onManuallyEnterData,
+  isManualDataEntryAvailable,
 }: DirectEntryViewProps) {
+  if (isManualDataEntryAvailable) {
+    return null;
+  }
+
   return (
     <Box
       bg="var(--primary-background)"
@@ -29,12 +35,12 @@ export function DirectEntryView({
       pl="sm"
       className={className}
     >
-      <Stack spacing="xs">
-        <div>
-          <Button loading={isLoading} onClick={onManuallyEnterData} leftIcon={<GridIcon />}>
-            {texts['PHASE1-2'].ENTER_DATA}
-          </Button>
-        </div>
+      <Stack bg="hotpink" spacing="xs">
+        {/* <div> */}
+        <Button loading={isLoading} onClick={onManuallyEnterData} leftIcon={<GridIcon />}>
+          {texts['PHASE1-2'].ENTER_DATA + 'Hola Pepisi Cola'}
+        </Button>
+        {/* </div> */}
         {limit ? (
           <Group>
             <Warning fill="var(--error-color)" />{' '}

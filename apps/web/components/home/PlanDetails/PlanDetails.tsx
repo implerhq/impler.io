@@ -1,5 +1,5 @@
 /* eslint-disable multiline-comment-style */
-import { Alert, Skeleton, Stack, Text, useMantineTheme } from '@mantine/core';
+import { Alert, Skeleton, Stack, Text, useMantineTheme, Button, Group } from '@mantine/core';
 
 import { colors } from '@config';
 
@@ -17,7 +17,7 @@ export function PlanDetails() {
   const { profileInfo } = useAppState();
   const { classes } = usePlanDetailsStyles();
 
-  const { activePlanDetails, isActivePlanLoading, showPlans } = usePlanDetails({
+  const { activePlanDetails, isActivePlanLoading, subscriptionError, showPlans } = usePlanDetails({
     projectId: profileInfo?._projectId ?? '',
   });
 
@@ -25,6 +25,21 @@ export function PlanDetails() {
     return <Skeleton width="100%" height="200" />;
   }
 
+  // Show error state with retry option
+  if (subscriptionError && !activePlanDetails) {
+    return (
+      <Alert color="red" title="Failed to load subscription details">
+        <Stack spacing="sm">
+          <Text size="sm">{String(subscriptionError)}</Text>
+          <Group spacing="sm">
+            <Button size="xs" variant="outline" onClick={showPlans}>
+              View Plans
+            </Button>
+          </Group>
+        </Stack>
+      </Alert>
+    );
+  }
   let numberOfAllocatedRowsInCurrentPlan = 0;
   let isOverLimit = false;
 

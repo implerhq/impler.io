@@ -14,6 +14,7 @@ export interface IPlanMeta {
   REMOVE_BRANDING: boolean;
   AUTOMATIC_IMPORTS: boolean;
   ADVANCED_VALIDATORS: boolean;
+  FREEZE_COLUMNS: boolean;
   TEAM_MEMBERS: number;
   ROWS: number;
 }

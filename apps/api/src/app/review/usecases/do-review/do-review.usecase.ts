@@ -264,7 +264,6 @@ export class DoReview extends BaseReview {
     const userExternalIdOrEmail = await this.uploadRepository.getUserEmailFromUploadId(uploadId);
 
     try {
-      // First, try to create the payment event
       await this.paymentAPIService.createEvent(
         { uploadId, totalRecords, validRecords, invalidRecords },
         userExternalIdOrEmail
@@ -320,6 +319,8 @@ export class DoReview extends BaseReview {
           senderName: process.env.EMAIL_FROM_NAME,
         });
       });
+
+      throw new UsageLimitExceededException(error.message);
     }
   }
 }
