@@ -19,6 +19,9 @@ export interface IImportConfig {
   TEAM_MEMBERS?: number;
   ROWS?: number;
   MANUAL_ENTRY?: boolean;
+  DOWNLOAD_SAMPLE_FILE?: boolean;
+  MAX_RECORDS?: boolean;
+  REQUIRED_VALUES?: boolean;
 }
 
 export interface ICommonShowPayload {

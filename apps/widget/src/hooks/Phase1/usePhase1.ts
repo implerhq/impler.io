@@ -67,7 +67,17 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
 
   const { isLoading: isUploadLoading, mutate: submitUpload } = useMutation<IUpload, IErrorObject, IUploadValues>(
     ['upload'],
-    (values: IUploadValues) => api.uploadFile(values),
+    (values: IUploadValues) => {
+      try {
+        if (maxRecords && !importConfig?.MAX_RECORDS) {
+          throw new Error('Configuring maxRecords property is not allowed in your current plan');
+        }
+      } catch (error) {
+        throw error;
+      }
+
+      return api.uploadFile(values);
+    },
     {
       onSuccess(uploadData, uploadValues) {
         ParentWindow.UploadStarted({ templateId: uploadData._templateId, uploadId: uploadData._id });
@@ -212,5 +222,6 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
     onSelectExcelSheet: handleSubmit(uploadFile),
     isManualDataEntryAvailable: importConfig.MANUAL_ENTRY,
     hideDownloadSampleButton: config?.hideDownloadSampleButton,
+    isDownloadFileAvailable: importConfig?.DOWNLOAD_SAMPLE_FILE,
   };
 }

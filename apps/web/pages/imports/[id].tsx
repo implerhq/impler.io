@@ -57,6 +57,7 @@ function ImportDetails() {
     onUploadComplete: onSpreadsheetImported,
     authHeaderValue: webhookConfig.authHeaderValue || '',
     extra: webhookConfig.extra || '',
+    // maxRecords: 10,
     appearance: {
       widget: {
         backgroundColor: '#1c1917',
