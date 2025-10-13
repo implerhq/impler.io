@@ -202,7 +202,7 @@ export class SendBubbleDataConsumer extends BaseConsumer {
       const emailContents = this.emailService.getEmailContent({
         type: 'ERROR_SENDING_BUBBLE_DATA',
         data: {
-          error: JSON.stringify(data.error, null, 2).replace(/\\+"/g, '"'),
+          error: JSON.stringify(data.error, null, 2)?.replace(/\\+"/g, '"') ?? 'Error while sending data to Bubble',
           importName,
           time: data.callDate.toString(),
           bubbleAppUrl: bubbleData.bubbleAppUrl,

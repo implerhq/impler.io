@@ -9,7 +9,7 @@ export function useImpler({
   authHeaderValue,
   title,
   texts,
-  extra,
+  extra: defaultExtra,
   config,
   maxRecords,
   appearance,
@@ -85,7 +85,8 @@ export function useImpler({
     sampleFile,
     schema,
     output,
-  }: Pick<IShowWidgetProps, 'colorScheme' | 'data' | 'schema' | 'output' | 'sampleFile'> = {}) => {
+    extra = defaultExtra,
+  }: Pick<IShowWidgetProps, 'colorScheme' | 'data' | 'schema' | 'output' | 'sampleFile' | 'extra'> = {}) => {
     if (window.impler && isImplerInitiated) {
       const payload: IShowWidgetProps & { uuid: string; host: string } = {
         uuid,

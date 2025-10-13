@@ -98,7 +98,9 @@ function ImportDetails() {
           onConfigSubmit={(config: { authHeaderValue?: string; extra?: string }) => {
             setWebhookConfig(config);
             modals.closeAll();
-            showWidget();
+            showWidget({
+              extra: config.extra || '',
+            });
             setTimeout(() => {}, 100);
           }}
         />
