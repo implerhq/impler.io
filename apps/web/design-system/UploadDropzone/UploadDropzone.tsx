@@ -26,6 +26,7 @@ export function UploadDropzone(props: IDropzoneProps) {
       FileMimeTypesEnum.EXCEL,
       FileMimeTypesEnum.EXCELX,
       FileMimeTypesEnum.EXCELM,
+      FileMimeTypesEnum.TEXT_PLAIN,
       '.csv',
     ],
     onDrop,
