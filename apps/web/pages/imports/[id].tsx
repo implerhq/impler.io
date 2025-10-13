@@ -56,7 +56,6 @@ function ImportDetails() {
     accessToken: profileInfo?.accessToken,
     onUploadComplete: onSpreadsheetImported,
     authHeaderValue: webhookConfig.authHeaderValue || '',
-    extra: webhookConfig.extra || '',
     appearance: {
       widget: {
         backgroundColor: '#1c1917',
@@ -97,7 +96,9 @@ function ImportDetails() {
           onConfigSubmit={(config: { authHeaderValue?: string; extra?: string }) => {
             setWebhookConfig(config);
             modals.closeAll();
-            showWidget();
+            showWidget({
+              extra: config.extra || '',
+            });
             setTimeout(() => {}, 100);
           }}
         />

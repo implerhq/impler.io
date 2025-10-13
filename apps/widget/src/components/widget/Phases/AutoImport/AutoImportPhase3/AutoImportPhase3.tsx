@@ -22,6 +22,7 @@ interface IAutoImportPhase3Props {
 
 const getDefaultValuesForFrequency = (frequency: AUTOIMPORTSCHEDULERFREQUENCY): Partial<RecurrenceFormData> => {
   const now = new Date();
+  now.setMinutes(now.getMinutes() + 5);
   const defaultTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
   const baseDefaults = {
