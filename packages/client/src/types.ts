@@ -223,6 +223,11 @@ export interface IUseImplerProps {
    * In future versions, the `primaryColor` property will be moved under `appearance` object.
    */
   primaryColor?: string;
+  /**
+   * @deprecated Use the `extra` parameter in `showWidget()` instead.
+   * Example: `showWidget({ extra: { your: 'data' } })`
+   * In future versions, the `extra` property will be removed and `showWidget({ extra: { your: 'data' } })` will be the only way to pass extra data.
+   */
   extra?: string | Record<string, any>;
   config?: WidgetConfig;
   appearance?: AppearanceConfig;
