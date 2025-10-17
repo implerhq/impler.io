@@ -29,6 +29,7 @@ export function Destination({ template }: DestinationProps) {
     isSendSampleRequestPending,
     isMapBubbleIoColumnsLoading,
     isSendSampleRequestLoading,
+    bubbleIoIntegrationUnavailable,
   } = useDestination({
     template,
   });
@@ -158,6 +159,7 @@ export function Destination({ template }: DestinationProps) {
         active={destination === DestinationsEnum.BUBBLEIO}
         onClick={() => swithDestination(DestinationsEnum.BUBBLEIO)}
         tooltipLink={DOCUMENTATION_REFERENCE_LINKS.bubbleIo}
+        disabled={bubbleIoIntegrationUnavailable}
       >
         <form onSubmit={onSubmit}>
           <Stack spacing="xs">

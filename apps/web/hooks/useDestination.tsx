@@ -10,6 +10,7 @@ import { modals } from '@mantine/modals';
 import { API_KEYS, NOTIFICATION_KEYS } from '@config';
 import { DestinationsEnum, IErrorObject, IDestinationData, ITemplate } from '@impler/shared';
 import { SampleWebhookDataConfiguration } from '../components/imports/destination/SampleWebhookDataConfiguration';
+import { useSubscriptionInfo } from './useSubscriptionInfo';
 
 interface UseDestinationProps {
   template: ITemplate;
@@ -27,6 +28,7 @@ interface SampleWebhookFormData {
 }
 
 export function useDestination({ template }: UseDestinationProps) {
+  const { bubbleIoIntegrationUnavailable } = useSubscriptionInfo();
   const queryClient = useQueryClient();
   const [destination, setDestination] = useState<DestinationsEnum | undefined>();
 
@@ -238,6 +240,7 @@ export function useDestination({ template }: UseDestinationProps) {
     openSampleRequestModal,
     isSendSampleRequestLoading,
     isSendSampleRequestPending,
+    bubbleIoIntegrationUnavailable,
     mapBubbleIoColumns,
     mapBubbleIoColumnsClick,
     isMapBubbleIoColumnsLoading,

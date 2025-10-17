@@ -43,7 +43,6 @@ export class StartProcess {
     const dataProcessingAllowed = await this.paymentAPIService.checkEvent({
       email: userEmail,
     });
-    console.log('true or false', dataProcessingAllowed);
 
     if (
       dataProcessingAllowed &&
@@ -59,11 +58,6 @@ export class StartProcess {
     await this.updateTemplateStatistics({ uploadInfo, userEmail, maxRecords });
 
     // if destination is frontend or not defined then complete the upload process
-    console.log('No destination or destination is frontend', !destination);
-    console.log(
-      'Destination is frontend',
-      (uploadInfo._templateId as unknown as TemplateEntity).destination === DestinationsEnum.FRONTEND
-    );
     if (
       !destination ||
       (uploadInfo._templateId as unknown as TemplateEntity).destination === DestinationsEnum.FRONTEND

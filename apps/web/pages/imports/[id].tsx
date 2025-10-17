@@ -3,25 +3,25 @@ import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { ActionIcon, Flex, Group, LoadingOverlay, Title, Select } from '@mantine/core';
-
 import { track } from '@libs/amplitude';
-import { useImpler } from '@impler/react';
-import { ITemplate, TemplateModeEnum } from '@impler/shared';
+import { defaultWidgetAppereance, ITemplate, TemplateModeEnum } from '@impler/shared';
 import { IMPORT_MODES, ROUTES, SubjectsEnum, colors } from '@config';
 import { useImportDetails } from '@hooks/useImportDetails';
 
 import { Tabs } from '@ui/Tabs';
+import { Destination } from '@components/imports/destination';
+import { EditIcon } from '@assets/icons/Edit.icon';
+import { IntegrationIcon } from '@assets/icons/Integration.icon';
 import { Button } from '@ui/button';
 import { Schema } from '@components/imports/schema';
 import { withProtectedResource } from '@components/hoc';
-import { Destination } from '@components/imports/destination';
 import { AppLayout } from '@layouts/AppLayout';
-import { EditIcon } from '@assets/icons/Edit.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
 import { LeftArrowIcon } from '@assets/icons/LeftArrow.icon';
-import { IntegrationIcon } from '@assets/icons/Integration.icon';
 import { modals } from '@mantine/modals';
 import { WidgetConfigurationModal } from '@components/imports/destination/WidgetConfigurationModal/WidgetConfigurationModal';
+import { useImpler } from '@impler/react';
+import { ForbiddenIcon } from '@assets/icons';
 
 const Editor = dynamic(() => import('@components/imports/editor').then((mod) => mod.OutputEditor), {
   ssr: false,
@@ -57,32 +57,7 @@ function ImportDetails() {
     onUploadComplete: onSpreadsheetImported,
     authHeaderValue: webhookConfig.authHeaderValue || '',
     extra: webhookConfig.extra || '',
-    // maxRecords: 10,
-    appearance: {
-      widget: {
-        backgroundColor: '#1c1917',
-      },
-      fontFamily: 'Inter, sans-serif',
-      borderRadius: '12px',
-      primaryButtonConfig: {
-        backgroundColor: '#f59e0b',
-        textColor: '#1c1917',
-        hoverBackground: '#fbbf24',
-        hoverTextColor: '#1c1917',
-        borderColor: 'transparent',
-        hoverBorderColor: 'transparent',
-        buttonShadow: '0 4px 16px rgba(245, 158, 11, 0.4)',
-      },
-      secondaryButtonConfig: {
-        backgroundColor: '#292524',
-        textColor: '#fcd34d',
-        hoverBackground: '#3c2d2a',
-        hoverTextColor: '#fed7aa',
-        borderColor: '#44403c',
-        hoverBorderColor: '#f59e0b',
-        buttonShadow: 'none',
-      },
-    },
+    appearance: defaultWidgetAppereance,
   });
   const onImportClick = () => {
     track({
@@ -100,6 +75,16 @@ function ImportDetails() {
             modals.closeAll();
             showWidget({
               extra: config.extra || '',
+              data: [
+                {
+                  Name: 'Jane Smith',
+                  Email: 'jane.smith@example.com',
+                  Gender: 'Female',
+                  Address: '456 Oak Avenue, City',
+                  'Mobile No': '+1-555-0456',
+                  'Addhar No': '9876-5432-1098',
+                },
+              ],
             });
             setTimeout(() => {}, 100);
           }}
@@ -183,6 +168,8 @@ function ImportDetails() {
               id: 'validator',
               value: 'validator',
               title: 'Validator',
+              icon: <ForbiddenIcon size="xl" />,
+              disabled: true,
               content: <Validator templateId={templateData._id} />,
             },
             {

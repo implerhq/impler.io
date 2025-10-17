@@ -50,6 +50,7 @@ export function Container({ children }: PropsWithChildren<{}>) {
       }
 
       setShowWidget(true);
+      console.log('data.value.texts', data.value.texts);
       setSecondaryPayload({
         accessToken: data.value.accessToken,
         host: data.value.host,

@@ -28,9 +28,13 @@ export class GetImportConfig {
             billableMetricCode: AVAILABLE_BILLABLEMETRIC_CODE_ENUM[billableMetricCode],
           });
           isFeatureAvailableMap.set(billableMetricCode, isAvailable);
-        } catch (error) {}
+        } catch (error) {
+          console.log('Error inside importconfig', error);
+        }
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log('Error inside importconfig2', error);
+    }
 
     let template: TemplateEntity;
     if (templateId) {

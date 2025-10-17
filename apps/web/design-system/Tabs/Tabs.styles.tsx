@@ -16,6 +16,14 @@ const getTabStyles = () => ({
   '&[aria-selected="true"]': {
     backgroundColor: `${colors.blue} !important`,
   },
+  '&[disabled]': {
+    backgroundColor: colors.BGSecondaryDark,
+    cursor: 'not-allowed',
+    '&:hover': {
+      backgroundColor: colors.BGSecondaryDark,
+    },
+    opacity: 0.3,
+  },
 });
 
 const getPanelStyles = (theme: MantineTheme): React.CSSProperties => ({

@@ -168,6 +168,144 @@ export function deepMerge(
     return mergedResult;
   }
 }
+interface TextDifference {
+  path: string;
+  type: 'modified' | 'added' | 'removed' | 'unchanged';
+  original: any;
+  current: any;
+}
+
+interface ComparisonResult {
+  differences: TextDifference[];
+  summary: {
+    modified: number;
+    added: number;
+    removed: number;
+    total: number;
+  };
+  overriddenProperties: string[];
+}
+
+/**
+ * Compares two text objects and identifies differences
+ * @param original - The source of truth (WIDGET_TEXTS)
+ * @param current - The current texts object to compare
+ * @returns Detailed comparison results
+ */
+export function compareWidgetTexts(original: any, current: any): ComparisonResult {
+  const differences: TextDifference[] = [];
+  const overriddenProperties: string[] = [];
+
+  function deepCompare(orig: any, curr: any, path = ''): void {
+    // Get all unique keys from both objects
+    const allKeys = new Set([...Object.keys(orig || {}), ...Object.keys(curr || {})]);
+
+    allKeys.forEach((key) => {
+      const currentPath = path ? `${path}.${key}` : key;
+      const origVal = orig?.[key];
+      const currVal = curr?.[key];
+
+      // Property exists in current but not in original (added)
+      if (origVal === undefined && currVal !== undefined) {
+        differences.push({
+          path: currentPath,
+          type: 'added',
+          original: undefined,
+          current: currVal,
+        });
+      }
+      // Property exists in original but not in current (removed)
+      else if (origVal !== undefined && currVal === undefined) {
+        differences.push({
+          path: currentPath,
+          type: 'removed',
+          original: origVal,
+          current: undefined,
+        });
+      }
+      // Both are objects, recurse deeper
+      else if (
+        typeof origVal === 'object' &&
+        origVal !== null &&
+        typeof currVal === 'object' &&
+        currVal !== null &&
+        !Array.isArray(origVal) &&
+        !Array.isArray(currVal)
+      ) {
+        deepCompare(origVal, currVal, currentPath);
+      }
+      // Values are different (modified/overridden)
+      else if (origVal !== currVal) {
+        differences.push({
+          path: currentPath,
+          type: 'modified',
+          original: origVal,
+          current: currVal,
+        });
+        overriddenProperties.push(currentPath);
+      }
+    });
+  }
+
+  deepCompare(original, current);
+
+  const summary = {
+    modified: differences.filter((diff) => diff.type === 'modified').length,
+    added: differences.filter((diff) => diff.type === 'added').length,
+    removed: differences.filter((diff) => diff.type === 'removed').length,
+    total: differences.length,
+  };
+
+  return {
+    differences,
+    summary,
+    overriddenProperties,
+  };
+}
+
+/**
+ * Formats the comparison results as a readable string
+ */
+export function formatComparisonResults(result: ComparisonResult): string {
+  let output = '=== TEXT COMPARISON RESULTS ===\n\n';
+
+  output += `Summary:\n`;
+  output += `  Modified: ${result.summary.modified}\n`;
+  output += `  Added: ${result.summary.added}\n`;
+  output += `  Removed: ${result.summary.removed}\n`;
+  output += `  Total Differences: ${result.summary.total}\n\n`;
+
+  if (result.overriddenProperties.length > 0) {
+    output += `Overridden Properties (${result.overriddenProperties.length}):\n`;
+    result.overriddenProperties.forEach((prop) => {
+      output += `  - ${prop}\n`;
+    });
+    output += '\n';
+  }
+
+  if (result.differences.length > 0) {
+    output += 'Detailed Differences:\n\n';
+
+    result.differences.forEach((diff, index) => {
+      output += `${index + 1}. ${diff.path}\n`;
+      output += `   Type: ${diff.type.toUpperCase()}\n`;
+
+      if (diff.type === 'modified') {
+        output += `   Original: "${diff.original}"\n`;
+        output += `   Current:  "${diff.current}"\n`;
+      } else if (diff.type === 'added') {
+        output += `   Value: "${diff.current}"\n`;
+      } else if (diff.type === 'removed') {
+        output += `   Value: "${diff.original}"\n`;
+      }
+      output += '\n';
+    });
+  } else {
+    output += 'No differences found! ✓\n';
+  }
+
+  return output;
+}
 
 export function debounce(func: (...args: any[]) => void, wait: number) {
   let timeout: any;

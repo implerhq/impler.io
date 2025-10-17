@@ -76,7 +76,7 @@ export const useSubOSIntegration = () => {
         useCancelSubscription: subos.useCancelSubscription,
         useCustomerPortal: subos.useCustomerPortal,
         usePagination: subos.usePagination,
-        useEmailManagement: subos.useEmailManagement,
+        // useEmailManagement: subos.useEmailManagement,
       };
 
       // Extract APIs
@@ -85,7 +85,7 @@ export const useSubOSIntegration = () => {
         subscriptionApi: subos.subscriptionApi,
         transactionApi: subos.transactionApi,
         customerApi: subos.customerApi,
-        checkoutApi: subos.checkoutApi,
+        // checkoutApi: subos.checkoutApi,
       };
 
       // Extract utilities

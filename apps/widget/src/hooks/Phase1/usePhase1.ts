@@ -3,12 +3,20 @@ import { useForm } from 'react-hook-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { logAmplitudeEvent } from '@amplitude';
-import { notifier, ParentWindow } from '@util';
+import { compareWidgetTexts /*, deepMerge*/, notifier, ParentWindow } from '@util';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { useImplerState } from '@store/impler.context';
 import { IUpload, WIDGET_TEXTS } from '@impler/client';
-import { IErrorObject, ITemplate, FileMimeTypesEnum, IColumn, downloadFile } from '@impler/shared';
+import {
+  IErrorObject,
+  ITemplate,
+  FileMimeTypesEnum,
+  IColumn,
+  downloadFile,
+  DEFAULT_WIDGET_TEXTS,
+  defaultWidgetAppereance,
+} from '@impler/shared';
 
 import { variables } from '@config';
 import { useSample } from '@hooks/useSample';
@@ -53,6 +61,7 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
     config,
     maxRecords,
     importConfig,
+    appearance,
   } = useAppState();
 
   const selectedTemplateId = watch('templateId');
@@ -69,9 +78,27 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
     ['upload'],
     (values: IUploadValues) => {
       try {
+        const result = compareWidgetTexts(DEFAULT_WIDGET_TEXTS, texts);
+        // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+        const modifiedAppearanceProperties = compareWidgetTexts(defaultWidgetAppereance, appearance);
+
+        console.log(modifiedAppearanceProperties);
+        // console.log('modifiedappearanceproperties', modifiedAppearanceProperties);
         if (maxRecords && !importConfig?.MAX_RECORDS) {
           throw new Error('Configuring maxRecords property is not allowed in your current plan');
         }
+
+        if (!importConfig.TEXT_CUSTOMIZATION && result.differences.length > 0) {
+          throw new Error('Configuring Widget texts property is not allowed in your current plan');
+        }
+
+        // if (!importConfig.APPEARANCE_CUSTOMIZATION && modifiedAppearanceProperties.differences.length > 0) {
+        //   throw new Error('Configuring Widget appearance property is not allowed in your current plan');
+        // }
+
+        // if (schema && !importConfig.RUNTIME_SCHEMA) {
+        //   throw new Error(`Your current plan does not support providing runtime schema`);
+        // }
       } catch (error) {
         throw error;
       }
