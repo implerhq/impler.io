@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { notifier } from '@util';
 import { IUpload } from '@impler/client';
 import { logAmplitudeEvent } from '@amplitude';
-import { IErrorObject } from '@impler/shared';
+import { IErrorObject, numberFormatter } from '@impler/shared';
 import { useAppState } from '@store/app.context';
 import { useAPIState } from '@store/api.context';
 
@@ -25,7 +25,7 @@ export const useCompleteImport = ({ onNext }: IUseCompleteImportProps) => {
     void,
     [string]
     // eslint-disable-next-line prettier/prettier
-    >([`confirm:${uploadInfo._id}`], () => api.confirmReview(uploadInfo._id, maxRecords), {
+  >([`confirm:${uploadInfo._id}`], () => api.confirmReview(uploadInfo._id, maxRecords), {
     onSuccess(uploadData) {
       logAmplitudeEvent('RECORDS', {
         type: 'invalid',
@@ -42,8 +42,11 @@ export const useCompleteImport = ({ onNext }: IUseCompleteImportProps) => {
       setUploadInfo(uploadData.uploadInfo);
       onNext?.(uploadData.uploadInfo, uploadData.importedData);
     },
-    onError(error: IErrorObject) {
-      notifier.showError({ message: texts.PHASE3.MAX_RECORD_LIMIT_ERROR ?? error.message, title: error.error });
+    onError() {
+      notifier.showError({
+        message: `${texts.PHASE3.MAX_RECORD_LIMIT_ERROR} ${numberFormatter(Number(maxRecords))} records`,
+        title: texts.PHASE3.MAX_RECORD_LIMIT_ERROR_TITLE,
+      });
     },
   });
 
