@@ -1,16 +1,9 @@
 import axios from 'axios';
-import {
-  ISubscriptionData,
-  AVAILABLE_BILLABLEMETRIC_CODE_ENUM,
-  constructQueryString,
-  handleApiError,
-} from '@impler/shared';
+import { ISubscriptionData, BILLABLEMETRIC_CODE_ENUM, constructQueryString, handleApiError } from '@impler/shared';
 
 interface ICheckData {
-  uploadId: string;
-  totalRecords: number;
-  validRecords: number;
-  invalidRecords: number;
+  units: number;
+  billableMetricCode: BILLABLEMETRIC_CODE_ENUM;
 }
 
 interface ICreateUser {
@@ -29,7 +22,7 @@ interface ICustomer {
 interface ICheckEvent {
   email: string;
   // eslint-disable-next-line prettier/prettier
-  billableMetricCode?: AVAILABLE_BILLABLEMETRIC_CODE_ENUM;
+  billableMetricCode?: BILLABLEMETRIC_CODE_ENUM;
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -45,15 +38,15 @@ export class PaymentAPIService {
     this.PAYMENT_API_BASE_URL = process.env.PAYMENT_API_BASE_URL;
   }
 
-  async createEvent(resultData: ICheckData, userExternalIdOrEmail: string) {
+  async createEvent(createEventData: ICheckData, userExternalIdOrEmail: string) {
     if (!this.PAYMENT_API_BASE_URL) return;
 
     const createEventAPIBody = {
       customerId: userExternalIdOrEmail,
-      billableMetricCode: AVAILABLE_BILLABLEMETRIC_CODE_ENUM.ROWS,
+      billableMetricCode: createEventData.billableMetricCode ?? BILLABLEMETRIC_CODE_ENUM.ROWS,
       timestamp: new Date(),
       metadata: {
-        units: resultData.totalRecords,
+        units: createEventData.units,
       },
     };
 
@@ -77,10 +70,7 @@ export class PaymentAPIService {
     }
   }
 
-  async checkEvent({
-    email,
-    billableMetricCode = AVAILABLE_BILLABLEMETRIC_CODE_ENUM.ROWS,
-  }: ICheckEvent): Promise<boolean> {
+  async checkEvent({ email, billableMetricCode = BILLABLEMETRIC_CODE_ENUM.ROWS }: ICheckEvent): Promise<boolean> {
     if (!this.PAYMENT_API_BASE_URL) return true;
 
     let url = `${this.PAYMENT_API_BASE_URL}/api/v1/check`;

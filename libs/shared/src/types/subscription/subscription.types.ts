@@ -19,6 +19,7 @@ export interface ISubscriptionData {
   usage: {
     IMPORTED_ROWS: number;
     ROWS: number;
+    TEAM_MEMBERS: number;
   };
   expiryDate: string;
   meta: {

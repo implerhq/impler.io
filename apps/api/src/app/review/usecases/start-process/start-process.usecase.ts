@@ -8,6 +8,7 @@ import {
   DestinationsEnum,
   ColumnDelimiterEnum,
   EMAIL_SUBJECT,
+  BILLABLEMETRIC_CODE_ENUM,
 } from '@impler/shared';
 import { PaymentAPIService, EmailService } from '@impler/services';
 import { QueueService } from '@shared/services/queue.service';
@@ -144,7 +145,6 @@ export class StartProcess {
 
     // Check max records limit BEFORE updating statistics
     if (maxRecords && uploadInfo.validRecords > maxRecords) {
-      console.log('Caused an Exception');
       throw new MaxRecordsExceededException({
         maxAllowed: maxRecords,
       });
@@ -152,11 +152,7 @@ export class StartProcess {
 
     // Validate that we're not updating with negative values
     const recordsToAdd = Math.max(0, uploadInfo.totalRecords || 0);
-    const invalidRecordsToAdd = Math.max(0, uploadInfo.invalidRecords || 0);
     const validRecordsToAdd = Math.max(0, uploadInfo.validRecords || 0);
-    console.log('Records to add', recordsToAdd);
-    console.log('Invalid records to add', invalidRecordsToAdd);
-    console.log('Valid records to add', validRecordsToAdd);
 
     // Only update if we have positive values to add
     if (validRecordsToAdd > 0) {
@@ -175,14 +171,11 @@ export class StartProcess {
     }
 
     if (validRecordsToAdd > 0 || recordsToAdd > 0) {
-      console.log('Creating payment event');
       try {
         await this.paymentAPIService.createEvent(
           {
-            uploadId: uploadInfo._id,
-            totalRecords: recordsToAdd,
-            validRecords: validRecordsToAdd,
-            invalidRecords: invalidRecordsToAdd,
+            units: recordsToAdd,
+            billableMetricCode: BILLABLEMETRIC_CODE_ENUM.ROWS,
           },
           userEmail
         );

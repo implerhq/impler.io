@@ -74,7 +74,6 @@ export class ApiService {
     selectedSheetName?: string;
     maxRecords?: number;
   }) {
-    console.log('API CLLLED');
     const formData = new FormData();
     if (data.file) formData.append('file', data.file);
     if (data.authHeaderValue) formData.append('authHeaderValue', data.authHeaderValue);

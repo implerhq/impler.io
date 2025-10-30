@@ -154,7 +154,6 @@ export function useDataGrid({ limit }: IDataGridProps) {
       selectedRowsCountRef.current = { valid: new Set(), invalid: new Set() };
     },
     onError(error: IErrorObject) {
-      console.log('ERROR IS >', error.message);
       notifier.showError({ message: error.message, title: error.error });
     },
   });

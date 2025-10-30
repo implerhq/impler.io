@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserRepository, TemplateRepository, TemplateEntity } from '@impler/dal';
-import { AVAILABLE_BILLABLEMETRIC_CODE_ENUM, IImportConfig } from '@impler/shared';
+import { BILLABLEMETRIC_CODE_ENUM, IImportConfig } from '@impler/shared';
 import { PaymentAPIService } from '@impler/services';
 import { APIMessages } from '@shared/constants';
 
@@ -16,25 +16,21 @@ export class GetImportConfig {
     const userEmail = await this.userRepository.findUserEmailFromProjectId(projectId);
     const isFeatureAvailableMap = new Map<string, boolean>();
 
-    Object.values(AVAILABLE_BILLABLEMETRIC_CODE_ENUM).forEach((code) => {
+    Object.values(BILLABLEMETRIC_CODE_ENUM).forEach((code) => {
       isFeatureAvailableMap.set(code, false);
     });
 
     try {
-      for (const billableMetricCode of Object.keys(AVAILABLE_BILLABLEMETRIC_CODE_ENUM)) {
+      for (const billableMetricCode of Object.keys(BILLABLEMETRIC_CODE_ENUM)) {
         try {
           const isAvailable = await this.paymentAPIService.checkEvent({
             email: userEmail,
-            billableMetricCode: AVAILABLE_BILLABLEMETRIC_CODE_ENUM[billableMetricCode],
+            billableMetricCode: BILLABLEMETRIC_CODE_ENUM[billableMetricCode],
           });
           isFeatureAvailableMap.set(billableMetricCode, isAvailable);
-        } catch (error) {
-          console.log('Error inside importconfig', error);
-        }
+        } catch (error) {}
       }
-    } catch (error) {
-      console.log('Error inside importconfig2', error);
-    }
+    } catch (error) {}
 
     let template: TemplateEntity;
     if (templateId) {
@@ -50,7 +46,7 @@ export class GetImportConfig {
 
     return {
       ...Object.fromEntries(isFeatureAvailableMap),
-      showBranding: !isFeatureAvailableMap.get(AVAILABLE_BILLABLEMETRIC_CODE_ENUM.REMOVE_BRANDING),
+      showBranding: !isFeatureAvailableMap.get(BILLABLEMETRIC_CODE_ENUM.REMOVE_BRANDING),
       mode: template?.mode,
       title: template?.name,
     };

@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export enum AVAILABLE_BILLABLEMETRIC_CODE_ENUM {
+export enum BILLABLEMETRIC_CODE_ENUM {
   ROWS = 'ROWS',
   IMPORTED_ROWS = 'IMPORTED_ROWS',
   REMOVE_BRANDING = 'REMOVE_BRANDING',

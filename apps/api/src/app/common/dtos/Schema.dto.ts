@@ -13,7 +13,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ColumnTypesEnum, Defaults } from '@impler/shared';
+import { ColumnTypesEnum /*, Defaults */ } from '@impler/shared';
 import { IsValidRegex } from '@shared/framework/is-valid-regex.validator';
 import { ValidationDto } from 'app/column/dtos/column-request.dto';
 
@@ -101,7 +101,7 @@ export class SchemaDto {
   @Type(() => Array<string>)
   @IsArray({ message: "'dateFormats' must be an array, when type is Date" })
   @ArrayMinSize(1, { message: "'dateFormats' must not be empty, when type is Date" })
-  dateFormats: string[] = Defaults.DATE_FORMATS;
+  dateFormats: string[]; /* = Defaults.DATE_FORMATS;*/
 
   @ApiProperty({
     description: 'Sequence of column',

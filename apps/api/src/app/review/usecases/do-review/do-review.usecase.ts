@@ -4,7 +4,7 @@ import { Writable } from 'stream';
 import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 
 import { APIMessages } from '@shared/constants';
-import { EMAIL_SUBJECT } from '@impler/shared';
+import { BILLABLEMETRIC_CODE_ENUM, EMAIL_SUBJECT } from '@impler/shared';
 import { BaseReview } from './base-review.usecase';
 import { UniqueWithValidationType, ValidationTypesEnum } from '@impler/client';
 import { BATCH_LIMIT } from '@shared/services/sandbox';
@@ -265,7 +265,7 @@ export class DoReview extends BaseReview {
 
     try {
       await this.paymentAPIService.createEvent(
-        { uploadId, totalRecords, validRecords, invalidRecords },
+        { units: totalRecords, billableMetricCode: BILLABLEMETRIC_CODE_ENUM.ROWS },
         userExternalIdOrEmail
       );
 
