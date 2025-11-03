@@ -49,8 +49,6 @@ export function PlanDetails() {
 
     numberOfAllocatedRowsInCurrentPlan = activePlanDetails.meta.ROWS;
     isOverLimit = activePlanDetails.usage.ROWS >= numberOfAllocatedRowsInCurrentPlan;
-
-    console.log('USAGE?', activePlanDetails.usage.ROWS);
   }
 
   return (

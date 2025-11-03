@@ -1,7 +1,7 @@
 import { IconType } from '@types';
 import { IconSizes } from 'config';
 
-export const PaymentCardIcon = ({ size = 'sm' }: IconType) => {
+export const PaymentCardIcon = ({ size = 'lg' }: IconType) => {
   return (
     <svg
       width={IconSizes[size]}

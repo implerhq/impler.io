@@ -261,6 +261,7 @@ export const useSubOSIntegration = () => {
       }
 
       try {
+        console.log('plan is this', plan);
         setSelectedPlan(plan);
 
         // Create checkout session using SubOS
@@ -270,6 +271,7 @@ export const useSubOSIntegration = () => {
           customerEmail: profileInfo?.email,
         });
 
+        console.log('response is', response);
         const checkoutUrl = response?.data?.checkoutUrl || response?.data?.url;
 
         if (response?.success && checkoutUrl) {

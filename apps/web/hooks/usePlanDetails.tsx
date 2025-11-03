@@ -67,8 +67,11 @@ export function usePlanDetails({ projectId }: UsePlanDetailProps) {
           loading={subOSIntegration.loading}
           error={subOSIntegration.error}
           onPlanSelect={(plan) => {
-            console.log('plan is >>', plan);
-            subOSIntegration.selectPlan(plan);
+            try {
+              subOSIntegration.selectPlan(plan);
+            } catch (error) {
+              console.log('error is >>', error);
+            }
           }}
           activePlanCode={finalActivePlanDetails?.planCode}
         />

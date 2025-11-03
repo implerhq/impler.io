@@ -3,18 +3,19 @@ import Link from 'next/link';
 import dayjs from 'dayjs';
 import { Stack, Group, Text, ActionIcon, Menu } from '@mantine/core';
 
-import { ActionsEnum, DATE_FORMATS, PLANCODEENUM, SubjectsEnum } from '@config';
+import { ActionsEnum, colors, DATE_FORMATS, PLANCODEENUM, SubjectsEnum } from '@config';
 import { ISubscriptionData, numberFormatter } from '@impler/shared';
 
 import { useCancelPlan } from '@hooks/useCancelPlan';
 import { Can } from 'store/ability.context';
 import { useCustomerPortal } from 'subos-frontend';
 import { useAppState } from 'store/app.context';
-import { CloseIcon } from '@assets/icons/Close.Icon';
+import { CloseIcon } from '@assets/icons/Close.icon';
 import { ExternalLinkIcon } from '@assets/icons/ExternalLink.icon';
 import { PaymentCardIcon } from '@assets/icons/PaymentCard.icon';
-import { ThreeDotsVerticalIcon } from '@assets/icons/ThreeDotsVertical.Icon';
+import { ThreeDotsVerticalIcon } from '@assets/icons/ThreeDotsVertical.icon';
 import { ViewTransactionIcon } from '@assets/icons/ViewTransaction.icon';
+import { MetricItem } from './MetricItem';
 
 interface ActivePlanDetailsProps {
   activePlanDetails: ISubscriptionData;
@@ -24,40 +25,6 @@ interface ActivePlanDetailsProps {
   projectId?: string;
   projectName?: string;
   showPlans: () => void;
-}
-
-interface MetricItemProps {
-  label: string;
-  value: string;
-  actionText?: string;
-  actionColor?: string;
-  onActionClick?: () => void;
-}
-
-function MetricItem({ label, value, actionText, actionColor, onActionClick }: MetricItemProps) {
-  return (
-    <div style={{ flex: 1, minWidth: 0 }}>
-      <Text size="xs" color="dimmed" style={{ marginBottom: 4 }}>
-        {label}
-      </Text>
-      <Text size="xl" weight={700} style={{ marginBottom: 4 }}>
-        {value}
-      </Text>
-      {actionText && (
-        <Text
-          size="xs"
-          weight={500}
-          style={{
-            color: actionColor || '#fbbf24',
-            cursor: onActionClick ? 'pointer' : 'default',
-          }}
-          onClick={onActionClick}
-        >
-          {actionText}
-        </Text>
-      )}
-    </div>
-  );
 }
 
 export function ActivePlanDetails({
@@ -87,7 +54,7 @@ export function ActivePlanDetails({
             Your Plan
           </Text>
           <Text size="sm" color="dimmed">
-            (Expire on {dayjs(activePlanDetails.expiryDate).format('DD MMM YYYY')})
+            (Expire on {dayjs(activePlanDetails.expiryDate).format(DATE_FORMATS.LONG)})
           </Text>
           <ActionIcon component="a" href="/subscription" target="_blank" size="xs" variant="subtle">
             <ExternalLinkIcon size="xs" />
@@ -106,8 +73,8 @@ export function ActivePlanDetails({
               <Menu.Item
                 component={Link}
                 href="/transactions"
-                icon={<ViewTransactionIcon size="lg" />}
-                style={{ color: '#e5e7eb' }}
+                icon={<ViewTransactionIcon />}
+                style={{ color: colors.StrokeLight }}
               >
                 View All Transactions
               </Menu.Item>
@@ -116,8 +83,8 @@ export function ActivePlanDetails({
             <Can I={ActionsEnum.UPDATE} a={SubjectsEnum.CARDS}>
               <Menu.Item
                 onClick={() => openCustomerPortal(profileInfo!.email!)}
-                icon={<PaymentCardIcon size="xs" />}
-                style={{ color: '#e5e7eb' }}
+                icon={<PaymentCardIcon />}
+                style={{ color: colors.StrokeLight }}
               >
                 Change Card
               </Menu.Item>
@@ -127,9 +94,9 @@ export function ActivePlanDetails({
               {!activePlanDetails.plan.canceledOn && activePlanDetails.plan.code !== PLANCODEENUM.STARTER && (
                 <Menu.Item
                   color="red"
-                  icon={<CloseIcon size="lg" />}
+                  icon={<CloseIcon />}
                   onClick={openCancelPlanModal}
-                  style={{ color: '#ef4444' }}
+                  style={{ color: colors.danger }}
                 >
                   Cancel Subscription
                 </Menu.Item>
@@ -155,7 +122,7 @@ export function ActivePlanDetails({
           actionText={
             Number(activePlanDetails.plan.fixedCost) > 0 ? `$${activePlanDetails.plan.fixedCost}/Month` : '$0.00/Month'
           }
-          actionColor="#fff"
+          actionColor={colors.white}
         />
 
         <div style={{ borderLeft: '1px solid #374151', paddingLeft: '24px' }}>
@@ -163,7 +130,7 @@ export function ActivePlanDetails({
             label="Total Members"
             value={membersValue}
             actionText="Add More"
-            actionColor="#fbbf24"
+            actionColor={colors.yellow}
             onActionClick={showPlans}
           />
         </div>
@@ -173,7 +140,7 @@ export function ActivePlanDetails({
             label="Records Imported"
             value={String(`${activePlanDetails.usage.ROWS}/${numberFormatter(numberOfAllocatedRowsInCurrentPlan)}`)}
             actionText="Upgrade for extra records"
-            actionColor={showWarning ? '#ef4444' : '#fbbf24'}
+            actionColor={showWarning ? colors.danger : colors.yellow}
             onActionClick={showPlans}
           />
         </div>
@@ -183,7 +150,7 @@ export function ActivePlanDetails({
             label="Rows Included"
             value={rowsValue}
             actionText="Upgrade for extra row"
-            actionColor={showWarning ? '#ef4444' : '#fbbf24'}
+            actionColor={showWarning ? colors.danger : colors.yellow}
             onActionClick={showPlans}
           />
         </div>
