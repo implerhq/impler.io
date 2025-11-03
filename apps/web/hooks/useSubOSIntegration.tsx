@@ -256,12 +256,10 @@ export const useSubOSIntegration = () => {
   // Handle plan selection and checkout
   const selectPlan = useCallback(
     async (plan: Plan) => {
-      if (!subOSApis?.checkoutApi || !isConfigured) {
-        return;
-      }
+      console.log('SubOS APIs or configuration not initialized', subOSApis?.checkoutApi);
 
       try {
-        console.log('plan is this', plan);
+        console.log('Creating payment session for plan:', plan.code);
         setSelectedPlan(plan);
 
         // Create checkout session using SubOS

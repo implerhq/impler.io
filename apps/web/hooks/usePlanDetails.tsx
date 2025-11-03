@@ -8,7 +8,7 @@ import { modals } from '@mantine/modals';
 import { track } from '@libs/amplitude';
 import { PaymentModal } from '@components/AddCard/PaymentModal';
 import { useSubOSIntegration } from './useSubOSIntegration';
-import { PlansGrid, usePlans } from 'subos-frontend';
+import { PlanSelector, usePlans } from 'subos-frontend';
 import { IPlanMeta } from '@types';
 
 interface UsePlanDetailProps {
@@ -60,20 +60,22 @@ export function usePlanDetails({ projectId }: UsePlanDetailProps) {
       id: MODAL_KEYS.PAYMENT_PLANS,
       modalId: MODAL_KEYS.PAYMENT_PLANS,
       children: (
-        <PlansGrid
+        <PlanSelector
           plans={subOSIntegration.plans}
           selectedPlan={subOSIntegration.selectedPlan}
+          tierFilter={tierFilter}
           billingCycle={subOSIntegration.billingCycle as 'monthly' | 'yearly'}
           loading={subOSIntegration.loading}
           error={subOSIntegration.error}
           onPlanSelect={(plan) => {
-            try {
-              subOSIntegration.selectPlan(plan);
-            } catch (error) {
-              console.log('error is >>', error);
-            }
+            console.log('Plan selected in PlanSelector:', plan);
+            console.log('selectPlan function:', subOSIntegration.selectPlan);
+            subOSIntegration.selectPlan(plan);
           }}
-          activePlanCode={finalActivePlanDetails?.planCode}
+          onTierFilterChange={setTierFilter}
+          onBillingCycleChange={subOSIntegration.changeBillingCycle}
+          dropdownOptions={[]}
+          currentSelectionText={'sfsdfsdfsd'}
         />
       ),
       centered: true,

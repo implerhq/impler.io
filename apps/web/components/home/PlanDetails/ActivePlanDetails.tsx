@@ -10,11 +10,11 @@ import { useCancelPlan } from '@hooks/useCancelPlan';
 import { Can } from 'store/ability.context';
 import { useCustomerPortal } from 'subos-frontend';
 import { useAppState } from 'store/app.context';
-import { CloseIcon } from '@assets/icons/Close.icon';
 import { ExternalLinkIcon } from '@assets/icons/ExternalLink.icon';
-import { PaymentCardIcon } from '@assets/icons/PaymentCard.icon';
 import { ThreeDotsVerticalIcon } from '@assets/icons/ThreeDotsVertical.icon';
 import { ViewTransactionIcon } from '@assets/icons/ViewTransaction.icon';
+import { CloseIcon } from '@assets/icons/Close.icon';
+import { PaymentCardIcon } from '@assets/icons/PaymentCard.icon';
 import { MetricItem } from './MetricItem';
 
 interface ActivePlanDetailsProps {
@@ -47,7 +47,6 @@ export function ActivePlanDetails({
 
   return (
     <Stack spacing={0}>
-      {/* Header */}
       <Group position="apart" align="center" mb="lg">
         <Group spacing={8}>
           <Text size="lg" weight={700}>
