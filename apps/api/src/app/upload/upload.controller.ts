@@ -77,8 +77,6 @@ export class UploadController {
     @Param('templateId', ValidateTemplate) templateId: string,
     @UploadedFile('file', ValidImportFile) file: Express.Multer.File
   ) {
-    console.log(parseInt(body.maxRecords));
-
     return this.makeUploadEntry.execute({
       file,
       templateId,

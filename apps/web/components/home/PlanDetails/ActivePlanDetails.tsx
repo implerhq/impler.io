@@ -10,54 +10,41 @@ import { useCancelPlan } from '@hooks/useCancelPlan';
 import { Can } from 'store/ability.context';
 import { useCustomerPortal } from 'subos-frontend';
 import { useAppState } from 'store/app.context';
-import { ExternalLinkIcon } from '@assets/icons/ExternalLink.icon';
 import { ThreeDotsVerticalIcon } from '@assets/icons/ThreeDotsVertical.icon';
 import { ViewTransactionIcon } from '@assets/icons/ViewTransaction.icon';
 import { CloseIcon } from '@assets/icons/Close.icon';
 import { PaymentCardIcon } from '@assets/icons/PaymentCard.icon';
-import { MetricItem } from './MetricItem';
+import { PlanDetailCard } from './PlanDetailsCard';
 
 interface ActivePlanDetailsProps {
   activePlanDetails: ISubscriptionData;
   numberOfAllocatedRowsInCurrentPlan: number;
   showWarning?: boolean;
-  email?: string;
-  projectId?: string;
-  projectName?: string;
-  showPlans: () => void;
 }
 
 export function ActivePlanDetails({
   activePlanDetails,
   numberOfAllocatedRowsInCurrentPlan,
   showWarning,
-  showPlans,
 }: ActivePlanDetailsProps) {
   const { profileInfo } = useAppState();
   const { openCustomerPortal } = useCustomerPortal();
   const { openCancelPlanModal } = useCancelPlan();
 
-  const rowsValue = `${numberFormatter(activePlanDetails.usage?.IMPORTED_ROWS)}/${numberFormatter(
-    numberOfAllocatedRowsInCurrentPlan
-  )}`;
-
-  const membersValue = activePlanDetails.meta?.TEAM_MEMBERS
-    ? `${activePlanDetails.usage?.TEAM_MEMBERS}/${activePlanDetails.meta?.TEAM_MEMBERS || 'Unlimited'}`
-    : 'N/A';
+  const currentUsedTeamMembers = Math.max(0, activePlanDetails.usage?.TEAM_MEMBERS || 0);
+  const allocatedTeamMembers = Math.max(0, (activePlanDetails.meta?.TEAM_MEMBERS || 0) - 1);
+  const isTeamMemberLimitReached = currentUsedTeamMembers >= allocatedTeamMembers;
 
   return (
     <Stack spacing={0}>
       <Group position="apart" align="center" mb="lg">
         <Group spacing={8}>
           <Text size="lg" weight={700}>
-            Your Plan
+            Your Plan - {activePlanDetails.plan.name} will
           </Text>
-          <Text size="sm" color="dimmed">
+          <Text size="lg" color="dimmed">
             (Expire on {dayjs(activePlanDetails.expiryDate).format(DATE_FORMATS.LONG)})
           </Text>
-          <ActionIcon component="a" href="/subscription" target="_blank" size="xs" variant="subtle">
-            <ExternalLinkIcon size="xs" />
-          </ActionIcon>
         </Group>
 
         <Menu position="bottom-end" shadow="md" width={240}>
@@ -105,57 +92,26 @@ export function ActivePlanDetails({
         </Menu>
       </Group>
 
-      {/* Metrics Grid */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: '24px',
-          borderTop: '1px solid #374151',
-          paddingTop: '20px',
-        }}
-      >
-        <MetricItem
-          label="Plan Type"
-          value={activePlanDetails.plan.name}
-          actionText={
-            Number(activePlanDetails.plan.fixedCost) > 0 ? `$${activePlanDetails.plan.fixedCost}/Month` : '$0.00/Month'
-          }
-          actionColor={colors.white}
-        />
-
-        <div style={{ borderLeft: '1px solid #374151', paddingLeft: '24px' }}>
-          <MetricItem
-            label="Total Members"
-            value={membersValue}
-            actionText="Add More"
-            actionColor={colors.yellow}
-            onActionClick={showPlans}
+      <Stack spacing="sm">
+        <Group grow align="flex-start">
+          <PlanDetailCard
+            title="Records Imported"
+            value={`${activePlanDetails.usage.ROWS}/${numberFormatter(numberOfAllocatedRowsInCurrentPlan)}`}
+            isWarning={showWarning}
           />
-        </div>
-
-        <div style={{ borderLeft: '1px solid #374151', paddingLeft: '24px' }}>
-          <MetricItem
-            label="Records Imported"
-            value={String(`${activePlanDetails.usage.ROWS}/${numberFormatter(numberOfAllocatedRowsInCurrentPlan)}`)}
-            actionText="Upgrade for extra records"
-            actionColor={showWarning ? colors.danger : colors.yellow}
-            onActionClick={showPlans}
+          <PlanDetailCard
+            title="Team Members"
+            value={`${currentUsedTeamMembers}/${allocatedTeamMembers}`}
+            isWarning={isTeamMemberLimitReached}
           />
-        </div>
+          <PlanDetailCard title="Active Plan" value={activePlanDetails.plan.name} />
+          {Number(activePlanDetails.plan.charge) > 0 && (
+            <PlanDetailCard title="Outstanding Amount" value={`$${activePlanDetails.plan.charge}`} />
+          )}
+          <PlanDetailCard title="Expiry Date" value={dayjs(activePlanDetails.expiryDate).format(DATE_FORMATS.LONG)} />
+        </Group>
+      </Stack>
 
-        <div style={{ borderLeft: '1px solid #374151', paddingLeft: '24px' }}>
-          <MetricItem
-            label="Rows Included"
-            value={rowsValue}
-            actionText="Upgrade for extra row"
-            actionColor={showWarning ? colors.danger : colors.yellow}
-            onActionClick={showPlans}
-          />
-        </div>
-      </div>
-
-      {/* Cancellation Alert */}
       {activePlanDetails.plan.canceledOn && (
         <Text size="sm" color="yellow" mt="md" style={{ fontStyle: 'italic' }}>
           Your Plan cancelled on {dayjs(activePlanDetails.plan.canceledOn).format(DATE_FORMATS.LONG)} and will expire on{' '}

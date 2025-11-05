@@ -17,7 +17,7 @@ export function PlanDetails() {
   const { profileInfo } = useAppState();
   const { classes } = usePlanDetailsStyles();
 
-  const { activePlanDetails, isActivePlanLoading, subscriptionError, showPlans } = usePlanDetails({
+  const { activePlanDetails, isActivePlanLoading, subscriptionError } = usePlanDetails({
     projectId: profileInfo?._projectId ?? '',
   });
 
@@ -32,7 +32,7 @@ export function PlanDetails() {
         <Stack spacing="sm">
           <Text size="sm">{String(subscriptionError)}</Text>
           <Group spacing="sm">
-            <Button size="xs" variant="outline" onClick={showPlans}>
+            <Button size="xs" variant="outline">
               View Plans
             </Button>
           </Group>
@@ -40,16 +40,7 @@ export function PlanDetails() {
       </Alert>
     );
   }
-  let numberOfAllocatedRowsInCurrentPlan = 0;
-  let isOverLimit = false;
-
-  if (activePlanDetails) {
-    // isLessThanZero =
-    //   typeof activePlanDetails?.meta.IMPORTED_ROWS === 'number' && activePlanDetails?.meta.IMPORTED_ROWS < 0;
-
-    numberOfAllocatedRowsInCurrentPlan = activePlanDetails.meta.ROWS;
-    isOverLimit = activePlanDetails.usage.ROWS >= numberOfAllocatedRowsInCurrentPlan;
-  }
+  const numberOfAllocatedRowsInCurrentPlan = activePlanDetails?.meta.ROWS;
 
   return (
     <>
@@ -81,14 +72,11 @@ export function PlanDetails() {
         {activePlanDetails ? (
           <ActivePlanDetails
             activePlanDetails={activePlanDetails}
-            numberOfAllocatedRowsInCurrentPlan={numberOfAllocatedRowsInCurrentPlan}
-            showPlans={showPlans}
-            showWarning={isOverLimit}
-            projectId={profileInfo?._projectId}
-            projectName={profileInfo?.projectName}
+            numberOfAllocatedRowsInCurrentPlan={activePlanDetails.meta.ROWS}
+            showWarning={activePlanDetails.usage.ROWS >= numberOfAllocatedRowsInCurrentPlan}
           />
         ) : (
-          <InactiveMembership showPlans={showPlans} />
+          <InactiveMembership />
         )}
       </Stack>
     </>

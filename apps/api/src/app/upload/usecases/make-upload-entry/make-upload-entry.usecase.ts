@@ -225,7 +225,6 @@ export class MakeUploadEntry {
     // If maxRecords is specified, use it as the limit instead of maxDataPoints calculation
     if (maxRecords !== undefined && maxRecords !== null) {
       if (rows > maxRecords) {
-        console.log('Caused an Exception, ', 231);
         throw new MaxRecordsExceededException({
           maxAllowed: maxRecords,
         });

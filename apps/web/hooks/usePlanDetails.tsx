@@ -1,14 +1,11 @@
-import { useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { API_KEYS, MODAL_KEYS } from '@config';
+import { API_KEYS } from '@config';
 import { IErrorObject, ISubscriptionData } from '@impler/shared';
 import { usePlanMetaData } from 'store/planmeta.store.context';
 import { useAppState } from 'store/app.context';
 import { modals } from '@mantine/modals';
-import { track } from '@libs/amplitude';
 import { PaymentModal } from '@components/AddCard/PaymentModal';
 import { useSubOSIntegration } from './useSubOSIntegration';
-import { PlanSelector, usePlans } from 'subos-frontend';
 import { IPlanMeta } from '@types';
 
 interface UsePlanDetailProps {
@@ -17,7 +14,6 @@ interface UsePlanDetailProps {
 }
 
 export function usePlanDetails({ projectId }: UsePlanDetailProps) {
-  const { setTierFilter, tierFilter } = usePlans();
   const subOSIntegration = useSubOSIntegration();
   const { profileInfo } = useAppState();
   const { meta, setPlanMeta } = usePlanMetaData();
@@ -51,50 +47,6 @@ export function usePlanDetails({ projectId }: UsePlanDetailProps) {
   const finalActivePlanDetails = activePlanDetails || subOSIntegration.subscription;
   const finalIsLoading = isLoading || subOSIntegration.loading;
 
-  const showPlans = useCallback(() => {
-    track({
-      name: 'VIEW PLANS',
-      properties: {},
-    });
-    modals.open({
-      id: MODAL_KEYS.PAYMENT_PLANS,
-      modalId: MODAL_KEYS.PAYMENT_PLANS,
-      children: (
-        <PlanSelector
-          plans={subOSIntegration.plans}
-          selectedPlan={subOSIntegration.selectedPlan}
-          tierFilter={tierFilter}
-          billingCycle={subOSIntegration.billingCycle as 'monthly' | 'yearly'}
-          loading={subOSIntegration.loading}
-          error={subOSIntegration.error}
-          onPlanSelect={(plan) => {
-            console.log('Plan selected in PlanSelector:', plan);
-            console.log('selectPlan function:', subOSIntegration.selectPlan);
-            subOSIntegration.selectPlan(plan);
-          }}
-          onTierFilterChange={setTierFilter}
-          onBillingCycleChange={subOSIntegration.changeBillingCycle}
-          dropdownOptions={[]}
-          currentSelectionText={'sfsdfsdfsd'}
-        />
-      ),
-      centered: true,
-      size: 'calc(50vw - 3rem)',
-      withCloseButton: false,
-    });
-  }, [
-    subOSIntegration.plans,
-    subOSIntegration.selectedPlan,
-    subOSIntegration.billingCycle,
-    subOSIntegration.loading,
-    subOSIntegration.error,
-    subOSIntegration.selectPlan,
-    subOSIntegration.changeBillingCycle,
-    tierFilter,
-    setTierFilter,
-    finalActivePlanDetails?.planCode,
-  ]);
-
   const onOpenPaymentModal = ({ code, modalId }: { code: string; modalId: string }) => {
     modals.closeAll();
     modals.open({
@@ -122,7 +74,6 @@ export function usePlanDetails({ projectId }: UsePlanDetailProps) {
     activePlanDetails: finalActivePlanDetails,
     isActivePlanLoading: finalIsLoading,
     subscriptionError: subscriptionError || subOSIntegration.error,
-    showPlans,
     onOpenPaymentModal,
     refetchActivePlanDetails,
   };

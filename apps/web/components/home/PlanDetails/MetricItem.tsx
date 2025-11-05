@@ -22,7 +22,7 @@ export function MetricItem({ label, value, actionText, actionColor, onActionClic
           size="xs"
           weight={500}
           style={{
-            color: actionColor || '#fbbf24',
+            color: actionColor || '#af2408',
             cursor: onActionClick ? 'pointer' : 'default',
           }}
           onClick={onActionClick}

@@ -4,11 +4,7 @@ import { Divider, Stack, Text, Title, Center, Group } from '@mantine/core';
 import { Button } from '@ui/button';
 import { colors, ROUTES } from '@config';
 
-interface InactiveMembershipProps {
-  showPlans: () => void;
-}
-
-export function InactiveMembership({ showPlans }: InactiveMembershipProps) {
+export function InactiveMembership() {
   return (
     <Stack>
       <Group position="apart" align="center" spacing="sm">
@@ -28,7 +24,6 @@ export function InactiveMembership({ showPlans }: InactiveMembershipProps) {
               here.
             </Text>
           </Text>
-          <Button onClick={showPlans}>Choose Plan</Button>
         </Stack>
       </Center>
     </Stack>

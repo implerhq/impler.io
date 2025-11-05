@@ -1,11 +1,11 @@
 import React from 'react';
 import { Card, Text, Badge, Stack, Divider } from '@mantine/core';
 import { Button } from '@ui/button';
-import { colors, MODAL_KEYS, PLANCODEENUM } from '@config';
+import { colors, PLANCODEENUM } from '@config';
 import { Plan } from './Plans';
 import { PlanFeature } from './PlanFeature';
 import useStyles from './Plans.styles';
-import { usePlanDetails } from '@hooks/usePlanDetails';
+import { useSubOSIntegration } from '@hooks/useSubOSIntegration';
 
 interface PlanCardProps {
   plan: Plan;
@@ -15,9 +15,34 @@ interface PlanCardProps {
   projectId?: string;
 }
 
-export function PlanCard({ plan, isYearly, activePlanCode, projectId }: PlanCardProps) {
+type BillingCycle = 'monthly' | 'yearly';
+const planBillingCycle: BillingCycle = 'monthly';
+
+const mapToSubOSPlan = (plan: Plan, cycle: BillingCycle): any => {
+  return {
+    id: plan.code,
+    name: plan.name,
+    code: plan.code,
+    price: plan.price,
+    fixedCost: 0,
+    paymentMode: 'recurring',
+    interval: cycle === 'monthly' ? 'month' : 'year',
+    intervalCount: 1,
+    currency: 'USD',
+    isActive: true,
+    isDefault: plan.code === PLANCODEENUM.STARTER,
+    metadata: {
+      rowsIncluded: plan.rowsIncluded,
+      extraChargeOverheadTenThusandRecords: plan.extraChargeOverheadTenThusandRecords,
+      removeBranding: plan.removeBranding,
+    },
+    billingCycle: cycle,
+  };
+};
+
+export function PlanCard({ plan, isYearly, activePlanCode }: PlanCardProps) {
   const { classes } = useStyles();
-  const { onOpenPaymentModal } = usePlanDetails({ projectId });
+  const { selectPlan } = useSubOSIntegration();
 
   return (
     <Card
@@ -41,7 +66,7 @@ export function PlanCard({ plan, isYearly, activePlanCode, projectId }: PlanCard
         <Button
           className={classes.button}
           fullWidth
-          onClick={() => onOpenPaymentModal({ code: plan.code, modalId: MODAL_KEYS.SELECT_CARD })}
+          onClick={() => selectPlan(mapToSubOSPlan(plan, planBillingCycle))}
           disabled={plan.code === PLANCODEENUM.STARTER || activePlanCode === plan.code}
         >
           {activePlanCode === plan.code ? 'Active Plan' : 'Choose Plan'}

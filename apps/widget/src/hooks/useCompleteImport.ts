@@ -27,7 +27,6 @@ export const useCompleteImport = ({ onNext }: IUseCompleteImportProps) => {
     // eslint-disable-next-line prettier/prettier
   >([`confirm:${uploadInfo._id}`], () => api.confirmReview(uploadInfo._id, maxRecords), {
     onSuccess(uploadData) {
-      console.log('Called with maxRecords', maxRecords);
       logAmplitudeEvent('RECORDS', {
         type: 'invalid',
         host,

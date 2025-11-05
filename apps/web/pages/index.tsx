@@ -5,11 +5,15 @@ import { Stack, Title } from '@mantine/core';
 import { TEXTS } from '@config';
 import { AppLayout } from '@layouts/AppLayout';
 import { PlanDetails } from '@components/home/PlanDetails';
-import { ImportCount } from '@components/home/ImportCount';
-
+import { PlanPricingTable } from '@components/UpgradePlan/Plans/PlansPricingTable';
+import { useAppState } from 'store/app.context';
+import { useSubOSIntegration } from '@hooks/useSubOSIntegration';
 const { publicRuntimeConfig } = getConfig();
 
 export default function Home() {
+  const { profileInfo } = useAppState();
+  const { subscription } = useSubOSIntegration();
+
   return (
     <>
       <Head>
@@ -24,7 +28,7 @@ export default function Home() {
       <Stack>
         <Title order={2}>Home</Title>
         {publicRuntimeConfig.NEXT_PUBLIC_PAYMENT_GATEWAY_URL && <PlanDetails />}
-        <ImportCount />
+        <PlanPricingTable userProfile={profileInfo!} activePlanCode={subscription?.plan.code} />
       </Stack>
     </>
   );

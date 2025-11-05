@@ -75,7 +75,6 @@ export function Phase3(props: IPhase3Props) {
   const columnDescriptions = columnDefs.map((column) => column.description || '');
 
   useEffect(() => {
-    console.log('isFindAndReplaceAvailable', isFindAndReplaceAvailable);
     setTableWrapperDimentions({
       height: tableWrapperRef.current.getBoundingClientRect().height - 50,
       width: tableWrapperRef.current.getBoundingClientRect().width,

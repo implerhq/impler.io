@@ -81,10 +81,6 @@ export class PaymentAPIService {
       },
     });
 
-    console.log('urlis >', url);
-
-    console.log('response.data.available', response.data.available);
-
     return response.data.available;
   }
 

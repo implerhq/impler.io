@@ -21,6 +21,10 @@ export interface Plan {
   price: number;
   extraChargeOverheadTenThusandRecords: number;
   removeBranding: boolean;
+  recordsImportedPerDollar: number | null;
+  costPerRecordImport: number | null;
+  costPerExtraRecordImport: number | null;
+  sellingPriceOf5KRecordsImport: number | null;
   content: PlanContent;
 }
 
