@@ -73,9 +73,7 @@ export const useUpdateBulkColumns = ({ onError, templateId }: UseUpdateBulkColum
       if (advancedValidationsUnavailable || dateFormatUnavailable) {
         let featureName = '';
 
-        // Use switch case to determine feature name
         switch (true) {
-          /*
           case !!column.regex:
             featureName = 'Regex Validation';
             break;
@@ -83,7 +81,7 @@ export const useUpdateBulkColumns = ({ onError, templateId }: UseUpdateBulkColum
           case !!column.allowMultiSelect:
             featureName = 'Multi-Select';
             break;
-          */
+
           case !!(column.selectValues && column.selectValues.length > 0):
             featureName = 'Select Values';
             break;

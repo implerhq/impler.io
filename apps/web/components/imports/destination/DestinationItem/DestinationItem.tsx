@@ -4,7 +4,6 @@ import { Title, Flex, Stack, Switch, Collapse, Group } from '@mantine/core';
 import useStyles from './DestinationItem.styles';
 import { colors } from '@config';
 import { TooltipLink } from '@components/guide-point';
-// import { ForbiddenIcon } from '@assets/icons';
 
 interface DestinationItemProps extends PropsWithChildren {
   title: string;

@@ -101,7 +101,7 @@ export class SchemaDto {
   @Type(() => Array<string>)
   @IsArray({ message: "'dateFormats' must be an array, when type is Date" })
   @ArrayMinSize(1, { message: "'dateFormats' must not be empty, when type is Date" })
-  dateFormats: string[]; /* = Defaults.DATE_FORMATS;*/
+  dateFormats: string[];
 
   @ApiProperty({
     description: 'Sequence of column',

@@ -64,7 +64,7 @@ export class PaymentAPIService {
         axiosInstance: axios,
         error,
         context: 'createEvent',
-        shouldLog: true,
+        shouldLog: process.env.NODE_ENV === 'development',
       });
       throw new Error(errorMessage);
     }
@@ -158,7 +158,7 @@ export class PaymentAPIService {
         axiosInstance: axios,
         error,
         context: 'subscribe',
-        shouldLog: true,
+        shouldLog: process.env.NODE_ENV === 'development',
       });
       throw new Error(errorMessage);
     }

@@ -186,18 +186,11 @@ interface ComparisonResult {
   overriddenProperties: string[];
 }
 
-/**
- * Compares two text objects and identifies differences
- * @param original - The source of truth (WIDGET_TEXTS)
- * @param current - The current texts object to compare
- * @returns Detailed comparison results
- */
-export function compareWidgetTexts(original: any, current: any): ComparisonResult {
+export function deepCompareObjects(original: any, current: any): ComparisonResult {
   const differences: TextDifference[] = [];
   const overriddenProperties: string[] = [];
 
   function deepCompare(orig: any, curr: any, path = ''): void {
-    // Get all unique keys from both objects
     const allKeys = new Set([...Object.keys(orig || {}), ...Object.keys(curr || {})]);
 
     allKeys.forEach((key) => {
@@ -205,7 +198,6 @@ export function compareWidgetTexts(original: any, current: any): ComparisonResul
       const origVal = orig?.[key];
       const currVal = curr?.[key];
 
-      // Property exists in current but not in original (added)
       if (origVal === undefined && currVal !== undefined) {
         differences.push({
           path: currentPath,
@@ -213,18 +205,14 @@ export function compareWidgetTexts(original: any, current: any): ComparisonResul
           original: undefined,
           current: currVal,
         });
-      }
-      // Property exists in original but not in current (removed)
-      else if (origVal !== undefined && currVal === undefined) {
+      } else if (origVal !== undefined && currVal === undefined) {
         differences.push({
           path: currentPath,
           type: 'removed',
           original: origVal,
           current: undefined,
         });
-      }
-      // Both are objects, recurse deeper
-      else if (
+      } else if (
         typeof origVal === 'object' &&
         origVal !== null &&
         typeof currVal === 'object' &&
@@ -233,9 +221,7 @@ export function compareWidgetTexts(original: any, current: any): ComparisonResul
         !Array.isArray(currVal)
       ) {
         deepCompare(origVal, currVal, currentPath);
-      }
-      // Values are different (modified/overridden)
-      else if (origVal !== currVal) {
+      } else if (origVal !== currVal) {
         differences.push({
           path: currentPath,
           type: 'modified',
@@ -263,9 +249,6 @@ export function compareWidgetTexts(original: any, current: any): ComparisonResul
   };
 }
 
-/**
- * Formats the comparison results as a readable string
- */
 export function formatComparisonResults(result: ComparisonResult): string {
   let output = '=== TEXT COMPARISON RESULTS ===\n\n';
 

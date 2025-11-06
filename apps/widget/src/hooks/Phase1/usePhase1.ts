@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { logAmplitudeEvent } from '@amplitude';
-import { compareWidgetTexts /*, deepMerge*/, notifier, ParentWindow } from '@util';
+import { deepCompareObjects, notifier, ParentWindow } from '@util';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { useImplerState } from '@store/impler.context';
@@ -18,7 +18,7 @@ import {
   defaultWidgetAppereance,
 } from '@impler/shared';
 
-import { variables } from '@config';
+import { variables, WIDGET_FEATURES_EXCEPTION_MESSAGES } from '@config';
 import { useSample } from '@hooks/useSample';
 import { useTemplates } from '@hooks/useTemplates';
 import { IFormvalues, IUploadValues } from '@types';
@@ -78,24 +78,26 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
     ['upload'],
     (values: IUploadValues) => {
       try {
-        const result = compareWidgetTexts(DEFAULT_WIDGET_TEXTS, texts);
-        const modifiedAppearanceProperties = compareWidgetTexts(defaultWidgetAppereance, appearance);
+        const textCustomizationResult = deepCompareObjects(DEFAULT_WIDGET_TEXTS, texts);
+        const appearanceCustomizationResult = deepCompareObjects(defaultWidgetAppereance, appearance);
 
         if (maxRecords && !importConfig?.MAX_RECORDS) {
-          throw new Error('Configuring maxRecords property is not allowed in your current plan');
+          throw new Error(WIDGET_FEATURES_EXCEPTION_MESSAGES.MAX_RECORDS);
         }
 
-        if (!importConfig.TEXT_CUSTOMIZATION && result.differences.length > 0) {
-          throw new Error('Configuring Widget texts property is not allowed in your current plan');
+        if (!importConfig.TEXT_CUSTOMIZATION && textCustomizationResult.differences.length > 0) {
+          throw new Error(WIDGET_FEATURES_EXCEPTION_MESSAGES.TEXT_CUSTOMIZATION);
         }
 
-        if (!importConfig.APPEARANCE_CUSTOMIZATION && modifiedAppearanceProperties.differences.length > 0) {
-          throw new Error('Configuring Widget appearance property is not allowed in your current plan');
+        if (!importConfig.APPEARANCE_CUSTOMIZATION && appearanceCustomizationResult.differences.length > 0) {
+          throw new Error(WIDGET_FEATURES_EXCEPTION_MESSAGES.APPEARANCE_CUSTOMIZATION);
         }
 
-        // if (schema && !importConfig.RUNTIME_SCHEMA) {
-        //   throw new Error(`Your current plan does not support providing runtime schema`);
-        // }
+        /*
+         * if (schema && !importConfig.RUNTIME_SCHEMA) {
+         *   throw new Error(`Your current plan does not support providing runtime schema`);
+         * }
+         */
       } catch (error) {
         throw error;
       }

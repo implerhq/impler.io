@@ -75,16 +75,6 @@ function ImportDetails() {
             modals.closeAll();
             showWidget({
               extra: config.extra || '',
-              data: [
-                {
-                  Name: 'Jane Smith',
-                  Email: 'jane.smith@example.com',
-                  Gender: 'Female',
-                  Address: '456 Oak Avenue, City',
-                  'Mobile No': '+1-555-0456',
-                  'Addhar No': '9876-5432-1098',
-                },
-              ],
             });
             setTimeout(() => {}, 100);
           }}

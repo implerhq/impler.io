@@ -154,7 +154,7 @@ export class ColumnRequestDto {
   })
   @ValidateIf((object) => object.type === ColumnTypesEnum.DATE)
   @Type(() => Array<string>)
-  dateFormats: string[] /* = Defaults.DATE_FORMATS*/;
+  dateFormats: string[];
 
   @ApiProperty({
     description: 'Sequence of column',
