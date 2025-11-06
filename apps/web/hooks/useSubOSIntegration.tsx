@@ -4,91 +4,122 @@ import { useAppState } from 'store/app.context';
 import { CancellationModeEnum } from '@config';
 import { BILLABLEMETRIC_CODE_ENUM } from '@impler/shared';
 
+interface SubOSComponents {
+  PlanSelector: any;
+  PlanCard: any;
+}
+
+interface SubOSHooks {
+  useCustomerPortal: any;
+}
+
+interface SubOSApis {
+  plansApi: any;
+  subscriptionApi: any;
+  transactionApi?: any;
+}
+
+// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+interface ITransactionParams {
+  page?: number;
+  limit?: number;
+}
+
+interface CancelSubscriptionParams {
+  reasons: string[];
+}
+
+const MAX_RETRY_ATTEMPTS = 2;
+const DEFAULT_RETRY_DELAY = 1000;
+const DEFAULT_TRANSACTION_LIMIT = 10;
+const DEFAULT_APP_NAME = 'Impler';
+const DEFAULT_APP_VERSION = '1.0.0';
+
 export const useSubOSIntegration = () => {
   const { profileInfo } = useAppState();
 
-  // SubOS components and utilities
-  const [subOSComponents, setSubOSComponents] = useState<{
-    PlanSelector: any;
-    PlanCard: any;
-  } | null>(null);
-  const [subOSHooks, setSubOSHooks] = useState<{
-    useCustomerPortal: any;
-  } | null>(null);
-  const [subOSApis, setSubOSApis] = useState<{
-    plansApi: any;
-    subscriptionApi: any;
-    transactionApi?: any;
-  } | null>(null);
+  const [subOSComponents, setSubOSComponents] = useState<SubOSComponents | null>(null);
+  const [subOSHooks, setSubOSHooks] = useState<SubOSHooks | null>(null);
+  const [subOSApis, setSubOSApis] = useState<SubOSApis | null>(null);
 
-  // Configuration state
   const [isConfigured, setIsConfigured] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Data states
   const [subscription, setSubscription] = useState<any>(null);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
 
-  // Track if initial data has been fetched
   const initialFetchDone = useRef(false);
   const initializingSubOS = useRef(false);
 
-  // Initialize SubOS
+  const handleError = useCallback((err: unknown, context: string) => {
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    console.error(`${context}:`, err);
+    setError(errorMessage);
+
+    return errorMessage;
+  }, []);
+
+  const isNetworkError = (err: unknown): boolean => {
+    return err instanceof Error && err.message.includes('network');
+  };
+
+  const delay = (ms: number): Promise<void> => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  };
+
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
+
   const initializeSubOS = useCallback(async () => {
-    if (initializingSubOS.current || isConfigured) return;
+    if (initializingSubOS.current || isConfigured) {
+      return;
+    }
 
     initializingSubOS.current = true;
+
     try {
       setLoading(true);
       setError(null);
 
-      // Configure SubOS using environment variables with fallbacks
+      // Configure/Initilize SubOS
       configureSubOS({
         apiEndpoint: process.env.NEXT_PUBLIC_SUBOS_API_ENDPOINT,
         projectId: process.env.NEXT_PUBLIC_SUBOS_PROJECT_ID,
         stripePublishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
-        appName: process.env.NEXT_PUBLIC_APP_NAME || 'Impler',
+        appName: process.env.NEXT_PUBLIC_APP_NAME || DEFAULT_APP_NAME,
         appEnvironment: process.env.NODE_ENV,
-        appVersion: process.env.NEXT_PUBLIC_APP_VERSION || '1.0.0',
+        appVersion: process.env.NEXT_PUBLIC_APP_VERSION || DEFAULT_APP_VERSION,
         debug: process.env.NODE_ENV === 'development',
       });
 
-      // Import SubOS module
       const subos = await import('subos-frontend');
 
-      // Extract components
-      const components = {
+      setSubOSComponents({
         PlanSelector: subos.PlanSelector,
         PlanCard: subos.PlanCard,
-      };
+      });
 
-      // Extract hooks
-      const hooks = {
+      setSubOSHooks({
         useCustomerPortal: subos.useCustomerPortal,
-      };
+      });
 
-      // Extract APIs
-      const apis = {
+      setSubOSApis({
         plansApi: subos.plansApi,
         subscriptionApi: subos.subscriptionApi,
         transactionApi: subos.transactionApi,
-      };
+      });
 
-      setSubOSComponents(components);
-      setSubOSHooks(hooks);
-      setSubOSApis(apis);
       setIsConfigured(true);
     } catch (err) {
-      console.error('Failed to initialize SubOS:', err);
-      setError(err instanceof Error ? err.message : String(err));
+      handleError(err, 'Failed to initialize SubOS');
     } finally {
       setLoading(false);
       initializingSubOS.current = false;
     }
-  }, [isConfigured]);
+  }, [isConfigured, handleError]);
 
-  // Fetch subscription with retry logic
   const fetchSubscription = useCallback(
     async (retryCount = 0): Promise<any> => {
       if (!subOSApis?.subscriptionApi || !isConfigured || !profileInfo?.email) {
@@ -96,84 +127,33 @@ export const useSubOSIntegration = () => {
       }
 
       try {
-        const subscriptionData = await subOSApis.subscriptionApi.getActiveSubscription(profileInfo.email);
+        const response = await subOSApis.subscriptionApi.getActiveSubscription(profileInfo.email);
 
-        if (subscriptionData?.data) {
-          setSubscription(subscriptionData.data);
+        if (response?.data) {
+          setSubscription(response.data);
         }
 
-        return subscriptionData;
+        return response;
       } catch (err) {
-        console.error('Error fetching subscription:', err);
-        if (retryCount < 2 && err instanceof Error && err.message.includes('network')) {
-          await new Promise((resolve) => setTimeout(resolve, 1000 * (retryCount + 1)));
+        // Retry logic for network errors
+        if (retryCount < MAX_RETRY_ATTEMPTS && isNetworkError(err)) {
+          await delay(DEFAULT_RETRY_DELAY * (retryCount + 1));
 
           return fetchSubscription(retryCount + 1);
         }
-        setError(err instanceof Error ? err.message : String(err));
+
+        handleError(err, 'Error fetching subscription');
 
         return null;
       }
     },
-    [subOSApis, isConfigured, profileInfo?.email]
+    [subOSApis, isConfigured, profileInfo?.email, handleError]
   );
 
-  // Handle plan selection and checkout
-  const selectPlan = useCallback(
-    async (plan: Plan) => {
-      if (!subOSApis?.plansApi || !profileInfo?.email) return null;
-
-      try {
-        setSelectedPlan(plan);
-        const response = await subOSApis.plansApi.createPaymentSession(plan.code, {
-          returnUrl: `${window.location.origin}/subscription_status`,
-          externalId: profileInfo.email,
-          billableMetricCode: BILLABLEMETRIC_CODE_ENUM.ROWS,
-        });
-
-        const checkoutUrl = response?.data?.checkoutUrl || response?.data?.url;
-        if (response?.success && checkoutUrl) {
-          window.location.href = checkoutUrl;
-
-          return response;
-        }
-
-        return null;
-      } catch (err) {
-        console.error('Error selecting plan:', err);
-        setError(err instanceof Error ? err.message : String(err));
-
-        return null;
-      }
-    },
-    [subOSApis, profileInfo?.email]
-  );
-
-  // Fetch transactions
-  const fetchTransactions = useCallback(
-    async (page = 1, limit = 10) => {
-      if (!subOSApis?.transactionApi || !isConfigured || !profileInfo?.email) {
-        return [];
-      }
-
-      try {
-        const response = await subOSApis.transactionApi.getTransactions(profileInfo.email, { page, limit });
-
-        return response?.data || [];
-      } catch (err) {
-        console.error('Error fetching transactions:', err);
-        setError(err instanceof Error ? err.message : String(err));
-
-        return [];
-      }
-    },
-    [subOSApis, isConfigured, profileInfo?.email]
-  );
-
-  // Handle subscription cancellation
   const cancelSubscription = useCallback(
     // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-    async ({ reasons }: { reasons: string[] }) => {
+    async ({ reasons }: CancelSubscriptionParams) => {
+      // Validation
       if (!subOSApis?.subscriptionApi || !isConfigured || !profileInfo?.email) {
         throw new Error('SubOS API not properly configured or email not available');
       }
@@ -185,20 +165,72 @@ export const useSubOSIntegration = () => {
 
         return response.data;
       } catch (err) {
-        console.error('Error cancelling subscription:', err);
-        setError(err instanceof Error ? err.message : String(err));
+        handleError(err, 'Error cancelling subscription');
         throw err;
       }
     },
-    [subOSApis, isConfigured, profileInfo?.email]
+    [subOSApis, isConfigured, profileInfo?.email, handleError]
   );
 
-  // Initialize on mount
+  const selectPlan = useCallback(
+    async (plan: Plan) => {
+      // Validation
+      if (!subOSApis?.plansApi || !profileInfo?.email) {
+        return null;
+      }
+
+      try {
+        setSelectedPlan(plan);
+
+        const response = await subOSApis.plansApi.createPaymentSession(plan.code, {
+          returnUrl: `${window.location.origin}/subscription_status`,
+          externalId: profileInfo.email,
+          billableMetricCode: BILLABLEMETRIC_CODE_ENUM.ROWS,
+        });
+
+        // Extract checkout URL
+        const checkoutUrl = response?.data?.checkoutUrl || response?.data?.url;
+
+        if (response?.success && checkoutUrl) {
+          window.location.href = checkoutUrl;
+
+          return response;
+        }
+
+        return null;
+      } catch (err) {
+        handleError(err, 'Error selecting plan');
+
+        return null;
+      }
+    },
+    [subOSApis, profileInfo?.email, handleError]
+  );
+
+  const fetchTransactions = useCallback(
+    async (page = 1, limit = DEFAULT_TRANSACTION_LIMIT) => {
+      // Validation
+      if (!subOSApis?.transactionApi || !isConfigured || !profileInfo?.email) {
+        return [];
+      }
+
+      try {
+        const response = await subOSApis.transactionApi.getTransactions(profileInfo.email, { page, limit });
+
+        return response?.data || [];
+      } catch (err) {
+        handleError(err, 'Error fetching transactions');
+
+        return [];
+      }
+    },
+    [subOSApis, isConfigured, profileInfo?.email, handleError]
+  );
+
   useEffect(() => {
     initializeSubOS();
   }, [initializeSubOS]);
 
-  // Fetch initial data when configured
   useEffect(() => {
     if (isConfigured && !initialFetchDone.current) {
       initialFetchDone.current = true;
@@ -207,28 +239,31 @@ export const useSubOSIntegration = () => {
   }, [isConfigured, fetchSubscription]);
 
   return {
-    // Configuration state
     isConfigured,
     loading,
     error,
 
-    // SubOS resources
+    // SubOS Resources
     components: subOSComponents,
     hooks: subOSHooks,
     apis: subOSApis,
 
-    // Data
+    // Data State
     subscription,
     selectedPlan,
 
-    // Actions
+    // Subscription Actions
     fetchSubscription,
-    fetchTransactions,
-    selectPlan,
     cancelSubscription,
 
-    // Utilities
+    // Plan Actions
+    selectPlan,
+
+    // Transaction Actions
+    fetchTransactions,
+
+    // Utility Actions
     reinitialize: initializeSubOS,
-    clearError: () => setError(null),
+    clearError,
   };
 };
