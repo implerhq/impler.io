@@ -34,7 +34,7 @@
     "@azure/storage-blob": "^12.27.0",
     "@impler/shared": "workspace:^",
     "axios": "1.8.2",
-    "nodemailer": "^6.9.14",
+    "nodemailer": "^7.0.7",
     "sax": "^1.4.1",
     "uuid": "^9.0.0"
   },
