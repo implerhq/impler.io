@@ -1,12 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
 
-// import { notifier } from '@util';
+import { notifier } from '@util';
 import { IUpload } from '@impler/client';
 import { logAmplitudeEvent } from '@amplitude';
 import { IErrorObject } from '@impler/shared';
 import { useAppState } from '@store/app.context';
 import { useAPIState } from '@store/api.context';
-import { notifier } from '@util';
 
 interface IUseCompleteImportProps {
   onNext?: (uploadInfo: IUpload, importedData: Record<string, any>[]) => void;

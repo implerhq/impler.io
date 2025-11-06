@@ -13,7 +13,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ColumnTypesEnum /*, Defaults */ } from '@impler/shared';
+import { ColumnTypesEnum } from '@impler/shared';
 import { IsValidRegex } from '@shared/framework/is-valid-regex.validator';
 import { ValidationDto } from 'app/column/dtos/column-request.dto';
 
