@@ -40,7 +40,6 @@ const mapToSubOSPlan = (plan: Plan, cycle: BillingCycle): any => {
 export function PlanCard({ plan, isYearly }: PlanCardProps) {
   const { classes } = useStyles();
   const { selectPlan, subscription } = useSubOSIntegration();
-  console.log(subscription);
 
   return (
     <Card

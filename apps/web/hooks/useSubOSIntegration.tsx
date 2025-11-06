@@ -153,7 +153,6 @@ export const useSubOSIntegration = () => {
   const cancelSubscription = useCallback(
     // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
     async ({ reasons }: CancelSubscriptionParams) => {
-      // Validation
       if (!subOSApis?.subscriptionApi || !isConfigured || !profileInfo?.email) {
         throw new Error('SubOS API not properly configured or email not available');
       }
