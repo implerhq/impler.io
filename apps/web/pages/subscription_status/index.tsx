@@ -21,6 +21,11 @@ export default function SubscriptionStatus() {
           <PaymentSuccessConfirmationModal paymentStatus={CONSTANTS.PAYMENT_SUCCCESS_CODE as 'failed'} />
         </Stack>
       ),
+      onClose: () => {
+        if (typeof window !== 'undefined') {
+          window.location.href = '/';
+        }
+      },
     });
   }, []);
 

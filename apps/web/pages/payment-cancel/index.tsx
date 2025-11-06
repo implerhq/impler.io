@@ -14,6 +14,11 @@ export default function PaymentCancel() {
           <PaymentSuccessConfirmationModal paymentStatus={CONSTANTS.PAYMENT_FAILED_CODE as 'failed'} />
         </Stack>
       ),
+      onClose: () => {
+        if (typeof window !== 'undefined') {
+          window.location.href = '/';
+        }
+      },
     });
   }, []);
 
