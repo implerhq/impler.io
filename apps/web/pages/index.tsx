@@ -7,12 +7,10 @@ import { AppLayout } from '@layouts/AppLayout';
 import { PlanDetails } from '@components/home/PlanDetails';
 import { PlanPricingTable } from '@components/UpgradePlan/Plans/PlansPricingTable';
 import { useAppState } from 'store/app.context';
-import { useSubOSIntegration } from '@hooks/useSubOSIntegration';
 const { publicRuntimeConfig } = getConfig();
 
 export default function Home() {
   const { profileInfo } = useAppState();
-  const { subscription } = useSubOSIntegration();
 
   return (
     <>
@@ -28,7 +26,7 @@ export default function Home() {
       <Stack>
         <Title order={2}>Home</Title>
         {publicRuntimeConfig.NEXT_PUBLIC_PAYMENT_GATEWAY_URL && <PlanDetails />}
-        <PlanPricingTable userProfile={profileInfo!} activePlanCode={subscription?.plan.code} />
+        <PlanPricingTable userProfile={profileInfo!} />
       </Stack>
     </>
   );

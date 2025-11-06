@@ -10,9 +10,6 @@ import { useSubOSIntegration } from '@hooks/useSubOSIntegration';
 interface PlanCardProps {
   plan: Plan;
   isYearly: boolean;
-  activePlanCode: string;
-  email: string;
-  projectId?: string;
 }
 
 type BillingCycle = 'monthly' | 'yearly';
@@ -40,9 +37,10 @@ const mapToSubOSPlan = (plan: Plan, cycle: BillingCycle): any => {
   };
 };
 
-export function PlanCard({ plan, isYearly, activePlanCode }: PlanCardProps) {
+export function PlanCard({ plan, isYearly }: PlanCardProps) {
   const { classes } = useStyles();
-  const { selectPlan } = useSubOSIntegration();
+  const { selectPlan, subscription } = useSubOSIntegration();
+  console.log(subscription);
 
   return (
     <Card
@@ -67,9 +65,9 @@ export function PlanCard({ plan, isYearly, activePlanCode }: PlanCardProps) {
           className={classes.button}
           fullWidth
           onClick={() => selectPlan(mapToSubOSPlan(plan, planBillingCycle))}
-          disabled={plan.code === PLANCODEENUM.STARTER || activePlanCode === plan.code}
+          disabled={plan.code === PLANCODEENUM.STARTER || subscription?.plan.code === plan.code}
         >
-          {activePlanCode === plan.code ? 'Active Plan' : 'Choose Plan'}
+          {subscription?.plan.code === plan.code ? 'Active Plan' : 'Choose Plan'}
         </Button>
         <Divider />
       </Stack>
