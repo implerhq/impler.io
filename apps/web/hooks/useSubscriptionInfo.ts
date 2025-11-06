@@ -26,6 +26,14 @@ export function useSubscriptionInfo() {
 
   return {
     columnTypes,
-    advancedValidationsUnavailable: false, //!meta?.ADVANCED_VALIDATORS,
+    advancedValidationsUnavailable: !meta?.ADVANCED_VALIDATORS,
+    freezeColumnsUnavailable: !meta?.FREEZE_COLUMNS,
+    requiredValidationUnavailable: !meta?.REQUIRED_VALUES,
+    uniqueValidationUnavailable: !meta?.UNIQUE_VALUES,
+    defaultValueUnavailable: !meta?.DEFAULT_VALUES,
+    dateFormatUnavailable: !meta?.DATE_FORMATS,
+    bubbleIoIntegrationUnavailable: !meta?.BUBBLE_INTEGRATION,
+    alternateColumnKeysUnavailable: !meta?.ALTERNATE_COLUMN_KEYS,
+    multiSelectValuesUnavailable: !meta?.MULTI_SELECT_VALUES,
   };
 }

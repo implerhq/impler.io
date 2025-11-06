@@ -18,7 +18,7 @@ import { useImportCount } from '@hooks/useImportCount';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Tooltip, Legend);
 
-export function ImportCount() {
+export function ImportStatistics() {
   const { importCountData, isImportCountLoading, dates, setDates } = useImportCount();
 
   return (

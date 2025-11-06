@@ -1,4 +1,5 @@
-import { Alert, Skeleton, Stack, Text, useMantineTheme } from '@mantine/core';
+/* eslint-disable multiline-comment-style */
+import { Alert, Skeleton, Stack, Text, useMantineTheme, Button, Group } from '@mantine/core';
 
 import { colors } from '@config';
 
@@ -16,7 +17,7 @@ export function PlanDetails() {
   const { profileInfo } = useAppState();
   const { classes } = usePlanDetailsStyles();
 
-  const { activePlanDetails, isActivePlanLoading, showPlans } = usePlanDetails({
+  const { activePlanDetails, isActivePlanLoading, subscriptionError } = usePlanDetails({
     projectId: profileInfo?._projectId ?? '',
   });
 
@@ -24,25 +25,22 @@ export function PlanDetails() {
     return <Skeleton width="100%" height="200" />;
   }
 
-  let numberOfRecords;
-  if (
-    Array.isArray(activePlanDetails?.meta.IMPORTED_ROWS) &&
-    (activePlanDetails?.meta.IMPORTED_ROWS as unknown as ChargeItem[]).length > 0
-  ) {
-    numberOfRecords = (activePlanDetails?.meta.IMPORTED_ROWS[0] as unknown as ChargeItem).last_unit;
-  } else {
-    numberOfRecords = 0;
+  // Show error state with retry option
+  if (subscriptionError && !activePlanDetails) {
+    return (
+      <Alert color="red" title="Failed to load subscription details">
+        <Stack spacing="sm">
+          <Text size="sm">{String(subscriptionError)}</Text>
+          <Group spacing="sm">
+            <Button size="xs" variant="outline">
+              View Plans
+            </Button>
+          </Group>
+        </Stack>
+      </Alert>
+    );
   }
-
-  let isLessThanZero;
-  let showWarning;
-  if (activePlanDetails) {
-    isLessThanZero =
-      typeof activePlanDetails?.meta.IMPORTED_ROWS === 'number' && activePlanDetails?.meta.IMPORTED_ROWS < 0;
-
-    const isOverLimit = activePlanDetails?.usage.IMPORTED_ROWS > numberOfRecords;
-    showWarning = isLessThanZero || isOverLimit;
-  }
+  const numberOfAllocatedRowsInCurrentPlan = activePlanDetails?.meta.ROWS;
 
   return (
     <>
@@ -74,14 +72,11 @@ export function PlanDetails() {
         {activePlanDetails ? (
           <ActivePlanDetails
             activePlanDetails={activePlanDetails}
-            numberOfRecords={numberOfRecords}
-            showPlans={showPlans}
-            showWarning={showWarning}
-            projectId={profileInfo?._projectId}
-            projectName={profileInfo?.projectName}
+            numberOfAllocatedRowsInCurrentPlan={activePlanDetails.meta.ROWS}
+            showWarning={activePlanDetails.usage.ROWS >= numberOfAllocatedRowsInCurrentPlan}
           />
         ) : (
-          <InactiveMembership showPlans={showPlans} />
+          <InactiveMembership />
         )}
       </Stack>
     </>

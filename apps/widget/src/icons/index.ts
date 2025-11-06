@@ -8,3 +8,4 @@ export * from './warning.icon';
 export * from './image.icon';
 export * from './back.icon';
 export * from './grid.icon';
+export * from './lock.icon';

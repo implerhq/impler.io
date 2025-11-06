@@ -1,15 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { commonApi } from '@libs/api';
-import { API_KEYS, MODAL_KEYS } from '@config';
+import { API_KEYS } from '@config';
 import { IErrorObject, ISubscriptionData } from '@impler/shared';
 import { usePlanMetaData } from 'store/planmeta.store.context';
-import { useCallback } from 'react';
-import { PlansModal } from '@components/UpgradePlan/PlansModal';
 import { useAppState } from 'store/app.context';
 import { modals } from '@mantine/modals';
-import { track } from '@libs/amplitude';
 import { PaymentModal } from '@components/AddCard/PaymentModal';
-import { Center } from '@mantine/core';
+import { useSubOSIntegration } from './useSubOSIntegration';
 import { IPlanMeta } from '@types';
 
 interface UsePlanDetailProps {
@@ -18,50 +14,38 @@ interface UsePlanDetailProps {
 }
 
 export function usePlanDetails({ projectId }: UsePlanDetailProps) {
+  const subOSIntegration = useSubOSIntegration();
   const { profileInfo } = useAppState();
   const { meta, setPlanMeta } = usePlanMetaData();
+
   const {
     data: activePlanDetails,
-    isLoading: isActivePlanLoading,
+    isLoading,
+    error: subscriptionError,
     refetch: refetchActivePlanDetails,
   } = useQuery<unknown, IErrorObject, ISubscriptionData, [string | undefined]>(
     [API_KEYS.FETCH_ACTIVE_SUBSCRIPTION],
-    () => commonApi<ISubscriptionData>(API_KEYS.FETCH_ACTIVE_SUBSCRIPTION as any, {}),
+    async () => {
+      if (!subOSIntegration.isConfigured || !profileInfo?.email) {
+        throw new Error('SubOS not configured or email not available');
+      }
+      const result = await subOSIntegration.fetchSubscription();
+
+      return result?.data || subOSIntegration.subscription;
+    },
     {
-      onSuccess(data) {
-        if (data && data.meta) {
-          setPlanMeta({
-            ...(data.meta as IPlanMeta),
-          });
-        }
-      },
       enabled: !!projectId,
+      refetchOnMount: true,
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
+      onSuccess: (data) => {
+        data?.meta && setPlanMeta(data.meta as IPlanMeta);
+      },
     }
   );
 
-  const showPlans = useCallback(() => {
-    track({
-      name: 'VIEW PLANS',
-      properties: {},
-    });
-    modals.open({
-      id: MODAL_KEYS.PAYMENT_PLANS,
-      modalId: MODAL_KEYS.PAYMENT_PLANS,
-      children: (
-        <Center>
-          <PlansModal
-            userProfile={profileInfo!}
-            activePlanCode={activePlanDetails?.plan?.code}
-            canceledOn={activePlanDetails?.plan.canceledOn}
-            expiryDate={activePlanDetails?.expiryDate}
-          />
-        </Center>
-      ),
-      centered: true,
-      size: 'calc(60vw - 3rem)',
-      withCloseButton: false,
-    });
-  }, [activePlanDetails, profileInfo]);
+  const finalActivePlanDetails = activePlanDetails || subOSIntegration.subscription;
+  const finalIsLoading = isLoading || subOSIntegration.loading;
 
   const onOpenPaymentModal = ({ code, modalId }: { code: string; modalId: string }) => {
     modals.closeAll();
@@ -87,9 +71,9 @@ export function usePlanDetails({ projectId }: UsePlanDetailProps) {
 
   return {
     meta,
-    activePlanDetails,
-    isActivePlanLoading,
-    showPlans,
+    activePlanDetails: finalActivePlanDetails,
+    isActivePlanLoading: finalIsLoading,
+    subscriptionError: subscriptionError || subOSIntegration.error,
     onOpenPaymentModal,
     refetchActivePlanDetails,
   };

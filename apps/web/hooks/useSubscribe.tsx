@@ -6,7 +6,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { notify } from '@libs/notify';
 import { commonApi } from '@libs/api';
 import { ICardData, IErrorObject } from '@impler/shared';
-import { ConfirmationModal } from '@components/ConfirmationModal';
+import { PaymentSuccessConfirmationModal } from '@components/ConfirmationModal';
 import { API_KEYS, CONSTANTS, MODAL_KEYS, NOTIFICATION_KEYS } from '@config';
 
 const { publicRuntimeConfig } = getConfig();
@@ -51,7 +51,7 @@ export const useSubscribe = ({ email, planCode }: UseSubscribeProps) => {
         modals.closeAll();
         if (response && response.status) {
           modals.open({
-            children: <ConfirmationModal status={response.status as string} />,
+            children: <PaymentSuccessConfirmationModal paymentStatus={CONSTANTS.PAYMENT_SUCCCESS_CODE as 'success'} />,
             withCloseButton: false,
           });
 
@@ -69,7 +69,7 @@ export const useSubscribe = ({ email, planCode }: UseSubscribeProps) => {
         if (error && error.statusCode) {
           modals.open({
             title: CONSTANTS.SUBSCRIPTION_FAILED_TITLE,
-            children: <ConfirmationModal status={String(error.statusCode)} />,
+            children: <PaymentSuccessConfirmationModal paymentStatus="failed" />,
           });
         }
       },

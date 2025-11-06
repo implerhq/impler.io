@@ -8,6 +8,7 @@ interface IButtonProps {
   visiblyDisabled?: boolean;
   loading?: boolean;
   onClick?: () => void;
+  onHover?: () => void;
   size?: MantineSize;
   type?: 'submit' | 'reset' | 'button';
   color?: 'blue' | 'red' | 'gray' | string;
@@ -23,6 +24,7 @@ export const Button = forwardRef<HTMLButtonElement, PropsWithChildren<IButtonPro
       children,
       loading,
       onClick,
+      onHover,
       visiblyDisabled,
       type = 'button',
       size = 'md',
@@ -46,6 +48,7 @@ export const Button = forwardRef<HTMLButtonElement, PropsWithChildren<IButtonPro
           if (visiblyDisabled) e.preventDefault();
           else onClick?.();
         }}
+        onMouseEnter={onHover}
         data-variant={variant}
         data-color={color}
         {...(visiblyDisabled && { 'data-disabled': true })}

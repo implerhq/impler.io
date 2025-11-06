@@ -144,9 +144,3 @@ export interface IFileInformation {
   data: Record<string, unknown>[];
   totalRecords: number;
 }
-
-export interface IImportConfig {
-  showBranding: boolean;
-  mode: string;
-  title: string;
-}

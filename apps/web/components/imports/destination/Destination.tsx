@@ -29,6 +29,7 @@ export function Destination({ template }: DestinationProps) {
     isSendSampleRequestPending,
     isMapBubbleIoColumnsLoading,
     isSendSampleRequestLoading,
+    bubbleIoIntegrationUnavailable,
   } = useDestination({
     template,
   });
@@ -154,10 +155,15 @@ export function Destination({ template }: DestinationProps) {
 
       <DestinationItem
         title="Bubble.io"
-        subtitle="Send Imported data to bubble.io"
+        subtitle={
+          bubbleIoIntegrationUnavailable
+            ? 'Bubble.io as a destination is not available in your current plan'
+            : 'Send Imported data to bubble.io'
+        }
         active={destination === DestinationsEnum.BUBBLEIO}
         onClick={() => swithDestination(DestinationsEnum.BUBBLEIO)}
         tooltipLink={DOCUMENTATION_REFERENCE_LINKS.bubbleIo}
+        disabled={bubbleIoIntegrationUnavailable}
       >
         <form onSubmit={onSubmit}>
           <Stack spacing="xs">

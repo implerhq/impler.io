@@ -11,10 +11,23 @@ export interface IPlanMeta {
     last_unit: number | string;
     first_unit: number;
   }>;
-  REMOVE_BRANDING: boolean;
-  AUTOMATIC_IMPORTS: boolean;
-  ADVANCED_VALIDATORS: boolean;
-  TEAM_MEMBERS: number;
+  REMOVE_BRANDING?: boolean;
+  AUTOMATIC_IMPORTS?: boolean;
+  ADVANCED_VALIDATORS?: boolean;
+  FREEZE_COLUMNS?: boolean;
+  TEAM_MEMBERS?: number;
+  ROWS?: number;
+  MANUAL_ENTRY?: boolean;
+  DOWNLOAD_SAMPLE_FILE?: boolean;
+  MAX_RECORDS?: boolean;
+  REQUIRED_VALUES?: boolean;
+  UNIQUE_VALUES?: boolean;
+  DEFAULT_VALUES?: boolean;
+  DATE_FORMATS?: boolean;
+  BUBBLE_INTEGRATION?: boolean;
+  ALTERNATE_COLUMN_KEYS?: boolean;
+  DATA_SEEDING?: boolean;
+  MULTI_SELECT_VALUES?: boolean;
 }
 
 export interface IPlanMetaContext {

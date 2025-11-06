@@ -3,14 +3,22 @@ import { useForm } from 'react-hook-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { logAmplitudeEvent } from '@amplitude';
-import { notifier, ParentWindow } from '@util';
+import { deepCompareObjects, notifier, ParentWindow } from '@util';
 import { useAPIState } from '@store/api.context';
 import { useAppState } from '@store/app.context';
 import { useImplerState } from '@store/impler.context';
 import { IUpload, WIDGET_TEXTS } from '@impler/client';
-import { IErrorObject, ITemplate, FileMimeTypesEnum, IColumn, downloadFile } from '@impler/shared';
+import {
+  IErrorObject,
+  ITemplate,
+  FileMimeTypesEnum,
+  IColumn,
+  downloadFile,
+  DEFAULT_WIDGET_TEXTS,
+  defaultWidgetAppereance,
+} from '@impler/shared';
 
-import { variables } from '@config';
+import { variables, WIDGET_FEATURES_EXCEPTION_MESSAGES } from '@config';
 import { useSample } from '@hooks/useSample';
 import { useTemplates } from '@hooks/useTemplates';
 import { IFormvalues, IUploadValues } from '@types';
@@ -52,6 +60,8 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
     sampleFile,
     config,
     maxRecords,
+    importConfig,
+    appearance,
   } = useAppState();
 
   const selectedTemplateId = watch('templateId');
@@ -66,7 +76,34 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
 
   const { isLoading: isUploadLoading, mutate: submitUpload } = useMutation<IUpload, IErrorObject, IUploadValues>(
     ['upload'],
-    (values: IUploadValues) => api.uploadFile(values),
+    (values: IUploadValues) => {
+      try {
+        const textCustomizationResult = deepCompareObjects(DEFAULT_WIDGET_TEXTS, texts);
+        const appearanceCustomizationResult = deepCompareObjects(defaultWidgetAppereance, appearance);
+
+        if (maxRecords && !importConfig?.MAX_RECORDS) {
+          throw new Error(WIDGET_FEATURES_EXCEPTION_MESSAGES.MAX_RECORDS);
+        }
+
+        if (!importConfig.TEXT_CUSTOMIZATION && textCustomizationResult.differences.length > 0) {
+          throw new Error(WIDGET_FEATURES_EXCEPTION_MESSAGES.TEXT_CUSTOMIZATION);
+        }
+
+        if (!importConfig.APPEARANCE_CUSTOMIZATION && appearanceCustomizationResult.differences.length > 0) {
+          throw new Error(WIDGET_FEATURES_EXCEPTION_MESSAGES.APPEARANCE_CUSTOMIZATION);
+        }
+
+        /*
+         * if (schema && !importConfig.RUNTIME_SCHEMA) {
+         *   throw new Error(`Your current plan does not support providing runtime schema`);
+         * }
+         */
+      } catch (error) {
+        throw error;
+      }
+
+      return api.uploadFile(values);
+    },
     {
       onSuccess(uploadData, uploadValues) {
         ParentWindow.UploadStarted({ templateId: uploadData._templateId, uploadId: uploadData._id });
@@ -192,8 +229,8 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
   }, [templateId]);
 
   return {
-    control,
     errors,
+    control,
     columns,
     setError,
     register,
@@ -209,6 +246,8 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
     isExcelSheetNamesLoading,
     showSelectTemplate: !templateId,
     onSelectExcelSheet: handleSubmit(uploadFile),
+    isManualDataEntryAvailable: importConfig.MANUAL_ENTRY,
     hideDownloadSampleButton: config?.hideDownloadSampleButton,
+    isDownloadFileAvailable: importConfig?.DOWNLOAD_SAMPLE_FILE,
   };
 }

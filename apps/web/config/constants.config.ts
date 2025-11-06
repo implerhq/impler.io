@@ -26,9 +26,16 @@ export const CONSTANTS = {
     'An error occurred with the payment. No amount has been deducted. Please try again later or contact the support team.',
   SUBSCRIPTION_ACTIVATED_TITLE: 'Subscription activated',
   SUBSCRIPTION_FAILED_TITLE: 'Payment failed',
+  SUBSCRIPTION_CANCELLED_MESSAGE: (expiryDate: string): string =>
+    `Your subscription is cancelled. Your current subscription will continue till ${expiryDate}. You won't be charged again.`,
   SAMPLE_IMPORT_NAME: 'Product Data Import',
   SIDEBAR_COLLAPSED_KEY: 'SIDE_BAR_COLLAPSED',
 };
+
+export enum CancellationModeEnum {
+  END_OF_PERIOD = 'endOfPeriod',
+  IMMEDIATE = 'immediate',
+}
 
 export const VARIABLES = {
   DEFAULT_ICON_SIZE: 24,
@@ -239,7 +246,8 @@ export const NOTIFICATION_KEYS = {
   INVITATION_DELETED: 'INVITATION_DELETED',
   ERROR_DELETING_INVITATION: 'INVITATION_DELETED',
   PERMISSION_DENIED_WHILE_DELETING_PROJECT: 'PERMISSION_DENIED_WHILE_DELETING_PROJECT',
-};
+  SUBSCRIPTION_FEATURE_NOT_INCLUDED_IN_CURRENT_PLAN: 'SUBSCRIPTION_FEATURE_NOT_INCLUDED_IN_CURRENT_PLAN',
+} as const;
 
 export const ROUTES = {
   HOME: '/',
@@ -477,27 +485,28 @@ export enum PLANCODEENUM {
   GROWTH = 'GROWTH-MONTHLY',
   GROWTH_YEARLY = 'GROWTH-YEARLY',
   STARTER = 'STARTER',
+  FREE_FOREVER = 'FREE_FOREVER',
 }
 export const plans: { monthly: Plan[]; yearly: Plan[] } = {
   monthly: [
     {
       name: 'Starter (Default)',
       code: 'STARTER',
-      rowsIncluded: 5000,
+      rowsIncluded: 2500,
       price: 0,
       extraChargeOverheadTenThusandRecords: 1,
       removeBranding: false,
+      recordsImportedPerDollar: null,
+      costPerRecordImport: null,
+      costPerExtraRecordImport: null,
+      sellingPriceOf5KRecordsImport: null,
       content: {
-        'Rows Included': [{ check: true, title: '5K' }],
-        'For extra 10K Records': [{ check: true, title: '$1 (Billed monthly)' }],
-        'Team Members': [{ check: true, title: '1', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
+        'Rows Included': [{ check: true, title: '2.5K' }],
+        'Cost of 5K Extra records Import': [{ check: true, title: '-' }],
+        'Team Members': [{ check: false, title: '0', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
         Features: [
-          { check: true, title: 'Theming' },
-          {
-            check: true,
-            title: 'Custom Validation',
-            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation,
-          },
+          { check: false, title: 'Theming' },
+          { check: true, title: 'Custom Validation', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation },
           {
             check: true,
             title: 'Output Customization',
@@ -509,16 +518,8 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
             title: 'Advanced Validations',
             tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
           },
-          {
-            check: false,
-            title: 'Auto Import',
-            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport,
-          },
-          {
-            check: false,
-            title: 'Image Import',
-            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport,
-          },
+          { check: false, title: 'Auto Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport },
+          { check: false, title: 'Image Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport },
         ],
       },
     },
@@ -526,41 +527,33 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       name: 'Growth',
       code: 'GROWTH-MONTHLY',
       price: 42,
-      rowsIncluded: 500000,
-      extraChargeOverheadTenThusandRecords: 0.7,
+      rowsIncluded: 50000,
+      extraChargeOverheadTenThusandRecords: 12.6,
       removeBranding: true,
+      recordsImportedPerDollar: 1190,
+      costPerRecordImport: 0.00084,
+      costPerExtraRecordImport: 0.00126,
+      sellingPriceOf5KRecordsImport: 64,
       content: {
-        'Rows Included': [{ check: true, title: '500K' }],
-        'For extra 10K Records': [{ check: true, title: '$0.70 (Billed monthly)' }],
+        'Rows Included': [{ check: true, title: '50K' }],
+        'Cost of 5K Extra records Import': [{ check: true, title: '$6.3' }],
         'Team Members': [{ check: true, title: '4', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
         Features: [
           { check: true, title: 'Theming' },
-          {
-            check: true,
-            title: 'Custom Validation',
-            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation,
-          },
+          { check: true, title: 'Custom Validation', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation },
           {
             check: true,
             title: 'Output Customization',
             tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
           },
-          { check: true, title: 'Remove Branding' },
+          { check: false, title: 'Remove Branding' },
           {
             check: true,
             title: 'Advanced Validations',
             tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
           },
-          {
-            check: false,
-            title: 'Auto Import',
-            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport,
-          },
-          {
-            check: false,
-            title: 'Image Import',
-            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport,
-          },
+          { check: false, title: 'Auto Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport },
+          { check: false, title: 'Image Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport },
         ],
       },
     },
@@ -568,12 +561,16 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       name: 'Scale',
       code: 'SCALE-MONTHLY',
       price: 90,
-      rowsIncluded: 1500000,
-      extraChargeOverheadTenThusandRecords: 0.5,
+      rowsIncluded: 150000,
+      extraChargeOverheadTenThusandRecords: 9,
       removeBranding: true,
+      recordsImportedPerDollar: 1667,
+      costPerRecordImport: 0.0006,
+      costPerExtraRecordImport: 0.0009,
+      sellingPriceOf5KRecordsImport: 64,
       content: {
-        'Rows Included': [{ check: true, title: '1.5M' }],
-        'For extra 10K Records': [{ check: true, title: '$0.50 (Billed monthly)' }],
+        'Rows Included': [{ check: true, title: '150K' }],
+        'Cost of 5K Extra records Import': [{ check: true, title: '$4.5' }],
         'Team Members': [{ check: true, title: '10', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
         Features: [
           { check: true, title: 'Theming' },
@@ -599,16 +596,20 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
     {
       name: 'Starter (Default)',
       code: 'STARTER',
-      rowsIncluded: 5000,
+      rowsIncluded: 2500,
       price: 0,
       extraChargeOverheadTenThusandRecords: 1,
       removeBranding: false,
+      recordsImportedPerDollar: null,
+      costPerRecordImport: null,
+      costPerExtraRecordImport: null,
+      sellingPriceOf5KRecordsImport: null,
       content: {
-        'Rows Included': [{ check: true, title: '5K' }],
-        'For extra 10K Records': [{ check: true, title: '$1 (Billed yearly)' }],
-        'Team Members': [{ check: true, title: '1', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
+        'Rows Included': [{ check: true, title: '2.5K' }],
+        'Cost of 5K Extra records Import': [{ check: true, title: '-' }],
+        'Team Members': [{ check: false, title: '0', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
         Features: [
-          { check: true, title: 'Theming' },
+          { check: false, title: 'Theming' },
           { check: true, title: 'Custom Validation', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation },
           {
             check: true,
@@ -630,12 +631,16 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       name: 'Growth',
       code: 'GROWTH-YEARLY',
       price: 420,
-      rowsIncluded: 6000000,
-      extraChargeOverheadTenThusandRecords: 0.7,
+      rowsIncluded: 50000,
+      extraChargeOverheadTenThusandRecords: 126,
       removeBranding: true,
+      recordsImportedPerDollar: 1190,
+      costPerRecordImport: 0.0084,
+      costPerExtraRecordImport: 0.0126,
+      sellingPriceOf5KRecordsImport: null,
       content: {
-        'Rows Included': [{ check: true, title: '6M' }],
-        'For extra 10K Records': [{ check: true, title: '$0.70 (Billed yearly)' }],
+        'Rows Included': [{ check: true, title: '50K' }],
+        'Cost of 5K Extra records Import': [{ check: true, title: '$63' }],
         'Team Members': [{ check: true, title: '4', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
         Features: [
           { check: true, title: 'Theming' },
@@ -645,7 +650,7 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
             title: 'Output Customization',
             tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
           },
-          { check: true, title: 'Remove Branding' },
+          { check: false, title: 'Remove Branding' },
           {
             check: true,
             title: 'Advanced Validations',
@@ -660,12 +665,16 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       name: 'Scale',
       code: 'SCALE-YEARLY',
       price: 900,
-      rowsIncluded: 18000000,
-      extraChargeOverheadTenThusandRecords: 0.5,
+      rowsIncluded: 150000,
+      extraChargeOverheadTenThusandRecords: 90,
       removeBranding: true,
+      recordsImportedPerDollar: 1667,
+      costPerRecordImport: 0.006,
+      costPerExtraRecordImport: 0.009,
+      sellingPriceOf5KRecordsImport: null,
       content: {
-        'Rows Included': [{ check: true, title: '18M' }],
-        'For extra 10K Records': [{ check: true, title: '$0.50 (Billed yearly)' }],
+        'Rows Included': [{ check: true, title: '150K' }],
+        'Cost of 5K Extra records Import': [{ check: true, title: '$45' }],
         'Team Members': [{ check: true, title: '10', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
         Features: [
           { check: true, title: 'Theming' },
@@ -731,3 +740,60 @@ export const sampleColumns = [
     isUnique: false,
   },
 ];
+
+export const defaultWidgetAppereanceThemeYellow = {
+  widget: {
+    backgroundColor: '#1c1917',
+  },
+  fontFamily: 'Inter, sans-serif',
+  borderRadius: '12px',
+  primaryButtonConfig: {
+    backgroundColor: '#f59e0b',
+    textColor: '#1c1917',
+    hoverBackground: '#fbbf24',
+    hoverTextColor: '#1c1917',
+    borderColor: 'transparent',
+    hoverBorderColor: 'transparent',
+    buttonShadow: '0 4px 16px rgba(245, 158, 11, 0.4)',
+  },
+  secondaryButtonConfig: {
+    backgroundColor: '#292524',
+    textColor: '#fcd34d',
+    hoverBackground: '#3c2d2a',
+    hoverTextColor: '#fed7aa',
+    borderColor: '#44403c',
+    hoverBorderColor: '#f59e0b',
+    buttonShadow: 'none',
+  },
+};
+
+export const defaultWidgetAppereanceThemeDark = {
+  widget: {
+    backgroundColor: '#000000',
+    background: 'linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #1a1a1a 100%)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    boxShadow: '0px 0px 50px rgba(0, 0, 0, 0.9), inset 0px 2px 10px rgba(255, 255, 255, 0.02)',
+  },
+  primaryColor: '#ffffff',
+  fontFamily: 'JetBrains Mono, Consolas, monospace',
+  borderRadius: '4px',
+  primaryButtonConfig: {
+    backgroundColor: '#1a1a1a',
+    textColor: '#ffffff',
+    hoverBackground: '#333333',
+    hoverTextColor: '#ffffff',
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    hoverBorderColor: '#ffffff',
+    buttonShadow: '0px 8px 32px rgba(0, 0, 0, 0.8), 0px 0px 20px rgba(255, 255, 255, 0.1)',
+    transform: 'translateY(-2px)',
+  },
+  secondaryButtonConfig: {
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    textColor: '#666666',
+    hoverBackground: 'rgba(26, 26, 26, 0.9)',
+    hoverTextColor: '#ffffff',
+    borderColor: 'rgba(102, 102, 102, 0.3)',
+    hoverBorderColor: '#1a1a1a',
+    buttonShadow: '0px 4px 16px rgba(0, 0, 0, 0.6)',
+  },
+};

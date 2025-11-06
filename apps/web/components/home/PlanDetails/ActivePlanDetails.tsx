@@ -1,122 +1,130 @@
 import React from 'react';
 import Link from 'next/link';
 import dayjs from 'dayjs';
-import { TooltipLink } from '@components/guide-point';
-import { Stack, Group, Divider, Title, Alert } from '@mantine/core';
-import { Button } from '@ui/button';
-import { InformationIcon } from '@assets/icons/Information.icon';
+import { Stack, Group, Text, ActionIcon, Menu, Alert } from '@mantine/core';
 
-import {
-  ActionsEnum,
-  DATE_FORMATS,
-  DOCUMENTATION_REFERENCE_LINKS,
-  MODAL_KEYS,
-  PLANCODEENUM,
-  SubjectsEnum,
-} from '@config';
+import { ActionsEnum, colors, DATE_FORMATS, PLANCODEENUM, SubjectsEnum } from '@config';
 import { ISubscriptionData, numberFormatter } from '@impler/shared';
 
-import { PlanDetailCard } from './PlanDetailsCard';
 import { useCancelPlan } from '@hooks/useCancelPlan';
-import { usePlanDetails } from '@hooks/usePlanDetails';
-import useActivePlanDetailsStyle from './ActivePlanDetails.styles';
 import { Can } from 'store/ability.context';
+import { useCustomerPortal } from 'subos-frontend';
+import { useAppState } from 'store/app.context';
+import { ThreeDotsVerticalIcon } from '@assets/icons/ThreeDotsVertical.icon';
+import { ViewTransactionIcon } from '@assets/icons/ViewTransaction.icon';
+import { CloseIcon } from '@assets/icons/Close.icon';
+import { PaymentCardIcon } from '@assets/icons/PaymentCard.icon';
+import { PlanDetailCard } from './PlanDetailsCard';
+import { InformationIcon } from '@assets/icons/Information.icon';
+import useActivePlanDetailsStyle from './ActivePlanDetails.styles';
 
 interface ActivePlanDetailsProps {
   activePlanDetails: ISubscriptionData;
-  numberOfRecords: number;
+  numberOfAllocatedRowsInCurrentPlan: number;
   showWarning?: boolean;
-  email?: string;
-  projectId?: string;
-  projectName?: string;
-  showPlans: () => void;
 }
 
 export function ActivePlanDetails({
   activePlanDetails,
-  numberOfRecords,
+  numberOfAllocatedRowsInCurrentPlan,
   showWarning,
-  showPlans,
-  projectId,
 }: ActivePlanDetailsProps) {
   const { classes } = useActivePlanDetailsStyle();
+  const { profileInfo } = useAppState();
+  const { openCustomerPortal } = useCustomerPortal();
   const { openCancelPlanModal } = useCancelPlan();
-  const { onOpenPaymentModal } = usePlanDetails({
-    projectId: projectId!,
-  });
+
+  let currentUsedTeamMembers: string | number = Math.max(0, activePlanDetails.usage?.TEAM_MEMBERS || 0);
+  let allocatedTeamMembers: string | number = Math.max(0, (activePlanDetails.meta?.TEAM_MEMBERS || 0) - 1);
+  if (allocatedTeamMembers === 0) {
+    allocatedTeamMembers = 'NA';
+    currentUsedTeamMembers = '0';
+  }
+  const isTeamMemberLimitReached = Number(currentUsedTeamMembers) >= Number(allocatedTeamMembers);
 
   return (
-    <Stack>
-      <Group grow>
-        <Title order={3}>{activePlanDetails.plan.name}</Title>
-        <Group spacing="sm" position="right">
-          <Can I={ActionsEnum.UPDATE} a={SubjectsEnum.CARDS}>
-            <Button component={Link} href="/transactions" variant="filled">
-              View all transactions
-            </Button>
-            {!(activePlanDetails.plan.code === PLANCODEENUM.STARTER || activePlanDetails.plan.canceledOn) && (
-              <Button
-                onClick={() => {
-                  onOpenPaymentModal({
-                    code: activePlanDetails.plan.code,
-                    modalId: MODAL_KEYS.CHANGE_CARD,
-                  });
-                }}
-                variant="filled"
-                color="green"
+    <Stack spacing={0}>
+      <Group position="apart" align="center" mb="lg">
+        <Group spacing={8}>
+          <Text size="lg" weight={700}>
+            Your Plan - {activePlanDetails.plan.name} will
+          </Text>
+          <Text size="lg" color="dimmed">
+            (Expire on {dayjs(activePlanDetails.expiryDate).format(DATE_FORMATS.LONG)})
+          </Text>
+        </Group>
+
+        <Menu position="bottom-end" shadow="md" width={240}>
+          <Menu.Target>
+            <ActionIcon variant="subtle" color="gray" size="lg" style={{ color: '#9ca3af' }}>
+              <ThreeDotsVerticalIcon size="sm" />
+            </ActionIcon>
+          </Menu.Target>
+
+          <Menu.Dropdown>
+            <Can I={ActionsEnum.UPDATE} a={SubjectsEnum.CARDS}>
+              <Menu.Item
+                component={Link}
+                href="/transactions"
+                icon={<ViewTransactionIcon />}
+                style={{ color: colors.StrokeLight }}
+              >
+                View All Transactions
+              </Menu.Item>
+            </Can>
+
+            <Can I={ActionsEnum.UPDATE} a={SubjectsEnum.CARDS}>
+              <Menu.Item
+                onClick={() => openCustomerPortal(profileInfo!.email!)}
+                icon={<PaymentCardIcon />}
+                style={{ color: colors.StrokeLight }}
               >
                 Change Card
-              </Button>
-            )}
-          </Can>
-        </Group>
+              </Menu.Item>
+            </Can>
+
+            <Can I={ActionsEnum.BUY} a={SubjectsEnum.PLAN}>
+              {!activePlanDetails.plan.canceledOn && activePlanDetails.plan.code !== PLANCODEENUM.STARTER && (
+                <Menu.Item
+                  color="red"
+                  icon={<CloseIcon />}
+                  onClick={openCancelPlanModal}
+                  style={{ color: colors.danger }}
+                >
+                  Cancel Subscription
+                </Menu.Item>
+              )}
+            </Can>
+          </Menu.Dropdown>
+        </Menu>
       </Group>
 
-      <Divider />
       <Stack spacing="sm">
         <Group grow align="flex-start">
           <PlanDetailCard
             title="Records Imported"
-            value={`${numberFormatter(activePlanDetails.usage.IMPORTED_ROWS)}/${numberFormatter(numberOfRecords)}`}
+            value={`${activePlanDetails.usage.ROWS}/${numberFormatter(numberOfAllocatedRowsInCurrentPlan)}`}
             isWarning={showWarning}
+          />
+          <PlanDetailCard
+            title="Team Members"
+            value={`${currentUsedTeamMembers}/${allocatedTeamMembers}`}
+            isWarning={isTeamMemberLimitReached}
           />
           <PlanDetailCard title="Active Plan" value={activePlanDetails.plan.name} />
           {Number(activePlanDetails.plan.charge) > 0 && (
             <PlanDetailCard title="Outstanding Amount" value={`$${activePlanDetails.plan.charge}`} />
           )}
-          <PlanDetailCard title="Expiry Date" value={activePlanDetails.expiryDate} />
+          <PlanDetailCard title="Expiry Date" value={dayjs(activePlanDetails.expiryDate).format(DATE_FORMATS.LONG)} />
         </Group>
-
-        <Divider />
-
-        <Can I={ActionsEnum.BUY} a={SubjectsEnum.PLAN}>
-          <Group spacing="xs">
-            <Button onClick={showPlans} variant="filled">
-              Upgrade Plan
-            </Button>
-
-            {activePlanDetails.plan.canceledOn ? (
-              <Alert icon={<InformationIcon size="md" />} variant="filled" classNames={classes}>
-                Your Plan cancelled on {dayjs(activePlanDetails.plan.canceledOn).format(DATE_FORMATS.LONG)} and Expire
-                on {dayjs(activePlanDetails.expiryDate).format(DATE_FORMATS.LONG)}
-              </Alert>
-            ) : (
-              activePlanDetails.plan.code !== PLANCODEENUM.STARTER && (
-                <Button
-                  color="red"
-                  variant="outline"
-                  onClick={openCancelPlanModal}
-                  leftIcon={<InformationIcon size="md" />}
-                >
-                  Cancel Plan
-                </Button>
-              )
-            )}
-
-            <TooltipLink link={DOCUMENTATION_REFERENCE_LINKS.subscriptionInformation} iconSize="md" />
-          </Group>
-        </Can>
       </Stack>
+
+      {activePlanDetails.plan.canceledOn && (
+        <Alert icon={<InformationIcon size="md" />} variant="filled" classNames={classes}>
+          Your Plan cancelled on {dayjs(activePlanDetails.plan.canceledOn).format(DATE_FORMATS.LONG)} and Expire on{' '}
+          {dayjs(activePlanDetails.expiryDate).format(DATE_FORMATS.LONG)}
+        </Alert>
+      )}
     </Stack>
   );
 }
