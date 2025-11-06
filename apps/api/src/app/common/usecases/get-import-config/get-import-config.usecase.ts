@@ -22,13 +22,11 @@ export class GetImportConfig {
 
     try {
       for (const billableMetricCode of Object.keys(BILLABLEMETRIC_CODE_ENUM)) {
-        try {
-          const isAvailable = await this.paymentAPIService.checkEvent({
-            email: userEmail,
-            billableMetricCode: BILLABLEMETRIC_CODE_ENUM[billableMetricCode],
-          });
-          isFeatureAvailableMap.set(billableMetricCode, isAvailable);
-        } catch (error) {}
+        const isAvailable = await this.paymentAPIService.checkEvent({
+          email: userEmail,
+          billableMetricCode: BILLABLEMETRIC_CODE_ENUM[billableMetricCode],
+        });
+        isFeatureAvailableMap.set(billableMetricCode, isAvailable);
       }
     } catch (error) {}
 
