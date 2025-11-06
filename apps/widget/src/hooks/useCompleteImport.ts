@@ -3,9 +3,10 @@ import { useMutation } from '@tanstack/react-query';
 // import { notifier } from '@util';
 import { IUpload } from '@impler/client';
 import { logAmplitudeEvent } from '@amplitude';
-import { IErrorObject, numberFormatter } from '@impler/shared';
+import { IErrorObject } from '@impler/shared';
 import { useAppState } from '@store/app.context';
 import { useAPIState } from '@store/api.context';
+import { notifier } from '@util';
 
 interface IUseCompleteImportProps {
   onNext?: (uploadInfo: IUpload, importedData: Record<string, any>[]) => void;
@@ -43,8 +44,7 @@ export const useCompleteImport = ({ onNext }: IUseCompleteImportProps) => {
       onNext?.(uploadData.uploadInfo, uploadData.importedData);
     },
     onError(error: IErrorObject) {
-      console.log(error.message);
-      // notifier.showError({ message: texts.PHASE3.MAX_RECORD_LIMIT_ERROR ?? error.message, title: error.error });
+      notifier.showError({ message: error.message, title: error.error });
     },
   });
 
