@@ -48,7 +48,7 @@ export const useSubOSIntegration = () => {
         apiEndpoint: process.env.NEXT_PUBLIC_SUBOS_API_ENDPOINT,
         projectId: process.env.NEXT_PUBLIC_SUBOS_PROJECT_ID,
         stripePublishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
-        appName: process.env.NEXT_PUBLIC_APP_NAME,
+        appName: process.env.NEXT_PUBLIC_APP_NAME || 'Impler',
         appEnvironment: process.env.NODE_ENV,
         appVersion: process.env.NEXT_PUBLIC_APP_VERSION || '1.0.0',
         debug: process.env.NODE_ENV === 'development',

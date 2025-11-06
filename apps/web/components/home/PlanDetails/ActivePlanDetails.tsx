@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import dayjs from 'dayjs';
-import { Stack, Group, Text, ActionIcon, Menu } from '@mantine/core';
+import { Stack, Group, Text, ActionIcon, Menu, Alert } from '@mantine/core';
 
 import { ActionsEnum, colors, DATE_FORMATS, PLANCODEENUM, SubjectsEnum } from '@config';
 import { ISubscriptionData, numberFormatter } from '@impler/shared';
@@ -15,6 +15,8 @@ import { ViewTransactionIcon } from '@assets/icons/ViewTransaction.icon';
 import { CloseIcon } from '@assets/icons/Close.icon';
 import { PaymentCardIcon } from '@assets/icons/PaymentCard.icon';
 import { PlanDetailCard } from './PlanDetailsCard';
+import { InformationIcon } from '@assets/icons/Information.icon';
+import useActivePlanDetailsStyle from './ActivePlanDetails.styles';
 
 interface ActivePlanDetailsProps {
   activePlanDetails: ISubscriptionData;
@@ -27,13 +29,18 @@ export function ActivePlanDetails({
   numberOfAllocatedRowsInCurrentPlan,
   showWarning,
 }: ActivePlanDetailsProps) {
+  const { classes } = useActivePlanDetailsStyle();
   const { profileInfo } = useAppState();
   const { openCustomerPortal } = useCustomerPortal();
   const { openCancelPlanModal } = useCancelPlan();
 
-  const currentUsedTeamMembers = Math.max(0, activePlanDetails.usage?.TEAM_MEMBERS || 0);
-  const allocatedTeamMembers = Math.max(0, (activePlanDetails.meta?.TEAM_MEMBERS || 0) - 1);
-  const isTeamMemberLimitReached = currentUsedTeamMembers >= allocatedTeamMembers;
+  let currentUsedTeamMembers: string | number = Math.max(0, activePlanDetails.usage?.TEAM_MEMBERS || 0);
+  let allocatedTeamMembers: string | number = Math.max(0, (activePlanDetails.meta?.TEAM_MEMBERS || 0) - 1);
+  if (allocatedTeamMembers === 0) {
+    allocatedTeamMembers = 'NA';
+    currentUsedTeamMembers = '0';
+  }
+  const isTeamMemberLimitReached = Number(currentUsedTeamMembers) >= Number(allocatedTeamMembers);
 
   return (
     <Stack spacing={0}>
@@ -113,10 +120,10 @@ export function ActivePlanDetails({
       </Stack>
 
       {activePlanDetails.plan.canceledOn && (
-        <Text size="sm" color="yellow" mt="md" style={{ fontStyle: 'italic' }}>
-          Your Plan cancelled on {dayjs(activePlanDetails.plan.canceledOn).format(DATE_FORMATS.LONG)} and will expire on{' '}
+        <Alert icon={<InformationIcon size="md" />} variant="filled" classNames={classes}>
+          Your Plan cancelled on {dayjs(activePlanDetails.plan.canceledOn).format(DATE_FORMATS.LONG)} and Expire on{' '}
           {dayjs(activePlanDetails.expiryDate).format(DATE_FORMATS.LONG)}
-        </Text>
+        </Alert>
       )}
     </Stack>
   );
