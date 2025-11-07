@@ -1,5 +1,5 @@
-import { Alert, Skeleton, Stack, Text, useMantineTheme, Group } from '@mantine/core';
-import { colors } from '@config';
+import { Alert, Skeleton, Stack, Text, useMantineTheme } from '@mantine/core';
+import { colors, NOTIFICATION_KEYS } from '@config';
 
 import { useAppState } from 'store/app.context';
 import { useActiveSubscriptionDetails } from '@hooks/useActiveSubscriptionDetails';
@@ -9,16 +9,10 @@ import { ActiveSubscriptionDetails } from './ActiveSubscriptionDetails';
 import { InformationIcon } from '@assets/icons/Information.icon';
 
 import usePlanDetailsStyles from './PlanDetails.styles';
-import { Button } from '@ui/button';
+import { useEffect } from 'react';
+import { notify } from '@libs/notify';
 
 export function PlanDetails() {
-  const scrollToBottom = () => {
-    window.scrollTo({
-      top: document.documentElement.scrollHeight,
-      behavior: 'smooth',
-    });
-  };
-
   const theme = useMantineTheme();
   const { profileInfo } = useAppState();
   const { classes } = usePlanDetailsStyles();
@@ -28,25 +22,17 @@ export function PlanDetails() {
   });
   const numberOfAllocatedRowsInCurrentPlan = activePlanDetails?.meta?.ROWS ?? 0;
 
+  useEffect(() => {
+    if (subscriptionError) {
+      notify(NOTIFICATION_KEYS.ERROR_FETCHING_SUBSCRIPTION_DETAILS, {
+        message: String(subscriptionError),
+        color: 'red',
+      });
+    }
+  }, [subscriptionError]);
+
   if (isActivePlanLoading) {
     return <Skeleton width="100%" height="200" />;
-  }
-
-  if (subscriptionError && !activePlanDetails) {
-    return (
-      <Alert color="red" title="Failed to load subscription details">
-        <Stack spacing="sm">
-          <Text size="sm">
-            An error occurred while loading subscription details. Please try again later or contact support.{' '}
-          </Text>
-          <Group spacing="sm">
-            <Button onClick={scrollToBottom} size="xs" variant="outline">
-              View Plans
-            </Button>
-          </Group>
-        </Stack>
-      </Alert>
-    );
   }
 
   return (
