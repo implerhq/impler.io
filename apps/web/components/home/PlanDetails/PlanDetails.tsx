@@ -1,13 +1,12 @@
-/* eslint-disable multiline-comment-style */
 import { Alert, Skeleton, Stack, Text, useMantineTheme, Button, Group } from '@mantine/core';
 
 import { colors } from '@config';
 
 import { useAppState } from 'store/app.context';
-import { usePlanDetails } from '@hooks/usePlanDetails';
+import { useActiveSubscriptionDetails } from '@hooks/useActiveSubscriptionDetails';
 
-import { ActivePlanDetails } from './ActivePlanDetails';
 import { InactiveMembership } from './InactiveMembership';
+import { ActiveSubscriptionDetails } from './ActiveSubscriptionDetails';
 import { InformationIcon } from '@assets/icons/Information.icon';
 
 import usePlanDetailsStyles from './PlanDetails.styles';
@@ -17,15 +16,15 @@ export function PlanDetails() {
   const { profileInfo } = useAppState();
   const { classes } = usePlanDetailsStyles();
 
-  const { activePlanDetails, isActivePlanLoading, subscriptionError } = usePlanDetails({
+  const { activePlanDetails, isActivePlanLoading, subscriptionError } = useActiveSubscriptionDetails({
     projectId: profileInfo?._projectId ?? '',
   });
+  const numberOfAllocatedRowsInCurrentPlan = activePlanDetails?.meta?.ROWS ?? 0;
 
   if (isActivePlanLoading) {
     return <Skeleton width="100%" height="200" />;
   }
 
-  // Show error state with retry option
   if (subscriptionError && !activePlanDetails) {
     return (
       <Alert color="red" title="Failed to load subscription details">
@@ -40,7 +39,6 @@ export function PlanDetails() {
       </Alert>
     );
   }
-  const numberOfAllocatedRowsInCurrentPlan = activePlanDetails?.meta.ROWS;
 
   return (
     <>
@@ -70,10 +68,10 @@ export function PlanDetails() {
         }}
       >
         {activePlanDetails ? (
-          <ActivePlanDetails
+          <ActiveSubscriptionDetails
             activePlanDetails={activePlanDetails}
-            numberOfAllocatedRowsInCurrentPlan={activePlanDetails.meta.ROWS}
-            showWarning={activePlanDetails.usage.ROWS >= numberOfAllocatedRowsInCurrentPlan}
+            numberOfAllocatedRowsInCurrentPlan={numberOfAllocatedRowsInCurrentPlan}
+            showWarning={(activePlanDetails.usage?.ROWS ?? 0) >= numberOfAllocatedRowsInCurrentPlan}
           />
         ) : (
           <InactiveMembership />
