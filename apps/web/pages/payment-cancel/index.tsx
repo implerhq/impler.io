@@ -3,7 +3,7 @@ import { modals } from '@mantine/modals';
 import { CONSTANTS } from '@config';
 import { Stack } from '@mantine/core';
 import { useEffect } from 'react';
-import { PaymentSuccessConfirmationModal } from '@components/ConfirmationModal';
+import { PaymentStatusConfirmationModal } from '@components/ConfirmationModal';
 
 export default function PaymentCancel() {
   useEffect(() => {
@@ -11,7 +11,7 @@ export default function PaymentCancel() {
       title: 'Subscription Status',
       children: (
         <Stack spacing="lg">
-          <PaymentSuccessConfirmationModal paymentStatus={CONSTANTS.PAYMENT_FAILED_CODE as 'failed'} />
+          <PaymentStatusConfirmationModal paymentStatus={CONSTANTS.PAYMENT_FAILED_CODE as 'failed'} />
         </Stack>
       ),
       onClose: () => {

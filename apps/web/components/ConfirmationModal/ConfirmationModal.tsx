@@ -15,7 +15,7 @@ interface PaymentConfirmationModalProps {
 
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 
-export function PaymentSuccessConfirmationModal({ paymentStatus }: PaymentConfirmationModalProps) {
+export function PaymentStatusConfirmationModal({ paymentStatus }: PaymentConfirmationModalProps) {
   const isSuccess = paymentStatus === CONSTANTS.PAYMENT_SUCCCESS_CODE;
   const title = isSuccess ? CONSTANTS.SUBSCRIPTION_ACTIVATED_TITLE : CONSTANTS.SUBSCRIPTION_FAILED_TITLE;
   const router = useRouter();
