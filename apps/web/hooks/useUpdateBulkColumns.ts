@@ -5,7 +5,7 @@ import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
 import { track } from '@libs/amplitude';
 import { IColumn, IErrorObject } from '@impler/shared';
-import { useSubscriptionInfo } from './useSubscriptionInfo';
+import { useSubscriptionMetaDataInformation } from './useSubscriptionMetaDataInformation';
 
 interface UseUpdateBulkColumnsProps {
   templateId: string;
@@ -19,7 +19,7 @@ export const useUpdateBulkColumns = ({ onError, templateId }: UseUpdateBulkColum
     requiredValidationUnavailable,
     uniqueValidationUnavailable,
     dateFormatUnavailable,
-  } = useSubscriptionInfo();
+  } = useSubscriptionMetaDataInformation();
   const queryClient = useQueryClient();
 
   const { mutate: updateColumnsInternal, isLoading: isUpdateColumsLoading } = useMutation<
