@@ -6,7 +6,7 @@ import { ICardData } from '@impler/shared';
 import { CardForm } from './CardForm';
 import { useAddCard } from '@hooks/useAddCard';
 import { usePaymentMethods } from '@hooks/usePaymentMethods';
-import { usePlanDetails } from '@hooks/usePlanDetails';
+import { useActiveSubscriptionDetails } from '@hooks/useActiveSubscriptionDetails';
 import { useUpdatePaymentMethod } from '@hooks/useUpdatePaymentMethod';
 import { ActiveSubscriptionContent } from './ActiveSubscriptionContent';
 
@@ -19,7 +19,7 @@ export interface ChangeCardModalContentProps {
 
 export function ChangeCard({ email, projectId }: ChangeCardModalContentProps) {
   const { paymentMethods, isPaymentMethodsLoading, refetchPaymentMethods } = usePaymentMethods();
-  const { activePlanDetails, isActivePlanLoading } = usePlanDetails({ projectId });
+  const { activePlanDetails, isActivePlanLoading } = useActiveSubscriptionDetails({ projectId });
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | undefined>();
   const [activeCard, setActiveCard] = useState<ICardData | undefined>(undefined);
   const [showForm, setShowForm] = useState(false);
