@@ -7,55 +7,9 @@ interface Route {
 }
 
 const routes: Record<string, Route> = {
-  [API_KEYS.PAYMENT_METHOD_LIST]: {
-    url: () => `/v1/user/payment-methods`,
-    method: 'GET',
-  },
-  [API_KEYS.PAYMENT_METHOD_DELETE]: {
-    url: (paymentMethodId: string) => `/v1/user/payment-methods/${paymentMethodId}`,
-    method: 'DELETE',
-  },
-  [API_KEYS.TRANSACTION_HISTORY]: {
-    url: () => `/v1/user/transactions/history`,
-    method: 'GET',
-  },
-  [API_KEYS.APPLY_COUPON_CODE]: {
-    url: (coponCode, planCode) => `/v1/user/coupons/${coponCode}/apply/${planCode}`,
-    method: 'GET',
-  },
-
-  [API_KEYS.CHECKOUT]: {
-    url: () => `/v1/user/checkout`,
-    method: 'GET',
-  },
-
-  [API_KEYS.ADD_PAYMENT_METHOD]: {
-    url: (paymentMethodId: string) => `/v1/user/setup-intent/${paymentMethodId}`,
-    method: 'PUT',
-  },
-
-  [API_KEYS.UPDATE_SUBSCRIPTION_PAYMENT_METHOD]: {
-    url: (paymentMethodId: string) => `/v1/user/subscription-payment-method/${paymentMethodId}`,
-    method: 'PUT',
-  },
-
-  [API_KEYS.SAVE_INTENT_ID]: {
-    url: (intentId: string) => `/v1/user/confirm-payment-intent-id/${intentId}`,
-    method: 'PUT',
-  },
-
-  [API_KEYS.SUBSCRIBE]: {
-    url: () => `/v1/user/subscribe`,
-    method: 'GET',
-  },
-
   [API_KEYS.FETCH_ACTIVE_SUBSCRIPTION]: {
     url: () => `/v1/user/subscription`,
     method: 'GET',
-  },
-  [API_KEYS.CANCEL_SUBSCRIPTION]: {
-    url: () => `/v1/user/subscription`,
-    method: 'DELETE',
   },
   [API_KEYS.ONBOARD_USER]: {
     url: () => '/v1/auth/onboard',

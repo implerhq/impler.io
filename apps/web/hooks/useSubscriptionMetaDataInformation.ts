@@ -5,7 +5,7 @@ import { COLUMN_TYPES } from '@config';
 
 import { usePlanMetaData } from 'store/planmeta.store.context';
 
-export function useSubscriptionInfo() {
+export function useSubscriptionMetaDataInformation() {
   const { meta } = usePlanMetaData();
   const [columnTypes, setColumnType] = useState<SelectItem[]>([]);
   const getColumnTypes = useCallback(() => {
