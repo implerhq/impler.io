@@ -27,7 +27,7 @@ import { MultiSelect } from '@ui/multi-select';
 import { CustomSelect } from '@ui/custom-select';
 import { TooltipLabel } from '@components/guide-point';
 import { AutoHeightComponent } from '@ui/auto-height-component';
-import { useSubscriptionInfo } from '@hooks/useSubscriptionInfo';
+import { useSubscriptionMetaDataInformation } from '@hooks/useSubscriptionMetaDataInformation';
 import Link from 'next/link';
 import { Badge } from '@ui/badge';
 
@@ -48,7 +48,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
     dateFormatUnavailable,
     alternateColumnKeysUnavailable,
     multiSelectValuesUnavailable,
-  } = useSubscriptionInfo();
+  } = useSubscriptionMetaDataInformation();
   const {
     watch,
     control,
