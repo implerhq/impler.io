@@ -25,8 +25,6 @@ interface ICheckEvent {
   billableMetricCode?: BILLABLEMETRIC_CODE_ENUM;
 }
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
-
 export class PaymentAPIService {
   private AUTH_KEY: string;
   private AUTH_VALUE: string;
