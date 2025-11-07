@@ -9,6 +9,7 @@ import { PaginateFileContent } from './paginate-file-content/paginate-file-conte
 import { GetOriginalFileContent } from './get-original-file-content/get-original-file-content.usecase';
 import { GetUploadProcessInformation } from './get-upload-process-info/get-upload-process-info.usecase';
 import { UploadCleanupSchedulerService } from './uploadcleanup-scheduler/uploadcleanup-scheduler.service';
+import { PaymentAPIService } from '@impler/services';
 
 export const USE_CASES = [
   GetPreviewRows,
@@ -18,6 +19,7 @@ export const USE_CASES = [
   TerminateUpload,
   MakeUploadEntry,
   GetUploadColumns,
+  PaymentAPIService,
   PaginateFileContent,
   GetOriginalFileContent,
   GetUploadProcessInformation,
@@ -33,6 +35,7 @@ export {
   MakeUploadEntry,
   TerminateUpload,
   GetUploadColumns,
+  PaymentAPIService,
   GetOriginalFileContent,
   GetUploadProcessInformation,
   PaginateFileContent,

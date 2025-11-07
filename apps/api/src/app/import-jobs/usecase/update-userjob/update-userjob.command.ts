@@ -1,3 +1,5 @@
+import { IFilter } from '@impler/shared';
+
 export class UpdateUserJobCommand {
   url: string;
 
@@ -10,4 +12,8 @@ export class UpdateUserJobCommand {
   headings: string[];
 
   status: string;
+
+  nextRun?: Date;
+
+  filters?: IFilter[];
 }

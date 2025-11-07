@@ -1,33 +1,75 @@
-import React from 'react';
-import { Card, Text, Badge, Stack, Divider } from '@mantine/core';
+import React, { useEffect, useState } from 'react';
+import { plansApi, useSubscription } from 'subos-frontend';
+import { Card, Text, Badge, Stack, Divider, LoadingOverlay } from '@mantine/core';
 import { Button } from '@ui/button';
-import { colors, MODAL_KEYS, PLANCODEENUM } from '@config';
+import { colors, PLANCODEENUM, ROUTES } from '@config';
 import { Plan } from './Plans';
 import { PlanFeature } from './PlanFeature';
 import useStyles from './Plans.styles';
-import { usePlanDetails } from '@hooks/usePlanDetails';
+import { useAppState } from 'store/app.context';
+import { notify } from '@libs/notify';
 
 interface PlanCardProps {
   plan: Plan;
   isYearly: boolean;
-  activePlanCode: string;
-  email: string;
-  projectId?: string;
 }
 
-export function PlanCard({ plan, isYearly, activePlanCode, projectId }: PlanCardProps) {
+export function PlanCard({ plan, isYearly }: PlanCardProps) {
+  const { profileInfo } = useAppState();
   const { classes } = useStyles();
-  const { onOpenPaymentModal } = usePlanDetails({ projectId });
+  const { createPaymentSession } = plansApi;
+  const [isLoading, setIsLoading] = useState(false);
+  const { subscription, fetchSubscription } = useSubscription();
+
+  useEffect(() => {
+    const loadSubscription = async () => {
+      if (!profileInfo?.email) return;
+
+      try {
+        setIsLoading(true);
+        await fetchSubscription(profileInfo.email);
+      } catch (err) {
+        notify('Failed to fetch subscription');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadSubscription();
+  }, [profileInfo?.email]);
+
+  const handlePaymentSession = async () => {
+    setIsLoading(true);
+    try {
+      const response = await createPaymentSession(plan.code, {
+        returnUrl: `${window.location.origin}/${ROUTES.SUBSCRIPTION_STATUS}`,
+        externalId: profileInfo?.email,
+        cancelUrl: `${window.location.origin}/${ROUTES.PAYMENT_CANCEL}`,
+      });
+      if (response?.success && response?.data?.checkoutUrl) {
+        window.location.href = response?.data?.checkoutUrl;
+
+        return response;
+      }
+
+      return null;
+    } catch (err: any) {
+      notify('Failed to create payment session');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Card
-      style={{ width: '800px' }}
+      style={{ width: '800px', position: 'relative' }}
       shadow="sm"
       withBorder
       bg={
-        plan.code === PLANCODEENUM.GROWTH || plan.code === PLANCODEENUM.GROWTH_YEARLY ? colors.faintGrey : colors.black
+        plan.code === PLANCODEENUM.GROWTH || plan.code === PLANCODEENUM.GROWTH_YEARLY ? colors.black : colors.faintGrey
       }
     >
+      <LoadingOverlay visible={isLoading} overlayBlur={2} />
       <Stack mt="md">
         {(plan.code === PLANCODEENUM.GROWTH || plan.code === PLANCODEENUM.GROWTH_YEARLY) && (
           <Badge color="blue" variant="gradient" className={classes.recommendedBadge}>
@@ -41,10 +83,10 @@ export function PlanCard({ plan, isYearly, activePlanCode, projectId }: PlanCard
         <Button
           className={classes.button}
           fullWidth
-          onClick={() => onOpenPaymentModal({ code: plan.code, modalId: MODAL_KEYS.SELECT_CARD })}
-          disabled={plan.code === PLANCODEENUM.STARTER || activePlanCode === plan.code}
+          onClick={handlePaymentSession}
+          disabled={plan.code === PLANCODEENUM.STARTER || subscription?.plan?.code === plan.code || isLoading}
         >
-          {activePlanCode === plan.code ? 'Active Plan' : 'Choose Plan'}
+          {subscription?.plan.code === plan.code ? 'Active Plan' : 'Choose Plan'}
         </Button>
         <Divider />
       </Stack>

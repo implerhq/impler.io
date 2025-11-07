@@ -210,6 +210,7 @@ export class ApiService {
     extra?: string;
     schema?: string;
     output?: string;
+    cron?: string;
   }) {
     return this.httpClient.post(`/import-jobs/${data.templateId}`, {
       webSocketSessionId: data.webSocketSessionId,
@@ -218,6 +219,7 @@ export class ApiService {
       extra: data.extra,
       schema: data.schema,
       output: data.output,
+      cron: data.cron,
     });
   }
 

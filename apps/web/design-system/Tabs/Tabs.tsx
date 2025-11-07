@@ -7,6 +7,7 @@ interface TabItem {
   title: string;
   icon?: React.ReactNode;
   content: React.ReactNode;
+  disabled?: boolean;
 }
 
 interface TabsProps {
@@ -33,7 +34,13 @@ export function Tabs({ items, value, onTabChange, keepMounted, allowTabDeactivat
     >
       <MantineTabs.List>
         {items.map((item) => (
-          <MantineTabs.Tab data-id={item.id} key={item.value} value={item.value} icon={item.icon}>
+          <MantineTabs.Tab
+            data-id={item.id}
+            key={item.value}
+            value={item.value}
+            icon={item.disabled ? item.icon : null}
+            disabled={item.disabled}
+          >
             {item.title}
           </MantineTabs.Tab>
         ))}

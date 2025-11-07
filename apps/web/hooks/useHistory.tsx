@@ -19,7 +19,6 @@ export function useHistory() {
   const [limit, setLimit] = useState<number>(VARIABLES.TEN);
   const [name, setName] = useDebouncedState('', VARIABLES.TWO_HUNDREDS);
 
-  // Main history data query
   const { isFetching: isHistoryDataLoading, data: historyData } = useQuery<
     unknown,
     IErrorObject,
@@ -40,6 +39,8 @@ export function useHistory() {
     {
       enabled: !!profileInfo,
       keepPreviousData: true,
+      refetchInterval: 3000,
+      refetchIntervalInBackground: false,
     }
   );
 
@@ -124,7 +125,7 @@ export function useHistory() {
         />
       ),
       withCloseButton: true,
-      title: <Title order={3}>Import Details</Title>,
+      title: <Title order={3}>{record.name} - Import Details</Title>,
     });
   }
 

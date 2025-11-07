@@ -3,6 +3,7 @@ const parseCronExpression = require('@impler/shared/src/utils/cronstrue');
 import { colors } from '@config';
 import { CheckIcon } from '@icons';
 import { useJobsInfo } from '@store/jobinfo.context';
+import { getFormattedFirstRunTime } from 'util/helpers/common.helpers';
 
 import { PhasesEnum } from '@types';
 import { Footer } from 'components/Common/Footer';
@@ -13,6 +14,10 @@ interface IAutoImportPhase4Props {
 
 export function AutoImportPhase4({ onCloseClick }: IAutoImportPhase4Props) {
   const { jobsInfo } = useJobsInfo();
+
+  const getNextRunTime = () => {
+    return getFormattedFirstRunTime();
+  };
 
   return (
     <>
@@ -33,7 +38,7 @@ export function AutoImportPhase4({ onCloseClick }: IAutoImportPhase4Props) {
           <Text color={colors.lightBlue}>{jobsInfo.url}</Text>
         </Paper>
         <Text fw="bold" color={colors.softGrey}>
-          Will be executed on {parseCronExpression.toString(jobsInfo.cron)}
+          First import will run at {getNextRunTime()}, then repeats {parseCronExpression.toString(jobsInfo.cron)}
         </Text>
       </Stack>
       <Footer onNextClick={onCloseClick} active={PhasesEnum.CONFIRM} />

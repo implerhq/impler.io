@@ -10,7 +10,7 @@ import {
   SendWebhookDataConsumer,
   EndImportConsumer,
   SendBubbleDataConsumer,
-  GetImportJobDataConsumer,
+  SendAutoImportJobDataConsumer,
   SendImportJobDataConsumer,
   SendFailedWebhookDataConsumer,
 } from './consumers';
@@ -47,7 +47,7 @@ export async function bootstrap() {
   const sendBubbleDataConsumer = new SendBubbleDataConsumer();
   const sendWebhookdataConsumer = new SendWebhookDataConsumer();
   const sendFailedWebhookDataConsumer = new SendFailedWebhookDataConsumer();
-  const getImportJobbDataConsumer = new GetImportJobDataConsumer();
+  const autoImportJobbDataConsumer = new SendAutoImportJobDataConsumer();
   const sendImportJobDataConsumer = new SendImportJobDataConsumer();
 
   // add queues to channel
@@ -84,7 +84,7 @@ export async function bootstrap() {
       }),
       channel.consume(
         QueuesEnum.GET_IMPORT_JOB_DATA,
-        getImportJobbDataConsumer.message.bind(getImportJobbDataConsumer),
+        autoImportJobbDataConsumer.message.bind(autoImportJobbDataConsumer),
         {
           noAck: true,
         }

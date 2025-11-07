@@ -5,8 +5,9 @@ import {
   WebhookDestinationRepository,
   WebhookLogEntity,
   UserJobRepository,
+  WebhookLogRepository,
 } from '@impler/dal';
-import { StorageService } from '@impler/services';
+import { PaymentAPIService, StorageService } from '@impler/services';
 import {
   SendImportJobData,
   SendImportJobCachedData,
@@ -20,7 +21,7 @@ import {
 
 import { publishToQueue } from '../bootstrap';
 import { BaseConsumer } from './base.consumer';
-import { getStorageServiceClass } from '../helpers/services.helper';
+import { getPaymentApiServiceClass, getStorageServiceClass } from '../helpers/services.helper';
 
 const MIN_LIMIT = 0;
 const DEFAULT_PAGE = 1;
@@ -28,9 +29,11 @@ const DEFAULT_PAGE = 1;
 export class SendImportJobDataConsumer extends BaseConsumer {
   private columnRepository: ColumnRepository = new ColumnRepository();
   public userJobRepository: UserJobRepository = new UserJobRepository();
-  private templateRepository: TemplateRepository = new TemplateRepository();
+  public templateRepository: TemplateRepository = new TemplateRepository();
   public importJobHistoryRepository: ImportJobHistoryRepository = new ImportJobHistoryRepository();
   public webhookDestinationRepository: WebhookDestinationRepository = new WebhookDestinationRepository();
+  public webhookLogRepository: WebhookLogRepository = new WebhookLogRepository();
+  public paymentApiService: PaymentAPIService = getPaymentApiServiceClass();
   public storageService: StorageService = getStorageServiceClass();
 
   async message(message: { content: string }) {

@@ -12,9 +12,9 @@ import {
   UploadedFile,
 } from '@nestjs/common';
 
-import { ACCESS_KEY_NAME } from '@impler/shared';
+import { ACCESS_KEY_NAME, IImportConfig } from '@impler/shared';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
-import { ValidRequestDto, SignedUrlDto, ImportConfigResponseDto } from './dtos';
+import { ValidRequestDto, SignedUrlDto } from './dtos';
 import { ValidImportFile } from '@shared/validations/valid-import-file.validation';
 import { ValidRequestCommand, GetSignedUrl, ValidRequest, GetImportConfig, GetSheetNames } from './usecases';
 
@@ -60,7 +60,7 @@ export class CommonController {
   async getImportConfigRoute(
     @Query('projectId') projectId: string,
     @Query('templateId') templateId: string
-  ): Promise<ImportConfigResponseDto> {
+  ): Promise<IImportConfig> {
     if (!projectId) {
       throw new BadRequestException();
     }

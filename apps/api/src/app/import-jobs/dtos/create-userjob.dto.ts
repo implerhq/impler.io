@@ -20,4 +20,8 @@ export class CreateUserJobDto {
   @IsString()
   @IsOptional()
   authHeaderValue?: string;
+
+  @IsString()
+  @IsOptional()
+  cron?: string;
 }

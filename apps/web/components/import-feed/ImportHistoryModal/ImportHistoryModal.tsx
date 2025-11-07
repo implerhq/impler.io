@@ -79,9 +79,11 @@ export function ImportHistoryModal({ record, onDownloadFile, onRetry, isRetryLoa
 
       <Box>
         <Flex gap="lg" justify="center">
-          <Button variant="outline" fullWidth onClick={handleDownloadFile}>
-            Download Original File
-          </Button>
+          {record._uploadedFileId ? (
+            <Button variant="outline" fullWidth onClick={handleDownloadFile}>
+              Download Original File
+            </Button>
+          ) : null}
           {canRetry && record.originalFileName && record._uploadedFileId ? (
             <Button fullWidth onClick={handleRetryClick} loading={isRetryLoading}>
               Retry Import

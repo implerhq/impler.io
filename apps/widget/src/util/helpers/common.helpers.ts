@@ -10,6 +10,40 @@ import { WIDGET_TEXTS, isObject } from '@impler/client';
 import { convertStringToJson, downloadFile, FileMimeTypesEnum } from '@impler/shared';
 import { RecurrenceFormData } from 'types/component.types';
 
+export const getFirstRunTime = (): Date => {
+  const now = new Date();
+
+  return new Date(now.getTime() + 5 * 60 * 1000); // 5 minutes from now
+};
+
+export const getFormattedFirstRunTime = (formData?: RecurrenceFormData): string => {
+  let firstRunTime: Date;
+
+  if (formData?.time) {
+    const [hours, minutes] = formData.time.split(':').map(Number);
+    const now = new Date();
+    firstRunTime = new Date();
+    firstRunTime.setHours(hours, minutes, 0, 0);
+
+    // If the time has already passed today, schedule for tomorrow
+    if (firstRunTime <= now) {
+      firstRunTime.setDate(firstRunTime.getDate() + 1);
+    }
+  } else {
+    // Fallback to 5 minutes from now
+    firstRunTime = getFirstRunTime();
+  }
+
+  return firstRunTime.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  });
+};
+
 // eslint-disable-next-line no-magic-numbers
 export function formatBytes(bytes, decimals = 2) {
   if (!+bytes) return '0 Bytes';
@@ -134,6 +168,127 @@ export function deepMerge(
     return mergedResult;
   }
 }
+interface TextDifference {
+  path: string;
+  type: 'modified' | 'added' | 'removed' | 'unchanged';
+  original: any;
+  current: any;
+}
+
+interface ComparisonResult {
+  differences: TextDifference[];
+  summary: {
+    modified: number;
+    added: number;
+    removed: number;
+    total: number;
+  };
+  overriddenProperties: string[];
+}
+
+export function deepCompareObjects(original: any, current: any): ComparisonResult {
+  const differences: TextDifference[] = [];
+  const overriddenProperties: string[] = [];
+
+  function deepCompare(orig: any, curr: any, path = ''): void {
+    const allKeys = new Set([...Object.keys(orig || {}), ...Object.keys(curr || {})]);
+
+    allKeys.forEach((key) => {
+      const currentPath = path ? `${path}.${key}` : key;
+      const origVal = orig?.[key];
+      const currVal = curr?.[key];
+
+      if (origVal === undefined && currVal !== undefined) {
+        differences.push({
+          path: currentPath,
+          type: 'added',
+          original: undefined,
+          current: currVal,
+        });
+      } else if (origVal !== undefined && currVal === undefined) {
+        differences.push({
+          path: currentPath,
+          type: 'removed',
+          original: origVal,
+          current: undefined,
+        });
+      } else if (
+        typeof origVal === 'object' &&
+        origVal !== null &&
+        typeof currVal === 'object' &&
+        currVal !== null &&
+        !Array.isArray(origVal) &&
+        !Array.isArray(currVal)
+      ) {
+        deepCompare(origVal, currVal, currentPath);
+      } else if (origVal !== currVal) {
+        differences.push({
+          path: currentPath,
+          type: 'modified',
+          original: origVal,
+          current: currVal,
+        });
+        overriddenProperties.push(currentPath);
+      }
+    });
+  }
+
+  deepCompare(original, current);
+
+  const summary = {
+    modified: differences.filter((diff) => diff.type === 'modified').length,
+    added: differences.filter((diff) => diff.type === 'added').length,
+    removed: differences.filter((diff) => diff.type === 'removed').length,
+    total: differences.length,
+  };
+
+  return {
+    differences,
+    summary,
+    overriddenProperties,
+  };
+}
+
+export function formatComparisonResults(result: ComparisonResult): string {
+  let output = '=== TEXT COMPARISON RESULTS ===\n\n';
+
+  output += `Summary:\n`;
+  output += `  Modified: ${result.summary.modified}\n`;
+  output += `  Added: ${result.summary.added}\n`;
+  output += `  Removed: ${result.summary.removed}\n`;
+  output += `  Total Differences: ${result.summary.total}\n\n`;
+
+  if (result.overriddenProperties.length > 0) {
+    output += `Overridden Properties (${result.overriddenProperties.length}):\n`;
+    result.overriddenProperties.forEach((prop) => {
+      output += `  - ${prop}\n`;
+    });
+    output += '\n';
+  }
+
+  if (result.differences.length > 0) {
+    output += 'Detailed Differences:\n\n';
+
+    result.differences.forEach((diff, index) => {
+      output += `${index + 1}. ${diff.path}\n`;
+      output += `   Type: ${diff.type.toUpperCase()}\n`;
+
+      if (diff.type === 'modified') {
+        output += `   Original: "${diff.original}"\n`;
+        output += `   Current:  "${diff.current}"\n`;
+      } else if (diff.type === 'added') {
+        output += `   Value: "${diff.current}"\n`;
+      } else if (diff.type === 'removed') {
+        output += `   Value: "${diff.original}"\n`;
+      }
+      output += '\n';
+    });
+  } else {
+    output += 'No differences found! ✓\n';
+  }
+
+  return output;
+}
 
 export function debounce(func: (...args: any[]) => void, wait: number) {
   let timeout: any;
@@ -205,8 +360,19 @@ const calculateMonthlyPattern = (frequency: number, consecutiveMonths = 1, input
 };
 
 export const generateCronExpression = (data: RecurrenceFormData): string => {
-  const minutes = 45;
-  const hours = 23;
+  let minutes = 0;
+  let hours = 0;
+
+  if (data.time) {
+    const [timeHours, timeMinutes] = data.time.split(':').map(Number);
+    hours = timeHours;
+    minutes = timeMinutes;
+  } else {
+    // Fallback to current time + 5 minutes if no time specified
+    const firstRunTime = getFirstRunTime();
+    minutes = firstRunTime.getMinutes();
+    hours = firstRunTime.getHours();
+  }
 
   const getMonthlyWeekDayIndex = (dayName?: string): number => {
     if (!dayName) return 0;
@@ -281,7 +447,9 @@ export const generateCronExpression = (data: RecurrenceFormData): string => {
         return `${minutes} ${hours} */${data.dailyFrequency} * *`;
       }
 
-      return `${minutes} ${hours} * * *`;
+      const cronExpression = `${minutes} ${hours} * * *`;
+
+      return cronExpression;
     }
     case AUTOIMPORTSCHEDULERFREQUENCY.WEEKLY: {
       const selectedDayIndexes = (data.selectedDays || [])

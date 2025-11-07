@@ -43,6 +43,7 @@ export class ImportJobsController {
       extra: jobData.extra,
       externalUserId: jobData.externalUserId,
       authHeaderValue: jobData.authHeaderValue,
+      cron: jobData.cron,
     });
   }
 

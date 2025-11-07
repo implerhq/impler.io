@@ -1,4 +1,4 @@
-import { Badge, Flex, Group, Stack } from '@mantine/core';
+import { Badge, Flex, Group, Stack, Tooltip } from '@mantine/core';
 import { useRef, useState, useEffect } from 'react';
 import HotTableClass from '@handsontable/react/hotTableClass';
 
@@ -18,6 +18,7 @@ import { LoadingOverlay } from '@ui/LoadingOverlay';
 import { SegmentedControl } from '@ui/SegmentedControl';
 import { ConfirmModal } from 'components/widget/modals/ConfirmModal';
 import { FindReplaceModal } from 'components/widget/modals/FindReplace';
+import { LockIcon } from '@icons';
 
 interface IPhase3Props {
   onNextClick: (uploadData: IUpload, importedData?: Record<string, any>[]) => void;
@@ -62,6 +63,7 @@ export function Phase3(props: IPhase3Props) {
     setShowAllDataValidModal,
     setShowDeleteConfirmModal,
     hideFindAndReplaceButton,
+    isFindAndReplaceAvailable,
     hideDeleteButton,
     hideCheckBox,
   } = usePhase3({ onNext: onNextClick });
@@ -117,9 +119,23 @@ export function Phase3(props: IPhase3Props) {
             ]}
           />
           <Group spacing="xs">
-            {!hideFindAndReplaceButton && (
-              <Button onClick={() => setShowFindReplaceModal(true)}>{texts.PHASE3.FIND_REPLACE}</Button>
-            )}
+            {isFindAndReplaceAvailable
+              ? null // Render nothing if available
+              : !hideFindAndReplaceButton && (
+                  <Tooltip
+                    label="This feature is not in your current plan"
+                    disabled={isFindAndReplaceAvailable !== false}
+                    position="top"
+                  >
+                    <Button
+                      leftIcon={isFindAndReplaceAvailable ? undefined : <LockIcon />}
+                      onClick={() => setShowFindReplaceModal(true)}
+                      disabled={!isFindAndReplaceAvailable}
+                    >
+                      {texts.PHASE3.FIND_REPLACE}
+                    </Button>
+                  </Tooltip>
+                )}
 
             {!hideDeleteButton && (
               <Button

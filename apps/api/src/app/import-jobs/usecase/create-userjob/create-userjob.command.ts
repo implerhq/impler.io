@@ -5,4 +5,5 @@ export class CreateUserJobCommand {
   _templateId: string;
   externalUserId?: string;
   authHeaderValue?: string;
+  cron?: string;
 }

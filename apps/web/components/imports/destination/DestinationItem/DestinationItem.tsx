@@ -11,17 +11,34 @@ interface DestinationItemProps extends PropsWithChildren {
   onClick?: () => void;
   active?: boolean;
   tooltipLink?: string;
+  disabled?: boolean;
 }
 
-export const DestinationItem = ({ title, subtitle, onClick, children, active, tooltipLink }: DestinationItemProps) => {
+export const DestinationItem = ({
+  title,
+  subtitle,
+  onClick,
+  children,
+  active,
+  tooltipLink,
+  disabled,
+}: DestinationItemProps) => {
   const { classes } = useStyles();
 
   return (
-    <Stack className={classes.container} p="lg" spacing={children ? 'sm' : 0}>
+    <Stack
+      className={classes.container}
+      p="lg"
+      spacing={children ? 'sm' : 0}
+      data-disabled={disabled}
+      style={{
+        pointerEvents: disabled ? 'none' : 'auto',
+      }}
+    >
       <Flex justify="space-between" align="center">
         <Stack spacing={2}>
           <Group spacing="xs" align="center" noWrap>
-            <Title color={colors.white} order={4}>
+            <Title color={disabled ? colors.TXTSecondaryDark : colors.white} order={4}>
               {title}
             </Title>
             {tooltipLink && <TooltipLink link={tooltipLink} iconSize="md" />}
@@ -30,9 +47,14 @@ export const DestinationItem = ({ title, subtitle, onClick, children, active, to
             {subtitle}
           </Title>
         </Stack>
-        <Switch color={colors.blue} checked={!!active} onClick={onClick} />
+        <Switch
+          color={disabled ? 'gray' : colors.blue}
+          checked={!!active}
+          onChange={disabled ? undefined : onClick}
+          disabled={disabled}
+        />
       </Flex>
-      <Collapse in={!!active}>{children}</Collapse>
+      {!disabled && <Collapse in={!!active}>{children}</Collapse>}
     </Stack>
   );
 };

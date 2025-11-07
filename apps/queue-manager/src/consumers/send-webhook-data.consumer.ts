@@ -188,6 +188,7 @@ export class SendWebhookDataConsumer extends BaseConsumer {
   private async getInitialCachedData(_uploadId: string): Promise<SendWebhookCachedData> {
     // Get Upload Information
     const uploadata = await this.uploadRepository.getUploadProcessInformation(_uploadId);
+
     if (uploadata?._allDataFileId) return null;
 
     const userEmail = await this.uploadRepository.getUserEmailFromUploadId(_uploadId);
@@ -218,6 +219,7 @@ export class SendWebhookDataConsumer extends BaseConsumer {
       name: templateData.name,
       page: 1,
       authHeaderName: webhookDestination?.authHeaderName,
+      authHeaderValue: uploadata.authHeaderValue,
       retryInterval: webhookDestination.retryInterval,
       retryCount: webhookDestination.retryCount,
       allDataFilePath: this.fileNameService.getAllJsonDataFilePath(_uploadId),

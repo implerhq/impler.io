@@ -1,7 +1,7 @@
 import { IconType } from '@types';
 import { IconSizes } from 'config';
 
-export const CloseIcon = ({ size = 'sm', color }: IconType) => {
+export const CloseIcon = ({ size = 'lg', color }: IconType) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
