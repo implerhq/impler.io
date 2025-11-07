@@ -266,6 +266,8 @@ export const ROUTES = {
   EXPLORE_PLANS: '/?explore_plans=true',
   TRANSACTIONS: '/transactions',
   INVITATION: '/auth/invitation/:id',
+  SUBSCRIPTION_STATUS: '/subscription-status',
+  PAYMENT_CANCEL: '/payment-cancel',
 };
 
 export const REGULAR_EXPRESSIONS = {
@@ -502,7 +504,6 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       sellingPriceOf5KRecordsImport: null,
       content: {
         'Rows Included': [{ check: true, title: '2.5K' }],
-        'Cost of 5K Extra records Import': [{ check: true, title: '-' }],
         'Team Members': [{ check: false, title: '0', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
         Features: [
           { check: false, title: 'Theming' },
@@ -536,7 +537,6 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       sellingPriceOf5KRecordsImport: 64,
       content: {
         'Rows Included': [{ check: true, title: '50K' }],
-        'Cost of 5K Extra records Import': [{ check: true, title: '$6.3' }],
         'Team Members': [{ check: true, title: '4', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
         Features: [
           { check: true, title: 'Theming' },
@@ -570,7 +570,6 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       sellingPriceOf5KRecordsImport: 64,
       content: {
         'Rows Included': [{ check: true, title: '150K' }],
-        'Cost of 5K Extra records Import': [{ check: true, title: '$4.5' }],
         'Team Members': [{ check: true, title: '10', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
         Features: [
           { check: true, title: 'Theming' },
@@ -606,7 +605,6 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       sellingPriceOf5KRecordsImport: null,
       content: {
         'Rows Included': [{ check: true, title: '2.5K' }],
-        'Cost of 5K Extra records Import': [{ check: true, title: '-' }],
         'Team Members': [{ check: false, title: '0', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
         Features: [
           { check: false, title: 'Theming' },
@@ -640,7 +638,6 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       sellingPriceOf5KRecordsImport: null,
       content: {
         'Rows Included': [{ check: true, title: '50K' }],
-        'Cost of 5K Extra records Import': [{ check: true, title: '$63' }],
         'Team Members': [{ check: true, title: '4', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
         Features: [
           { check: true, title: 'Theming' },
@@ -674,7 +671,6 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       sellingPriceOf5KRecordsImport: null,
       content: {
         'Rows Included': [{ check: true, title: '150K' }],
-        'Cost of 5K Extra records Import': [{ check: true, title: '$45' }],
         'Team Members': [{ check: true, title: '10', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
         Features: [
           { check: true, title: 'Theming' },
