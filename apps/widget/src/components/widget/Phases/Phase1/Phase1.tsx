@@ -1,4 +1,4 @@
-import { Flex, Group } from '@mantine/core';
+import { Flex, Group, Tooltip } from '@mantine/core';
 import { Controller } from 'react-hook-form';
 import { useMediaQuery } from '@mantine/hooks';
 
@@ -7,7 +7,7 @@ import { Select } from '@ui/Select';
 import { Button } from '@ui/Button';
 import { WIDGET_TEXTS } from '@impler/client';
 
-import { DownloadIcon, BackIcon } from '@icons';
+import { DownloadIcon, BackIcon, LockIcon } from '@icons';
 import { UploadDropzone } from '@ui/UploadDropzone';
 import { usePhase1 } from '@hooks/Phase1/usePhase1';
 import { mantineConfig, MANUAL_ENTRY_LIMIT, variables } from '@config';
@@ -51,6 +51,8 @@ export function Phase1({
     onSelectSheetModalReset,
     isExcelSheetNamesLoading,
     hideDownloadSampleButton,
+    isManualDataEntryAvailable,
+    isDownloadFileAvailable,
   } = usePhase1({
     goNext,
     texts,
@@ -85,16 +87,25 @@ export function Phase1({
             )}
           />
         )}
-        {}
+
         <div className={classes.download}>
           {!hideDownloadSampleButton ? (
-            <Button
-              onClick={onDownload}
-              loading={isDownloadInProgress}
-              leftIcon={hasImageUpload ? <BackIcon /> : <DownloadIcon />}
+            <Tooltip
+              label="This feature is not in your current plan"
+              disabled={isDownloadFileAvailable !== false}
+              position="top"
             >
-              {hasImageUpload ? texts.PHASE1.GENERATE_TEMPLATE : texts.PHASE1.DOWNLOAD_SAMPLE}
-            </Button>
+              <Button
+                onClick={onDownload}
+                loading={isDownloadInProgress}
+                disabled={isDownloadFileAvailable === false}
+                leftIcon={
+                  isDownloadFileAvailable === false ? <LockIcon /> : hasImageUpload ? <BackIcon /> : <DownloadIcon />
+                }
+              >
+                {hasImageUpload ? texts.PHASE1.GENERATE_TEMPLATE : texts.PHASE1.DOWNLOAD_SAMPLE}
+              </Button>
+            </Tooltip>
           ) : null}
         </div>
       </Group>
@@ -126,6 +137,7 @@ export function Phase1({
           <Divider orientation={isBiggerThanSm ? 'vertical' : 'horizontal'} label="OR" />
 
           <DirectEntryView
+            isManualDataEntryAvailable={isManualDataEntryAvailable}
             texts={texts}
             columns={columns}
             limit={MANUAL_ENTRY_LIMIT}

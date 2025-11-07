@@ -8,7 +8,7 @@ import { PaymentAPIService } from '@impler/services';
 import { ValidRequestCommand } from './valid-request.command';
 import { ProjectRepository, TemplateRepository, UserEntity } from '@impler/dal';
 import { UniqueColumnException } from '@shared/exceptions/unique-column.exception';
-import { AVAILABLE_BILLABLEMETRIC_CODE_ENUM, ColumnTypesEnum } from '@impler/shared';
+import { BILLABLEMETRIC_CODE_ENUM, ColumnTypesEnum } from '@impler/shared';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
 
 @Injectable()
@@ -98,7 +98,7 @@ export class ValidRequest {
         if (hasImageColumns && email) {
           const imageImportAvailable = await this.paymentAPIService.checkEvent({
             email,
-            billableMetricCode: AVAILABLE_BILLABLEMETRIC_CODE_ENUM.IMAGE_IMPORT,
+            billableMetricCode: BILLABLEMETRIC_CODE_ENUM.IMAGE_IMPORT,
           });
 
           if (!imageImportAvailable) {
@@ -108,7 +108,7 @@ export class ValidRequest {
         if (hasValidations && email) {
           const validationsAvailable = await this.paymentAPIService.checkEvent({
             email,
-            billableMetricCode: AVAILABLE_BILLABLEMETRIC_CODE_ENUM.ADVANCED_VALIDATORS,
+            billableMetricCode: BILLABLEMETRIC_CODE_ENUM.ADVANCED_VALIDATORS,
           });
 
           if (!validationsAvailable) {

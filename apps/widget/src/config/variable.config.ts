@@ -133,3 +133,9 @@ export const positionMap: { [key: string]: string } = {
 
 export const monthlyDayPositions = ['First', 'Second', 'Third', 'Fourth', 'Last'];
 export const yearlyDayPositions = ['First', 'Second', 'Third', 'Fourth', 'Last'];
+
+export const WIDGET_FEATURES_EXCEPTION_MESSAGES = {
+  MAX_RECORDS: 'Configuring maxRecords property is not allowed in your current plan',
+  TEXT_CUSTOMIZATION: 'Configuring Widget texts property is not allowed in your current plan',
+  APPEARANCE_CUSTOMIZATION: 'Configuring Widget appearance property is not allowed in your current plan',
+};

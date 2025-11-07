@@ -1,12 +1,12 @@
-import { Alert, Skeleton, Stack, Text, useMantineTheme } from '@mantine/core';
+import { Alert, Skeleton, Stack, Text, useMantineTheme, Button, Group } from '@mantine/core';
 
 import { colors } from '@config';
 
 import { useAppState } from 'store/app.context';
-import { usePlanDetails } from '@hooks/usePlanDetails';
+import { useActiveSubscriptionDetails } from '@hooks/useActiveSubscriptionDetails';
 
-import { ActivePlanDetails } from './ActivePlanDetails';
 import { InactiveMembership } from './InactiveMembership';
+import { ActiveSubscriptionDetails } from './ActiveSubscriptionDetails';
 import { InformationIcon } from '@assets/icons/Information.icon';
 
 import usePlanDetailsStyles from './PlanDetails.styles';
@@ -16,32 +16,28 @@ export function PlanDetails() {
   const { profileInfo } = useAppState();
   const { classes } = usePlanDetailsStyles();
 
-  const { activePlanDetails, isActivePlanLoading, showPlans } = usePlanDetails({
+  const { activePlanDetails, isActivePlanLoading, subscriptionError } = useActiveSubscriptionDetails({
     projectId: profileInfo?._projectId ?? '',
   });
+  const numberOfAllocatedRowsInCurrentPlan = activePlanDetails?.meta?.ROWS ?? 0;
 
   if (isActivePlanLoading) {
     return <Skeleton width="100%" height="200" />;
   }
 
-  let numberOfRecords;
-  if (
-    Array.isArray(activePlanDetails?.meta.IMPORTED_ROWS) &&
-    (activePlanDetails?.meta.IMPORTED_ROWS as unknown as ChargeItem[]).length > 0
-  ) {
-    numberOfRecords = (activePlanDetails?.meta.IMPORTED_ROWS[0] as unknown as ChargeItem).last_unit;
-  } else {
-    numberOfRecords = 0;
-  }
-
-  let isLessThanZero;
-  let showWarning;
-  if (activePlanDetails) {
-    isLessThanZero =
-      typeof activePlanDetails?.meta.IMPORTED_ROWS === 'number' && activePlanDetails?.meta.IMPORTED_ROWS < 0;
-
-    const isOverLimit = activePlanDetails?.usage.IMPORTED_ROWS > numberOfRecords;
-    showWarning = isLessThanZero || isOverLimit;
+  if (subscriptionError && !activePlanDetails) {
+    return (
+      <Alert color="red" title="Failed to load subscription details">
+        <Stack spacing="sm">
+          <Text size="sm">{String(subscriptionError)}</Text>
+          <Group spacing="sm">
+            <Button size="xs" variant="outline">
+              View Plans
+            </Button>
+          </Group>
+        </Stack>
+      </Alert>
+    );
   }
 
   return (
@@ -72,16 +68,13 @@ export function PlanDetails() {
         }}
       >
         {activePlanDetails ? (
-          <ActivePlanDetails
+          <ActiveSubscriptionDetails
             activePlanDetails={activePlanDetails}
-            numberOfRecords={numberOfRecords}
-            showPlans={showPlans}
-            showWarning={showWarning}
-            projectId={profileInfo?._projectId}
-            projectName={profileInfo?.projectName}
+            numberOfAllocatedRowsInCurrentPlan={numberOfAllocatedRowsInCurrentPlan}
+            showWarning={(activePlanDetails.usage?.ROWS ?? 0) >= numberOfAllocatedRowsInCurrentPlan}
           />
         ) : (
-          <InactiveMembership showPlans={showPlans} />
+          <InactiveMembership />
         )}
       </Stack>
     </>

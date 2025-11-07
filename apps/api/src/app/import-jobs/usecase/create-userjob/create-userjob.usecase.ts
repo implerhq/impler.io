@@ -5,7 +5,8 @@ import { APIMessages } from '@shared/constants';
 import { RSSXMLService } from '@impler/services';
 import { getMimeType, isValidXMLMimeType } from '@shared/helpers/common.helper';
 import { WebSocketService } from '@shared/services';
-
+const parser = require('cron-parser');
+import * as dayjs from 'dayjs';
 @Injectable()
 export class CreateUserJob {
   constructor(
@@ -20,6 +21,7 @@ export class CreateUserJob {
     _templateId,
     externalUserId,
     authHeaderValue,
+    cron,
   }: CreateUserJobCommand): Promise<UserJobEntity> {
     const rssService = new RSSXMLService(url);
 
@@ -45,6 +47,8 @@ export class CreateUserJob {
           formattedExtra = JSON.parse(extra);
         } catch (_) {}
 
+        const nextRun = this.calculateInitialNextRun(cron);
+
         return await this.userJobRepository.create({
           url,
           extra,
@@ -52,12 +56,38 @@ export class CreateUserJob {
           headings: rssXmlParsedDataKeys?.keys || [],
           _templateId: _templateId,
           externalUserId: externalUserId || (formattedExtra as unknown as Record<string, any>)?.externalUserId,
+          nextRun,
+          cron,
         });
       } else {
         throw new BadRequestException(APIMessages.INVALID_RSS_URL);
       }
     } catch (error) {
       throw new BadRequestException(error);
+    }
+  }
+
+  calculateInitialNextRun(cronExpression: string): Date {
+    try {
+      if (!cronExpression || typeof cronExpression !== 'string' || cronExpression.trim() === '') {
+        return dayjs().add(5, 'minutes').toDate();
+      }
+
+      const interval = parser.parseExpression(cronExpression.trim(), {
+        tz: 'Asia/Kolkata',
+      });
+      const nextCronTime = dayjs(interval.next().toDate());
+      const now = dayjs();
+
+      if (nextCronTime.isBefore(now.add(1, 'minute'))) {
+        const nextOccurrence = dayjs(interval.next().toDate());
+
+        return nextOccurrence.toDate();
+      }
+
+      return nextCronTime.toDate();
+    } catch (error) {
+      return dayjs().add(5, 'minutes').toDate();
     }
   }
 }

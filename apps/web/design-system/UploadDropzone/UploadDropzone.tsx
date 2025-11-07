@@ -1,9 +1,10 @@
 import { Flex, Stack, Text } from '@mantine/core';
-import { Dropzone as MantineDropzone, FileWithPath, MIME_TYPES } from '@mantine/dropzone';
+import { Dropzone as MantineDropzone, FileWithPath } from '@mantine/dropzone';
 
 import { WIDGET_TEXTS } from '@impler/client';
 import useStyles from './UploadDropzone.styles';
 import { Button } from '@ui/button';
+import { FileMimeTypesEnum } from '@impler/shared';
 
 interface IDropzoneProps {
   loading?: boolean;
@@ -18,7 +19,16 @@ interface IDropzoneProps {
 export function UploadDropzone(props: IDropzoneProps) {
   const {
     loading,
-    accept = [MIME_TYPES.csv, MIME_TYPES.xlsx, 'application/vnd.ms-excel.sheet.macroenabled.12'],
+    accept = [
+      FileMimeTypesEnum.CSV,
+      FileMimeTypesEnum.CSV_ALT,
+      FileMimeTypesEnum.CSV_ALT2,
+      FileMimeTypesEnum.EXCEL,
+      FileMimeTypesEnum.EXCELX,
+      FileMimeTypesEnum.EXCELM,
+      FileMimeTypesEnum.TEXT_PLAIN,
+      '.csv',
+    ],
     onDrop,
     onReject,
     error,

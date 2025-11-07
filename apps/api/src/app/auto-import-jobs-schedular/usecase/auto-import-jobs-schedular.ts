@@ -1,26 +1,23 @@
 import { UserJobEntity, UserJobRepository, WebhookDestinationRepository } from '@impler/dal';
 import { Injectable } from '@nestjs/common';
-import * as dayjs from 'dayjs';
-import * as parser from 'cron-parser';
-import { Cron } from '@nestjs/schedule';
-import { UpdateUserJob } from 'app/import-jobs/usecase';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { UserJobImportStatusEnum } from '@impler/shared';
-import { UserJobTriggerService } from 'app/import-jobs/usecase';
-import { CRON_SCHEDULE } from '@shared/constants';
-const parseCronExpression = require('@impler/shared/src/utils/cronstrue');
+import * as dayjs from 'dayjs';
+const parser = require('cron-parser');
+import parseCronExpression from '@impler/shared/src/utils/cronstrue';
+import { UserJobTriggerService } from 'app/import-jobs/usecase/userjob-usecase/userjob-trigger.usecase';
 
 @Injectable()
 export class AutoImportJobsSchedular {
   constructor(
     private readonly userJobRepository: UserJobRepository,
     private readonly webhookDestinationRepository: WebhookDestinationRepository,
-    private readonly updateUserJob: UpdateUserJob,
     private readonly userJobTriggerService: UserJobTriggerService
   ) {}
 
-  @Cron(CRON_SCHEDULE.AUTO_IMPORT_DEFAULT_CRON_TIME)
+  @Cron(CronExpression.EVERY_MINUTE)
   async handleCronSchedular() {
-    console.log('Crone Running');
+    console.log('Cron Running');
     await this.fetchAndExecuteScheduledJobs();
   }
 
@@ -29,23 +26,36 @@ export class AutoImportJobsSchedular {
     const userJobs = await this.userJobRepository.find({});
 
     for (const userJob of userJobs) {
-      console.log('Should run the Cron Job ?', await this.shouldCroneRun({ userJob }), userJob._id);
       if (await this.shouldCroneRun({ userJob })) {
         try {
-          const interval = parser.parseExpression(userJob.cron);
+          if (this.isJobDueNow(userJob.nextRun, now)) {
+            const nextScheduledTime = this.calculateNextRun(userJob.cron, userJob.nextRun);
 
-          const nextScheduledTime = dayjs(interval.next().toDate().toDateString());
-
-          if (this.isJobDueToday(userJob.cron, now)) {
             await this.scheduleUpdateNextRun(userJob._id, nextScheduledTime, dayjs(userJob.endsOn));
 
-            await this.updateUserJob.execute(userJob._id, userJob);
-
-            // await this.scheduleUserJob.execute(userJob._id, userJob.cron);
             await this.userJobTriggerService.execute(userJob._id);
           }
         } catch (error) {}
       }
+    }
+  }
+
+  calculateNextRun(cronExpression: string, currentNextRun: Date): dayjs.Dayjs {
+    try {
+      if (!cronExpression || typeof cronExpression !== 'string' || cronExpression.trim() === '') {
+        return dayjs(currentNextRun).add(24, 'hours');
+      }
+
+      const interval = parser.parseExpression(cronExpression.trim(), {
+        currentDate: currentNextRun,
+        tz: 'Asia/Kolkata',
+      });
+
+      const nextRun = interval.next().toDate();
+
+      return dayjs(nextRun);
+    } catch (error) {
+      return dayjs(currentNextRun).add(24, 'hours');
     }
   }
 
@@ -63,16 +73,14 @@ export class AutoImportJobsSchedular {
     return parseCronExpression.toString(userCronExpression);
   }
 
-  private isJobDueToday(cronExpression: string, currentDate: dayjs.Dayjs): boolean {
-    try {
-      const interval = parser.parseExpression(cronExpression);
-
-      const nextScheduledTime = dayjs(interval.next().toDate());
-
-      return nextScheduledTime.isSame(currentDate, 'd');
-    } catch (error) {
+  private isJobDueNow(nextRunDate: Date, currentDate: dayjs.Dayjs): boolean {
+    if (!nextRunDate) {
       return false;
     }
+
+    const nextRun = dayjs(nextRunDate);
+
+    return currentDate.isSame(nextRun, 'minute');
   }
 
   async fetchDestination(templateId: string) {
@@ -96,13 +104,19 @@ export class AutoImportJobsSchedular {
       return false;
     }
 
+    if (userJob.endsOn && dayjs(userJob.endsOn).isBefore(now)) {
+      return false;
+    }
+
+    if (!userJob.nextRun) {
+      return false;
+    }
+
     if (
-      (userJob.cron && userJob.status === UserJobImportStatusEnum.SCHEDULING) ||
-      userJob.status === UserJobImportStatusEnum.RUNNING ||
-      (userJob.status === UserJobImportStatusEnum.COMPLETED &&
-        (await this.fetchDestination(userJob._templateId)) &&
-        !userJob.endsOn) ||
-      !dayjs(userJob.endsOn).isSame(now, 'd')
+      userJob.cron &&
+      (userJob.status === UserJobImportStatusEnum.SCHEDULING ||
+        userJob.status === UserJobImportStatusEnum.RUNNING ||
+        (userJob.status === UserJobImportStatusEnum.COMPLETED && (await this.fetchDestination(userJob._templateId))))
     ) {
       return true;
     }

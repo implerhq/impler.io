@@ -164,6 +164,17 @@ export class SendBubbleDataConsumer extends BaseConsumer {
         Object.keys(extra).forEach((extraObjKey) => {
           defaultValueObj[`extra.${extraObjKey}`] = extra[extraObjKey];
         });
+        /*
+         * if (uploadata.customRecordFormat && uploadata.customRecordFormat.includes('{{extra.uploadId}}')) {
+         *   defaultValueObj['extra.uploadId'] = _uploadId;
+         * }
+         */
+
+        /*
+         * if (uploadata.customRecordFormat && uploadata.customRecordFormat.includes('{{extra.userId}}')) {
+         *   defaultValueObj['extra.userId'] = await this.uploadRepository.getUserIdFromUploadId(_uploadId);
+         * }
+         */
       } catch (error) {}
     }
 
@@ -191,7 +202,7 @@ export class SendBubbleDataConsumer extends BaseConsumer {
       const emailContents = this.emailService.getEmailContent({
         type: 'ERROR_SENDING_BUBBLE_DATA',
         data: {
-          error: JSON.stringify(data.error, null, 2).replace(/\\+"/g, '"'),
+          error: JSON.stringify(data.error, null, 2)?.replace(/\\+"/g, '"') ?? 'Error while sending data to Bubble',
           importName,
           time: data.callDate.toString(),
           bubbleAppUrl: bubbleData.bubbleAppUrl,

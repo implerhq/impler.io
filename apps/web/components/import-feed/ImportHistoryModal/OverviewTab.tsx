@@ -20,6 +20,8 @@ import { DATE_FORMATS } from '@config';
 import { CopyIcon } from '@assets/icons/Copy.icon';
 import { GraphIcon } from '@assets/icons/Graph.icon';
 import { DateIcon } from '@assets/icons/Date.icon';
+import { DestinationIcon } from '@assets/icons/Destination.icon';
+import { InformationIcon } from '@assets/icons/Information.icon';
 
 interface OverviewTabProps {
   record: IHistoryRecord;
@@ -66,6 +68,26 @@ export function OverviewTab({ record }: OverviewTabProps) {
             </Group>
             <Text size="lg" fw={700} c="blue">
               {record.totalRecords || 0}
+            </Text>
+          </Grid.Col>
+
+          <Grid.Col span={6}>
+            <Group spacing="xs" mb="xs">
+              <InformationIcon />
+              <Text size="sm">Import Type</Text>
+            </Group>
+            <Text size="md" fw={600}>
+              {record.type || 'Manual'}
+            </Text>
+          </Grid.Col>
+
+          <Grid.Col span={6}>
+            <Group spacing="xs" mb="xs">
+              <DestinationIcon size="sm" />
+              <Text size="sm">Destination</Text>
+            </Group>
+            <Text size="md" fw={600}>
+              {record.destination || 'Unknown'}
             </Text>
           </Grid.Col>
         </Grid>
