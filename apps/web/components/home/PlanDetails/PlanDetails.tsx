@@ -1,5 +1,4 @@
-import { Alert, Skeleton, Stack, Text, useMantineTheme, Button, Group } from '@mantine/core';
-
+import { Alert, Skeleton, Stack, Text, useMantineTheme, Group } from '@mantine/core';
 import { colors } from '@config';
 
 import { useAppState } from 'store/app.context';
@@ -10,8 +9,16 @@ import { ActiveSubscriptionDetails } from './ActiveSubscriptionDetails';
 import { InformationIcon } from '@assets/icons/Information.icon';
 
 import usePlanDetailsStyles from './PlanDetails.styles';
+import { Button } from '@ui/button';
 
 export function PlanDetails() {
+  const scrollToBottom = () => {
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: 'smooth',
+    });
+  };
+
   const theme = useMantineTheme();
   const { profileInfo } = useAppState();
   const { classes } = usePlanDetailsStyles();
@@ -29,9 +36,11 @@ export function PlanDetails() {
     return (
       <Alert color="red" title="Failed to load subscription details">
         <Stack spacing="sm">
-          <Text size="sm">{String(subscriptionError)}</Text>
+          <Text size="sm">
+            An error occurred while loading subscription details. Please try again later or contact support.{' '}
+          </Text>
           <Group spacing="sm">
-            <Button size="xs" variant="outline">
+            <Button onClick={scrollToBottom} size="xs" variant="outline">
               View Plans
             </Button>
           </Group>

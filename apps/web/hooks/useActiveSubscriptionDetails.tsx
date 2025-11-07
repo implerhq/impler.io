@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { API_KEYS } from '@config';
+import { API_KEYS, NOTIFICATION_KEYS } from '@config';
 import { IErrorObject, ISubscriptionData } from '@impler/shared';
 import { usePlanMetaData } from 'store/planmeta.store.context';
 import { useAppState } from 'store/app.context';
@@ -37,8 +37,12 @@ export function useActiveSubscriptionDetails({ projectId }: UseActiveSubscriptio
       onSuccess: (data) => {
         data?.meta && setPlanMeta(data.meta as IPlanMeta);
       },
-      onError: (error) => {
-        notify(String(error));
+      onError: () => {
+        notify(NOTIFICATION_KEYS.ERROR_FETCHING_SUBSCRIPTION_DETAILS, {
+          title: 'Failed to load subscription details',
+          message: 'An error occurred while loading subscription details',
+          color: 'red',
+        });
       },
     }
   );

@@ -1,5 +1,8 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { configureSubOS } from 'subos-frontend';
+import getConfig from 'next/config';
+
+const { publicRuntimeConfig } = getConfig();
 
 const DEFAULT_APP_NAME = 'Impler';
 const DEFAULT_APP_VERSION = '1.0.0';
@@ -34,11 +37,11 @@ export const useSubOSIntegration = () => {
 
       // Configure/Initialize SubOS
       configureSubOS({
-        apiEndpoint: process.env.NEXT_PUBLIC_PAYMENT_GATEWAY_URL,
-        projectId: process.env.NEXT_PUBLIC_SUBOS_PROJECT_ID,
-        appName: process.env.NEXT_PUBLIC_APP_NAME || DEFAULT_APP_NAME,
+        apiEndpoint: publicRuntimeConfig.NEXT_PUBLIC_PAYMENT_GATEWAY_URL,
+        projectId: publicRuntimeConfig.NEXT_PUBLIC_SUBOS_PROJECT_ID,
+        appName: publicRuntimeConfig.NEXT_PUBLIC_APP_NAME || DEFAULT_APP_NAME,
         appEnvironment: process.env.NODE_ENV,
-        appVersion: process.env.NEXT_PUBLIC_APP_VERSION || DEFAULT_APP_VERSION,
+        appVersion: publicRuntimeConfig.NEXT_PUBLIC_APP_VERSION || DEFAULT_APP_VERSION,
         debug: process.env.NODE_ENV === 'development',
       });
 
