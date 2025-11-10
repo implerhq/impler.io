@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { plansApi, useSubscription } from 'subos-frontend';
 import { Card, Text, Badge, Stack, Divider, LoadingOverlay } from '@mantine/core';
 import { Button } from '@ui/button';
-import { colors, PLANCODEENUM, ROUTES } from '@config';
+import { colors, NOTIFICATION_KEYS, PLANCODEENUM, ROUTES } from '@config';
 import { Plan } from './Plans';
 import { PlanFeature } from './PlanFeature';
 import useStyles from './Plans.styles';
@@ -28,8 +28,11 @@ export function PlanCard({ plan, isYearly }: PlanCardProps) {
       try {
         setIsLoading(true);
         await fetchSubscription(profileInfo.email);
-      } catch (err) {
-        notify('Failed to fetch subscription');
+      } catch (err: any) {
+        notify(NOTIFICATION_KEYS.ERROR_FETCHING_SUBSCRIPTION_DETAILS, {
+          title: 'Failed to fetch subscription',
+          message: err?.message,
+        });
       } finally {
         setIsLoading(false);
       }
@@ -42,9 +45,9 @@ export function PlanCard({ plan, isYearly }: PlanCardProps) {
     setIsLoading(true);
     try {
       const response = await createPaymentSession(plan.code, {
-        returnUrl: `${window.location.origin}/${ROUTES.SUBSCRIPTION_STATUS}`,
+        returnUrl: `${window.location.origin}${ROUTES.SUBSCRIPTION_STATUS}`,
         externalId: profileInfo?.email,
-        cancelUrl: `${window.location.origin}/${ROUTES.PAYMENT_CANCEL}`,
+        cancelUrl: `${window.location.origin}${ROUTES.PAYMENT_CANCEL}`,
       });
       if (response?.success && response?.data?.checkoutUrl) {
         window.location.href = response?.data?.checkoutUrl;
@@ -54,7 +57,10 @@ export function PlanCard({ plan, isYearly }: PlanCardProps) {
 
       return null;
     } catch (err: any) {
-      notify('Failed to create payment session');
+      notify(NOTIFICATION_KEYS.ERROR_CREATE_CHECKOUT_SESSION, {
+        title: 'Failed to create the checkout session',
+        message: err?.message,
+      });
     } finally {
       setIsLoading(false);
     }
