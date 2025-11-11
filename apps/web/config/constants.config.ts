@@ -5,6 +5,15 @@ import { AngularIcon } from '@assets/icons/Angular.icon';
 import { JavaScriptIcon } from '@assets/icons/Javascript.icon';
 import { UserRolesEnum, IntegrationEnum, ColumnTypesEnum } from '@impler/shared';
 import { Plan } from '@components/UpgradePlan/Plans';
+import SuperworksLogo from '@assets/images/companies/Superworks.svg';
+import AklamioLogo from '@assets/images/companies/aklamio.svg';
+import ArthaLogo from '@assets/images/companies/artha.svg';
+import NasscomLogo from '@assets/images/companies/nasscom.svg';
+import NirvanaLogo from '@assets/images/companies/nirvana.svg';
+import OmnivaLogo from '@assets/images/companies/omniva.svg';
+import OrbitLogo from '@assets/images/companies/orbit.svg';
+import UbicoLogo from '@assets/images/companies/ubico.svg';
+import React from 'react';
 
 export const CONSTANTS = {
   IMPLER_DOCUMENTATION: 'https://docs.impler.io',
@@ -730,4 +739,15 @@ export const sampleColumns = [
     isRequired: false,
     isUnique: false,
   },
+];
+
+export const companyLogos = [
+  { id: 'superworks', src: SuperworksLogo, alt: 'Superworks' },
+  { id: 'aklamio', src: AklamioLogo, alt: 'Aklamio' },
+  { id: 'artha', src: ArthaLogo, alt: 'Artha' },
+  { id: 'nasscom', src: NasscomLogo, alt: 'Nasscom' },
+  { id: 'nirvana', src: NirvanaLogo, alt: 'Nirvana' },
+  { id: 'omniva', src: OmnivaLogo, alt: 'Omniva' },
+  { id: 'orbit', src: OrbitLogo, alt: 'Orbit' },
+  { id: 'ubico', src: UbicoLogo, alt: 'Ubico' },
 ];
