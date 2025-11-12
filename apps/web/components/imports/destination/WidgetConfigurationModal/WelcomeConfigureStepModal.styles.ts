@@ -14,12 +14,12 @@ export const getHeroBannerStyles = (): React.CSSProperties => ({
 });
 
 export const getHeroTitleStyles = (): React.CSSProperties => ({
-  color: '#06E50D',
+  color: '#34f60eff',
   marginBottom: '1rem',
 });
 
 export const getHeroTextStyles = (): React.CSSProperties => ({
-  color: '#ffffffff',
+  color: colors.white,
   lineHeight: 1.6,
 });
 
@@ -53,11 +53,12 @@ export const getIconWrapperStyles = (): React.CSSProperties => ({
 
 export const getCardTitleStyles = (): React.CSSProperties => ({
   fontWeight: 400,
-  color: '#ffffffff',
+  color: colors.white,
 });
 
 export const useWelcomeConfigureStepModalStyles = createStyles(
-  (theme: MantineTheme): Record<string, React.CSSProperties> => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (theme: MantineTheme): Record<string, any> => ({
     container: getContainerStyles(theme),
     heroBanner: getHeroBannerStyles(),
     heroTitle: getHeroTitleStyles(),

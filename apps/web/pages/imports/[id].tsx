@@ -63,51 +63,70 @@ function ImportDetails() {
     onUploadComplete: (data) => {
       onSpreadsheetImported();
       if (data) {
-        console.log('Upload complete', data);
-        closeWidget();
-        setTimeout(() => {
-          modals.open({
-            children: (
-              <WelcomeConfigureStepModal
-                onConfigureDestinationClicked={(action) => {
-                  switch (action as WelcomeConfigureStepModalAction) {
-                    case 'setupDestination':
-                      setActiveTab('destination');
-                      break;
-                    case 'createImporter':
-                      router.push(ROUTES.IMPORTS);
-                      setTimeout(() => {
-                        onImportCreateClick();
-                      }, 500);
+        if (router.query.welcomeShow === 'true') {
+          closeWidget();
+          setTimeout(() => {
+            modals.open({
+              children: (
+                <WelcomeConfigureStepModal
+                  onConfigureDestinationClicked={(action) => {
+                    switch (action as WelcomeConfigureStepModalAction) {
+                      case 'setupDestination':
+                        console.log('setupDestination');
+                        setTimeout(() => {
+                          setActiveTab('destination');
+                        }, 500);
+                        break;
+                      case 'createImporter':
+                        console.log('createImporter');
+                        router.push(ROUTES.IMPORTS);
+                        setTimeout(() => {
+                          onImportCreateClick();
+                        }, 500);
 
-                      /*
-                       * setActiveTab('destination');
-                       * modals.open({});
-                       */
-                      break;
-                    case 'createIntegrationStep':
+                        /*
+                         * setActiveTab('destination');
+                         * modals.open({});
+                         */
+                        break;
+                      case 'createIntegrationStep':
+                        console.log('createIntegrationStep');
+                        setActiveTab('destination');
+                        break;
+                      case 'talkWithTeam':
+                        console.log('talkWithTeam');
+                        // setActiveTab('destination');
+                        router.push(CONSTANTS.IMPLER_CAL_QUICK_MEETING);
+                        break;
+
+                      default: {
+                        modals.closeAll();
+                        break;
+                      }
+                    }
+                    setTimeout(() => {
                       setActiveTab('destination');
-                      break;
-                    case 'talkWithTeam':
-                      // setActiveTab('destination');
-                      router.push(CONSTANTS.IMPLER_CAL_QUICK_MEETING);
-                      break;
-                  }
-                  modals.closeAll();
-                  setTimeout(() => {
-                    setActiveTab('destination');
-                  }, 500);
-                }}
-              />
-            ),
-            withCloseButton: false,
-            centered: true,
-            size: 'xl',
-          });
-        }, 1000);
+                    }, 500);
+                  }}
+                />
+              ),
+              withCloseButton: false,
+              centered: true,
+              size: 'xl',
+            });
+          }, 1000);
+        }
       }
     },
   });
+
+  const onImportClick = useCallback(() => {
+    track({ name: 'IMPORT CLICK', properties: {} });
+
+    modals.close(MODAL_KEYS.WELCOME_IMPORTER);
+
+    setTimeout(() => showWidget({}), 150);
+  }, [router, showWidget]);
 
   useEffect(() => {
     if (router.query.welcomeShow) {
@@ -116,7 +135,7 @@ function ImportDetails() {
         children: (
           <WelcomeImporterModal
             onDoWelcomeWidgetAction={() => {
-              console.log('Import clicked');
+              modals.close(MODAL_KEYS.WELCOME_IMPORTER);
               onImportClick();
             }}
           />
@@ -126,26 +145,7 @@ function ImportDetails() {
         size: 'xl',
       });
     }
-  }, [router.query.welcomeShow]);
-
-  const onImportClick = useCallback(() => {
-    track({ name: 'IMPORT CLICK', properties: {} });
-    modals.close(MODAL_KEYS.WELCOME_IMPORTER);
-    // eslint-disable-next-line no-unused-vars
-    const { welcomeShow: _welcomeShow, ...restQuery } = router.query;
-
-    // Replace the URL without the welcomeShow parameter
-    router.replace(
-      {
-        pathname: router.pathname,
-        query: restQuery,
-      },
-      undefined,
-      { shallow: true }
-    );
-
-    setTimeout(() => showWidget({}), 100);
-  }, [router, showWidget]);
+  }, [router.query.welcomeShow, onImportClick]);
 
   return (
     <Flex gap="sm" direction="column" h="100%" style={{ position: 'relative' }}>

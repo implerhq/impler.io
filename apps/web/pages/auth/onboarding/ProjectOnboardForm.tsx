@@ -34,8 +34,6 @@ export default function ProjectOnboardForm({ onSubmit, isLoading }: ProjectOnboa
     },
   });
 
-  console.log(profileInfo);
-
   return (
     <>
       <Title order={2} mb="md">
