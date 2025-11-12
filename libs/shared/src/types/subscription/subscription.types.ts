@@ -18,6 +18,8 @@ export interface ISubscriptionData {
   isActive: boolean;
   usage: {
     IMPORTED_ROWS: number;
+    ROWS: number;
+    TEAM_MEMBERS: number;
   };
   expiryDate: string;
   meta: {
@@ -27,15 +29,24 @@ export interface ISubscriptionData {
       last_unit: string | number;
       first_unit: number;
     }[];
-    REMOVE_BRANDING: boolean;
-    AUTOMATIC_IMPORTS: boolean;
-    ADVANCED_VALIDATORS: boolean;
-    TEAM_MEMBERS: number;
-    IMAGE_IMPORT: boolean;
+    REMOVE_BRANDING?: boolean;
+    AUTOMATIC_IMPORTS?: boolean;
+    ADVANCED_VALIDATORS?: boolean;
+    FREEZE_COLUMNS?: boolean;
+    TEAM_MEMBERS?: number;
+    ROWS?: number;
+    MANUAL_ENTRY?: boolean;
+    DOWNLOAD_SAMPLE_FILE?: boolean;
+    MAX_RECORDS?: boolean;
+    REQUIRED_VALUES?: boolean;
+    DEFAULT_VALUES?: boolean;
+    RUNTIME_SCHEMA?: boolean;
+    DATA_SEEDING?: boolean;
   };
   customer?: {
     paymentMethodCurrency?: string;
     paymentMethodId?: string;
+    externalId?: string;
   };
   tax?: number;
   amount?: number;

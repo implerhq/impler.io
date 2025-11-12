@@ -44,7 +44,7 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     valid: new Set(),
     invalid: new Set(),
   });
-  const { uploadInfo, setUploadInfo, config, maxRecords } = useAppState();
+  const { uploadInfo, setUploadInfo, config, maxRecords, importConfig } = useAppState();
   const [allChecked, setAllChecked] = useState<boolean>(false);
   const [reviewData, setReviewData] = useState<IRecordExtended[]>([]);
   const [columnDefs, setColumnDefs] = useState<HotItemSchema[]>([]);
@@ -308,5 +308,6 @@ export function usePhase3({ onNext }: IUsePhase3Props) {
     hideFindAndReplaceButton: config?.hideFindAndReplaceButton,
     hideDeleteButton: config?.hideDeleteButton,
     hideCheckBox: config?.hideCheckBox,
+    isFindAndReplaceAvailable: importConfig.FIND_AND_REPLACE,
   };
 }

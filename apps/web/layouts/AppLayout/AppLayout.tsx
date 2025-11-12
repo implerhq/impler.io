@@ -22,7 +22,7 @@ import { useProject } from '@hooks/useProject';
 import { useAppState } from 'store/app.context';
 import { useLogout } from '@hooks/auth/useLogout';
 import { notify } from '@libs/notify';
-import { usePlanDetails } from '@hooks/usePlanDetails';
+import { useActiveSubscriptionDetails } from '@hooks/useActiveSubscriptionDetails';
 import dynamic from 'next/dynamic';
 import { useStyles } from './AppLayout.styles';
 import { DrawerRightOpenIcon } from '@assets/icons/DrawerRightOpen.icon';
@@ -55,7 +55,7 @@ export function AppLayout({ children, pageProps }: PropsWithChildren<{ pageProps
     onLogout: () => replace(ROUTES.SIGNIN),
   });
 
-  usePlanDetails({ projectId: profileInfo?._projectId });
+  useActiveSubscriptionDetails({ projectId: profileInfo?._projectId });
   const { projects, onEditImportClick, isProjectsLoading, isProfileLoading } = useProject();
 
   const handleCopyEmail = () => {

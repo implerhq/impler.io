@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { notifier } from '@util';
 import { IUpload } from '@impler/client';
 import { logAmplitudeEvent } from '@amplitude';
-import { IErrorObject, numberFormatter } from '@impler/shared';
+import { IErrorObject } from '@impler/shared';
 import { useAppState } from '@store/app.context';
 import { useAPIState } from '@store/api.context';
 
@@ -13,7 +13,7 @@ interface IUseCompleteImportProps {
 
 export const useCompleteImport = ({ onNext }: IUseCompleteImportProps) => {
   const { api } = useAPIState();
-  const { uploadInfo, setUploadInfo, host, maxRecords, texts } = useAppState();
+  const { uploadInfo, setUploadInfo, host, maxRecords } = useAppState();
   const { isLoading: isCompleteImportLoading, mutate: completeImport } = useMutation<
     {
       email: string;
@@ -42,11 +42,8 @@ export const useCompleteImport = ({ onNext }: IUseCompleteImportProps) => {
       setUploadInfo(uploadData.uploadInfo);
       onNext?.(uploadData.uploadInfo, uploadData.importedData);
     },
-    onError() {
-      notifier.showError({
-        message: `${texts.PHASE3.MAX_RECORD_LIMIT_ERROR} ${numberFormatter(Number(maxRecords))} records`,
-        title: texts.PHASE3.MAX_RECORD_LIMIT_ERROR_TITLE,
-      });
+    onError(error: IErrorObject) {
+      notifier.showError({ message: error.message, title: error.error });
     },
   });
 

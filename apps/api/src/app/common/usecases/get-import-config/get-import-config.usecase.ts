@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserRepository, TemplateRepository, TemplateEntity } from '@impler/dal';
-import { AVAILABLE_BILLABLEMETRIC_CODE_ENUM, IImportConfig } from '@impler/shared';
+import { BILLABLEMETRIC_CODE_ENUM, IImportConfig } from '@impler/shared';
 import { PaymentAPIService } from '@impler/services';
 import { APIMessages } from '@shared/constants';
 
@@ -14,11 +14,21 @@ export class GetImportConfig {
 
   async execute(projectId: string, templateId?: string): Promise<IImportConfig> {
     const userEmail = await this.userRepository.findUserEmailFromProjectId(projectId);
+    const isFeatureAvailableMap = new Map<string, boolean>();
 
-    const removeBrandingAvailable = await this.paymentAPIService.checkEvent({
-      email: userEmail,
-      billableMetricCode: AVAILABLE_BILLABLEMETRIC_CODE_ENUM.REMOVE_BRANDING,
+    Object.values(BILLABLEMETRIC_CODE_ENUM).forEach((code) => {
+      isFeatureAvailableMap.set(code, false);
     });
+
+    try {
+      for (const billableMetricCode of Object.keys(BILLABLEMETRIC_CODE_ENUM)) {
+        const isAvailable = await this.paymentAPIService.checkEvent({
+          email: userEmail,
+          billableMetricCode: BILLABLEMETRIC_CODE_ENUM[billableMetricCode],
+        });
+        isFeatureAvailableMap.set(billableMetricCode, isAvailable);
+      }
+    } catch (error) {}
 
     let template: TemplateEntity;
     if (templateId) {
@@ -32,6 +42,11 @@ export class GetImportConfig {
       }
     }
 
-    return { showBranding: !removeBrandingAvailable, mode: template?.mode, title: template?.name };
+    return {
+      ...Object.fromEntries(isFeatureAvailableMap),
+      showBranding: !isFeatureAvailableMap.get(BILLABLEMETRIC_CODE_ENUM.REMOVE_BRANDING),
+      mode: template?.mode,
+      title: template?.name,
+    };
   }
 }

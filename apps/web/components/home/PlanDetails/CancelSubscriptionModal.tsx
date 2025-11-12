@@ -1,11 +1,12 @@
 import React from 'react';
-import { Checkbox, Flex, Text, Center, Stack } from '@mantine/core';
+import { Checkbox, Flex, Text, Center, Stack, Textarea } from '@mantine/core';
 import { Button } from '@ui/button';
 import { Controller } from 'react-hook-form';
 
 import { PlanCancelIllustration } from './illustrations/PlanCancelIllustration';
 
 import { colors, MEMBERSHIP_CANCELLATION_REASONS } from '@config';
+import { AutoHeightComponent } from '@ui/auto-height-component';
 
 interface CancelSubscriptionModalProps {
   control: any;
@@ -68,6 +69,44 @@ export function CancelSubscriptionModal({
                 )}
               </>
             )}
+          />
+          <Controller
+            name="reasons"
+            control={control}
+            render={({ field: { value } }) => {
+              const isSomethingElseSelected = Array.isArray(value) && value.includes('Something else');
+
+              return (
+                <AutoHeightComponent isVisible={isSomethingElseSelected}>
+                  {isSomethingElseSelected && (
+                    <Controller
+                      name="cancellationReason"
+                      control={control}
+                      rules={{
+                        validate: (val: string) => {
+                          if (isSomethingElseSelected && (!val || val.trim() === '')) {
+                            return 'Please specify your other reason for cancellation';
+                          }
+
+                          return true;
+                        },
+                      }}
+                      render={({ field, fieldState }) => (
+                        <Textarea
+                          {...field}
+                          placeholder="Please specify your other reason for cancellation"
+                          label="Reason for cancellation"
+                          withAsterisk
+                          minRows={3}
+                          maxRows={6}
+                          error={fieldState.error?.message}
+                        />
+                      )}
+                    />
+                  )}
+                </AutoHeightComponent>
+              );
+            }}
           />
         </Flex>
 

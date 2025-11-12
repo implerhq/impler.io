@@ -25,7 +25,7 @@ import { GripIcon } from '@assets/icons/Grip.icon';
 import { CloseIcon } from '@assets/icons/Close.icon';
 import { CheckIcon } from '@assets/icons/Check.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
-import { useSubscriptionInfo } from '@hooks/useSubscriptionInfo';
+import { useSubscriptionMetaDataInformation } from '@hooks/useSubscriptionMetaDataInformation';
 
 import { ValidationsGroup } from './ValidationsGroup';
 interface ColumnsTableProps {
@@ -33,7 +33,7 @@ interface ColumnsTableProps {
 }
 
 export function ColumnsTable({ templateId }: ColumnsTableProps) {
-  const { columnTypes } = useSubscriptionInfo();
+  const { columnTypes } = useSubscriptionMetaDataInformation();
   const { colors: themeColors } = useMantineTheme();
   const {
     columns,

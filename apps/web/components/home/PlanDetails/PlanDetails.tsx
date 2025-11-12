@@ -1,47 +1,38 @@
 import { Alert, Skeleton, Stack, Text, useMantineTheme } from '@mantine/core';
-
-import { colors } from '@config';
+import { colors, NOTIFICATION_KEYS } from '@config';
 
 import { useAppState } from 'store/app.context';
-import { usePlanDetails } from '@hooks/usePlanDetails';
+import { useActiveSubscriptionDetails } from '@hooks/useActiveSubscriptionDetails';
 
-import { ActivePlanDetails } from './ActivePlanDetails';
 import { InactiveMembership } from './InactiveMembership';
+import { ActiveSubscriptionDetails } from './ActiveSubscriptionDetails';
 import { InformationIcon } from '@assets/icons/Information.icon';
 
 import usePlanDetailsStyles from './PlanDetails.styles';
+import { useEffect } from 'react';
+import { notify } from '@libs/notify';
 
 export function PlanDetails() {
   const theme = useMantineTheme();
   const { profileInfo } = useAppState();
   const { classes } = usePlanDetailsStyles();
 
-  const { activePlanDetails, isActivePlanLoading, showPlans } = usePlanDetails({
+  const { activePlanDetails, isActivePlanLoading, subscriptionError } = useActiveSubscriptionDetails({
     projectId: profileInfo?._projectId ?? '',
   });
+  const numberOfAllocatedRowsInCurrentPlan = activePlanDetails?.meta?.ROWS ?? 0;
+
+  useEffect(() => {
+    if (subscriptionError) {
+      notify(NOTIFICATION_KEYS.ERROR_FETCHING_SUBSCRIPTION_DETAILS, {
+        message: String(subscriptionError),
+        color: 'red',
+      });
+    }
+  }, [subscriptionError]);
 
   if (isActivePlanLoading) {
     return <Skeleton width="100%" height="200" />;
-  }
-
-  let numberOfRecords;
-  if (
-    Array.isArray(activePlanDetails?.meta.IMPORTED_ROWS) &&
-    (activePlanDetails?.meta.IMPORTED_ROWS as unknown as ChargeItem[]).length > 0
-  ) {
-    numberOfRecords = (activePlanDetails?.meta.IMPORTED_ROWS[0] as unknown as ChargeItem).last_unit;
-  } else {
-    numberOfRecords = 0;
-  }
-
-  let isLessThanZero;
-  let showWarning;
-  if (activePlanDetails) {
-    isLessThanZero =
-      typeof activePlanDetails?.meta.IMPORTED_ROWS === 'number' && activePlanDetails?.meta.IMPORTED_ROWS < 0;
-
-    const isOverLimit = activePlanDetails?.usage.IMPORTED_ROWS > numberOfRecords;
-    showWarning = isLessThanZero || isOverLimit;
   }
 
   return (
@@ -72,16 +63,13 @@ export function PlanDetails() {
         }}
       >
         {activePlanDetails ? (
-          <ActivePlanDetails
+          <ActiveSubscriptionDetails
             activePlanDetails={activePlanDetails}
-            numberOfRecords={numberOfRecords}
-            showPlans={showPlans}
-            showWarning={showWarning}
-            projectId={profileInfo?._projectId}
-            projectName={profileInfo?.projectName}
+            numberOfAllocatedRowsInCurrentPlan={numberOfAllocatedRowsInCurrentPlan}
+            showWarning={(activePlanDetails.usage?.ROWS ?? 0) >= numberOfAllocatedRowsInCurrentPlan}
           />
         ) : (
-          <InactiveMembership showPlans={showPlans} />
+          <InactiveMembership />
         )}
       </Stack>
     </>
