@@ -6,14 +6,12 @@ import Lottie from 'lottie-react';
 import SuccessConfetti from './confetti_on_transparent_background.json';
 import TickConfetti from './success_confetti.json';
 
-interface IWelcomeConfigureDestinationModalProps {
+interface IWelcomeConfigureStepModalProps {
   onConfigureDestinationClicked: () => void;
   templateId?: string;
 }
 
-export function WelcomeConfigureDestinationModal({
-  onConfigureDestinationClicked,
-}: IWelcomeConfigureDestinationModalProps) {
+export function WelcomeConfigureStepModal({ onConfigureDestinationClicked }: IWelcomeConfigureStepModalProps) {
   const { classes } = useStyles();
 
   return (
