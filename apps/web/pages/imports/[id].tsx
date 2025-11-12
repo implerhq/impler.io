@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import Link from 'next/link';
 import React, { useCallback, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
@@ -28,8 +27,6 @@ import {
 import { useImpler } from '@impler/react';
 import { ForbiddenIcon } from '@assets/icons';
 import { useImports } from '@hooks/useImports';
-// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-import { useLocalStorage } from '@mantine/hooks';
 
 const Editor = dynamic(() => import('@components/imports/editor').then((mod) => mod.OutputEditor), {
   ssr: false,
@@ -42,9 +39,8 @@ function ImportDetails() {
   const router = useRouter();
   const { onImportCreateClick } = useImports();
   const [activeTab, setActiveTab] = useState<'schema' | 'destination' | 'snippet' | 'validator' | 'output'>();
-  const [hasOpenedWelcomeModal, setHasOpenedWelcomeModal] = useState(false);
 
-  const showWelcome = localStorage.getItem('VARIABLES_SHOW_WELCOME_IMPORTER_STORAGE_KEY') === 'true';
+  const showWelcome = localStorage.getItem(CONSTANTS.VARIABLES_SHOW_WELCOME_IMPORTER_STORAGE_KEY) === 'true';
 
   const {
     meta,
@@ -61,6 +57,58 @@ function ImportDetails() {
     templateId: router.query.id as string,
   });
 
+  const handleActionClick = useCallback(
+    (action: WelcomeConfigureStepModalAction) => {
+      // Remove the welcome flag from localStorage
+      localStorage.removeItem(CONSTANTS.VARIABLES_SHOW_WELCOME_IMPORTER_STORAGE_KEY);
+
+      // Close all modals first
+      modals.closeAll();
+
+      switch (action) {
+        case 'setupDestination':
+          console.log('setupDestination');
+          setTimeout(() => {
+            setActiveTab('destination');
+          }, 500);
+          break;
+        case 'createImporter':
+          console.log('createImporter');
+          router.push(ROUTES.IMPORTS);
+          setTimeout(() => {
+            onImportCreateClick();
+          }, 500);
+          break;
+        case 'createIntegrationStep':
+          console.log('createIntegrationStep');
+          setTimeout(() => {
+            setActiveTab('destination');
+          }, 500);
+          break;
+        case 'talkWithTeam':
+          console.log('talkWithTeam');
+          router.push(CONSTANTS.IMPLER_CAL_QUICK_MEETING);
+          break;
+        default:
+          break;
+      }
+    },
+    [onImportCreateClick, setActiveTab]
+  );
+
+  if (localStorage.getItem(CONSTANTS.VARIABLES_SHOW_WELCOME_IMPORTER_STORAGE_KEY)) {
+    // Then in your modal open:
+    setTimeout(() => {
+      modals.open({
+        id: MODAL_KEYS.WELCOME_CONFIGURE_STEP,
+        children: <WelcomeConfigureStepModal onConfigureDestinationClicked={handleActionClick} />,
+        withCloseButton: false,
+        centered: true,
+        size: 'xl',
+      });
+    }, 1000);
+  }
+
   const { showWidget, isImplerInitiated, closeWidget } = useImpler({
     primaryColor: colors.faintYellow,
     templateId: templateData?._id,
@@ -70,46 +118,17 @@ function ImportDetails() {
     onUploadComplete: (data) => {
       onSpreadsheetImported();
       if (data) {
-        if (showWelcome === true) {
+        if (
+          showWelcome === true &&
+          localStorage.getItem(CONSTANTS.VARIABLES_SHOW_WELCOME_IMPORTER_STORAGE_KEY) === 'true'
+        ) {
+          console.log(showWelcome === true);
           closeWidget();
+          modals.close(MODAL_KEYS.WELCOME_IMPORTER);
           setTimeout(() => {
             modals.open({
-              children: (
-                <WelcomeConfigureStepModal
-                  onConfigureDestinationClicked={(action) => {
-                    // Close all modals first
-                    modals.closeAll();
-
-                    switch (action as WelcomeConfigureStepModalAction) {
-                      case 'setupDestination':
-                        console.log('setupDestination');
-                        setTimeout(() => {
-                          setActiveTab('destination');
-                        }, 500);
-                        break;
-                      case 'createImporter':
-                        console.log('createImporter');
-                        router.push(ROUTES.IMPORTS);
-                        setTimeout(() => {
-                          onImportCreateClick();
-                        }, 500);
-                        break;
-                      case 'createIntegrationStep':
-                        console.log('createIntegrationStep');
-                        setTimeout(() => {
-                          setActiveTab('destination');
-                        }, 500);
-                        break;
-                      case 'talkWithTeam':
-                        console.log('talkWithTeam');
-                        router.push(CONSTANTS.IMPLER_CAL_QUICK_MEETING);
-                        break;
-                      default:
-                        break;
-                    }
-                  }}
-                />
-              ),
+              id: MODAL_KEYS.WELCOME_CONFIGURE_STEP,
+              children: <WelcomeConfigureStepModal onConfigureDestinationClicked={handleActionClick} />,
               withCloseButton: false,
               centered: true,
               size: 'xl',
@@ -123,28 +142,17 @@ function ImportDetails() {
   const onImportClick = useCallback(() => {
     track({ name: 'IMPORT CLICK', properties: {} });
 
-    // Close the welcome modal
     modals.close(MODAL_KEYS.WELCOME_IMPORTER);
-
-    // Remove welcomeShow from URL
-    const { welcomeShow: _welcomeShow, ...restQuery } = router.query;
-    router.replace(
-      {
-        pathname: router.pathname,
-        query: restQuery,
-      },
-      undefined,
-      { shallow: true }
-    );
+    modals.close(MODAL_KEYS.WELCOME_CONFIGURE_STEP);
 
     // Show widget after modal closes
     setTimeout(() => showWidget({}), 150);
-  }, [router, showWidget]);
+  }, [showWidget]);
 
   useEffect(() => {
     // Only open if welcomeShow is present AND we haven't opened it yet
-    if (router.query.welcomeShow && !hasOpenedWelcomeModal) {
-      setHasOpenedWelcomeModal(true);
+    if (showWelcome) {
+      console.log('showWelcome', showWelcome);
       modals.open({
         id: MODAL_KEYS.WELCOME_IMPORTER,
         children: (
@@ -160,7 +168,7 @@ function ImportDetails() {
         size: 'xl',
       });
     }
-  }, [router.query.welcomeShow, hasOpenedWelcomeModal, onImportClick]);
+  }, [showWelcome, onImportClick]);
 
   return (
     <Flex gap="sm" direction="column" h="100%" style={{ position: 'relative' }}>
