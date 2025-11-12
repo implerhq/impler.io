@@ -64,7 +64,8 @@ function ImportDetails() {
           modals.open({
             children: (
               <WelcomeConfigureStepModal
-                onConfigureDestinationClicked={() => {
+                onConfigureDestinationClicked={(action) => {
+                  console.log(action.type);
                   modals.closeAll();
                   setTimeout(() => {
                     setActiveTab('destination');
@@ -72,7 +73,7 @@ function ImportDetails() {
                 }}
               />
             ),
-            withCloseButton: true,
+            withCloseButton: false,
             centered: true,
             size: 'xl',
           });
