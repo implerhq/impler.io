@@ -6,7 +6,7 @@ import { ActionIcon, Flex, Group, LoadingOverlay, Title, Select } from '@mantine
 
 import { track } from '@libs/amplitude';
 import { useImpler } from '@impler/react';
-import { ITemplate, TemplateModeEnum } from '@impler/shared';
+import { TemplateModeEnum } from '@impler/shared';
 import { IMPORT_MODES, ROUTES, SubjectsEnum, colors } from '@config';
 import { useImportDetails } from '@hooks/useImportDetails';
 
@@ -21,7 +21,8 @@ import { DeleteIcon } from '@assets/icons/Delete.icon';
 import { LeftArrowIcon } from '@assets/icons/LeftArrow.icon';
 import { IntegrationIcon } from '@assets/icons/Integration.icon';
 import { modals } from '@mantine/modals';
-import { WidgetConfigurationModal } from '@components/imports/destination/WidgetConfigurationModal/WidgetConfigurationModal';
+import { WelcomeImporterModal } from '@components/imports/destination/WidgetConfigurationModal/WelcomeImporterModal';
+import { WelcomeConfigureDestinationModal } from '@components/imports/destination/WidgetConfigurationModal/WelcomeConfigureDestinationModal';
 
 const Editor = dynamic(() => import('@components/imports/editor').then((mod) => mod.OutputEditor), {
   ssr: false,
@@ -33,7 +34,6 @@ const Validator = dynamic(() => import('@components/imports/validator').then((mo
 function ImportDetails() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'schema' | 'destination' | 'snippet' | 'validator' | 'output'>();
-  const [webhookConfig, setWebhookConfig] = useState<{ authHeaderValue?: string; extra?: string }>({});
   const {
     meta,
     columns,
@@ -49,13 +49,37 @@ function ImportDetails() {
     templateId: router.query.id as string,
   });
 
-  const { showWidget, isImplerInitiated } = useImpler({
+  const { showWidget, isImplerInitiated, closeWidget } = useImpler({
     primaryColor: colors.faintYellow,
     templateId: templateData?._id,
     projectId: templateData?._projectId,
     accessToken: profileInfo?.accessToken,
-    onUploadComplete: onSpreadsheetImported,
-    authHeaderValue: webhookConfig.authHeaderValue || '',
+    onUploadComplete: (data) => {
+      onSpreadsheetImported();
+      if (data) {
+        console.log('Upload complete', data);
+        closeWidget();
+        setTimeout(() => {
+          modals.open({
+            children: (
+              <WelcomeConfigureDestinationModal
+                onConfigureDestinationClicked={() => {
+                  modals.closeAll();
+                  setTimeout(() => {
+                    setActiveTab('destination');
+                  }, 500);
+                }}
+              />
+            ),
+            withCloseButton: true,
+            centered: true,
+            size: 'xl',
+          });
+        }, 1000);
+      }
+    },
+
+    // authHeaderValue: webhookConfig.authHeaderValue || '',
     appearance: {
       widget: {
         backgroundColor: '#1c1917',
@@ -82,38 +106,35 @@ function ImportDetails() {
       },
     },
   });
+
+  useEffect(() => {
+    if (router.query.welcomeShow) {
+      modals.open({
+        children: (
+          <WelcomeImporterModal
+            onDoWelcomeWidgetAction={() => {
+              console.log('Import clicked');
+              onImportClick();
+
+              // modals.closeAll();
+            }}
+          />
+        ),
+        withCloseButton: true,
+        centered: true,
+        size: 'xl',
+      });
+    }
+  }, [router.query.welcomeShow]);
+
   const onImportClick = () => {
     track({
       name: 'IMPORT CLICK',
       properties: {},
     });
 
-    modals.open({
-      title: 'Configure Import Webhook',
-      children: (
-        <WidgetConfigurationModal
-          template={templateData as ITemplate}
-          onConfigSubmit={(config: { authHeaderValue?: string; extra?: string }) => {
-            setWebhookConfig(config);
-            modals.closeAll();
-            showWidget({
-              extra: config.extra || '',
-            });
-            setTimeout(() => {}, 100);
-          }}
-        />
-      ),
-      withCloseButton: true,
-      centered: true,
-      size: 'xl',
-    });
+    showWidget({});
   };
-
-  useEffect(() => {
-    if (isImplerInitiated && router.query.showWidget) {
-      onImportClick();
-    }
-  }, [isImplerInitiated]);
 
   return (
     <Flex gap="sm" direction="column" h="100%" style={{ position: 'relative' }}>

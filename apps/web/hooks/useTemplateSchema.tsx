@@ -66,7 +66,7 @@ export function useTemplateSchema({ setError }: UseTemplateSchemaProps) {
     {
       onSuccess: (templateData) => {
         if (templateData && templateData._id && profileInfo) {
-          push(`${ROUTES.IMPORTS}/${templateData._id}?showWidget=true`);
+          push(`${ROUTES.IMPORTS}/${templateData._id}?welcomeShow=true`);
         }
       },
     }

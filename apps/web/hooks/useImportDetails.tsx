@@ -116,6 +116,7 @@ export function useImportDetails({ templateId }: useImportDetailProps) {
   };
 
   const onSpreadsheetImported = () => {
+    console.log('Spreadsheet imported');
     refetchTemplateData();
     track({
       name: 'WEB IMPORT',
