@@ -124,7 +124,7 @@ export function useImports() {
       });
     }
   }
-  function onCreateClick() {
+  function onImportCreateClick() {
     modals.open({
       modalId: MODAL_KEYS.IMPORT_CREATE,
       title: MODAL_TITLES.IMPORT_CREATE,
@@ -160,7 +160,7 @@ export function useImports() {
     search,
     importsData,
     onSearchChange,
-    onCreateClick,
+    onImportCreateClick,
     onLimitChange,
     onDuplicateClick,
     isImportsLoading,

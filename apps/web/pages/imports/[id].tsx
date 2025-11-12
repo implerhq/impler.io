@@ -1,11 +1,11 @@
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { ActionIcon, Flex, Group, LoadingOverlay, Title, Select } from '@mantine/core';
 import { track } from '@libs/amplitude';
 import { defaultWidgetAppereance, TemplateModeEnum } from '@impler/shared';
-import { IMPORT_MODES, ROUTES, SubjectsEnum, colors } from '@config';
+import { CONSTANTS, IMPORT_MODES, MODAL_KEYS, ROUTES, SubjectsEnum, colors } from '@config';
 import { useImportDetails } from '@hooks/useImportDetails';
 
 import { Tabs } from '@ui/Tabs';
@@ -20,9 +20,13 @@ import { DeleteIcon } from '@assets/icons/Delete.icon';
 import { LeftArrowIcon } from '@assets/icons/LeftArrow.icon';
 import { modals } from '@mantine/modals';
 import { WelcomeImporterModal } from '@components/imports/destination/WidgetConfigurationModal/WelcomeImporterModal';
-import { WelcomeConfigureStepModal } from '@components/imports/destination/WidgetConfigurationModal/WelcomeConfigureStepModal';
+import {
+  WelcomeConfigureStepModal,
+  WelcomeConfigureStepModalAction,
+} from '@components/imports/destination/WidgetConfigurationModal/WelcomeConfigureStepModal';
 import { useImpler } from '@impler/react';
 import { ForbiddenIcon } from '@assets/icons';
+import { useImports } from '@hooks/useImports';
 
 const Editor = dynamic(() => import('@components/imports/editor').then((mod) => mod.OutputEditor), {
   ssr: false,
@@ -33,6 +37,7 @@ const Validator = dynamic(() => import('@components/imports/validator').then((mo
 
 function ImportDetails() {
   const router = useRouter();
+  const { onImportCreateClick } = useImports();
   const [activeTab, setActiveTab] = useState<'schema' | 'destination' | 'snippet' | 'validator' | 'output'>();
   const {
     meta,
@@ -65,7 +70,29 @@ function ImportDetails() {
             children: (
               <WelcomeConfigureStepModal
                 onConfigureDestinationClicked={(action) => {
-                  console.log(action.type);
+                  switch (action as WelcomeConfigureStepModalAction) {
+                    case 'setupDestination':
+                      setActiveTab('destination');
+                      break;
+                    case 'createImporter':
+                      router.push(ROUTES.IMPORTS);
+                      setTimeout(() => {
+                        onImportCreateClick();
+                      }, 500);
+
+                      /*
+                       * setActiveTab('destination');
+                       * modals.open({});
+                       */
+                      break;
+                    case 'createIntegrationStep':
+                      setActiveTab('destination');
+                      break;
+                    case 'talkWithTeam':
+                      // setActiveTab('destination');
+                      router.push(CONSTANTS.IMPLER_CAL_QUICK_MEETING);
+                      break;
+                  }
                   modals.closeAll();
                   setTimeout(() => {
                     setActiveTab('destination');
@@ -85,13 +112,12 @@ function ImportDetails() {
   useEffect(() => {
     if (router.query.welcomeShow) {
       modals.open({
+        id: MODAL_KEYS.WELCOME_IMPORTER,
         children: (
           <WelcomeImporterModal
             onDoWelcomeWidgetAction={() => {
               console.log('Import clicked');
               onImportClick();
-
-              // modals.closeAll();
             }}
           />
         ),
@@ -102,14 +128,24 @@ function ImportDetails() {
     }
   }, [router.query.welcomeShow]);
 
-  const onImportClick = () => {
-    track({
-      name: 'IMPORT CLICK',
-      properties: {},
-    });
+  const onImportClick = useCallback(() => {
+    track({ name: 'IMPORT CLICK', properties: {} });
+    modals.close(MODAL_KEYS.WELCOME_IMPORTER);
+    // eslint-disable-next-line no-unused-vars
+    const { welcomeShow: _welcomeShow, ...restQuery } = router.query;
 
-    showWidget({});
-  };
+    // Replace the URL without the welcomeShow parameter
+    router.replace(
+      {
+        pathname: router.pathname,
+        query: restQuery,
+      },
+      undefined,
+      { shallow: true }
+    );
+
+    setTimeout(() => showWidget({}), 100);
+  }, [router, showWidget]);
 
   return (
     <Flex gap="sm" direction="column" h="100%" style={{ position: 'relative' }}>
