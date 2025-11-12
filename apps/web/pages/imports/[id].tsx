@@ -20,7 +20,7 @@ import { DeleteIcon } from '@assets/icons/Delete.icon';
 import { LeftArrowIcon } from '@assets/icons/LeftArrow.icon';
 import { modals } from '@mantine/modals';
 import { WelcomeImporterModal } from '@components/imports/destination/WidgetConfigurationModal/WelcomeImporterModal';
-import { WelcomeConfigureDestinationModal } from '@components/imports/destination/WidgetConfigurationModal/WelcomeConfigureDestinationModal';
+import { WelcomeConfigureStepModal } from '@components/imports/destination/WidgetConfigurationModal/WelcomeConfigureStepModal';
 import { useImpler } from '@impler/react';
 import { ForbiddenIcon } from '@assets/icons';
 
@@ -63,7 +63,7 @@ function ImportDetails() {
         setTimeout(() => {
           modals.open({
             children: (
-              <WelcomeConfigureDestinationModal
+              <WelcomeConfigureStepModal
                 onConfigureDestinationClicked={() => {
                   modals.closeAll();
                   setTimeout(() => {
