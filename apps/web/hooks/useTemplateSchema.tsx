@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { commonApi } from '@libs/api';
-import { API_KEYS, ROUTES } from '@config';
+// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+import { API_KEYS, ROUTES, VARIABLES } from '@config';
 import { IColumn, IErrorObject, ITemplate, ITemplateSchema } from '@impler/shared';
 import { UseFormSetError } from 'react-hook-form';
 import { useAppState } from 'store/app.context';
 import { useRouter } from 'next/router';
+import { useLocalStorage } from '@mantine/hooks';
 
 interface UseTemplateSchemaProps {
   setError?: UseFormSetError<CreateOnboardImportFormData>;
@@ -15,6 +17,11 @@ export function useTemplateSchema({ setError }: UseTemplateSchemaProps) {
   const [templateSchema, setTemplateSchema] = useState<OnboardTemplateSchemaTable[]>();
   const { profileInfo } = useAppState();
   const { push } = useRouter();
+  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+  const [showWelcome, setShowWelcome] = useLocalStorage<boolean>({
+    key: 'VARIABLES_SHOW_WELCOME_IMPORTER_STORAGE_KEY',
+    defaultValue: true,
+  });
 
   const {
     data: templateSampleData,
@@ -67,6 +74,7 @@ export function useTemplateSchema({ setError }: UseTemplateSchemaProps) {
       onSuccess: (templateData) => {
         if (templateData && templateData._id && profileInfo) {
           push(`${ROUTES.IMPORTS}/${templateData._id}?welcomeShow=true`);
+          setShowWelcome(true);
         }
       },
     }
