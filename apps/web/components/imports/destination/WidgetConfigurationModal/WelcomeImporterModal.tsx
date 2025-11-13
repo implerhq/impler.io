@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stack, Title, Text, Box, Container } from '@mantine/core';
+import { Stack, Title, Text, Box, Container, Anchor } from '@mantine/core';
 import { useStyles } from './WelcomeImporterModal.styles';
 import { Button } from '@ui/button';
 import Lottie from 'lottie-react';
@@ -34,7 +34,11 @@ export function WelcomeImporterModal({ onDoWelcomeWidgetAction }: IWelcomeImport
         </Title>
 
         <Text align="center">
-          You can give it a quick try and see how it works - no setup required. Download the demo file!
+          You can give it a quick try and see how it works - no setup required. Download the
+          <br />
+          <Anchor onClick={() => {}} underline={true} fw={700} c="yellow" fz="md">
+            Demo File!
+          </Anchor>
         </Text>
 
         <Button fullWidth onClick={onDoWelcomeWidgetAction} loading={false}>
