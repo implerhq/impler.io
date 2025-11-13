@@ -3,18 +3,19 @@ import { Stack, Title, Text, Box, Container, Anchor } from '@mantine/core';
 import { useStyles } from './WelcomeImporterModal.styles';
 import { Button } from '@ui/button';
 import Lottie from 'lottie-react';
-import SuccessConfetti from './confetti_on_transparent_background.json';
-import TickConfetti from './success_confetti.json';
+import SuccessConfetti from './static-assets/confetti_on_transparent_background.json';
+import TickConfetti from './static-assets/success_confetti.json';
 import Link from 'next/link';
 import { CONSTANTS } from '@config';
+import { useImports } from '@hooks/useImports';
 
 interface IWelcomeImporterModalProps {
   onDoWelcomeWidgetAction: () => void;
-  templateId?: string;
 }
 
 export function WelcomeImporterModal({ onDoWelcomeWidgetAction }: IWelcomeImporterModalProps) {
   const { classes } = useStyles();
+  const { handleDownloadSample } = useImports();
 
   return (
     <Container>
@@ -36,7 +37,7 @@ export function WelcomeImporterModal({ onDoWelcomeWidgetAction }: IWelcomeImport
         <Text align="center">
           You can give it a quick try and see how it works - no setup required. Download the
           <br />
-          <Anchor onClick={() => {}} underline={true} fw={700} c="yellow" fz="md">
+          <Anchor onClick={handleDownloadSample} underline={true} fw={700} c="yellow" fz="md">
             Demo File!
           </Anchor>
         </Text>

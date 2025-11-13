@@ -154,6 +154,17 @@ export function useImports() {
     localStorage.removeItem(CONSTANTS.SHOW_WELCOME_IMPORTER_STORAGE_KEY);
   }, []);
 
+  function handleDownloadSample() {
+    try {
+      const link = document.createElement('a');
+      link.href = '/sample-excel.xlsx'; // Direct path from public folder
+      link.download = 'sample-import.xlsx'; // The name you want the downloaded file to have
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {}
+  }
+
   useEffect(() => {
     if (importsData && page && importsData.data.length < page) {
       setPage(importsData.totalPages);
@@ -169,6 +180,7 @@ export function useImports() {
     importsData,
     onSearchChange,
     onImportCreateClick,
+    handleDownloadSample,
     onLimitChange,
     onDuplicateClick,
     isImportsLoading,
