@@ -28,7 +28,7 @@ interface SampleWebhookFormData {
 }
 
 export function useDestination({ template }: UseDestinationProps) {
-  const { bubbleIoIntegrationUnavailable } = useSubscriptionMetaDataInformation();
+  const { bubbleIoIntegrationUnavailable, webhookRetrySettingsUnavailable } = useSubscriptionMetaDataInformation();
   const queryClient = useQueryClient();
   const [destination, setDestination] = useState<DestinationsEnum | undefined>();
 
@@ -241,6 +241,7 @@ export function useDestination({ template }: UseDestinationProps) {
     isSendSampleRequestLoading,
     isSendSampleRequestPending,
     bubbleIoIntegrationUnavailable,
+    webhookRetrySettingsUnavailable,
     mapBubbleIoColumns,
     mapBubbleIoColumnsClick,
     isMapBubbleIoColumnsLoading,
