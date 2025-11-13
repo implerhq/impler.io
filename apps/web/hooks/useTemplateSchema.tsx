@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { commonApi } from '@libs/api';
-// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-import { API_KEYS, ROUTES, VARIABLES } from '@config';
+import { API_KEYS, CONSTANTS, ROUTES } from '@config';
 import { IColumn, IErrorObject, ITemplate, ITemplateSchema } from '@impler/shared';
 import { UseFormSetError } from 'react-hook-form';
 import { useAppState } from 'store/app.context';
@@ -19,7 +18,7 @@ export function useTemplateSchema({ setError }: UseTemplateSchemaProps) {
   const { push } = useRouter();
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   const [showWelcome, setShowWelcome] = useLocalStorage<boolean>({
-    key: 'SHOW_WELCOME_IMPORTER_STORAGE_KEY',
+    key: CONSTANTS.SHOW_WELCOME_IMPORTER_STORAGE_KEY,
     defaultValue: true,
   });
 

@@ -20,7 +20,6 @@ export const variables = {
   implerWebsite: 'https://impler.io?utm_source=widget',
   LIMIT_5_MB: 5 * 1024 * 1024,
   SHOW_IMAGE_ALERT_STORAGE_KEY: 'showImageAlert',
-  SHOW_WELCOME_IMPORTER_STORAGE_KEY: 'showWelcomeImporter',
 };
 
 export const AMPLITUDE = {

@@ -8,7 +8,7 @@ import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
 import { track } from '@libs/amplitude';
 import { useAppState } from 'store/app.context';
-import { API_KEYS, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS, VARIABLES } from '@config';
+import { API_KEYS, CONSTANTS, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS, VARIABLES } from '@config';
 import { IErrorObject, ITemplate, IImport, IPaginationData, IProjectPayload } from '@impler/shared';
 
 import { CreateImportForm } from '@components/imports/forms/CreateImportForm';
@@ -148,10 +148,10 @@ export function useImports() {
     });
   }
 
-  const showWelcome = localStorage.getItem('SHOW_WELCOME_IMPORTER_STORAGE_KEY') === 'true';
+  const showWelcome = localStorage.getItem(CONSTANTS.SHOW_WELCOME_IMPORTER_STORAGE_KEY) === 'true';
 
   const clearWelcomeFlag = useCallback(() => {
-    localStorage.removeItem('SHOW_WELCOME_IMPORTER_STORAGE_KEY');
+    localStorage.removeItem(CONSTANTS.SHOW_WELCOME_IMPORTER_STORAGE_KEY);
   }, []);
 
   useEffect(() => {
