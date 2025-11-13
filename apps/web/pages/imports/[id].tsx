@@ -9,9 +9,6 @@ import { CONSTANTS, IMPORT_MODES, MODAL_KEYS, ROUTES, SubjectsEnum, colors } fro
 import { useImportDetails } from '@hooks/useImportDetails';
 
 import { Tabs } from '@ui/Tabs';
-import { Destination } from '@components/imports/destination';
-import { EditIcon } from '@assets/icons/Edit.icon';
-import { IntegrationIcon } from '@assets/icons/Integration.icon';
 import { Button } from '@ui/button';
 import { Schema } from '@components/imports/schema';
 import { withProtectedResource } from '@components/hoc';
@@ -28,6 +25,9 @@ import { useImpler } from '@impler/react';
 import { ForbiddenIcon } from '@assets/icons';
 import { useImports } from '@hooks/useImports';
 import { useSubscriptionMetaDataInformation } from '@hooks/useSubscriptionMetaDataInformation';
+import { EditIcon } from '@assets/icons/Edit.icon';
+import { IntegrationIcon } from '@assets/icons/Integration.icon';
+import { Destination } from '@components/imports/destination';
 
 const Editor = dynamic(() => import('@components/imports/editor').then((mod) => mod.OutputEditor), {
   ssr: false,

@@ -3,7 +3,3 @@ export { SunIcon } from './Sun.icon';
 export { ChevronDownIcon } from './ChevronDown.icon';
 export { ImportIcon } from './Import.icon';
 export { ForbiddenIcon } from './Forbidden.icon';
-export { DestinationIcon } from './Destination.icon';
-export { ImporterIcon } from './Importer.icon';
-export { IntegrationStepIcon } from './IntegrationStep.icon';
-export { TeamIcon } from './Team.icon';

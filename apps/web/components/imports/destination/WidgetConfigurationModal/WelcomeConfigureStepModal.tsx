@@ -1,9 +1,11 @@
 import React from 'react';
 import { Stack, Title, Text, Box, Container, SimpleGrid } from '@mantine/core';
-import { ImporterIcon, IntegrationStepIcon, TeamIcon } from '@assets/icons';
 import { SetupDestinationIcon } from '@assets/icons/SetupDestination.icon';
 import { useWelcomeConfigureStepModalStyles } from './WelcomeConfigureStepModal.styles';
 import { ActionCard } from './ActionCard';
+import { ImporterIcon } from '@assets/icons/Importer.icon';
+import { IntegrationStepIcon } from '@assets/icons/IntegrationStep.icon';
+import { TeamIcon } from '@assets/icons/Team.icon';
 
 export enum WelcomeConfigureStepModalActionEnum {
   SetupDestination = 'setupDestination',
