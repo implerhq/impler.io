@@ -58,7 +58,6 @@ export class RegisterUser {
     }
 
     if (this.emailService.isConnected()) {
-      console.log('Email service is connected');
       const emailContents = this.emailService.getEmailContent({
         type: 'VERIFICATION_EMAIL',
         data: {

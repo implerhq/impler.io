@@ -70,7 +70,6 @@ export function useSignup() {
     (string | undefined)[]
   >([API_KEYS.SIGNUP], (body) => commonApi<ILoginResponse>(API_KEYS.SIGNUP as any, { body }), {
     onSuccess: (data) => {
-      console.log(data);
       if (!data) return;
       const profileData = jwt<IProfileData>(data.token as string);
       setProfileInfo(profileData);

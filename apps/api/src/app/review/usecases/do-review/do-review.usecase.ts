@@ -48,7 +48,6 @@ export class DoReview extends BaseReview {
   }
 
   async execute(_uploadId: string) {
-    console.log('Called The Do Review.execute');
     this._modal = this.dalService.getRecordCollection(_uploadId);
     const userEmail = await this.uploadRepository.getUserEmailFromUploadId(_uploadId);
 
