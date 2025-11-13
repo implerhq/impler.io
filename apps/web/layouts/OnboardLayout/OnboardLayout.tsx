@@ -64,7 +64,7 @@ export function OnboardLayout({ children }: OnboardLayoutProps) {
                   Need Help?
                 </Anchor>
               </Link>
-              <Anchor underline={false} href={CONSTANTS.IMPLER_CAL_QUICK_MEETING} fw={600} c={colors.blue[6]} fz="sm">
+              <Anchor underline={false} href={CONSTANTS.IMPLER_CAL_QUICK_MEETING} fw={600} c={colors.yellow} fz="sm">
                 Get in Touch
               </Anchor>
             </Flex>
