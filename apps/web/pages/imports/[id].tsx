@@ -27,6 +27,7 @@ import {
 import { useImpler } from '@impler/react';
 import { ForbiddenIcon } from '@assets/icons';
 import { useImports } from '@hooks/useImports';
+import { useSubscriptionMetaDataInformation } from '@hooks/useSubscriptionMetaDataInformation';
 
 const Editor = dynamic(() => import('@components/imports/editor').then((mod) => mod.OutputEditor), {
   ssr: false,
@@ -36,6 +37,8 @@ const Validator = dynamic(() => import('@components/imports/validator').then((mo
 });
 
 function ImportDetails() {
+  const { customValidatatorCodeUnavailable } = useSubscriptionMetaDataInformation();
+
   const router = useRouter();
   const { onImportCreateClick, showWelcome, clearWelcomeFlag } = useImports();
   const [activeTab, setActiveTab] = useState<'schema' | 'destination' | 'snippet' | 'validator' | 'output'>();
@@ -137,9 +140,12 @@ function ImportDetails() {
         withCloseButton: true,
         centered: true,
         size: 'xl',
+        onClose: () => {
+          clearWelcomeFlag();
+        },
       });
     }
-  }, [showWelcome, onImportClick]);
+  }, [showWelcome, onImportClick, clearWelcomeFlag]);
 
   return (
     <Flex gap="sm" direction="column" h="100%" style={{ position: 'relative' }}>
@@ -208,7 +214,7 @@ function ImportDetails() {
               value: 'validator',
               title: 'Validator',
               icon: <ForbiddenIcon size="xl" />,
-              disabled: true,
+              disabled: customValidatatorCodeUnavailable,
               content: <Validator templateId={templateData._id} />,
             },
             {
