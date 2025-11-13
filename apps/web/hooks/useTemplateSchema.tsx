@@ -19,7 +19,7 @@ export function useTemplateSchema({ setError }: UseTemplateSchemaProps) {
   const { push } = useRouter();
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   const [showWelcome, setShowWelcome] = useLocalStorage<boolean>({
-    key: 'VARIABLES_SHOW_WELCOME_IMPORTER_STORAGE_KEY',
+    key: 'SHOW_WELCOME_IMPORTER_STORAGE_KEY',
     defaultValue: true,
   });
 

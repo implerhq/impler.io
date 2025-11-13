@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { modals } from '@mantine/modals';
 import { useDebouncedState, useLocalStorage } from '@mantine/hooks';
@@ -148,6 +148,12 @@ export function useImports() {
     });
   }
 
+  const showWelcome = localStorage.getItem('SHOW_WELCOME_IMPORTER_STORAGE_KEY') === 'true';
+
+  const clearWelcomeFlag = useCallback(() => {
+    localStorage.removeItem('SHOW_WELCOME_IMPORTER_STORAGE_KEY');
+  }, []);
+
   useEffect(() => {
     if (importsData && page && importsData.data.length < page) {
       setPage(importsData.totalPages);
@@ -158,6 +164,8 @@ export function useImports() {
     page,
     limit,
     search,
+    showWelcome,
+    clearWelcomeFlag,
     importsData,
     onSearchChange,
     onImportCreateClick,

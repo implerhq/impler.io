@@ -22,7 +22,7 @@ import { modals } from '@mantine/modals';
 import { WelcomeImporterModal } from '@components/imports/destination/WidgetConfigurationModal/WelcomeImporterModal';
 import {
   WelcomeConfigureStepModal,
-  WelcomeConfigureStepModalAction,
+  WelcomeConfigureStepModalActionEnum,
 } from '@components/imports/destination/WidgetConfigurationModal/WelcomeConfigureStepModal';
 import { useImpler } from '@impler/react';
 import { ForbiddenIcon } from '@assets/icons';
@@ -37,10 +37,8 @@ const Validator = dynamic(() => import('@components/imports/validator').then((mo
 
 function ImportDetails() {
   const router = useRouter();
-  const { onImportCreateClick } = useImports();
+  const { onImportCreateClick, showWelcome, clearWelcomeFlag } = useImports();
   const [activeTab, setActiveTab] = useState<'schema' | 'destination' | 'snippet' | 'validator' | 'output'>();
-
-  const showWelcome = localStorage.getItem(CONSTANTS.VARIABLES_SHOW_WELCOME_IMPORTER_STORAGE_KEY) === 'true';
 
   const {
     meta,
@@ -58,56 +56,29 @@ function ImportDetails() {
   });
 
   const handleActionClick = useCallback(
-    (action: WelcomeConfigureStepModalAction) => {
-      // Remove the welcome flag from localStorage
-      localStorage.removeItem(CONSTANTS.VARIABLES_SHOW_WELCOME_IMPORTER_STORAGE_KEY);
-
-      // Close all modals first
+    async (action: WelcomeConfigureStepModalActionEnum) => {
       modals.closeAll();
-
+      clearWelcomeFlag();
       switch (action) {
-        case 'setupDestination':
-          console.log('setupDestination');
-          setTimeout(() => {
-            setActiveTab('destination');
-          }, 500);
+        case WelcomeConfigureStepModalActionEnum.SetupDestination:
+          setActiveTab('destination');
           break;
-        case 'createImporter':
-          console.log('createImporter');
+        case WelcomeConfigureStepModalActionEnum.CreateImporter:
+          onImportCreateClick();
           router.push(ROUTES.IMPORTS);
-          setTimeout(() => {
-            onImportCreateClick();
-          }, 500);
           break;
-        case 'createIntegrationStep':
-          console.log('createIntegrationStep');
-          setTimeout(() => {
-            setActiveTab('destination');
-          }, 500);
+        case WelcomeConfigureStepModalActionEnum.EmbedIntoYourApplication:
+          onIntegrationClick();
           break;
-        case 'talkWithTeam':
-          console.log('talkWithTeam');
-          router.push(CONSTANTS.IMPLER_CAL_QUICK_MEETING);
+        case WelcomeConfigureStepModalActionEnum.TalkWithTeam:
+          window.open(CONSTANTS.IMPLER_CAL_QUICK_MEETING, '_blank');
           break;
         default:
           break;
       }
     },
-    [onImportCreateClick, setActiveTab]
+    [onImportCreateClick, setActiveTab, router, clearWelcomeFlag, onIntegrationClick]
   );
-
-  if (localStorage.getItem(CONSTANTS.VARIABLES_SHOW_WELCOME_IMPORTER_STORAGE_KEY)) {
-    // Then in your modal open:
-    setTimeout(() => {
-      modals.open({
-        id: MODAL_KEYS.WELCOME_CONFIGURE_STEP,
-        children: <WelcomeConfigureStepModal onConfigureDestinationClicked={handleActionClick} />,
-        withCloseButton: false,
-        centered: true,
-        size: 'xl',
-      });
-    }, 1000);
-  }
 
   const { showWidget, isImplerInitiated, closeWidget } = useImpler({
     primaryColor: colors.faintYellow,
@@ -118,20 +89,25 @@ function ImportDetails() {
     onUploadComplete: (data) => {
       onSpreadsheetImported();
       if (data) {
-        if (
-          showWelcome === true &&
-          localStorage.getItem(CONSTANTS.VARIABLES_SHOW_WELCOME_IMPORTER_STORAGE_KEY) === 'true'
-        ) {
-          console.log(showWelcome === true);
-          closeWidget();
-          modals.close(MODAL_KEYS.WELCOME_IMPORTER);
+        closeWidget();
+        if (showWelcome) {
+          modals.closeAll();
           setTimeout(() => {
             modals.open({
               id: MODAL_KEYS.WELCOME_CONFIGURE_STEP,
-              children: <WelcomeConfigureStepModal onConfigureDestinationClicked={handleActionClick} />,
+              children: (
+                <WelcomeConfigureStepModal
+                  onConfigureDestinationClicked={(action) => {
+                    handleActionClick(action);
+                  }}
+                />
+              ),
               withCloseButton: false,
               centered: true,
               size: 'xl',
+              onClose: () => {
+                clearWelcomeFlag();
+              },
             });
           }, 1000);
         }
@@ -143,22 +119,17 @@ function ImportDetails() {
     track({ name: 'IMPORT CLICK', properties: {} });
 
     modals.close(MODAL_KEYS.WELCOME_IMPORTER);
-    modals.close(MODAL_KEYS.WELCOME_CONFIGURE_STEP);
 
-    // Show widget after modal closes
     setTimeout(() => showWidget({}), 150);
   }, [showWidget]);
 
   useEffect(() => {
-    // Only open if welcomeShow is present AND we haven't opened it yet
     if (showWelcome) {
-      console.log('showWelcome', showWelcome);
       modals.open({
         id: MODAL_KEYS.WELCOME_IMPORTER,
         children: (
           <WelcomeImporterModal
             onDoWelcomeWidgetAction={() => {
-              console.log('onDoWelcomeWidgetAction');
               onImportClick();
             }}
           />

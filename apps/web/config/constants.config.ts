@@ -39,7 +39,7 @@ export const CONSTANTS = {
     `Your subscription is cancelled. Your current subscription will continue till ${expiryDate}. You won't be charged again.`,
   SAMPLE_IMPORT_NAME: 'Product Data Import',
   SIDEBAR_COLLAPSED_KEY: 'SIDE_BAR_COLLAPSED',
-  VARIABLES_SHOW_WELCOME_IMPORTER_STORAGE_KEY: 'VARIABLES_SHOW_WELCOME_IMPORTER_STORAGE_KEY',
+  SHOW_WELCOME_IMPORTER_STORAGE_KEY: 'SHOW_WELCOME_IMPORTER_STORAGE_KEY',
 };
 
 export enum CancellationModeEnum {

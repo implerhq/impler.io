@@ -5,15 +5,15 @@ import { SetupDestinationIcon } from '@assets/icons/SetupDestination.icon';
 import { useWelcomeConfigureStepModalStyles } from './WelcomeConfigureStepModal.styles';
 import { ActionCard } from './ActionCard';
 
-export type WelcomeConfigureStepModalAction =
-  | 'setupDestination'
-  | 'createImporter'
-  | 'createIntegrationStep'
-  | 'talkWithTeam';
-export const action: WelcomeConfigureStepModalAction = 'setupDestination';
+export enum WelcomeConfigureStepModalActionEnum {
+  SetupDestination = 'setupDestination',
+  CreateImporter = 'createImporter',
+  EmbedIntoYourApplication = 'embedIntoYourApplication',
+  TalkWithTeam = 'talkWithTeam',
+}
 
 interface IWelcomeConfigureStepModalProps {
-  onConfigureDestinationClicked: (action: WelcomeConfigureStepModalAction) => void;
+  onConfigureDestinationClicked: (action: WelcomeConfigureStepModalActionEnum) => void;
   templateId?: string;
 }
 
@@ -42,25 +42,27 @@ export function WelcomeConfigureStepModal({ onConfigureDestinationClicked }: IWe
           <SimpleGrid cols={2} spacing="md" breakpoints={[{ maxWidth: 'sm', cols: 1 }]}>
             <ActionCard
               title="Setup Destination"
-              onClick={() => onConfigureDestinationClicked('setupDestination')}
+              onClick={() => onConfigureDestinationClicked(WelcomeConfigureStepModalActionEnum.SetupDestination)}
               icon={<SetupDestinationIcon size="xl" color="white" />}
             />
 
             <ActionCard
               title="Create New Importer"
-              onClick={() => onConfigureDestinationClicked('createImporter')}
+              onClick={() => onConfigureDestinationClicked(WelcomeConfigureStepModalActionEnum.CreateImporter)}
               icon={<ImporterIcon color="white" />}
             />
 
             <ActionCard
               title="Embed into your App"
-              onClick={() => onConfigureDestinationClicked('createIntegrationStep')}
+              onClick={() =>
+                onConfigureDestinationClicked(WelcomeConfigureStepModalActionEnum.EmbedIntoYourApplication)
+              }
               icon={<IntegrationStepIcon color="white" />}
             />
 
             <ActionCard
               title="Talk With The Team."
-              onClick={() => onConfigureDestinationClicked('talkWithTeam')}
+              onClick={() => onConfigureDestinationClicked(WelcomeConfigureStepModalActionEnum.TalkWithTeam)}
               icon={<TeamIcon color="white" />}
             />
           </SimpleGrid>
