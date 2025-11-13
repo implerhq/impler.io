@@ -298,7 +298,6 @@ export class DoReview extends BaseReview {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const teamMemberEmails = environment.map((teamMember) => teamMember._userId.email);
-      console.log(teamMemberEmails);
 
       const emailContents = this.emailService.getEmailContent({
         type: 'IMPORT_LIMIT_EXCEEDED_EMAIL',
