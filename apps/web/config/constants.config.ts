@@ -13,7 +13,6 @@ import NirvanaLogo from '@assets/images/companies/nirvana.svg';
 import OmnivaLogo from '@assets/images/companies/omniva.svg';
 import OrbitLogo from '@assets/images/companies/orbit.svg';
 import UbicoLogo from '@assets/images/companies/ubico.svg';
-import React from 'react';
 
 export const CONSTANTS = {
   IMPLER_DOCUMENTATION: 'https://docs.impler.io',
