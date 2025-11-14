@@ -68,7 +68,12 @@ export function PlanCard({ plan, isYearly }: PlanCardProps) {
 
   return (
     <Card
-      style={{ width: '800px', position: 'relative' }}
+      style={{
+        width: '800px',
+        display: 'flex',
+        flexDirection: 'column',
+        maxHeight: '600px',
+      }}
       shadow="sm"
       withBorder
       bg={
@@ -76,38 +81,57 @@ export function PlanCard({ plan, isYearly }: PlanCardProps) {
       }
     >
       <LoadingOverlay visible={isLoading} overlayBlur={2} />
-      <Stack mt="md">
-        {(plan.code === PLANCODEENUM.GROWTH || plan.code === PLANCODEENUM.GROWTH_YEARLY) && (
-          <Badge color="blue" variant="gradient" className={classes.recommendedBadge}>
-            Recommended
-          </Badge>
-        )}
-        <Text className={classes.planName}>{plan.name}</Text>
-        <Text className={classes.planPrice}>
-          {plan.price === 0 ? 'Free' : `$${plan.price} / ${isYearly ? 'year' : 'month'}`}
-        </Text>
-        <Button
-          className={classes.button}
-          fullWidth
-          onClick={handlePaymentSession}
-          disabled={plan.code === PLANCODEENUM.STARTER || subscription?.plan?.code === plan.code || isLoading}
-        >
-          {subscription?.plan.code === plan.code ? 'Active Plan' : 'Choose Plan'}
-        </Button>
-        <Divider />
-      </Stack>
-      <Stack spacing={10}>
-        <Divider />
-        {Object.entries(plan.content).map(([category, items], categoryIndex) => (
-          <React.Fragment key={category}>
-            {category !== 'Features' && <Text>{category}</Text>}
-            {items.map(({ check, title, tooltipLink }, index) => (
-              <PlanFeature key={`${category}-${index}`} included={check} value={title} tooltipLink={tooltipLink} />
-            ))}
-            {category !== 'Features' && categoryIndex < Object.keys(plan.content).length - 1 && <Divider my={5} />}
-          </React.Fragment>
-        ))}
-      </Stack>
+
+      <div
+        style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 10,
+          paddingBottom: '10px',
+        }}
+      >
+        <Stack mt="md">
+          {(plan.code === PLANCODEENUM.GROWTH || plan.code === PLANCODEENUM.GROWTH_YEARLY) && (
+            <Badge color="blue" variant="gradient" className={classes.recommendedBadge}>
+              Recommended
+            </Badge>
+          )}
+          <Text className={classes.planName}>{plan.name}</Text>
+          <Text className={classes.planPrice}>
+            {plan.price === 0 ? 'Free' : `$${plan.price} / ${isYearly ? 'year' : 'month'}`}
+          </Text>
+
+          <Button
+            className={classes.button}
+            fullWidth
+            onClick={handlePaymentSession}
+            disabled={plan.code === PLANCODEENUM.STARTER || subscription?.plan?.code === plan.code || isLoading}
+          >
+            {subscription?.plan.code === plan.code ? 'Active Plan' : 'Choose Plan'}
+          </Button>
+          <Divider />
+        </Stack>
+      </div>
+
+      <div
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          paddingTop: '10px',
+        }}
+      >
+        <Stack spacing={10}>
+          {Object.entries(plan.content).map(([category, items], categoryIndex) => (
+            <React.Fragment key={category}>
+              {category !== 'Features' && <Text>{category}</Text>}
+              {items.map(({ check, title, tooltipLink }, index) => (
+                <PlanFeature key={`${category}-${index}`} included={check} value={title} tooltipLink={tooltipLink} />
+              ))}
+              {category !== 'Features' && categoryIndex < Object.keys(plan.content).length - 1 && <Divider my={5} />}
+            </React.Fragment>
+          ))}
+        </Stack>
+      </div>
     </Card>
   );
 }
