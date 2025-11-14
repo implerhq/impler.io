@@ -15,7 +15,7 @@ export function ImportsList() {
     search,
     importsData,
     onPageChange,
-    onCreateClick,
+    onImportCreateClick,
     onLimitChange,
     onSearchChange,
     onDuplicateClick,
@@ -36,7 +36,7 @@ export function ImportsList() {
             onChange={(e: ChangeEvent<HTMLInputElement>) => onSearchChange(e.currentTarget.value)}
             type="search"
           />
-          <Button id="create-import" color="invariant" onClick={onCreateClick}>
+          <Button id="create-import" color="invariant" onClick={onImportCreateClick}>
             {NEW_IMPORT_TEXT}
           </Button>
         </Group>

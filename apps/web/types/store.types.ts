@@ -28,6 +28,12 @@ export interface IPlanMeta {
   ALTERNATE_COLUMN_KEYS?: boolean;
   DATA_SEEDING?: boolean;
   MULTI_SELECT_VALUES?: boolean;
+  CUSTOM_CODE_VALIDATOR?: boolean;
+  LENGTH_VALIDATION?: boolean;
+  RANGE_VALIDATION?: boolean;
+  DIGITS_VALIDATION?: boolean;
+  MULTIPLE_COLUMNS_COMBINATION_UNIQUE_VALIDATION?: boolean;
+  WEBHOOK_RETRY_SETTINGS?: boolean;
 }
 
 export interface IPlanMetaContext {

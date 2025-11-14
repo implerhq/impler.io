@@ -119,23 +119,21 @@ export function Phase3(props: IPhase3Props) {
             ]}
           />
           <Group spacing="xs">
-            {isFindAndReplaceAvailable
-              ? null // Render nothing if available
-              : !hideFindAndReplaceButton && (
-                  <Tooltip
-                    label="This feature is not in your current plan"
-                    disabled={isFindAndReplaceAvailable !== false}
-                    position="top"
-                  >
-                    <Button
-                      leftIcon={isFindAndReplaceAvailable ? undefined : <LockIcon />}
-                      onClick={() => setShowFindReplaceModal(true)}
-                      disabled={!isFindAndReplaceAvailable}
-                    >
-                      {texts.PHASE3.FIND_REPLACE}
-                    </Button>
-                  </Tooltip>
-                )}
+            {!hideFindAndReplaceButton && (
+              <Tooltip
+                label="This feature is not in your current plan"
+                disabled={isFindAndReplaceAvailable !== false}
+                position="top"
+              >
+                <Button
+                  leftIcon={isFindAndReplaceAvailable === false ? <LockIcon /> : undefined}
+                  onClick={() => setShowFindReplaceModal(true)}
+                  disabled={isFindAndReplaceAvailable === false}
+                >
+                  {texts.PHASE3.FIND_REPLACE}
+                </Button>
+              </Tooltip>
+            )}
 
             {!hideDeleteButton && (
               <Button

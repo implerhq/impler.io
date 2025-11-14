@@ -5,6 +5,7 @@ import { Button } from '@ui/button';
 import { useAppState } from 'store/app.context';
 import { colors, COMPANY_SIZES, HOW_HEARD_ABOUT_US, PLACEHOLDERS, ROLES } from '@config';
 import { Stepper } from '@components/Stepper/Stepper';
+import { capitalizeFirstLetter } from '@shared/utils';
 
 interface ProjectOnboardFormData {
   projectName: string;
@@ -27,7 +28,11 @@ export default function ProjectOnboardForm({ onSubmit, isLoading }: ProjectOnboa
     handleSubmit,
     formState: { errors },
     control,
-  } = useForm<ProjectOnboardFormData>();
+  } = useForm<ProjectOnboardFormData>({
+    defaultValues: {
+      projectName: `${capitalizeFirstLetter(profileInfo?.firstName ?? '')}'s Project`,
+    },
+  });
 
   return (
     <>
@@ -48,7 +53,7 @@ export default function ProjectOnboardForm({ onSubmit, isLoading }: ProjectOnboa
               name="projectName"
               control={control}
               rules={{
-                required: 'Project name is required',
+                // required: 'Project name is required',
                 validate: {
                   noSpaces: (value) => value.trim().length > 0 || 'Project name cannot be empty or contain only spaces',
                 },

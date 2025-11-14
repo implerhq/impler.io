@@ -20,15 +20,15 @@ export class GetImportConfig {
       isFeatureAvailableMap.set(code, false);
     });
 
-    try {
-      for (const billableMetricCode of Object.keys(BILLABLEMETRIC_CODE_ENUM)) {
+    for (const billableMetricCode of Object.values(BILLABLEMETRIC_CODE_ENUM)) {
+      try {
         const isAvailable = await this.paymentAPIService.checkEvent({
           email: userEmail,
           billableMetricCode: BILLABLEMETRIC_CODE_ENUM[billableMetricCode],
         });
         isFeatureAvailableMap.set(billableMetricCode, isAvailable);
-      }
-    } catch (error) {}
+      } catch (error) {}
+    }
 
     let template: TemplateEntity;
     if (templateId) {

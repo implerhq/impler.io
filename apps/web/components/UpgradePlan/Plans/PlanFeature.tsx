@@ -1,7 +1,7 @@
 import React from 'react';
 import { Flex, Text } from '@mantine/core';
-import { CheckCircle } from '@assets/icons/CheckCircle.icon';
-import { CrossCircle } from '@assets/icons/CrossCircle.icon';
+import CrossIcon from '@assets/icons/Cross-filled.Icon';
+import { TickIcon } from '@assets/icons/Tick.icon';
 import { TooltipLink } from '@components/guide-point';
 
 interface PlanFeatureProps {
@@ -13,7 +13,7 @@ interface PlanFeatureProps {
 export function PlanFeature({ included, value = '', tooltipLink }: PlanFeatureProps) {
   return (
     <Flex align="center" gap="xs">
-      {included ? <CheckCircle /> : <CrossCircle />}
+      {included ? <TickIcon /> : <CrossIcon />}
       <Text fw="bolder">{value}</Text>
       {tooltipLink && <TooltipLink link={tooltipLink} iconSize="md" />}
     </Flex>

@@ -16,6 +16,7 @@ export default function OnboardImportForm() {
     resetField,
   } = useForm<CreateOnboardImportFormData>({
     defaultValues: {
+      importName: 'Product Import',
       importIntegration: IntegrationEnum.REACT,
       onboardCreateTemplateMode: OnboardCreateTemplateModeEnum.FILE_MAP_COLUMN,
     },
@@ -27,7 +28,7 @@ export default function OnboardImportForm() {
   const handleCreateImportFormSubmit = async (createImportFormData: CreateOnboardImportFormData) => {
     if (createImportFormData.onboardCreateTemplateMode === OnboardCreateTemplateModeEnum.SAMPLE_COLUMN) {
       createOnboardTemplateSample({
-        name: CONSTANTS.SAMPLE_IMPORT_NAME,
+        name: createImportFormData.importName || CONSTANTS.SAMPLE_IMPORT_NAME,
         _projectId: profileInfo!._projectId,
         columns: sampleColumns as IColumn[],
       });

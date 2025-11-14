@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { modals } from '@mantine/modals';
 import { useDebouncedState, useLocalStorage } from '@mantine/hooks';
@@ -8,7 +8,7 @@ import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
 import { track } from '@libs/amplitude';
 import { useAppState } from 'store/app.context';
-import { API_KEYS, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS, VARIABLES } from '@config';
+import { API_KEYS, CONSTANTS, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS, VARIABLES } from '@config';
 import { IErrorObject, ITemplate, IImport, IPaginationData, IProjectPayload } from '@impler/shared';
 
 import { CreateImportForm } from '@components/imports/forms/CreateImportForm';
@@ -124,7 +124,7 @@ export function useImports() {
       });
     }
   }
-  function onCreateClick() {
+  function onImportCreateClick() {
     modals.open({
       modalId: MODAL_KEYS.IMPORT_CREATE,
       title: MODAL_TITLES.IMPORT_CREATE,
@@ -148,6 +148,23 @@ export function useImports() {
     });
   }
 
+  const showWelcome = localStorage.getItem(CONSTANTS.SHOW_WELCOME_IMPORTER_STORAGE_KEY) === 'true';
+
+  const clearWelcomeFlag = useCallback(() => {
+    localStorage.removeItem(CONSTANTS.SHOW_WELCOME_IMPORTER_STORAGE_KEY);
+  }, []);
+
+  function handleDownloadSample() {
+    try {
+      const link = document.createElement('a');
+      link.href = '/sample-excel-file.xlsx';
+      link.download = 'sample-import-file.xlsx';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {}
+  }
+
   useEffect(() => {
     if (importsData && page && importsData.data.length < page) {
       setPage(importsData.totalPages);
@@ -158,9 +175,12 @@ export function useImports() {
     page,
     limit,
     search,
+    showWelcome,
+    clearWelcomeFlag,
     importsData,
     onSearchChange,
-    onCreateClick,
+    onImportCreateClick,
+    handleDownloadSample,
     onLimitChange,
     onDuplicateClick,
     isImportsLoading,

@@ -46,8 +46,12 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
     uniqueValidationUnavailable,
     defaultValueUnavailable,
     dateFormatUnavailable,
-    alternateColumnKeysUnavailable,
+    rangeValidationUnavailable,
+    // alternateColumnKeysUnavailable,
     multiSelectValuesUnavailable,
+    lengthValidationUnavailable,
+    digitsValidationUnavailable,
+    multipleColumnsCombinationUniqueValidationUnavailable,
   } = useSubscriptionMetaDataInformation();
   const {
     watch,
@@ -222,58 +226,31 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                   />
                 )}
               </AutoHeightComponent>
-              {alternateColumnKeysUnavailable ? (
-                <Flex
-                  direction="row"
-                  gap="sm"
-                  align="center"
-                  style={{
-                    padding: '7px',
-                    backgroundColor: colors.BGPrimaryDark,
-                    borderRadius: '4px',
-                  }}
-                >
-                  <LockIcon size="xl" />
 
-                  <Stack spacing={5} w="100%" align="flex-start">
-                    <Badge color="orange">Feature unavailable on current plan</Badge>
-                    <div>
-                      <TooltipLabel label="Alternative column keys" link={DOCUMENTATION_REFERENCE_LINKS.defaultValue} />
-                      <p style={{ fontSize: '0.75rem', color: '#868e96', margin: 0 }}>
-                        Fallback identifiers for column matching
-                      </p>
-                    </div>
-                  </Stack>
+              <Controller
+                name="alternateKeys"
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <MultiSelect
+                    creatable
+                    clearable
+                    searchable
+                    value={value}
+                    onChange={onChange}
+                    label="Alternative column keys"
+                    placeholder="Alternative column keys"
+                    description="Fallback identifiers for column matching"
+                    getCreateLabel={(query) => `+ ${query}`}
+                    data={Array.isArray(value) ? value : []}
+                    onCreate={(newItem) => {
+                      onChange([...(Array.isArray(value) ? value : []), newItem]);
 
-                  <Button component={Link} size="xs" href={ROUTES.EXPLORE_PLANS} onClick={modals.closeAll}>
-                    Explore Options
-                  </Button>
-                </Flex>
-              ) : (
-                <Controller
-                  name="alternateKeys"
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <MultiSelect
-                      creatable
-                      clearable
-                      searchable
-                      value={value}
-                      onChange={onChange}
-                      label="Alternative column keys"
-                      placeholder="Alternative column keys"
-                      description="Fallback identifiers for column matching"
-                      getCreateLabel={(query) => `+ ${query}`}
-                      data={Array.isArray(value) ? value : []}
-                      onCreate={(newItem) => {
-                        onChange([...(Array.isArray(value) ? value : []), newItem]);
+                      return newItem;
+                    }}
+                  />
+                )}
+              />
 
-                        return newItem;
-                      }}
-                    />
-                  )}
-                />
-              )}
               <AutoHeightComponent isVisible={typeValue === ColumnTypesEnum.DATE}>
                 {dateFormatUnavailable ? (
                   <Flex
@@ -527,27 +504,56 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
               <AutoHeightComponent
                 isVisible={typeValue === ColumnTypesEnum.DOUBLE || typeValue === ColumnTypesEnum.NUMBER}
               >
-                <Validation
-                  errors={errors}
-                  control={control}
-                  minPlaceholder="Min"
-                  maxPlaceholder="Max"
-                  label="Range Validation"
-                  type={ValidationTypesEnum.RANGE}
-                  unavailable={advancedValidationsUnavailable}
-                  link={DOCUMENTATION_REFERENCE_LINKS.rangeValidator}
-                  description="Set min/max bounds for valid input values"
-                  errorMessagePlaceholder='Value must be between "Min" and "Max"'
-                  index={fields.findIndex((field) => field.validate === ValidationTypesEnum.RANGE)}
-                  onCheckToggle={(status, index) => {
-                    if (status) {
-                      append({ validate: ValidationTypesEnum.RANGE });
-                    } else {
-                      remove(index);
-                    }
-                  }}
-                />
+                {rangeValidationUnavailable ? (
+                  <Flex
+                    direction="row"
+                    gap="sm"
+                    align="center"
+                    style={{
+                      padding: '8px',
+                      backgroundColor: colors.BGPrimaryDark,
+                      borderRadius: '4px',
+                      marginTop: '8px',
+                    }}
+                  >
+                    <LockIcon size="xl" />
+                    <Stack spacing={5} w="100%" align="flex-start">
+                      <Badge color="orange">Feature unavailable on current plan</Badge>
+                      <div>
+                        <TooltipLabel label="Range Validation" link={DOCUMENTATION_REFERENCE_LINKS.rangeValidator} />
+                        <p style={{ fontSize: '0.75rem', color: '#868e96', margin: 0 }}>
+                          Set min/max bounds for valid input values
+                        </p>
+                      </div>
+                    </Stack>
+                    <Button component={Link} size="xs" href={ROUTES.EXPLORE_PLANS} onClick={modals.closeAll}>
+                      Explore Options
+                    </Button>
+                  </Flex>
+                ) : (
+                  <Validation
+                    errors={errors}
+                    control={control}
+                    minPlaceholder="Min"
+                    maxPlaceholder="Max"
+                    label="Range Validation"
+                    type={ValidationTypesEnum.RANGE}
+                    unavailable={advancedValidationsUnavailable}
+                    link={DOCUMENTATION_REFERENCE_LINKS.rangeValidator}
+                    description="Set min/max bounds for valid input values"
+                    errorMessagePlaceholder='Value must be between "Min" and "Max"'
+                    index={fields.findIndex((field) => field.validate === ValidationTypesEnum.RANGE)}
+                    onCheckToggle={(status, index) => {
+                      if (status) {
+                        append({ validate: ValidationTypesEnum.RANGE });
+                      } else {
+                        remove(index);
+                      }
+                    }}
+                  />
+                )}
               </AutoHeightComponent>
+
               <AutoHeightComponent isVisible={typeValue === ColumnTypesEnum.NUMBER}>
                 <Validation
                   errors={errors}
@@ -558,7 +564,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                   maxPlaceholder="Max digits (e.g. 10)"
                   label="Number of Digits Validation"
                   type={ValidationTypesEnum.DIGITS}
-                  unavailable={advancedValidationsUnavailable}
+                  unavailable={digitsValidationUnavailable}
                   link={DOCUMENTATION_REFERENCE_LINKS.lengthValidator}
                   description="Set min/max digit count for valid numbers"
                   errorMessagePlaceholder='Number must have between "Min" and "Max" digits'
@@ -594,7 +600,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                   minPlaceholder="Min characters"
                   maxPlaceholder="Max characters"
                   type={ValidationTypesEnum.LENGTH}
-                  unavailable={advancedValidationsUnavailable}
+                  unavailable={lengthValidationUnavailable}
                   link={DOCUMENTATION_REFERENCE_LINKS.lengthValidator}
                   description="Set min/max character count for valid strings"
                   errorMessagePlaceholder='Value must be between "Min" and "Max"'
@@ -608,24 +614,55 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                   }}
                 />
               </AutoHeightComponent>
-              <Validation
-                errors={errors}
-                control={control}
-                label="Unique With Validation"
-                type={ValidationTypesEnum.UNIQUE_WITH}
-                unavailable={advancedValidationsUnavailable}
-                link={DOCUMENTATION_REFERENCE_LINKS.uniqueWithValidator}
-                description="Enforce unique combinations across specified columns"
-                errorMessagePlaceholder='Value should be unique with "Unique Key"'
-                index={fields.findIndex((field) => field.validate === ValidationTypesEnum.UNIQUE_WITH)}
-                onCheckToggle={(status, index) => {
-                  if (status) {
-                    append({ validate: ValidationTypesEnum.UNIQUE_WITH, uniqueKey: '' });
-                  } else {
-                    remove(index);
-                  }
-                }}
-              />
+              {multipleColumnsCombinationUniqueValidationUnavailable ? (
+                <Flex
+                  direction="row"
+                  gap="sm"
+                  align="center"
+                  style={{
+                    padding: '8px',
+                    backgroundColor: colors.BGPrimaryDark,
+                    borderRadius: '4px',
+                    marginTop: '8px',
+                  }}
+                >
+                  <LockIcon size="xl" />
+                  <Stack spacing={5} w="100%" align="flex-start">
+                    <Badge color="orange">Feature unavailable on current plan</Badge>
+                    <div>
+                      <TooltipLabel
+                        label="Unique With Validation"
+                        link={DOCUMENTATION_REFERENCE_LINKS.uniqueWithValidator}
+                      />
+                      <p style={{ fontSize: '0.75rem', color: '#868e96', margin: 0 }}>
+                        Enforce unique combinations across specified columns
+                      </p>
+                    </div>
+                  </Stack>
+                  <Button component={Link} size="xs" href={ROUTES.EXPLORE_PLANS} onClick={modals.closeAll}>
+                    Explore Options
+                  </Button>
+                </Flex>
+              ) : (
+                <Validation
+                  errors={errors}
+                  control={control}
+                  label="Unique With Validation"
+                  type={ValidationTypesEnum.UNIQUE_WITH}
+                  unavailable={false}
+                  link={DOCUMENTATION_REFERENCE_LINKS.uniqueWithValidator}
+                  description="Enforce unique combinations across specified columns"
+                  errorMessagePlaceholder='Value should be unique with "Unique Key"'
+                  index={fields.findIndex((field) => field.validate === ValidationTypesEnum.UNIQUE_WITH)}
+                  onCheckToggle={(status, index) => {
+                    if (status) {
+                      append({ validate: ValidationTypesEnum.UNIQUE_WITH, uniqueKey: '' });
+                    } else {
+                      remove(index);
+                    }
+                  }}
+                />
+              )}
             </Stack>
           </SimpleGrid>
         </div>

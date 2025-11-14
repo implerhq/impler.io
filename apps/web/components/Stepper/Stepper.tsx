@@ -1,4 +1,4 @@
-import { Box, Text, Progress } from '@mantine/core';
+import { Box, Text } from '@mantine/core';
 import { useStyles } from './Stepper.styles';
 
 interface StepperProps {
@@ -8,14 +8,12 @@ interface StepperProps {
 
 export const Stepper = ({ currentStep, totalSteps }: StepperProps) => {
   const { classes } = useStyles();
-  const progressValue = (currentStep / totalSteps) * 100;
 
   return (
     <Box className={classes.stepperContainer}>
       <Text className={classes.stepText}>
-        Step {currentStep} of {totalSteps}
+        {currentStep}/{totalSteps}
       </Text>
-      <Progress value={progressValue} className={classes.progressBar} radius="xs" />
     </Box>
   );
 };

@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import dayjs from 'dayjs';
 import { useCustomerPortal } from 'subos-frontend';
-import { Stack, Group, Text, ActionIcon, Menu, Alert } from '@mantine/core';
+import { Stack, Group, ActionIcon, Menu, Alert } from '@mantine/core';
 
 import { ActionsEnum, colors, DATE_FORMATS, PLANCODEENUM, SubjectsEnum } from '@config';
 import { ISubscriptionData, numberFormatter } from '@impler/shared';
@@ -34,11 +34,6 @@ export function ActiveSubscriptionDetails({
   const { openCustomerPortal } = useCustomerPortal();
   const { openCancelPlanModal } = useCancelPlan();
 
-  const planName = activePlanDetails?.plan?.name || 'Current Plan';
-  const expiryDate = activePlanDetails?.expiryDate
-    ? dayjs(activePlanDetails.expiryDate).format(DATE_FORMATS.LONG)
-    : 'N/A';
-
   const teamMembersUsed = activePlanDetails?.usage?.TEAM_MEMBERS || 0;
   const teamMembersAllocated = activePlanDetails?.meta?.TEAM_MEMBERS ? activePlanDetails.meta.TEAM_MEMBERS - 1 : 0;
 
@@ -53,20 +48,13 @@ export function ActiveSubscriptionDetails({
 
   return (
     <Stack spacing={0}>
-      <Group position="apart" align="center" mb="lg">
-        <Group spacing={8}>
-          <Text size="lg" weight={700}>
-            Your Plan - {planName} will
-          </Text>
-          <Text size="lg" color="dimmed">
-            (Expire on {expiryDate})
-          </Text>
-        </Group>
+      <Group mb="xs" position="apart">
+        <Group spacing={8}></Group>
 
-        <Menu position="bottom-end" shadow="md" width={240}>
+        <Menu position="bottom-end" shadow="xl" width={240}>
           <Menu.Target>
             <ActionIcon variant="subtle" color="gray" size="lg" style={{ color: '#9ca3af' }}>
-              <ThreeDotsVerticalIcon size="sm" />
+              <ThreeDotsVerticalIcon size="xl" color="white" />
             </ActionIcon>
           </Menu.Target>
 
