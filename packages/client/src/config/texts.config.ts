@@ -97,7 +97,6 @@ export const WIDGET_TEXTS = {
     LABEL_ALL_RECORDS: `All {records}`,
     LABEL_VALID_RECORDS: `Valid {records}`,
     LABEL_INVALID_RECORDS: `Invalid {records}`,
-    MAX_RECORD_LIMIT_ERROR_TITLE: 'Max Record Limit Error',
     REPLACE: 'Replace',
     FIND_REPLACE: 'Find and Replace',
     ALL_COLUMNS_LABEL: 'All Columns',
@@ -109,6 +108,7 @@ export const WIDGET_TEXTS = {
     IN_COLUMN_LABEL: 'In Column',
     CASE_SENSITIVE_LABEL: 'Case Sensitive',
     MATCH_ENTIRE_LABEL: 'Match Entire Cell',
+    MAX_RECORD_LIMIT_ERROR_TITLE: 'Max Record Limit Error',
     MAX_RECORD_LIMIT_ERROR: 'You can not import records more than',
   },
   PHASE4: {
