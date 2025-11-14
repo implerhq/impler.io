@@ -95,7 +95,7 @@ export function handleApiError({
   error: any;
   context?: string;
   shouldLog?: boolean;
-}): string {
+}): string | IErrorDetails {
   const isAxios = axiosInstance.isAxiosError(error);
   const errorDetails: IErrorDetails = isAxios
     ? {
@@ -155,7 +155,7 @@ export function handleApiError({
     }
   }
 
-  return errorDetails.message || 'An unexpected error occurred.';
+  return errorDetails;
 }
 
 interface IErrorDetails {
