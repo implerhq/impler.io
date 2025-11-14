@@ -157,8 +157,8 @@ export function useImports() {
   function handleDownloadSample() {
     try {
       const link = document.createElement('a');
-      link.href = '/sample-excel.xlsx'; // Direct path from public folder
-      link.download = 'sample-import.xlsx'; // The name you want the downloaded file to have
+      link.href = '/sample-excel-file.xlsx';
+      link.download = 'sample-import-file.xlsx';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
