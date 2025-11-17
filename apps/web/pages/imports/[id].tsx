@@ -145,7 +145,7 @@ function ImportDetails() {
         },
       });
     }
-  }, [showWelcome, onImportClick, clearWelcomeFlag]);
+  }, [showWelcome, onImportClick]);
 
   return (
     <Flex gap="sm" direction="column" h="100%" style={{ position: 'relative' }}>
