@@ -81,7 +81,11 @@ export function PlanCard({ plan, isYearly }: PlanCardProps) {
       }
     >
       <LoadingOverlay visible={isLoading} overlayBlur={2} />
-
+      {(plan.code === PLANCODEENUM.GROWTH || plan.code === PLANCODEENUM.GROWTH_YEARLY) && (
+        <Badge color="blue" variant="gradient" className={classes.recommendedBadge}>
+          Recommended
+        </Badge>
+      )}
       <div
         style={{
           position: 'sticky',
@@ -91,11 +95,6 @@ export function PlanCard({ plan, isYearly }: PlanCardProps) {
         }}
       >
         <Stack mt="md">
-          {(plan.code === PLANCODEENUM.GROWTH || plan.code === PLANCODEENUM.GROWTH_YEARLY) && (
-            <Badge color="blue" variant="gradient" className={classes.recommendedBadge}>
-              Recommended
-            </Badge>
-          )}
           <Text className={classes.planName}>{plan.name}</Text>
           <Text className={classes.planPrice}>
             {plan.price === 0 ? 'Free' : `$${plan.price} / ${isYearly ? 'year' : 'month'}`}
