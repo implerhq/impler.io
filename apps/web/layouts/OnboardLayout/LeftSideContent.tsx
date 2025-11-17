@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { Box, Text, Title, Stack, Group, useMantineTheme, Center, Divider } from '@mantine/core';
 import Image from 'next/image';
 import FullLogo from '@assets/images/full-logo-light.png';
@@ -94,8 +94,8 @@ export function LeftSideContent() {
           <Box mt="xl">
             <Divider
               label={
-                <Text size="sm" color={colors.StrokeLight} px="md">
-                  Trusted by fast-moving SaaS teams and developers
+                <Text size="md" color={colors.StrokeLight} px="md">
+                  Developers and Teams Love Us, You will too.
                 </Text>
               }
               labelPosition="center"
