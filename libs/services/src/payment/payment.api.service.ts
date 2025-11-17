@@ -89,6 +89,7 @@ export class PaymentAPIService {
       name: createUser.name,
       email: createUser.email,
       externalId: createUser.externalId,
+      planCode: 'TRIAL',
     };
 
     const url = `${this.PAYMENT_API_BASE_URL}/api/v1/customer`;
