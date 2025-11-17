@@ -120,11 +120,11 @@ function ImportDetails() {
 
   const onImportClick = useCallback(() => {
     track({ name: 'IMPORT CLICK', properties: {} });
-
+    clearWelcomeFlag();
     modals.close(MODAL_KEYS.WELCOME_IMPORTER);
 
     setTimeout(() => showWidget({}), 150);
-  }, [showWidget]);
+  }, [showWidget, clearWelcomeFlag]);
 
   useEffect(() => {
     if (showWelcome) {
@@ -145,7 +145,7 @@ function ImportDetails() {
         },
       });
     }
-  }, [showWelcome, onImportClick]);
+  }, [showWelcome, onImportClick, clearWelcomeFlag]);
 
   return (
     <Flex gap="sm" direction="column" h="100%" style={{ position: 'relative' }}>

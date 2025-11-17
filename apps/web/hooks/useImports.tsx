@@ -157,8 +157,8 @@ export function useImports() {
   function handleDownloadSample() {
     try {
       const link = document.createElement('a');
-      link.href = '/sample-excel-file.xlsx';
-      link.download = 'sample-import-file.xlsx';
+      link.href = '/sample-excel-file.csv';
+      link.download = 'sample-import-file.csv';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

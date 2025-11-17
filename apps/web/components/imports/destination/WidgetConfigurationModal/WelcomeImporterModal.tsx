@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stack, Title, Text, Box, Container, Anchor } from '@mantine/core';
+import { Stack, Title, Text, Box, Container, Anchor, Flex } from '@mantine/core';
 import { useStyles } from './WelcomeImporterModal.styles';
 import { Button } from '@ui/button';
 import Lottie from 'lottie-react';
@@ -8,6 +8,7 @@ import TickConfetti from './static-assets/success_confetti.json';
 import Link from 'next/link';
 import { CONSTANTS } from '@config';
 import { useImports } from '@hooks/useImports';
+import { modals } from '@mantine/modals';
 
 interface IWelcomeImporterModalProps {
   onDoWelcomeWidgetAction: () => void;
@@ -33,7 +34,6 @@ export function WelcomeImporterModal({ onDoWelcomeWidgetAction }: IWelcomeImport
         <Title align="center" color="white" order={1}>
           Welcome to your new importer!
         </Title>
-
         <Text align="center">
           You can give it a quick try and see how it works - no setup required. Download the
           <br />
@@ -41,16 +41,18 @@ export function WelcomeImporterModal({ onDoWelcomeWidgetAction }: IWelcomeImport
             Demo File!
           </Anchor>
         </Text>
-
-        <Button fullWidth onClick={onDoWelcomeWidgetAction} loading={false}>
-          Give it a try
-        </Button>
-
         <Text color="dimmed">Need help embedding your first importer?</Text>
-
         <Link target="_blank" href={CONSTANTS.IMPLER_CAL_QUICK_MEETING}>
           Book a 15-min onboarding call
         </Link>
+        <Flex w="100%" gap="md" mt="md">
+          <Button fullWidth onClick={onDoWelcomeWidgetAction} loading={false}>
+            Give it a try
+          </Button>
+          <Button fullWidth variant="outline" onClick={modals.closeAll} loading={false}>
+            Close
+          </Button>
+        </Flex>
       </Stack>
     </Container>
   );
