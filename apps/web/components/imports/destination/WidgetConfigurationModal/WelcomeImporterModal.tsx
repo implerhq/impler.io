@@ -48,7 +48,9 @@ export function WelcomeImporterModal({ onDoWelcomeWidgetAction }: IWelcomeImport
 
         <Text color="dimmed">Need help embedding your first importer?</Text>
 
-        <Link href={CONSTANTS.IMPLER_CAL_QUICK_MEETING}>Book a 15-min onboarding call</Link>
+        <Link target="_blank" href={CONSTANTS.IMPLER_CAL_QUICK_MEETING}>
+          Book a 15-min onboarding call
+        </Link>
       </Stack>
     </Container>
   );
