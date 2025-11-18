@@ -46,10 +46,15 @@ export function WelcomeImporterModal({ onDoWelcomeWidgetAction }: IWelcomeImport
           Book a 15-min onboarding call
         </Link>
         <Flex w="100%" gap="md" mt="md">
-          <Button fullWidth onClick={onDoWelcomeWidgetAction} loading={false}>
+          <Button
+            fullWidth
+            onClick={() => {
+              onDoWelcomeWidgetAction();
+            }}
+          >
             Give it a try
           </Button>
-          <Button fullWidth variant="outline" onClick={modals.closeAll} loading={false}>
+          <Button fullWidth variant="outline" onClick={modals.closeAll}>
             Close
           </Button>
         </Flex>
