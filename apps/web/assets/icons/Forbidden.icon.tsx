@@ -14,8 +14,8 @@ export function ForbiddenIcon({ size = 'xl' }: IconType) {
       id="Forbid--Streamline-Tabler"
     >
       <desc>Forbid Streamline Icon: https://streamlinehq.com</desc>
-      <path d="M3 12a9 9 0 1 0 18 0 9 9 0 1 0 -18 0" stroke-width="2"></path>
-      <path d="m9 9 6 6" stroke-width="2"></path>
+      <path d="M3 12a9 9 0 1 0 18 0 9 9 0 1 0 -18 0" strokeWidth="2"></path>
+      <path d="m9 9 6 6" strokeWidth="2"></path>
     </svg>
   );
 }
