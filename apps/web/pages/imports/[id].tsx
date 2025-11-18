@@ -83,7 +83,7 @@ function ImportDetails() {
     [onImportCreateClick, setActiveTab, router, clearWelcomeFlag, onIntegrationClick]
   );
 
-  const { showWidget, isImplerInitiated, closeWidget } = useImpler({
+  const { showWidget, isImplerInitiated } = useImpler({
     primaryColor: colors.faintYellow,
     templateId: templateData?._id,
     projectId: templateData?._projectId,
@@ -92,7 +92,6 @@ function ImportDetails() {
     onUploadComplete: (data) => {
       onSpreadsheetImported();
       if (data) {
-        closeWidget();
         if (showWelcome) {
           modals.closeAll();
           setTimeout(() => {
@@ -120,24 +119,24 @@ function ImportDetails() {
 
   const onImportClick = useCallback(() => {
     track({ name: 'IMPORT CLICK', properties: {} });
-    clearWelcomeFlag();
-    modals.close(MODAL_KEYS.WELCOME_IMPORTER);
-
     setTimeout(() => showWidget({}), 150);
+  }, [showWidget]);
+
+  const onWelcomeImportClick = useCallback(() => {
+    track({ name: 'IMPORT CLICK', properties: {} });
+    modals.close(MODAL_KEYS.WELCOME_IMPORTER);
+    setTimeout(() => {
+      clearWelcomeFlag();
+      showWidget({});
+    }, 200);
   }, [showWidget, clearWelcomeFlag]);
 
   useEffect(() => {
     if (showWelcome) {
       modals.open({
         id: MODAL_KEYS.WELCOME_IMPORTER,
-        children: (
-          <WelcomeImporterModal
-            onDoWelcomeWidgetAction={() => {
-              onImportClick();
-            }}
-          />
-        ),
-        withCloseButton: true,
+        children: <WelcomeImporterModal onDoWelcomeWidgetAction={onWelcomeImportClick} />,
+        withCloseButton: false,
         centered: true,
         size: 'xl',
         onClose: () => {
@@ -145,7 +144,7 @@ function ImportDetails() {
         },
       });
     }
-  }, [showWelcome, onImportClick, clearWelcomeFlag]);
+  }, [showWelcome, onWelcomeImportClick, clearWelcomeFlag]);
 
   return (
     <Flex gap="sm" direction="column" h="100%" style={{ position: 'relative' }}>

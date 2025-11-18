@@ -49,7 +49,10 @@ export function WelcomeImporterModal({ onDoWelcomeWidgetAction }: IWelcomeImport
           <Button
             fullWidth
             onClick={() => {
-              onDoWelcomeWidgetAction();
+              modals.closeAll();
+              setTimeout(() => {
+                onDoWelcomeWidgetAction();
+              }, 150);
             }}
           >
             Give it a try
