@@ -1,5 +1,6 @@
 import React from 'react';
 import { Stack, Title, Text, Box, Container, Anchor, Flex } from '@mantine/core';
+import { modals } from '@mantine/modals';
 import { useStyles } from './WelcomeImporterModal.styles';
 import { Button } from '@ui/button';
 import Lottie from 'lottie-react';
@@ -8,7 +9,6 @@ import TickConfetti from './static-assets/success_confetti.json';
 import Link from 'next/link';
 import { CONSTANTS } from '@config';
 import { useImports } from '@hooks/useImports';
-import { modals } from '@mantine/modals';
 
 interface IWelcomeImporterModalProps {
   onDoWelcomeWidgetAction: () => void;
