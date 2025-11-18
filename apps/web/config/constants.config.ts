@@ -3,7 +3,7 @@ import { ReactIcon } from '@assets/icons/React.icon';
 import { BubbleIcon } from '@assets/icons/Bubble.icon';
 import { AngularIcon } from '@assets/icons/Angular.icon';
 import { JavaScriptIcon } from '@assets/icons/Javascript.icon';
-import { UserRolesEnum, IntegrationEnum, ColumnTypesEnum } from '@impler/shared';
+import { UserRolesEnum, IntegrationEnum, ColumnTypesEnum, IColumn } from '@impler/shared';
 import { Plan } from '@components/UpgradePlan/Plans';
 import SuperworksLogo from '@assets/images/companies/Superworks.svg';
 import AklamioLogo from '@assets/images/companies/aklamio.svg';
@@ -771,7 +771,7 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
   ],
 };
 
-export const sampleColumns = [
+export const sampleColumns: Partial<IColumn>[] = [
   {
     name: 'Product Name/ID',
     key: 'Product Name/ID *',
@@ -809,6 +809,7 @@ export const sampleColumns = [
     key: 'Category',
     description: 'The category of the product',
     type: ColumnTypesEnum.SELECT,
+    selectValues: ['Electronics', 'Furniture', 'Appliances'],
     isRequired: false,
     isUnique: false,
   },
