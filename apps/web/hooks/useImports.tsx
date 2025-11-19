@@ -15,6 +15,15 @@ import { CreateImportForm } from '@components/imports/forms/CreateImportForm';
 import { DuplicateImportForm } from '@components/imports/forms/DuplicateImportForm';
 
 export function useImports() {
+  const [showWelcome, setShowWelcome] = useState(
+    localStorage.getItem(CONSTANTS.SHOW_WELCOME_IMPORTER_STORAGE_KEY) === 'true'
+  );
+
+  const clearWelcomeFlag = useCallback(() => {
+    localStorage.removeItem(CONSTANTS.SHOW_WELCOME_IMPORTER_STORAGE_KEY);
+    setShowWelcome(false);
+  }, []);
+
   const { push } = useRouter();
   const queryClient = useQueryClient();
   const { profileInfo } = useAppState();
@@ -147,12 +156,6 @@ export function useImports() {
       ),
     });
   }
-
-  const showWelcome = localStorage.getItem(CONSTANTS.SHOW_WELCOME_IMPORTER_STORAGE_KEY) === 'true';
-
-  const clearWelcomeFlag = useCallback(() => {
-    localStorage.removeItem(CONSTANTS.SHOW_WELCOME_IMPORTER_STORAGE_KEY);
-  }, []);
 
   function handleDownloadSample() {
     try {

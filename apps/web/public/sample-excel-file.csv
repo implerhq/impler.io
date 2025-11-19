@@ -1,11 +1,1001 @@
 Product Name/ID,Quantity,Unit Price,Total Price,Category
-Laptop 001,2,800,1600,Electronics
-Wireless Mouse 002,5,25,125,Electronics
-Office Chair 003,3,150,450,Furniture
-LED Monitor 004,4,300,1200,Electronics
-Blender 005,1,120,120,Appliances
-Desk Lamp 006,6,30,180,Furniture
-Smartphone 007,3,500,1500,Electronics
-Coffee Maker 008,2,80,160,Appliances
-Gaming Keyboard 009,4,70,280,Electronics
-Refrigerator 010,1,1000,1000,Appliances
+Refrigerator 001,4,25,100,Appliances
+Filing Cabinet 002,1,114,114,Furniture
+Filing Cabinet 003,10,804,8040,Furniture
+Wireless Mouse 004,2,756,1512,Electronics
+Projector 005,6,97,582,Office
+Whiteboard 006,10,612,6120,Home Appliances
+Headphones 007,4,441,1764,Electronics
+Wireless Mouse 008,2,274,548,Electronics
+Scanner 009,5,512,2560,Office
+Filing Cabinet 010,9,503,4527,Furniture
+Office Chair 011,5,421,2105,Furniture
+Refrigerator 012,7,175,1225,Appliances
+Gaming Keyboard 013,10,855,8550,Electronics
+Scanner 014,5,340,1700,Office
+Filing Cabinet 015,8,612,4896,Home Appliances
+Bookshelf 016,9,998,8982,Furniture
+Desk Lamp 017,3,808,2424,Furniture
+Blender 018,7,277,1939,Appliances
+Desk 019,6,92,552,Furniture
+Laptop 020,8,756,6048,Electronics
+Scanner 021,7,349,2443,Office
+Whiteboard 022,8,318,2544,Office
+Whiteboard 023,6,886,5316,Office
+Office Chair 024,2,334,668,Furniture
+Gaming Keyboard 025,8,329,2632,Electronics
+Scanner 026,7,572,4004,Office
+Scanner 027,5,859,4295,Office
+Microwave 028,7,998,6986,Appliances
+Desk Lamp 029,6,849,5094,Furniture
+Scanner 030,8,888,7104,Office
+Refrigerator 031,7,954,6678,Appliances
+Refrigerator 032,7,186,1302,Appliances
+Gaming Keyboard 033,9,717,6453,Electronics
+Toaster 034,4,391,1564,Appliances
+Laptop 035,5,498,2490,Electronics
+Printer 036,6,392,2352,Office
+Blender 037,7,510,3570,Appliances
+Laptop 038,5,825,4125,Electronics
+Wireless Mouse 039,1,720,720,Electronics
+Whiteboard 040,9,953,8577,Office
+Toaster 041,3,963,2889,Appliances
+Headphones 042,6,557,3342,Electronics
+Printer 043,3,433,1299,Office
+Bookshelf 044,1,949,949,Furniture
+Blender 045,3,71,213,Appliances
+Projector 046,4,966,3864,Office
+Bookshelf 047,8,613,4904,Furniture
+Refrigerator 048,5,410,2050,Appliances
+Whiteboard 049,8,463,3704,Office
+Scanner 050,6,903,5418,Office
+Refrigerator 051,10,275,2750,Appliances
+Microwave 052,8,404,3232,Appliances
+Desk Lamp 053,6,813,4878,Furniture
+Headphones 054,2,222,444,Electronics
+Gaming Keyboard 055,2,188,376,Electronics
+Blender 056,8,841,6728,Appliances
+Office Chair 057,3,54,162,Furniture
+Tablet 058,1,611,611,Electronics
+Microwave 059,3,522,1566,Appliances
+Office Chair 060,5,95,475,Furniture
+Microwave 061,10,682,6820,Appliances
+LED Monitor 062,2,353,706,Electronics
+Smartphone 063,2,428,856,Electronics
+Projector 064,4,566,2264,Office
+Tablet 065,1,914,914,Electronics
+Projector 066,7,152,1064,Office
+Desk 067,3,955,2865,Furniture
+Refrigerator 068,9,168,1512,Appliances
+Laptop 069,9,856,7704,Electronics
+Filing Cabinet 070,1,731,731,Furniture
+Blender 071,10,814,8140,Appliances
+Office Chair 072,3,411,1233,Furniture
+Scanner 073,1,280,280,Office
+Blender 074,6,341,2046,Appliances
+Bookshelf 075,2,859,1718,Furniture
+Printer 076,2,139,278,Office
+Filing Cabinet 077,6,190,1140,Furniture
+Office Chair 078,6,833,4998,Furniture
+Coffee Maker 079,7,919,6433,Appliances
+Smartphone 080,1,419,419,Electronics
+Keyboard 081,5,265,1325,Electronics
+Desk Lamp 082,3,818,2454,Furniture
+Gaming Keyboard 083,1,144,144,Electronics
+Bookshelf 084,5,58,290,Furniture
+Printer 085,10,458,4580,Office
+Whiteboard 086,4,453,1812,Office
+Projector 087,2,776,1552,Office
+Microwave 088,1,221,221,Appliances
+Coffee Maker 089,7,238,1666,Appliances
+Headphones 090,7,59,413,Electronics
+Office Chair 091,2,324,648,Furniture
+Coffee Maker 092,9,890,8010,Appliances
+Microwave 093,9,343,3087,Appliances
+Scanner 094,5,665,3325,Office
+Microwave 095,3,509,1527,Appliances
+Blender 096,4,152,608,Appliances
+Desk Lamp 097,1,698,698,Furniture
+Bookshelf 098,1,366,366,Furniture
+Bookshelf 099,5,362,1810,Furniture
+Refrigerator 100,4,908,3632,Appliances
+Smartphone 101,10,955,9550,Electronics
+Office Chair 102,5,446,2230,Furniture
+Whiteboard 103,5,974,4870,Office
+Desk 104,5,139,695,Furniture
+Microwave 105,4,392,1568,Appliances
+Projector 106,7,713,4991,Office
+Printer 107,2,231,462,Office
+Projector 108,9,852,7668,Office
+Wireless Mouse 109,7,503,3521,Electronics
+Microwave 110,3,511,1533,Appliances
+Projector 111,1,270,270,Office
+Projector 112,6,79,474,Office
+Desk 113,9,337,3033,Furniture
+Smartphone 114,2,784,1568,Electronics
+Projector 115,4,685,2740,Office
+Tablet 116,9,540,4860,Electronics
+Microwave 117,6,76,456,Appliances
+Refrigerator 118,1,233,233,Appliances
+Whiteboard 119,3,222,666,Office
+Blender 120,5,957,4785,Appliances
+Microwave 121,4,611,2444,Appliances
+Blender 122,10,673,6730,Appliances
+Toaster 123,10,864,8640,Appliances
+Projector 124,4,491,1964,Office
+Toaster 125,10,816,8160,Appliances
+Blender 126,6,545,3270,Appliances
+LED Monitor 127,4,771,3084,Electronics
+Projector 128,8,153,1224,Office
+Whiteboard 129,9,729,6561,Office
+Whiteboard 130,2,156,312,Office
+Tablet 131,4,939,3756,Electronics
+Desk 132,10,658,6580,Furniture
+Whiteboard 133,4,74,296,Office
+Microwave 134,5,375,1875,Appliances
+Microwave 135,8,932,7456,Appliances
+Office Chair 136,2,963,1926,Furniture
+Refrigerator 137,6,489,2934,Appliances
+Smartphone 138,7,380,2660,Electronics
+Laptop 139,6,224,1344,Electronics
+Filing Cabinet 140,4,989,3956,Furniture
+Printer 141,3,498,1494,Office
+Filing Cabinet 142,3,514,1542,Furniture
+Office Chair 143,7,465,3255,Furniture
+Coffee Maker 144,2,78,156,Appliances
+Projector 145,9,930,8370,Office
+Desk 146,4,865,3460,Furniture
+Filing Cabinet 147,6,905,5430,Furniture
+Headphones 148,2,588,1176,Electronics
+Office Chair 149,5,366,1830,Furniture
+Scanner 150,9,260,2340,Office
+Whiteboard 151,2,942,1884,Office
+Whiteboard 152,5,391,1955,Office
+Blender 153,7,73,511,Appliances
+Desk 154,1,55,55,Furniture
+Blender 155,4,406,1624,Appliances
+Tablet 156,5,308,1540,Electronics
+Desk Lamp 157,7,299,2093,Furniture
+Blender 158,7,117,819,Appliances
+Gaming Keyboard 159,7,283,1981,Electronics
+Office Chair 160,3,885,2655,Furniture
+Filing Cabinet 161,8,1016,8128,Furniture
+Keyboard 162,1,763,763,Electronics
+Tablet 163,5,963,4815,Electronics
+Desk Lamp 164,8,387,3096,Furniture
+Scanner 165,6,734,4404,Office
+Refrigerator 166,1,215,215,Appliances
+LED Monitor 167,10,193,1930,Electronics
+Blender 168,7,64,448,Appliances
+Desk Lamp 169,6,802,4812,Furniture
+LED Monitor 170,5,32,160,Electronics
+Toaster 171,2,43,86,Appliances
+Toaster 172,4,360,1440,Appliances
+Desk Lamp 173,9,1000,9000,Furniture
+Desk 174,2,693,1386,Furniture
+Filing Cabinet 175,10,973,9730,Furniture
+Wireless Mouse 176,3,341,1023,Electronics
+Filing Cabinet 177,3,749,2247,Furniture
+Scanner 178,5,187,935,Office
+Refrigerator 179,3,597,1791,Appliances
+Scanner 180,3,130,390,Office
+Scanner 181,6,726,4356,Office
+Filing Cabinet 182,9,329,2961,Furniture
+Printer 183,3,648,1944,Office
+Toaster 184,6,239,1434,Appliances
+Coffee Maker 185,9,202,1818,Appliances
+Coffee Maker 186,5,508,2540,Appliances
+Refrigerator 187,6,400,2400,Appliances
+Printer 188,10,99,990,Office
+Scanner 189,6,232,1392,Office
+Whiteboard 190,4,786,3144,Office
+Office Chair 191,6,326,1956,Furniture
+Wireless Mouse 192,8,417,3336,Electronics
+Headphones 193,6,504,3024,Electronics
+Desk 194,7,314,2198,Furniture
+LED Monitor 195,5,672,3360,Electronics
+Smartphone 196,4,425,1700,Electronics
+Office Chair 197,8,291,2328,Furniture
+Bookshelf 198,8,553,4424,Furniture
+Coffee Maker 199,5,710,3550,Appliances
+Bookshelf 200,1,691,691,Furniture
+Whiteboard 201,3,819,2457,Office
+Filing Cabinet 202,5,246,1230,Furniture
+Scanner 203,1,485,485,Office
+Laptop 204,1,845,845,Electronics
+Whiteboard 205,8,913,7304,Office
+Desk Lamp 206,7,720,5040,Furniture
+Desk Lamp 207,1,26,26,Furniture
+Headphones 208,9,622,5598,Electronics
+Printer 209,1,21,21,Office
+Desk 210,1,255,255,Furniture
+Projector 211,3,160,480,Office
+Whiteboard 212,3,650,1950,Office
+Smartphone 213,10,585,5850,Electronics
+Refrigerator 214,2,271,542,Appliances
+Whiteboard 215,10,405,4050,Office
+Desk 216,6,290,1740,Furniture
+Microwave 217,4,939,3756,Appliances
+Wireless Mouse 218,7,721,5047,Electronics
+LED Monitor 219,9,459,4131,Electronics
+Scanner 220,5,438,2190,Office
+Whiteboard 221,9,643,5787,Office
+Projector 222,4,278,1112,Office
+Scanner 223,10,439,4390,Office
+LED Monitor 224,6,176,1056,Electronics
+Smartphone 225,6,903,5418,Electronics
+Refrigerator 226,5,191,955,Appliances
+Desk Lamp 227,7,769,5383,Furniture
+Whiteboard 228,2,520,1040,Office
+Laptop 229,7,187,1309,Electronics
+Gaming Keyboard 230,2,398,796,Electronics
+Desk 231,1,242,242,Furniture
+Refrigerator 232,1,814,814,Appliances
+Projector 233,3,551,1653,Office
+Keyboard 234,9,346,3114,Electronics
+Laptop 235,4,91,364,Electronics
+LED Monitor 236,3,206,618,Electronics
+Tablet 237,8,697,5576,Electronics
+Filing Cabinet 238,2,349,698,Furniture
+Printer 239,5,564,2820,Office
+Gaming Keyboard 240,4,613,2452,Electronics
+Desk Lamp 241,5,1014,5070,Furniture
+Blender 242,8,641,5128,Appliances
+Filing Cabinet 243,8,646,5168,Furniture
+Projector 244,1,711,711,Office
+Headphones 245,3,266,798,Electronics
+Whiteboard 246,10,354,3540,Office
+Gaming Keyboard 247,9,382,3438,Electronics
+Keyboard 248,8,647,5176,Electronics
+Keyboard 249,1,211,211,Electronics
+Microwave 250,7,759,5313,Appliances
+Toaster 251,5,367,1835,Appliances
+Blender 252,1,993,993,Appliances
+Printer 253,5,785,3925,Office
+Blender 254,1,204,204,Appliances
+Toaster 255,4,884,3536,Appliances
+Keyboard 256,10,61,610,Electronics
+Desk Lamp 257,4,853,3412,Furniture
+Keyboard 258,8,869,6952,Electronics
+Smartphone 259,3,265,795,Electronics
+Laptop 260,10,966,9660,Electronics
+Keyboard 261,3,490,1470,Electronics
+Microwave 262,5,961,4805,Appliances
+Desk 263,10,426,4260,Furniture
+Scanner 264,4,62,248,Office
+Laptop 265,8,756,6048,Electronics
+Refrigerator 266,4,618,2472,Appliances
+Printer 267,9,89,801,Office
+Printer 268,9,359,3231,Office
+Laptop 269,1,208,208,Electronics
+Desk Lamp 270,4,930,3720,Furniture
+Headphones 271,10,409,4090,Electronics
+Headphones 272,7,943,6601,Electronics
+Microwave 273,5,554,2770,Appliances
+Refrigerator 274,3,536,1608,Appliances
+Gaming Keyboard 275,2,928,1856,Electronics
+Desk Lamp 276,3,811,2433,Furniture
+Toaster 277,3,702,2106,Appliances
+Coffee Maker 278,7,703,4921,Appliances
+Scanner 279,3,270,810,Office
+Desk 280,3,642,1926,Furniture
+Tablet 281,9,942,8478,Electronics
+Whiteboard 282,8,865,6920,Office
+Projector 283,7,354,2478,Office
+Wireless Mouse 284,2,98,196,Electronics
+Scanner 285,10,878,8780,Office
+Filing Cabinet 286,7,939,6573,Furniture
+Projector 287,4,228,912,Office
+Gaming Keyboard 288,10,347,3470,Electronics
+Blender 289,5,624,3120,Appliances
+Toaster 290,9,516,4644,Appliances
+LED Monitor 291,6,695,4170,Electronics
+Coffee Maker 292,8,310,2480,Appliances
+Desk 293,3,720,2160,Furniture
+Projector 294,6,945,5670,Office
+Coffee Maker 295,3,400,1200,Appliances
+Office Chair 296,9,350,3150,Furniture
+Refrigerator 297,4,53,212,Appliances
+Gaming Keyboard 298,2,540,1080,Electronics
+LED Monitor 299,7,126,882,Electronics
+Refrigerator 300,9,173,1557,Appliances
+Toaster 301,9,967,8703,Appliances
+Toaster 302,3,45,135,Appliances
+Coffee Maker 303,8,527,4216,Appliances
+Office Chair 304,3,881,2643,Furniture
+Blender 305,3,23,69,Appliances
+Gaming Keyboard 306,10,687,6870,Electronics
+Scanner 307,5,700,3500,Office
+Projector 308,10,996,9960,Office
+Tablet 309,1,740,740,Electronics
+Coffee Maker 310,8,514,4112,Appliances
+Projector 311,3,247,741,Office
+Desk Lamp 312,10,89,890,Furniture
+Wireless Mouse 313,7,365,2555,Electronics
+Gaming Keyboard 314,4,797,3188,Electronics
+Desk Lamp 315,3,497,1491,Furniture
+Tablet 316,2,705,1410,Electronics
+Wireless Mouse 317,10,773,7730,Electronics
+Microwave 318,4,664,2656,Appliances
+Scanner 319,2,447,894,Office
+Coffee Maker 320,8,278,2224,Appliances
+Projector 321,10,740,7400,Office
+Gaming Keyboard 322,8,686,5488,Electronics
+Desk 323,2,452,904,Furniture
+Office Chair 324,9,299,2691,Furniture
+Coffee Maker 325,2,280,560,Appliances
+Keyboard 326,7,86,602,Electronics
+Desk 327,8,783,6264,Furniture
+Smartphone 328,4,106,424,Electronics
+Bookshelf 329,10,870,8700,Furniture
+Toaster 330,5,454,2270,Appliances
+Projector 331,5,992,4960,Office
+Headphones 332,4,950,3800,Electronics
+Whiteboard 333,2,962,1924,Office
+Scanner 334,5,761,3805,Office
+Headphones 335,10,193,1930,Electronics
+Filing Cabinet 336,10,822,8220,Furniture
+Filing Cabinet 337,9,485,4365,Furniture
+Coffee Maker 338,6,631,3786,Appliances
+LED Monitor 339,10,467,4670,Electronics
+Refrigerator 340,10,747,7470,Appliances
+Wireless Mouse 341,7,501,3507,Electronics
+Bookshelf 342,5,897,4485,Furniture
+Filing Cabinet 343,6,783,4698,Furniture
+Laptop 344,7,957,6699,Electronics
+Desk Lamp 345,10,749,7490,Furniture
+Printer 346,2,689,1378,Office
+Tablet 347,6,399,2394,Electronics
+Headphones 348,10,492,4920,Electronics
+Microwave 349,3,400,1200,Appliances
+Desk Lamp 350,8,633,5064,Furniture
+Filing Cabinet 351,9,716,6444,Furniture
+LED Monitor 352,1,590,590,Electronics
+Laptop 353,2,212,424,Electronics
+Blender 354,8,895,7160,Appliances
+Scanner 355,9,330,2970,Office
+Bookshelf 356,6,954,5724,Furniture
+Microwave 357,2,847,1694,Appliances
+Wireless Mouse 358,1,862,862,Electronics
+Headphones 359,5,287,1435,Electronics
+Office Chair 360,5,567,2835,Furniture
+Printer 361,7,491,3437,Office
+Toaster 362,6,672,4032,Appliances
+Whiteboard 363,10,213,2130,Office
+Laptop 364,9,812,7308,Electronics
+Whiteboard 365,10,205,2050,Office
+Desk 366,2,370,740,Furniture
+Printer 367,8,627,5016,Office
+Coffee Maker 368,1,658,658,Appliances
+Microwave 369,4,691,2764,Appliances
+Tablet 370,9,949,8541,Electronics
+Laptop 371,2,724,1448,Electronics
+Desk Lamp 372,5,528,2640,Furniture
+LED Monitor 373,9,413,3717,Electronics
+Gaming Keyboard 374,9,45,405,Electronics
+Laptop 375,1,661,661,Electronics
+Scanner 376,1,365,365,Office
+Whiteboard 377,3,242,726,Office
+Projector 378,9,801,7209,Office
+Microwave 379,8,767,6136,Appliances
+Coffee Maker 380,5,827,4135,Appliances
+Toaster 381,9,353,3177,Appliances
+Laptop 382,8,509,4072,Electronics
+Toaster 383,4,422,1688,Appliances
+Tablet 384,9,459,4131,Electronics
+Blender 385,6,463,2778,Appliances
+Laptop 386,9,906,8154,Electronics
+Desk 387,5,783,3915,Furniture
+Toaster 388,2,223,446,Appliances
+Coffee Maker 389,4,876,3504,Appliances
+Projector 390,3,966,2898,Office
+Office Chair 391,7,167,1169,Furniture
+Smartphone 392,2,848,1696,Electronics
+Microwave 393,6,502,3012,Appliances
+Projector 394,7,576,4032,Office
+Wireless Mouse 395,9,170,1530,Electronics
+Gaming Keyboard 396,8,393,3144,Electronics
+Desk Lamp 397,8,227,1816,Furniture
+Wireless Mouse 398,4,654,2616,Electronics
+Blender 399,3,998,2994,Appliances
+Tablet 400,7,440,3080,Electronics
+Gaming Keyboard 401,1,504,504,Electronics
+Filing Cabinet 402,9,371,3339,Furniture
+Bookshelf 403,10,977,9770,Furniture
+Keyboard 404,6,192,1152,Electronics
+Projector 405,5,783,3915,Office
+Refrigerator 406,2,50,100,Appliances
+Refrigerator 407,1,566,566,Appliances
+Coffee Maker 408,3,778,2334,Appliances
+Coffee Maker 409,3,800,2400,Appliances
+Coffee Maker 410,9,956,8604,Appliances
+Wireless Mouse 411,10,802,8020,Electronics
+LED Monitor 412,5,403,2015,Electronics
+Coffee Maker 413,9,519,4671,Appliances
+Toaster 414,9,305,2745,Appliances
+Projector 415,5,325,1625,Office
+Blender 416,7,979,6853,Appliances
+Office Chair 417,2,210,420,Furniture
+Refrigerator 418,7,134,938,Appliances
+Tablet 419,9,119,1071,Electronics
+Headphones 420,5,675,3375,Electronics
+Toaster 421,10,395,3950,Appliances
+Wireless Mouse 422,8,304,2432,Electronics
+Filing Cabinet 423,6,733,4398,Furniture
+Keyboard 424,3,675,2025,Electronics
+Filing Cabinet 425,5,801,4005,Furniture
+Projector 426,9,793,7137,Office
+Desk Lamp 427,3,628,1884,Furniture
+Office Chair 428,5,730,3650,Furniture
+Projector 429,5,396,1980,Office
+Desk Lamp 430,7,20,140,Furniture
+Gaming Keyboard 431,9,1013,9117,Electronics
+Refrigerator 432,7,135,945,Appliances
+Desk Lamp 433,8,557,4456,Furniture
+LED Monitor 434,1,618,618,Electronics
+Blender 435,1,813,813,Appliances
+Scanner 436,9,872,7848,Office
+Refrigerator 437,8,488,3904,Appliances
+Desk 438,5,216,1080,Furniture
+Printer 439,2,52,104,Office
+Keyboard 440,3,174,522,Electronics
+Laptop 441,10,510,5100,Electronics
+Blender 442,3,167,501,Appliances
+Filing Cabinet 443,5,247,1235,Furniture
+Bookshelf 444,4,83,332,Furniture
+Bookshelf 445,1,885,885,Furniture
+Blender 446,1,287,287,Appliances
+Blender 447,9,537,4833,Appliances
+Scanner 448,2,102,204,Office
+Coffee Maker 449,6,479,2874,Appliances
+Desk 450,9,809,7281,Furniture
+Toaster 451,10,223,2230,Appliances
+Blender 452,6,324,1944,Appliances
+Laptop 453,6,625,3750,Electronics
+Microwave 454,8,704,5632,Appliances
+Tablet 455,7,484,3388,Electronics
+Headphones 456,3,817,2451,Electronics
+Smartphone 457,4,335,1340,Electronics
+Refrigerator 458,9,438,3942,Appliances
+Office Chair 459,1,884,884,Furniture
+Bookshelf 460,2,615,1230,Furniture
+Laptop 461,4,140,560,Electronics
+Office Chair 462,3,688,2064,Furniture
+Refrigerator 463,1,981,981,Appliances
+Scanner 464,10,126,1260,Office
+Printer 465,8,795,6360,Office
+Whiteboard 466,4,989,3956,Office
+Toaster 467,7,185,1295,Appliances
+Filing Cabinet 468,9,412,3708,Furniture
+Bookshelf 469,7,732,5124,Furniture
+Desk Lamp 470,10,648,6480,Furniture
+LED Monitor 471,8,495,3960,Electronics
+Coffee Maker 472,10,200,2000,Appliances
+Desk 473,5,142,710,Furniture
+Desk Lamp 474,9,972,8748,Furniture
+Bookshelf 475,9,98,882,Furniture
+Projector 476,10,129,1290,Office
+Desk 477,2,888,1776,Furniture
+Blender 478,9,742,6678,Appliances
+Scanner 479,6,564,3384,Office
+Wireless Mouse 480,3,321,963,Electronics
+Printer 481,8,326,2608,Office
+Whiteboard 482,4,587,2348,Office
+Office Chair 483,7,690,4830,Furniture
+Blender 484,10,933,9330,Appliances
+Toaster 485,2,336,672,Appliances
+Tablet 486,6,725,4350,Electronics
+Laptop 487,6,679,4074,Electronics
+Coffee Maker 488,6,218,1308,Appliances
+Whiteboard 489,10,599,5990,Office
+Toaster 490,4,486,1944,Appliances
+Projector 491,2,295,590,Office
+Wireless Mouse 492,9,990,8910,Electronics
+Blender 493,8,195,1560,Appliances
+Gaming Keyboard 494,6,285,1710,Electronics
+Tablet 495,10,320,3200,Electronics
+Bookshelf 496,4,705,2820,Furniture
+Refrigerator 497,3,316,948,Appliances
+Microwave 498,7,192,1344,Appliances
+Office Chair 499,10,400,4000,Furniture
+Wireless Mouse 500,5,790,3950,Electronics
+Office Chair 501,3,147,441,Furniture
+Filing Cabinet 502,5,709,3545,Furniture
+Desk 503,9,71,639,Furniture
+Filing Cabinet 504,2,300,600,Furniture
+Tablet 505,4,433,1732,Electronics
+Desk Lamp 506,10,269,2690,Furniture
+Coffee Maker 507,2,300,600,Appliances
+Desk Lamp 508,10,901,9010,Furniture
+Coffee Maker 509,3,887,2661,Appliances
+Projector 510,8,34,272,Office
+Coffee Maker 511,2,142,284,Appliances
+Bookshelf 512,8,617,4936,Furniture
+Refrigerator 513,10,856,8560,Appliances
+Toaster 514,4,891,3564,Appliances
+Whiteboard 515,6,635,3810,Office
+LED Monitor 516,7,97,679,Electronics
+Keyboard 517,6,555,3330,Electronics
+Coffee Maker 518,4,280,1120,Appliances
+Whiteboard 519,1,282,282,Office
+Scanner 520,3,511,1533,Office
+Coffee Maker 521,10,604,6040,Appliances
+Coffee Maker 522,9,288,2592,Appliances
+Bookshelf 523,4,749,2996,Furniture
+Scanner 524,1,472,472,Office
+Blender 525,7,962,6734,Appliances
+Coffee Maker 526,4,358,1432,Appliances
+Microwave 527,4,280,1120,Appliances
+Bookshelf 528,9,623,5607,Furniture
+Printer 529,9,156,1404,Office
+Desk Lamp 530,2,207,414,Furniture
+LED Monitor 531,2,323,646,Electronics
+Tablet 532,7,514,3598,Electronics
+Whiteboard 533,4,164,656,Office
+Office Chair 534,6,86,516,Furniture
+Bookshelf 535,10,655,6550,Furniture
+Toaster 536,9,296,2664,Appliances
+Gaming Keyboard 537,2,58,116,Electronics
+Filing Cabinet 538,10,877,8770,Furniture
+Projector 539,1,785,785,Office
+Blender 540,1,782,782,Appliances
+Desk 541,9,602,5418,Furniture
+Coffee Maker 542,3,417,1251,Appliances
+Coffee Maker 543,2,965,1930,Appliances
+Office Chair 544,4,109,436,Furniture
+Bookshelf 545,9,915,8235,Furniture
+Smartphone 546,5,23,115,Electronics
+Projector 547,6,761,4566,Office
+Bookshelf 548,5,577,2885,Furniture
+Whiteboard 549,2,1003,2006,Office
+Desk Lamp 550,4,896,3584,Furniture
+Smartphone 551,3,176,528,Electronics
+LED Monitor 552,3,95,285,Electronics
+Wireless Mouse 553,6,453,2718,Electronics
+Gaming Keyboard 554,1,43,43,Electronics
+Projector 555,6,264,1584,Office
+Printer 556,6,35,210,Office
+Toaster 557,7,842,5894,Appliances
+Printer 558,9,942,8478,Office
+Refrigerator 559,1,831,831,Appliances
+Printer 560,9,572,5148,Office
+Microwave 561,1,104,104,Appliances
+Printer 562,1,139,139,Office
+Coffee Maker 563,3,1003,3009,Appliances
+Printer 564,4,43,172,Office
+Refrigerator 565,3,612,1836,Appliances
+Desk 566,5,914,4570,Furniture
+Bookshelf 567,5,180,900,Furniture
+Bookshelf 568,1,156,156,Furniture
+Office Chair 569,10,740,7400,Furniture
+Scanner 570,9,629,5661,Office
+Projector 571,9,99,891,Office
+Refrigerator 572,4,749,2996,Appliances
+Bookshelf 573,1,622,622,Furniture
+Projector 574,6,182,1092,Office
+Blender 575,1,655,655,Appliances
+Desk Lamp 576,10,762,7620,Furniture
+Projector 577,3,627,1881,Office
+Wireless Mouse 578,10,207,2070,Electronics
+Refrigerator 579,9,917,8253,Appliances
+Projector 580,4,726,2904,Office
+Blender 581,2,936,1872,Appliances
+Tablet 582,8,82,656,Electronics
+Desk 583,4,220,880,Furniture
+Wireless Mouse 584,4,126,504,Electronics
+LED Monitor 585,10,644,6440,Electronics
+Bookshelf 586,6,234,1404,Furniture
+Desk 587,10,73,730,Furniture
+Scanner 588,10,852,8520,Office
+Laptop 589,5,316,1580,Electronics
+Desk 590,9,170,1530,Furniture
+Refrigerator 591,5,904,4520,Appliances
+Blender 592,4,639,2556,Appliances
+Printer 593,7,407,2849,Office
+Office Chair 594,2,771,1542,Furniture
+Keyboard 595,9,961,8649,Electronics
+Bookshelf 596,7,358,2506,Furniture
+Desk 597,1,204,204,Furniture
+Desk Lamp 598,10,680,6800,Furniture
+Toaster 599,9,241,2169,Appliances
+Refrigerator 600,5,632,3160,Appliances
+Blender 601,4,914,3656,Appliances
+Printer 602,7,117,819,Office
+Keyboard 603,1,157,157,Electronics
+Laptop 604,1,59,59,Electronics
+Scanner 605,4,359,1436,Office
+Desk Lamp 606,2,791,1582,Furniture
+Coffee Maker 607,3,614,1842,Appliances
+Laptop 608,2,784,1568,Electronics
+Laptop 609,6,491,2946,Electronics
+Refrigerator 610,3,828,2484,Appliances
+Projector 611,3,184,552,Office
+Gaming Keyboard 612,8,32,256,Electronics
+Toaster 613,2,334,668,Appliances
+Filing Cabinet 614,1,603,603,Furniture
+Coffee Maker 615,5,611,3055,Appliances
+Scanner 616,1,487,487,Office
+Whiteboard 617,2,754,1508,Office
+Toaster 618,2,334,668,Appliances
+Printer 619,10,196,1960,Office
+Desk Lamp 620,2,482,964,Furniture
+Tablet 621,6,196,1176,Electronics
+Headphones 622,3,801,2403,Electronics
+Office Chair 623,5,72,360,Furniture
+Laptop 624,5,365,1825,Electronics
+Projector 625,6,86,516,Office
+Headphones 626,4,976,3904,Electronics
+Projector 627,9,496,4464,Office
+Toaster 628,1,606,606,Appliances
+Microwave 629,5,661,3305,Appliances
+Bookshelf 630,1,176,176,Furniture
+Gaming Keyboard 631,1,75,75,Electronics
+Wireless Mouse 632,2,686,1372,Electronics
+Scanner 633,10,978,9780,Office
+Blender 634,7,626,4382,Appliances
+Smartphone 635,4,768,3072,Electronics
+Refrigerator 636,3,809,2427,Appliances
+Desk Lamp 637,10,926,9260,Furniture
+Keyboard 638,2,115,230,Electronics
+LED Monitor 639,8,641,5128,Electronics
+Blender 640,8,67,536,Appliances
+Filing Cabinet 641,6,616,3696,Furniture
+Tablet 642,7,177,1239,Electronics
+Gaming Keyboard 643,6,109,654,Electronics
+Bookshelf 644,10,826,8260,Furniture
+Filing Cabinet 645,4,397,1588,Furniture
+Coffee Maker 646,10,245,2450,Appliances
+LED Monitor 647,2,529,1058,Electronics
+Desk Lamp 648,9,804,7236,Furniture
+Gaming Keyboard 649,3,887,2661,Electronics
+Whiteboard 650,8,561,4488,Office
+Bookshelf 651,2,931,1862,Furniture
+Scanner 652,9,885,7965,Office
+Scanner 653,1,290,290,Office
+Microwave 654,10,290,2900,Appliances
+Microwave 655,9,344,3096,Appliances
+Projector 656,3,315,945,Office
+Desk 657,10,227,2270,Furniture
+Toaster 658,2,735,1470,Appliances
+Filing Cabinet 659,9,185,1665,Furniture
+Desk Lamp 660,5,916,4580,Furniture
+LED Monitor 661,6,64,384,Electronics
+Office Chair 662,2,869,1738,Furniture
+Wireless Mouse 663,9,460,4140,Electronics
+Toaster 664,7,558,3906,Appliances
+Blender 665,3,234,702,Appliances
+Gaming Keyboard 666,5,91,455,Electronics
+Whiteboard 667,4,908,3632,Office
+Toaster 668,3,45,135,Appliances
+Laptop 669,10,536,5360,Electronics
+Printer 670,2,955,1910,Office
+Blender 671,4,129,516,Appliances
+Coffee Maker 672,4,884,3536,Appliances
+Keyboard 673,3,761,2283,Electronics
+Projector 674,3,83,249,Office
+Toaster 675,5,542,2710,Appliances
+Office Chair 676,4,745,2980,Furniture
+Toaster 677,1,448,448,Appliances
+Scanner 678,8,491,3928,Office
+Headphones 679,8,327,2616,Electronics
+Blender 680,6,915,5490,Appliances
+Toaster 681,7,491,3437,Appliances
+Whiteboard 682,3,237,711,Office
+Bookshelf 683,9,946,8514,Furniture
+Projector 684,4,45,180,Office
+Headphones 685,7,549,3843,Electronics
+Blender 686,9,319,2871,Appliances
+Keyboard 687,4,780,3120,Electronics
+Whiteboard 688,7,693,4851,Office
+Scanner 689,6,292,1752,Office
+Projector 690,6,783,4698,Office
+Keyboard 691,2,447,894,Electronics
+LED Monitor 692,8,186,1488,Electronics
+Desk Lamp 693,5,202,1010,Furniture
+Projector 694,5,711,3555,Office
+Whiteboard 695,1,489,489,Office
+Coffee Maker 696,7,800,5600,Appliances
+Projector 697,5,742,3710,Office
+Gaming Keyboard 698,2,139,278,Electronics
+Toaster 699,7,655,4585,Appliances
+Office Chair 700,5,712,3560,Furniture
+Scanner 701,7,339,2373,Office
+Toaster 702,3,611,1833,Appliances
+Blender 703,7,391,2737,Appliances
+Tablet 704,6,23,138,Electronics
+Printer 705,10,829,8290,Office
+Blender 706,3,615,1845,Appliances
+Printer 707,4,606,2424,Office
+Headphones 708,4,204,816,Electronics
+Bookshelf 709,5,642,3210,Furniture
+Scanner 710,6,657,3942,Office
+Desk Lamp 711,8,290,2320,Furniture
+Desk Lamp 712,1,311,311,Furniture
+Laptop 713,8,296,2368,Electronics
+Filing Cabinet 714,8,964,7712,Furniture
+Whiteboard 715,1,92,92,Office
+Scanner 716,9,625,5625,Office
+Scanner 717,7,445,3115,Office
+Gaming Keyboard 718,2,275,550,Electronics
+Coffee Maker 719,6,826,4956,Appliances
+Keyboard 720,10,374,3740,Electronics
+Whiteboard 721,8,509,4072,Office
+Toaster 722,5,36,180,Appliances
+LED Monitor 723,6,229,1374,Electronics
+Microwave 724,3,356,1068,Appliances
+Keyboard 725,4,426,1704,Electronics
+Coffee Maker 726,8,742,5936,Appliances
+Filing Cabinet 727,1,837,837,Furniture
+Smartphone 728,1,551,551,Electronics
+Office Chair 729,10,210,2100,Furniture
+Whiteboard 730,9,137,1233,Office
+Office Chair 731,4,65,260,Furniture
+LED Monitor 732,7,744,5208,Electronics
+Toaster 733,8,71,568,Appliances
+Filing Cabinet 734,6,423,2538,Furniture
+Headphones 735,9,647,5823,Electronics
+Microwave 736,4,54,216,Appliances
+Coffee Maker 737,1,844,844,Appliances
+Printer 738,10,758,7580,Office
+Office Chair 739,1,847,847,Furniture
+Tablet 740,10,603,6030,Electronics
+Microwave 741,5,518,2590,Appliances
+Printer 742,10,292,2920,Office
+Scanner 743,4,893,3572,Office
+Bookshelf 744,5,595,2975,Furniture
+Coffee Maker 745,6,956,5736,Appliances
+Printer 746,6,572,3432,Office
+Bookshelf 747,3,478,1434,Furniture
+Coffee Maker 748,9,964,8676,Appliances
+Toaster 749,2,921,1842,Appliances
+Headphones 750,8,607,4856,Electronics
+Projector 751,1,43,43,Office
+Scanner 752,3,480,1440,Office
+Desk 753,4,642,2568,Furniture
+Projector 754,3,468,1404,Office
+Desk Lamp 755,1,68,68,Furniture
+Refrigerator 756,4,301,1204,Appliances
+Microwave 757,3,38,114,Appliances
+Desk 758,3,414,1242,Furniture
+LED Monitor 759,4,907,3628,Electronics
+Headphones 760,9,90,810,Electronics
+Filing Cabinet 761,5,721,3605,Furniture
+Projector 762,3,290,870,Office
+Desk Lamp 763,4,489,1956,Furniture
+Toaster 764,4,229,916,Appliances
+Scanner 765,8,162,1296,Office
+Printer 766,6,659,3954,Office
+Wireless Mouse 767,3,938,2814,Electronics
+Toaster 768,1,514,514,Appliances
+Smartphone 769,3,104,312,Electronics
+Filing Cabinet 770,10,849,8490,Furniture
+Tablet 771,9,854,7686,Electronics
+Wireless Mouse 772,7,746,5222,Electronics
+Projector 773,8,224,1792,Office
+Smartphone 774,3,504,1512,Electronics
+Headphones 775,10,817,8170,Electronics
+Coffee Maker 776,4,448,1792,Appliances
+Scanner 777,4,1009,4036,Office
+Projector 778,8,274,2192,Office
+LED Monitor 779,9,351,3159,Electronics
+Desk 780,3,372,1116,Furniture
+Printer 781,10,599,5990,Office
+Desk Lamp 782,3,849,2547,Furniture
+Office Chair 783,4,79,316,Furniture
+Coffee Maker 784,7,222,1554,Appliances
+Whiteboard 785,9,672,6048,Office
+Whiteboard 786,7,855,5985,Office
+Coffee Maker 787,3,783,2349,Appliances
+Office Chair 788,4,176,704,Furniture
+Smartphone 789,1,532,532,Electronics
+Desk Lamp 790,3,574,1722,Furniture
+Coffee Maker 791,1,1017,1017,Appliances
+Bookshelf 792,2,472,944,Furniture
+Projector 793,10,356,3560,Office
+Office Chair 794,7,527,3689,Furniture
+Filing Cabinet 795,10,148,1480,Furniture
+Desk Lamp 796,3,315,945,Furniture
+Whiteboard 797,3,554,1662,Office
+Desk 798,1,875,875,Furniture
+Coffee Maker 799,7,225,1575,Appliances
+Headphones 800,2,190,380,Electronics
+Laptop 801,7,298,2086,Electronics
+Desk 802,5,786,3930,Furniture
+LED Monitor 803,2,71,142,Electronics
+Bookshelf 804,8,785,6280,Furniture
+Desk 805,9,94,846,Furniture
+Keyboard 806,4,61,244,Electronics
+Refrigerator 807,2,514,1028,Appliances
+Blender 808,1,376,376,Appliances
+Laptop 809,8,856,6848,Electronics
+Smartphone 810,9,191,1719,Electronics
+Printer 811,3,426,1278,Office
+Refrigerator 812,5,583,2915,Appliances
+Filing Cabinet 813,1,1014,1014,Furniture
+Office Chair 814,4,172,688,Furniture
+Scanner 815,8,535,4280,Office
+Filing Cabinet 816,4,825,3300,Furniture
+Toaster 817,1,377,377,Appliances
+Desk 818,10,325,3250,Furniture
+Coffee Maker 819,8,897,7176,Appliances
+Gaming Keyboard 820,8,838,6704,Electronics
+Filing Cabinet 821,3,29,87,Furniture
+Office Chair 822,7,511,3577,Furniture
+Headphones 823,10,799,7990,Electronics
+Office Chair 824,2,951,1902,Furniture
+Laptop 825,1,580,580,Electronics
+Gaming Keyboard 826,3,420,1260,Electronics
+Office Chair 827,2,801,1602,Furniture
+Keyboard 828,5,715,3575,Electronics
+Coffee Maker 829,8,83,664,Appliances
+Microwave 830,7,636,4452,Appliances
+Laptop 831,5,295,1475,Electronics
+Keyboard 832,2,541,1082,Electronics
+Office Chair 833,5,701,3505,Furniture
+Laptop 834,10,879,8790,Electronics
+Toaster 835,10,620,6200,Appliances
+Headphones 836,8,660,5280,Electronics
+Toaster 837,7,431,3017,Appliances
+Scanner 838,4,400,1600,Office
+Filing Cabinet 839,6,295,1770,Furniture
+Desk 840,6,959,5754,Furniture
+Filing Cabinet 841,6,885,5310,Furniture
+Refrigerator 842,4,302,1208,Appliances
+Microwave 843,1,576,576,Appliances
+Tablet 844,5,844,4220,Electronics
+Whiteboard 845,4,737,2948,Office
+Desk 846,1,236,236,Furniture
+Desk 847,7,900,6300,Furniture
+Projector 848,7,113,791,Office
+Desk 849,1,820,820,Furniture
+Blender 850,6,205,1230,Appliances
+Blender 851,6,542,3252,Appliances
+Office Chair 852,7,447,3129,Furniture
+Coffee Maker 853,1,394,394,Appliances
+Smartphone 854,3,534,1602,Electronics
+Projector 855,10,650,6500,Office
+Blender 856,3,707,2121,Appliances
+Tablet 857,9,997,8973,Electronics
+Wireless Mouse 858,7,936,6552,Electronics
+Desk Lamp 859,8,297,2376,Furniture
+Coffee Maker 860,8,311,2488,Appliances
+Desk 861,8,1007,8056,Furniture
+Scanner 862,3,887,2661,Office
+Bookshelf 863,7,301,2107,Furniture
+Refrigerator 864,9,895,8055,Appliances
+Printer 865,2,975,1950,Office
+Whiteboard 866,10,819,8190,Office
+Printer 867,10,240,2400,Office
+Refrigerator 868,5,809,4045,Appliances
+Blender 869,3,680,2040,Appliances
+Projector 870,1,321,321,Office
+LED Monitor 871,8,702,5616,Electronics
+Printer 872,10,472,4720,Office
+Smartphone 873,10,454,4540,Electronics
+Desk 874,8,835,6680,Furniture
+Refrigerator 875,3,870,2610,Appliances
+Bookshelf 876,6,121,726,Furniture
+Toaster 877,4,587,2348,Appliances
+Tablet 878,8,955,7640,Electronics
+Bookshelf 879,6,481,2886,Furniture
+Microwave 880,3,450,1350,Appliances
+Coffee Maker 881,2,395,790,Appliances
+Toaster 882,5,276,1380,Appliances
+Office Chair 883,10,110,1100,Furniture
+Laptop 884,4,587,2348,Electronics
+Wireless Mouse 885,4,418,1672,Electronics
+Office Chair 886,5,488,2440,Furniture
+Coffee Maker 887,8,55,440,Appliances
+Gaming Keyboard 888,9,424,3816,Electronics
+Headphones 889,2,653,1306,Electronics
+Projector 890,1,981,981,Office
+Microwave 891,1,150,150,Appliances
+Whiteboard 892,3,972,2916,Office
+Bookshelf 893,1,30,30,Furniture
+Bookshelf 894,6,294,1764,Furniture
+Whiteboard 895,5,188,940,Office
+Wireless Mouse 896,7,667,4669,Electronics
+Wireless Mouse 897,7,889,6223,Electronics
+Office Chair 898,2,836,1672,Furniture
+Filing Cabinet 899,1,382,382,Furniture
+Refrigerator 900,10,725,7250,Appliances
+Coffee Maker 901,1,189,189,Appliances
+Keyboard 902,6,128,768,Electronics
+Desk 903,8,478,3824,Furniture
+Projector 904,1,75,75,Office
+Headphones 905,1,825,825,Electronics
+Toaster 906,3,73,219,Appliances
+Projector 907,2,820,1640,Office
+Whiteboard 908,5,289,1445,Office
+Smartphone 909,5,994,4970,Electronics
+LED Monitor 910,3,363,1089,Electronics
+Toaster 911,10,168,1680,Appliances
+Coffee Maker 912,6,338,2028,Appliances
+Desk 913,6,306,1836,Furniture
+LED Monitor 914,7,894,6258,Electronics
+Filing Cabinet 915,8,812,6496,Furniture
+Projector 916,4,608,2432,Office
+Blender 917,2,104,208,Appliances
+Bookshelf 918,2,245,490,Furniture
+Laptop 919,4,675,2700,Electronics
+Bookshelf 920,1,312,312,Furniture
+Refrigerator 921,6,650,3900,Appliances
+Whiteboard 922,8,620,4960,Office
+Headphones 923,1,363,363,Electronics
+Office Chair 924,7,688,4816,Furniture
+Desk 925,6,75,450,Furniture
+LED Monitor 926,10,325,3250,Electronics
+Coffee Maker 927,8,572,4576,Appliances
+Keyboard 928,5,534,2670,Electronics
+Laptop 929,1,265,265,Electronics
+Coffee Maker 930,1,940,940,Appliances
+Tablet 931,3,199,597,Electronics
+Printer 932,1,297,297,Office
+Smartphone 933,9,596,5364,Electronics
+Wireless Mouse 934,5,300,1500,Electronics
+Projector 935,6,678,4068,Office
+Headphones 936,3,174,522,Electronics
+Printer 937,9,103,927,Office
+Desk 938,9,897,8073,Furniture
+Keyboard 939,2,230,460,Electronics
+LED Monitor 940,7,424,2968,Electronics
+Filing Cabinet 941,6,89,534,Furniture
+Printer 942,6,422,2532,Office
+Filing Cabinet 943,5,530,2650,Furniture
+Keyboard 944,4,256,1024,Electronics
+Microwave 945,6,762,4572,Appliances
+Tablet 946,9,182,1638,Electronics
+Desk 947,4,890,3560,Furniture
+Office Chair 948,1,262,262,Furniture
+Tablet 949,9,260,2340,Electronics
+LED Monitor 950,3,219,657,Electronics
+Blender 951,10,616,6160,Appliances
+Headphones 952,9,806,7254,Electronics
+Refrigerator 953,8,903,7224,Appliances
+Printer 954,9,61,549,Office
+LED Monitor 955,9,764,6876,Electronics
+Tablet 956,6,642,3852,Electronics
+Smartphone 957,3,952,2856,Electronics
+Coffee Maker 958,8,850,6800,Appliances
+Laptop 959,1,604,604,Electronics
+Scanner 960,6,309,1854,Office
+Coffee Maker 961,9,401,3609,Appliances
+Printer 962,10,978,9780,Office
+Filing Cabinet 963,6,1013,6078,Furniture
+Refrigerator 964,9,940,8460,Appliances
+Toaster 965,9,540,4860,Appliances
+LED Monitor 966,10,966,9660,Electronics
+Laptop 967,1,605,605,Electronics
+Desk 968,9,50,450,Furniture
+Desk 969,9,975,8775,Furniture
+Keyboard 970,4,837,3348,Electronics
+Scanner 971,4,621,2484,Office
+Keyboard 972,9,594,5346,Electronics
+Desk 973,4,447,1788,Furniture
+Printer 974,1,897,897,Office
+Whiteboard 975,5,380,1900,Office
+Headphones 976,2,65,130,Electronics
+Coffee Maker 977,4,433,1732,Appliances
+LED Monitor 978,4,259,1036,Electronics
+Microwave 979,4,112,448,Appliances
+Bookshelf 980,1,691,691,Furniture
+Filing Cabinet 981,4,631,2524,Furniture
+Refrigerator 982,1,840,840,Appliances
+Gaming Keyboard 983,2,560,1120,Electronics
+Scanner 984,1,423,423,Office
+Whiteboard 985,6,422,2532,Office
+Projector 986,5,403,2015,Office
+Printer 987,9,509,4581,Office
+LED Monitor 988,1,707,707,Electronics
+Bookshelf 989,7,527,3689,Furniture
+Refrigerator 990,3,624,1872,Appliances
+Printer 991,1,340,340,Office
+Toaster 992,6,224,1344,Appliances
+Desk 993,5,87,435,Furniture
+Whiteboard 994,9,579,5211,Office
+Blender 995,7,803,5621,Appliances
+Headphones 996,9,195,1755,Electronics
+Wireless Mouse 997,7,362,2534,Electronics
+LED Monitor 998,3,693,2079,Electronics
+Microwave 999,5,921,4605,Appliances
+Coffee Maker 1000,6,24,144,Appliances

@@ -23,9 +23,16 @@ export const useStyles = createStyles((theme: MantineTheme) => ({
   splitContainer: {
     minHeight: '100vh',
     position: 'relative',
+    display: 'grid',
+    gridTemplateColumns: '100%',
     [theme.fn.largerThan('md')]: {
       display: 'grid',
       gridTemplateColumns: '60% 40%',
+    },
+    [theme.fn.smallerThan('md')]: {
+      background:
+        'linear-gradient(135deg, #6b2323ff 0%, #4A2C42 20%, #2D2F5A 40%, #1A2847 60%, #0F1B3D 80%, #0A0F2C 100%)',
+      animation: `${subtleGradientShift} 20s ease-in-out infinite`,
     },
   },
   leftSide: {

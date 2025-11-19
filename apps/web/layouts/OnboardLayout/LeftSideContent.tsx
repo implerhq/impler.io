@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { Box, Text, Title, Stack, Group, useMantineTheme, Center, Divider } from '@mantine/core';
+import { Box, Text, Title, Stack, Group, useMantineTheme, Divider, Container } from '@mantine/core';
 import Image from 'next/image';
 import FullLogo from '@assets/images/full-logo-light.png';
 import { StocksIcon } from '@assets/icons/Stocks.icon';
@@ -49,7 +49,7 @@ export function LeftSideContent() {
   ];
 
   return (
-    <Center>
+    <Container>
       <Box mt="xl" p="xl">
         <Stack spacing={''}>
           <Box>
@@ -113,16 +113,28 @@ export function LeftSideContent() {
               mb="lg"
             />
 
-            <Group spacing="xl" align="center">
-              {companyLogos.map((company: any) => (
-                <Box key={company.id}>
-                  <Image src={company.src} alt={company.alt} width={100} height={24} />
-                </Box>
-              ))}
-            </Group>
+            <Stack spacing="md" align="center">
+              {/* First row: 6 logos */}
+              <Group spacing="xl" position="center">
+                {companyLogos.slice(0, 6).map((company: any) => (
+                  <Box key={company.id}>
+                    <Image src={company.src} alt={company.alt} width={100} height={24} />
+                  </Box>
+                ))}
+              </Group>
+
+              {/* Second row: 2 logos (centered) */}
+              <Group spacing="xl" position="center">
+                {companyLogos.slice(6, 8).map((company: any) => (
+                  <Box key={company.id}>
+                    <Image src={company.src} alt={company.alt} width={100} height={24} />
+                  </Box>
+                ))}
+              </Group>
+            </Stack>
           </Box>
         </Stack>
       </Box>
-    </Center>
+    </Container>
   );
 }

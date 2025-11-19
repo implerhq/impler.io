@@ -61,7 +61,6 @@ function ImportDetails() {
   const handleActionClick = useCallback(
     async (action: WelcomeConfigureStepModalActionEnum) => {
       modals.closeAll();
-      clearWelcomeFlag();
       switch (action) {
         case WelcomeConfigureStepModalActionEnum.SetupDestination:
           setActiveTab('destination');
@@ -80,7 +79,7 @@ function ImportDetails() {
           break;
       }
     },
-    [onImportCreateClick, setActiveTab, router, clearWelcomeFlag, onIntegrationClick]
+    [onImportCreateClick, setActiveTab, router, onIntegrationClick]
   );
 
   const { showWidget, isImplerInitiated } = useImpler({
@@ -90,29 +89,26 @@ function ImportDetails() {
     accessToken: profileInfo?.accessToken,
     appearance: defaultWidgetAppereance,
     onUploadComplete: (data) => {
+      console.log(data);
+      console.log(localStorage.getItem(CONSTANTS.SHOW_WELCOME_IMPORTER_STORAGE_KEY));
       onSpreadsheetImported();
-      if (data) {
-        if (showWelcome) {
-          modals.closeAll();
-          setTimeout(() => {
-            modals.open({
-              id: MODAL_KEYS.WELCOME_CONFIGURE_STEP,
-              children: (
-                <WelcomeConfigureStepModal
-                  onConfigureDestinationClicked={(action) => {
-                    handleActionClick(action);
-                  }}
-                />
-              ),
-              withCloseButton: false,
-              centered: true,
-              size: 'xl',
-              onClose: () => {
-                clearWelcomeFlag();
-              },
-            });
-          }, 1000);
-        }
+      if (data && localStorage.getItem(CONSTANTS.SHOW_WELCOME_IMPORTER_STORAGE_KEY)) {
+        clearWelcomeFlag();
+        modals.open({
+          id: MODAL_KEYS.WELCOME_CONFIGURE_STEP,
+          children: (
+            <WelcomeConfigureStepModal
+              onConfigureDestinationClicked={(action) => {
+                handleActionClick(action);
+              }}
+            />
+          ),
+          withCloseButton: true,
+          closeOnClickOutside: true,
+          trapFocus: true,
+          centered: true,
+          size: 'xl',
+        });
       }
     },
   });
@@ -126,10 +122,9 @@ function ImportDetails() {
     track({ name: 'IMPORT CLICK', properties: {} });
     modals.close(MODAL_KEYS.WELCOME_IMPORTER);
     setTimeout(() => {
-      clearWelcomeFlag();
       showWidget({});
     }, 200);
-  }, [showWidget, clearWelcomeFlag]);
+  }, [showWidget]);
 
   useEffect(() => {
     if (showWelcome) {
@@ -139,12 +134,10 @@ function ImportDetails() {
         withCloseButton: false,
         centered: true,
         size: 'xl',
-        onClose: () => {
-          clearWelcomeFlag();
-        },
+        onClose: () => {},
       });
     }
-  }, [showWelcome, onWelcomeImportClick, clearWelcomeFlag]);
+  }, [showWelcome, onWelcomeImportClick]);
 
   return (
     <Flex gap="sm" direction="column" h="100%" style={{ position: 'relative' }}>

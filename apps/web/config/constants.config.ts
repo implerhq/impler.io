@@ -809,7 +809,7 @@ export const sampleColumns: Partial<IColumn>[] = [
     key: 'Category',
     description: 'The category of the product',
     type: ColumnTypesEnum.SELECT,
-    selectValues: ['Electronics', 'Furniture', 'Appliances'],
+    selectValues: ['Electronics', 'Furniture', 'Appliances', 'Office'],
     isRequired: false,
     isUnique: false,
   },
