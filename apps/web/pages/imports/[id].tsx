@@ -89,8 +89,6 @@ function ImportDetails() {
     accessToken: profileInfo?.accessToken,
     appearance: defaultWidgetAppereance,
     onUploadComplete: (data) => {
-      console.log(data);
-      console.log(localStorage.getItem(CONSTANTS.SHOW_WELCOME_IMPORTER_STORAGE_KEY));
       onSpreadsheetImported();
       if (data && localStorage.getItem(CONSTANTS.SHOW_WELCOME_IMPORTER_STORAGE_KEY)) {
         clearWelcomeFlag();
