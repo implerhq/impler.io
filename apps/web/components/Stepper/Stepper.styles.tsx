@@ -2,20 +2,19 @@ import { createStyles } from '@mantine/core';
 
 export const useStyles = createStyles((theme) => ({
   stepperContainer: {
-    marginBottom: theme.spacing.xl,
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.colors.dark[5],
+    borderRadius: theme.radius.xl,
+    minWidth: 50,
+    height: 50,
   },
   stepText: {
-    color: theme.colors.gray[5],
-    fontSize: theme.fontSizes.sm,
-    fontWeight: 500,
-    marginBottom: theme.spacing.xs,
-  },
-  progressBar: {
-    height: 4,
-    backgroundColor: theme.colors.dark[4],
-
-    '& .mantine-Progress-bar': {
-      backgroundColor: theme.colors.blue[5],
-    },
+    color: theme.white,
+    fontSize: theme.fontSizes.md,
+    fontWeight: 600,
+    lineHeight: 1,
+    letterSpacing: '0.5px',
   },
 }));

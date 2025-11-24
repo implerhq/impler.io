@@ -67,7 +67,7 @@ export function DirectEntryView({
             <thead style={{ backgroundColor: 'var(--secondary-background-hover)' }}>
               <tr>
                 {columns?.map((column) => (
-                  <th style={{ textWrap: 'nowrap' }} key={column.name}>
+                  <th style={{ textWrap: 'nowrap', color: 'var(--secondary-background)' }} key={column.name}>
                     {column.name}
                   </th>
                 ))}

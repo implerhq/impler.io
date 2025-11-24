@@ -33,7 +33,13 @@ export function useSubscriptionMetaDataInformation() {
     defaultValueUnavailable: !meta?.DEFAULT_VALUES,
     dateFormatUnavailable: !meta?.DATE_FORMATS,
     bubbleIoIntegrationUnavailable: !meta?.BUBBLE_INTEGRATION,
-    alternateColumnKeysUnavailable: !meta?.ALTERNATE_COLUMN_KEYS,
+    webhookRetrySettingsUnavailable: !meta?.WEBHOOK_RETRY_SETTINGS,
     multiSelectValuesUnavailable: !meta?.MULTI_SELECT_VALUES,
+    customValidatatorCodeUnavailable: !meta?.CUSTOM_CODE_VALIDATOR,
+    lengthValidationUnavailable: !meta?.LENGTH_VALIDATION,
+    digitsValidationUnavailable: !meta?.DIGITS_VALIDATION,
+    rangeValidationUnavailable: !meta?.RANGE_VALIDATION,
+    multipleColumnsCombinationUniqueValidationUnavailable: !meta?.MULTIPLE_COLUMNS_COMBINATION_UNIQUE_VALIDATION,
+    // alternateColumnKeysUnavailable: !meta?.ALTERNATE_COLUMN_KEYS,
   };
 }

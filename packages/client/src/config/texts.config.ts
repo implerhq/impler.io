@@ -29,13 +29,13 @@ export const WIDGET_TEXTS = {
   },
   FILE_DROP_AREA: {
     DROP_FILE: 'Drag and drop a file Here',
-    ONBOARD_DROP_FILE: 'Create Columns from the file',
+    ONBOARD_DROP_FILE: 'Upload File (Optional) or Use Sample Data',
     CHOOSE_FILE: 'Choose a file',
     IMAGE_FILE_SIZE:
       'Image size should be less than 5 MB. Supported formats are PNG, JPG and JPEG.',
     FILE_FORMATS: 'You can upload: csv, xlsx, xlsm',
     ONBOARD_FILE_FORMATS:
-      'Drop a CSV or Excel file here and columns will be created automatically',
+      'Drop CSV or Excel here. Impler will detect columns automatically',
     FILE_SELECTED: 'File selected successfully',
   },
   'PHASE0-1': {

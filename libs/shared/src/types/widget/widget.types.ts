@@ -107,11 +107,11 @@ export const DEFAULT_WIDGET_TEXTS: typeof WIDGET_TEXTS = {
   },
   FILE_DROP_AREA: {
     DROP_FILE: 'Drag and drop a file Here',
-    ONBOARD_DROP_FILE: 'Create Columns from the file',
+    ONBOARD_DROP_FILE: 'Upload File (Optional) or Use Sample Data',
     CHOOSE_FILE: 'Choose a file',
     IMAGE_FILE_SIZE: 'Image size should be less than 5 MB. Supported formats are PNG, JPG and JPEG.',
     FILE_FORMATS: 'You can upload: csv, xlsx, xlsm',
-    ONBOARD_FILE_FORMATS: 'Drop a CSV or Excel file here and columns will be created automatically',
+    ONBOARD_FILE_FORMATS: 'Drop CSV or Excel here. Impler will detect columns automatically',
     FILE_SELECTED: 'File selected successfully',
   },
   'PHASE0-1': {
@@ -169,7 +169,6 @@ export const DEFAULT_WIDGET_TEXTS: typeof WIDGET_TEXTS = {
     LABEL_ALL_RECORDS: `All {records}`,
     LABEL_VALID_RECORDS: `Valid {records}`,
     LABEL_INVALID_RECORDS: `Invalid {records}`,
-    MAX_RECORD_LIMIT_ERROR_TITLE: 'Max Record Limit Error',
     REPLACE: 'Replace',
     FIND_REPLACE: 'Find and Replace',
     ALL_COLUMNS_LABEL: 'All Columns',
@@ -181,6 +180,7 @@ export const DEFAULT_WIDGET_TEXTS: typeof WIDGET_TEXTS = {
     IN_COLUMN_LABEL: 'In Column',
     CASE_SENSITIVE_LABEL: 'Case Sensitive',
     MATCH_ENTIRE_LABEL: 'Match Entire Cell',
+    MAX_RECORD_LIMIT_ERROR_TITLE: 'Max Record Limit Error',
     MAX_RECORD_LIMIT_ERROR: 'You can not import records more than',
   },
   PHASE4: {

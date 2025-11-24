@@ -71,7 +71,7 @@ export function Validation({
           <TooltipLabel link={link} label={label} />
           {description ? <p className={classes.description}>{description}</p> : null}
         </div>
-        <AutoHeightComponent isVisible={index > -1 && type === ValidationTypesEnum.DIGITS}>
+        <AutoHeightComponent isVisible={index > -1 && type === ValidationTypesEnum.DIGITS && !unavailable}>
           {type === ValidationTypesEnum.DIGITS ? (
             <DigitsValidation
               minDigits={min}
@@ -109,7 +109,7 @@ export function Validation({
             />
           )}
         </AutoHeightComponent>
-        <AutoHeightComponent isVisible={index > -1 && type === ValidationTypesEnum.UNIQUE_WITH}>
+        <AutoHeightComponent isVisible={index > -1 && type === ValidationTypesEnum.UNIQUE_WITH && !unavailable}>
           <UniqueWithValidation
             key={index}
             size={size}
@@ -120,7 +120,9 @@ export function Validation({
           />
         </AutoHeightComponent>
         <AutoHeightComponent
-          isVisible={index > -1 && (type === ValidationTypesEnum.LENGTH || type === ValidationTypesEnum.RANGE)}
+          isVisible={
+            index > -1 && (type === ValidationTypesEnum.LENGTH || type === ValidationTypesEnum.RANGE) && !unavailable
+          }
         >
           <MinMaxValidation
             max={max}

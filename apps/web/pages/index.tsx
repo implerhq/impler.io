@@ -27,6 +27,7 @@ export default function Home() {
         <Title order={2}>Home</Title>
         {publicRuntimeConfig.NEXT_PUBLIC_PAYMENT_GATEWAY_URL && <PlanDetails />}
         <PlanPricingTable userProfile={profileInfo!} />
+        {/* <PlanTableDetails /> */}
       </Stack>
     </>
   );

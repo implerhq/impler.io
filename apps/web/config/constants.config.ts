@@ -3,8 +3,16 @@ import { ReactIcon } from '@assets/icons/React.icon';
 import { BubbleIcon } from '@assets/icons/Bubble.icon';
 import { AngularIcon } from '@assets/icons/Angular.icon';
 import { JavaScriptIcon } from '@assets/icons/Javascript.icon';
-import { UserRolesEnum, IntegrationEnum, ColumnTypesEnum } from '@impler/shared';
+import { UserRolesEnum, IntegrationEnum, ColumnTypesEnum, IColumn } from '@impler/shared';
 import { Plan } from '@components/UpgradePlan/Plans';
+import SuperworksLogo from '@assets/images/companies/Superworks.svg';
+import AklamioLogo from '@assets/images/companies/aklamio.svg';
+import ArthaLogo from '@assets/images/companies/artha.svg';
+import NasscomLogo from '@assets/images/companies/nasscom.svg';
+import NirvanaLogo from '@assets/images/companies/nirvana.svg';
+import OmnivaLogo from '@assets/images/companies/omniva.svg';
+import OrbitLogo from '@assets/images/companies/orbit.svg';
+import UbicoLogo from '@assets/images/companies/ubico.svg';
 
 export const CONSTANTS = {
   IMPLER_DOCUMENTATION: 'https://docs.impler.io',
@@ -30,6 +38,7 @@ export const CONSTANTS = {
     `Your subscription is cancelled. Your current subscription will continue till ${expiryDate}. You won't be charged again.`,
   SAMPLE_IMPORT_NAME: 'Product Data Import',
   SIDEBAR_COLLAPSED_KEY: 'SIDE_BAR_COLLAPSED',
+  SHOW_WELCOME_IMPORTER_STORAGE_KEY: 'SHOW_WELCOME_IMPORTER_STORAGE_KEY',
 };
 
 export enum CancellationModeEnum {
@@ -74,6 +83,8 @@ export const MODAL_KEYS = {
   CONFIRM_REMOVE_TEAM_MEMBER: 'CONFIRM_REMOVE_TEAM_MEMBER',
 
   VIEW_IMPORT_HISTORY: 'VIEW_IMPORT_HISTORY',
+  WELCOME_IMPORTER: 'WELCOME_IMPORTER',
+  WELCOME_CONFIGURE_STEP: 'WELCOME_CONFIGURE_STEP',
 };
 
 interface IntegrateOption {
@@ -506,23 +517,34 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       sellingPriceOf5KRecordsImport: null,
       content: {
         'Rows Included': [{ check: true, title: '2.5K' }],
-        'Team Members': [{ check: false, title: '0', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
+        'Team Members': [{ check: false, title: '0', tooltipLink: 'DOCUMENTATION_REFERENCE_LINKS.teamMembers' }],
+        Support: [{ check: true, title: 'Chat' }],
         Features: [
+          // Available Features
+          { check: true, title: 'Unlimited Imports' },
+          { check: true, title: 'Unlimited Sheets' },
+          { check: true, title: 'Column Warning' },
+          { check: true, title: 'Column Description' },
+          // Unavailable Features
           { check: false, title: 'Theming' },
-          { check: true, title: 'Custom Validation', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation },
-          {
-            check: true,
-            title: 'Output Customization',
-            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
-          },
-          {
-            check: false,
-            title: 'Advanced Validations',
-            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
-          },
           { check: false, title: 'Remove Branding' },
-          { check: false, title: 'Auto Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport },
-          { check: false, title: 'Image Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport },
+          { check: false, title: 'Freeze Column' },
+          { check: false, title: 'Direct Data Entry' },
+          { check: false, title: 'Required Validations' },
+          { check: false, title: 'Unique Validations' },
+          { check: false, title: 'Multi Select Validations' },
+          { check: false, title: 'Runtime Schema' },
+          { check: false, title: 'Custom Validation', tooltipLink: 'DOCUMENTATION_REFERENCE_LINKS.customValidation' },
+          { check: false, title: 'Length Validation' },
+          { check: false, title: 'Range Validation' },
+          { check: false, title: 'Widget Customizations' },
+          { check: false, title: 'Default Value in Column' },
+          { check: false, title: 'Sample File Download' },
+          { check: false, title: 'Bubble Integration' },
+          { check: false, title: 'Auto Imports (RSS)', tooltipLink: 'DOCUMENTATION_REFERENCE_LINKS.autoImport' },
+          { check: false, title: 'Webhook Retry' },
+          { check: false, title: 'Find and Replace' },
+          { check: false, title: 'Image Imports', tooltipLink: 'DOCUMENTATION_REFERENCE_LINKS.imageImport' },
         ],
       },
     },
@@ -531,7 +553,7 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       code: 'GROWTH-MONTHLY',
       price: 42,
       rowsIncluded: 50000,
-      extraChargeOverheadTenThusandRecords: 12.6,
+      extraChargeOverheadTenThusandRecords: 0.7,
       removeBranding: true,
       recordsImportedPerDollar: 1190,
       costPerRecordImport: 0.00084,
@@ -539,23 +561,34 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       sellingPriceOf5KRecordsImport: 64,
       content: {
         'Rows Included': [{ check: true, title: '50K' }],
-        'Team Members': [{ check: true, title: '4', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
+        'Team Members': [{ check: true, title: '4', tooltipLink: 'DOCUMENTATION_REFERENCE_LINKS.teamMembers' }],
+        Support: [{ check: true, title: 'Chat + Mail' }],
         Features: [
+          // Available Features
           { check: true, title: 'Theming' },
-          { check: true, title: 'Custom Validation', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation },
-          {
-            check: true,
-            title: 'Output Customization',
-            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
-          },
-          {
-            check: true,
-            title: 'Advanced Validations',
-            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
-          },
+          { check: true, title: 'Unlimited Imports' },
+          { check: true, title: 'Unlimited Sheets' },
+          { check: true, title: 'Freeze Column' },
+          { check: true, title: 'Direct Data Entry' },
+          { check: true, title: 'Column Warning' },
+          { check: true, title: 'Column Description' },
+          { check: true, title: 'Required Validations' },
+          { check: true, title: 'Unique Validations' },
+          { check: true, title: 'Multi Select Validations' },
+          { check: true, title: 'Runtime Schema' },
+          { check: true, title: 'Custom Validation', tooltipLink: 'DOCUMENTATION_REFERENCE_LINKS.customValidation' },
+          { check: true, title: 'Widget Customizations' },
+          { check: true, title: 'Default Value in Column' },
+          { check: true, title: 'Sample File Download' },
+          { check: true, title: 'Bubble Integration' },
+          { check: true, title: 'Find and Replace' },
+          // Unavailable Features
           { check: false, title: 'Remove Branding' },
-          { check: false, title: 'Auto Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport },
-          { check: false, title: 'Image Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport },
+          { check: false, title: 'Length Validation' },
+          { check: false, title: 'Range Validation' },
+          { check: false, title: 'Auto Imports (RSS)', tooltipLink: 'DOCUMENTATION_REFERENCE_LINKS.autoImport' },
+          { check: false, title: 'Webhook Retry' },
+          { check: false, title: 'Image Imports', tooltipLink: 'DOCUMENTATION_REFERENCE_LINKS.imageImport' },
         ],
       },
     },
@@ -564,7 +597,7 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       code: 'SCALE-MONTHLY',
       price: 90,
       rowsIncluded: 150000,
-      extraChargeOverheadTenThusandRecords: 9,
+      extraChargeOverheadTenThusandRecords: 0.5,
       removeBranding: true,
       recordsImportedPerDollar: 1667,
       costPerRecordImport: 0.0006,
@@ -572,23 +605,33 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       sellingPriceOf5KRecordsImport: 64,
       content: {
         'Rows Included': [{ check: true, title: '150K' }],
-        'Team Members': [{ check: true, title: '10', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
+        'Team Members': [{ check: true, title: '10', tooltipLink: 'DOCUMENTATION_REFERENCE_LINKS.teamMembers' }],
+        Support: [{ check: true, title: 'Chat + Mail + Meet' }],
         Features: [
+          // All Available Features
           { check: true, title: 'Theming' },
-          { check: true, title: 'Custom Validation', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation },
-          {
-            check: true,
-            title: 'Output Customization',
-            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
-          },
           { check: true, title: 'Remove Branding' },
-          {
-            check: true,
-            title: 'Advanced Validations',
-            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
-          },
-          { check: true, title: 'Auto Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport },
-          { check: true, title: 'Image Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport },
+          { check: true, title: 'Unlimited Imports' },
+          { check: true, title: 'Unlimited Sheets' },
+          { check: true, title: 'Freeze Column' },
+          { check: true, title: 'Direct Data Entry' },
+          { check: true, title: 'Column Warning' },
+          { check: true, title: 'Column Description' },
+          { check: true, title: 'Required Validations' },
+          { check: true, title: 'Unique Validations' },
+          { check: true, title: 'Multi Select Validations' },
+          { check: true, title: 'Runtime Schema' },
+          { check: true, title: 'Custom Validation', tooltipLink: 'DOCUMENTATION_REFERENCE_LINKS.customValidation' },
+          { check: true, title: 'Length Validation' },
+          { check: true, title: 'Range Validation' },
+          { check: true, title: 'Widget Customizations' },
+          { check: true, title: 'Default Value in Column' },
+          { check: true, title: 'Sample File Download' },
+          { check: true, title: 'Bubble Integration' },
+          { check: true, title: 'Auto Imports (RSS)', tooltipLink: 'DOCUMENTATION_REFERENCE_LINKS.autoImport' },
+          { check: true, title: 'Webhook Retry' },
+          { check: true, title: 'Find and Replace' },
+          { check: true, title: 'Image Imports', tooltipLink: 'DOCUMENTATION_REFERENCE_LINKS.imageImport' },
         ],
       },
     },
@@ -607,23 +650,34 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       sellingPriceOf5KRecordsImport: null,
       content: {
         'Rows Included': [{ check: true, title: '2.5K' }],
-        'Team Members': [{ check: false, title: '0', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
+        'Team Members': [{ check: false, title: '0', tooltipLink: 'DOCUMENTATION_REFERENCE_LINKS.teamMembers' }],
+        Support: [{ check: true, title: 'Chat' }],
         Features: [
+          // Available Features
+          { check: true, title: 'Unlimited Imports' },
+          { check: true, title: 'Unlimited Sheets' },
+          { check: true, title: 'Column Warning' },
+          { check: true, title: 'Column Description' },
+          // Unavailable Features
           { check: false, title: 'Theming' },
-          { check: true, title: 'Custom Validation', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation },
-          {
-            check: true,
-            title: 'Output Customization',
-            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
-          },
-          {
-            check: false,
-            title: 'Advanced Validations',
-            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
-          },
           { check: false, title: 'Remove Branding' },
-          { check: false, title: 'Auto Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport },
-          { check: false, title: 'Image Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport },
+          { check: false, title: 'Freeze Column' },
+          { check: false, title: 'Direct Data Entry' },
+          { check: false, title: 'Required Validations' },
+          { check: false, title: 'Unique Validations' },
+          { check: false, title: 'Multi Select Validations' },
+          { check: false, title: 'Runtime Schema' },
+          { check: false, title: 'Custom Validation', tooltipLink: 'DOCUMENTATION_REFERENCE_LINKS.customValidation' },
+          { check: false, title: 'Length Validation' },
+          { check: false, title: 'Range Validation' },
+          { check: false, title: 'Widget Customizations' },
+          { check: false, title: 'Default Value in Column' },
+          { check: false, title: 'Sample File Download' },
+          { check: false, title: 'Bubble Integration' },
+          { check: false, title: 'Auto Imports (RSS)', tooltipLink: 'DOCUMENTATION_REFERENCE_LINKS.autoImport' },
+          { check: false, title: 'Webhook Retry' },
+          { check: false, title: 'Find and Replace' },
+          { check: false, title: 'Image Imports', tooltipLink: 'DOCUMENTATION_REFERENCE_LINKS.imageImport' },
         ],
       },
     },
@@ -632,7 +686,7 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       code: 'GROWTH-YEARLY',
       price: 420,
       rowsIncluded: 50000,
-      extraChargeOverheadTenThusandRecords: 126,
+      extraChargeOverheadTenThusandRecords: 7,
       removeBranding: true,
       recordsImportedPerDollar: 1190,
       costPerRecordImport: 0.0084,
@@ -640,23 +694,34 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       sellingPriceOf5KRecordsImport: null,
       content: {
         'Rows Included': [{ check: true, title: '50K' }],
-        'Team Members': [{ check: true, title: '4', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
+        'Team Members': [{ check: true, title: '4', tooltipLink: 'DOCUMENTATION_REFERENCE_LINKS.teamMembers' }],
+        Support: [{ check: true, title: 'Chat + Mail' }],
         Features: [
+          // Available Features
           { check: true, title: 'Theming' },
-          { check: true, title: 'Custom Validation', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation },
-          {
-            check: true,
-            title: 'Output Customization',
-            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
-          },
-          {
-            check: true,
-            title: 'Advanced Validations',
-            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
-          },
+          { check: true, title: 'Unlimited Imports' },
+          { check: true, title: 'Unlimited Sheets' },
+          { check: true, title: 'Freeze Column' },
+          { check: true, title: 'Direct Data Entry' },
+          { check: true, title: 'Column Warning' },
+          { check: true, title: 'Column Description' },
+          { check: true, title: 'Required Validations' },
+          { check: true, title: 'Unique Validations' },
+          { check: true, title: 'Multi Select Validations' },
+          { check: true, title: 'Runtime Schema' },
+          { check: true, title: 'Custom Validation', tooltipLink: 'DOCUMENTATION_REFERENCE_LINKS.customValidation' },
+          { check: true, title: 'Widget Customizations' },
+          { check: true, title: 'Default Value in Column' },
+          { check: true, title: 'Sample File Download' },
+          { check: true, title: 'Bubble Integration' },
+          { check: true, title: 'Find and Replace' },
+          // Unavailable Features
           { check: false, title: 'Remove Branding' },
-          { check: false, title: 'Auto Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport },
-          { check: false, title: 'Image Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport },
+          { check: false, title: 'Length Validation' },
+          { check: false, title: 'Range Validation' },
+          { check: false, title: 'Auto Imports (RSS)', tooltipLink: 'DOCUMENTATION_REFERENCE_LINKS.autoImport' },
+          { check: false, title: 'Webhook Retry' },
+          { check: false, title: 'Image Imports', tooltipLink: 'DOCUMENTATION_REFERENCE_LINKS.imageImport' },
         ],
       },
     },
@@ -665,7 +730,7 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       code: 'SCALE-YEARLY',
       price: 900,
       rowsIncluded: 150000,
-      extraChargeOverheadTenThusandRecords: 90,
+      extraChargeOverheadTenThusandRecords: 5,
       removeBranding: true,
       recordsImportedPerDollar: 1667,
       costPerRecordImport: 0.006,
@@ -673,30 +738,40 @@ export const plans: { monthly: Plan[]; yearly: Plan[] } = {
       sellingPriceOf5KRecordsImport: null,
       content: {
         'Rows Included': [{ check: true, title: '150K' }],
-        'Team Members': [{ check: true, title: '10', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.teamMembers }],
+        'Team Members': [{ check: true, title: '10', tooltipLink: 'DOCUMENTATION_REFERENCE_LINKS.teamMembers' }],
+        Support: [{ check: true, title: 'Chat + Mail + Meet' }],
         Features: [
+          // All Available Features
           { check: true, title: 'Theming' },
-          { check: true, title: 'Custom Validation', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.customValidation },
-          {
-            check: true,
-            title: 'Output Customization',
-            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.outputCustomization,
-          },
           { check: true, title: 'Remove Branding' },
-          {
-            check: true,
-            title: 'Advanced Validations',
-            tooltipLink: DOCUMENTATION_REFERENCE_LINKS.advancedValidations,
-          },
-          { check: true, title: 'Auto Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.autoImport },
-          { check: true, title: 'Image Import', tooltipLink: DOCUMENTATION_REFERENCE_LINKS.imageImport },
+          { check: true, title: 'Unlimited Imports' },
+          { check: true, title: 'Unlimited Sheets' },
+          { check: true, title: 'Freeze Column' },
+          { check: true, title: 'Direct Data Entry' },
+          { check: true, title: 'Column Warning' },
+          { check: true, title: 'Column Description' },
+          { check: true, title: 'Required Validations' },
+          { check: true, title: 'Unique Validations' },
+          { check: true, title: 'Multi Select Validations' },
+          { check: true, title: 'Runtime Schema' },
+          { check: true, title: 'Custom Validation', tooltipLink: 'DOCUMENTATION_REFERENCE_LINKS.customValidation' },
+          { check: true, title: 'Length Validation' },
+          { check: true, title: 'Range Validation' },
+          { check: true, title: 'Widget Customizations' },
+          { check: true, title: 'Default Value in Column' },
+          { check: true, title: 'Sample File Download' },
+          { check: true, title: 'Bubble Integration' },
+          { check: true, title: 'Auto Imports (RSS)', tooltipLink: 'DOCUMENTATION_REFERENCE_LINKS.autoImport' },
+          { check: true, title: 'Webhook Retry' },
+          { check: true, title: 'Find and Replace' },
+          { check: true, title: 'Image Imports', tooltipLink: 'DOCUMENTATION_REFERENCE_LINKS.imageImport' },
         ],
       },
     },
   ],
 };
 
-export const sampleColumns = [
+export const sampleColumns: Partial<IColumn>[] = [
   {
     name: 'Product Name/ID',
     key: 'Product Name/ID *',
@@ -734,11 +809,22 @@ export const sampleColumns = [
     key: 'Category',
     description: 'The category of the product',
     type: ColumnTypesEnum.SELECT,
+    selectValues: ['Electronics', 'Furniture', 'Appliances', 'Office'],
     isRequired: false,
     isUnique: false,
   },
 ];
 
+export const companyLogos = [
+  { id: 'superworks', src: SuperworksLogo, alt: 'Superworks' },
+  { id: 'aklamio', src: AklamioLogo, alt: 'Aklamio' },
+  { id: 'artha', src: ArthaLogo, alt: 'Artha' },
+  { id: 'nasscom', src: NasscomLogo, alt: 'Nasscom' },
+  { id: 'nirvana', src: NirvanaLogo, alt: 'Nirvana' },
+  { id: 'omniva', src: OmnivaLogo, alt: 'Omniva' },
+  { id: 'orbit', src: OrbitLogo, alt: 'Orbit' },
+  { id: 'ubico', src: UbicoLogo, alt: 'Ubico' },
+];
 export const defaultWidgetAppereanceThemeYellow = {
   widget: {
     backgroundColor: '#1c1917',

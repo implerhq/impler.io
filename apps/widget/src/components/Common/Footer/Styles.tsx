@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
-import { colors } from '@config';
 import { createStyles, MantineTheme } from '@mantine/core';
 
 export const getWrapperStyles = (theme: MantineTheme): React.CSSProperties => ({
@@ -11,15 +10,17 @@ export const getWrapperStyles = (theme: MantineTheme): React.CSSProperties => ({
 });
 
 export const getPoweredByLinkStyles = (theme: MantineTheme): React.CSSProperties => ({
-  color: colors.black,
   textDecoration: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing.xs,
 });
 
 export const getImplerImageStyles = (theme: MantineTheme): React.CSSProperties => ({
   display: 'inline',
-  marginLeft: 2,
   height: 17,
-  marginTop: 1,
+  filter: 'var(--logo-filter, invert(0.5) brightness(1.5))',
+  transition: 'filter 0.2s ease',
 });
 
 export default createStyles((theme: MantineTheme): Record<string, any> => {

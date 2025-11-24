@@ -33,11 +33,11 @@ export class UpdateTemplateColumns {
 
       column.sequence = index;
       column.dateFormats = column.dateFormats?.map((format) => format.toUpperCase()) || [];
-      column.isRequired = existingUserColumns?.isRequired || false;
-      column.isUnique = existingUserColumns?.isUnique || false;
-      column.selectValues = existingUserColumns?.selectValues || [];
-      column.dateFormats = existingUserColumns?.dateFormats || [];
-      column.validations = existingUserColumns?.validations || [];
+      column.isRequired = existingUserColumns?.isRequired || column.isRequired || false;
+      column.isUnique = existingUserColumns?.isUnique || column.isUnique || false;
+      column.selectValues = column.selectValues || existingUserColumns?.selectValues || [];
+      column.dateFormats = existingUserColumns?.dateFormats || column.dateFormats || [];
+      column.validations = existingUserColumns?.validations || column.validations || [];
     });
     const columns = await this.columnRepository.createMany(userColumns);
     await this.saveSampleFile.execute(columns, _templateId);

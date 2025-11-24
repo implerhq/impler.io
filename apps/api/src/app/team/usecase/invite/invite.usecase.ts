@@ -17,8 +17,10 @@ export class Invite {
 
   async exec(command: InviteCommand) {
     try {
-      // const subscription = await this.paymentAPIService.fetchActiveSubscription(command.invitedBy);
-      // const allocated = subscription.meta.TEAM_MEMBERS;
+      /*
+       * const subscription = await this.paymentAPIService.fetchActiveSubscription(command.invitedBy);
+       * const allocated = subscription.meta.TEAM_MEMBERS;
+       */
 
       const existingInvitationsCount = await this.projectInvitationRepository.count({
         _projectId: command.projectId,
