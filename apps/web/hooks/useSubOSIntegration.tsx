@@ -38,7 +38,6 @@ export const useSubOSIntegration = () => {
       // Configure/Initialize SubOS
       configureSubOS({
         apiEndpoint: publicRuntimeConfig.NEXT_PUBLIC_PAYMENT_GATEWAY_URL,
-        projectId: publicRuntimeConfig.NEXT_PUBLIC_SUBOS_PROJECT_ID,
         appName: publicRuntimeConfig.NEXT_PUBLIC_APP_NAME || DEFAULT_APP_NAME,
         appEnvironment: process.env.NODE_ENV,
         appVersion: publicRuntimeConfig.NEXT_PUBLIC_APP_VERSION || DEFAULT_APP_VERSION,

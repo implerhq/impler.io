@@ -130,9 +130,9 @@ function ImportDetails() {
         id: MODAL_KEYS.WELCOME_IMPORTER,
         children: <WelcomeImporterModal onDoWelcomeWidgetAction={onWelcomeImportClick} />,
         withCloseButton: false,
+        closeOnClickOutside: true,
         centered: true,
         size: 'xl',
-        onClose: () => {},
       });
     }
   }, [showWelcome, onWelcomeImportClick]);

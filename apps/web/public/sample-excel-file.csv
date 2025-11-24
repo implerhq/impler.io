@@ -1,5 +1,5 @@
 Product Name/ID,Quantity,Unit Price,Total Price,Category
-Refrigerator 001,4,25,100,Appliances
+Refrigerator 001,4,25,100,Home Appliances
 Filing Cabinet 002,1,114,114,Furniture
 Filing Cabinet 003,10,804,8040,Furniture
 Wireless Mouse 004,2,756,1512,Electronics
@@ -7,7 +7,7 @@ Projector 005,6,97,582,Office
 Whiteboard 006,10,612,6120,Home Appliances
 Headphones 007,4,441,1764,Electronics
 Wireless Mouse 008,2,274,548,Electronics
-Scanner 009,5,512,2560,Office
+Scanner 009,5,512,2560,Home Appliances
 Filing Cabinet 010,9,503,4527,Furniture
 Office Chair 011,5,421,2105,Furniture
 Refrigerator 012,7,175,1225,Appliances
