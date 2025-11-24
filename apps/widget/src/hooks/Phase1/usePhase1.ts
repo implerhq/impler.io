@@ -89,7 +89,11 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
           throw new Error(WIDGET_FEATURES_EXCEPTION_MESSAGES.TEXT_CUSTOMIZATION);
         }
 
-        if (!importConfig.APPEARANCE_CUSTOMIZATION && appearanceCustomizationResult.differences.length > 0) {
+        if (
+          !importConfig.APPEARANCE_CUSTOMIZATION &&
+          appearance &&
+          appearanceCustomizationResult.differences.length > 0
+        ) {
           throw new Error(WIDGET_FEATURES_EXCEPTION_MESSAGES.APPEARANCE_CUSTOMIZATION);
         }
 
