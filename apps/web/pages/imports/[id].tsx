@@ -205,7 +205,7 @@ function ImportDetails() {
               id: 'validator',
               value: 'validator',
               title: 'Validator',
-              icon: <ForbiddenIcon size="xl" />,
+              icon: customValidatatorCodeUnavailable ? <ForbiddenIcon size="xl" /> : null,
               disabled: customValidatatorCodeUnavailable,
               content: <Validator templateId={templateData._id} />,
             },
