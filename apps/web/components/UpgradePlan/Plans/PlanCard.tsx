@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { plansApi, useSubscription } from 'subos-frontend';
+import { plansApi, useSubscription, useCountryAndCurrency } from 'subos-frontend';
 import { Card, Text, Badge, Stack, Divider, LoadingOverlay } from '@mantine/core';
 import { Button } from '@ui/button';
 import { colors, NOTIFICATION_KEYS, PLANCODEENUM, ROUTES } from '@config';
@@ -18,6 +18,8 @@ export function PlanCard({ plan, isYearly }: PlanCardProps) {
   const { profileInfo } = useAppState();
   const { classes } = useStyles();
   const { createPaymentSession } = plansApi;
+  const { currency } = useCountryAndCurrency();
+
   const [isLoading, setIsLoading] = useState(false);
   const { subscription, fetchSubscription } = useSubscription();
 
@@ -48,6 +50,7 @@ export function PlanCard({ plan, isYearly }: PlanCardProps) {
         returnUrl: `${window.location.origin}${ROUTES.SUBSCRIPTION_STATUS}`,
         externalId: profileInfo?.email,
         cancelUrl: `${window.location.origin}${ROUTES.PAYMENT_CANCEL}`,
+        currency,
       });
       if (response?.success && response?.data?.checkoutUrl) {
         window.location.href = response?.data?.checkoutUrl;
