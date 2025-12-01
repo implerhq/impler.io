@@ -489,8 +489,8 @@ importers:
         specifier: ^0.32.6
         version: 0.32.6
       subos-frontend:
-        specifier: ^1.0.81
-        version: 1.0.81(react-dom@18.2.0)(react-router-dom@6.30.1)(react@18.2.0)
+        specifier: ^1.0.94
+        version: 1.0.94(react-dom@18.2.0)(react@18.2.0)
       typescript:
         specifier: 4.9.5
         version: 4.9.5
@@ -23465,16 +23465,14 @@ packages:
     resolution: {integrity: sha512-Orov6g6BB1sDfYgzWfTHDOxamtX1bE/zo104Dh9e6fqJ3PooipYyfJ0pUmrZO2wAvO8YbEyeFrkV91XTsGMSrw==}
     dev: false
 
-  /subos-frontend@1.0.81(react-dom@18.2.0)(react-router-dom@6.30.1)(react@18.2.0):
-    resolution: {integrity: sha512-K7rsAShk2cfHlELFeWtyE3N+6WFBXBdHaxN+oyLxg61tGiqaeo51N5bxX0uzdx/gfFQ2T6dqerwmubpgpZb6uw==}
+  /subos-frontend@1.0.94(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-pCYGpsBn2m9VqBedysdejdfjehClYD9ViBweA7szF5HRDaT4+UCmNZ42vId+VdQUUNKS2LLILsilK+XiMAqx2g==}
     peerDependencies:
       react: '>=18'
       react-dom: '>=18'
-      react-router-dom: '>=6'
     dependencies:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      react-router-dom: 6.30.1(react-dom@18.2.0)(react@18.2.0)
     dev: false
 
   /sucrase@3.35.0:
