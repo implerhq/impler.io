@@ -1,4 +1,4 @@
-import { Tabs as MantineTabs } from '@mantine/core';
+import { Tabs as MantineTabs, Tooltip } from '@mantine/core';
 import useStyles from './Tabs.styles';
 
 interface TabItem {
@@ -7,6 +7,8 @@ interface TabItem {
   title: string;
   icon?: React.ReactNode;
   content: React.ReactNode;
+  disabled?: boolean;
+  disabledTooltip?: string;
 }
 
 interface TabsProps {
@@ -33,9 +35,24 @@ export function Tabs({ items, value, onTabChange, keepMounted, allowTabDeactivat
     >
       <MantineTabs.List>
         {items.map((item) => (
-          <MantineTabs.Tab data-id={item.id} key={item.value} value={item.value} icon={item.icon}>
-            {item.title}
-          </MantineTabs.Tab>
+          <Tooltip
+            key={item.value}
+            label={item.disabledTooltip || 'This feature is not available in your current plan'}
+            disabled={!item.disabled}
+            position="top"
+            withArrow
+            multiline
+            withinPortal
+          >
+            <MantineTabs.Tab
+              data-id={item.id}
+              value={item.value}
+              icon={item.disabled ? item.icon : null}
+              disabled={item.disabled}
+            >
+              {item.title}
+            </MantineTabs.Tab>
+          </Tooltip>
         ))}
       </MantineTabs.List>
       {items.map((item) => (

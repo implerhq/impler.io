@@ -17,7 +17,7 @@ import { ValidationTypesEnum } from '@impler/client';
 import { IsValidRegex } from '@shared/framework/is-valid-regex.validator';
 import { IsValidDigitsConstraint } from '@shared/framework/is-valid-digits.validator';
 import { IsNumberOrString } from '@shared/framework/number-or-string.validator';
-import { ColumnDelimiterEnum, ColumnTypesEnum, Defaults } from '@impler/shared';
+import { ColumnDelimiterEnum, ColumnTypesEnum } from '@impler/shared';
 
 export class ValidationDto {
   @ApiProperty({
@@ -154,7 +154,7 @@ export class ColumnRequestDto {
   })
   @ValidateIf((object) => object.type === ColumnTypesEnum.DATE)
   @Type(() => Array<string>)
-  dateFormats: string[] = Defaults.DATE_FORMATS;
+  dateFormats: string[];
 
   @ApiProperty({
     description: 'Sequence of column',

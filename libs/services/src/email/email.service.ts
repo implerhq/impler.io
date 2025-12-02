@@ -21,6 +21,13 @@ interface IExecutionErrorEmailOptions {
   time: string;
   importId: string;
 }
+
+interface IUsageLimitExceededEmailOptions {
+  limitType: string;
+  currentUsage: string;
+  planName?: string;
+  upgradeUrl?: string;
+}
 interface ISendMailOptions {
   to: string;
   from: string;
@@ -615,7 +622,7 @@ const EMAIL_CONTENTS = {
 </div>
 </body>
 </html>`,
-  DECLINE_INVITATION_EMAIL: ({ invitedBy, projectName, declinedBy }: IDeclineInvitationEmailOptions) => `
+  IMPORT_LIMIT_EXCEEDED_EMAIL: ({ limitType, currentUsage, planName, upgradeUrl }: IUsageLimitExceededEmailOptions) => `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -655,7 +662,18 @@ const EMAIL_CONTENTS = {
         ul {
             padding-left: 20px;
         }
-        
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .button {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
         .contact {
             margin-top: 30px;
         }
@@ -664,16 +682,24 @@ const EMAIL_CONTENTS = {
 <body>
     <div class="container">
         <div class="logo"><img src="https://impler.io/wp-content/uploads/2024/07/Logo-black.png" style="width: 150px;" alt="Impler Logo" /></div>
-        <h1>Project Invitation Declined: ${projectName}</h1>
-        <p>${declinedBy} has declined the invitation to join the project.</p>
+        <h1>Import Limit Exceeded</h1>
+        <p>Your account has reached its ${limitType} limit. To continue using Impler's services without interruption, please upgrade your plan.</p>
         <ul>
-            <li><strong>Project Name:</strong> ${projectName}</li>
-            <li><strong>Invited By:</strong> ${invitedBy}</li>
-            <li><strong>Declined By:</strong> ${declinedBy}</li>
+            <li><strong>Limit Type:</strong> ${limitType}</li>
+            <li><strong>Current Usage:</strong> ${currentUsage}</li>
+            ${planName ? `<li><strong>Current Plan:</strong> ${planName}</li>` : ''}
         </ul>
+        <p>Upgrade your plan to continue importing data seamlessly.</p>
+        ${
+          upgradeUrl
+            ? `<div class="button-container">
+            <a href="${upgradeUrl}" class="button">Upgrade Your Plan</a>
+        </div>`
+            : ''
+        }
         
         <div class="contact">
-            <p>Need any help? <a href="mailto:support@impler.io">Contact us</a></p>
+            <p>Need any help? <a href="mailto:bhavik@impler.io">Contact us</a></p>
         </div>
     </div>
 </body>
@@ -716,6 +742,10 @@ type EmailContents =
   | {
       type: 'DECLINE_INVITATION_EMAIL';
       data: IDeclineInvitationEmailOptions;
+    }
+  | {
+      type: 'IMPORT_LIMIT_EXCEEDED_EMAIL';
+      data: IUsageLimitExceededEmailOptions;
     };
 
 export abstract class EmailService {

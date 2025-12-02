@@ -7,6 +7,7 @@ import {
   UserJobImportStatusEnum,
   IFilter,
   FilterOperationEnum,
+  BILLABLEMETRIC_CODE_ENUM,
 } from '@impler/shared';
 
 import { SendImportJobDataConsumer } from './send-import-job-data.consumer';
@@ -394,10 +395,8 @@ export class SendAutoImportJobDataConsumer extends SendImportJobDataConsumer {
 
       await this.paymentAPIService.createEvent(
         {
-          uploadId: _jobId,
-          totalRecords: validationResult.totalRecords,
-          validRecords: validationResult.validRecords,
-          invalidRecords: validationResult.invalidRecords,
+          units: validationResult.totalRecords,
+          billableMetricCode: BILLABLEMETRIC_CODE_ENUM.ROWS,
         },
         userJobInfo.externalUserId
       );

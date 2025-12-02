@@ -21,18 +21,14 @@ export interface Plan {
   price: number;
   extraChargeOverheadTenThusandRecords: number;
   removeBranding: boolean;
+  recordsImportedPerDollar: number | null;
+  costPerRecordImport: number | null;
+  costPerExtraRecordImport: number | null;
+  sellingPriceOf5KRecordsImport: number | null;
   content: PlanContent;
 }
 
-interface PlansProps {
-  activePlanCode: string;
-  email: string;
-  projectId?: string;
-  canceledOn?: string;
-  expiryDate?: string;
-}
-
-export function Plans({ activePlanCode, email, projectId }: PlansProps) {
+export function Plans() {
   const [showYearly, setShowYearly] = useState(true);
 
   return (
@@ -57,14 +53,7 @@ export function Plans({ activePlanCode, email, projectId }: PlansProps) {
       <Divider />
       <Group grow align="flex-start">
         {plans[showYearly ? 'yearly' : 'monthly'].map((plan) => (
-          <PlanCard
-            key={plan.code}
-            plan={plan}
-            isYearly={showYearly}
-            activePlanCode={activePlanCode}
-            email={email}
-            projectId={projectId}
-          />
+          <PlanCard key={plan.code} plan={plan} isYearly={showYearly} />
         ))}
       </Group>
     </Stack>

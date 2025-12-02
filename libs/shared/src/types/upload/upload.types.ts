@@ -23,6 +23,8 @@ export const SupportedFileMimeTypes = [
 
 export enum FileMimeTypesEnum {
   'CSV' = 'text/csv',
+  'CSV_ALT' = 'text/comma-separated-values',
+  'CSV_ALT2' = 'application/csv',
   'EXCEL' = 'application/vnd.ms-excel',
   'EXCELX' = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   'EXCELM' = 'application/vnd.ms-excel.sheet.macroenabled.12',
@@ -34,6 +36,7 @@ export enum FileMimeTypesEnum {
   'JPG' = 'image/jpeg',
   'JPEG' = 'image/jpeg',
   'WEBP' = 'image/webp',
+  'TEXT_PLAIN' = 'text/plain',
 }
 
 export enum FileEncodingsEnum {
@@ -140,10 +143,4 @@ export interface IFileInformation {
   headings: string[];
   data: Record<string, unknown>[];
   totalRecords: number;
-}
-
-export interface IImportConfig {
-  showBranding: boolean;
-  mode: string;
-  title: string;
 }

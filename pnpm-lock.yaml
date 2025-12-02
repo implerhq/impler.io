@@ -487,6 +487,9 @@ importers:
       sharp:
         specifier: ^0.32.6
         version: 0.32.6
+      subos-frontend:
+        specifier: ^1.0.95
+        version: 1.0.95(react-dom@18.2.0)(react@18.2.0)
       typescript:
         specifier: 4.9.5
         version: 4.9.5
@@ -21030,6 +21033,7 @@ packages:
     resolution:
       { integrity: sha512-3pKJwH184Xo/lnH6oyP1q2pMd7HcypqqmRs91/6/i2CGtWwIKGCkOOMTm/zXbgTEWHw1uNpNi/igc3ePOYHb6w== }
     engines: { node: '>=0.10.0' }
+    requiresBuild: true
     dependencies:
       remove-trailing-separator: 1.1.0
 
@@ -24363,6 +24367,7 @@ packages:
   /remove-trailing-separator@1.1.0:
     resolution:
       { integrity: sha512-/hS+Y0u3aOfIETiaiirUFwDBDzmXPvO+jAfKTitUngIPzdKc6Z0LoFjM/CK5PL4C+eKwHohlHAb6H0VFfmmUsw== }
+    requiresBuild: true
 
   /renderkid@2.0.7:
     resolution:
@@ -26098,6 +26103,17 @@ packages:
   /stylis@4.2.0:
     resolution:
       { integrity: sha512-Orov6g6BB1sDfYgzWfTHDOxamtX1bE/zo104Dh9e6fqJ3PooipYyfJ0pUmrZO2wAvO8YbEyeFrkV91XTsGMSrw== }
+    dev: false
+
+  /subos-frontend@1.0.95(react-dom@18.2.0)(react@18.2.0):
+    resolution:
+      { integrity: sha512-vGJeCdPsW9CE+dK5uhHfVKb+L5i7YyGipz0DscbfY1vB+x3aoDBQMdGmTxVV6i6Tjh6v6m4rgxS7pdFGE+w8Rw== }
+    peerDependencies:
+      react: '>=18'
+      react-dom: '>=18'
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /sucrase@3.35.0:

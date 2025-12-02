@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Title, Text, Stack, Divider, Box, Alert, TextInput as Input, Container } from '@mantine/core';
+import { Title, Text, Stack, Divider, Box, Alert, TextInput as Input } from '@mantine/core';
 
 import { Button } from '@ui/button';
 import { useSignin } from '@hooks/auth/useSignin';
@@ -16,15 +16,18 @@ export const Signin = ({ API_URL, error }: SigninProps) => {
   const { register, isLoginLoading, login, errorMessage } = useSignin();
 
   return (
-    <Container size="xs">
+    <Box>
       <Title order={1} color="white" mb="md">
         Let&apos;s Continue
       </Title>
-
+      <Text size="xs" mb="md" color="dimmed">
+        Get your free trial — explore every feature for 14 days, then keep building on our free plan.
+      </Text>
       <Box w="100%">
         <Button fullWidth component="a" size="md" href={API_URL + CONSTANTS.GITHUB_LOGIN_URL} leftIcon={<GithubIcon />}>
           Continue with Github
         </Button>
+
         {error && error === CONSTANTS.AUTHENTICATION_ERROR_CODE && (
           <Text color="red" pt="sm" fw={600}>
             Some error occured while signin, please try again later.
@@ -40,7 +43,7 @@ export const Signin = ({ API_URL, error }: SigninProps) => {
         w="100%"
       />
       <form style={{ width: '100%' }} onSubmit={login}>
-        <Stack>
+        <Stack spacing="md">
           {errorMessage && errorMessage.message ? (
             <Alert color={colors.white} mb="sm" bg={colors.danger} p="xs">
               {errorMessage.message}
@@ -74,6 +77,6 @@ export const Signin = ({ API_URL, error }: SigninProps) => {
           </Text>
         </Stack>
       </form>
-    </Container>
+    </Box>
   );
 };

@@ -15,6 +15,7 @@ export function useTemplateSchema({ setError }: UseTemplateSchemaProps) {
   const [templateSchema, setTemplateSchema] = useState<OnboardTemplateSchemaTable[]>();
   const { profileInfo } = useAppState();
   const { push } = useRouter();
+  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
 
   const {
     data: templateSampleData,
@@ -66,7 +67,7 @@ export function useTemplateSchema({ setError }: UseTemplateSchemaProps) {
     {
       onSuccess: (templateData) => {
         if (templateData && templateData._id && profileInfo) {
-          push(`${ROUTES.IMPORTS}/${templateData._id}?showWidget=true`);
+          push(`${ROUTES.IMPORTS}/${templateData._id}`);
         }
       },
     }

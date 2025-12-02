@@ -102,6 +102,7 @@ export default function OtpVerifyPage() {
                           value !== profileInfo?.email || 'Email cannot be the same as the current email',
                       },
                     })}
+                    defaultValue={profileInfo?.email}
                     required
                     size="md"
                     type="email"

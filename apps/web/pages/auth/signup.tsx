@@ -1,4 +1,4 @@
-import { Container } from '@mantine/core';
+import { Container, Flex } from '@mantine/core';
 import { Stepper } from '@components/Stepper/Stepper';
 import { Button } from '@ui/button';
 import Link from 'next/link';
@@ -15,10 +15,22 @@ export default function SignupPage() {
   return (
     <OnboardLayout>
       <Container size="xs">
-        <Title order={1} color="white" mb="md">
-          Get Started
-        </Title>
-        <Stepper currentStep={1} totalSteps={3} />
+        <Flex justify="space-between" align="center">
+          <Title order={1} color="white" mb={0}>
+            Get Started
+          </Title>
+
+          <Stepper currentStep={1} totalSteps={2} />
+        </Flex>
+
+        <Text mt="md" size="xs" color="dimmed">
+          Get your free trial — explore every feature for 14 days, then keep building on our free plan.
+        </Text>
+        <Text mt="xs" mb="xs" size="xs" color="dimmed">
+          No credit card required • 2,500 free records/month • Cancel anytime
+        </Text>
+
+        {/* <Stepper currentStep={1} totalSteps={2} /> */}
         <FocusTrap>
           <form onSubmit={signup} style={{ width: '100%' }}>
             <Stack>
@@ -38,11 +50,12 @@ export default function SignupPage() {
               <TextInput
                 size="md"
                 required
+                type="email"
                 label="Email"
                 {...register('email')}
                 error={errors.email?.message}
                 placeholder={PLACEHOLDERS.email}
-                description="Verification code will be sent to your email!"
+                description="You will receive verification code to be entered in next screen!"
                 disabled={isInvitationLink}
               />
               <PasswordInput

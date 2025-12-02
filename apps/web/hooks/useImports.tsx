@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { modals } from '@mantine/modals';
 import { useDebouncedState, useLocalStorage } from '@mantine/hooks';
@@ -8,13 +8,22 @@ import { commonApi } from '@libs/api';
 import { notify } from '@libs/notify';
 import { track } from '@libs/amplitude';
 import { useAppState } from 'store/app.context';
-import { API_KEYS, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS, VARIABLES } from '@config';
+import { API_KEYS, CONSTANTS, MODAL_KEYS, MODAL_TITLES, NOTIFICATION_KEYS, VARIABLES } from '@config';
 import { IErrorObject, ITemplate, IImport, IPaginationData, IProjectPayload } from '@impler/shared';
 
 import { CreateImportForm } from '@components/imports/forms/CreateImportForm';
 import { DuplicateImportForm } from '@components/imports/forms/DuplicateImportForm';
 
 export function useImports() {
+  const [showWelcome, setShowWelcome] = useState(
+    localStorage.getItem(CONSTANTS.SHOW_WELCOME_IMPORTER_STORAGE_KEY) === 'true'
+  );
+
+  const clearWelcomeFlag = useCallback(() => {
+    localStorage.removeItem(CONSTANTS.SHOW_WELCOME_IMPORTER_STORAGE_KEY);
+    setShowWelcome(false);
+  }, []);
+
   const { push } = useRouter();
   const queryClient = useQueryClient();
   const { profileInfo } = useAppState();
@@ -124,7 +133,7 @@ export function useImports() {
       });
     }
   }
-  function onCreateClick() {
+  function onImportCreateClick() {
     modals.open({
       modalId: MODAL_KEYS.IMPORT_CREATE,
       title: MODAL_TITLES.IMPORT_CREATE,
@@ -148,6 +157,17 @@ export function useImports() {
     });
   }
 
+  function handleDownloadSample() {
+    try {
+      const link = document.createElement('a');
+      link.href = '/sample-excel-file.csv';
+      link.download = 'sample-import-file.csv';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {}
+  }
+
   useEffect(() => {
     if (importsData && page && importsData.data.length < page) {
       setPage(importsData.totalPages);
@@ -158,9 +178,12 @@ export function useImports() {
     page,
     limit,
     search,
+    showWelcome,
+    clearWelcomeFlag,
     importsData,
     onSearchChange,
-    onCreateClick,
+    onImportCreateClick,
+    handleDownloadSample,
     onLimitChange,
     onDuplicateClick,
     isImportsLoading,

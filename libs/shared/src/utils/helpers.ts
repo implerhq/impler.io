@@ -84,3 +84,88 @@ export const convertStringToJson = (value: any) => {
     return undefined;
   }
 };
+
+export function handleApiError({
+  axiosInstance,
+  error,
+  context,
+  shouldLog,
+}: {
+  axiosInstance: any;
+  error: any;
+  context?: string;
+  shouldLog?: boolean;
+}): string {
+  const isAxios = axiosInstance.isAxiosError(error);
+  const errorDetails: IErrorDetails = isAxios
+    ? {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        headers: error.response?.headers,
+        url: error.config?.url,
+        method: error.config?.method,
+        context,
+      }
+    : {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+        context,
+      };
+
+  if (shouldLog) {
+    // eslint-disable-next-line no-console
+    console.error(`API Error${context ? ` [${context}]` : ''}:`, errorDetails);
+  }
+
+  if (errorDetails.response && typeof errorDetails.response === 'object') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const response = errorDetails.response as any;
+
+    // Check for common API error message patterns
+    if (response.message) {
+      return response.message;
+    }
+    if (response.error && typeof response.error === 'string') {
+      return response.error;
+    }
+    if (response.errors && Array.isArray(response.errors) && response.errors.length > 0) {
+      return response.errors[0].message || response.errors[0];
+    }
+  }
+
+  // Fallback to generic message based on status code
+  if (errorDetails.status) {
+    switch (errorDetails.status) {
+      case 400:
+        return 'Bad request. Please check your input data.';
+      case 401:
+        return 'Authentication failed. Please check your credentials.';
+      case 403:
+        return 'Access denied. You do not have permission to perform this action.';
+      case 404:
+        return 'Resource not found.';
+      case 429:
+        return 'Too many requests. Please try again later.';
+      case 500:
+        return 'Internal server error. Please try again later.';
+      default:
+        return errorDetails.message || 'An unexpected error occurred.';
+    }
+  }
+
+  return errorDetails.message || 'An unexpected error occurred.';
+}
+
+interface IErrorDetails {
+  message: string;
+  response?: unknown;
+  status?: number;
+  statusText?: string;
+  headers?: unknown;
+  url?: string;
+  method?: string;
+  stack?: string;
+  context?: string;
+}

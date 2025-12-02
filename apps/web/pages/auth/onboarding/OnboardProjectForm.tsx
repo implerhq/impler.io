@@ -1,21 +1,25 @@
+import { useEffect, useRef } from 'react';
 import { useOnboardUserProjectForm } from '@hooks/useOnboardUserProjectForm';
-import ProjectOnboardForm from './ProjectOnboardForm';
-
-interface ProjectOnboardFormData {
-  projectName: string;
-  companySize: string;
-  role: string;
-  source: string;
-}
+import { useAppState } from 'store/app.context';
+import { capitalizeFirstLetter } from '@shared/utils';
 
 export default function OnboardProjectForm() {
-  const { onboardUser, isUserOnboardLoading } = useOnboardUserProjectForm({});
+  const { profileInfo } = useAppState();
+  const { onboardUser } = useOnboardUserProjectForm({});
+  const hasSubmitted = useRef(false);
 
-  const handleProjectOnboardFormSubmit = async (data: ProjectOnboardFormData) => {
-    try {
-      onboardUser(data);
-    } catch (error) {}
-  };
+  useEffect(() => {
+    if (!hasSubmitted.current && profileInfo?.firstName) {
+      hasSubmitted.current = true;
+      const defaultValues = {
+        projectName: `${capitalizeFirstLetter(profileInfo.firstName)}'s Project`,
+        companySize: '1-10',
+        role: 'developer',
+        source: 'search',
+      };
+      onboardUser(defaultValues);
+    }
+  }, [onboardUser, profileInfo?.firstName]);
 
-  return <ProjectOnboardForm isLoading={isUserOnboardLoading} onSubmit={handleProjectOnboardFormSubmit} />;
+  return null;
 }

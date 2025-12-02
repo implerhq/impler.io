@@ -153,7 +153,7 @@ export function Footer({
       {importConfig && importConfig.showBranding === true ? (
         <a className={classes.poweredBy} href={variables.implerWebsite} target="_blank" rel="noopener noreferrer">
           <Text size="xs">
-            Powered by <img src="/logo-full.png" className={classes.implerImage} />
+            Powered by <img src="/full-logo-light.png" className={classes.implerImage} alt="Impler" />
           </Text>
         </a>
       ) : (

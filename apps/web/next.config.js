@@ -4,6 +4,7 @@ const { withSentryConfig } = require('@sentry/nextjs');
 const nextConfig = {
   reactStrictMode: true,
   publicRuntimeConfig: {
+    NEXT_PUBLIC_APP_FRONT_BASE_URL: process.env.NEXT_PUBLIC_APP_FRONT_BASE_URL,
     NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
     NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
     NEXT_PUBLIC_EMBED_URL: process.env.NEXT_PUBLIC_EMBED_URL,
@@ -16,6 +17,8 @@ const nextConfig = {
     NEXT_PUBLIC_PAYMENT_GATEWAY_URL: process.env.NEXT_PUBLIC_PAYMENT_GATEWAY_URL,
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
     NEXT_PUBLIC_COUPON_ENABLED: process.env.NEXT_PUBLIC_COUPON_ENABLED,
+    NEXT_PUBLIC_SUBOS_PROJECT_ID: process.env.NEXT_PUBLIC_SUBOS_PROJECT_ID,
+    NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
   },
   sentry: {
     hideSourceMaps: true,

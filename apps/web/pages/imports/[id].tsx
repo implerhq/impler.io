@@ -1,27 +1,33 @@
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { ActionIcon, Flex, Group, LoadingOverlay, Title, Select } from '@mantine/core';
-
 import { track } from '@libs/amplitude';
-import { useImpler } from '@impler/react';
-import { ITemplate, TemplateModeEnum } from '@impler/shared';
-import { IMPORT_MODES, ROUTES, SubjectsEnum, colors } from '@config';
+import { defaultWidgetAppereance, TemplateModeEnum } from '@impler/shared';
+import { CONSTANTS, IMPORT_MODES, MODAL_KEYS, ROUTES, SubjectsEnum, colors } from '@config';
 import { useImportDetails } from '@hooks/useImportDetails';
 
 import { Tabs } from '@ui/Tabs';
 import { Button } from '@ui/button';
 import { Schema } from '@components/imports/schema';
 import { withProtectedResource } from '@components/hoc';
-import { Destination } from '@components/imports/destination';
 import { AppLayout } from '@layouts/AppLayout';
-import { EditIcon } from '@assets/icons/Edit.icon';
 import { DeleteIcon } from '@assets/icons/Delete.icon';
 import { LeftArrowIcon } from '@assets/icons/LeftArrow.icon';
-import { IntegrationIcon } from '@assets/icons/Integration.icon';
 import { modals } from '@mantine/modals';
-import { WidgetConfigurationModal } from '@components/imports/destination/WidgetConfigurationModal/WidgetConfigurationModal';
+import { WelcomeImporterModal } from '@components/imports/destination/WidgetConfigurationModal/WelcomeImporterModal';
+import {
+  WelcomeConfigureStepModal,
+  WelcomeConfigureStepModalActionEnum,
+} from '@components/imports/destination/WidgetConfigurationModal/WelcomeConfigureStepModal';
+import { useImpler } from '@impler/react';
+import { ForbiddenIcon } from '@assets/icons';
+import { useImports } from '@hooks/useImports';
+import { useSubscriptionMetaDataInformation } from '@hooks/useSubscriptionMetaDataInformation';
+import { EditIcon } from '@assets/icons/Edit.icon';
+import { IntegrationIcon } from '@assets/icons/Integration.icon';
+import { Destination } from '@components/imports/destination';
 
 const Editor = dynamic(() => import('@components/imports/editor').then((mod) => mod.OutputEditor), {
   ssr: false,
@@ -31,9 +37,12 @@ const Validator = dynamic(() => import('@components/imports/validator').then((mo
 });
 
 function ImportDetails() {
+  const { customValidatatorCodeUnavailable } = useSubscriptionMetaDataInformation();
+
   const router = useRouter();
+  const { onImportCreateClick, showWelcome, clearWelcomeFlag } = useImports();
   const [activeTab, setActiveTab] = useState<'schema' | 'destination' | 'snippet' | 'validator' | 'output'>();
-  const [webhookConfig, setWebhookConfig] = useState<{ authHeaderValue?: string; extra?: string }>({});
+
   const {
     meta,
     columns,
@@ -49,71 +58,86 @@ function ImportDetails() {
     templateId: router.query.id as string,
   });
 
+  const handleActionClick = useCallback(
+    async (action: WelcomeConfigureStepModalActionEnum) => {
+      modals.closeAll();
+      switch (action) {
+        case WelcomeConfigureStepModalActionEnum.SetupDestination:
+          setActiveTab('destination');
+          break;
+        case WelcomeConfigureStepModalActionEnum.CreateImporter:
+          onImportCreateClick();
+          router.push(ROUTES.IMPORTS);
+          break;
+        case WelcomeConfigureStepModalActionEnum.EmbedIntoYourApplication:
+          onIntegrationClick();
+          break;
+        case WelcomeConfigureStepModalActionEnum.TalkWithTeam:
+          window.open(CONSTANTS.IMPLER_CAL_QUICK_MEETING, '_blank');
+          break;
+        default:
+          break;
+      }
+    },
+    [onImportCreateClick, setActiveTab, router, onIntegrationClick]
+  );
+
   const { showWidget, isImplerInitiated } = useImpler({
     primaryColor: colors.faintYellow,
     templateId: templateData?._id,
     projectId: templateData?._projectId,
     accessToken: profileInfo?.accessToken,
-    onUploadComplete: onSpreadsheetImported,
-    authHeaderValue: webhookConfig.authHeaderValue || '',
-    appearance: {
-      widget: {
-        backgroundColor: '#1c1917',
-      },
-      fontFamily: 'Inter, sans-serif',
-      borderRadius: '12px',
-      primaryButtonConfig: {
-        backgroundColor: '#f59e0b',
-        textColor: '#1c1917',
-        hoverBackground: '#fbbf24',
-        hoverTextColor: '#1c1917',
-        borderColor: 'transparent',
-        hoverBorderColor: 'transparent',
-        buttonShadow: '0 4px 16px rgba(245, 158, 11, 0.4)',
-      },
-      secondaryButtonConfig: {
-        backgroundColor: '#292524',
-        textColor: '#fcd34d',
-        hoverBackground: '#3c2d2a',
-        hoverTextColor: '#fed7aa',
-        borderColor: '#44403c',
-        hoverBorderColor: '#f59e0b',
-        buttonShadow: 'none',
-      },
+    appearance: defaultWidgetAppereance,
+    onUploadComplete: (data) => {
+      onSpreadsheetImported();
+      if (data && localStorage.getItem(CONSTANTS.SHOW_WELCOME_IMPORTER_STORAGE_KEY)) {
+        clearWelcomeFlag();
+        modals.open({
+          id: MODAL_KEYS.WELCOME_CONFIGURE_STEP,
+          children: (
+            <WelcomeConfigureStepModal
+              onConfigureDestinationClicked={(action) => {
+                handleActionClick(action);
+              }}
+            />
+          ),
+          withCloseButton: true,
+          closeOnClickOutside: true,
+          trapFocus: true,
+          centered: true,
+          size: 'xl',
+        });
+      }
     },
   });
-  const onImportClick = () => {
-    track({
-      name: 'IMPORT CLICK',
-      properties: {},
-    });
 
-    modals.open({
-      title: 'Configure Import Webhook',
-      children: (
-        <WidgetConfigurationModal
-          template={templateData as ITemplate}
-          onConfigSubmit={(config: { authHeaderValue?: string; extra?: string }) => {
-            setWebhookConfig(config);
-            modals.closeAll();
-            showWidget({
-              extra: config.extra || '',
-            });
-            setTimeout(() => {}, 100);
-          }}
-        />
-      ),
-      withCloseButton: true,
-      centered: true,
-      size: 'xl',
-    });
-  };
+  const onImportClick = useCallback(() => {
+    track({ name: 'IMPORT CLICK', properties: {} });
+    setTimeout(() => showWidget({}), 150);
+  }, [showWidget]);
+
+  const onWelcomeImportClick = useCallback(() => {
+    track({ name: 'IMPORT CLICK', properties: {} });
+    modals.close(MODAL_KEYS.WELCOME_IMPORTER);
+    setTimeout(() => {
+      showWidget({});
+    }, 200);
+  }, [showWidget]);
 
   useEffect(() => {
-    if (isImplerInitiated && router.query.showWidget) {
-      onImportClick();
+    if (showWelcome) {
+      modals.open({
+        id: MODAL_KEYS.WELCOME_IMPORTER,
+        children: <WelcomeImporterModal onDoWelcomeWidgetAction={onWelcomeImportClick} />,
+        withCloseButton: false,
+        centered: true,
+        size: 'xl',
+        onClose() {
+          clearWelcomeFlag();
+        },
+      });
     }
-  }, [isImplerInitiated]);
+  }, [showWelcome, onWelcomeImportClick]);
 
   return (
     <Flex gap="sm" direction="column" h="100%" style={{ position: 'relative' }}>
@@ -181,6 +205,8 @@ function ImportDetails() {
               id: 'validator',
               value: 'validator',
               title: 'Validator',
+              icon: customValidatatorCodeUnavailable ? <ForbiddenIcon size="xl" /> : null,
+              disabled: customValidatatorCodeUnavailable,
               content: <Validator templateId={templateData._id} />,
             },
             {

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { APIMessages } from '@shared/constants';
 import { PaymentAPIService } from '@impler/services';
 import { UpdateImageColumns, SaveSampleFile } from '@shared/usecases';
-import { AVAILABLE_BILLABLEMETRIC_CODE_ENUM, ColumnTypesEnum } from '@impler/shared';
+import { BILLABLEMETRIC_CODE_ENUM, ColumnTypesEnum } from '@impler/shared';
 import { ColumnEntity, ColumnRepository, CustomizationRepository, TemplateRepository } from '@impler/dal';
 import { AddColumnCommand } from 'app/column/commands/add-column.command';
 import { UniqueColumnException } from '@shared/exceptions/unique-column.exception';
@@ -33,11 +33,11 @@ export class UpdateTemplateColumns {
 
       column.sequence = index;
       column.dateFormats = column.dateFormats?.map((format) => format.toUpperCase()) || [];
-      column.isRequired = existingUserColumns?.isRequired || false;
-      column.isUnique = existingUserColumns?.isUnique || false;
-      column.selectValues = existingUserColumns?.selectValues || [];
-      column.dateFormats = existingUserColumns?.dateFormats || [];
-      column.validations = existingUserColumns?.validations || [];
+      column.isRequired = existingUserColumns?.isRequired || column.isRequired || false;
+      column.isUnique = existingUserColumns?.isUnique || column.isUnique || false;
+      column.selectValues = column.selectValues || existingUserColumns?.selectValues || [];
+      column.dateFormats = existingUserColumns?.dateFormats || column.dateFormats || [];
+      column.validations = existingUserColumns?.validations || column.validations || [];
     });
     const columns = await this.columnRepository.createMany(userColumns);
     await this.saveSampleFile.execute(columns, _templateId);
@@ -76,13 +76,13 @@ export class UpdateTemplateColumns {
     if (hasImageColumns && email) {
       const imageImportAvailable = await this.paymentAPIService.checkEvent({
         email,
-        billableMetricCode: AVAILABLE_BILLABLEMETRIC_CODE_ENUM.IMAGE_IMPORT,
+        billableMetricCode: BILLABLEMETRIC_CODE_ENUM.IMAGE_IMPORT,
       });
 
       if (!imageImportAvailable) {
         throw new DocumentNotFoundException(
           'Schema',
-          AVAILABLE_BILLABLEMETRIC_CODE_ENUM.IMAGE_IMPORT,
+          BILLABLEMETRIC_CODE_ENUM.IMAGE_IMPORT,
           APIMessages.FEATURE_UNAVAILABLE.IMAGE_IMPORT
         );
       }
@@ -90,13 +90,13 @@ export class UpdateTemplateColumns {
     if (hasValidations && email) {
       const validationsAvailable = await this.paymentAPIService.checkEvent({
         email,
-        billableMetricCode: AVAILABLE_BILLABLEMETRIC_CODE_ENUM.ADVANCED_VALIDATORS,
+        billableMetricCode: BILLABLEMETRIC_CODE_ENUM.ADVANCED_VALIDATORS,
       });
 
       if (!validationsAvailable) {
         throw new DocumentNotFoundException(
           'Schema',
-          AVAILABLE_BILLABLEMETRIC_CODE_ENUM.ADVANCED_VALIDATORS,
+          BILLABLEMETRIC_CODE_ENUM.ADVANCED_VALIDATORS,
           APIMessages.FEATURE_UNAVAILABLE.ADVANCED_VALIDATIONS
         );
       }

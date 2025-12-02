@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { NOTIFICATION_KEYS } from '@config';
 import { notifications } from '@mantine/notifications';
 
-const Messages: Record<string, NotifyProps> = {
+const Messages: Record<string, NotifyProps | ((data?: any) => NotifyProps)> = {
   [NOTIFICATION_KEYS.MEMBERSHIP_PURCHASED]: {
     title: 'Membership Upgraded',
     message: 'Thankyou for Upgrading your membership',
@@ -66,6 +66,14 @@ const Messages: Record<string, NotifyProps> = {
     message: 'It looks like column data is not correct. Please fix it and try again.',
     color: 'red',
   },
+  // Change this to a simple string key, not a function call
+  SUBSCRIPTION_FEATURE_NOT_INCLUDED_IN_CURRENT_PLAN: (data?: { featureName?: string }) => ({
+    title: 'Subscription plan does not support this feature',
+    message: data?.featureName
+      ? `${data.featureName} is not available in your current plan. Please upgrade to use this feature.`
+      : 'Your subscription plan does not support this feature. Please upgrade to continue.',
+    color: 'red',
+  }),
 };
 
 interface NotifyProps {
@@ -76,6 +84,11 @@ interface NotifyProps {
   color?: string;
 }
 
-export function notify(key: keyof typeof Messages, options?: NotifyProps) {
-  notifications.show({ ...Messages[key], ...options });
+export function notify(key: string, options?: NotifyProps & { featureName?: string }) {
+  const messageConfig = Messages[key];
+
+  // Check if it's a function (dynamic message)
+  const config = typeof messageConfig === 'function' ? messageConfig(options) : messageConfig;
+
+  notifications.show({ ...config, ...options });
 }

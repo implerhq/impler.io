@@ -1,5 +1,5 @@
-import { GridIcon, Warning } from '@icons';
-import { Box, Group, Skeleton, Stack, Table, Text } from '@mantine/core';
+import { GridIcon, Warning, LockIcon } from '@icons';
+import { Box, Group, Skeleton, Stack, Table, Text, Tooltip } from '@mantine/core';
 import { Button } from '@ui/Button';
 import { WIDGET_TEXTS } from '@impler/client';
 import { IColumn, numberFormatter, replaceVariablesInString } from '@impler/shared';
@@ -10,6 +10,7 @@ interface DirectEntryViewProps {
   columns?: IColumn[];
   isLoading?: boolean;
   texts: typeof WIDGET_TEXTS;
+  isManualDataEntryAvailable?: boolean;
   onManuallyEnterData?: () => void;
 }
 
@@ -20,21 +21,27 @@ export function DirectEntryView({
   isLoading,
   className,
   onManuallyEnterData,
+  isManualDataEntryAvailable,
 }: DirectEntryViewProps) {
   return (
-    <Box
-      bg="var(--primary-background)"
-      style={{ borderRadius: 'var(--border-radius)' }}
-      pt="sm"
-      pl="sm"
-      className={className}
-    >
+    <Box bg="var(--primary-background)" pt="sm" pl="sm" className={className}>
       <Stack spacing="xs">
-        <div>
-          <Button loading={isLoading} onClick={onManuallyEnterData} leftIcon={<GridIcon />}>
-            {texts['PHASE1-2'].ENTER_DATA}
-          </Button>
-        </div>
+        <Group>
+          <Tooltip
+            label="This feature is not in your current plan"
+            disabled={isManualDataEntryAvailable !== false}
+            position="top"
+          >
+            <Button
+              loading={isLoading}
+              onClick={onManuallyEnterData}
+              leftIcon={isManualDataEntryAvailable === false ? <LockIcon /> : <GridIcon />}
+              disabled={isManualDataEntryAvailable === false}
+            >
+              {texts['PHASE1-2'].ENTER_DATA}
+            </Button>
+          </Tooltip>
+        </Group>
         {limit ? (
           <Group>
             <Warning fill="var(--error-color)" />{' '}
@@ -60,7 +67,7 @@ export function DirectEntryView({
             <thead style={{ backgroundColor: 'var(--secondary-background-hover)' }}>
               <tr>
                 {columns?.map((column) => (
-                  <th style={{ textWrap: 'nowrap' }} key={column.name}>
+                  <th style={{ textWrap: 'nowrap', color: 'var(--secondary-background)' }} key={column.name}>
                     {column.name}
                   </th>
                 ))}
