@@ -2,10 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import { API_KEYS, NOTIFICATION_KEYS } from '@config';
 import { IErrorObject, ISubscriptionData } from '@impler/shared';
 import { usePlanMetaData } from 'store/planmeta.store.context';
-import { useAppState } from 'store/app.context';
+import { commonApi } from '@libs/api';
 import { useSubOSIntegration } from './useSubOSIntegration';
 import { IPlanMeta } from '@types';
-import { subscriptionApi } from 'subos-frontend';
 import { notify } from '@libs/notify';
 
 interface UseActiveSubscriptionDetailProps {
@@ -14,7 +13,6 @@ interface UseActiveSubscriptionDetailProps {
 
 export function useActiveSubscriptionDetails({ projectId }: UseActiveSubscriptionDetailProps) {
   const subOSIntegration = useSubOSIntegration();
-  const { profileInfo } = useAppState();
   const { meta, setPlanMeta } = usePlanMetaData();
 
   const {
@@ -25,9 +23,7 @@ export function useActiveSubscriptionDetails({ projectId }: UseActiveSubscriptio
   } = useQuery<unknown, IErrorObject, ISubscriptionData, [string | undefined]>(
     [API_KEYS.FETCH_ACTIVE_SUBSCRIPTION],
     async () => {
-      const activeSubscription = await subscriptionApi.getActiveSubscription(profileInfo!.email);
-
-      return activeSubscription?.data;
+      return await commonApi(API_KEYS.FETCH_ACTIVE_SUBSCRIPTION as any, {});
     },
     {
       enabled: !!projectId,
@@ -36,6 +32,8 @@ export function useActiveSubscriptionDetails({ projectId }: UseActiveSubscriptio
       refetchOnReconnect: true,
       onSuccess: (data) => {
         data?.meta && setPlanMeta(data.meta as IPlanMeta);
+
+        return data.meta as IPlanMeta;
       },
       onError: () => {
         notify(NOTIFICATION_KEYS.ERROR_FETCHING_SUBSCRIPTION_DETAILS, {
