@@ -1,10 +1,10 @@
-version: "3"
+version: '3'
 services:
   mongodb:
     image: mongo
     container_name: mongodb
     logging:
-      driver: "none"
+      driver: 'none'
     environment:
       - PUID=1000
       - PGID=1000
@@ -18,7 +18,7 @@ services:
 
   api:
     privileged: true
-    image: "ghcr.io/implerhq/impler/api:1.9.0"
+    image: 'ghcr.io/implerhq/impler/api:1.9.2'
     depends_on:
       - mongodb
       - rabbitmq
@@ -51,12 +51,12 @@ services:
       ALERT_EMAIL_FROM: ${ALERT_EMAIL_FROM}
       LEAD_MAKE_WEBHOOK_URL: ${LEAD_MAKE_WEBHOOK_URL}
     ports:
-      - "3000:3000"
+      - '3000:3000'
     networks:
       - impler
 
   queue-manager:
-    image: "ghcr.io/implerhq/impler/queue-manager:1.9.0"
+    image: 'ghcr.io/implerhq/impler/queue-manager:1.9.2'
     depends_on:
       - api
       - rabbitmq
@@ -84,7 +84,7 @@ services:
       - impler
 
   widget:
-    image: "ghcr.io/implerhq/impler/widget:1.9.0"
+    image: 'ghcr.io/implerhq/impler/widget:1.9.2'
     depends_on:
       - api
     container_name: widget
@@ -102,7 +102,7 @@ services:
   embed:
     depends_on:
       - widget
-    image: "ghcr.io/implerhq/impler/embed:1.9.0"
+    image: 'ghcr.io/implerhq/impler/embed:1.9.2'
     container_name: embed
     environment:
       WIDGET_URL: ${WIDGET_BASE_URL}
@@ -114,7 +114,7 @@ services:
   web:
     depends_on:
       - api
-    image: "ghcr.io/implerhq/impler/web:1.9.0"
+    image: 'ghcr.io/implerhq/impler/web:1.9.2'
     container_name: web
     environment:
       NEXT_PUBLIC_API_BASE_URL: ${API_ROOT_URL}
@@ -129,12 +129,12 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-alpine
-    container_name: "rabbitmq"
+    container_name: 'rabbitmq'
     restart: always
     ports:
       - 5672:5672
     healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "5672"]
+      test: ['CMD', 'nc', '-z', 'localhost', '5672']
       interval: 5s
       timeout: 15s
       retries: 1
@@ -153,7 +153,7 @@ services:
       - 9001:9001
     command: server /data --console-address ":9001"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
       interval: 30s
       timeout: 20s
       retries: 3

@@ -39,7 +39,6 @@ export function useHistory() {
     {
       enabled: !!profileInfo,
       keepPreviousData: true,
-      refetchInterval: 3000,
       refetchIntervalInBackground: false,
     }
   );
