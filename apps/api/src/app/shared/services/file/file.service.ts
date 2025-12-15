@@ -13,14 +13,13 @@ export class ExcelFileService {
   async convertToCsv(file: Express.Multer.File, sheetName?: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const wb = XLSX.read(file.buffer as any, { cellDates: true, cellText: false });
+        const wb = XLSX.read(file.buffer as any);
         const ws = sheetName && wb.SheetNames.includes(sheetName) ? wb.Sheets[sheetName] : wb.Sheets[wb.SheetNames[0]];
         resolve(
           XLSX.utils.sheet_to_csv(ws, {
             blankrows: false,
             skipHidden: true,
             forceQuotes: true,
-            dateNF: Defaults.DATE_FORMAT.toLowerCase(),
             // rawNumbers: true, // was converting 12:12:12 to 1.3945645673
           })
         );
