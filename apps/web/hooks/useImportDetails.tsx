@@ -51,7 +51,7 @@ export function useImportDetails({ templateId }: useImportDetailProps) {
           [API_KEYS.TEMPLATES_LIST, profileInfo!._projectId],
           (oldData) => oldData?.map((item) => (item._id === data._id ? data : item))
         );
-        queryClient.setQueryData<ITemplate>([API_KEYS.TEMPLATE_DETAILS, templateId], data);
+        queryClient.invalidateQueries([API_KEYS.TEMPLATE_DETAILS, templateId]);
         notify(NOTIFICATION_KEYS.IMPORT_UPDATED);
       },
     }
@@ -111,7 +111,15 @@ export function useImportDetails({ templateId }: useImportDetailProps) {
         modalId: MODAL_KEYS.IMPORT_UPDATE,
         title: MODAL_TITLES.IMPORT_UPDATE,
 
-        children: <UpdateImportForm onSubmit={updateImport} data={templateData} />,
+        children: (
+          <UpdateImportForm
+            onSubmit={updateImport}
+            data={templateData}
+            isAutoImportAvailable={meta?.AUTOMATIC_IMPORTS ? true : false}
+          />
+        ),
+        size: 'xl',
+        centered: true,
       });
   };
 

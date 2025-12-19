@@ -17,7 +17,7 @@ export class GetTemplateDetails {
   }): Promise<TemplateResponseDto> {
     const template = await this.templateRepository.findOne(
       { _id: _templateId, _projectId },
-      '_projectId name sampleFileUrl _id totalUploads totalInvalidRecords totalRecords mode integration'
+      '_projectId name sampleFileUrl _id totalUploads totalInvalidRecords totalRecords mode integration expectedDateFormat'
     );
     if (!template) {
       throw new DocumentNotFoundException('Template', _templateId);
@@ -33,6 +33,7 @@ export class GetTemplateDetails {
       totalRecords: template.totalRecords,
       mode: template.mode,
       integration: template.integration as IntegrationEnum,
+      expectedDateFormat: template.expectedDateFormat,
     };
   }
 }

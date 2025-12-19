@@ -20,4 +20,8 @@ export class UpdateTemplateCommand extends BaseCommand {
   @IsEnum(IntegrationEnum)
   @IsOptional()
   integration?: IntegrationEnum;
+
+  @IsString()
+  @IsOptional()
+  expectedDateFormat?: string;
 }
