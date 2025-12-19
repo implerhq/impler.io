@@ -168,3 +168,97 @@ export const renderJSONContent = (content: unknown) => {
     return typeof content === 'string' ? content : JSON.stringify(content);
   }
 };
+
+export function validateDateFormatString(format: string) {
+  if (!format || typeof format !== 'string') {
+    return { isValid: false, error: 'Format must be a non-empty string' };
+  }
+
+  /*
+   * Valid tokens and separators
+   * const validSeparators = ['/', '-', '.', ' ', ':', ','];
+   */
+
+  // Check for valid structure
+  const formatRegex = /^(YYYY|YY|MM|DD|M|D|[\/\-.\s:,])+$/;
+  if (!formatRegex.test(format)) {
+    return {
+      isValid: false,
+      error: 'Format contains invalid characters. Use YYYY, YY, MM, DD, M, D and separators (/, -, ., space, :, ,)',
+    };
+  }
+
+  // Check if format contains at least one valid token
+  const hasValidToken = /(YYYY|YY|MM|DD|M|D)/.test(format);
+  if (!hasValidToken) {
+    return { isValid: false, error: 'Format must contain at least one valid date token (YYYY, YY, MM, DD, M, D)' };
+  }
+
+  // Extract all tokens by replacing them one by one
+  let tempFormat = format;
+  let yearCount = 0;
+  let monthCount = 0;
+  let dayCount = 0;
+
+  // Count YYYY tokens
+  while (tempFormat.includes('YYYY')) {
+    yearCount++;
+    tempFormat = tempFormat.replace('YYYY', '');
+  }
+
+  // Count YY tokens (only if YYYY wasn't found)
+  while (tempFormat.includes('YY')) {
+    yearCount++;
+    tempFormat = tempFormat.replace('YY', '');
+  }
+
+  // Reset for month/day counting
+  tempFormat = format.replace(/YYYY/g, '').replace(/YY/g, '');
+
+  // Count MM tokens
+  while (tempFormat.includes('MM')) {
+    monthCount++;
+    tempFormat = tempFormat.replace('MM', '');
+  }
+
+  // Count M tokens (single M, not part of MM)
+  const singleMMatches = tempFormat.match(/(?<!M)M(?!M)/g);
+  monthCount += singleMMatches?.length ?? 0;
+
+  // Reset for day counting
+  tempFormat = format
+    .replace(/YYYY/g, '')
+    .replace(/YY/g, '')
+    .replace(/MM/g, '')
+    .replace(/(?<!M)M(?!M)/g, '');
+
+  // Count DD tokens
+  while (tempFormat.includes('DD')) {
+    dayCount++;
+    tempFormat = tempFormat.replace('DD', '');
+  }
+
+  // Count D tokens (single D, not part of DD)
+  const singleDMatches = tempFormat.match(/(?<!D)D(?!D)/g);
+  dayCount += singleDMatches?.length ?? 0;
+
+  // Validate counts
+  if (yearCount > 1) {
+    return { isValid: false, error: 'Format cannot have multiple year tokens' };
+  }
+
+  if (monthCount > 1) {
+    return { isValid: false, error: 'Format cannot have multiple month tokens' };
+  }
+
+  if (dayCount > 1) {
+    return { isValid: false, error: 'Format cannot have multiple day tokens' };
+  }
+
+  // Check that tokens aren't directly adjacent without separator
+  if (/YYYYMM|YYYYDD|MMDD|DDMM|MMYY|DDYY|YYMM|YYDD/i.test(format)) {
+    return { isValid: false, error: 'Date tokens must be separated by valid separators' };
+  }
+
+  return { isValid: true, error: null };
+}
