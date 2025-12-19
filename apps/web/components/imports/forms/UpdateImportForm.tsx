@@ -5,8 +5,7 @@ import { useFocusTrap } from '@mantine/hooks';
 
 import { Button } from '@ui/button';
 import { ITemplate, TemplateModeEnum } from '@impler/shared';
-import { TooltipLabel } from '@components/guide-point';
-import { DOCUMENTATION_REFERENCE_LINKS, SAMPLE_DATE_FORMATS, VARIABLES } from '@config';
+import { SAMPLE_DATE_FORMATS, VARIABLES } from '@config';
 import { MultiSelect } from '@ui/multi-select';
 import { validateDateFormatString } from '@shared/utils';
 
@@ -76,10 +75,6 @@ export function UpdateImportForm({ onSubmit, data, isAutoImportAvailable }: Upda
         </Box>
 
         <Box>
-          <TooltipLabel label="Expected Date Formats" link={DOCUMENTATION_REFERENCE_LINKS?.defaultValue ?? '#'} />
-          <Text size="xs" color="dimmed" mb="xs">
-            Define the date format you expect in your import data.
-          </Text>
           <Controller
             name="expectedDateFormat"
             control={control}
@@ -103,7 +98,7 @@ export function UpdateImportForm({ onSubmit, data, isAutoImportAvailable }: Upda
                 searchable
                 label="Date Formats"
                 placeholder="Date Formats"
-                description="Accepted date input formats for this field"
+                description="Define the date format you expect in your import data."
                 data={[
                   ...SAMPLE_DATE_FORMATS,
                   ...(field.value && !SAMPLE_DATE_FORMATS.includes(field.value) ? [field.value] : []),
