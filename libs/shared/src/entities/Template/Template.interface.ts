@@ -15,6 +15,7 @@ export interface ITemplate {
   totalInvalidRecords: number;
   mode: string;
   integration: IntegrationEnum;
+  expectedDateFormat?: string;
 }
 
 export interface ITemplateSchema {

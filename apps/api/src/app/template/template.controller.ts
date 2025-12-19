@@ -223,6 +223,7 @@ export class TemplateController {
       UpdateTemplateCommand.create({
         name: body.name,
         mode: body.mode,
+        expectedDateFormat: body.expectedDateFormat,
       }),
       templateId
     );

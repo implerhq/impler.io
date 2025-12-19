@@ -88,6 +88,7 @@ interface IUpdateTemplateData {
   mode?: string;
   name?: string;
   integration?: string;
+  expectedDateFormat?: string;
 }
 
 interface Window {

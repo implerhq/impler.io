@@ -66,6 +66,7 @@ export class MakeUploadEntry {
         file.mimetype === FileMimeTypesEnum.EXCELM
       ) {
         try {
+          const template = await this.templateRepository.findOne({ _id: templateId }, 'expectedDateFormat');
           const fileService = new ExcelFileService();
           const opts = await fileService.getExcelRowsColumnsCount(file, selectedSheetName);
 
@@ -77,7 +78,7 @@ export class MakeUploadEntry {
           }
 
           this.analyzeLargeFile(opts, true, maxRecords);
-          csvFile = await fileService.convertToCsv(file, selectedSheetName);
+          csvFile = await fileService.convertToCsv(file, selectedSheetName, template?.expectedDateFormat);
         } catch (error) {
           if (error instanceof FileSizeException || error instanceof MaxRecordsExceededException) {
             throw error;
