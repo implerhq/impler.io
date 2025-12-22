@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
-import { Stack, TextInput as Input, Text, SegmentedControl, Box } from '@mantine/core';
+import { Stack, TextInput as Input, Text, SegmentedControl, Box, Group, Flex } from '@mantine/core';
+import { LockIcon } from '@assets/icons/Lock.icon';
 import { useForm, Controller } from 'react-hook-form';
 import { useFocusTrap } from '@mantine/hooks';
 
 import { Button } from '@ui/button';
 import { ITemplate, TemplateModeEnum } from '@impler/shared';
+import { ImportConfigEnum } from '@types';
 import { SAMPLE_DATE_FORMATS, VARIABLES } from '@config';
 import { MultiSelect } from '@ui/multi-select';
 import { validateDateFormatString } from '@shared/utils';
@@ -63,11 +65,24 @@ export function UpdateImportForm({ onSubmit, data, isAutoImportAvailable }: Upda
             render={({ field }) => (
               <SegmentedControl
                 fullWidth
-                value={field.value || 'manual'}
+                value={field.value || ImportConfigEnum.MANUAL}
                 onChange={field.onChange}
                 data={[
-                  { label: 'Manual', value: 'manual' },
-                  { label: 'Automatic', value: 'automatic', disabled: !isAutoImportAvailable },
+                  { label: 'Manual', value: ImportConfigEnum.MANUAL },
+                  {
+                    value: ImportConfigEnum.AUTOMATED,
+                    disabled: !isAutoImportAvailable,
+                    label: (
+                      <Group position="center" spacing={4}>
+                        {!isAutoImportAvailable && (
+                          <Flex>
+                            <LockIcon size="md" />
+                          </Flex>
+                        )}
+                        Automatic
+                      </Group>
+                    ),
+                  },
                 ]}
               />
             )}
