@@ -66,4 +66,11 @@ export class TemplateResponseDto {
   @IsString()
   @IsDefined()
   mode: string;
+
+  @ApiPropertyOptional({
+    description: 'Expected Date Format',
+  })
+  @IsString()
+  @IsOptional()
+  expectedDateFormat?: string;
 }

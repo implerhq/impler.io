@@ -2,10 +2,10 @@ import Link from 'next/link';
 import React, { useCallback, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import { ActionIcon, Flex, Group, LoadingOverlay, Title, Select } from '@mantine/core';
+import { Flex, Group, LoadingOverlay, Title } from '@mantine/core';
 import { track } from '@libs/amplitude';
-import { defaultWidgetAppereance, TemplateModeEnum } from '@impler/shared';
-import { CONSTANTS, IMPORT_MODES, MODAL_KEYS, ROUTES, SubjectsEnum, colors } from '@config';
+import { defaultWidgetAppereance } from '@impler/shared';
+import { CONSTANTS, MODAL_KEYS, ROUTES, SubjectsEnum, colors } from '@config';
 import { useImportDetails } from '@hooks/useImportDetails';
 
 import { Tabs } from '@ui/Tabs';
@@ -44,10 +44,8 @@ function ImportDetails() {
   const [activeTab, setActiveTab] = useState<'schema' | 'destination' | 'snippet' | 'validator' | 'output'>();
 
   const {
-    meta,
     columns,
     profileInfo,
-    updateImport,
     templateData,
     onUpdateClick,
     onDeleteClick,
@@ -149,23 +147,12 @@ function ImportDetails() {
           </Button>
           <Group spacing={0}>
             <Title order={2}>{templateData?.name}</Title>
-            <ActionIcon radius={0} onClick={onUpdateClick} p={0}>
-              <EditIcon color={colors.blue} size="sm" />
-            </ActionIcon>
           </Group>
         </Group>
         <Group spacing="xs">
-          <Select
-            size="sm"
-            maw={125}
-            placeholder="Mode"
-            data={IMPORT_MODES.map((mode) => ({
-              ...mode,
-              disabled: mode.value === TemplateModeEnum.AUTOMATIC && !meta?.AUTOMATIC_IMPORTS ? true : false,
-            }))}
-            value={templateData?.mode || TemplateModeEnum.MANUAL}
-            onChange={(mode) => updateImport({ mode: mode || undefined })}
-          />
+          <Button leftIcon={<EditIcon />} onClick={onUpdateClick}>
+            Edit
+          </Button>
           <Button
             color="green"
             id="import"

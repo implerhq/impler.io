@@ -24,4 +24,11 @@ export class UpdateTemplateRequestDto {
   @IsOptional()
   @IsEnum(IntegrationEnum)
   integration?: IntegrationEnum;
+
+  @ApiProperty({
+    description: 'Expected Date Format',
+    nullable: true,
+  })
+  @IsOptional()
+  expectedDateFormat?: string;
 }

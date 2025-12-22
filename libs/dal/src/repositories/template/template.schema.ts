@@ -39,6 +39,10 @@ const templateSchema = new Schema(
       default: 'manual',
     },
 
+    expectedDateFormat: {
+      type: Schema.Types.String,
+    },
+
     integration: {
       type: Schema.Types.String,
     },

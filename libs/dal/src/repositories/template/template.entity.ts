@@ -22,4 +22,6 @@ export class TemplateEntity {
   imageColumns: string[];
 
   integration: IntegrationEnum;
+
+  expectedDateFormat: string;
 }
