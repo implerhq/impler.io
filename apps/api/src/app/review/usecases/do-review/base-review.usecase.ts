@@ -454,7 +454,7 @@ export class BaseReview {
       Papa.parse(csvFileStream, {
         dynamicTyping: false,
         skipEmptyLines: 'greedy',
-        step: (results: Papa.ParseStepResult<any>) => {
+        step: (results: Papa.ParseStepResult<any>, parser: any) => {
           totalRecords++;
           const record = results.data;
 
@@ -477,7 +477,13 @@ export class BaseReview {
             } else {
               invalidRecords++;
             }
-            dataStream.write(validationResultItem);
+            const canContinue = dataStream.write(validationResultItem);
+            if (!canContinue) {
+              parser.pause();
+              dataStream.once('drain', () => {
+                parser.resume();
+              });
+            }
           }
         },
         complete: async () => {

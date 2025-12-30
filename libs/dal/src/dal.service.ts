@@ -1,4 +1,5 @@
 import { Connection, ConnectOptions } from 'mongoose';
+import { Readable } from 'stream';
 import * as mongoose from 'mongoose';
 import { RecordEntity, RecordSchema } from './repositories/record';
 
@@ -134,6 +135,55 @@ export class DalService {
 
     return model.find({}, 'index isValid errors warnings record');
   }
+
+  getRecordsStream(_uploadId: string) {
+    const model = this.getRecordCollection(_uploadId);
+    if (!model) throw new Error('Record collection not found');
+
+    const cursor = model.find({}, 'index isValid errors warnings record').cursor();
+
+    const jsonStream = new Readable({
+      read() {
+        // controlled by cursor events
+      },
+    });
+
+    let isFirst = true;
+
+    cursor.on('data', (document) => {
+      let chunk = JSON.stringify(document);
+      if (isFirst) {
+        chunk = '[' + chunk;
+        isFirst = false;
+      } else {
+        chunk = ',' + chunk;
+      }
+      const canContinue = jsonStream.push(chunk);
+      if (!canContinue) {
+        cursor.pause();
+      }
+    });
+
+    cursor.on('end', () => {
+      if (isFirst) {
+        jsonStream.push('[]');
+      } else {
+        jsonStream.push(']');
+      }
+      jsonStream.push(null);
+    });
+
+    cursor.on('error', (err) => {
+      jsonStream.emit('error', err);
+    });
+
+    jsonStream._read = () => {
+      cursor.resume();
+    };
+
+    return jsonStream;
+  }
+
   getFieldData(_uploadId: string, fields: string[]) {
     const model = this.getRecordCollection(_uploadId);
     if (!model) return;
