@@ -38,7 +38,9 @@ export class EndImportConsumer extends BaseConsumer {
           });
         }
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(`Error processing import for uploadId: ${data.uploadId}`, error);
+    }
   }
 
   private async convertRecordsToJsonFile(uploadId: string, uploadedFileId?: string): Promise<void> {
