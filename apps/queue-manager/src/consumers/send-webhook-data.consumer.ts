@@ -48,82 +48,88 @@ export class SendWebhookDataConsumer extends BaseConsumer {
     const uploadId = data.uploadId;
     const isRetry = data.isRetry || false;
 
-    const cachedData = data.cache || (await this.getInitialCachedData(uploadId));
+    try {
+      const cachedData = data.cache || (await this.getInitialCachedData(uploadId));
 
-    if (cachedData && cachedData.callbackUrl) {
-      // Get valid data information
-      let allDataJson: null | any[] = null;
-      if (cachedData.allDataFilePath) {
-        const allDataContent = await this.storageService.getFileContent(
-          cachedData.allDataFilePath,
-          FileEncodingsEnum.JSON
-        );
-        allDataJson = JSON.parse(allDataContent);
+      if (cachedData && cachedData.callbackUrl) {
+        // Get valid data information
+        let allDataJson: null | any[] = null;
+        if (cachedData.allDataFilePath) {
+          const allDataContent = await this.storageService.getFileContent(
+            cachedData.allDataFilePath,
+            FileEncodingsEnum.JSON
+          );
+          allDataJson = JSON.parse(allDataContent);
+        }
+        if (!(Array.isArray(allDataJson) && allDataJson.length > 0)) return;
+
+        const totalPages = this.getTotalPages(allDataJson.length, cachedData.chunkSize);
+        let currentPage = cachedData.page || DEFAULT_PAGE;
+        const startPage = currentPage;
+        const PAGES_TO_PROCESS = 50; // Process 50 pages per message to speed up but allow heartbeats
+
+        while (currentPage <= totalPages && currentPage < startPage + PAGES_TO_PROCESS) {
+          const { sendData, page } = this.buildSendData({
+            uploadId,
+            data: allDataJson,
+            extra: cachedData.extra,
+            template: cachedData.name,
+            fileName: cachedData.fileName,
+            chunkSize: cachedData.chunkSize,
+            defaultValues: cachedData.defaultValues,
+            page: currentPage,
+            recordFormat: cachedData.recordFormat,
+            chunkFormat: cachedData.chunkFormat,
+            totalRecords: allDataJson.length,
+            imageHeadings: cachedData.imageHeadings,
+            multiSelectHeadings: cachedData.multiSelectHeadings,
+          });
+
+          const headers =
+            cachedData.authHeaderName && cachedData.authHeaderValue
+              ? { [cachedData.authHeaderName]: cachedData.authHeaderValue }
+              : null;
+
+          const allData = {
+            data: sendData,
+            uploadId,
+            page,
+            method: 'POST',
+            url: cachedData.callbackUrl,
+            headers,
+            isRetry,
+          };
+
+          const response = await this.makeApiCall(allData);
+
+          await this.makeResponseEntry({
+            data: response,
+            projectId: cachedData.projectId,
+            importName: cachedData.name,
+            url: cachedData.callbackUrl,
+            retryInterval: cachedData.retryInterval,
+            retryCount: cachedData.retryCount,
+            allData,
+          });
+
+          currentPage += 1;
+        }
+
+        if (currentPage <= totalPages) {
+          // Queue next batch
+          publishToQueue(QueuesEnum.SEND_WEBHOOK_DATA, {
+            uploadId,
+            cache: {
+              ...cachedData,
+              page: currentPage,
+            },
+          });
+        } else {
+          // Processing is done
+          this.finalizeUpload(uploadId);
+        }
       }
-      if (!(Array.isArray(allDataJson) && allDataJson.length > 0)) return;
-      const { sendData, page } = this.buildSendData({
-        uploadId,
-        data: allDataJson,
-        extra: cachedData.extra,
-        template: cachedData.name,
-        fileName: cachedData.fileName,
-        chunkSize: cachedData.chunkSize,
-        defaultValues: cachedData.defaultValues,
-        page: cachedData.page || DEFAULT_PAGE,
-        recordFormat: cachedData.recordFormat,
-        chunkFormat: cachedData.chunkFormat,
-        totalRecords: allDataJson.length,
-        imageHeadings: cachedData.imageHeadings,
-        multiSelectHeadings: cachedData.multiSelectHeadings,
-      });
-
-      const headers =
-        cachedData.authHeaderName && cachedData.authHeaderValue
-          ? { [cachedData.authHeaderName]: cachedData.authHeaderValue }
-          : null;
-
-      const allData = {
-        data: sendData,
-        uploadId,
-        page,
-        method: 'POST',
-        url: cachedData.callbackUrl,
-        headers,
-        isRetry,
-      };
-
-      const response = await this.makeApiCall(allData);
-
-      await this.makeResponseEntry({
-        data: response,
-        projectId: cachedData.projectId,
-        importName: cachedData.name,
-        url: cachedData.callbackUrl,
-        retryInterval: cachedData.retryInterval,
-        retryCount: cachedData.retryCount,
-        allData,
-      });
-
-      const nextPageNumber = this.getNextPageNumber({
-        totalRecords: allDataJson.length,
-        currentPage: page,
-        chunkSize: cachedData.chunkSize,
-      });
-
-      if (nextPageNumber) {
-        // Make next call
-        publishToQueue(QueuesEnum.SEND_WEBHOOK_DATA, {
-          uploadId,
-          cache: {
-            ...cachedData,
-            page: nextPageNumber,
-          },
-        });
-      } else {
-        // Processing is done
-        this.finalizeUpload(uploadId);
-      }
-    }
+    } catch (error) {}
   }
 
   private buildSendData({
