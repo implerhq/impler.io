@@ -1,3 +1,4 @@
+import { Readable } from 'stream';
 import { DalService, FileRepository, UploadRepository } from '@impler/dal';
 import { QueuesEnum, EndImportData, FileMimeTypesEnum, DestinationsEnum } from '@impler/shared';
 import { FileNameService, PaymentAPIService, StorageService } from '@impler/services';
@@ -17,59 +18,67 @@ export class EndImportConsumer extends BaseConsumer {
 
   async message(message: { content: string }) {
     const data = JSON.parse(message.content) as EndImportData;
-    await this.convertRecordsToJsonFile(data.uploadId, data.uploadedFileId);
-    const userEmail = await this.uploadRepository.getUserEmailFromUploadId(data.uploadId);
 
-    const dataProcessingAllowed = await this.paymentAPIService.checkEvent({
-      email: userEmail,
-    });
+    try {
+      await this.convertRecordsToJsonFile(data.uploadId, data.uploadedFileId);
+      const userEmail = await this.uploadRepository.getUserEmailFromUploadId(data.uploadId);
 
-    if (dataProcessingAllowed) {
-      if (data.destination === DestinationsEnum.WEBHOOK) {
-        publishToQueue(QueuesEnum.SEND_WEBHOOK_DATA, {
-          uploadId: data.uploadId,
-        });
-      } else if (data.destination === DestinationsEnum.BUBBLEIO) {
-        publishToQueue(QueuesEnum.SEND_BUBBLE_DATA, {
-          uploadId: data.uploadId,
-        });
+      const dataProcessingAllowed = await this.paymentAPIService.checkEvent({
+        email: userEmail,
+      });
+
+      if (dataProcessingAllowed) {
+        if (data.destination === DestinationsEnum.WEBHOOK) {
+          publishToQueue(QueuesEnum.SEND_WEBHOOK_DATA, {
+            uploadId: data.uploadId,
+          });
+        } else if (data.destination === DestinationsEnum.BUBBLEIO) {
+          publishToQueue(QueuesEnum.SEND_BUBBLE_DATA, {
+            uploadId: data.uploadId,
+          });
+        }
       }
-    }
+    } catch (error) {}
   }
 
   private async convertRecordsToJsonFile(uploadId: string, uploadedFileId?: string): Promise<void> {
-    const importData = await this.dalService.getAllRecords(uploadId);
-    const allJsonDataFilePath = this.fileNameService.getAllJsonDataFilePath(uploadId);
-    await this.storageService.uploadFile(allJsonDataFilePath, JSON.stringify(importData), FileMimeTypesEnum.JSON);
-    await this.dalService.dropRecordCollection(uploadId);
+    try {
+      const jsonStream = this.dalService.getRecordsStream(uploadId);
 
-    if (!uploadedFileId) {
-      const csvData = await this.convertImportDataToCsv(importData);
-      const importedFileName = this.fileNameService.getImportedFileName(uploadId);
-      const filePath = this.fileNameService.getImportedFilePath(uploadId);
-      const uploadedFileEntry = await this.fileRepository.create({
-        mimeType: FileMimeTypesEnum.CSV,
-        name: importedFileName,
-        originalName: importedFileName,
-        path: filePath,
-      });
-      await this.storageService.uploadFile(filePath, csvData, FileMimeTypesEnum.CSV);
-      await this.uploadRepository.findOneAndUpdate(
-        {
-          _id: uploadId,
-        },
-        {
-          $set: {
-            _uploadedFileId: uploadedFileEntry._id,
-            originalFileName: importedFileName,
-            originalFileType: FileMimeTypesEnum.CSV,
+      const allJsonDataFilePath = this.fileNameService.getAllJsonDataFilePath(uploadId);
+      await this.storageService.uploadFile(allJsonDataFilePath, jsonStream, FileMimeTypesEnum.JSON);
+      await this.dalService.dropRecordCollection(uploadId);
+
+      if (!uploadedFileId) {
+        const csvData = await this.convertImportDataToCsv(jsonStream);
+        const importedFileName = this.fileNameService.getImportedFileName(uploadId);
+        const filePath = this.fileNameService.getImportedFilePath(uploadId);
+        const uploadedFileEntry = await this.fileRepository.create({
+          mimeType: FileMimeTypesEnum.CSV,
+          name: importedFileName,
+          originalName: importedFileName,
+          path: filePath,
+        });
+        await this.storageService.uploadFile(filePath, csvData, FileMimeTypesEnum.CSV);
+        await this.uploadRepository.findOneAndUpdate(
+          {
+            _id: uploadId,
           },
-        }
-      );
+          {
+            $set: {
+              _uploadedFileId: uploadedFileEntry._id,
+              originalFileName: importedFileName,
+              originalFileType: FileMimeTypesEnum.CSV,
+            },
+          }
+        );
+      }
+    } catch (error) {
+      console.log(`Error converting records to CSV for uploadId: ${uploadId}`, error);
     }
   }
 
-  async convertImportDataToCsv(importData) {
+  async convertImportDataToCsv(importData: Readable) {
     const recordsData = importData.map((item) => item.record);
 
     const csv = Papa.unparse(recordsData, {
