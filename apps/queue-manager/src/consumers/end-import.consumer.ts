@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node';
 import { Readable } from 'stream';
 import { DalService, FileRepository, UploadRepository } from '@impler/dal';
 import { QueuesEnum, EndImportData, FileMimeTypesEnum, DestinationsEnum } from '@impler/shared';
@@ -39,7 +40,7 @@ export class EndImportConsumer extends BaseConsumer {
         }
       }
     } catch (error) {
-      console.log(`Error processing import for uploadId: ${data.uploadId}`, error);
+      Sentry.captureException(error);
     }
   }
 
@@ -76,7 +77,7 @@ export class EndImportConsumer extends BaseConsumer {
         );
       }
     } catch (error) {
-      console.log(`Error converting records to CSV for uploadId: ${uploadId}`, error);
+      Sentry.captureException(error);
     }
   }
 
