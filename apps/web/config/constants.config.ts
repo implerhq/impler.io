@@ -821,7 +821,6 @@ export const companyLogos = [
   { id: 'aklamio', src: AklamioLogo, alt: 'Aklamio' },
   { id: 'artha', src: ArthaLogo, alt: 'Artha' },
   { id: 'nasscom', src: NasscomLogo, alt: 'Nasscom' },
-  { id: 'nirvana', src: NirvanaLogo, alt: 'Nirvana' },
   { id: 'omniva', src: OmnivaLogo, alt: 'Omniva' },
   { id: 'orbit', src: OrbitLogo, alt: 'Orbit' },
   { id: 'ubico', src: UbicoLogo, alt: 'Ubico' },

@@ -114,18 +114,18 @@ export function LeftSideContent() {
             />
 
             <Stack spacing="md" align="center">
-              {/* First row: 6 logos */}
+              {/* First row: 4 logos */}
               <Group spacing="xl" position="center">
-                {companyLogos.slice(0, 6).map((company: any) => (
+                {companyLogos.slice(0, 4).map((company: any) => (
                   <Box key={company.id}>
                     <Image src={company.src} alt={company.alt} width={100} height={24} />
                   </Box>
                 ))}
               </Group>
 
-              {/* Second row: 2 logos (centered) */}
+              {/* Second row: 3 logos (centered) */}
               <Group spacing="xl" position="center">
-                {companyLogos.slice(6, 8).map((company: any) => (
+                {companyLogos.slice(4, 7).map((company: any) => (
                   <Box key={company.id}>
                     <Image src={company.src} alt={company.alt} width={100} height={24} />
                   </Box>
