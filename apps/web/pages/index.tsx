@@ -7,6 +7,7 @@ import { AppLayout } from '@layouts/AppLayout';
 import { PlanDetails } from '@components/home/PlanDetails';
 import { PlanPricingTable } from '@components/UpgradePlan/Plans/PlansPricingTable';
 import { useAppState } from 'store/app.context';
+// Initializing public runtime configuration
 const { publicRuntimeConfig } = getConfig();
 
 export default function Home() {
