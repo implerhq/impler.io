@@ -111,11 +111,13 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
     {
       onSuccess(uploadData, uploadValues) {
         ParentWindow.UploadStarted({ templateId: uploadData._templateId, uploadId: uploadData._id });
+        ParentWindow.UploadStatusSuccess({ uploadId: uploadData._id, rowCount: uploadData.totalRecords });
         setUploadInfo(uploadData);
         if (uploadValues.file) goNext();
         else onManuallyEnterData();
       },
       onError(error: IErrorObject) {
+        ParentWindow.UploadStatusError({ error, status: error.statusCode });
         resetField('file');
         setError('file', {
           type: 'file',
