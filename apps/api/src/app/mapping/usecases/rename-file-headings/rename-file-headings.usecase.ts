@@ -14,10 +14,7 @@ export class ReanameFileHeadings {
 
         const newHeadings = [...uploadInfo.headings];
         templateColumnItems.forEach((mapping) => {
-          if (!mapping.columnHeading) {
-            const headingIndex = newHeadings.findIndex((heading) => heading === mapping.key);
-            if (headingIndex > -1) newHeadings[headingIndex] = '_';
-          } else {
+          if (mapping.columnHeading) {
             const columnHeadingIndex = newHeadings.findIndex((heading) => heading === mapping.columnHeading);
             const keyHeadingIndex = newHeadings.findIndex((keyHeading) => keyHeading === mapping.key);
             if (keyHeadingIndex > -1 && columnHeadingIndex > -1) {
