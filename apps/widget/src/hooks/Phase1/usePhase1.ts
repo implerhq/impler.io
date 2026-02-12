@@ -111,11 +111,18 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
     {
       onSuccess(uploadData, uploadValues) {
         ParentWindow.UploadStarted({ templateId: uploadData._templateId, uploadId: uploadData._id });
+        ParentWindow.UploadSuccess({ uploadId: uploadData._id, rowCount: uploadData.totalRecords });
+        ParentWindow.UploadStatusSuccess({ uploadId: uploadData._id, rowCount: uploadData.totalRecords });
         setUploadInfo(uploadData);
         if (uploadValues.file) goNext();
         else onManuallyEnterData();
       },
       onError(error: IErrorObject) {
+        ParentWindow.UploadError({
+          errorCode: error.statusCode || 500,
+          errorMessage: error.message || 'Unknown Error',
+        });
+        ParentWindow.UploadStatusError(error);
         resetField('file');
         setError('file', {
           type: 'file',
@@ -129,7 +136,6 @@ export function usePhase1({ goNext, texts, onManuallyEnterData }: IUsePhase1Prop
     string[],
     IErrorObject,
     { file: File }
-    // eslint-disable-next-line prettier/prettier
   >(['getExcelSheetNames'], (excelSheetFile) => api.getExcelSheetNames(excelSheetFile), {
     onSuccess(sheetNames) {
       if (sheetNames.length <= 1) {
