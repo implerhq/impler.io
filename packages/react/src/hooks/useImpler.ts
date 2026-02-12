@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { isObject, EventTypes, logError, EventCalls, IShowWidgetProps, IUseImplerProps } from '@impler/client';
 
 export function useImpler({
@@ -19,13 +19,29 @@ export function useImpler({
   onDataImported,
   onUploadTerminate,
   onImportJobCreated,
+  onWidgetReady,
+  onUploadSuccess,
+  onUploadError,
 }: IUseImplerProps) {
   const [uuid] = useState(generateUuid());
   const [isImplerInitiated, setIsImplerInitiated] = useState(false);
+  const onWidgetReadyCalledRef = useRef(false);
+
+  /*
+   * Use a ref so the listener always calls the latest version of callbacks
+   * without needing to re-register with the embed library
+   */
+  const onEventHappenRef = useRef<(eventData: EventCalls) => void>(() => {});
 
   const onEventHappen = useCallback(
     (eventData: EventCalls) => {
       switch (eventData.type) {
+        case EventTypes.WIDGET_READY:
+          if (onWidgetReady && !onWidgetReadyCalledRef.current) {
+            onWidgetReadyCalledRef.current = true;
+            onWidgetReady();
+          }
+          break;
         case EventTypes.UPLOAD_STARTED:
           if (onUploadStart) onUploadStart(eventData.value);
           break;
@@ -34,6 +50,12 @@ export function useImpler({
           break;
         case EventTypes.UPLOAD_COMPLETED:
           if (onUploadComplete) onUploadComplete(eventData.value);
+          break;
+        case EventTypes.UPLOAD_SUCCESS:
+          if (onUploadSuccess) onUploadSuccess(eventData.value);
+          break;
+        case EventTypes.UPLOAD_ERROR:
+          if (onUploadError) onUploadError(eventData.value);
           break;
         case EventTypes.DATA_IMPORTED:
           if (onDataImported) onDataImported(eventData.value);
@@ -46,13 +68,32 @@ export function useImpler({
           break;
       }
     },
-    [onUploadComplete, onUploadStart, onUploadTerminate, onWidgetClose]
+    [
+      onUploadComplete,
+      onUploadStart,
+      onUploadTerminate,
+      onWidgetClose,
+      onDataImported,
+      onImportJobCreated,
+      onWidgetReady,
+      onUploadSuccess,
+      onUploadError,
+    ]
   );
+
+  // Keep ref in sync with latest callback
+  useEffect(() => {
+    onEventHappenRef.current = onEventHappen;
+  }, [onEventHappen]);
 
   useEffect(() => {
     const readyCheckInterval = setInterval(() => {
       if (window.impler && window.impler.isReady()) {
         setIsImplerInitiated(true);
+        if (onWidgetReady && !onWidgetReadyCalledRef.current) {
+          onWidgetReadyCalledRef.current = true;
+          onWidgetReady();
+        }
         clearInterval(readyCheckInterval);
       }
     }, 1000);
@@ -66,7 +107,11 @@ export function useImpler({
     if (!window.impler) logError('IMPLER_UNDEFINED_ERROR');
     else {
       window.impler.init(uuid);
-      window.impler.on('message', onEventHappen, uuid);
+      /*
+       * Use a stable wrapper that delegates to the ref,
+       * so the embed always calls the latest version of onEventHappen
+       */
+      window.impler.on('message', (data: EventCalls) => onEventHappenRef.current(data), uuid);
     }
   }, []);
 

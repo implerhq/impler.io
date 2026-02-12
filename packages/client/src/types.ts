@@ -31,6 +31,8 @@ export const EventTypes = {
   UPLOAD_STARTED: 'UPLOAD_STARTED',
   UPLOAD_TERMINATED: 'UPLOAD_TERMINATED',
   UPLOAD_COMPLETED: 'UPLOAD_COMPLETED',
+  UPLOAD_SUCCESS: 'UPLOAD_SUCCESS',
+  UPLOAD_ERROR: 'UPLOAD_ERROR',
   DATA_IMPORTED: 'DATA_IMPORTED',
   IMPORT_JOB_CREATED: 'IMPORT_JOB_CREATED',
 } as const;
@@ -135,6 +137,8 @@ export type UploadTemplateData = {
   templateId: string;
 };
 export type UploadData = { uploadId: string };
+export type UploadSuccessData = { uploadId: string; rowCount: number };
+export type UploadErrorData = { errorCode: number; errorMessage: string };
 
 export type EventCalls =
   | {
@@ -156,6 +160,14 @@ export type EventCalls =
   | {
       type: typeof EventTypes.IMPORT_JOB_CREATED;
       value: IUserJob;
+    }
+  | {
+      type: typeof EventTypes.UPLOAD_SUCCESS;
+      value: UploadSuccessData;
+    }
+  | {
+      type: typeof EventTypes.UPLOAD_ERROR;
+      value: UploadErrorData;
     }
   | {
       type: typeof EventTypes.CLOSE_WIDGET;
@@ -236,7 +248,10 @@ export interface IUseImplerProps {
   onUploadStart?: (value: UploadTemplateData) => void;
   onUploadTerminate?: (value: UploadData) => void;
   onUploadComplete?: (value: IUpload) => void;
+  onUploadSuccess?: (value: UploadSuccessData) => void;
   onDataImported?: (importedData: Record<string, any>[]) => void;
   onWidgetClose?: () => void;
   onImportJobCreated?: (jobInfo: IUserJob) => void;
+  onWidgetReady?: () => void;
+  onUploadError?: (error: UploadErrorData) => void;
 }
