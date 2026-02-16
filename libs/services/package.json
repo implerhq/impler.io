@@ -1,6 +1,6 @@
 {
   "name": "@impler/services",
-  "version": "1.9.3",
+  "version": "1.10.0",
   "description": "Reusable services to shared between backend api and queue-manager",
   "license": "MIT",
   "author": "implerhq",
