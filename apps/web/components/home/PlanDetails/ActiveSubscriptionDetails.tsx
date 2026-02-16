@@ -76,7 +76,7 @@ export function ActiveSubscriptionDetails({
                 icon={<PaymentCardIcon />}
                 style={{ color: colors.StrokeLight }}
               >
-                Change Card
+                Manage Billing
               </Menu.Item>
             </Can>
 
