@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import dayjs from 'dayjs';
 import { useCustomerPortal } from 'subos-frontend';
-import { Stack, Group, ActionIcon, Menu, Alert } from '@mantine/core';
+import { Stack, Group, ActionIcon, Menu, Alert, Button } from '@mantine/core';
 
 import { ActionsEnum, colors, DATE_FORMATS, PLANCODEENUM, SubjectsEnum } from '@config';
 import { ISubscriptionData, numberFormatter } from '@impler/shared';
@@ -51,49 +51,52 @@ export function ActiveSubscriptionDetails({
       <Group mb="xs" position="apart">
         <Group spacing={8}></Group>
 
-        <Menu position="bottom-end" shadow="xl" width={240}>
-          <Menu.Target>
-            <ActionIcon variant="subtle" color="gray" size="lg" style={{ color: '#9ca3af' }}>
-              <ThreeDotsVerticalIcon size="xl" color="white" />
-            </ActionIcon>
-          </Menu.Target>
+        <Group spacing={8}>
+          <Can I={ActionsEnum.UPDATE} a={SubjectsEnum.CARDS}>
+            <Button
+              variant="subtle"
+              size="sm"
+              onClick={() => openCustomerPortal(profileInfo!.email!)}
+              leftIcon={<PaymentCardIcon />}
+              style={{ color: colors.StrokeLight, fontWeight: 400 }}
+            >
+              Manage Billing
+            </Button>
+          </Can>
+          <Menu position="bottom-end" shadow="xl" width={240}>
+            <Menu.Target>
+              <ActionIcon variant="subtle" color="gray" size="lg" style={{ color: '#9ca3af' }}>
+                <ThreeDotsVerticalIcon size="xl" color="white" />
+              </ActionIcon>
+            </Menu.Target>
 
-          <Menu.Dropdown>
-            <Can I={ActionsEnum.UPDATE} a={SubjectsEnum.CARDS}>
-              <Menu.Item
-                component={Link}
-                href="/transactions"
-                icon={<ViewTransactionIcon />}
-                style={{ color: colors.StrokeLight }}
-              >
-                View All Transactions
-              </Menu.Item>
-            </Can>
-
-            <Can I={ActionsEnum.UPDATE} a={SubjectsEnum.CARDS}>
-              <Menu.Item
-                onClick={() => openCustomerPortal(profileInfo!.email!)}
-                icon={<PaymentCardIcon />}
-                style={{ color: colors.StrokeLight }}
-              >
-                Manage Billing
-              </Menu.Item>
-            </Can>
-
-            <Can I={ActionsEnum.BUY} a={SubjectsEnum.PLAN}>
-              {!activePlanDetails?.plan?.canceledOn && activePlanDetails?.plan?.code !== PLANCODEENUM.STARTER && (
+            <Menu.Dropdown>
+              <Can I={ActionsEnum.UPDATE} a={SubjectsEnum.CARDS}>
                 <Menu.Item
-                  color="red"
-                  icon={<CloseIcon />}
-                  onClick={openCancelPlanModal}
-                  style={{ color: colors.danger }}
+                  component={Link}
+                  href="/transactions"
+                  icon={<ViewTransactionIcon />}
+                  style={{ color: colors.StrokeLight }}
                 >
-                  Cancel Subscription
+                  View All Transactions
                 </Menu.Item>
-              )}
-            </Can>
-          </Menu.Dropdown>
-        </Menu>
+              </Can>
+
+              <Can I={ActionsEnum.BUY} a={SubjectsEnum.PLAN}>
+                {!activePlanDetails?.plan?.canceledOn && activePlanDetails?.plan?.code !== PLANCODEENUM.STARTER && (
+                  <Menu.Item
+                    color="red"
+                    icon={<CloseIcon />}
+                    onClick={openCancelPlanModal}
+                    style={{ color: colors.danger }}
+                  >
+                    Cancel Subscription
+                  </Menu.Item>
+                )}
+              </Can>
+            </Menu.Dropdown>
+          </Menu>
+        </Group>
       </Group>
 
       <Stack spacing="sm">
