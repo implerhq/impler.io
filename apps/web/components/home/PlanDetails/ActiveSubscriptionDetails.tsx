@@ -31,7 +31,9 @@ export function ActiveSubscriptionDetails({
 }: ActivePlanDetailsProps) {
   const { classes } = useActiveSubscriptionDetailsStyle();
   const { profileInfo } = useAppState();
-  const { openCustomerPortal } = useCustomerPortal();
+  const { openCustomerPortal } = useCustomerPortal({
+    returnPath: '',
+  });
   const { openCancelPlanModal } = useCancelPlan();
 
   const teamMembersUsed = activePlanDetails?.usage?.TEAM_MEMBERS || 0;
