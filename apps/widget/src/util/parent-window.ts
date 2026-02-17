@@ -28,3 +28,45 @@ export function DataImported(value: Record<string, any>[]) {
 export function ImportJobCreated(value: IUserJob) {
   window.parent.postMessage({ type: EventTypesEnum.IMPORT_JOB_CREATED, value }, '*');
 }
+export function UploadSuccess(value: { uploadId: string; rowCount: number }) {
+  window.parent.postMessage({ type: EventTypesEnum.UPLOAD_SUCCESS, value }, '*');
+}
+export function UploadError(value: { errorCode: number; errorMessage: string }) {
+  window.parent.postMessage({ type: EventTypesEnum.UPLOAD_ERROR, value }, '*');
+}
+
+export function UploadStatusSuccess(value: { uploadId: string; rowCount: number }) {
+  window.parent.postMessage(
+    {
+      source: 'impler-embed',
+      type: 'UPLOAD_STATUS',
+      payload: {
+        status: 'SUCCESS',
+        meta: {
+          uploadId: value.uploadId,
+          rowCount: value.rowCount,
+          timestamp: new Date().toISOString(),
+        },
+      },
+    },
+    '*'
+  );
+}
+
+export function UploadStatusError(value: { message?: string; error?: string; statusCode?: number }) {
+  window.parent.postMessage(
+    {
+      source: 'impler-embed',
+      type: 'UPLOAD_STATUS',
+      payload: {
+        status: 'ERROR',
+        meta: {
+          errorCode: value.statusCode || 500,
+          errorMessage: value.message || value.error || 'Unknown Network Error',
+          timestamp: new Date().toISOString(),
+        },
+      },
+    },
+    '*'
+  );
+}

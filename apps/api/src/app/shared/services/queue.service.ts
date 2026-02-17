@@ -17,8 +17,8 @@ export class QueueService {
     this.connection.on('error', (error: any) => {
       Logger.error('QueueService RabbitMQ::Error!', error);
     });
-    this.connection.on('disconnect', () => {
-      Logger.log('QueueService RabbitMQ::Disconnected!');
+    this.connection.on('disconnect', ({ error }: { error: any }) => {
+      Logger.log('QueueService RabbitMQ::Disconnected!', error);
       this.isQueueConnected = false;
     });
 

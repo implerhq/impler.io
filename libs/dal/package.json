@@ -1,6 +1,6 @@
 {
   "name": "@impler/dal",
-  "version": "1.9.3",
+  "version": "1.10.0",
   "author": "implerhq",
   "license": "MIT",
   "main": "dist/index.js",
