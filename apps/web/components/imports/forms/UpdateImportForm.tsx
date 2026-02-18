@@ -6,7 +6,6 @@ import { useFocusTrap } from '@mantine/hooks';
 
 import { Button } from '@ui/button';
 import { ITemplate, TemplateModeEnum } from '@impler/shared';
-import { ImportConfigEnum } from '@types';
 import { SAMPLE_DATE_FORMATS, VARIABLES } from '@config';
 import { MultiSelect } from '@ui/multi-select';
 import { validateDateFormatString } from '@shared/utils';
@@ -65,12 +64,12 @@ export function UpdateImportForm({ onSubmit, data, isAutoImportAvailable }: Upda
             render={({ field }) => (
               <SegmentedControl
                 fullWidth
-                value={field.value || ImportConfigEnum.MANUAL}
+                value={field.value || TemplateModeEnum.MANUAL}
                 onChange={field.onChange}
                 data={[
-                  { label: 'Manual', value: ImportConfigEnum.MANUAL },
+                  { label: 'Manual', value: TemplateModeEnum.MANUAL },
                   {
-                    value: ImportConfigEnum.AUTOMATED,
+                    value: TemplateModeEnum.AUTOMATIC,
                     disabled: !isAutoImportAvailable,
                     label: (
                       <Group position="center" spacing={4}>
