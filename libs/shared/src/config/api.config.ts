@@ -1,4 +1,5 @@
 export const ACCESS_KEY_NAME = 'accesskey';
+export const WIDGET_ORIGIN_HEADER_NAME = 'x-impler-widget-host';
 
 export const ENVTypesEnum = {
   DEV: 'dev',

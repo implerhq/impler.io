@@ -29,6 +29,7 @@ export interface IImportConfig {
   DATA_SEEDING?: boolean;
   APPEARANCE_CUSTOMIZATION?: boolean;
   MULTI_SELECT_VALUES?: boolean;
+  authDomains?: string[];
 }
 
 export interface ICommonShowPayload {

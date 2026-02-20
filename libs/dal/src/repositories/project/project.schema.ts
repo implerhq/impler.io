@@ -19,6 +19,11 @@ const projectSchema = new Schema(
       type: Schema.Types.Boolean,
       default: false,
     },
+    authDomains: [
+      {
+        type: Schema.Types.String,
+      },
+    ],
   },
   { ...schemaOptions }
 );
