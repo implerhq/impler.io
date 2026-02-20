@@ -24,7 +24,7 @@ export function useProject() {
     data: profileData,
     isFetching: isProfileLoading,
     refetch: refetchMeData,
-  } = useQuery<IProfileData, IErrorObject>([API_KEYS.ME], () => commonApi<IProfileData>(API_KEYS.ME as any, {}), {
+  } = useQuery<IProfileData, IErrorObject>([API_KEYS.ME], () => commonApi<IProfileData>(API_KEYS.ME, {}), {
     onSuccess(data) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -46,11 +46,11 @@ export function useProject() {
 
   const { data: projects, isLoading: isProjectsLoading } = useQuery<IProjectPayload[], IErrorObject>(
     [API_KEYS.PROJECTS_LIST],
-    () => commonApi<IProjectPayload[]>(API_KEYS.PROJECTS_LIST as any, {})
+    () => commonApi<IProjectPayload[]>(API_KEYS.PROJECTS_LIST, {})
   );
   const { mutate: switchProject } = useMutation<string, IErrorObject, string, string[]>(
     [API_KEYS.PROJECT_SWITCH],
-    (projectId) => commonApi(API_KEYS.PROJECT_SWITCH as any, { parameters: [projectId] }),
+    (projectId) => commonApi(API_KEYS.PROJECT_SWITCH, { parameters: [projectId] }),
     {
       onSuccess() {
         refetchMeData();
@@ -64,7 +64,7 @@ export function useProject() {
     { project: IProjectPayload; environment: IEnvironmentData },
     IErrorObject,
     ICreateProjectData
-  >([API_KEYS.PROJECT_CREATE], (data) => commonApi(API_KEYS.PROJECT_CREATE as any, { body: data }), {
+  >([API_KEYS.PROJECT_CREATE], (data) => commonApi(API_KEYS.PROJECT_CREATE, { body: data }), {
     onSuccess: ({ project }) => {
       reset();
       queryClient.setQueryData<IProjectPayload[]>([API_KEYS.PROJECTS_LIST], () => [...(projects || []), project]);
@@ -81,7 +81,7 @@ export function useProject() {
 
   const { mutate: deleteProject } = useMutation<void, IErrorObject, string>(
     [API_KEYS.PROJECT_DELETE],
-    (projectId) => commonApi(API_KEYS.PROJECT_DELETE as any, { parameters: [projectId] }),
+    (projectId) => commonApi(API_KEYS.PROJECT_DELETE, { parameters: [projectId] }),
     {
       onSuccess: (_, deletedProjectId) => {
         queryClient.setQueryData<IProjectPayload[]>(
@@ -106,6 +106,32 @@ export function useProject() {
         }
         modals.close(MODAL_KEYS.CONFIRM_PROJECT_DELETE);
         refetchMeData();
+      },
+    }
+  );
+  const { mutate: updateProject, isLoading: isUpdateProjectLoading } = useMutation<
+    IProjectPayload,
+    IErrorObject,
+    { projectId: string; data: Partial<IProjectPayload> }
+  >(
+    [API_KEYS.PROJECT_UPDATE],
+    ({ projectId, data }) => commonApi(API_KEYS.PROJECT_UPDATE, { body: data, parameters: [projectId] }),
+    {
+      onSuccess: (project) => {
+        queryClient.setQueryData<IProjectPayload[]>(
+          [API_KEYS.PROJECTS_LIST],
+          (oldProjects) => oldProjects?.map((oldProject) => (oldProject._id === project._id ? project : oldProject))
+        );
+        if (profileInfo?._projectId === project._id) {
+          setProfileInfo({
+            ...profileInfo,
+            projectName: project.name,
+          });
+        }
+        notify(NOTIFICATION_KEYS.PROJECT_UPDATED, {
+          title: 'Project updated',
+          message: 'Project details updated successfully',
+        });
       },
     }
   );
@@ -195,6 +221,8 @@ export function useProject() {
     currentProjectId: profileData?._projectId,
     isProfileLoading,
     deleteProject,
+    updateProject,
+    isUpdateProjectLoading,
     onProjectIdChange,
     onEditImportClick,
     handleDeleteProject,

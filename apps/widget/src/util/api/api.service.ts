@@ -32,6 +32,10 @@ export class ApiService {
     this.isAuthenticated = true;
   }
 
+  setWidgetOrigin(origin: string) {
+    this.httpClient.setWidgetOrigin(origin);
+  }
+
   disposeAuthorizationToken() {
     this.httpClient.disposeAuthorizationToken();
 

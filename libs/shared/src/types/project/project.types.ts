@@ -5,6 +5,7 @@ export interface IProjectPayload {
   role: UserRolesEnum;
   importName: string;
   onboarding?: boolean;
+  authDomains?: string[];
 }
 
 export enum UserRolesEnum {

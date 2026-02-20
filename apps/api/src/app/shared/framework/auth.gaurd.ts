@@ -1,5 +1,5 @@
 import { ExecutionContext, Injectable, CanActivate, UnauthorizedException, Inject, forwardRef } from '@nestjs/common';
-import { ACCESS_KEY_NAME } from '@impler/shared';
+import { ACCESS_KEY_NAME, WIDGET_ORIGIN_HEADER_NAME } from '@impler/shared';
 import { CONSTANTS } from '@shared/constants';
 import { AuthService } from 'app/auth/services/auth.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -35,8 +35,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     const req = context.switchToHttp().getRequest();
     if (req.headers && req.headers[ACCESS_KEY_NAME]) {
       const accessKey = req.headers[ACCESS_KEY_NAME];
+      const origin = req.headers[WIDGET_ORIGIN_HEADER_NAME] || req.headers.origin || req.headers.referer;
 
-      await this.authService.apiKeyAuthenticate(accessKey);
+      await this.authService.apiKeyAuthenticate(accessKey, origin);
 
       return true;
     } else if (req.cookies && req.cookies[CONSTANTS.AUTH_COOKIE_NAME]) {

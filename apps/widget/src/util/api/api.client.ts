@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, ResponseType } from 'axios';
-import { ACCESS_KEY_NAME } from '@impler/shared';
+import { ACCESS_KEY_NAME, WIDGET_ORIGIN_HEADER_NAME } from '@impler/shared';
 
 export interface IParamObject {
   [key: string]: string | string[] | number | boolean | undefined;
@@ -22,6 +22,10 @@ export class HttpClient {
 
   setAuthorizationToken(token: string) {
     this.axiosClient.defaults.headers.common[ACCESS_KEY_NAME] = token;
+  }
+
+  setWidgetOrigin(origin: string) {
+    this.axiosClient.defaults.headers.common[WIDGET_ORIGIN_HEADER_NAME] = origin;
   }
 
   disposeAuthorizationToken() {

@@ -9,7 +9,6 @@ import SuperworksLogo from '@assets/images/companies/Superworks.svg';
 import AklamioLogo from '@assets/images/companies/aklamio.svg';
 import ArthaLogo from '@assets/images/companies/artha.svg';
 import NasscomLogo from '@assets/images/companies/nasscom.svg';
-import NirvanaLogo from '@assets/images/companies/nirvana.svg';
 import OmnivaLogo from '@assets/images/companies/omniva.svg';
 import OrbitLogo from '@assets/images/companies/orbit.svg';
 import UbicoLogo from '@assets/images/companies/ubico.svg';
@@ -148,6 +147,7 @@ export const API_KEYS = {
   PROJECTS_LIST: 'PROJECT_LIST',
   PROJECT_CREATE: 'PROJECT_CREATE',
   PROJECT_DELETE: 'PROJECT_DELETE',
+  PROJECT_UPDATE: 'PROJECT_UPDATE',
   PROJECT_ENVIRONMENT: 'PROJECT_ENVIRONMENT',
   PROJECT_INVITATION: 'PROJECT_INVITATION',
   SENT_TEAM_INVITATIONS: 'SENT_TEAM_INVITATIONS',
@@ -203,7 +203,7 @@ export const API_KEYS = {
   REGENERATE: 'REGENERATE',
   IMPORT_COUNT: 'IMPORT_COUNT',
   DONWLOAD_ORIGINAL_FILE: 'DOWNLOAD_ORIGINAL_FILE',
-};
+} as const;
 
 export const NOTIFICATION_KEYS = {
   OTP_CODE_RESENT_SUCCESSFULLY: 'OTP_CODE_RESENT_SUCCESSFULLY',
@@ -228,6 +228,7 @@ export const NOTIFICATION_KEYS = {
   IMPORT_DELETED: 'IMPORT_DELETED',
 
   PROJECT_CREATED: 'PROJECT_CREATED',
+  PROJECT_UPDATED: 'PROJECT_UPDATED',
   PROJECT_DELETED: 'PROJECT_DELETED',
   PROJECT_SWITCHED: 'PROJECT_SWITCHED',
   OUTPUT_UPDATED: 'OUTPUT_UPDATED',

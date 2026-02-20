@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { UserRepository, TemplateRepository, TemplateEntity } from '@impler/dal';
+import { UserRepository, TemplateRepository, TemplateEntity, ProjectRepository } from '@impler/dal';
 import { BILLABLEMETRIC_CODE_ENUM, IImportConfig } from '@impler/shared';
 import { PaymentAPIService } from '@impler/services';
 import { APIMessages } from '@shared/constants';
@@ -9,7 +9,8 @@ export class GetImportConfig {
   constructor(
     private userRepository: UserRepository,
     private paymentAPIService: PaymentAPIService,
-    private templateRepository: TemplateRepository
+    private templateRepository: TemplateRepository,
+    private projectRepository: ProjectRepository
   ) {}
 
   async execute(projectId: string, templateId?: string): Promise<IImportConfig> {
@@ -42,11 +43,14 @@ export class GetImportConfig {
       }
     }
 
+    const project = await this.projectRepository.findById(projectId, 'authDomains');
+
     return {
       ...Object.fromEntries(isFeatureAvailableMap),
       showBranding: !isFeatureAvailableMap.get(BILLABLEMETRIC_CODE_ENUM.REMOVE_BRANDING),
       mode: template?.mode,
       title: template?.name,
+      authDomains: project?.authDomains || [],
     };
   }
 }

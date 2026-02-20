@@ -44,13 +44,15 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
     return apiKey ? apiKey.apiKeys[0]._userId : null;
   }
 
-  async getUserEnvironmentProjects(userId: string): Promise<{ name: string; _id: string; isOwner: boolean }[]> {
+  async getUserEnvironmentProjects(
+    userId: string
+  ): Promise<{ name: string; _id: string; isOwner: boolean; role: UserRolesEnum; authDomains: string[] }[]> {
     const environments = await Environment.find(
       {
         'apiKeys._userId': userId,
       },
       '_id apiKeys'
-    ).populate('_projectId', 'name');
+    ).populate('_projectId', 'name authDomains');
 
     return environments
       .filter((env) => env._projectId)
@@ -72,11 +74,15 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
           _id: project._id.toString(),
           isOwner: userApiKey.isOwner || false,
           role: userApiKey.role as UserRolesEnum,
+          authDomains: project.authDomains || [],
         };
 
         return result;
       })
-      .filter((item): item is { name: string; _id: string; isOwner: boolean; role: UserRolesEnum } => item !== null);
+      .filter(
+        (item): item is { name: string; _id: string; isOwner: boolean; role: UserRolesEnum; authDomains: string[] } =>
+          item !== null
+      );
   }
 
   async getApiKeyForUserId(userId: string): Promise<{ projectId: string; apiKey: string; role: string } | null> {

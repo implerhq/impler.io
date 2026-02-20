@@ -193,7 +193,11 @@ export class ProjectController {
     @Param('projectId', ValidateMongoId) projectId: string
   ): Promise<ProjectResponseDto> {
     return this.updateProjectUsecase.execute(
-      UpdateProjectCommand.create({ name: body.name, authHeaderName: body.authHeaderName }),
+      UpdateProjectCommand.create({
+        name: body.name,
+        authHeaderName: body.authHeaderName,
+        authDomains: body.authDomains,
+      }),
       projectId,
       user._id
     );

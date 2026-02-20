@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import { IsArray, IsOptional, IsString } from 'class-validator';
 
 export class UpdateProjectRequestDto {
   @ApiPropertyOptional({
@@ -15,4 +15,12 @@ export class UpdateProjectRequestDto {
   @IsString()
   @IsOptional()
   authHeaderName: string;
+
+  @ApiPropertyOptional({
+    description: 'List of allowed domains for the project',
+  })
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  authDomains?: string[];
 }

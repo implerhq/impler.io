@@ -78,6 +78,10 @@ const routes: Record<string, Route> = {
     url: (projectId: string) => `/v1/project/${projectId}`,
     method: 'DELETE',
   },
+  [API_KEYS.PROJECT_UPDATE]: {
+    url: (projectId: string) => `/v1/project/${projectId}`,
+    method: 'PUT',
+  },
 
   [API_KEYS.PROJECT_SWITCH]: {
     url: (projectId) => `/v1/project/switch/${projectId}`,
@@ -284,7 +288,7 @@ function queryObjToString(obj?: Record<string, string | number | undefined>): st
   const str = [];
   for (const key in obj)
     if (obj.hasOwnProperty(key) && typeof obj[key] !== 'undefined') {
-      str.push(encodeURIComponent(key) + '=' + encodeURIComponent(obj[key] as any));
+      str.push(encodeURIComponent(key) + '=' + encodeURIComponent(String(obj[key])));
     }
 
   return str.join('&');
@@ -293,7 +297,7 @@ function queryObjToString(obj?: Record<string, string | number | undefined>): st
 const { publicRuntimeConfig } = getConfig();
 
 export async function commonApi<T>(
-  key: keyof typeof API_KEYS,
+  key: (typeof API_KEYS)[keyof typeof API_KEYS],
   {
     parameters,
     body,
@@ -304,7 +308,7 @@ export async function commonApi<T>(
     credentials = 'include',
   }: {
     parameters?: string[];
-    body?: any;
+    body?: unknown;
     credentials?: 'include' | 'omit' | 'same-origin' | undefined;
     headers?: Record<string, string>;
     cookie?: string;
