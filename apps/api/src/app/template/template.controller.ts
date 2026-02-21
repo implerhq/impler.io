@@ -299,8 +299,11 @@ export class TemplateController {
   @ApiOkResponse({
     type: TemplateResponseDto,
   })
-  async deleteTemplate(@Param('templateId', ValidateMongoId) templateId: string): Promise<TemplateResponseDto> {
-    const document = await this.deleteTemplateUsecase.execute(templateId);
+  async deleteTemplate(
+    @Param('templateId', ValidateMongoId) templateId: string,
+    @UserSession() user: IJwtPayload
+  ): Promise<TemplateResponseDto> {
+    const document = await this.deleteTemplateUsecase.execute(templateId, user._projectId);
     if (!document) {
       throw new DocumentNotFoundException('Template', templateId);
     }
