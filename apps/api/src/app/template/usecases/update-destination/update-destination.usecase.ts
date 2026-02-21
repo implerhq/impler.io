@@ -1,5 +1,5 @@
 import { DestinationsEnum } from '@impler/shared';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { TemplateRepository, BubbleDestinationRepository, WebhookDestinationRepository } from '@impler/dal';
 import { BubbleIoService } from '@shared/services/bubble-io.service';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
@@ -16,11 +16,13 @@ export class UpdateDestination {
     private webhookDestinationRepo: WebhookDestinationRepository
   ) {}
 
-  async execute(_templateId: string, data: UpdateDestinationCommand) {
-    const template = await this.templateRepository.findById(_templateId);
+  async execute(_templateId: string, data: UpdateDestinationCommand, _projectId?: string) {
+    const template = _projectId
+      ? await this.templateRepository.findOne({ _id: _templateId, _projectId })
+      : await this.templateRepository.findById(_templateId);
 
     if (!template) {
-      throw new DocumentNotFoundException('Template', _templateId);
+      throw new NotFoundException('Template not found or does not belong to this project');
     }
 
     if (!data.destination) {

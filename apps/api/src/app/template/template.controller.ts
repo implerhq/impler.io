@@ -286,10 +286,11 @@ export class TemplateController {
     type: DestinationResponseDto,
   })
   async updateTemplateDestinationRoute(
+    @UserSession() user: IJwtPayload,
     @Param('templateId', ValidateMongoId) templateId: string,
     @Body() body: UpdateDestinationDto
   ): Promise<DestinationResponseDto> {
-    return this.updateDestination.execute(templateId, UpdateDestinationCommand.create(body));
+    return this.updateDestination.execute(templateId, UpdateDestinationCommand.create(body), user._projectId);
   }
 
   @Delete(':templateId')

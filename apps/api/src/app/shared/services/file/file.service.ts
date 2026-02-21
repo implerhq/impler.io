@@ -121,7 +121,9 @@ export class ExcelFileService {
     let parsedData = [];
     try {
       if (data) parsedData = JSON.parse(data);
-    } catch (error) {}
+    } catch (error) {
+      console.warn('[ExcelFileService] Failed to parse data JSON:', error?.message);
+    }
     if (Array.isArray(parsedData) && parsedData.length > 0) {
       const rows: string[][] = parsedData.reduce<string[][]>((acc: string[][], rowItem: Record<string, any>) => {
         acc.push(
