@@ -49,6 +49,41 @@ export async function bootstrap(expressApp?): Promise<INestApplication> {
 
   app.use(compression());
 
+  // Rate limiting middleware (in-memory, per-IP)
+  const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
+  const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+  const RATE_LIMIT_MAX = 200; // 200 requests per minute per IP
+  const AUTH_RATE_LIMIT_MAX = 20; // 20 auth requests per minute per IP
+
+  // Clean up expired entries periodically
+  setInterval(() => {
+    const now = Date.now();
+    for (const [key, value] of rateLimitStore) {
+      if (now > value.resetTime) rateLimitStore.delete(key);
+    }
+  }, RATE_LIMIT_WINDOW_MS);
+
+  app.use((req, res, next) => {
+    const ip = req.ip || req.connection.remoteAddress || 'unknown';
+    const isAuthRoute = req.path.startsWith('/v1/auth');
+    const maxRequests = isAuthRoute ? AUTH_RATE_LIMIT_MAX : RATE_LIMIT_MAX;
+    const key = `${ip}:${isAuthRoute ? 'auth' : 'general'}`;
+    const now = Date.now();
+
+    const record = rateLimitStore.get(key);
+    if (!record || now > record.resetTime) {
+      rateLimitStore.set(key, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
+    } else {
+      record.count += 1;
+      if (record.count > maxRequests) {
+        res.setHeader('Retry-After', Math.ceil((record.resetTime - now) / 1000));
+
+        return res.status(429).json({ message: 'Too many requests, please try again later' });
+      }
+    }
+    next();
+  });
+
   // Security headers middleware
   app.use((req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');

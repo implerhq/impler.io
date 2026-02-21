@@ -43,7 +43,9 @@ export class DownloadSample {
     let parsedSchema: ISchemaItem[], columnKeys: IExcelFileHeading[];
     try {
       if (data.schema) parsedSchema = JSON.parse(data.schema);
-    } catch (error) {}
+    } catch (error) {
+      console.warn('[DownloadSample] Failed to parse schema JSON:', error?.message);
+    }
 
     if (Array.isArray(parsedSchema) && parsedSchema.length > 0) {
       columnKeys = parsedSchema.map((columnItem) => ({

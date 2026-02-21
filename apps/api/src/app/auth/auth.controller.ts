@@ -78,25 +78,31 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
     @StrategyUser() strategyUser: IStrategyResponse
   ) {
-    if (!strategyUser || !strategyUser.token) {
+    try {
+      if (!strategyUser || !strategyUser.token) {
+        return response.redirect(`${process.env.WEB_BASE_URL}/auth/signin?error=AuthenticationError`);
+      }
+
+      let url = process.env.WEB_BASE_URL + '/auth/signin';
+      const queryObj: Record<string, any> = {
+        token: strategyUser.token,
+      };
+      if (strategyUser.showAddProject) {
+        queryObj.showAddProject = true;
+      }
+      url += constructQueryString(queryObj);
+
+      response.cookie(CONSTANTS.AUTH_COOKIE_NAME, strategyUser.token, {
+        ...COOKIE_CONFIG,
+        domain: process.env.COOKIE_DOMAIN,
+      });
+
+      return response.redirect(url);
+    } catch (error) {
+      console.error('[AuthController] GitHub OAuth callback failed:', error?.message || error);
+
       return response.redirect(`${process.env.WEB_BASE_URL}/auth/signin?error=AuthenticationError`);
     }
-
-    let url = process.env.WEB_BASE_URL + '/auth/signin';
-    const queryObj: Record<string, any> = {
-      token: strategyUser.token,
-    };
-    if (strategyUser.showAddProject) {
-      queryObj.showAddProject = true;
-    }
-    url += constructQueryString(queryObj);
-
-    response.cookie(CONSTANTS.AUTH_COOKIE_NAME, strategyUser.token, {
-      ...COOKIE_CONFIG,
-      domain: process.env.COOKIE_DOMAIN,
-    });
-
-    return response.redirect(url);
   }
 
   @Get('/me')

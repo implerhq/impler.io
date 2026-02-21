@@ -81,7 +81,7 @@ export class StartProcess {
       invalid: uploadInfo.invalidRecords,
     });
 
-    this.queueService.publishToQueue(QueuesEnum.END_IMPORT, {
+    await this.queueService.publishToQueue(QueuesEnum.END_IMPORT, {
       uploadId: _uploadId,
       destination: destination,
       uploadedFileId: uploadInfo._uploadedFileId,
