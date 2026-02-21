@@ -52,7 +52,7 @@ export const CONSTANTS = {
   EXCEL_DATA_SHEET_STARTER: 'imp_',
   AUTH_COOKIE_NAME: 'authentication',
   // eslint-disable-next-line no-magic-numbers
-  maxAge: 1000 * 60 * 60 * 24 * 1, // 1 day
+  maxAge: 1000 * 60 * 60 * 4, // 4 hours (reduced from 24h for security)
   DEFAULT_USER_AVATAR: 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y',
   CHUNK_VARIABLES: ['page', 'chunkSize', 'template', 'uploadId', 'fileName', 'extra'],
   CHUNK_FORMAT: `{

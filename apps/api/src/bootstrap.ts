@@ -36,6 +36,8 @@ export async function bootstrap(expressApp?): Promise<INestApplication> {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
     })
   );
 
@@ -47,23 +49,73 @@ export async function bootstrap(expressApp?): Promise<INestApplication> {
 
   app.use(compression());
 
-  const options = new DocumentBuilder()
-    .setTitle('Impler API')
-    .setDescription('The Impler API description')
-    .setVersion('1.0')
-    .addApiKey(
-      {
-        type: 'apiKey', // type
-        name: ACCESS_KEY_NAME, // Name of the key to expect in header
-        in: 'header',
-      },
-      ACCESS_KEY_NAME // Name to show and used in swagger
-    )
-    .addTag('Project')
-    .build();
-  const document = SwaggerModule.createDocument(app, options);
+  // Rate limiting middleware (in-memory, per-IP)
+  const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
+  const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+  const RATE_LIMIT_MAX = 200; // 200 requests per minute per IP
+  const AUTH_RATE_LIMIT_MAX = 20; // 20 auth requests per minute per IP
 
-  SwaggerModule.setup('api', app, document);
+  // Clean up expired entries periodically
+  setInterval(() => {
+    const now = Date.now();
+    for (const [key, value] of rateLimitStore) {
+      if (now > value.resetTime) rateLimitStore.delete(key);
+    }
+  }, RATE_LIMIT_WINDOW_MS);
+
+  app.use((req, res, next) => {
+    const ip = req.ip || req.connection.remoteAddress || 'unknown';
+    const isAuthRoute = req.path.startsWith('/v1/auth');
+    const maxRequests = isAuthRoute ? AUTH_RATE_LIMIT_MAX : RATE_LIMIT_MAX;
+    const key = `${ip}:${isAuthRoute ? 'auth' : 'general'}`;
+    const now = Date.now();
+
+    const record = rateLimitStore.get(key);
+    if (!record || now > record.resetTime) {
+      rateLimitStore.set(key, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
+    } else {
+      record.count += 1;
+      if (record.count > maxRequests) {
+        res.setHeader('Retry-After', Math.ceil((record.resetTime - now) / 1000));
+
+        return res.status(429).json({ message: 'Too many requests, please try again later' });
+      }
+    }
+    next();
+  });
+
+  // Security headers middleware
+  app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    if (process.env.NODE_ENV === 'production') {
+      res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    }
+    next();
+  });
+
+  // Only expose Swagger in non-production environments
+  if (process.env.NODE_ENV !== 'production') {
+    const options = new DocumentBuilder()
+      .setTitle('Impler API')
+      .setDescription('The Impler API description')
+      .setVersion('1.0')
+      .addApiKey(
+        {
+          type: 'apiKey',
+          name: ACCESS_KEY_NAME,
+          in: 'header',
+        },
+        ACCESS_KEY_NAME
+      )
+      .addTag('Project')
+      .build();
+    const document = SwaggerModule.createDocument(app, options);
+
+    SwaggerModule.setup('api', app, document);
+  }
 
   if (process.env.SENTRY_DSN) {
     Sentry.init({
@@ -71,10 +123,11 @@ export async function bootstrap(expressApp?): Promise<INestApplication> {
       dsn: process.env.SENTRY_DSN,
       integrations: [new Sentry.Integrations.Console({ tracing: true })],
     });
-
-    const { httpAdapter } = app.get(HttpAdapterHost);
-    app.useGlobalFilters(new SentryFilter(httpAdapter));
   }
+
+  // Always register exception filter (with or without Sentry)
+  const { httpAdapter } = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new SentryFilter(httpAdapter));
 
   if (expressApp) {
     await app.init();
@@ -82,15 +135,19 @@ export async function bootstrap(expressApp?): Promise<INestApplication> {
     await app.listen(process.env.PORT);
   }
 
+  // Graceful shutdown
+  app.enableShutdownHooks();
+
   Logger.log(`Started application in NODE_ENV=${process.env.NODE_ENV} on port ${process.env.PORT}`);
 
   return app;
 }
 
 const corsOptionsDelegate = function (req, callback) {
+  const allowedOrigins = [process.env.WIDGET_BASE_URL, process.env.WEB_BASE_URL].filter(Boolean);
   const corsOptions = {
     credentials: true,
-    origin: [process.env.WIDGET_BASE_URL, process.env.WEB_BASE_URL],
+    origin: allowedOrigins.length > 0 ? allowedOrigins : false,
     preflightContinue: false,
     allowedHeaders: ['Content-Type', 'x-openreplay-session-token', ACCESS_KEY_NAME, 'sentry-trace', 'baggage'],
     methods: ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],

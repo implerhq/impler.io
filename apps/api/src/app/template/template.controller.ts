@@ -286,10 +286,11 @@ export class TemplateController {
     type: DestinationResponseDto,
   })
   async updateTemplateDestinationRoute(
+    @UserSession() user: IJwtPayload,
     @Param('templateId', ValidateMongoId) templateId: string,
     @Body() body: UpdateDestinationDto
   ): Promise<DestinationResponseDto> {
-    return this.updateDestination.execute(templateId, UpdateDestinationCommand.create(body));
+    return this.updateDestination.execute(templateId, UpdateDestinationCommand.create(body), user._projectId);
   }
 
   @Delete(':templateId')
@@ -299,8 +300,11 @@ export class TemplateController {
   @ApiOkResponse({
     type: TemplateResponseDto,
   })
-  async deleteTemplate(@Param('templateId', ValidateMongoId) templateId: string): Promise<TemplateResponseDto> {
-    const document = await this.deleteTemplateUsecase.execute(templateId);
+  async deleteTemplate(
+    @Param('templateId', ValidateMongoId) templateId: string,
+    @UserSession() user: IJwtPayload
+  ): Promise<TemplateResponseDto> {
+    const document = await this.deleteTemplateUsecase.execute(templateId, user._projectId);
     if (!document) {
       throw new DocumentNotFoundException('Template', templateId);
     }

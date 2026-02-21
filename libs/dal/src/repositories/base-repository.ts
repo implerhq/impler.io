@@ -45,7 +45,22 @@ export class BaseRepository<T> {
     return await this.MongooseModel.countDocuments(sanitizedQuery);
   }
 
+  private static readonly BLOCKED_AGGREGATE_STAGES = ['$out', '$merge'];
+
   async aggregate(query: any[]): Promise<any> {
+    if (!Array.isArray(query)) {
+      throw new Error('Aggregate pipeline must be an array');
+    }
+    // Validate pipeline stages to prevent data exfiltration via $out/$merge
+    for (const stage of query) {
+      const stageKeys = Object.keys(stage);
+      for (const key of stageKeys) {
+        if (BaseRepository.BLOCKED_AGGREGATE_STAGES.includes(key)) {
+          throw new Error(`Aggregate stage '${key}' is not allowed`);
+        }
+      }
+    }
+
     return await this.MongooseModel.aggregate(query);
   }
 

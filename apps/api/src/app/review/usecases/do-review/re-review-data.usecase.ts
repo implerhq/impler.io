@@ -283,7 +283,9 @@ export class DoReReview extends BaseReview {
           await this._modal.bulkWrite(bulkOp, {
             ordered: false,
           });
-        } catch (error) {}
+        } catch (error) {
+          console.error('[ReReviewData] bulkWrite failed during final flush:', error?.message || error);
+        }
         callback();
       },
     });

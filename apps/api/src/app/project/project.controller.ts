@@ -1,6 +1,18 @@
 import { Response } from 'express';
 import { ApiOperation, ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  Res,
+  UseGuards,
+  UnauthorizedException,
+} from '@nestjs/common';
 
 import { ACCESS_KEY_NAME, Defaults, IJwtPayload, PaginationResult, UserRolesEnum } from '@impler/shared';
 import { UserSession } from '@shared/framework/user.decorator';
@@ -80,9 +92,9 @@ export class ProjectController {
     @Query('search') search: string
   ): Promise<PaginationResult<ImportListResponseDto>> {
     if (isNaN(page)) page = Defaults.ONE;
-    else page = Number(page);
+    else page = Math.max(1, Math.min(Number(page), 10000));
     if (isNaN(limit)) limit = Defaults.PAGE_LIMIT;
-    else limit = Number(limit);
+    else limit = Math.max(1, Math.min(Number(limit), 1000));
 
     return this.getImports.execute({
       _projectId,
@@ -158,6 +170,11 @@ export class ProjectController {
   ) {
     const projectEnvironment = await this.getEnvironment.execute(projectId);
     const userApiKey = projectEnvironment.apiKeys.find((apiKey) => apiKey._userId.toString() === user._id.toString());
+
+    // IDOR protection: verify user belongs to this project
+    if (!userApiKey) {
+      throw new UnauthorizedException('You do not have access to this project');
+    }
 
     const token = this.authService.getSignedToken(
       {

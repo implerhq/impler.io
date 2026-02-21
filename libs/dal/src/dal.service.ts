@@ -7,7 +7,14 @@ export class DalService {
   connection: Connection;
 
   async connect(url: string, config: ConnectOptions = {}) {
-    const instance = await mongoose.connect(url, config);
+    const instance = await mongoose.connect(url, {
+      maxPoolSize: 100,
+      minPoolSize: 10,
+      socketTimeoutMS: 30000,
+      serverSelectionTimeoutMS: 5000,
+      retryWrites: true,
+      ...config,
+    });
 
     this.connection = instance.connection;
 
