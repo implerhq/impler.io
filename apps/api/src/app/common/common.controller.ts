@@ -16,6 +16,7 @@ import { ACCESS_KEY_NAME, IImportConfig } from '@impler/shared';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
 import { ValidRequestDto, SignedUrlDto } from './dtos';
 import { ValidImportFile } from '@shared/validations/valid-import-file.validation';
+import { ValidateDomain } from '@shared/decorators/validate-domain.decorator';
 import { ValidRequestCommand, GetSignedUrl, ValidRequest, GetImportConfig, GetSheetNames } from './usecases';
 
 @ApiTags('Common')
@@ -31,6 +32,7 @@ export class CommonController {
   ) {}
 
   @Post('/valid')
+  @ValidateDomain()
   @ApiOperation({
     summary: 'Check if request is valid (Checks Auth)',
   })
@@ -54,6 +56,7 @@ export class CommonController {
   }
 
   @Get('/import-config')
+  @ValidateDomain()
   @ApiOperation({
     summary: 'Get import config',
   })

@@ -176,29 +176,31 @@ export class AuthService {
     return await this.userRepository.findById(_id);
   }
 
-  async apiKeyAuthenticate(apiKey: string, origin?: string) {
+  async apiKeyAuthenticate(apiKey: string, origin?: string, validateDomain = false) {
     const environment = await this.environmentRepository.findByApiKey(apiKey);
     if (!environment) throw new UnauthorizedException('API Key not found!');
 
     if (apiKey !== environment.key) throw new UnauthorizedException('API Key not found!');
 
-    const project = await this.projectRepository.findById(environment._projectId);
-    if (project && project.authDomains && project.authDomains.length > 0) {
-      if (!origin) throw new UnauthorizedException('Origin not allowed!');
-      const originHost = origin
-        .replace(/^https?:\/\//, '')
-        .split('/')[0]
-        .split(':')[0];
-
-      const isDomainAllowed = project.authDomains.some((domain) => {
-        const whitelistedHost = domain
+    if (validateDomain) {
+      const project = await this.projectRepository.findById(environment._projectId);
+      if (project && project.authDomains && project.authDomains.length > 0) {
+        if (!origin) throw new UnauthorizedException('Origin not allowed!');
+        const originHost = origin
           .replace(/^https?:\/\//, '')
           .split('/')[0]
           .split(':')[0];
 
-        return originHost === whitelistedHost || originHost.endsWith(`.${whitelistedHost}`);
-      });
-      if (!isDomainAllowed) throw new UnauthorizedException('Origin not allowed!');
+        const isDomainAllowed = project.authDomains.some((domain) => {
+          const whitelistedHost = domain
+            .replace(/^https?:\/\//, '')
+            .split('/')[0]
+            .split(':')[0];
+
+          return originHost === whitelistedHost || originHost.endsWith(`.${whitelistedHost}`);
+        });
+        if (!isDomainAllowed) throw new UnauthorizedException('Origin not allowed!');
+      }
     }
   }
 

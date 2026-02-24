@@ -26,6 +26,7 @@ import {
 import { AuthService } from 'app/auth/services/auth.service';
 import { CONSTANTS, COOKIE_CONFIG } from '@shared/constants';
 import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
+import { ValidateDomain } from '@shared/decorators/validate-domain.decorator';
 import { EnvironmentResponseDto } from 'app/environment/dtos/environment-response.dto';
 
 @Controller('/project')
@@ -56,6 +57,7 @@ export class ProjectController {
   }
 
   @Get(':projectId/templates')
+  @ValidateDomain()
   @ApiOperation({
     summary: 'Get all templates for project',
   })

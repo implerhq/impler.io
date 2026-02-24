@@ -4,6 +4,8 @@ import { CONSTANTS } from '@shared/constants';
 import { AuthService } from 'app/auth/services/auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
+import { Reflector } from '@nestjs/core';
+import { IS_DOMAIN_VALIDATION_REQUIRED_KEY } from '@shared/decorators/validate-domain.decorator';
 
 @Injectable()
 export class APIKeyGuard implements CanActivate {
@@ -26,18 +28,24 @@ export class APIKeyGuard implements CanActivate {
 export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(
     @Inject(forwardRef(() => AuthService)) private authService: AuthService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private reflector: Reflector
   ) {
     super();
   }
 
   async canActivate(context: ExecutionContext) {
+    const isDomainValidationRequired = this.reflector.getAllAndOverride<boolean>(IS_DOMAIN_VALIDATION_REQUIRED_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
     const req = context.switchToHttp().getRequest();
     if (req.headers && req.headers[ACCESS_KEY_NAME]) {
       const accessKey = req.headers[ACCESS_KEY_NAME];
       const origin = req.headers[WIDGET_ORIGIN_HEADER_NAME] || req.headers.origin || req.headers.referer;
 
-      await this.authService.apiKeyAuthenticate(accessKey, origin);
+      await this.authService.apiKeyAuthenticate(accessKey, origin, isDomainValidationRequired);
 
       return true;
     } else if (req.cookies && req.cookies[CONSTANTS.AUTH_COOKIE_NAME]) {
