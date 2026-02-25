@@ -98,21 +98,50 @@ export function isValidXMLMimeType(mimeType: string): boolean {
 }
 
 export const getMimeType = async (url: string): Promise<string | null> => {
-  try {
-    if (!isUrlSafe(url)) {
-      throw new BadRequestException('Invalid URL');
-    }
+  if (!isUrlSafe(url)) {
+    throw new BadRequestException('Invalid URL');
+  }
 
+  const headers = {
+    'User-Agent':
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    Accept: 'application/rss+xml, application/xml, text/xml, */*',
+  };
+
+  // Try HEAD request first
+  try {
     const response = await axios.head(url, {
       timeout: 10000,
       maxRedirects: 3,
+      headers,
     });
 
     const mimeType = response.headers['content-type'] || null;
 
     return mimeType?.split(';')[0] || null;
-  } catch (error) {
-    throw error;
+  } catch (headError) {
+    // If HEAD fails with 400, 405 (Method Not Allowed), 403 (Forbidden), or 429 (Too Many Requests), fallback to GET
+    if (headError.response && [400, 405, 403, 429].includes(headError.response.status)) {
+      try {
+        const response = await axios.get(url, {
+          timeout: 15000,
+          maxRedirects: 3,
+          headers,
+          responseType: 'stream',
+        });
+
+        const mimeType = response.headers['content-type'] || null;
+        // Destroy the stream as we only need the headers
+        if (response.data && typeof response.data.destroy === 'function') {
+          response.data.destroy();
+        }
+
+        return mimeType?.split(';')[0] || null;
+      } catch (getError) {
+        throw getError;
+      }
+    }
+    throw headError;
   }
 };
 
