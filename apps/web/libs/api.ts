@@ -87,6 +87,14 @@ const routes: Record<string, Route> = {
     url: (projectId) => `/v1/project/${projectId}/environment`,
     method: 'GET',
   },
+  [API_KEYS.PROJECT_ALLOWED_DOMAINS_GET]: {
+    url: (projectId) => `/v1/project/${projectId}/allowed-domains`,
+    method: 'GET',
+  },
+  [API_KEYS.PROJECT_ALLOWED_DOMAINS_UPDATE]: {
+    url: (projectId) => `/v1/project/${projectId}/allowed-domains`,
+    method: 'PUT',
+  },
 
   [API_KEYS.LOGOUT]: {
     url: () => '/v1/auth/logout',

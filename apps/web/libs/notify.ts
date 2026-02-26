@@ -42,6 +42,11 @@ const Messages: Record<string, NotifyProps | ((data?: any) => NotifyProps)> = {
     message: 'Columns has been updated',
     color: 'green',
   },
+  [NOTIFICATION_KEYS.ALLOWED_DOMAINS_UPDATED]: {
+    title: 'Allowed domains updated',
+    message: 'Allowed domains has been updated',
+    color: 'green',
+  },
   [NOTIFICATION_KEYS.VALIDATIONS_UPDATED]: {
     title: 'Validations updated',
     message: 'Validations has been updated',

@@ -22,6 +22,8 @@ import {
   GetEnvironment,
   CreateProjectCommand,
   UpdateProjectCommand,
+  GetAllowedDomains,
+  UpdateAllowedDomains,
 } from './usecases';
 import { AuthService } from 'app/auth/services/auth.service';
 import { CONSTANTS, COOKIE_CONFIG } from '@shared/constants';
@@ -41,7 +43,9 @@ export class ProjectController {
     private deleteProjectUsecase: DeleteProject,
     private authService: AuthService,
     private getTemplates: GetTemplates,
-    private getEnvironment: GetEnvironment
+    private getEnvironment: GetEnvironment,
+    private getAllowedDomains: GetAllowedDomains,
+    private updateAllowedDomains: UpdateAllowedDomains
   ) {}
 
   @Get()
@@ -101,6 +105,35 @@ export class ProjectController {
   })
   getEnvironmentRoute(@Param('projectId', ValidateMongoId) projectId: string): Promise<EnvironmentResponseDto> {
     return this.getEnvironment.execute(projectId);
+  }
+
+  @Get(':projectId/allowed-domains')
+  @ApiOperation({
+    summary: 'Get allowed domains for project',
+  })
+  @ApiOkResponse({
+    type: [String],
+  })
+  getAllowedDomainsRoute(
+    @UserSession() user: IJwtPayload,
+    @Param('projectId', ValidateMongoId) projectId: string
+  ): Promise<string[]> {
+    return this.getAllowedDomains.execute(projectId, user._id);
+  }
+
+  @Put(':projectId/allowed-domains')
+  @ApiOperation({
+    summary: 'Update allowed domains for project',
+  })
+  @ApiOkResponse({
+    type: [String],
+  })
+  updateAllowedDomainsRoute(
+    @UserSession() user: IJwtPayload,
+    @Param('projectId', ValidateMongoId) projectId: string,
+    @Body() body: { allowedDomains: string[] }
+  ): Promise<string[]> {
+    return this.updateAllowedDomains.execute(projectId, body.allowedDomains, user._id);
   }
 
   @Post()

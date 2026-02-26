@@ -36,7 +36,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     if (req.headers && req.headers[ACCESS_KEY_NAME]) {
       const accessKey = req.headers[ACCESS_KEY_NAME];
 
-      await this.authService.apiKeyAuthenticate(accessKey);
+      await this.authService.apiKeyAuthenticate(accessKey, req.headers.origin || req.headers.referer);
 
       return true;
     } else if (req.cookies && req.cookies[CONSTANTS.AUTH_COOKIE_NAME]) {
