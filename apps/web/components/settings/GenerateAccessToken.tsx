@@ -17,6 +17,7 @@ export function GenerateAccessToken() {
         <Input
           type="password"
           value={accessToken}
+          readOnly
           rightSection={
             <Tooltip label={clipboardApiKey.copied ? 'Copied!' : 'Copy Key'}>
               <ActionIcon radius={0} variant="transparent" onClick={() => clipboardApiKey.copy(accessToken)}>

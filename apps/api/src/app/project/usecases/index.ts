@@ -7,6 +7,8 @@ import { UpdateProjectCommand } from './update-project/update-project.command';
 import { DeleteProject } from './delete-project/delete-project.usecase';
 import { GetTemplates } from './get-templates/get-templates.usecase';
 import { GetEnvironment } from './get-environment/get-environment.usecase';
+import { GetAllowedDomains } from './get-allowed-domains/get-allowed-domains.usecase';
+import { UpdateAllowedDomains } from './update-allowed-domains/update-allowed-domains.usecase';
 
 import { UpdateImageColumns, SaveSampleFile } from '@shared/usecases';
 import { CreateTemplate, UpdateTemplateColumns, UpdateCustomization, AddColumn } from 'app/template/usecases';
@@ -27,6 +29,8 @@ export const USE_CASES = [
   UpdateImageColumns,
   GetImportFileSchema,
   AddColumn,
+  GetAllowedDomains,
+  UpdateAllowedDomains,
   //
 ];
 
@@ -38,6 +42,8 @@ export {
   GetTemplates,
   GetEnvironment,
   GetImports,
+  GetAllowedDomains,
+  UpdateAllowedDomains,
   AddColumn,
 };
 export { CreateProjectCommand, UpdateProjectCommand };

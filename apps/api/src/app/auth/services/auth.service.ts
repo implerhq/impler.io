@@ -4,7 +4,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { IJwtPayload, UserRolesEnum } from '@impler/shared';
 import { CONSTANTS, LEAD_SIGNUP_USING } from '@shared/constants';
-import { UserEntity, UserRepository, EnvironmentRepository } from '@impler/dal';
+import { UserEntity, UserRepository, EnvironmentRepository, ProjectRepository } from '@impler/dal';
 import { UserNotFoundException } from '@shared/exceptions/user-not-found.exception';
 import { IAuthenticationData, IStrategyResponse } from '@shared/types/auth.types';
 import { IncorrectLoginCredentials } from '@shared/exceptions/incorrect-login-credentials.exception';
@@ -14,7 +14,8 @@ export class AuthService {
   constructor(
     private jwtService: JwtService,
     private userRepository: UserRepository,
-    private environmentRepository: EnvironmentRepository
+    private environmentRepository: EnvironmentRepository,
+    private projectRepository: ProjectRepository
   ) {}
 
   async authenticate({ profile, provider }: IAuthenticationData): Promise<IStrategyResponse> {
@@ -175,11 +176,40 @@ export class AuthService {
     return await this.userRepository.findById(_id);
   }
 
-  async apiKeyAuthenticate(apiKey: string) {
+  async apiKeyAuthenticate(apiKey: string, origin?: string) {
     const environment = await this.environmentRepository.findByApiKey(apiKey);
     if (!environment) throw new UnauthorizedException('API Key not found!');
 
     if (apiKey !== environment.key) throw new UnauthorizedException('API Key not found!');
+
+    if (origin) {
+      const project = await this.projectRepository.findById(environment._projectId, 'allowedDomains');
+      if (project && project.allowedDomains && project.allowedDomains.length > 0) {
+        try {
+          const originUrl = new URL(origin);
+          const sanitizedOrigin = `${originUrl.protocol}//${originUrl.host}`;
+
+          const isAllowed = project.allowedDomains.some((domain) => {
+            try {
+              const domainUrl = new URL(domain);
+              const sanitizedDomain = `${domainUrl.protocol}//${domainUrl.host}`;
+
+              return sanitizedOrigin === sanitizedDomain;
+            } catch (e) {
+              // If domain in DB is not a valid URL, fallback to strict string comparison
+              return sanitizedOrigin === domain.replace(/\/$/, '');
+            }
+          });
+
+          if (!isAllowed) {
+            throw new UnauthorizedException('Domain not allowed');
+          }
+        } catch (e) {
+          if (e instanceof UnauthorizedException) throw e;
+          throw new UnauthorizedException('Invalid Origin');
+        }
+      }
+    }
   }
 
   async generateUserToken(user: UserEntity) {

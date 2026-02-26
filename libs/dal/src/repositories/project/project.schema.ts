@@ -19,6 +19,10 @@ const projectSchema = new Schema(
       type: Schema.Types.Boolean,
       default: false,
     },
+    allowedDomains: {
+      type: [Schema.Types.String],
+      default: [],
+    },
   },
   { ...schemaOptions }
 );

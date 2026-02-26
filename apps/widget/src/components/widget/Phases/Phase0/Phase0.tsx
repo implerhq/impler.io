@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { Alert } from '@mantine/core';
+import { colors } from '@config';
+import { Stack, Text, Center } from '@mantine/core';
 import { LoadingOverlay } from '@ui/LoadingOverlay';
 import { usePhase0 } from '@hooks/Phase0/usePhase0';
 
@@ -22,20 +23,37 @@ export function Phase0({ onValidationSuccess: goNext }: IPhase0Props) {
 
   if (error || fileError) {
     return (
-      <Alert
-        color="yellow"
-        style={{
-          textAlign: 'center',
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%,-50%)',
-          maxWidth: '100%',
-          border: '.1rem solid #FFC300',
-        }}
-      >
-        {error?.message || fileError}
-      </Alert>
+      <Center sx={{ height: '100%', width: '100%' }}>
+        <Stack align="center" spacing="xs" sx={{ maxWidth: '80%' }}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="60"
+            height="60"
+            fill="none"
+            stroke={colors.yellow}
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <Text
+            size="lg"
+            weight={600}
+            color="dimmed"
+            align="center"
+            sx={{
+              color: colors.yellow,
+              fontSize: '18px',
+            }}
+          >
+            {error?.message || fileError}
+          </Text>
+        </Stack>
+      </Center>
     );
   }
 
