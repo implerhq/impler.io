@@ -8,7 +8,7 @@ export class BubbleBaseService {
   throwRequestError(errorWithType: AxiosError) {
     if ((errorWithType as AxiosError).response) {
       // Request made and server responded
-      const response = errorWithType.response.data as Record<string, any>;
+      const response = errorWithType.response.data as any;
       if (response?.translation) throw new Error(response?.translation);
       else if (response.body?.message) throw new Error(response.body?.message);
       else if (typeof response === 'string' && response.includes('invalid appname hosted on bubbleapps.io'))
