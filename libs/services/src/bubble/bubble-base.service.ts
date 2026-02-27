@@ -11,7 +11,8 @@ export class BubbleBaseService {
       const response = errorWithType.response.data as Record<string, any>;
       if (response?.translation) throw new Error(response?.translation);
       else if (response.body?.message) throw new Error(response.body?.message);
-      else if (response.includes('invalid appname hosted on bubbleapps.io')) throw new Error('Invalid App Name');
+      else if (typeof response === 'string' && response.includes('invalid appname hosted on bubbleapps.io'))
+        throw new Error('Invalid App Name');
       else if (errorWithType.response.status === 401)
         throw new Error(`You're not authorized to access this app. Please check "App Name" or "API Private Key"`);
       console.log('response error', response, errorWithType.response);
