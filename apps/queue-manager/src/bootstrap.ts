@@ -17,6 +17,9 @@ import {
 
 let connection: IAmqpConnectionManager, chanelWrapper: ChannelWrapper;
 
+const PREFETCH_COUNT = 10;
+const DEAD_LETTER_EXCHANGE = 'impler-dlx';
+
 validateEnv();
 
 if (process.env.SENTRY_DSN) {
@@ -27,8 +30,25 @@ if (process.env.SENTRY_DSN) {
   });
 }
 
+function createSafeConsumer(consumer: { message: (data: any) => void }, channel: any) {
+  return async (msg: any) => {
+    if (!msg) return;
+    try {
+      await consumer.message(msg);
+      channel.ack(msg);
+    } catch (error) {
+      console.error(`[Queue] Consumer error:`, error?.message || error);
+      if (process.env.SENTRY_DSN) {
+        Sentry.captureException(error);
+      }
+      // Reject and do not requeue - message goes to dead letter queue
+      channel.nack(msg, false, false);
+    }
+  };
+}
+
 export async function bootstrap() {
-  // conenct dal service
+  // connect dal service
   const dalService = new DalService();
   await dalService.connect(process.env.MONGO_URL);
 
@@ -50,59 +70,70 @@ export async function bootstrap() {
   const autoImportJobbDataConsumer = new SendAutoImportJobDataConsumer();
   const sendImportJobDataConsumer = new SendImportJobDataConsumer();
 
+  const queueOptions = {
+    durable: true,
+    arguments: {
+      'x-dead-letter-exchange': DEAD_LETTER_EXCHANGE,
+    },
+  };
+
   // add queues to channel
   chanelWrapper.addSetup((channel) => {
     return Promise.all([
-      channel.assertQueue(QueuesEnum.END_IMPORT, {
-        durable: false,
-      }),
-      channel.consume(QueuesEnum.END_IMPORT, endImportConsumer.message.bind(endImportConsumer), { noAck: true }),
-      channel.assertQueue(QueuesEnum.SEND_WEBHOOK_DATA, {
-        durable: false,
-      }),
-      channel.consume(QueuesEnum.SEND_WEBHOOK_DATA, sendWebhookdataConsumer.message.bind(sendWebhookdataConsumer), {
-        noAck: true,
-      }),
-      channel.assertQueue(QueuesEnum.SEND_FAILED_WEBHOOK_DATA, {
-        durable: false,
-      }),
+      // Set prefetch to limit concurrent message processing
+      channel.prefetch(PREFETCH_COUNT),
+
+      // Setup dead letter exchange
+      channel.assertExchange(DEAD_LETTER_EXCHANGE, 'direct', { durable: true }),
+      channel.assertQueue('dead-letter-queue', { durable: true }),
+      channel.bindQueue('dead-letter-queue', DEAD_LETTER_EXCHANGE, ''),
+
+      // Setup durable queues with manual ack
+      channel.assertQueue(QueuesEnum.END_IMPORT, queueOptions),
+      channel.consume(
+        QueuesEnum.END_IMPORT,
+        createSafeConsumer(endImportConsumer, channel),
+        { noAck: false }
+      ),
+
+      channel.assertQueue(QueuesEnum.SEND_WEBHOOK_DATA, queueOptions),
+      channel.consume(
+        QueuesEnum.SEND_WEBHOOK_DATA,
+        createSafeConsumer(sendWebhookdataConsumer, channel),
+        { noAck: false }
+      ),
+
+      channel.assertQueue(QueuesEnum.SEND_FAILED_WEBHOOK_DATA, queueOptions),
       channel.consume(
         QueuesEnum.SEND_FAILED_WEBHOOK_DATA,
-        sendFailedWebhookDataConsumer.message.bind(sendFailedWebhookDataConsumer),
-        {
-          noAck: true,
-        }
+        createSafeConsumer(sendFailedWebhookDataConsumer, channel),
+        { noAck: false }
       ),
-      channel.assertQueue(QueuesEnum.SEND_BUBBLE_DATA, {
-        durable: false,
-      }),
-      channel.consume(QueuesEnum.SEND_BUBBLE_DATA, sendBubbleDataConsumer.message.bind(sendBubbleDataConsumer), {
-        noAck: true,
-      }),
-      channel.assertQueue(QueuesEnum.GET_IMPORT_JOB_DATA, {
-        durable: false,
-      }),
+
+      channel.assertQueue(QueuesEnum.SEND_BUBBLE_DATA, queueOptions),
+      channel.consume(
+        QueuesEnum.SEND_BUBBLE_DATA,
+        createSafeConsumer(sendBubbleDataConsumer, channel),
+        { noAck: false }
+      ),
+
+      channel.assertQueue(QueuesEnum.GET_IMPORT_JOB_DATA, queueOptions),
       channel.consume(
         QueuesEnum.GET_IMPORT_JOB_DATA,
-        autoImportJobbDataConsumer.message.bind(autoImportJobbDataConsumer),
-        {
-          noAck: true,
-        }
+        createSafeConsumer(autoImportJobbDataConsumer, channel),
+        { noAck: false }
       ),
-      channel.assertQueue(QueuesEnum.SEND_IMPORT_JOB_DATA, {
-        durable: false,
-      }),
+
+      channel.assertQueue(QueuesEnum.SEND_IMPORT_JOB_DATA, queueOptions),
       channel.consume(
         QueuesEnum.SEND_IMPORT_JOB_DATA,
-        sendImportJobDataConsumer.message.bind(sendImportJobDataConsumer),
-        {
-          noAck: true,
-        }
+        createSafeConsumer(sendImportJobDataConsumer, channel),
+        { noAck: false }
       ),
     ]);
   });
 }
 
 export function publishToQueue(queueName: QueuesEnum, data: any) {
-  chanelWrapper.sendToQueue(queueName, data);
+  chanelWrapper.sendToQueue(queueName, data, { persistent: true });
 }

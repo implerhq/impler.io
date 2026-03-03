@@ -54,4 +54,7 @@ interface ITemplateDocument extends TemplateEntity, Document {
   _id: never;
 }
 
+// Composite index for project-scoped queries sorted by creation time
+templateSchema.index({ _projectId: 1, createdAt: -1 });
+
 export const Template = models.Template || model<ITemplateDocument>('Template', templateSchema);

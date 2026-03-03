@@ -105,26 +105,33 @@ export class S3StorageService implements StorageService {
         // Check if there are more objects to delete
         continuationToken = listResponse.NextContinuationToken;
       } while (continuationToken);
-    } catch (error) {}
+    } catch (error) {
+      console.error('[StorageService] Failed to delete S3 folder:', error?.message || error);
+    }
   }
 
   async uploadFile(key: string, file: Buffer | string | Readable, contentType: string): Promise<IStorageResponse> {
-    const command = new PutObjectCommand({
-      Bucket: process.env.S3_BUCKET_NAME,
-      Key: key,
-      Body: file,
-      ContentType: contentType,
-    });
+    try {
+      const command = new PutObjectCommand({
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: key,
+        Body: file,
+        ContentType: contentType,
+      });
 
-    const result = await this.s3.send(command);
+      const result = await this.s3.send(command);
 
-    return {
-      success: true,
-      metadata: {
-        eTag: result.ETag,
-        versionId: result.VersionId,
-      },
-    };
+      return {
+        success: true,
+        metadata: {
+          eTag: result.ETag,
+          versionId: result.VersionId,
+        },
+      };
+    } catch (error) {
+      console.error(`[StorageService] Failed to upload file '${key}':`, error?.message || error);
+      throw error;
+    }
   }
 
   async getFileContent(key: string, encoding = 'utf8' as BufferEncoding): Promise<string> {

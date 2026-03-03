@@ -28,6 +28,17 @@ import { publishToQueue } from '../bootstrap';
 import { IBuildSendDataParameters } from '../types/file-processing.types';
 import { getEmailServiceClass, getStorageServiceClass } from '../helpers/services.helper';
 
+// Prototype pollution safe JSON parse - strips dangerous keys recursively
+function safeJsonParse(jsonStr: string): any {
+  const DANGEROUS_KEYS = ['__proto__', 'constructor', 'prototype'];
+
+  return JSON.parse(jsonStr, (key, value) => {
+    if (DANGEROUS_KEYS.includes(key)) return undefined;
+
+    return value;
+  });
+}
+
 const MIN_LIMIT = 0;
 const DEFAULT_PAGE = 1;
 
@@ -129,7 +140,15 @@ export class SendWebhookDataConsumer extends BaseConsumer {
           this.finalizeUpload(uploadId);
         }
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error(`[SendWebhookDataConsumer] Failed to process webhook for upload ${uploadId}:`, error?.message || error);
+      // Update upload status to reflect the failure
+      try {
+        await this.uploadRepository.update({ _id: uploadId }, { status: UploadStatusEnum.COMPLETED });
+      } catch (updateError) {
+        console.error(`[SendWebhookDataConsumer] Failed to update upload status for ${uploadId}:`, updateError?.message);
+      }
+    }
   }
 
   private buildSendData({
@@ -169,7 +188,7 @@ export class SendWebhookDataConsumer extends BaseConsumer {
     }
     if (recordFormat)
       slicedData = slicedData.map((obj) =>
-        replaceVariablesInObject(JSON.parse(recordFormat), obj.record, defaultValuesObj)
+        replaceVariablesInObject(safeJsonParse(recordFormat), obj.record, defaultValuesObj)
       );
     else slicedData = slicedData.map((obj) => obj.record);
 
@@ -186,7 +205,7 @@ export class SendWebhookDataConsumer extends BaseConsumer {
     };
 
     return {
-      sendData: chunkFormat ? replaceVariablesInObject(JSON.parse(chunkFormat), sendData as any) : sendData,
+      sendData: chunkFormat ? replaceVariablesInObject(safeJsonParse(chunkFormat), sendData as any) : sendData,
       page,
     };
   }
@@ -274,15 +293,17 @@ export class SendWebhookDataConsumer extends BaseConsumer {
           importId: data._uploadId,
         },
       });
-      teamMemberEmails.forEach(async (email) => {
-        await this.emailService.sendEmail({
-          to: email,
-          subject: `${EMAIL_SUBJECT.ERROR_SENDING_WEBHOOK_DATA} ${importName}`,
-          html: emailContents,
-          from: process.env.ALERT_EMAIL_FROM,
-          senderName: process.env.EMAIL_FROM_NAME,
-        });
-      });
+      await Promise.all(
+        teamMemberEmails.map((email) =>
+          this.emailService.sendEmail({
+            to: email,
+            subject: `${EMAIL_SUBJECT.ERROR_SENDING_WEBHOOK_DATA} ${importName}`,
+            html: emailContents,
+            from: process.env.ALERT_EMAIL_FROM,
+            senderName: process.env.EMAIL_FROM_NAME,
+          })
+        )
+      );
 
       if (retryCount && retryInterval) {
         await this.failedWebhookRetryRequestsRepository.create({

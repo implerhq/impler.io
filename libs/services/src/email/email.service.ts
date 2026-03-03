@@ -774,23 +774,29 @@ export class SESEmailService extends EmailService {
   async sendEmail({ to, subject, html, from, senderName }: ISendMailOptions) {
     if (!this.isConnected()) return;
 
-    const transporter = nodemailer.createTransport({
-      SES: { ses: this.ses, aws: { SendRawEmailCommand } },
-    });
+    try {
+      const transporter = nodemailer.createTransport({
+        SES: { ses: this.ses, aws: { SendRawEmailCommand } },
+      });
 
-    const response = await transporter.sendMail({
-      to,
-      html,
-      subject,
-      from: {
-        address: from,
-        name: senderName,
-      },
-    });
+      const response = await transporter.sendMail({
+        to,
+        html,
+        subject,
+        from: {
+          address: from,
+          name: senderName,
+        },
+      });
 
-    return {
-      messageId: response.messageId,
-    };
+      return {
+        messageId: response.messageId,
+      };
+    } catch (error) {
+      console.error(`[EmailService] Failed to send email to ${to}:`, error?.message || error);
+
+      return { messageId: null, error: error?.message };
+    }
   }
   isConnected(): boolean {
     return !!this.ses;

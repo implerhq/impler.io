@@ -203,6 +203,10 @@ export class UploadController {
     @Query('page') page = Defaults.ONE,
     @Query('limit') limit = Defaults.PAGE_LIMIT
   ): Promise<PaginationResponseDto> {
+    // Sanitize pagination params to prevent DoS via extreme values
+    page = Math.max(1, Math.min(Number(page) || 1, 10000));
+    limit = Math.max(1, Math.min(Number(limit) || Defaults.PAGE_LIMIT, 1000));
+
     const uploadData = await this.getUploadProcessInfo.execute(uploadId);
 
     // throw error if upload information not found

@@ -1,3 +1,5 @@
+import * as path from 'path';
+
 export class FileNameService {
   getURLOrigin(): string {
     return '';
@@ -70,6 +72,10 @@ export class FileNameService {
     return `${uploadId}/${this.getValidDataFileName()}`;
   }
   getAssetFilePath(uploadId: string, fileName: string): string {
-    return `${uploadId}/${fileName}`;
+    // Normalize backslashes to forward slashes then extract basename to prevent path traversal
+    const normalized = fileName.replace(/\\/g, '/');
+    const safeFileName = path.basename(normalized);
+
+    return `${uploadId}/${safeFileName}`;
   }
 }

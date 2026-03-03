@@ -116,7 +116,9 @@ export class MakeUploadEntry {
     let parsedSchema: ISchemaItem[], combinedSchema: string, customRecordFormat: string, customChunkFormat: string;
     try {
       if (schema) parsedSchema = JSON.parse(schema);
-    } catch (error) {}
+    } catch (error) {
+      console.warn('[MakeUploadEntry] Failed to parse schema JSON:', error?.message);
+    }
     if (Array.isArray(parsedSchema) && parsedSchema.length > 0) {
       const formattedColumns: Record<string, Partial<ITemplateSchemaItem>> = {};
       parsedSchema.forEach((schemaItem) => {

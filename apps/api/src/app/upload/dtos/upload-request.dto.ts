@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsJSON, IsMongoId, IsNumberString, IsOptional, IsString } from 'class-validator';
+import { IsJSON, IsMongoId, IsNumberString, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class UploadRequestDto {
   @ApiProperty({
@@ -14,6 +14,7 @@ export class UploadRequestDto {
   })
   @IsOptional()
   @IsString()
+  @MaxLength(2048)
   authHeaderValue?: string;
 
   @ApiProperty({
@@ -38,6 +39,7 @@ export class UploadRequestDto {
   })
   @IsOptional()
   @IsString()
+  @MaxLength(100000)
   extra?: string;
 
   @ApiProperty({
@@ -68,5 +70,6 @@ export class UploadRequestDto {
   })
   @IsOptional()
   @IsNumberString()
+  @MaxLength(7, { message: 'maxRecords cannot exceed 1000000' })
   maxRecords?: string;
 }

@@ -1,9 +1,9 @@
+import * as crypto from 'crypto';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { EnvironmentRepository } from '@impler/dal';
-import * as hat from 'hat';
 import { VARIABLES } from '@shared/constants';
 
-const API_KEY_GENERATION_MAX_RETRIES = 3;
+const API_KEY_GENERATION_MAX_RETRIES = 10;
 
 @Injectable()
 export class GenerateUniqueApiKey {
@@ -29,12 +29,10 @@ export class GenerateUniqueApiKey {
   }
 
   /**
-   * Extracting the generation functionality so it can be stubbed for functional testing
-   *
-   * @requires hat
-   * @todo Dependency is no longer accessible to source code due of removal from GitHub. Consider look for an alternative.
+   * Generates a cryptographically secure API key with 256-bit entropy.
+   * Replaces the deprecated `hat` library with Node.js native crypto.
    */
   private generateApiKey(): string {
-    return hat();
+    return crypto.randomBytes(32).toString('hex');
   }
 }

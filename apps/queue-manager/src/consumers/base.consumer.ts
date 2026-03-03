@@ -1,7 +1,7 @@
 import axios from 'axios';
 import dayjs from 'dayjs';
 import { WebhookLogEntity } from '@impler/dal';
-import { StatusEnum, ISendDataParameters } from '@impler/shared';
+import { StatusEnum, ISendDataParameters, isUrlSafeForServerRequest } from '@impler/shared';
 
 export abstract class BaseConsumer {
   protected DEFAULT_PAGE = 1;
@@ -48,12 +48,27 @@ export abstract class BaseConsumer {
       headersContent: headers,
       isRetry: isRetry || false,
     };
+
+    // SSRF protection: validate URL before making the call
+    if (!isUrlSafeForServerRequest(url)) {
+      baseResponse.status = StatusEnum.FAILED;
+      baseResponse.failedReason = 'URL points to a restricted address';
+      baseResponse.responseStatusCode = 400;
+      baseResponse.error = {
+        error: `Blocked request to restricted URL`,
+      };
+
+      return baseResponse;
+    }
+
     try {
       const response = await axios({
         method,
         url,
         data,
         headers: headers || {},
+        maxRedirects: 5,
+        timeout: 30000,
       });
 
       baseResponse.responseStatusCode = response.status;

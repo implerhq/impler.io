@@ -83,6 +83,10 @@ export class ReviewController {
     @Query('limit') limit = Defaults.PAGE_LIMIT,
     @Query('type') type = ReviewDataTypesEnum.ALL
   ) {
+    // Sanitize pagination params to prevent DoS via extreme values
+    const safePage = Math.max(1, Math.min(Number(page) || 1, 10000));
+    const safeLimit = Math.max(1, Math.min(Number(limit) || Defaults.PAGE_LIMIT, 1000));
+
     const uploadData = await this.getUpload.execute({
       uploadId: _uploadId,
     });
@@ -91,8 +95,8 @@ export class ReviewController {
 
     return await this.getFileInvalidData.execute(
       _uploadId,
-      Number(page),
-      limit,
+      safePage,
+      safeLimit,
       type === ReviewDataTypesEnum.VALID
         ? uploadData.validRecords
         : type === ReviewDataTypesEnum.INVALID
