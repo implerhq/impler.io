@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as dayjs from 'dayjs';
 import * as Papa from 'papaparse';
 import { Writable } from 'stream';
+import { cpus } from 'os';
 import addFormats from 'ajv-formats';
 import addKeywords from 'ajv-keywords';
 import * as customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -53,8 +54,38 @@ interface ISaveResults {
 
 export class BaseReview {
   private sandboxManager: SManager;
+  private readonly multiSelectRegexCache = new Map<string, { trim: RegExp; dedupe: RegExp }>();
   constructor() {
     this.sandboxManager = new SManager();
+  }
+
+  private getBatchConcurrency() {
+    return Math.min(8, Math.max(1, cpus().length || 1));
+  }
+
+  private escapeRegExp(value: string) {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  private getMultiSelectRegex(delimiter: string) {
+    const cached = this.multiSelectRegexCache.get(delimiter);
+    if (cached) return cached;
+
+    const escapedDelimiter = this.escapeRegExp(delimiter);
+    const regex = {
+      trim: new RegExp(`^(?:${escapedDelimiter})+|(?:${escapedDelimiter})+$`, 'g'),
+      dedupe: new RegExp(`(?:${escapedDelimiter}){2,}`, 'g'),
+    };
+
+    this.multiSelectRegexCache.set(delimiter, regex);
+
+    return regex;
+  }
+
+  private async writeToStream(dataStream: Writable, item: IDataItem) {
+    const canContinue = dataStream.write(item);
+    if (canContinue) return;
+    await new Promise<void>((resolve) => dataStream.once('drain', resolve));
   }
 
   buildAJVSchema({
@@ -365,9 +396,10 @@ export class BaseReview {
   }
 
   private async executeBatchInSandbox(batchItem: IBatchItem, sandboxManager: SManager, onBatchInitialize: string) {
+    let sandbox: Awaited<ReturnType<SManager['obtainSandbox']>> | undefined;
     try {
-      const sandbox = await sandboxManager.obtainSandbox(batchItem.uploadId);
-      sandbox.clean();
+      sandbox = await sandboxManager.obtainSandbox(batchItem.uploadId);
+      await sandbox.clean();
       const sandboxPath = sandbox.getSandboxFolderPath();
 
       if (!fs.existsSync(sandboxPath)) {
@@ -390,6 +422,10 @@ export class BaseReview {
       return await sandbox.runCommandLine(`${nodeExecutablePath} main.js`);
     } catch (error) {
       throw new Error(error.message);
+    } finally {
+      if (sandbox) {
+        await sandboxManager.returnSandbox(sandbox.boxId);
+      }
     }
   }
   formatRecord({
@@ -411,17 +447,10 @@ export class BaseReview {
         if (numberColumnHeadings.has(heading)) val = val !== '' && !isNaN(val) ? Number(val) : val;
         if (typeof val === 'string') val = val.trim();
         if (multiSelectColumnHeadings[heading]) {
-          if (val)
-            val = val
-              .replace(
-                new RegExp(`^[${multiSelectColumnHeadings[heading]}]+|[${multiSelectColumnHeadings[heading]}]+$`, 'g'),
-                ''
-              )
-              .replace(
-                new RegExp(`[${multiSelectColumnHeadings[heading]}]{2,}`, 'g'),
-                multiSelectColumnHeadings[heading]
-              );
-          acc.checkRecord[heading] = !val ? [] : val.split(multiSelectColumnHeadings[heading]);
+          const delimiter = multiSelectColumnHeadings[heading];
+          const regex = this.getMultiSelectRegex(delimiter);
+          if (val) val = val.replace(regex.trim, '').replace(regex.dedupe, delimiter);
+          acc.checkRecord[heading] = !val ? [] : val.split(delimiter);
         } else acc.checkRecord[heading] = val;
 
         acc.passRecord[heading] = val;
@@ -480,9 +509,7 @@ export class BaseReview {
             const canContinue = dataStream.write(validationResultItem);
             if (!canContinue) {
               parser.pause();
-              dataStream.once('drain', () => {
-                parser.resume();
-              });
+              dataStream.once('drain', () => parser.resume());
             }
           }
         },
@@ -670,11 +697,11 @@ export class BaseReview {
           step: (results: Papa.ParseStepResult<any>) => {
             recordsCount++;
             const record = results.data;
-            const recordObj: {
-              checkRecord: Record<string, unknown>;
-              passRecord: Record<string, unknown>;
-            } = this.formatRecord({ headings, multiSelectColumnHeadings, record, numberColumnHeadings });
             if (recordsCount > headerRow) {
+              const recordObj: {
+                checkRecord: Record<string, unknown>;
+                passRecord: Record<string, unknown>;
+              } = this.formatRecord({ headings, multiSelectColumnHeadings, record, numberColumnHeadings });
               const validationResultItem = this.validateRecord({
                 index: recordsCount,
                 checkRecord: recordObj.checkRecord,
@@ -686,16 +713,12 @@ export class BaseReview {
               });
               batchRecords.push(validationResultItem);
               if (batchRecords.length === BATCH_LIMIT) {
-                batches.push(
-                  JSON.parse(
-                    JSON.stringify({
-                      uploadId,
-                      data: batchRecords,
-                      batchCount,
-                      extra,
-                    })
-                  )
-                );
+                batches.push({
+                  uploadId,
+                  data: [...batchRecords],
+                  batchCount,
+                  extra,
+                });
                 batchRecords.length = 0;
                 batchCount++;
               }
@@ -737,38 +760,49 @@ export class BaseReview {
     forItem?: (item: any) => void;
   }): Promise<void> {
     return new Promise(async (resolve) => {
-      const batchProcess = await Promise.all(
-        batches.map((batch) => this.executeBatchInSandbox(batch, this.sandboxManager, onBatchInitialize))
-      );
-      const processedArray = batchProcess.flat();
+      const concurrency = this.getBatchConcurrency();
+      let batchCursor = 0;
 
-      let processOutput: {
-        uploadId: string;
-        data: any[];
-        batchCount: number;
-        sandboxPath: string;
-        chunkSize: number;
+      const runWorker = async () => {
+        while (true) {
+          const currentIndex = batchCursor++;
+          const batch = batches[currentIndex];
+          if (!batch) return;
+
+          const processData = await this.executeBatchInSandbox(batch, this.sandboxManager, onBatchInitialize);
+
+          if (
+            processData &&
+            processData.output &&
+            typeof (processData.output as any)?.output === 'object' &&
+            !Array.isArray((processData.output as any)?.output)
+          ) {
+            const processOutput: {
+              uploadId: string;
+              data: any[];
+              batchCount: number;
+              sandboxPath: string;
+              chunkSize: number;
+            } = (processData.output as unknown as any).output;
+
+            for (const item of processOutput.data) {
+              await this.writeToStream(dataStream, item);
+              forItem?.(item);
+            }
+          } else {
+            console.log(processData);
+            onError?.(processData);
+          }
+        }
       };
 
-      for (const processData of processedArray) {
-        if (
-          processData &&
-          processData.output &&
-          typeof (processData.output as any)?.output === 'object' &&
-          !Array.isArray((processData.output as any)?.output)
-        ) {
-          processOutput = (processData.output as unknown as any).output;
-          // eslint-disable-next-line @typescript-eslint/no-loop-func
-          processOutput.data.forEach((item: any) => {
-            dataStream.write(item);
-            forItem?.(item);
-          });
-        } else {
-          console.log(processData);
-          onError?.(processData);
-        }
+      const workerCount = Math.min(concurrency, Math.max(1, batches.length));
+      const workers = Array.from({ length: workerCount }, () => runWorker());
+      await Promise.all(workers);
+
+      if (!dataStream.writableEnded) {
+        dataStream.end();
       }
-      dataStream.end();
       resolve();
     });
   }

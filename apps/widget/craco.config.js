@@ -1,4 +1,24 @@
 const path = require('path');
+
+// Node.js 22+ may expose localStorage as a getter that throws unless started
+// with `--localstorage-file`. html-webpack-plugin can touch this during template
+// evaluation, so we provide a harmless in-memory shim for build-time.
+const localStorageDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+if (localStorageDescriptor?.configurable) {
+  Object.defineProperty(globalThis, 'localStorage', {
+    configurable: true,
+    enumerable: true,
+    value: {
+      getItem: () => null,
+      setItem: () => {},
+      removeItem: () => {},
+      clear: () => {},
+      key: () => null,
+      length: 0,
+    },
+  });
+}
+
 module.exports = {
   webpack: {
     alias: {
