@@ -37,7 +37,7 @@ import {
 } from './usecases';
 import { AuthService } from 'app/auth/services/auth.service';
 import { CONSTANTS, COOKIE_CONFIG } from '@shared/constants';
-import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
+import { JwtAuthGuard } from '@shared/framework/auth.guard';
 import { EnvironmentResponseDto } from 'app/environment/dtos/environment-response.dto';
 
 @Controller('/project')

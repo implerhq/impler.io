@@ -4,7 +4,7 @@ import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 
 import { UploadSummary, UploadHistory, RetryUpload, WebhookLogs } from './usecases';
 import { ACCESS_KEY_NAME, Defaults } from '@impler/shared';
-import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
+import { JwtAuthGuard } from '@shared/framework/auth.guard';
 import { isDateString } from '@shared/helpers/common.helper';
 
 @Controller('/activity')

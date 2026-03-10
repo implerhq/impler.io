@@ -6,6 +6,7 @@ import {
   ClassSerializerInterceptor,
   Controller,
   Get,
+  Logger,
   Post,
   Put,
   Res,
@@ -47,6 +48,8 @@ import {
 @ApiExcludeController()
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
+
   constructor(
     private verify: Verify,
     private resendOTP: ResendOTP,
@@ -99,7 +102,7 @@ export class AuthController {
 
       return response.redirect(url);
     } catch (error) {
-      console.error('[AuthController] GitHub OAuth callback failed:', error?.message || error);
+      this.logger.error(`GitHub OAuth callback failed: ${error?.message || error}`);
 
       return response.redirect(`${process.env.WEB_BASE_URL}/auth/signin?error=AuthenticationError`);
     }

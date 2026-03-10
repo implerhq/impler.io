@@ -18,7 +18,7 @@ import {
 
 import { UploadEntity } from '@impler/dal';
 import { ACCESS_KEY_NAME, IJwtPayload, IntegrationEnum } from '@impler/shared';
-import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
+import { JwtAuthGuard } from '@shared/framework/auth.guard';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 import { DocumentNotFoundException } from '@shared/exceptions/document-not-found.exception';
 

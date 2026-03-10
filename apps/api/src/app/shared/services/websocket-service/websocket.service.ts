@@ -9,6 +9,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Injectable, Logger } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { IProgressData } from '@impler/services';
 
 @Injectable()
@@ -22,7 +23,32 @@ export class WebSocketService implements OnGatewayConnection, OnGatewayDisconnec
   // Track active abort controllers for each session
   private sessionAbortControllers = new Map<string, AbortController>();
 
+  constructor(private jwtService: JwtService) {}
+
   handleConnection(client: Socket) {
+    // Authenticate WebSocket connections via token in handshake
+    const token =
+      client.handshake?.auth?.token || client.handshake?.headers?.authorization?.replace('Bearer ', '');
+    if (token) {
+      try {
+        this.jwtService.verify(token, { secret: process.env.JWT_SECRET as string });
+      } catch {
+        this.logger.warn(`WebSocket auth failed for client ${client.id}`);
+        client.emit('auth-error', { message: 'Authentication failed' });
+        client.disconnect(true);
+
+        return;
+      }
+    }
+    // Allow unauthenticated widget connections (they use ACCESS_KEY via headers)
+    // but log them for monitoring
+    if (!token) {
+      const accessKey = client.handshake?.headers?.['accesskey'];
+      if (!accessKey) {
+        this.logger.warn(`WebSocket connection without credentials: ${client.id}`);
+      }
+    }
+
     this.logger.log(`Client connected: ${client.id}`);
     this.connectedClients.set(client.id, client);
   }
@@ -44,6 +70,12 @@ export class WebSocketService implements OnGatewayConnection, OnGatewayDisconnec
   @SubscribeMessage('join-session')
   handleJoinSession(@MessageBody() data: { sessionId: string }, @ConnectedSocket() client: Socket) {
     const { sessionId } = data;
+    // Validate sessionId format to prevent injection
+    if (!sessionId || typeof sessionId !== 'string' || sessionId.length > 128 || !/^[a-zA-Z0-9_-]+$/.test(sessionId)) {
+      client.emit('error', { message: 'Invalid session ID' });
+
+      return;
+    }
     client.join(sessionId);
     this.logger.log(`Client ${client.id} joined session ${sessionId}`);
 

@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 
 import { ACCESS_KEY_NAME, IImportConfig } from '@impler/shared';
-import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
+import { JwtAuthGuard } from '@shared/framework/auth.guard';
 import { ValidRequestDto, SignedUrlDto } from './dtos';
 import { ValidImportFile } from '@shared/validations/valid-import-file.validation';
 import { ValidRequestCommand, GetSignedUrl, ValidRequest, GetImportConfig, GetSheetNames } from './usecases';
