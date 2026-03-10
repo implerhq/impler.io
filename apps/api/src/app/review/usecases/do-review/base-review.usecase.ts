@@ -537,6 +537,7 @@ export class BaseReview {
     dateFormats,
     uniqueCombinations,
     validationErrorMessages,
+    updated,
   }: {
     index: number;
     validator: ValidateFunction;
@@ -545,7 +546,9 @@ export class BaseReview {
     dateFormats: Record<string, string[]>;
     uniqueCombinations: Record<string, string[]>;
     validationErrorMessages?: Record<string, { string: Record<string, string> }>;
+    updated?: Record<string, boolean>;
   }) {
+    const propertyUpdated = updated || {};
     const isValid = validator(checkRecord, {
       instancePath: `/${index}`,
       parentData: undefined,
@@ -561,7 +564,7 @@ export class BaseReview {
         errors: errors,
         isValid: false,
         record: passRecord,
-        updated: {},
+        updated: propertyUpdated,
       };
     } else {
       return {
@@ -569,7 +572,7 @@ export class BaseReview {
         isValid: true,
         record: passRecord,
         errors: {},
-        updated: {},
+        updated: propertyUpdated,
       };
     }
   }
