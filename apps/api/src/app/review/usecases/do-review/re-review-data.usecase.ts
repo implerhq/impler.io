@@ -238,6 +238,7 @@ export class DoReReview extends BaseReview {
         index: record.index,
         validationErrorMessages,
         passRecord: record.record,
+        updated: record.updated,
       });
       response.totalRecords++;
       if (record.isValid && !validationResult.isValid) {
@@ -268,10 +269,11 @@ export class DoReReview extends BaseReview {
             filter: { index: record.index },
             update: {
               $set: {
+                record: record.record,
                 errors: record.errors,
                 warnings: record.warnings,
                 isValid: record.isValid,
-                updated: {},
+                updated: record.updated,
               },
             },
           },
@@ -419,6 +421,7 @@ export class DoReReview extends BaseReview {
         index: record.index,
         validationErrorMessages,
         passRecord: record.record,
+        updated: record.updated,
       });
       batchRecords.push(validationResultItem);
       if (batchRecords.length === BATCH_LIMIT) {
