@@ -31,6 +31,9 @@ export async function bootstrap(expressApp?): Promise<INestApplication> {
     app = await NestFactory.create(AppModule);
   }
 
+  // Remove X-Powered-By header to avoid fingerprinting
+  app.getHttpAdapter().getInstance().disable('x-powered-by');
+
   app.enableCors(corsOptionsDelegate);
   app.setGlobalPrefix('v1');
   app.useGlobalPipes(
@@ -90,6 +93,7 @@ export async function bootstrap(expressApp?): Promise<INestApplication> {
     res.setHeader('X-Frame-Options', 'DENY');
     res.setHeader('X-XSS-Protection', '1; mode=block');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
     if (process.env.NODE_ENV === 'production') {
       res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
     }
@@ -148,6 +152,7 @@ const corsOptionsDelegate = function (req, callback) {
   const corsOptions = {
     credentials: true,
     origin: allowedOrigins.length > 0 ? allowedOrigins : false,
+    maxAge: 86400, // Cache preflight responses for 24 hours
     preflightContinue: false,
     allowedHeaders: ['Content-Type', 'x-openreplay-session-token', ACCESS_KEY_NAME, 'sentry-trace', 'baggage'],
     methods: ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],

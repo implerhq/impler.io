@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, ParseArrayPipe, Post, UseGuards } from '@
 import { ApiTags, ApiSecurity, ApiOperation, ApiBody } from '@nestjs/swagger';
 import { ACCESS_KEY_NAME, Defaults, ITemplateSchemaItem, UploadStatusEnum } from '@impler/shared';
 
-import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
+import { JwtAuthGuard } from '@shared/framework/auth.guard';
 import { validateNotFound } from '@shared/helpers/common.helper';
 import { validateUploadStatus } from '@shared/helpers/upload.helpers';
 import { GetUpload } from '@shared/usecases/get-upload/get-upload.usecase';

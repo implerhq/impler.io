@@ -21,7 +21,7 @@ import {
 import { ApiTags, ApiSecurity, ApiConsumes, ApiOperation, ApiParam, ApiQuery, ApiOkResponse } from '@nestjs/swagger';
 
 import { GetUpload, GetAsset } from './usecases';
-import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
+import { JwtAuthGuard } from '@shared/framework/auth.guard';
 import { validateUploadStatus } from '@shared/helpers/upload.helpers';
 import { PaginationResponseDto } from '@shared/dtos/pagination-response.dto';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';

@@ -2,7 +2,7 @@ import { ApiTags, ApiOperation, ApiSecurity } from '@nestjs/swagger';
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 
 import { GetImportCounts, GetActiveSubscription } from './usecases';
-import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
+import { JwtAuthGuard } from '@shared/framework/auth.guard';
 import { IJwtPayload, ACCESS_KEY_NAME } from '@impler/shared';
 import { UserSession } from '@shared/framework/user.decorator';
 

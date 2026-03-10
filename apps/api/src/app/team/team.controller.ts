@@ -15,7 +15,7 @@ import {
   DeclineInvitation,
   TeamMemberMeta,
 } from './usecase';
-import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
+import { JwtAuthGuard } from '@shared/framework/auth.guard';
 import { CONSTANTS, COOKIE_CONFIG } from '@shared/constants';
 import { UserSession } from '@shared/framework/user.decorator';
 import { InvitationDto } from './dto/invtation.dto';

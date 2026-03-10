@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 
 import { APIMessages } from '@shared/constants';
-import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
+import { JwtAuthGuard } from '@shared/framework/auth.guard';
 import { validateUploadStatus } from '@shared/helpers/upload.helpers';
 import { Defaults, ACCESS_KEY_NAME, UploadStatusEnum, ReviewDataTypesEnum } from '@impler/shared';
 
