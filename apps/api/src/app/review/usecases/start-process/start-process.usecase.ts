@@ -197,15 +197,17 @@ export class StartProcess {
           },
         });
 
-        teamMemberEmails.forEach(async (email) => {
-          await this.emailService.sendEmail({
-            to: email,
-            subject: EMAIL_SUBJECT.IMPORT_LIMIT_EXCEEDED,
-            html: emailContents,
-            from: process.env.ALERT_EMAIL_FROM,
-            senderName: process.env.EMAIL_FROM_NAME,
-          });
-        });
+        await Promise.allSettled(
+          teamMemberEmails.map((email) =>
+            this.emailService.sendEmail({
+              to: email,
+              subject: EMAIL_SUBJECT.IMPORT_LIMIT_EXCEEDED,
+              html: emailContents,
+              from: process.env.ALERT_EMAIL_FROM,
+              senderName: process.env.EMAIL_FROM_NAME,
+            })
+          )
+        );
       }
     }
   }
