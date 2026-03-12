@@ -111,19 +111,21 @@ export class BaseRepository<T> {
   } | null> {
     const sanitizedQuery = this.sanitizeQuery(query);
 
-    const data = await this.MongooseModel.find(sanitizedQuery, select, {
-      sort: options.sort || null,
-    })
-      .skip(options.skip)
-      .limit(options.limit)
-      .lean()
-      .exec();
+    const [data, count] = await Promise.all([
+      this.MongooseModel.find(sanitizedQuery, select, {
+        sort: options.sort || null,
+      })
+        .skip(options.skip)
+        .limit(options.limit)
+        .lean()
+        .exec(),
+      this.MongooseModel.countDocuments(sanitizedQuery),
+    ]);
 
-    const count = await this.count(query);
     if (!data) return null;
 
     return {
-      data: data ? this.mapEntities(data) : [],
+      data: this.mapEntities(data),
       total: count,
     };
   }
@@ -186,10 +188,10 @@ export class BaseRepository<T> {
   }
 
   protected mapEntity(data: any): T {
-    return plainToClass<T, T>(this.entity, JSON.parse(JSON.stringify(data))) as any;
+    return plainToClass<T, T>(this.entity, data) as any;
   }
 
   protected mapEntities(data: any): T[] {
-    return plainToClass<T, T[]>(this.entity, JSON.parse(JSON.stringify(data)));
+    return plainToClass<T, T[]>(this.entity, data);
   }
 }

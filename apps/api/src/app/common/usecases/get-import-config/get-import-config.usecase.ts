@@ -13,34 +13,34 @@ export class GetImportConfig {
   ) {}
 
   async execute(projectId: string, templateId?: string): Promise<IImportConfig> {
-    const userEmail = await this.userRepository.findUserEmailFromProjectId(projectId);
-    const isFeatureAvailableMap = new Map<string, boolean>();
+    const [userEmail, template] = await Promise.all([
+      this.userRepository.findUserEmailFromProjectId(projectId),
+      templateId
+        ? this.templateRepository.findOne({ _projectId: projectId, _id: templateId })
+        : Promise.resolve(undefined as TemplateEntity),
+    ]);
 
-    Object.values(BILLABLEMETRIC_CODE_ENUM).forEach((code) => {
-      isFeatureAvailableMap.set(code, false);
-    });
+    if (templateId && !template) {
+      throw new BadRequestException(APIMessages.TEMPLATE_NOT_FOUND);
+    }
 
-    for (const billableMetricCode of Object.values(BILLABLEMETRIC_CODE_ENUM)) {
-      try {
-        const isAvailable = await this.paymentAPIService.checkEvent({
+    const billableMetricCodes = Object.values(BILLABLEMETRIC_CODE_ENUM);
+    const isFeatureAvailableMap = new Map<string, boolean>(billableMetricCodes.map((code) => [code, false]));
+
+    const results = await Promise.allSettled(
+      billableMetricCodes.map((code) =>
+        this.paymentAPIService.checkEvent({
           email: userEmail,
-          billableMetricCode: BILLABLEMETRIC_CODE_ENUM[billableMetricCode],
-        });
-        isFeatureAvailableMap.set(billableMetricCode, isAvailable);
-      } catch (error) {}
-    }
+          billableMetricCode: code,
+        })
+      )
+    );
 
-    let template: TemplateEntity;
-    if (templateId) {
-      template = await this.templateRepository.findOne({
-        _projectId: projectId,
-        _id: templateId,
-      });
-
-      if (!template) {
-        throw new BadRequestException(APIMessages.TEMPLATE_NOT_FOUND);
+    results.forEach((result, index) => {
+      if (result.status === 'fulfilled') {
+        isFeatureAvailableMap.set(billableMetricCodes[index], result.value);
       }
-    }
+    });
 
     return {
       ...Object.fromEntries(isFeatureAvailableMap),

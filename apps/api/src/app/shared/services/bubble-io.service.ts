@@ -39,12 +39,12 @@ export class BubbleIoService extends BubbleBaseService {
   }
 
   createColumns(data: Record<string, string | number>[], _templateId: string) {
-    const bubbleIoDefaultColumns = ['Modified Date', 'Created Date', 'Created By', '_id', 'Slug'];
+    const bubbleIoDefaultColumns = new Set(['Modified Date', 'Created Date', 'Created By', '_id', 'Slug']);
     const columns: Partial<IColumn>[] = [];
     const takenCols = new Set();
     for (const record of data) {
       for (const colKey of Object.keys(record)) {
-        if (!bubbleIoDefaultColumns.includes(colKey) && !takenCols.has(colKey)) {
+        if (!bubbleIoDefaultColumns.has(colKey) && !takenCols.has(colKey)) {
           const columnType = this.assumeValueType(record[colKey]);
           columns.push({
             name: colKey,

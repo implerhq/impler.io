@@ -11,6 +11,7 @@ const userJobSchema = new Schema(
     _templateId: {
       type: Schema.Types.ObjectId,
       ref: 'Template',
+      index: true,
     },
     cron: {
       type: Schema.Types.String,
@@ -18,6 +19,7 @@ const userJobSchema = new Schema(
 
     nextRun: {
       type: Schema.Types.Date,
+      index: true,
     },
 
     endsOn: {
@@ -37,6 +39,7 @@ const userJobSchema = new Schema(
     },
     status: {
       type: Schema.Types.String,
+      index: true,
     },
     customRecordFormat: {
       type: Schema.Types.String,
