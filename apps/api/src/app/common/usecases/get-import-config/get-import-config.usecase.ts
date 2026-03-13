@@ -13,34 +13,30 @@ export class GetImportConfig {
   ) {}
 
   async execute(projectId: string, templateId?: string): Promise<IImportConfig> {
-    const userEmail = await this.userRepository.findUserEmailFromProjectId(projectId);
-    const isFeatureAvailableMap = new Map<string, boolean>();
+    const [userEmail, template] = await Promise.all([
+      this.userRepository.findUserEmailFromProjectId(projectId),
+      templateId
+        ? this.templateRepository.findOne({ _projectId: projectId, _id: templateId })
+        : Promise.resolve(undefined as TemplateEntity),
+    ]);
 
-    Object.values(BILLABLEMETRIC_CODE_ENUM).forEach((code) => {
-      isFeatureAvailableMap.set(code, false);
-    });
-
-    for (const billableMetricCode of Object.values(BILLABLEMETRIC_CODE_ENUM)) {
-      try {
-        const isAvailable = await this.paymentAPIService.checkEvent({
-          email: userEmail,
-          billableMetricCode: BILLABLEMETRIC_CODE_ENUM[billableMetricCode],
-        });
-        isFeatureAvailableMap.set(billableMetricCode, isAvailable);
-      } catch (error) {}
+    if (templateId && !template) {
+      throw new BadRequestException(APIMessages.TEMPLATE_NOT_FOUND);
     }
 
-    let template: TemplateEntity;
-    if (templateId) {
-      template = await this.templateRepository.findOne({
-        _projectId: projectId,
-        _id: templateId,
-      });
+    const billableMetricCodes = Object.values(BILLABLEMETRIC_CODE_ENUM);
+    const results = await Promise.allSettled(
+      billableMetricCodes.map((billableMetricCode) =>
+        this.paymentAPIService.checkEvent({ email: userEmail, billableMetricCode })
+      )
+    );
 
-      if (!template) {
-        throw new BadRequestException(APIMessages.TEMPLATE_NOT_FOUND);
-      }
-    }
+    const isFeatureAvailableMap = new Map<string, boolean>(
+      billableMetricCodes.map((code, i) => [
+        code,
+        results[i].status === 'fulfilled' ? (results[i] as PromiseFulfilledResult<boolean>).value : false,
+      ])
+    );
 
     return {
       ...Object.fromEntries(isFeatureAvailableMap),
