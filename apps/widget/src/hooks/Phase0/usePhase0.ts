@@ -16,36 +16,40 @@ export function usePhase0({ goNext }: IUsePhase0Props) {
   const { api } = useAPIState();
   const { projectId, templateId } = useImplerState();
   const [fileError, setFileError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const { schema, setImportConfig, showWidget, setFlow, sampleFile } = useAppState();
 
-  const { isLoading: isFetchingImportConfig, mutate: fetchImportConfig } = useMutation<
-    IImportConfig,
-    IErrorObject,
-    void
-  >(['importConfig', projectId, templateId], () => api.getImportConfig(projectId, templateId), {
-    onSuccess(importConfigData) {
-      setFlow(importConfigData.mode === TemplateModeEnum.AUTOMATIC ? FlowsEnum.AUTO_IMPORT : FlowsEnum.STRAIGHT_IMPORT);
-      setImportConfig(importConfigData);
-      const allowedTypes = [
-        FileMimeTypesEnum.CSV,
-        FileMimeTypesEnum.EXCEL,
-        FileMimeTypesEnum.EXCELM,
-        FileMimeTypesEnum.EXCELX,
-      ];
+  const { mutate: fetchImportConfig } = useMutation<IImportConfig, IErrorObject, void>(
+    ['importConfig', projectId, templateId],
+    () => api.getImportConfig(projectId, templateId),
+    {
+      onSuccess(importConfigData) {
+        setFlow(
+          importConfigData.mode === TemplateModeEnum.AUTOMATIC ? FlowsEnum.AUTO_IMPORT : FlowsEnum.STRAIGHT_IMPORT
+        );
+        setImportConfig(importConfigData);
+        const allowedTypes = [
+          FileMimeTypesEnum.CSV,
+          FileMimeTypesEnum.EXCEL,
+          FileMimeTypesEnum.EXCELM,
+          FileMimeTypesEnum.EXCELX,
+        ];
 
-      if (sampleFile && !isValidFileType(sampleFile as Blob)) {
-        setFileError(`Only ${allowedTypes.join(',')} are supported`);
-      } else {
-        goNext();
-      }
-    },
-  });
+        if (sampleFile && !isValidFileType(sampleFile as Blob)) {
+          setIsLoading(false);
+          setFileError(`Only ${allowedTypes.join(',')} are supported`);
+        } else {
+          setIsLoading(false);
+          goNext();
+        }
+      },
+      onError() {
+        setIsLoading(false);
+      },
+    }
+  );
 
-  const {
-    error,
-    isLoading: isCheckingRequest,
-    mutate: checkIsRequestvalid,
-  } = useMutation<boolean, IErrorObject, any, string[]>(
+  const { error, mutate: checkIsRequestvalid } = useMutation<boolean, IErrorObject, any, string[]>(
     ['valid'],
     () => api.checkIsRequestvalid(projectId, templateId, schema) as Promise<boolean>,
     {
@@ -53,19 +57,26 @@ export function usePhase0({ goNext }: IUsePhase0Props) {
         identifyImportIntent({ projectId, templateId });
         if (valid) {
           fetchImportConfig();
+        } else {
+          setIsLoading(false);
         }
+      },
+      onError() {
+        setIsLoading(false);
       },
     }
   );
 
   const handleValidate = async () => {
+    setIsLoading(true);
+
     return checkIsRequestvalid({ projectId, templateId, schema });
   };
 
   return {
     error,
     fileError,
-    isLoading: isCheckingRequest || isFetchingImportConfig,
+    isLoading,
     handleValidate,
     isWidgetOpened: showWidget,
   };
