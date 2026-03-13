@@ -6,6 +6,7 @@ const projectInvitationSchema = new Schema(
   {
     invitationToEmail: {
       type: Schema.Types.String,
+      index: true,
     },
     invitedOn: {
       type: Schema.Types.String,
@@ -15,6 +16,7 @@ const projectInvitationSchema = new Schema(
     },
     invitedBy: {
       type: Schema.Types.String,
+      index: true,
     },
     token: {
       type: Schema.Types.String,
@@ -22,6 +24,7 @@ const projectInvitationSchema = new Schema(
     _projectId: {
       type: Schema.Types.ObjectId,
       ref: 'Project',
+      index: true,
     },
   },
   { ...schemaOptions }
