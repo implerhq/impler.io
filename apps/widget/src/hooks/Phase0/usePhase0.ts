@@ -18,34 +18,32 @@ export function usePhase0({ goNext }: IUsePhase0Props) {
   const [fileError, setFileError] = useState<string | null>(null);
   const { schema, setImportConfig, showWidget, setFlow, sampleFile } = useAppState();
 
-  const { mutate: fetchImportConfig } = useMutation<IImportConfig, IErrorObject, void>(
-    ['importConfig', projectId, templateId],
-    () => api.getImportConfig(projectId, templateId),
-    {
-      onSuccess(importConfigData) {
-        setFlow(
-          importConfigData.mode === TemplateModeEnum.AUTOMATIC ? FlowsEnum.AUTO_IMPORT : FlowsEnum.STRAIGHT_IMPORT
-        );
-        setImportConfig(importConfigData);
-        const allowedTypes = [
-          FileMimeTypesEnum.CSV,
-          FileMimeTypesEnum.EXCEL,
-          FileMimeTypesEnum.EXCELM,
-          FileMimeTypesEnum.EXCELX,
-        ];
+  const { isLoading: isFetchingImportConfig, mutate: fetchImportConfig } = useMutation<
+    IImportConfig,
+    IErrorObject,
+    void
+  >(['importConfig', projectId, templateId], () => api.getImportConfig(projectId, templateId), {
+    onSuccess(importConfigData) {
+      setFlow(importConfigData.mode === TemplateModeEnum.AUTOMATIC ? FlowsEnum.AUTO_IMPORT : FlowsEnum.STRAIGHT_IMPORT);
+      setImportConfig(importConfigData);
+      const allowedTypes = [
+        FileMimeTypesEnum.CSV,
+        FileMimeTypesEnum.EXCEL,
+        FileMimeTypesEnum.EXCELM,
+        FileMimeTypesEnum.EXCELX,
+      ];
 
-        if (sampleFile && !isValidFileType(sampleFile as Blob)) {
-          setFileError(`Only ${allowedTypes.join(',')} are supported`);
-        } else {
-          goNext();
-        }
-      },
-    }
-  );
+      if (sampleFile && !isValidFileType(sampleFile as Blob)) {
+        setFileError(`Only ${allowedTypes.join(',')} are supported`);
+      } else {
+        goNext();
+      }
+    },
+  });
 
   const {
     error,
-    isLoading,
+    isLoading: isCheckingRequest,
     mutate: checkIsRequestvalid,
   } = useMutation<boolean, IErrorObject, any, string[]>(
     ['valid'],
@@ -67,7 +65,7 @@ export function usePhase0({ goNext }: IUsePhase0Props) {
   return {
     error,
     fileError,
-    isLoading,
+    isLoading: isCheckingRequest || isFetchingImportConfig,
     handleValidate,
     isWidgetOpened: showWidget,
   };

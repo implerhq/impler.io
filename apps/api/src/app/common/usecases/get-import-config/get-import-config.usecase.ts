@@ -25,22 +25,18 @@ export class GetImportConfig {
     }
 
     const billableMetricCodes = Object.values(BILLABLEMETRIC_CODE_ENUM);
-    const isFeatureAvailableMap = new Map<string, boolean>(billableMetricCodes.map((code) => [code, false]));
-
     const results = await Promise.allSettled(
-      billableMetricCodes.map((code) =>
-        this.paymentAPIService.checkEvent({
-          email: userEmail,
-          billableMetricCode: code,
-        })
+      billableMetricCodes.map((billableMetricCode) =>
+        this.paymentAPIService.checkEvent({ email: userEmail, billableMetricCode })
       )
     );
 
-    results.forEach((result, index) => {
-      if (result.status === 'fulfilled') {
-        isFeatureAvailableMap.set(billableMetricCodes[index], result.value);
-      }
-    });
+    const isFeatureAvailableMap = new Map<string, boolean>(
+      billableMetricCodes.map((code, i) => [
+        code,
+        results[i].status === 'fulfilled' ? (results[i] as PromiseFulfilledResult<boolean>).value : false,
+      ])
+    );
 
     return {
       ...Object.fromEntries(isFeatureAvailableMap),
