@@ -24,23 +24,14 @@ export class GetImportConfig {
       throw new BadRequestException(APIMessages.TEMPLATE_NOT_FOUND);
     }
 
-    const billableMetricCodes = Object.values(BILLABLEMETRIC_CODE_ENUM);
-    const results = await Promise.allSettled(
-      billableMetricCodes.map((billableMetricCode) =>
-        this.paymentAPIService.checkEvent({ email: userEmail, billableMetricCode })
-      )
-    );
-
-    const isFeatureAvailableMap = new Map<string, boolean>(
-      billableMetricCodes.map((code, i) => [
-        code,
-        results[i].status === 'fulfilled' ? (results[i] as PromiseFulfilledResult<boolean>).value : false,
-      ])
-    );
+    const subscription = await this.paymentAPIService.fetchActiveSubscription(userEmail);
+    const featureMeta: Record<string, unknown> = subscription
+      ? { ...subscription.meta }
+      : Object.fromEntries(Object.values(BILLABLEMETRIC_CODE_ENUM).map((code) => [code, true]));
 
     return {
-      ...Object.fromEntries(isFeatureAvailableMap),
-      showBranding: !isFeatureAvailableMap.get(BILLABLEMETRIC_CODE_ENUM.REMOVE_BRANDING),
+      ...(featureMeta as Partial<IImportConfig>),
+      showBranding: !featureMeta[BILLABLEMETRIC_CODE_ENUM.REMOVE_BRANDING],
       mode: template?.mode,
       title: template?.name,
     };

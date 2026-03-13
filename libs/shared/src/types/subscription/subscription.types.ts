@@ -42,6 +42,10 @@ export interface ISubscriptionData {
     DEFAULT_VALUES?: boolean;
     RUNTIME_SCHEMA?: boolean;
     DATA_SEEDING?: boolean;
+    IMAGE_IMPORT?: boolean;
+    FIND_AND_REPLACE?: boolean;
+    APPEARANCE_CUSTOMIZATION?: boolean;
+    TEXT_CUSTOMIZATION?: boolean;
   };
   customer?: {
     paymentMethodCurrency?: string;
