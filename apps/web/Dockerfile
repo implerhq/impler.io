@@ -11,7 +11,7 @@ COPY libs/shared/package.json ./libs/shared/
 COPY packages/client/package.json ./packages/client/
 COPY packages/react/package.json ./packages/react/
 
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # Copy source and pre-built artifacts
 COPY tsconfig.json tsconfig.base.json nx.json ./

@@ -13,7 +13,7 @@ COPY libs/shared/package.json ./libs/shared/
 COPY libs/services/package.json ./libs/services/
 COPY packages/client/package.json ./packages/client/
 
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # Copy source and pre-built artifacts
 COPY tsconfig.json tsconfig.base.json nx.json ./
@@ -22,6 +22,8 @@ COPY libs/dal ./libs/dal
 COPY libs/shared ./libs/shared
 COPY libs/services ./libs/services
 COPY packages/client ./packages/client
+
+RUN pnpm build:queue-manager
 
 WORKDIR /usr/src/app/apps/queue-manager
 RUN cp src/.example.env dist/.env \

@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY libs/embed/package.json ./libs/embed/
 
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # Copy source files
 COPY tsconfig.json tsconfig.base.json nx.json ./
