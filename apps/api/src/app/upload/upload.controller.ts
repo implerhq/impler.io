@@ -161,7 +161,7 @@ export class UploadController {
   @ApiOperation({
     summary: 'Get rows of the uploaded file',
   })
-  async getPreviewRowsRoute(@Param('uploadId') uploadId: string) {
+  async getPreviewRowsRoute(@Param('uploadId', ValidateMongoId) uploadId: string) {
     const uploadData = await this.getUploadProcessInfo.execute(uploadId);
 
     // throw error if upload information not found
@@ -174,7 +174,7 @@ export class UploadController {
   @ApiOperation({
     summary: 'Set header row of the uploaded file',
   })
-  async setHeaderRowRoute(@Param('uploadId') uploadId: string, @Body() body: SetHeaderDto) {
+  async setHeaderRowRoute(@Param('uploadId', ValidateMongoId) uploadId: string, @Body() body: SetHeaderDto) {
     await this.setHeaderRow.execute(uploadId, body);
   }
 

@@ -1,0 +1,44 @@
+# Dependencies — reinstalled inside the container
+**/node_modules
+
+# Version control
+.git
+.gitignore
+.github
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Test artifacts
+coverage
+.nyc_output
+**/*.test.ts
+**/*.spec.ts
+
+# IDE / editor
+.vscode
+.idea
+*.suo
+*.user
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation (not needed at runtime)
+*.md
+LICENSE
+CONTRIBUTING.md
+CODE_OF_CONDUCT.md
+SECURITY.md
+
+# Local env overrides (real secrets injected at runtime via env vars)
+**/.env.local
+**/.env.*.local
+
+# Claude Code artifacts
+.claude/

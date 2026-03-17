@@ -78,7 +78,7 @@ export class ReviewController {
     type: PaginationResponseDto,
   })
   async getReview(
-    @Param('uploadId') _uploadId: string,
+    @Param('uploadId', ValidateMongoId) _uploadId: string,
     @Query('page') page = Defaults.ONE,
     @Query('limit') limit = Defaults.PAGE_LIMIT,
     @Query('type') type = ReviewDataTypesEnum.ALL
@@ -144,7 +144,7 @@ export class ReviewController {
   @ApiOperation({
     summary: 'Update review record for ongoing import',
   })
-  async updateReviewData(@Param('uploadId') _uploadId: string, @Body() body: UpdateRecordDto) {
+  async updateReviewData(@Param('uploadId', ValidateMongoId) _uploadId: string, @Body() body: UpdateRecordDto) {
     return this.updateRecord.execute(_uploadId, body);
   }
 
@@ -154,7 +154,7 @@ export class ReviewController {
     summary: 'Delete review records for ongoing import',
   })
   async updateRecordsRoute(
-    @Param('uploadId') _uploadId: string,
+    @Param('uploadId', ValidateMongoId) _uploadId: string,
     @Body(new ParseArrayPipe({ items: UpdateRecordDto })) body: UpdateRecordDto[]
   ) {
     await this.updateRecords.execute(_uploadId, body);
