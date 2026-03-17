@@ -24,8 +24,7 @@ COPY packages/react ./packages/react
 # Disable Next.js telemetry at build and runtime
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Uncomment to build inside Docker (currently built outside and copied in)
-# RUN pnpm build
+RUN pnpm build:web
 
 # Use built-in non-root node user (uid 1000)
 USER node

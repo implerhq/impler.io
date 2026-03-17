@@ -19,6 +19,8 @@ COPY apps/widget/.example.env ./apps/widget/.env
 COPY libs/shared ./libs/shared
 COPY packages/client ./packages/client
 
+RUN pnpm build:widget
+
 # Use built-in non-root node user (uid 1000)
 USER node
 
