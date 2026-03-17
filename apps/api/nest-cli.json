@@ -33,7 +33,8 @@
         }
       }
     ],
-    "webpack": true
+    "webpack": true,
+    "webpackConfigPath": "webpack.config.js"
   },
   "projects": {
     "dal": {
