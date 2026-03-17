@@ -14,7 +14,9 @@ RUN pnpm install --frozen-lockfile --ignore-scripts
 COPY tsconfig.json tsconfig.base.json nx.json ./
 COPY libs/embed ./libs/embed
 
+RUN pnpm build:embed
+
 # Use built-in non-root node user (uid 1000)
 USER node
 
-CMD ["pnpm", "start:docker:embed"]
+CMD ["node", "/usr/src/app/libs/embed/index.js"]
