@@ -1,35 +1,33 @@
 FROM node:20.13.1-slim
 
-RUN npm install -g pnpm@8.9.0 --loglevel notice
-
 WORKDIR /usr/src/app
 
-# Copy manifests before source to maximize layer cache reuse
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
-COPY apps/web/package.json ./apps/web/
-COPY libs/shared/package.json ./libs/shared/
-COPY packages/client/package.json ./packages/client/
-COPY packages/react/package.json ./packages/react/
+RUN npm i -g npm@9.5.1 pnpm@8.9.0
 
-RUN pnpm install --frozen-lockfile --ignore-scripts
+COPY .npmrc .
+COPY package.json .
+COPY pnpm-lock.yaml .
 
-# Copy source and pre-built artifacts
-COPY tsconfig.json tsconfig.base.json nx.json ./
+COPY tsconfig.json .
+COPY tsconfig.base.json .
+
+COPY nx.json .
+COPY pnpm-workspace.yaml .
+
+COPY .eslintrc.js .
+COPY .prettierrc .
+COPY .prettierignore .
+
 COPY apps/web ./apps/web
 COPY apps/web/.example.env ./apps/web/.env
-COPY libs/shared ./libs/shared
 COPY packages/client ./packages/client
+COPY libs/shared ./libs/shared
 COPY packages/react ./packages/react
 
-# Disable Next.js telemetry at build and runtime
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NX_SKIP_NX_CACHE=true
 
-RUN pnpm build:web
-
-# Pre-chmod env.sh while still root so the node user can execute it
-RUN chmod +x apps/web/env.sh
-
-# Use built-in non-root node user (uid 1000)
-USER node
+RUN pnpm i
+# RUN pnpm build
 
 CMD ["pnpm", "start:static:web"]
