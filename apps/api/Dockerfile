@@ -1,49 +1,45 @@
 FROM node:20.13.1-bullseye-slim
 
+COPY apps/api/src/config/default.cf /usr/local/etc/isolate
+
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
     locales \
     locales-all \
     libcap-dev \
-  && rm -rf /var/lib/apt/lists/*
+ && rm -rf /var/lib/apt/lists/*
 
-# Install all global tools in a single layer
-RUN npm install -g pnpm@8.9.0 pm2 --loglevel notice
+RUN npm i -g \
+  npm@9.5.1 \
+  pnpm@8.9.0
 
 WORKDIR /usr/src/app
 
-# Copy manifests before source to maximize layer cache reuse
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
-COPY apps/api/package.json ./apps/api/
-COPY libs/dal/package.json ./libs/dal/
-COPY libs/shared/package.json ./libs/shared/
-COPY libs/services/package.json ./libs/services/
-COPY packages/client/package.json ./packages/client/
+RUN npm install -g pnpm@8.9.0 --loglevel notice
+RUN npm i pm2 -g
 
-RUN pnpm install --frozen-lockfile --ignore-scripts
+COPY package.json .
+COPY .npmrc .
 
-# Copy source and pre-built artifacts
-COPY tsconfig.json tsconfig.base.json nx.json ./
 COPY apps/api ./apps/api
+COPY packages/client ./packages/client
 COPY libs/dal ./libs/dal
 COPY libs/shared ./libs/shared
 COPY libs/services ./libs/services
-COPY packages/client ./packages/client
 
-RUN pnpm build:api
+COPY tsconfig.json .
+COPY tsconfig.base.json .
 
-RUN cp apps/api/src/config/default.cf /usr/local/etc/isolate
+COPY nx.json .
+COPY pnpm-workspace.yaml .
+COPY pnpm-lock.yaml .
+
+RUN pnpm i
 
 WORKDIR /usr/src/app/apps/api
-RUN cp src/.example.env dist/src/.env \
-  && cp src/.env.test dist/src/.env.test \
-  && cp src/.env.development dist/src/.env.development \
-  && cp src/.env.production dist/src/.env.production
+RUN cp src/.example.env dist/src/.env
+RUN cp src/.env.test dist/src/.env.test
+RUN cp src/.env.development dist/src/.env.development
+RUN cp src/.env.production dist/src/.env.production
 
-# pm2 needs a writable home directory; /tmp is always writable by all users
-ENV PM2_HOME=/tmp/pm2
-
-# Use built-in non-root node user (uid 1000)
-USER node
-
-CMD ["pm2-runtime", "/usr/src/app/apps/api/dist/main.js"]
+CMD [ "pm2-runtime", "/usr/src/app/apps/api/dist/main.js" ]
