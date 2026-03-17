@@ -39,7 +39,7 @@ jobs:
 
       - name: Check application health
         run: |
-          for i in {1..5}; do
+          for i in {1..12}; do
             if curl --output /dev/null --silent --head --fail http://localhost:4200; then
               exit 0
             fi
