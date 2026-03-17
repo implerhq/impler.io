@@ -13,6 +13,7 @@
     "esModuleInterop": false,
     "sourceMap": true,
     "outDir": "./dist",
+    "incremental": true,
     "baseUrl": "src",
     "paths": {
       "@shared/*": ["app/shared/*"],

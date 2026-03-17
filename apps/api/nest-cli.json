@@ -33,7 +33,7 @@
         }
       }
     ],
-    "webpack": true
+    "webpack": false
   },
   "projects": {
     "dal": {

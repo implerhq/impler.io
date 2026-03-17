@@ -16,10 +16,9 @@ export function usePhase0({ goNext }: IUsePhase0Props) {
   const { api } = useAPIState();
   const { projectId, templateId } = useImplerState();
   const [fileError, setFileError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const { schema, setImportConfig, showWidget, setFlow, sampleFile } = useAppState();
 
-  const { mutate: fetchImportConfig } = useMutation<IImportConfig, IErrorObject, void>(
+  const { mutate: fetchImportConfig, status: importConfigStatus } = useMutation<IImportConfig, IErrorObject, void>(
     ['importConfig', projectId, templateId],
     () => api.getImportConfig(projectId, templateId),
     {
@@ -36,20 +35,19 @@ export function usePhase0({ goNext }: IUsePhase0Props) {
         ];
 
         if (sampleFile && !isValidFileType(sampleFile as Blob)) {
-          setIsLoading(false);
           setFileError(`Only ${allowedTypes.join(',')} are supported`);
         } else {
-          setIsLoading(false);
           goNext();
         }
-      },
-      onError() {
-        setIsLoading(false);
       },
     }
   );
 
-  const { error, mutate: checkIsRequestvalid } = useMutation<boolean, IErrorObject, any, string[]>(
+  const {
+    error,
+    mutate: checkIsRequestvalid,
+    status: checkIsRequestvalidStatus,
+  } = useMutation<boolean, IErrorObject, any, string[]>(
     ['valid'],
     () => api.checkIsRequestvalid(projectId, templateId, schema) as Promise<boolean>,
     {
@@ -57,26 +55,19 @@ export function usePhase0({ goNext }: IUsePhase0Props) {
         identifyImportIntent({ projectId, templateId });
         if (valid) {
           fetchImportConfig();
-        } else {
-          setIsLoading(false);
         }
-      },
-      onError() {
-        setIsLoading(false);
       },
     }
   );
 
   const handleValidate = async () => {
-    setIsLoading(true);
-
     return checkIsRequestvalid({ projectId, templateId, schema });
   };
 
   return {
     error,
     fileError,
-    isLoading,
+    isLoading: importConfigStatus === 'loading' || checkIsRequestvalidStatus === 'loading',
     handleValidate,
     isWidgetOpened: showWidget,
   };
