@@ -1,21 +1,20 @@
-FROM node:16-buster-slim
+FROM node:20.13.1-slim
+
+RUN npm install -g pnpm@8.9.0 --loglevel notice
 
 WORKDIR /usr/src/app
 
-RUN npm install -g pnpm@8.9.0 --loglevel notice --force
+# Copy manifests before source to maximize layer cache reuse
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+COPY libs/embed/package.json ./libs/embed/
 
-COPY .npmrc .
-COPY package.json .
+RUN pnpm install --frozen-lockfile
 
+# Copy source files
+COPY tsconfig.json tsconfig.base.json nx.json ./
 COPY libs/embed ./libs/embed
 
-COPY tsconfig.json .
-COPY tsconfig.base.json .
+# Use built-in non-root node user (uid 1000)
+USER node
 
-COPY nx.json .
-COPY pnpm-workspace.yaml .
-COPY pnpm-lock.yaml .
-
-RUN pnpm install
-
-CMD [ "pnpm", "start:docker:embed" ]
+CMD ["pnpm", "start:docker:embed"]
