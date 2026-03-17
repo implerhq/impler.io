@@ -152,7 +152,7 @@ export class BaseRepository<T> {
     const newEntity = new this.MongooseModel(data);
     const saved = await newEntity.save();
 
-    return this.mapEntity(saved);
+    return this.mapEntity(saved.toObject());
   }
 
   async createMany(data: T[]): Promise<T[]> {
