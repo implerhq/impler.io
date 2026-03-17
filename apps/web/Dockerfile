@@ -26,6 +26,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN pnpm build:web
 
+# Pre-chmod env.sh while still root so the node user can execute it
+RUN chmod +x apps/web/env.sh
+
 # Use built-in non-root node user (uid 1000)
 USER node
 
