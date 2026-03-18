@@ -10,6 +10,8 @@ import { BaseRepository } from '../base-repository';
 import { TemplateEntity, TemplateRepository } from '../template';
 
 export class UploadRepository extends BaseRepository<UploadEntity> {
+  private readonly logger = { log: (msg: string) => console.log(`[${UploadRepository.name}] ${msg}`) };
+
   private templateRepository: TemplateRepository;
   constructor() {
     super(Upload, UploadEntity);
@@ -94,11 +96,16 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
   }
   async getStats(_projectId: string) {
     const now: number = Date.now();
+    this.logger.log(`[getStats] now=${now}`);
     const yearBefore = subYears(now, 1);
+    this.logger.log(`[getStats] yearBefore=${yearBefore}`);
     const monthBefore = subMonths(now, 1);
+    this.logger.log(`[getStats] monthBefore=${monthBefore}`);
     const weekBefore = subWeeks(now, 1);
+    this.logger.log(`[getStats] weekBefore=${weekBefore}`);
 
     const templateIds = await this.templateRepository.getProjectTemplateIds(_projectId);
+    this.logger.log(`[getStats] templateIds=${templateIds}`);
 
     const result = await this.aggregate([
       {
@@ -142,6 +149,7 @@ export class UploadRepository extends BaseRepository<UploadEntity> {
         },
       },
     ]);
+    this.logger.log(`[getStats] result=${JSON.stringify(result)}`);
 
     const stats = result[0] || {};
 
