@@ -1,5 +1,5 @@
 import { ApiTags, ApiOperation, ApiSecurity } from '@nestjs/swagger';
-import { Controller, Param, UseGuards, Get, Query, Post } from '@nestjs/common';
+import { Controller, Param, UseGuards, Get, Query, Post, Logger } from '@nestjs/common';
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 
 import { UploadSummary, UploadHistory, RetryUpload, WebhookLogs } from './usecases';
@@ -12,6 +12,8 @@ import { isDateString } from '@shared/helpers/common.helper';
 @UseGuards(JwtAuthGuard)
 @ApiSecurity(ACCESS_KEY_NAME)
 export class ActivityController {
+  private readonly logger = new Logger(ActivityController.name);
+
   constructor(
     private uploadSummary: UploadSummary,
     private uploadHistory: UploadHistory,
@@ -46,13 +48,16 @@ export class ActivityController {
       date = undefined;
     }
 
-    return this.uploadHistory.execute({
-      _projectId,
-      name,
-      date,
-      page,
-      limit,
-    });
+    const input = { _projectId, name, date, page, limit };
+    this.logger.log(`[getUploadHistoryRoute] INPUT: ${JSON.stringify(input)}`);
+
+    const result = await this.uploadHistory.execute(input);
+
+    this.logger.log(
+      `[getUploadHistoryRoute] OUTPUT: totalRecords=${result.totalRecords}, totalPages=${result.totalPages}, page=${result.page}, limit=${result.limit}, dataCount=${result.data?.length}`
+    );
+
+    return result;
   }
 
   @Post(':uploadId/retry')
