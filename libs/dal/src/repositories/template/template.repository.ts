@@ -24,6 +24,6 @@ export class TemplateRepository extends BaseRepository<TemplateEntity> {
       '_id'
     );
 
-    return ids?.map((id) => id._id);
+    return ids?.map((id) => id._id.toString());
   }
 }
