@@ -73,10 +73,6 @@ function processErrors(batchData, errors) {
       isErrorsEmpty = isObjectEmpty(combinedErrors);
       batchData.data[rowIndexToUpdate] = {
         ...batchData.data[rowIndexToUpdate],
-        record: {
-          ...batchData.data[rowIndexToUpdate].record,
-          ...error.record,
-        },
         updated: {
           ...batchData.data[rowIndexToUpdate].updated,
           ...error.updated,
