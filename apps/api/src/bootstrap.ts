@@ -94,14 +94,14 @@ export async function bootstrap(expressApp?): Promise<INestApplication> {
     res.setHeader('X-XSS-Protection', '1; mode=block');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
     res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === 'prod') {
       res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
     }
     next();
   });
 
   // Only expose Swagger in non-production environments
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== 'prod') {
     const options = new DocumentBuilder()
       .setTitle('Impler API')
       .setDescription('The Impler API description')

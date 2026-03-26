@@ -90,50 +90,37 @@ export async function bootstrap() {
 
       // Setup durable queues with manual ack
       channel.assertQueue(QueuesEnum.END_IMPORT, queueOptions),
-      channel.consume(
-        QueuesEnum.END_IMPORT,
-        createSafeConsumer(endImportConsumer, channel),
-        { noAck: false }
-      ),
+      channel.consume(QueuesEnum.END_IMPORT, createSafeConsumer(endImportConsumer, channel), { noAck: false }),
 
       channel.assertQueue(QueuesEnum.SEND_WEBHOOK_DATA, queueOptions),
-      channel.consume(
-        QueuesEnum.SEND_WEBHOOK_DATA,
-        createSafeConsumer(sendWebhookdataConsumer, channel),
-        { noAck: false }
-      ),
+      channel.consume(QueuesEnum.SEND_WEBHOOK_DATA, createSafeConsumer(sendWebhookdataConsumer, channel), {
+        noAck: false,
+      }),
 
       channel.assertQueue(QueuesEnum.SEND_FAILED_WEBHOOK_DATA, queueOptions),
-      channel.consume(
-        QueuesEnum.SEND_FAILED_WEBHOOK_DATA,
-        createSafeConsumer(sendFailedWebhookDataConsumer, channel),
-        { noAck: false }
-      ),
+      channel.consume(QueuesEnum.SEND_FAILED_WEBHOOK_DATA, createSafeConsumer(sendFailedWebhookDataConsumer, channel), {
+        noAck: false,
+      }),
 
       channel.assertQueue(QueuesEnum.SEND_BUBBLE_DATA, queueOptions),
-      channel.consume(
-        QueuesEnum.SEND_BUBBLE_DATA,
-        createSafeConsumer(sendBubbleDataConsumer, channel),
-        { noAck: false }
-      ),
+      channel.consume(QueuesEnum.SEND_BUBBLE_DATA, createSafeConsumer(sendBubbleDataConsumer, channel), {
+        noAck: false,
+      }),
 
       channel.assertQueue(QueuesEnum.GET_IMPORT_JOB_DATA, queueOptions),
-      channel.consume(
-        QueuesEnum.GET_IMPORT_JOB_DATA,
-        createSafeConsumer(autoImportJobbDataConsumer, channel),
-        { noAck: false }
-      ),
+      channel.consume(QueuesEnum.GET_IMPORT_JOB_DATA, createSafeConsumer(autoImportJobbDataConsumer, channel), {
+        noAck: false,
+      }),
 
       channel.assertQueue(QueuesEnum.SEND_IMPORT_JOB_DATA, queueOptions),
-      channel.consume(
-        QueuesEnum.SEND_IMPORT_JOB_DATA,
-        createSafeConsumer(sendImportJobDataConsumer, channel),
-        { noAck: false }
-      ),
+      channel.consume(QueuesEnum.SEND_IMPORT_JOB_DATA, createSafeConsumer(sendImportJobDataConsumer, channel), {
+        noAck: false,
+      }),
     ]);
   });
 }
 
 export function publishToQueue(queueName: QueuesEnum, data: any) {
-  chanelWrapper.sendToQueue(queueName, data, { persistent: true });
+  // deliveryMode: 2 = persistent message; cast needed as @types/amqplib is not installed
+  chanelWrapper.sendToQueue(queueName, data, { deliveryMode: 2 } as any);
 }

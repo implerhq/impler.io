@@ -13,7 +13,7 @@ export class SentryFilter extends BaseExceptionFilter {
     }
 
     // In production, normalize unexpected error responses to avoid leaking internals
-    if (process.env.NODE_ENV === 'production' && !(exception instanceof HttpException)) {
+    if (process.env.NODE_ENV === 'prod' && !(exception instanceof HttpException)) {
       this.logger.error('Unhandled exception', exception instanceof Error ? exception.stack : String(exception));
       const ctx = host.switchToHttp();
       const response = ctx.getResponse();
@@ -38,7 +38,7 @@ export class SentryFilter extends BaseExceptionFilter {
     Sentry.captureException(exception);
 
     // In production, normalize unknown errors
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === 'prod') {
       this.logger.error('Unknown error', exception?.stack || String(exception));
       const ctx = host.switchToHttp();
       const response = ctx.getResponse();
