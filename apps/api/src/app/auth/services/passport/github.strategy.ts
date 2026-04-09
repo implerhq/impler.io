@@ -18,10 +18,17 @@ export class GitHubStrategy extends PassportStrategy(githubPassport.Strategy, 'g
       passReqToCallback: true,
       store: {
         verify(req, state: string, meta: Metadata, callback: StateStoreVerifyCallback) {
-          callback(null, true, JSON.stringify(req.query));
+          // Sanitize query to prevent prototype pollution via __proto__/constructor keys
+          const safeQuery = Object.fromEntries(
+            Object.entries(req.query).filter(([key]) => !['__proto__', 'constructor', 'prototype'].includes(key))
+          );
+          callback(null, true, JSON.stringify(safeQuery));
         },
         store(req, meta: Metadata, callback: StateStoreStoreCallback) {
-          callback(null, JSON.stringify(req.query));
+          const safeQuery = Object.fromEntries(
+            Object.entries(req.query).filter(([key]) => !['__proto__', 'constructor', 'prototype'].includes(key))
+          );
+          callback(null, JSON.stringify(safeQuery));
         },
       },
     });
@@ -64,7 +71,14 @@ export class GitHubStrategy extends PassportStrategy(githubPassport.Strategy, 'g
 
   private parseState(req: any) {
     try {
-      return JSON.parse(req.query.state);
+      const DANGEROUS_KEYS = ['__proto__', 'constructor', 'prototype'];
+      const parsed = JSON.parse(req.query.state, (key, value) => {
+        if (DANGEROUS_KEYS.includes(key)) return undefined;
+
+        return value;
+      });
+
+      return parsed && typeof parsed === 'object' ? parsed : {};
     } catch (e) {
       return {};
     }
