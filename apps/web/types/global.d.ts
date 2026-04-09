@@ -30,6 +30,7 @@ interface IProfileData {
   source: string;
   _projectId: string;
   accessToken: string;
+  hasProject?: boolean;
   isEmailVerified: boolean;
 }
 

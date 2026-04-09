@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ForbiddenException } from '@nestjs/common';
 import { ColumnRepository, TemplateRepository } from '@impler/dal';
 import { DEFAULT_KEYS_OBJ, ColumnTypesEnum } from '@impler/shared';
 import { UpdateCustomization } from 'app/template/usecases';
@@ -15,7 +15,14 @@ export class AddColumn {
     private updateCustomization: UpdateCustomization
   ) {}
 
-  async execute(command: AddColumnCommand, _templateId: string) {
+  async execute(command: AddColumnCommand, _templateId: string, _projectId?: string) {
+    // Verify template belongs to user's project
+    if (_projectId) {
+      const template = await this.templateRepository.findOne({ _id: _templateId, _projectId });
+      if (!template) {
+        throw new ForbiddenException('Template not found or does not belong to this project');
+      }
+    }
     const columns = await this.columnRepository.find({ _templateId });
     const sameKeyColumns = columns.filter((columnItem) => columnItem.key === command.key);
     if (sameKeyColumns.length > 0) {

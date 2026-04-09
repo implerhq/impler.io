@@ -352,8 +352,13 @@ export class SendAutoImportJobDataConsumer extends SendImportJobDataConsumer {
 
           case FilterOperationEnum.MATCHES:
             try {
-              const regex = new RegExp(filter.value, 'i');
-              operationPassed = regex.test(stringValue);
+              // Limit regex length and escape if too complex to prevent ReDoS
+              if (filter.value && filter.value.length <= 200) {
+                const regex = new RegExp(filter.value, 'i');
+                operationPassed = regex.test(stringValue);
+              } else {
+                operationPassed = false;
+              }
             } catch (regexError) {
               operationPassed = false;
             }

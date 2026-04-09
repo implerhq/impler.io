@@ -15,6 +15,7 @@ import {
 } from '@nestjs/common';
 
 import { constructQueryString, IJwtPayload, UserRolesEnum } from '@impler/shared';
+import { EnvironmentRepository } from '@impler/dal';
 import { AuthService } from './services/auth.service';
 import { IStrategyResponse } from '@shared/types/auth.types';
 import { CONSTANTS, COOKIE_CONFIG } from '@shared/constants';
@@ -59,7 +60,8 @@ export class AuthController {
     private authService: AuthService,
     private registerUser: RegisterUser,
     private resetPassword: ResetPassword,
-    private requestForgotPassword: RequestForgotPassword
+    private requestForgotPassword: RequestForgotPassword,
+    private environmentRepository: EnvironmentRepository
   ) {}
 
   @Get('/github')
@@ -110,7 +112,13 @@ export class AuthController {
 
   @Get('/me')
   async user(@UserSession() user: IJwtPayload) {
-    return user;
+    // Fetch the actual API key from DB instead of exposing it in JWT
+    const apiKey = await this.environmentRepository.getApiKeyForUserId(user._id);
+
+    return {
+      ...user,
+      accessToken: apiKey?.apiKey || undefined,
+    };
   }
 
   @Put('/me')

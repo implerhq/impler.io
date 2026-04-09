@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { ColumnRepository } from '@impler/dal';
+import { Injectable, ForbiddenException } from '@nestjs/common';
+import { ColumnRepository, TemplateRepository } from '@impler/dal';
 import { UpdateImageColumns } from '@shared/usecases';
 import { UpdateCustomization } from 'app/template/usecases';
 import { UpdateColumnCommand } from '../../commands/update-column.command';
@@ -12,14 +12,23 @@ export class UpdateColumn {
   constructor(
     private saveSampleFile: SaveSampleFile,
     private columnRepository: ColumnRepository,
+    private templateRepository: TemplateRepository,
     private updateImageTemplates: UpdateImageColumns,
     private updateCustomization: UpdateCustomization
   ) {}
 
-  async execute(command: UpdateColumnCommand, _id: string) {
+  async execute(command: UpdateColumnCommand, _id: string, _projectId?: string) {
     let column = await this.columnRepository.findOne({ _id });
     if (!column) {
       throw new DocumentNotFoundException('Column', _id);
+    }
+
+    // Verify column's template belongs to user's project
+    if (_projectId) {
+      const template = await this.templateRepository.findOne({ _id: column._templateId, _projectId });
+      if (!template) {
+        throw new ForbiddenException('Column does not belong to this project');
+      }
     }
 
     const columns = await this.columnRepository.find({ _templateId: column._templateId });

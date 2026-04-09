@@ -4,6 +4,11 @@ import { TemplateRepository, CommonRepository } from '@impler/dal';
 import { ImportListResponseDto } from 'app/project/dtos/import-list-response.dto';
 import { PaginationResult } from '@impler/shared';
 
+// Escape special regex characters to prevent ReDoS attacks
+function escapeRegex(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 @Injectable()
 export class GetImports {
   constructor(
@@ -21,7 +26,7 @@ export class GetImports {
       {
         _projectId: this.commonRepository.generateMongoId(_projectId),
         name: {
-          $regex: search || '',
+          $regex: search ? escapeRegex(search) : '',
           $options: 'i',
         },
       },
