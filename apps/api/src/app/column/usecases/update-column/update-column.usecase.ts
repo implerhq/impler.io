@@ -24,7 +24,7 @@ export class UpdateColumn {
 
     const columns = await this.columnRepository.find({ _templateId: column._templateId });
     const updatedColumns = columns.map((columnItem) =>
-      columnItem._id === _id ? { ...command, _templateId: columnItem._templateId } : columnItem
+      columnItem._id.toString() === _id ? { ...command, _templateId: columnItem._templateId } : columnItem
     );
     const sameKeyColumns = updatedColumns.filter((columnItem) => columnItem.key === command.key);
     if (sameKeyColumns.length > 1) {
