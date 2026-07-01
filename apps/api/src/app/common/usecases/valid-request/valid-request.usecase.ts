@@ -55,16 +55,19 @@ export class ValidRequest {
           );
         }
 
-        const columnKeysSet = new Set();
-        const duplicateKeys = parsedSchema.reduce((acc, item) => {
-          if (columnKeysSet.has(item.key)) acc.add(item.key);
-          columnKeysSet.add(item.key);
-
-          return acc;
-        }, new Set());
-        if (columnKeysSet.size !== parsedSchema.length) {
+        const seenKeys = new Set();
+        const duplicateKeys = new Set();
+        for (const item of parsedSchema) {
+          const normalizedKey = item.key?.toLowerCase();
+          if (seenKeys.has(normalizedKey)) duplicateKeys.add(item.key);
+          seenKeys.add(normalizedKey);
+        }
+        if (duplicateKeys.size) {
+          const duplicateKeysList = [...duplicateKeys].map((key) => `"${key}"`).join(', ');
           throw new UniqueColumnException(
-            `${APIMessages.COLUMN_KEY_DUPLICATED} Duplicate Keys Found for ${[...duplicateKeys].join(', ')}`
+            `${APIMessages.COLUMN_KEY_DUPLICATED} Duplicate ${
+              duplicateKeys.size > 1 ? 'keys' : 'key'
+            } found: ${duplicateKeysList}.`
           );
         }
 

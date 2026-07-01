@@ -63,9 +63,20 @@ export class UpdateTemplateColumns {
   }
 
   async checkSchema(userColumns: AddColumnCommand[], email: string) {
-    const columnKeysSet = new Set(userColumns.map((column) => column.key));
-    if (columnKeysSet.size !== userColumns.length) {
-      throw new UniqueColumnException(APIMessages.COLUMN_KEY_TAKEN);
+    const seenKeys = new Set();
+    const duplicateKeys = new Set();
+    for (const column of userColumns) {
+      const normalizedKey = column.key?.toLowerCase();
+      if (seenKeys.has(normalizedKey)) duplicateKeys.add(column.key);
+      seenKeys.add(normalizedKey);
+    }
+    if (duplicateKeys.size) {
+      const duplicateKeysList = [...duplicateKeys].map((key) => `"${key}"`).join(', ');
+      throw new UniqueColumnException(
+        `${APIMessages.COLUMN_KEY_TAKEN} Duplicate ${
+          duplicateKeys.size > 1 ? 'keys' : 'key'
+        } found: ${duplicateKeysList}.`
+      );
     }
 
     const hasImageColumns = userColumns.some((column) => column.type === ColumnTypesEnum.IMAGE);

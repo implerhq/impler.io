@@ -136,7 +136,7 @@ export function useProject() {
         ...profileData,
         projectName: project?.name || '',
       });
-      setAbility(defineAbilitiesFor(profileData.role));
+      setAbility(defineAbilitiesFor(profileData.role, project?.isOwner));
     }
   }, [profileData, projects, setAbility, setProfileInfo]);
 
