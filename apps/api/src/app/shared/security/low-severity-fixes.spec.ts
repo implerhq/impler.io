@@ -2,8 +2,11 @@ import { expect } from 'chai';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const ROOT = process.cwd();
-const API_SRC = path.join(ROOT, 'apps/api/src');
+// Resolve paths from this file's location so they work regardless of the
+// process cwd (mocha runs with cwd = apps/api via the filtered pnpm script).
+const API_ROOT = path.resolve(__dirname, '../../../..'); // apps/api
+const ROOT = path.resolve(API_ROOT, '../..'); // monorepo root
+const API_SRC = path.join(API_ROOT, 'src');
 
 function readFile(relativePath: string): string {
   return fs.readFileSync(path.join(ROOT, relativePath), 'utf-8');
@@ -149,7 +152,7 @@ describe('LOW Severity Security Fixes', () => {
     });
 
     it('should normalize error responses in production in exception filter', () => {
-      expect(filterContent).to.include("process.env.NODE_ENV === 'production'");
+      expect(filterContent).to.include("process.env.NODE_ENV === 'prod'");
       expect(filterContent).to.include("message: 'Internal server error'");
       expect(filterContent).to.include('statusCode: 500');
     });
