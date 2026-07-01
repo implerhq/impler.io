@@ -39,8 +39,12 @@ export async function bootstrap(expressApp?): Promise<INestApplication> {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
+      /*
+       * Strip unknown properties so they never reach business logic, but do
+       * not reject the request outright: clients (e.g. the web app) echo back
+       * full entities including server-managed fields like `_id`.
+       */
       whitelist: true,
-      forbidNonWhitelisted: true,
     })
   );
 
