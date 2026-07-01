@@ -94,13 +94,13 @@ describe('Security Configuration Tests', () => {
     });
 
     it('should enable Swagger in development', () => {
-      const nodeEnv = 'development';
+      const nodeEnv: string = 'development';
       const shouldEnableSwagger = nodeEnv !== 'production';
       expect(shouldEnableSwagger).to.equal(true);
     });
 
     it('should enable Swagger in test', () => {
-      const nodeEnv = 'test';
+      const nodeEnv: string = 'test';
       const shouldEnableSwagger = nodeEnv !== 'production';
       expect(shouldEnableSwagger).to.equal(true);
     });
