@@ -66,4 +66,9 @@ interface IUploadDocument extends UploadEntity, Document {
   _id: never;
 }
 
+// Composite index for template-scoped queries sorted by upload date
+uploadSchema.index({ _templateId: 1, uploadedDate: -1 });
+// Index for status-based queries
+uploadSchema.index({ status: 1 });
+
 export const Upload = (models.Upload as Model<IUploadDocument>) || model<IUploadDocument>('Upload', uploadSchema);

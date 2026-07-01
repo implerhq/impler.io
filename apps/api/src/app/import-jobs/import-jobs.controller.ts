@@ -12,7 +12,7 @@ import {
   UserJobTerminate,
 } from './usecase';
 import { ACCESS_KEY_NAME } from '@impler/shared';
-import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
+import { JwtAuthGuard } from '@shared/framework/auth.guard';
 import { UpdateJobDto, CreateUserJobDto, UpdateJobMappingDto } from './dtos';
 
 @ApiTags('Import Jobs')

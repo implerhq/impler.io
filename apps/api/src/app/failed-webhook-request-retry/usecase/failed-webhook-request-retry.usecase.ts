@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
 import { QueuesEnum } from '@impler/shared';
@@ -7,6 +7,7 @@ import { FailedWebhookRetryRequestsEntity, FailedWebhookRetryRequestsRepository 
 
 @Injectable()
 export class FailedWebhookRetry {
+  private readonly logger = new Logger(FailedWebhookRetry.name);
   constructor(
     private failedWebhookRetryRequestsRepository: FailedWebhookRetryRequestsRepository = new FailedWebhookRetryRequestsRepository(),
     private queueService: QueueService
@@ -18,20 +19,20 @@ export class FailedWebhookRetry {
     const memUsageStart = process.memoryUsage();
     const cpuUsageStart = process.cpuUsage();
     
-    console.log('========================================');
-    console.log(`[FAILED-WEBHOOK-RETRY] Cron Started at ${startTime.toISOString()}`);
-    console.log(`[FAILED-WEBHOOK-RETRY] Memory Usage (Start): RSS=${(memUsageStart.rss / 1024 / 1024).toFixed(2)}MB, Heap=${(memUsageStart.heapUsed / 1024 / 1024).toFixed(2)}MB`);
-    console.log('========================================');
+    this.logger.log('========================================');
+    this.logger.log(`[FAILED-WEBHOOK-RETRY] Cron Started at ${startTime.toISOString()}`);
+    this.logger.log(`[FAILED-WEBHOOK-RETRY] Memory Usage (Start): RSS=${(memUsageStart.rss / 1024 / 1024).toFixed(2)}MB, Heap=${(memUsageStart.heapUsed / 1024 / 1024).toFixed(2)}MB`);
+    this.logger.log('========================================');
     
     try {
       const failedWebhooks: FailedWebhookRetryRequestsEntity[] = await this.failedWebhookRetryRequestsRepository.find({
         nextRequestTime: { $lt: new Date() },
       });
 
-      console.log(`[FAILED-WEBHOOK-RETRY] Found ${failedWebhooks.length} failed webhooks to retry`);
+      this.logger.log(`[FAILED-WEBHOOK-RETRY] Found ${failedWebhooks.length} failed webhooks to retry`);
 
       if (!failedWebhooks.length) {
-        console.log(`[FAILED-WEBHOOK-RETRY] No webhooks to process, exiting`);
+        this.logger.log(`[FAILED-WEBHOOK-RETRY] No webhooks to process, exiting`);
         return;
       }
 
@@ -47,33 +48,33 @@ export class FailedWebhookRetry {
       const memUsageEnd = process.memoryUsage();
       const cpuUsageEnd = process.cpuUsage(cpuUsageStart);
       
-      console.log('========================================');
-      console.log(`[FAILED-WEBHOOK-RETRY] Cron Completed at ${endTime.toISOString()}`);
-      console.log(`[FAILED-WEBHOOK-RETRY] Results - Successful: ${successful}, Failed: ${failed}, Total: ${failedWebhooks.length}`);
-      console.log(`[FAILED-WEBHOOK-RETRY] Processing Duration: ${processDuration}ms`);
-      console.log(`[FAILED-WEBHOOK-RETRY] Total Duration: ${duration}ms`);
-      console.log(`[FAILED-WEBHOOK-RETRY] Memory Usage (End): RSS=${(memUsageEnd.rss / 1024 / 1024).toFixed(2)}MB, Heap=${(memUsageEnd.heapUsed / 1024 / 1024).toFixed(2)}MB`);
-      console.log(`[FAILED-WEBHOOK-RETRY] Memory Delta: RSS=${((memUsageEnd.rss - memUsageStart.rss) / 1024 / 1024).toFixed(2)}MB, Heap=${((memUsageEnd.heapUsed - memUsageStart.heapUsed) / 1024 / 1024).toFixed(2)}MB`);
-      console.log(`[FAILED-WEBHOOK-RETRY] CPU Usage: User=${(cpuUsageEnd.user / 1000).toFixed(2)}ms, System=${(cpuUsageEnd.system / 1000).toFixed(2)}ms`);
+      this.logger.log('========================================');
+      this.logger.log(`[FAILED-WEBHOOK-RETRY] Cron Completed at ${endTime.toISOString()}`);
+      this.logger.log(`[FAILED-WEBHOOK-RETRY] Results - Successful: ${successful}, Failed: ${failed}, Total: ${failedWebhooks.length}`);
+      this.logger.log(`[FAILED-WEBHOOK-RETRY] Processing Duration: ${processDuration}ms`);
+      this.logger.log(`[FAILED-WEBHOOK-RETRY] Total Duration: ${duration}ms`);
+      this.logger.log(`[FAILED-WEBHOOK-RETRY] Memory Usage (End): RSS=${(memUsageEnd.rss / 1024 / 1024).toFixed(2)}MB, Heap=${(memUsageEnd.heapUsed / 1024 / 1024).toFixed(2)}MB`);
+      this.logger.log(`[FAILED-WEBHOOK-RETRY] Memory Delta: RSS=${((memUsageEnd.rss - memUsageStart.rss) / 1024 / 1024).toFixed(2)}MB, Heap=${((memUsageEnd.heapUsed - memUsageStart.heapUsed) / 1024 / 1024).toFixed(2)}MB`);
+      this.logger.log(`[FAILED-WEBHOOK-RETRY] CPU Usage: User=${(cpuUsageEnd.user / 1000).toFixed(2)}ms, System=${(cpuUsageEnd.system / 1000).toFixed(2)}ms`);
       
       if (duration > 5000) {
-        console.warn(`[FAILED-WEBHOOK-RETRY] ⚠️ WARNING: Cron execution took ${duration}ms (>5s threshold)`);
+        this.logger.warn(`[FAILED-WEBHOOK-RETRY] ⚠️ WARNING: Cron execution took ${duration}ms (>5s threshold)`);
       }
       
       if (failedWebhooks.length > 100) {
-        console.warn(`[FAILED-WEBHOOK-RETRY] ⚠️ WARNING: Processing large batch of ${failedWebhooks.length} webhooks`);
+        this.logger.warn(`[FAILED-WEBHOOK-RETRY] ⚠️ WARNING: Processing large batch of ${failedWebhooks.length} webhooks`);
       }
       
-      console.log('========================================');
+      this.logger.log('========================================');
     } catch (error) {
       const endTime = new Date();
       const duration = endTime.getTime() - startTime.getTime();
       
-      console.error('========================================');
-      console.error(`[FAILED-WEBHOOK-RETRY] ❌ ERROR at ${endTime.toISOString()}`);
-      console.error(`[FAILED-WEBHOOK-RETRY] Duration before error: ${duration}ms`);
-      console.error('[FAILED-WEBHOOK-RETRY] Error details:', error);
-      console.error('========================================');
+      this.logger.error('========================================');
+      this.logger.error(`[FAILED-WEBHOOK-RETRY] ❌ ERROR at ${endTime.toISOString()}`);
+      this.logger.error(`[FAILED-WEBHOOK-RETRY] Duration before error: ${duration}ms`);
+      this.logger.error('[FAILED-WEBHOOK-RETRY] Error details:', error);
+      this.logger.error('========================================');
       throw error;
     }
   }
@@ -81,15 +82,15 @@ export class FailedWebhookRetry {
   private async processWebhook(webhook: FailedWebhookRetryRequestsEntity) {
     const webhookStartTime = Date.now();
     try {
-      console.log(`[FAILED-WEBHOOK-RETRY] Processing webhook - ID: ${webhook._id}, Time: ${new Date().toISOString()}`);
+      this.logger.log(`[FAILED-WEBHOOK-RETRY] Processing webhook - ID: ${webhook._id}, Time: ${new Date().toISOString()}`);
       
       this.queueService.publishToQueue(QueuesEnum.SEND_FAILED_WEBHOOK_DATA, webhook._id as string);
       
       const webhookDuration = Date.now() - webhookStartTime;
-      console.log(`[FAILED-WEBHOOK-RETRY] Webhook queued - ID: ${webhook._id}, Duration: ${webhookDuration}ms`);
+      this.logger.log(`[FAILED-WEBHOOK-RETRY] Webhook queued - ID: ${webhook._id}, Duration: ${webhookDuration}ms`);
     } catch (error) {
       const webhookDuration = Date.now() - webhookStartTime;
-      console.error(`[FAILED-WEBHOOK-RETRY] ❌ Error processing webhook - ID: ${webhook._id}, Duration: ${webhookDuration}ms, Time: ${new Date().toISOString()}`, error);
+      this.logger.error(`[FAILED-WEBHOOK-RETRY] ❌ Error processing webhook - ID: ${webhook._id}, Duration: ${webhookDuration}ms, Time: ${new Date().toISOString()}`, error);
       throw error;
     }
   }

@@ -1,4 +1,13 @@
-import { ExecutionContext, Injectable, CanActivate, UnauthorizedException, Inject, forwardRef } from '@nestjs/common';
+import * as crypto from 'crypto';
+import {
+  ExecutionContext,
+  Injectable,
+  CanActivate,
+  UnauthorizedException,
+  Inject,
+  forwardRef,
+  Logger,
+} from '@nestjs/common';
 import { ACCESS_KEY_NAME } from '@impler/shared';
 import { CONSTANTS } from '@shared/constants';
 import { AuthService } from 'app/auth/services/auth.service';
@@ -14,7 +23,14 @@ export class APIKeyGuard implements CanActivate {
     const API_KEY =
       process.env[String(ACCESS_KEY_NAME).toLowerCase()] || process.env[String(ACCESS_KEY_NAME).toUpperCase()];
 
-    if (API_KEY && API_KEY !== authorizationHeader) {
+    if (API_KEY && authorizationHeader) {
+      // Use timing-safe comparison to prevent timing attacks
+      const apiKeyBuf = Buffer.from(API_KEY);
+      const headerBuf = Buffer.from(String(authorizationHeader));
+      if (apiKeyBuf.length !== headerBuf.length || !crypto.timingSafeEqual(apiKeyBuf, headerBuf)) {
+        throw new UnauthorizedException();
+      }
+    } else if (API_KEY && !authorizationHeader) {
       throw new UnauthorizedException();
     }
 
@@ -24,6 +40,8 @@ export class APIKeyGuard implements CanActivate {
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
+  private readonly logger = new Logger(JwtAuthGuard.name);
+
   constructor(
     @Inject(forwardRef(() => AuthService)) private authService: AuthService,
     private jwtService: JwtService
@@ -46,7 +64,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         });
 
         return true;
-      } catch (err) {}
+      } catch (err) {
+        this.logger.warn(`JWT verification failed: ${err.message}`);
+        throw new UnauthorizedException('Invalid or expired token');
+      }
     }
 
     throw new UnauthorizedException();

@@ -15,9 +15,15 @@ export const UserSession = createParamDecorator((data, ctx) => {
   if (req.cookies && typeof req.cookies[CONSTANTS.AUTH_COOKIE_NAME] === 'string') {
     const tokenParts = req.cookies[CONSTANTS.AUTH_COOKIE_NAME].split(' ');
     if (!tokenParts || tokenParts[0] !== 'Bearer' || !tokenParts[1]) throw new UnauthorizedException('bad_token');
-    const user = jwt.decode(tokenParts[1], { json: true });
 
-    if (user) return user;
+    try {
+      // Verify the JWT signature before trusting its claims
+      const user = jwt.verify(tokenParts[1], process.env.JWT_SECRET as string, { algorithms: ['HS256'] });
+
+      if (user) return user;
+    } catch (err) {
+      throw new UnauthorizedException('invalid_token');
+    }
   }
 
   throw new UnauthorizedException('bad_token');

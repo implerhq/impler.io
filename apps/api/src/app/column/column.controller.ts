@@ -3,7 +3,7 @@ import { Controller, Put, Param, Body, UseGuards, Post, Delete } from '@nestjs/c
 import { ValidateMongoId } from '@shared/validations/valid-mongo-id.validation';
 
 import { ACCESS_KEY_NAME } from '@impler/shared';
-import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
+import { JwtAuthGuard } from '@shared/framework/auth.guard';
 import { ColumnRequestDto } from './dtos/column-request.dto';
 import { ColumnResponseDto } from './dtos/column-response.dto';
 import { AddColumn, UpdateColumn, DeleteColumn } from './usecases';

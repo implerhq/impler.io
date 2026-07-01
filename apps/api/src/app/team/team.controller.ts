@@ -15,7 +15,7 @@ import {
   DeclineInvitation,
   TeamMemberMeta,
 } from './usecase';
-import { JwtAuthGuard } from '@shared/framework/auth.gaurd';
+import { JwtAuthGuard } from '@shared/framework/auth.guard';
 import { CONSTANTS, COOKIE_CONFIG } from '@shared/constants';
 import { UserSession } from '@shared/framework/user.decorator';
 import { InvitationDto } from './dto/invtation.dto';
@@ -78,18 +78,19 @@ export class TeamController {
     summary: 'Change the role of a particular team member',
   })
   async updateTeamMemberRoleRoute(
+    @UserSession() user: IJwtPayload,
     @Param('memberId') memberId: string,
     @Body() updateTeamMemberData: UpdateTeamMemberDto
   ) {
-    return this.updateTeamMember.exec(memberId, updateTeamMemberData);
+    return this.updateTeamMember.exec(memberId, updateTeamMemberData, user._projectId);
   }
 
   @Delete('/:memberId')
   @ApiOperation({
     summary: 'Remove a team member from the project',
   })
-  async removeTeamMemberRoute(@Param('memberId') memberId: string) {
-    return await this.removeTeamMember.exec(memberId);
+  async removeTeamMemberRoute(@UserSession() user: IJwtPayload, @Param('memberId') memberId: string) {
+    return await this.removeTeamMember.exec(memberId, user._projectId);
   }
 
   // invitation routes
