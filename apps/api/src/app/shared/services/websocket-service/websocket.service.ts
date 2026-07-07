@@ -71,7 +71,7 @@ export class WebSocketService implements OnGatewayConnection, OnGatewayDisconnec
   handleJoinSession(@MessageBody() data: { sessionId: string }, @ConnectedSocket() client: Socket) {
     const { sessionId } = data;
     // Validate sessionId format to prevent injection
-    if (!sessionId || typeof sessionId !== 'string' || sessionId.length > 128 || !/^[a-zA-Z0-9_-]+$/.test(sessionId)) {
+    if (!sessionId || typeof sessionId !== 'string' || sessionId.length < 6 || sessionId.length > 128 || !/^[a-zA-Z0-9_-]+$/.test(sessionId)) {
       client.emit('error', { message: 'Invalid session ID' });
 
       return;

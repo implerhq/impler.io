@@ -146,7 +146,8 @@ export class AuthService {
           email: user.email,
           isEmailVerified: user.isEmailVerified,
           profilePicture: user.profilePicture,
-          accessToken: user.accessToken,
+          // Store only a boolean flag instead of the raw API key to prevent key exposure via JWT
+          accessToken: user.accessToken ? true : undefined,
         },
         {
           secret: process.env.JWT_SECRET,

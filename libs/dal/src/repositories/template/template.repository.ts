@@ -3,6 +3,11 @@ import { BaseRepository } from '../base-repository';
 import { TemplateEntity } from './template.entity';
 import { Template } from './template.schema';
 
+// Escape special regex characters to prevent ReDoS attacks
+function escapeRegex(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 export class TemplateRepository extends BaseRepository<TemplateEntity> {
   constructor() {
     super(Template, TemplateEntity);
@@ -15,7 +20,7 @@ export class TemplateRepository extends BaseRepository<TemplateEntity> {
         ...(name
           ? {
               name: {
-                $regex: name || '',
+                $regex: escapeRegex(name),
                 $options: 'i',
               },
             }

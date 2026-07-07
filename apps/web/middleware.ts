@@ -21,7 +21,7 @@ export function middleware(request: NextRequest) {
   if (!profileData.isEmailVerified)
     if (path !== ROUTES.OTP_VERIFY) return NextResponse.redirect(new URL(ROUTES.OTP_VERIFY, request.url));
     else return;
-  else if (!profileData.accessToken && !path.includes('invitation'))
+  else if (!profileData.accessToken && !profileData.hasProject && !path.includes('invitation'))
     if (path !== ROUTES.SIGNUP_ONBOARDING) return NextResponse.redirect(new URL(ROUTES.SIGNUP_ONBOARDING, request.url));
     else return;
   else if ([ROUTES.SIGNIN, ROUTES.OTP_VERIFY, ROUTES.SIGNUP_ONBOARDING, ROUTES.SIGNUP].includes(path))

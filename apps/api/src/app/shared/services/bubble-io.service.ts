@@ -72,7 +72,8 @@ export class BubbleIoService extends BubbleBaseService {
       type: ColumnTypesEnum.STRING,
     };
     // Check if the value is an email
-    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
+    // Use a simpler, non-backtracking email regex to prevent ReDoS
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value)) {
       obj.type = ColumnTypesEnum.EMAIL;
     }
 

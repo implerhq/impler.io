@@ -51,6 +51,7 @@ export class ReviewController {
   ) {}
 
   @Get(':uploadId')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Get Review data for uploaded file',
   })
@@ -107,6 +108,7 @@ export class ReviewController {
   }
 
   @Post(':uploadId')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Review Data',
   })

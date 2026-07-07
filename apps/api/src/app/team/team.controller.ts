@@ -37,6 +37,7 @@ export class TeamController {
   ) {}
 
   @Get('/members')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary:
       'List out the members who have accepted the project invitation and now a part of a team and working on the same project',
@@ -74,6 +75,7 @@ export class TeamController {
   }
 
   @Put('/:memberId')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Change the role of a particular team member',
   })
@@ -86,6 +88,7 @@ export class TeamController {
   }
 
   @Delete('/:memberId')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Remove a team member from the project',
   })
@@ -93,7 +96,7 @@ export class TeamController {
     return await this.removeTeamMember.exec(memberId, user._projectId);
   }
 
-  // invitation routes
+  // invitation routes - GET invitation is intentionally public (invitee views before auth)
   @Get('/:invitationId')
   @ApiOperation({
     summary: 'Fetch an already sent invitation when the user tries to accept the invitation',
@@ -103,6 +106,7 @@ export class TeamController {
   }
 
   @Post('/:invitationId/accept')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Accept a sent Invitation',
   })
@@ -121,6 +125,7 @@ export class TeamController {
   }
 
   @Delete('/:invitationId/decline')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Decline an Invitation',
   })
@@ -132,6 +137,7 @@ export class TeamController {
   }
 
   @Get(':projectId/members')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Fetch Meta Related to TeamMembers in Current Plan',
   })
@@ -140,10 +146,11 @@ export class TeamController {
   }
 
   @Delete('/:invitationId/revoke')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Revoke sent invitation',
   })
-  async cancelInvitationRoute(@Param('invitationId') invitationId: string) {
+  async cancelInvitationRoute(@UserSession() user: IJwtPayload, @Param('invitationId') invitationId: string) {
     return await this.revokeInvitation.exec(invitationId);
   }
 }
