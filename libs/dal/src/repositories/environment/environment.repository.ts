@@ -55,7 +55,7 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
     return environments
       .filter((env) => env._projectId)
       .map((env) => {
-        const userApiKey = env.apiKeys.find((apiKey) => apiKey._userId.toString() === userId);
+        const userApiKey = env.apiKeys.find((apiKey) => apiKey._userId.toString() === String(userId));
 
         if (!userApiKey) {
           return null;
@@ -85,7 +85,7 @@ export class EnvironmentRepository extends BaseRepository<EnvironmentEntity> {
     });
 
     if (userEnvironment) {
-      const userApiKey = userEnvironment.apiKeys.find((apiKey) => apiKey._userId.toString() === userId);
+      const userApiKey = userEnvironment.apiKeys.find((apiKey) => apiKey._userId.toString() === String(userId));
 
       return {
         projectId: userEnvironment._projectId,
