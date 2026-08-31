@@ -12,6 +12,8 @@ interface IDropzoneProps {
   onDrop: (files: FileWithPath[]) => void;
   title?: string;
   error?: string;
+  maxSize?: number;
+  maxSizeText?: string;
   texts: typeof WIDGET_TEXTS;
 }
 
@@ -22,6 +24,8 @@ export function FileDropzone(props: IDropzoneProps) {
     onDrop,
     loading,
     onReject,
+    maxSize = variables.LIMIT_5_MB,
+    maxSizeText,
     accept = [MIME_TYPES.png, MIME_TYPES.jpeg, MIME_TYPES.webp],
     texts,
   } = props;
@@ -35,7 +39,7 @@ export function FileDropzone(props: IDropzoneProps) {
         loading={loading}
         onReject={onReject}
         classNames={classes}
-        maxSize={variables.LIMIT_5_MB} // 5 MB
+        maxSize={maxSize}
       >
         <Stack spacing={0} align="center" content="center">
           <Text align="center" weight="bold">
@@ -46,7 +50,7 @@ export function FileDropzone(props: IDropzoneProps) {
             <Button>{texts.FILE_DROP_AREA.CHOOSE_FILE}</Button>
           </MantineDropzone.Idle>
           <Text size="xs" align="center">
-            {texts.FILE_DROP_AREA.IMAGE_FILE_SIZE}
+            {maxSizeText || texts.FILE_DROP_AREA.IMAGE_FILE_SIZE}
           </Text>
         </Stack>
       </MantineDropzone>

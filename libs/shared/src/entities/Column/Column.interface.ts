@@ -20,6 +20,7 @@ export interface IColumn {
   sequence?: number;
   validations?: ValidationType[];
   _templateId: string;
+  maxImageSize?: number;
 }
 
 export interface ISchemaColumn extends IColumn {

@@ -6,6 +6,7 @@ import {
   IsString,
   IsEnum,
   IsNumber,
+  Min,
   ValidateIf,
   IsNotEmpty,
   Validate,
@@ -155,6 +156,15 @@ export class ColumnRequestDto {
   @ValidateIf((object) => object.type === ColumnTypesEnum.DATE)
   @Type(() => Array<string>)
   dateFormats: string[];
+
+  @ApiPropertyOptional({
+    description: 'Maximum allowed image size in MB if type is Image',
+  })
+  @ValidateIf((object) => object.type === ColumnTypesEnum.IMAGE)
+  @IsNumber()
+  @Min(1)
+  @IsOptional()
+  maxImageSize?: number;
 
   @ApiProperty({
     description: 'Sequence of column',

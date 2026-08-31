@@ -33,6 +33,7 @@ export interface ISchemaItem {
   delimiter?: ColumnDelimiterEnum;
   defaultValue?: string | number;
   validations?: ValidationType[];
+  maxImageSize?: number;
 }
 
 export interface ITemplateSchemaItem extends ISchemaItem {

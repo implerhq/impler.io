@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ColumnRepository, TemplateRepository } from '@impler/dal';
-import { DEFAULT_KEYS_OBJ, ColumnTypesEnum } from '@impler/shared';
+import { DEFAULT_KEYS_OBJ, DEFAULT_MAX_IMAGE_SIZE_MB, ColumnTypesEnum } from '@impler/shared';
 import { UpdateCustomization } from 'app/template/usecases';
 import { AddColumnCommand } from '../../commands/add-column.command';
 import { UniqueColumnException } from '@shared/exceptions/unique-column.exception';
@@ -26,6 +26,8 @@ export class AddColumn {
       ...command,
       sequence: columns.length,
       dateFormats: command.dateFormats?.map((format) => format.toUpperCase()) || [],
+      maxImageSize:
+        command.type === ColumnTypesEnum.IMAGE ? command.maxImageSize || DEFAULT_MAX_IMAGE_SIZE_MB : undefined,
     });
     const variables = columns.map((columnItem) => columnItem.key);
     variables.push(column.key);

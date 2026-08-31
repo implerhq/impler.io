@@ -36,4 +36,6 @@ export class ColumnEntity {
   defaultValue?: string | number;
 
   validations?: any[];
+
+  maxImageSize?: number;
 }

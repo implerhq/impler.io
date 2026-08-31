@@ -57,6 +57,10 @@ export class UpdateColumnCommand extends BaseCommand {
 
   @IsNumber()
   @IsOptional()
+  maxImageSize?: number;
+
+  @IsNumber()
+  @IsOptional()
   sequence: number;
 
   @IsOptional()

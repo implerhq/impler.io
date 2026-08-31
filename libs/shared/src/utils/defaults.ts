@@ -13,6 +13,8 @@ export const Defaults = {
   FORMATTED_DATE: ['DD MMM YYYY'],
 };
 
+export const DEFAULT_MAX_IMAGE_SIZE_MB = 5;
+
 export const DEFAULT_VALUES = [
   {
     label: 'null',
