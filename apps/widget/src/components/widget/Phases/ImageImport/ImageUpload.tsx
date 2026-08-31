@@ -1,4 +1,4 @@
-import { Controller } from 'react-hook-form';
+import { Controller, useWatch } from 'react-hook-form';
 import { useLocalStorage, useMediaQuery } from '@mantine/hooks';
 import { Alert, Flex, Stack, Text, Box, useMantineTheme } from '@mantine/core';
 import { ReactNode, useEffect, useRef, useState } from 'react';
@@ -36,11 +36,14 @@ export function ImageUpload({ goToUpload, texts }: ImageUploadProps) {
     imageColumns,
     onImageSelect,
     onRemoveImage,
+    getMaxSizeForKey,
     isDownloadInProgress,
     onGenerateTemplateClick,
   } = useImageUpload({ goToUpload });
   const wrapperRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>;
   const [containerHeight, setContainerHeight] = useState<number>(200);
+  const selectedKey = useWatch({ control, name: 'key' });
+  const selectedMaxSizeMB = getMaxSizeForKey(selectedKey);
 
   const onImageAlertClose = () => {
     setShowAlert(false);
@@ -81,7 +84,14 @@ export function ImageUpload({ goToUpload, texts }: ImageUploadProps) {
           />
         </Flex>
 
-        <FileDropzone texts={texts} title="Upload Image" onDrop={onImageSelect} error={errors.image?.message} />
+        <FileDropzone
+          texts={texts}
+          title="Upload Image"
+          onDrop={onImageSelect}
+          error={errors.image?.message}
+          maxSize={selectedMaxSizeMB * 1024 * 1024}
+          maxSizeText={`Image size should be less than ${selectedMaxSizeMB} MB. Supported formats are PNG, JPG and JPEG.`}
+        />
         <Stack ref={wrapperRef} style={{ flexGrow: 1, overflow: 'auto' }} h={containerHeight}>
           {Object.entries(
             fields.reduce((acc, field, index) => {

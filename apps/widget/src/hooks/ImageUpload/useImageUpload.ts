@@ -9,6 +9,9 @@ import { useAppState } from '@store/app.context';
 import { captureError, getObjectId } from '@util';
 import { useTemplates } from '@hooks/useTemplates';
 import { useImplerState } from '@store/impler.context';
+import { DEFAULT_MAX_IMAGE_SIZE_MB } from '@impler/shared';
+
+const BYTES_PER_MB = 1024 * 1024;
 
 interface ImageUploadProps {
   goToUpload: () => void;
@@ -19,7 +22,7 @@ export function useImageUpload({ goToUpload }: ImageUploadProps) {
   const { templateId } = useImplerState();
   const imageSchemaRef = useRef<Map<string, Set<string>>>(new Map());
   const { onDownload, isDownloadSampleLoading } = useSample({ onDownloadComplete: goToUpload });
-  const { templates, isTemplatesFetchedAfterMount, imageColumns } = useTemplates();
+  const { templates, isTemplatesFetchedAfterMount, imageColumns, imageColumnMaxSizes } = useTemplates();
   const [isDownloadInProgress, setIsDownloadInProgress] = useState<boolean>(false);
   const {
     getValues,
@@ -42,10 +45,20 @@ export function useImageUpload({ goToUpload }: ImageUploadProps) {
     control,
     name: 'images',
   });
+  const getMaxSizeForKey = (key: string) => imageColumnMaxSizes[key] || DEFAULT_MAX_IMAGE_SIZE_MB;
+
   const onImageSelect = (images: FileWithPath[]) => {
     const key = getValues('key');
+    const maxImageSizeMB = getMaxSizeForKey(key);
     clearErrors('image');
     images.forEach((image) => {
+      if (image.size > maxImageSizeMB * BYTES_PER_MB) {
+        setError('image', {
+          message: `Image "${image.name}" exceeds the maximum allowed size of ${maxImageSizeMB} MB for ${key}.`,
+        });
+
+        return;
+      }
       const reader = new FileReader();
       logAmplitudeEvent('IMAGE_SELECTED', {
         type: image.type,
@@ -115,6 +128,7 @@ export function useImageUpload({ goToUpload }: ImageUploadProps) {
     control,
     register,
     imageColumns,
+    getMaxSizeForKey,
     onRemoveImage,
     onImageSelect,
     onGenerateTemplateClick,

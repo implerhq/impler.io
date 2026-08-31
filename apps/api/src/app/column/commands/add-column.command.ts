@@ -34,6 +34,8 @@ export class AddColumnCommand {
 
   dateFormats?: string[];
 
+  maxImageSize?: number;
+
   sequence?: number;
 
   _templateId: string;

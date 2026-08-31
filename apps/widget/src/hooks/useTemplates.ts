@@ -6,7 +6,7 @@ import { useAppState } from '@store/app.context';
 import { useImplerState } from '@store/impler.context';
 
 import { notifier } from '@util';
-import { ITemplate, IErrorObject, ColumnTypesEnum, IColumn } from '@impler/shared';
+import { ITemplate, IErrorObject, ColumnTypesEnum, IColumn, DEFAULT_MAX_IMAGE_SIZE_MB } from '@impler/shared';
 
 export function useTemplates() {
   const { api } = useAPIState();
@@ -29,12 +29,27 @@ export function useTemplates() {
     }
   );
 
-  const imageColumns = useMemo((): string[] => {
-    let parsedSchema;
+  const { data: templateColumns } = useQuery<unknown, IErrorObject, IColumn[], [string]>(
+    [`template-columns:${templateId}`],
+    () => api.getTemplateColun(templateId as string),
+    {
+      enabled: !!templateId && !schema,
+    }
+  );
+
+  const parsedSchema = useMemo((): IColumn[] | undefined => {
     try {
-      if (schema) parsedSchema = JSON.parse(schema);
+      if (schema) {
+        const parsed = JSON.parse(schema);
+        if (Array.isArray(parsed)) return parsed;
+      }
     } catch (error) {}
-    if (Array.isArray(parsedSchema))
+
+    return undefined;
+  }, [schema]);
+
+  const imageColumns = useMemo((): string[] => {
+    if (parsedSchema)
       return parsedSchema.reduce((acc, columnItem: IColumn) => {
         if (columnItem.type === ColumnTypesEnum.IMAGE) acc.push(columnItem.key);
 
@@ -44,7 +59,19 @@ export function useTemplates() {
     const template = templates?.find((templateItem) => templateItem._id === templateId);
 
     return template?.imageColumns || [];
-  }, [templates, templateId, schema]);
+  }, [templates, templateId, parsedSchema]);
+
+  const imageColumnMaxSizes = useMemo((): Record<string, number> => {
+    const sizeMap: Record<string, number> = {};
+    const source = parsedSchema || templateColumns;
+    source?.forEach((columnItem) => {
+      if (columnItem.type === ColumnTypesEnum.IMAGE) {
+        sizeMap[columnItem.key] = columnItem.maxImageSize || DEFAULT_MAX_IMAGE_SIZE_MB;
+      }
+    });
+
+    return sizeMap;
+  }, [parsedSchema, templateColumns]);
 
   useEffect(() => {
     if (templateId) {
@@ -58,6 +85,7 @@ export function useTemplates() {
   return {
     templates,
     imageColumns,
+    imageColumnMaxSizes,
     isTemplatesFetching,
     isTemplatesLoading,
     isTemplatesFetchedAfterMount,

@@ -11,11 +11,12 @@ import {
   SimpleGrid,
   CloseButton,
   TextInput as Input,
+  NumberInput,
   Flex,
 } from '@mantine/core';
 
 import { ValidationTypesEnum } from '@impler/client';
-import { ColumnTypesEnum, DEFAULT_VALUES, IColumn } from '@impler/shared';
+import { ColumnTypesEnum, DEFAULT_MAX_IMAGE_SIZE_MB, DEFAULT_VALUES, IColumn } from '@impler/shared';
 import { colors, DELIMITERS, MODAL_KEYS, MODAL_TITLES, DOCUMENTATION_REFERENCE_LINKS, ROUTES } from '@config';
 
 import { Button } from '@ui/button';
@@ -310,6 +311,22 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                     )}
                   />
                 )}
+              </AutoHeightComponent>
+              <AutoHeightComponent isVisible={typeValue === ColumnTypesEnum.IMAGE}>
+                <Controller
+                  name="maxImageSize"
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <NumberInput
+                      min={1}
+                      label="Max Image Size (MB)"
+                      placeholder="Max Image Size"
+                      value={value ?? DEFAULT_MAX_IMAGE_SIZE_MB}
+                      onChange={(newValue) => onChange(newValue === '' ? DEFAULT_MAX_IMAGE_SIZE_MB : newValue)}
+                      description="Maximum allowed size for images uploaded to this column"
+                    />
+                  )}
+                />
               </AutoHeightComponent>
               <AutoHeightComponent isVisible={typeValue === ColumnTypesEnum.REGEX}>
                 <Input

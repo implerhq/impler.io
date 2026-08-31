@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ColumnRepository } from '@impler/dal';
+import { ColumnTypesEnum, DEFAULT_MAX_IMAGE_SIZE_MB } from '@impler/shared';
 import { UpdateImageColumns } from '@shared/usecases';
 import { UpdateCustomization } from 'app/template/usecases';
 import { UpdateColumnCommand } from '../../commands/update-column.command';
@@ -32,6 +33,8 @@ export class UpdateColumn {
     }
 
     command.dateFormats = command.dateFormats?.map((format) => format.toUpperCase()) || [];
+    command.maxImageSize =
+      command.type === ColumnTypesEnum.IMAGE ? command.maxImageSize || DEFAULT_MAX_IMAGE_SIZE_MB : undefined;
     const isKeyUpdated = command.key !== column.key || command.allowMultiSelect !== column.allowMultiSelect;
     const isTypeUpdated = command.type !== column.type;
     const isFieldConditionUpdated =

@@ -65,6 +65,11 @@ export class ColumnResponseDto {
   })
   dateFormats?: string[];
 
+  @ApiPropertyOptional({
+    description: 'Maximum allowed image size in MB if type is Image',
+  })
+  maxImageSize?: number;
+
   @ApiProperty({
     description: 'Sequence of column',
   })

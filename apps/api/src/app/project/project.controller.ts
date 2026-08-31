@@ -168,7 +168,7 @@ export class ProjectController {
       })
     );
     const userApiKey = projectWithEnvironment.environment.apiKeys.find(
-      (apiKey) => apiKey._userId.toString() === user._id
+      (apiKey) => apiKey._userId.toString() === String(user._id)
     );
 
     const token = this.authService.getSignedToken(
