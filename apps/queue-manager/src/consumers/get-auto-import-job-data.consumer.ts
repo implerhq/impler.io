@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { PaymentAPIService, RSSXMLService } from '@impler/services';
 import {
   SendImportJobCachedData,
@@ -8,10 +9,14 @@ import {
   IFilter,
   FilterOperationEnum,
   BILLABLEMETRIC_CODE_ENUM,
+  IMAGE_URL_CHECK_TIMEOUT_MS,
+  IMAGE_URL_CHECK_CONCURRENCY,
 } from '@impler/shared';
 
 import { SendImportJobDataConsumer } from './send-import-job-data.consumer';
 import { JobMappingRepository, ColumnRepository, UserJobEntity } from '@impler/dal';
+
+const BYTES_PER_MB = 1024 * 1024;
 
 interface IValidationResult {
   hasInvalidRecords: boolean;
@@ -174,15 +179,26 @@ export class SendAutoImportJobDataConsumer extends SendImportJobDataConsumer {
         }
       }
 
-      for (const recordData of filteredData) {
-        const checkRecord: Record<string, unknown> = this.formatRecord({
+      const formattedRecords: Record<string, unknown>[] = filteredData.map((recordData) =>
+        this.formatRecord({
           record: { record: recordData },
           multiSelectColumnHeadings,
-        });
+        })
+      );
+
+      const imageSizeCache = await this.fetchImageSizesForColumns(
+        formattedRecords,
+        columns as unknown as ITemplateSchemaItem[]
+      );
+
+      for (let recordIndex = 0; recordIndex < filteredData.length; recordIndex++) {
+        const recordData = filteredData[recordIndex];
+        const checkRecord = formattedRecords[recordIndex];
 
         const validationResult = this.validateRecordUsingColumnSchema(
           checkRecord,
-          columns as unknown as ITemplateSchemaItem[]
+          columns as unknown as ITemplateSchemaItem[],
+          imageSizeCache
         );
 
         totalRecords++;
@@ -415,9 +431,55 @@ export class SendAutoImportJobDataConsumer extends SendImportJobDataConsumer {
     } catch (error) {}
   }
 
+  private async getImageSizeInBytes(url: string): Promise<number | null> {
+    try {
+      const response = await axios.head(url, { timeout: IMAGE_URL_CHECK_TIMEOUT_MS });
+      const contentLength = response.headers['content-length'];
+
+      return contentLength ? Number(contentLength) : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  private async fetchImageSizesForColumns(
+    records: Record<string, unknown>[],
+    columns: ITemplateSchemaItem[]
+  ): Promise<Map<string, number | null>> {
+    const imageColumnKeys = columns
+      .filter((column) => column.type === ColumnTypesEnum.IMAGE && column.maxImageSize)
+      .map((column) => column.key);
+    const sizeCache = new Map<string, number | null>();
+
+    if (!imageColumnKeys.length) return sizeCache;
+
+    const urls = new Set<string>();
+    for (const record of records) {
+      for (const key of imageColumnKeys) {
+        const value = record[key];
+        if (typeof value === 'string' && value) urls.add(value);
+      }
+    }
+
+    const urlList = Array.from(urls);
+    let nextIndex = 0;
+    const runWorker = async (): Promise<void> => {
+      while (nextIndex < urlList.length) {
+        const url = urlList[nextIndex];
+        nextIndex++;
+        sizeCache.set(url, await this.getImageSizeInBytes(url));
+      }
+    };
+    const workers = Array.from({ length: Math.min(IMAGE_URL_CHECK_CONCURRENCY, urlList.length) }, () => runWorker());
+    await Promise.all(workers);
+
+    return sizeCache;
+  }
+
   private validateRecordUsingColumnSchema(
     record: Record<string, unknown>,
-    columns: ITemplateSchemaItem[]
+    columns: ITemplateSchemaItem[],
+    imageSizeCache: Map<string, number | null> = new Map()
   ): { isValid: boolean; errors: Record<string, string> } {
     enum ValidationTypesEnum {
       RANGE = 'range',
@@ -491,6 +553,16 @@ export class SendAutoImportJobDataConsumer extends SendImportJobDataConsumer {
             if (!imageUrlRegex.test(String(value))) {
               errors[column.key] = `${column.key} must be a valid image URL`;
               isValid = false;
+            } else if (column.maxImageSize) {
+              const imageSizeBytes = imageSizeCache.get(String(value));
+              const maxSizeBytes = column.maxImageSize * BYTES_PER_MB;
+              if (imageSizeBytes === null || imageSizeBytes === undefined) {
+                errors[column.key] = `${column.key} image size could not be verified`;
+                isValid = false;
+              } else if (imageSizeBytes > maxSizeBytes) {
+                errors[column.key] = `${column.key} image exceeds maximum allowed size of ${column.maxImageSize} MB`;
+                isValid = false;
+              }
             }
             break;
         }

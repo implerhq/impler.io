@@ -34,8 +34,12 @@ const TableRow = <T extends { _id?: string; index: number }>({
 }) => {
   const ref = useRef<HTMLTableRowElement>(null);
 
-  const [{ handlerId }, drop] = useDrop<T, void, { handlerId: string | null }>({
+  const [{ handlerId, isOver }, drop] = useDrop<T, void, { handlerId: string | null; isOver: boolean }>({
     accept: 'row',
+    collect: (monitor) => ({
+      handlerId: monitor.getHandlerId() as string | null,
+      isOver: monitor.isOver(),
+    }),
     drop(dropLocationItem: T) {
       if (!ref.current) {
         return;
@@ -61,7 +65,15 @@ const TableRow = <T extends { _id?: string; index: number }>({
   drag(drop(ref));
 
   return (
-    <tr key={item._id || rowIndex} ref={ref} style={{ opacity }} data-handler-id={handlerId}>
+    <tr
+      key={item._id || rowIndex}
+      ref={ref}
+      style={{
+        opacity,
+        boxShadow: isOver ? 'inset 0 2px 0 0 var(--mantine-color-blue-6, #228be6)' : undefined,
+      }}
+      data-handler-id={handlerId}
+    >
       {headings.map((heading: IHeadingItem<T>, fieldIndex: number) =>
         typeof heading.Cell === 'function' ? (
           <td key={fieldIndex}>{heading.Cell(item)}</td>

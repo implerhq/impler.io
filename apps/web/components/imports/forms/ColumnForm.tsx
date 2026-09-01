@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { modals } from '@mantine/modals';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import {
@@ -12,33 +12,43 @@ import {
   CloseButton,
   TextInput as Input,
   NumberInput,
-  Flex,
 } from '@mantine/core';
 
 import { ValidationTypesEnum } from '@impler/client';
-import { ColumnTypesEnum, DEFAULT_MAX_IMAGE_SIZE_MB, DEFAULT_VALUES, IColumn } from '@impler/shared';
-import { colors, DELIMITERS, MODAL_KEYS, MODAL_TITLES, DOCUMENTATION_REFERENCE_LINKS, ROUTES } from '@config';
+import {
+  ColumnTypesEnum,
+  DEFAULT_MAX_IMAGE_SIZE_MB,
+  MAX_IMAGE_SIZE_MB_LIMIT,
+  DEFAULT_VALUES,
+  IColumn,
+} from '@impler/shared';
+import { DELIMITERS, MODAL_KEYS, MODAL_TITLES, DOCUMENTATION_REFERENCE_LINKS } from '@config';
 
 import { Button } from '@ui/button';
 import { Textarea } from '@ui/textarea';
 import { Checkbox } from '@ui/checkbox';
 import { Validation } from '@ui/validation';
-import { LockIcon } from '@assets/icons/Lock.icon';
 import { MultiSelect } from '@ui/multi-select';
 import { CustomSelect } from '@ui/custom-select';
 import { TooltipLabel } from '@components/guide-point';
 import { AutoHeightComponent } from '@ui/auto-height-component';
 import { useSubscriptionMetaDataInformation } from '@hooks/useSubscriptionMetaDataInformation';
-import Link from 'next/link';
-import { Badge } from '@ui/badge';
+import { GatedField } from './GatedField';
+
+const TYPE_VALIDATIONS: Partial<Record<ColumnTypesEnum, ValidationTypesEnum[]>> = {
+  [ColumnTypesEnum.STRING]: [ValidationTypesEnum.LENGTH],
+  [ColumnTypesEnum.NUMBER]: [ValidationTypesEnum.RANGE, ValidationTypesEnum.DIGITS],
+  [ColumnTypesEnum.DOUBLE]: [ValidationTypesEnum.RANGE],
+};
 
 interface ColumnFormProps {
   isLoading?: boolean;
   data?: Partial<IColumn>;
   onSubmit: (data: IColumn) => void;
+  existingColumns?: IColumn[];
 }
 
-export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
+export function ColumnForm({ onSubmit, data, isLoading, existingColumns }: ColumnFormProps) {
   const {
     columnTypes,
     advancedValidationsUnavailable,
@@ -58,6 +68,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
     watch,
     control,
     register,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm<IColumn>({
@@ -69,53 +80,65 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
   });
   const typeValue = watch('type');
   const multiSelectValue = watch('allowMultiSelect');
+  const keyManuallyEditedRef = useRef(!!data?.key && data.key !== data?.name);
 
   const onClose = () => {
     modals.close(MODAL_KEYS.COLUMN_UPDATE);
   };
 
-  useEffect(() => {
-    const rangeValidationIndex = fields.findIndex((field) => field.validate === ValidationTypesEnum.RANGE);
-    const lengthValidationIndex = fields.findIndex((field) => field.validate === ValidationTypesEnum.LENGTH);
-    const digitsValidationIndex = fields.findIndex((field) => field.validate === ValidationTypesEnum.DIGITS);
+  function removeValidationsIncompatibleWith(nextType: string) {
+    const allowed = TYPE_VALIDATIONS[nextType as ColumnTypesEnum] || [];
+    [ValidationTypesEnum.RANGE, ValidationTypesEnum.LENGTH, ValidationTypesEnum.DIGITS].forEach((validationType) => {
+      if (!allowed.includes(validationType)) {
+        const index = fields.findIndex((field) => field.validate === validationType);
+        if (index > -1) remove(index);
+      }
+    });
+  }
 
-    switch (typeValue) {
-      case ColumnTypesEnum.STRING:
-        if (rangeValidationIndex > -1) {
-          remove(rangeValidationIndex);
-        }
-        if (digitsValidationIndex > -1) {
-          remove(digitsValidationIndex);
-        }
-        break;
-      case ColumnTypesEnum.DOUBLE:
-      case ColumnTypesEnum.NUMBER:
-        if (lengthValidationIndex > -1) {
-          remove(lengthValidationIndex);
-        }
-        break;
-      case ColumnTypesEnum.DOUBLE:
-        if (lengthValidationIndex > -1) {
-          remove(lengthValidationIndex);
-        }
-        if (digitsValidationIndex > -1) {
-          remove(digitsValidationIndex);
-        }
-        break;
-      default:
-        if (rangeValidationIndex > -1) {
-          remove(rangeValidationIndex);
-        }
-        if (lengthValidationIndex > -1) {
-          remove(lengthValidationIndex);
-        }
-        if (digitsValidationIndex > -1) {
-          remove(digitsValidationIndex);
-        }
-        break;
+  function onTypeChange(nextType: ColumnTypesEnum, onFieldChange: (value: ColumnTypesEnum) => void) {
+    const hasIncompatibleValidations = fields.some(
+      (field) =>
+        [ValidationTypesEnum.RANGE, ValidationTypesEnum.LENGTH, ValidationTypesEnum.DIGITS].includes(
+          field.validate as ValidationTypesEnum
+        ) && !(TYPE_VALIDATIONS[nextType] || []).includes(field.validate as ValidationTypesEnum)
+    );
+
+    if (hasIncompatibleValidations) {
+      modals.openConfirmModal({
+        title: 'Change column type?',
+        centered: true,
+        children: (
+          <Text size="sm">
+            Changing the column type will remove the range, length or digits validations already configured for this
+            column. This cannot be undone.
+          </Text>
+        ),
+        labels: { confirm: 'Change type', cancel: 'Keep current type' },
+        confirmProps: { color: 'red' },
+        onConfirm: () => onFieldChange(nextType),
+      });
+
+      return;
     }
+
+    onFieldChange(nextType);
+  }
+
+  useEffect(() => {
+    removeValidationsIncompatibleWith(typeValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [typeValue]);
+
+  function isKeyTaken(key: string, currentId?: string) {
+    if (!key || !Array.isArray(existingColumns)) return false;
+
+    return existingColumns.some(
+      (column) =>
+        column._id !== currentId &&
+        (column.key === key || (Array.isArray(column.alternateKeys) && column.alternateKeys.includes(key)))
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -135,7 +158,13 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
               <Input
                 required
                 label="Column Name"
-                {...register('name')}
+                {...register('name', {
+                  onChange: (event) => {
+                    if (!keyManuallyEditedRef.current) {
+                      setValue('key', event.target.value, { shouldValidate: true });
+                    }
+                  },
+                })}
                 error={errors.name?.message}
                 placeholder="Name of the column"
                 description="Display name for column in mapping interface"
@@ -143,10 +172,17 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
               <Input
                 required
                 label="Column Key"
-                {...register('key')}
+                {...register('key', {
+                  onChange: () => {
+                    keyManuallyEditedRef.current = true;
+                  },
+                  validate: (value) =>
+                    !isKeyTaken(value, data?._id) ||
+                    'This key is already used by another column (or its alternate keys)',
+                })}
                 placeholder="Column Key"
                 error={errors.key?.message}
-                description="Unique identifier for column; used in sample generation and data retrival"
+                description="Unique identifier for column; auto-filled from name, edit to customize"
               />
               <Input
                 label={
@@ -166,7 +202,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                     placeholder="Type"
                     value={value}
                     data-autofocus
-                    onChange={onChange}
+                    onChange={(nextType: ColumnTypesEnum) => onTypeChange(nextType, onChange)}
                     onBlur={onBlur}
                     description="Base validation rule applied to column data"
                   />
@@ -174,34 +210,12 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
               />
 
               <AutoHeightComponent isVisible={typeValue === ColumnTypesEnum.SELECT}>
-                {multiSelectValuesUnavailable ? (
-                  <Flex
-                    direction="row"
-                    gap="sm"
-                    align="center"
-                    style={{
-                      padding: '7px',
-                      backgroundColor: colors.BGPrimaryDark,
-                      borderRadius: '4px',
-                    }}
-                  >
-                    <LockIcon size="xl" />
-
-                    <Stack spacing={5} w="100%" align="flex-start">
-                      <Badge color="orange">Feature unavailable on current plan</Badge>
-                      <div>
-                        <TooltipLabel label="Select Values" link={DOCUMENTATION_REFERENCE_LINKS.defaultValue} />
-                        <p style={{ fontSize: '0.75rem', color: '#868e96', margin: 0 }}>
-                          Predefined list of allowable values for selection
-                        </p>
-                      </div>
-                    </Stack>
-
-                    <Button component={Link} size="xs" href={ROUTES.EXPLORE_PLANS} onClick={modals.closeAll}>
-                      Explore Options
-                    </Button>
-                  </Flex>
-                ) : (
+                <GatedField
+                  unavailable={!!multiSelectValuesUnavailable}
+                  label="Select Values"
+                  link="defaultValue"
+                  description="Predefined list of allowable values for selection"
+                >
                   <Controller
                     name="selectValues"
                     control={control}
@@ -225,7 +239,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                       />
                     )}
                   />
-                )}
+                </GatedField>
               </AutoHeightComponent>
 
               <Controller
@@ -253,34 +267,12 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
               />
 
               <AutoHeightComponent isVisible={typeValue === ColumnTypesEnum.DATE}>
-                {dateFormatUnavailable ? (
-                  <Flex
-                    direction="row"
-                    gap="sm"
-                    align="center"
-                    style={{
-                      padding: '7px',
-                      backgroundColor: colors.BGPrimaryDark,
-                      borderRadius: '4px',
-                    }}
-                  >
-                    <LockIcon size="xl" />
-
-                    <Stack spacing={5} w="100%" align="flex-start">
-                      <Badge color="orange">Feature unavailable on current plan</Badge>
-                      <div>
-                        <TooltipLabel label="Date Formats" link={DOCUMENTATION_REFERENCE_LINKS.defaultValue} />
-                        <p style={{ fontSize: '0.75rem', color: '#868e96', margin: 0 }}>
-                          Specify accepted date input formats for this field
-                        </p>
-                      </div>
-                    </Stack>
-
-                    <Button component={Link} size="xs" href={ROUTES.EXPLORE_PLANS} onClick={modals.closeAll}>
-                      Explore Options
-                    </Button>
-                  </Flex>
-                ) : (
+                <GatedField
+                  unavailable={!!dateFormatUnavailable}
+                  label="Date Formats"
+                  link="defaultValue"
+                  description="Specify accepted date input formats for this field"
+                >
                   <Controller
                     name="dateFormats"
                     control={control}
@@ -310,7 +302,7 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                       />
                     )}
                   />
-                )}
+                </GatedField>
               </AutoHeightComponent>
               <AutoHeightComponent isVisible={typeValue === ColumnTypesEnum.IMAGE}>
                 <Controller
@@ -319,11 +311,18 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                   render={({ field: { value, onChange } }) => (
                     <NumberInput
                       min={1}
+                      max={MAX_IMAGE_SIZE_MB_LIMIT}
                       label="Max Image Size (MB)"
                       placeholder="Max Image Size"
                       value={value ?? DEFAULT_MAX_IMAGE_SIZE_MB}
-                      onChange={(newValue) => onChange(newValue === '' ? DEFAULT_MAX_IMAGE_SIZE_MB : newValue)}
-                      description="Maximum allowed size for images uploaded to this column"
+                      onChange={(newValue) =>
+                        onChange(
+                          newValue === ''
+                            ? DEFAULT_MAX_IMAGE_SIZE_MB
+                            : Math.min(Number(newValue), MAX_IMAGE_SIZE_MB_LIMIT)
+                        )
+                      }
+                      description={`Maximum allowed size for images uploaded to this column (up to ${MAX_IMAGE_SIZE_MB_LIMIT} MB)`}
                     />
                   )}
                 />
@@ -348,34 +347,12 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                   description="Human-readable explanation of regex pattern"
                 />
               </AutoHeightComponent>
-              {defaultValueUnavailable ? (
-                <Flex
-                  direction="row"
-                  gap="sm"
-                  align="center"
-                  style={{
-                    padding: '8px',
-                    backgroundColor: colors.BGPrimaryDark,
-                    borderRadius: '4px',
-                  }}
-                >
-                  <LockIcon size="xl" />
-
-                  <Stack spacing={5} w="100%" align="flex-start">
-                    <Badge color="orange">Feature unavailable on current plan</Badge>
-                    <div>
-                      <TooltipLabel label="Default Value" link={DOCUMENTATION_REFERENCE_LINKS.defaultValue} />
-                      <p style={{ fontSize: '0.75rem', color: '#868e96', margin: 0 }}>
-                        Fallback value for empty cells in response
-                      </p>
-                    </div>
-                  </Stack>
-
-                  <Button component={Link} size="xs" href={ROUTES.EXPLORE_PLANS} onClick={modals.closeAll}>
-                    Explore Options
-                  </Button>
-                </Flex>
-              ) : (
+              <GatedField
+                unavailable={!!defaultValueUnavailable}
+                label="Default Value"
+                link="defaultValue"
+                description="Fallback value for empty cells in response"
+              >
                 <Controller
                   name="defaultValue"
                   control={control}
@@ -391,41 +368,24 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                     />
                   )}
                 />
-              )}
+              </GatedField>
             </Stack>
-            <Stack spacing="sm" p="xs" bg={colors.BGSecondaryDark}>
+            <Stack spacing="sm" p="xs" bg="var(--mantine-color-gray-0, #f8f9fa)">
               <Title order={5}>Column Validations</Title>
-              <Flex
-                direction="row"
-                gap="sm"
-                align="center"
-                style={{
-                  padding: requiredValidationUnavailable ? '8px' : '0',
-                  backgroundColor: requiredValidationUnavailable ? colors.BGPrimaryDark : 'transparent',
-                }}
+              <GatedField
+                unavailable={!!requiredValidationUnavailable}
+                label="Required Values"
+                link="advancedValidations"
+                description="Mandatory column mapping and data entry during import"
               >
-                {requiredValidationUnavailable ? (
-                  <LockIcon size="xl" />
-                ) : (
-                  <Checkbox register={register('isRequired')} />
-                )}
-                <Stack spacing={5} w="100%" align="flex-start">
-                  {requiredValidationUnavailable ? (
-                    <Badge color="orange">Feature unavailable on current plan</Badge>
-                  ) : null}
-                  <div>
+                <Checkbox
+                  register={register('isRequired')}
+                  label={
                     <TooltipLabel label="Required Values" link={DOCUMENTATION_REFERENCE_LINKS.advancedValidations} />
-                    <p style={{ fontSize: '0.75rem', color: '#868e96', margin: 0 }}>
-                      Mandatory column mapping and data entry during import
-                    </p>
-                  </div>
-                </Stack>
-                {requiredValidationUnavailable ? (
-                  <Button component={Link} size="xs" href={ROUTES.EXPLORE_PLANS} onClick={modals.closeAll}>
-                    Explore Options
-                  </Button>
-                ) : null}
-              </Flex>
+                  }
+                  description="Mandatory column mapping and data entry during import"
+                />
+              </GatedField>
               <AutoHeightComponent isVisible={typeValue === ColumnTypesEnum.SELECT}>
                 <Checkbox
                   label={
@@ -439,36 +399,23 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 />
               </AutoHeightComponent>
               <AutoHeightComponent isVisible={typeValue !== ColumnTypesEnum.SELECT}>
-                <Flex
-                  direction="row"
-                  gap="sm"
-                  align="center"
-                  style={{
-                    padding: uniqueValidationUnavailable ? '8px' : '0',
-                    backgroundColor: uniqueValidationUnavailable ? colors.BGPrimaryDark : 'transparent',
-                  }}
+                <GatedField
+                  unavailable={!!uniqueValidationUnavailable}
+                  label="Unique Values Only"
+                  link="uniqueWithValidator"
+                  description="Enforce unique entries; users have to resolve duplicates before import"
                 >
-                  {uniqueValidationUnavailable ? <LockIcon size="xl" /> : <Checkbox register={register('isUnique')} />}
-                  <Stack spacing={5} w="100%" align="flex-start">
-                    {uniqueValidationUnavailable ? (
-                      <Badge color="orange">Feature unavailable on current plan</Badge>
-                    ) : null}
-                    <div>
+                  <Checkbox
+                    register={register('isUnique')}
+                    label={
                       <TooltipLabel
                         label="Unique Values Only"
                         link={DOCUMENTATION_REFERENCE_LINKS.uniqueWithValidator}
                       />
-                      <p style={{ fontSize: '0.75rem', color: '#868e96', margin: 0 }}>
-                        Enforce unique entries; users have to resolve duplicates before import
-                      </p>
-                    </div>
-                  </Stack>
-                  {uniqueValidationUnavailable ? (
-                    <Button component={Link} size="xs" href={ROUTES.EXPLORE_PLANS} onClick={modals.closeAll}>
-                      Explore Options
-                    </Button>
-                  ) : null}
-                </Flex>
+                    }
+                    description="Enforce unique entries; users have to resolve duplicates before import"
+                  />
+                </GatedField>
               </AutoHeightComponent>
               <AutoHeightComponent isVisible={!!(multiSelectValue && typeValue === ColumnTypesEnum.SELECT)}>
                 <Controller
@@ -490,85 +437,42 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                 />
               </AutoHeightComponent>
 
-              <Flex
-                direction="row"
-                gap="sm"
-                align="center"
-                style={{
-                  padding: freezeColumnsUnavailable ? '8px' : '0',
-                  backgroundColor: freezeColumnsUnavailable ? colors.BGPrimaryDark : 'transparent',
-                }}
+              <GatedField
+                unavailable={!!freezeColumnsUnavailable}
+                label="Freeze Column"
+                link="freezeColumns"
+                description="Pin column to left side in sample file and review views"
               >
-                {freezeColumnsUnavailable ? <LockIcon size="xl" /> : <Checkbox register={register('isFrozen')} />}
-
-                <Stack spacing={5} w="100%" align="flex-start">
-                  {freezeColumnsUnavailable ? <Badge color="orange">Feature unavailable on current plan</Badge> : null}
-                  <div>
-                    <TooltipLabel label="Freeze Column" link={DOCUMENTATION_REFERENCE_LINKS.freezeColumns} />
-                    <p style={{ fontSize: '0.75rem', color: '#868e96', margin: 0 }}>
-                      Pin column to left side in sample file and review views
-                    </p>
-                  </div>
-                </Stack>
-
-                {freezeColumnsUnavailable ? (
-                  <Button component={Link} size="xs" href={ROUTES.EXPLORE_PLANS} onClick={modals.closeAll}>
-                    Explore Options
-                  </Button>
-                ) : null}
-              </Flex>
+                <Checkbox
+                  register={register('isFrozen')}
+                  label={<TooltipLabel label="Freeze Column" link={DOCUMENTATION_REFERENCE_LINKS.freezeColumns} />}
+                  description="Pin column to left side in sample file and review views"
+                />
+              </GatedField>
 
               <AutoHeightComponent
                 isVisible={typeValue === ColumnTypesEnum.DOUBLE || typeValue === ColumnTypesEnum.NUMBER}
               >
-                {rangeValidationUnavailable ? (
-                  <Flex
-                    direction="row"
-                    gap="sm"
-                    align="center"
-                    style={{
-                      padding: '8px',
-                      backgroundColor: colors.BGPrimaryDark,
-                      borderRadius: '4px',
-                      marginTop: '8px',
-                    }}
-                  >
-                    <LockIcon size="xl" />
-                    <Stack spacing={5} w="100%" align="flex-start">
-                      <Badge color="orange">Feature unavailable on current plan</Badge>
-                      <div>
-                        <TooltipLabel label="Range Validation" link={DOCUMENTATION_REFERENCE_LINKS.rangeValidator} />
-                        <p style={{ fontSize: '0.75rem', color: '#868e96', margin: 0 }}>
-                          Set min/max bounds for valid input values
-                        </p>
-                      </div>
-                    </Stack>
-                    <Button component={Link} size="xs" href={ROUTES.EXPLORE_PLANS} onClick={modals.closeAll}>
-                      Explore Options
-                    </Button>
-                  </Flex>
-                ) : (
-                  <Validation
-                    errors={errors}
-                    control={control}
-                    minPlaceholder="Min"
-                    maxPlaceholder="Max"
-                    label="Range Validation"
-                    type={ValidationTypesEnum.RANGE}
-                    unavailable={advancedValidationsUnavailable}
-                    link={DOCUMENTATION_REFERENCE_LINKS.rangeValidator}
-                    description="Set min/max bounds for valid input values"
-                    errorMessagePlaceholder='Value must be between "Min" and "Max"'
-                    index={fields.findIndex((field) => field.validate === ValidationTypesEnum.RANGE)}
-                    onCheckToggle={(status, index) => {
-                      if (status) {
-                        append({ validate: ValidationTypesEnum.RANGE });
-                      } else {
-                        remove(index);
-                      }
-                    }}
-                  />
-                )}
+                <Validation
+                  errors={errors}
+                  control={control}
+                  minPlaceholder="Min"
+                  maxPlaceholder="Max"
+                  label="Range Validation"
+                  type={ValidationTypesEnum.RANGE}
+                  unavailable={!!(rangeValidationUnavailable || advancedValidationsUnavailable)}
+                  link={DOCUMENTATION_REFERENCE_LINKS.rangeValidator}
+                  description="Set min/max bounds for valid input values"
+                  errorMessagePlaceholder='Value must be between "Min" and "Max"'
+                  index={fields.findIndex((field) => field.validate === ValidationTypesEnum.RANGE)}
+                  onCheckToggle={(status, index) => {
+                    if (status) {
+                      append({ validate: ValidationTypesEnum.RANGE });
+                    } else {
+                      remove(index);
+                    }
+                  }}
+                />
               </AutoHeightComponent>
 
               <AutoHeightComponent isVisible={typeValue === ColumnTypesEnum.NUMBER}>
@@ -631,55 +535,24 @@ export function ColumnForm({ onSubmit, data, isLoading }: ColumnFormProps) {
                   }}
                 />
               </AutoHeightComponent>
-              {multipleColumnsCombinationUniqueValidationUnavailable ? (
-                <Flex
-                  direction="row"
-                  gap="sm"
-                  align="center"
-                  style={{
-                    padding: '8px',
-                    backgroundColor: colors.BGPrimaryDark,
-                    borderRadius: '4px',
-                    marginTop: '8px',
-                  }}
-                >
-                  <LockIcon size="xl" />
-                  <Stack spacing={5} w="100%" align="flex-start">
-                    <Badge color="orange">Feature unavailable on current plan</Badge>
-                    <div>
-                      <TooltipLabel
-                        label="Unique With Validation"
-                        link={DOCUMENTATION_REFERENCE_LINKS.uniqueWithValidator}
-                      />
-                      <p style={{ fontSize: '0.75rem', color: '#868e96', margin: 0 }}>
-                        Enforce unique combinations across specified columns
-                      </p>
-                    </div>
-                  </Stack>
-                  <Button component={Link} size="xs" href={ROUTES.EXPLORE_PLANS} onClick={modals.closeAll}>
-                    Explore Options
-                  </Button>
-                </Flex>
-              ) : (
-                <Validation
-                  errors={errors}
-                  control={control}
-                  label="Unique With Validation"
-                  type={ValidationTypesEnum.UNIQUE_WITH}
-                  unavailable={false}
-                  link={DOCUMENTATION_REFERENCE_LINKS.uniqueWithValidator}
-                  description="Enforce unique combinations across specified columns"
-                  errorMessagePlaceholder='Value should be unique with "Unique Key"'
-                  index={fields.findIndex((field) => field.validate === ValidationTypesEnum.UNIQUE_WITH)}
-                  onCheckToggle={(status, index) => {
-                    if (status) {
-                      append({ validate: ValidationTypesEnum.UNIQUE_WITH, uniqueKey: '' });
-                    } else {
-                      remove(index);
-                    }
-                  }}
-                />
-              )}
+              <Validation
+                errors={errors}
+                control={control}
+                label="Unique With Validation"
+                type={ValidationTypesEnum.UNIQUE_WITH}
+                unavailable={!!multipleColumnsCombinationUniqueValidationUnavailable}
+                link={DOCUMENTATION_REFERENCE_LINKS.uniqueWithValidator}
+                description="Enforce unique combinations across specified columns"
+                errorMessagePlaceholder='Value should be unique with "Unique Key"'
+                index={fields.findIndex((field) => field.validate === ValidationTypesEnum.UNIQUE_WITH)}
+                onCheckToggle={(status, index) => {
+                  if (status) {
+                    append({ validate: ValidationTypesEnum.UNIQUE_WITH, uniqueKey: '' });
+                  } else {
+                    remove(index);
+                  }
+                }}
+              />
             </Stack>
           </SimpleGrid>
         </div>

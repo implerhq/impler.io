@@ -32,7 +32,7 @@ export const WIDGET_TEXTS = {
     ONBOARD_DROP_FILE: 'Upload File (Optional) or Use Sample Data',
     CHOOSE_FILE: 'Choose a file',
     IMAGE_FILE_SIZE:
-      'Image size should be less than 5 MB. Supported formats are PNG, JPG and JPEG.',
+      'Image exceeds the maximum allowed size. Supported formats are PNG, JPG and JPEG.',
     FILE_FORMATS: 'You can upload: csv, xlsx, xlsm',
     ONBOARD_FILE_FORMATS:
       'Drop CSV or Excel here. Impler will detect columns automatically',

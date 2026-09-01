@@ -38,7 +38,9 @@ export const useUpdateBulkColumns = ({ onError, templateId }: UseUpdateBulkColum
         notify('COLUMNS_UPDATED');
       },
       onError(error: IErrorObject) {
-        notify(error.message + 'Hola');
+        if (!Array.isArray(error.message)) {
+          notify(NOTIFICATION_KEYS.COLUMN_ERRROR, { message: error.message });
+        }
         onError?.(error);
       },
     }

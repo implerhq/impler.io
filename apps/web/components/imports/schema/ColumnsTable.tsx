@@ -39,29 +39,26 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
     columns,
     control,
     register,
-    getValues,
     showAddRow,
     onMoveColumns,
-    validationRef,
     setShowAddRow,
     onCancelAddColumn,
     onEditColumnClick,
-    onAddColumnSubmit,
-    onValidationsClick,
+    onOpenAddColumnModal,
     onDeleteColumnClick,
     isColumnCreateLoading,
   } = useSchema({
     templateId,
   });
 
-  const onValidationsButtonClick = () => {
-    validationRef.current = true;
-    const values = getValues();
-    onValidationsClick({ ...values, key: values.key || values.name });
-  };
-
   return (
-    <form id="columns" onSubmit={onAddColumnSubmit}>
+    <form
+      id="columns"
+      onSubmit={(event) => {
+        event.preventDefault();
+        onOpenAddColumnModal();
+      }}
+    >
       <DraggableTable<IColumn>
         emptyDataText='No columns found click on "+" to add a new column'
         headings={[
@@ -125,8 +122,8 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                           />
                         )}
                       />
-                      <Button color="blue" onClick={onValidationsButtonClick}>
-                        Validations
+                      <Button color="blue" onClick={onOpenAddColumnModal}>
+                        Add Column
                       </Button>
                     </Group>
 
@@ -145,15 +142,15 @@ export function ColumnsTable({ templateId }: ColumnsTableProps) {
                     <Text size="sm" span>
                       ENTER
                     </Text>{' '}
-                    to save,{' '}
+                    or click{' '}
+                    <Text size="sm" span>
+                      ADD COLUMN
+                    </Text>{' '}
+                    to configure validations and save, or{' '}
                     <Text size="sm" span>
                       ESC
                     </Text>{' '}
-                    to cancel or click on{' '}
-                    <Text size="sm" span>
-                      VALIDATIONS
-                    </Text>{' '}
-                    to configure column behavior
+                    to cancel
                   </Text>
                 </td>
               </>

@@ -7,6 +7,7 @@ import {
   IsEnum,
   IsNumber,
   Min,
+  Max,
   ValidateIf,
   IsNotEmpty,
   Validate,
@@ -18,7 +19,7 @@ import { ValidationTypesEnum } from '@impler/client';
 import { IsValidRegex } from '@shared/framework/is-valid-regex.validator';
 import { IsValidDigitsConstraint } from '@shared/framework/is-valid-digits.validator';
 import { IsNumberOrString } from '@shared/framework/number-or-string.validator';
-import { ColumnDelimiterEnum, ColumnTypesEnum } from '@impler/shared';
+import { ColumnDelimiterEnum, ColumnTypesEnum, MAX_IMAGE_SIZE_MB_LIMIT } from '@impler/shared';
 
 export class ValidationDto {
   @ApiProperty({
@@ -158,11 +159,12 @@ export class ColumnRequestDto {
   dateFormats: string[];
 
   @ApiPropertyOptional({
-    description: 'Maximum allowed image size in MB if type is Image',
+    description: `Maximum allowed image size in MB if type is Image (max ${MAX_IMAGE_SIZE_MB_LIMIT})`,
   })
   @ValidateIf((object) => object.type === ColumnTypesEnum.IMAGE)
   @IsNumber()
   @Min(1)
+  @Max(MAX_IMAGE_SIZE_MB_LIMIT)
   @IsOptional()
   maxImageSize?: number;
 
