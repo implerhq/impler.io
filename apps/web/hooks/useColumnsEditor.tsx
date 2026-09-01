@@ -98,13 +98,14 @@ export function useColumnsEditor({ templateId }: UseSchemaProps) {
   const onColumnUpdateError = (error: IErrorObject) => {
     if (error.error && Array.isArray(error.message)) {
       setColumnErrors(
-        error.message.reduce((acc, message) => {
-          const columnIndex = Number(message[1]) + 1;
-          const trimmedMessage = String(message).substring(4);
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          if (Array.isArray[acc[columnIndex]]) {
-            acc[columnIndex].errors.push(trimmedMessage);
+        error.message.reduce((acc: Record<number, string[]>, rawMessage) => {
+          // Nest's ParseArrayPipe prefixes each item error with its 0-based index, e.g. "[12] name should not be empty"
+          const match = /^\[(\d+)\]\s*(.*)$/.exec(String(rawMessage));
+          const columnIndex = match ? Number(match[1]) + 1 : 0;
+          const trimmedMessage = match ? match[2] : String(rawMessage);
+
+          if (Array.isArray(acc[columnIndex])) {
+            acc[columnIndex].push(trimmedMessage);
           } else {
             acc[columnIndex] = [trimmedMessage];
           }

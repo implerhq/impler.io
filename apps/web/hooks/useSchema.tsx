@@ -26,7 +26,7 @@ export function useSchema({ templateId }: UseSchemaProps) {
   const queryClient = useQueryClient();
   const [showAddRow, setShowAddRow] = useState(false);
   const validationRef = useRef<boolean | undefined>(undefined);
-  const { register, control, watch, reset, setFocus, handleSubmit, formState, getValues } = useForm<IColumn>({
+  const { register, control, watch, reset, setFocus, formState, getValues } = useForm<IColumn>({
     defaultValues: {
       type: 'String',
     },
@@ -123,6 +123,7 @@ export function useSchema({ templateId }: UseSchemaProps) {
         children: (
           <ColumnForm
             data={columnData}
+            existingColumns={columns}
             onSubmit={(data) => {
               updateColumn({ id: columnId, data });
             }}
@@ -131,30 +132,45 @@ export function useSchema({ templateId }: UseSchemaProps) {
       });
     }
   }
-  const onAddColumnSubmit = handleSubmit((data) => {
-    validationRef.current = false;
+  function submitNewColumn(data: IColumn) {
     if (!data.key) data.key = data.name;
-    createColumn(data);
-  });
-  function onValidationsClick(columnData: Partial<IColumn>) {
-    if (columnData) {
-      modals.open({
-        size: '70%',
-        trapFocus: true,
-        withCloseButton: false,
-        modalId: MODAL_KEYS.COLUMN_UPDATE,
-        children: (
-          <ColumnForm
-            data={columnData}
-            onSubmit={(data) => {
-              reset(data);
-              onAddColumnSubmit();
-              modals.close(MODAL_KEYS.COLUMN_UPDATE);
-            }}
-          />
-        ),
+    const isDuplicateKey = columns?.some(
+      (column) => column.key === data.key || (column.alternateKeys || []).includes(data.key)
+    );
+    if (isDuplicateKey) {
+      notify(NOTIFICATION_KEYS.COLUMN_ERRROR, {
+        message: `A column with key "${data.key}" already exists. Please choose a different name or key.`,
       });
+
+      return;
     }
+    createColumn(data);
+  }
+  /*
+   * Single entry point for adding a column: the inline row only ever collects a starting
+   * Name/Type, then this opens the full form so every column is created with the same
+   * validation (duplicate keys, plan gating, etc.) regardless of how the user got there.
+   */
+  function onOpenAddColumnModal() {
+    validationRef.current = true;
+    const values = getValues();
+    const columnData: Partial<IColumn> = { ...values, key: values.key || values.name };
+    modals.open({
+      size: '70%',
+      trapFocus: true,
+      withCloseButton: false,
+      modalId: MODAL_KEYS.COLUMN_UPDATE,
+      children: (
+        <ColumnForm
+          data={columnData}
+          existingColumns={columns}
+          onSubmit={(data) => {
+            submitNewColumn(data);
+            modals.close(MODAL_KEYS.COLUMN_UPDATE);
+          }}
+        />
+      ),
+    });
   }
 
   function onConfirmDelete(columnId: string) {
@@ -201,10 +217,9 @@ export function useSchema({ templateId }: UseSchemaProps) {
     validationRef,
     onMoveColumns,
     setShowAddRow,
-    onAddColumnSubmit,
     onEditColumnClick,
     onCancelAddColumn,
-    onValidationsClick,
+    onOpenAddColumnModal,
     onDeleteColumnClick,
     isColumnCreateLoading,
     isLoading: isColumnListLoading,

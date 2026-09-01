@@ -14,6 +14,9 @@ export const Defaults = {
 };
 
 export const DEFAULT_MAX_IMAGE_SIZE_MB = 5;
+export const MAX_IMAGE_SIZE_MB_LIMIT = 20;
+export const IMAGE_URL_CHECK_TIMEOUT_MS = 5000;
+export const IMAGE_URL_CHECK_CONCURRENCY = 5;
 
 export const DEFAULT_VALUES = [
   {
