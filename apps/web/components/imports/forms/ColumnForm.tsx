@@ -22,7 +22,7 @@ import {
   DEFAULT_VALUES,
   IColumn,
 } from '@impler/shared';
-import { DELIMITERS, MODAL_KEYS, MODAL_TITLES, DOCUMENTATION_REFERENCE_LINKS } from '@config';
+import { colors, DELIMITERS, MODAL_KEYS, MODAL_TITLES, DOCUMENTATION_REFERENCE_LINKS } from '@config';
 
 import { Button } from '@ui/button';
 import { Textarea } from '@ui/textarea';
@@ -370,7 +370,7 @@ export function ColumnForm({ onSubmit, data, isLoading, existingColumns }: Colum
                 />
               </GatedField>
             </Stack>
-            <Stack spacing="sm" p="xs" bg="var(--mantine-color-gray-0, #f8f9fa)">
+            <Stack spacing="sm" p="xs" bg={colors.BGSecondaryDark}>
               <Title order={5}>Column Validations</Title>
               <GatedField
                 unavailable={!!requiredValidationUnavailable}
